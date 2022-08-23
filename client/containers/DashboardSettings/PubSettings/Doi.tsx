@@ -1,22 +1,18 @@
+import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { Component } from 'react';
-import { FormGroup, Button, InputGroup, Callout } from '@blueprintjs/core';
 
-import {
-	choosePrefixByCommunityId,
-	managedDoiPrefixes,
-	PUBPUB_DOI_PREFIX,
-} from 'utils/crossref/communities';
 import { apiFetch } from 'client/utils/apiFetch';
+import { AssignDoi } from 'components';
+import { DepositTarget } from 'types';
+import { getPrimaryCollection } from 'utils/collections/primary';
 import { getSchemaForKind } from 'utils/collections/schemas';
+import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
 import { isDoi } from 'utils/crossref/parseDoi';
 import {
-	RelationType,
 	findParentEdgeByRelationTypes,
+	RelationType,
 	relationTypeDefinitions,
 } from 'utils/pubEdge/relations';
-
-import { AssignDoi } from 'components';
-import { getPrimaryCollection } from 'utils/collections/primary';
 
 require('./doi.scss');
 
@@ -25,11 +21,11 @@ type Props = {
 	communityData: any;
 	pubData: any;
 	updatePubData: (...args: any[]) => any;
+	depositTarget?: DepositTarget;
 };
 
-const extractDoiSuffix = (doi, community) => {
-	const prefix = choosePrefixByCommunityId(community.id);
-
+const extractDoiSuffix = (doi: string, depositTarget?: DepositTarget) => {
+	const prefix = depositTarget?.doiPrefix ?? PUBPUB_DOI_PREFIX;
 	return doi.replace(`${prefix}/`, '');
 };
 
@@ -39,8 +35,10 @@ class Doi extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
+		const [, doiSuffix] = (props.pubData.doi || '').split('/');
+
 		this.state = {
-			doiSuffix: extractDoiSuffix(props.pubData.doi || '', props.communityData),
+			doiSuffix,
 			error: false,
 			justSetDoi: false,
 			deleting: false,
@@ -56,7 +54,7 @@ class Doi extends Component<Props, State> {
 	}
 
 	getDoiPrefix() {
-		return choosePrefixByCommunityId(this.props.communityData.id);
+		return this.props.depositTarget?.doiPrefix ?? PUBPUB_DOI_PREFIX;
 	}
 
 	getFullDoi() {
@@ -130,6 +128,13 @@ class Doi extends Component<Props, State> {
 		return pubData.releases.length === 0;
 	}
 
+	disabledDueToUnmanagedPrefix() {
+		return (
+			this.props.depositTarget &&
+			!(this.props.depositTarget.password && this.props.depositTarget.username)
+		);
+	}
+
 	handleDeposit(doi) {
 		const { updatePubData } = this.props;
 
@@ -162,7 +167,7 @@ class Doi extends Component<Props, State> {
 			});
 			this.setState({
 				[pendingStateKey]: false,
-				doiSuffix: extractDoiSuffix(response.doi, communityData),
+				doiSuffix: extractDoiSuffix(response.doi, this.props.depositTarget),
 				error: false,
 				success: true,
 			});
@@ -207,7 +212,7 @@ class Doi extends Component<Props, State> {
 
 			this.setState({
 				generating: false,
-				doiSuffix: extractDoiSuffix(response.dois.pub, communityData),
+				doiSuffix: extractDoiSuffix(response.dois.pub, this.props.depositTarget),
 				error: false,
 				success: false,
 			});
@@ -221,9 +226,9 @@ class Doi extends Component<Props, State> {
 	}
 
 	async handleUpdateDoiClick() {
-		const { pubData, communityData } = this.props;
+		const { pubData } = this.props;
 		const doi = this.getFullDoi();
-		const currentDoiSuffix = extractDoiSuffix(pubData.doi || '', communityData);
+		const currentDoiSuffix = extractDoiSuffix(pubData.doi || '', this.props.depositTarget);
 		this.updateDoi(doi, 'updating', currentDoiSuffix);
 	}
 
@@ -240,7 +245,7 @@ class Doi extends Component<Props, State> {
 			!(justSetDoi || pubData.crossrefDepositRecordId) &&
 			// the Pub is not a supplement to another work
 			// and the community has a custom, hardcoded DOI prefix
-			managedDoiPrefixes.includes(doiPrefix) &&
+			this.props.depositTarget &&
 			doiPrefix !== PUBPUB_DOI_PREFIX
 		);
 	}
@@ -311,9 +316,16 @@ class Doi extends Component<Props, State> {
 		return (
 			<>
 				{!pubData.doi && <p>A DOI can be set for each Pub by admins of this community.</p>}
+				{this.disabledDueToUnmanagedPrefix() && (
+					<Callout intent="warning">
+						This Pub cannot be deposited to Crossref via PubPub because there is no
+						Crossref account connected to PubPub for this Community.
+					</Callout>
+				)}
 				{pubData.doi &&
 					!pubData.crossrefDepositRecordId &&
-					!this.disabledDueToNoReleases() && (
+					!this.disabledDueToNoReleases() &&
+					!this.disabledDueToUnmanagedPrefix() && (
 						<Callout intent="warning">
 							A DOI has been assigned to this Pub, but it has not yet been deposited
 							to Crossref.
@@ -391,7 +403,9 @@ class Doi extends Component<Props, State> {
 						pubData={this.props.pubData}
 						target="pub"
 						disabled={
-							this.disabledDueToParentWithoutDoi() || this.disabledDueToNoReleases()
+							this.disabledDueToParentWithoutDoi() ||
+							this.disabledDueToNoReleases() ||
+							this.disabledDueToUnmanagedPrefix()
 						}
 					/>
 				</FormGroup>

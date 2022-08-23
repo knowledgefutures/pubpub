@@ -14,10 +14,11 @@ import pubHasPreprint from './data/pubHasPreprint';
 import makeCollectionPub from './data/makeCollectionPub';
 import { book, issue, conference } from './data/collections';
 
-const createDeposit = (context, target) =>
+const createDeposit = (context, target, depositTarget) =>
 	createDepositPartial(
 		{ ...context, community },
 		target,
+		depositTarget,
 		new Date('2019-04-11T19:02:15.577Z').getTime(),
 	);
 
@@ -338,5 +339,13 @@ describe('createDeposit', () => {
 			getSchemaForKind('book').contextHints.find((ch) => ch.value === contextHintValue)
 				.crossrefComponentType,
 		);
+	});
+
+	it.only('uses a DepositTarget to produce a doi prefix', () => {
+		const depositTarget = { doiPrefix: 'abc' };
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { doi, ...pubWithouDoi } = pub;
+		const { dois } = createDeposit({ pub: pubWithouDoi }, 'pub', depositTarget);
+		expect(dois.pub.split('/')[0]).toEqual(depositTarget.doiPrefix);
 	});
 });

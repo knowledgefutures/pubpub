@@ -7,10 +7,15 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubForRequest } from 'server/utils/queryHelpers';
+import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 
 const getSettingsData = async (pubSlug, initialData) => {
+	const baseSettingsData = {
+		depositTarget: await getCommunityDepositTarget(initialData.communityData.id),
+	};
 	if (pubSlug) {
 		return {
+			...baseSettingsData,
 			pubData: await getPubForRequest({
 				slug: pubSlug,
 				initialData,
@@ -18,7 +23,7 @@ const getSettingsData = async (pubSlug, initialData) => {
 			}),
 		};
 	}
-	return {};
+	return baseSettingsData;
 };
 
 app.get(

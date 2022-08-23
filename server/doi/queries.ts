@@ -1,5 +1,4 @@
 import createDeposit, { getDois } from 'utils/crossref/createDeposit';
-
 import {
 	Collection,
 	CollectionAttribution,
@@ -14,6 +13,7 @@ import {
 	updateCrossrefDepositRecord,
 } from 'server/crossrefDepositRecord/queries';
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
+import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 
 import { submitDoiData } from './submit';
 
@@ -118,7 +118,8 @@ export const getDoiData = (
 		collectionId && findCollection(collectionId),
 		pubId && findPrimaryCollectionPubForPub(pubId),
 		pubId && findPub(pubId),
-	]).then(([community, collection, collectionPub, pub]) => {
+		getCommunityDepositTarget(communityId),
+	]).then(([community, collection, collectionPub, pub, depositTarget]) => {
 		const resolvedCollection = collectionPub ? collectionPub.collection : collection;
 		return createDeposit(
 			{
@@ -131,6 +132,7 @@ export const getDoiData = (
 				reviewRecommendation,
 			},
 			doiTarget,
+			depositTarget,
 			timestamp,
 			includeRelationships,
 		);
@@ -176,10 +178,11 @@ export const setDoiData = async (
 };
 
 export const generateDoi = async ({ communityId, collectionId, pubId }, target) => {
-	const [community, collection, pub] = await Promise.all([
+	const [community, collection, pub, depositTarget] = await Promise.all([
 		findCommunity(communityId),
 		collectionId && findCollection(collectionId),
 		pubId && findPub(pubId),
+		getCommunityDepositTarget(communityId),
 	]);
 
 	return getDois(
@@ -189,5 +192,6 @@ export const generateDoi = async ({ communityId, collectionId, pubId }, target) 
 			collection,
 		},
 		target,
+		depositTarget,
 	);
 };

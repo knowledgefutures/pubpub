@@ -9,3 +9,8 @@ export function assert(condition: boolean, message = ''): asserts condition {
 		}
 	}
 }
+
+export function expect<T>(value: T | null | undefined): T {
+	assert(value != null);
+	return value;
+}

@@ -93,8 +93,8 @@ const assertParentToSupplementHasDoi = (parentPub) => {
 	return true;
 };
 
-const getPubDoiPart = (context, doiTarget) => {
-	const { pub, collection, community, pubEdge } = context;
+const getPubDoiPart = (context, doiTarget, depositTarget) => {
+	const { pub, community, pubEdge } = context;
 
 	if (!pub) {
 		return {};
@@ -111,37 +111,30 @@ const getPubDoiPart = (context, doiTarget) => {
 
 		doi = createComponentDoi(parentPub, pub);
 	} else {
-		doi =
-			pub.doi ||
-			createDoi({
-				community,
-				collection,
-				target: pub,
-				pubEdge,
-			});
+		doi = pub.doi || createDoi(community, pub, depositTarget);
 	}
 
 	return { pub: doi };
 };
 
-const getCollectionDoiPart = (context, doiTarget) => {
+const getCollectionDoiPart = (context, doiTarget, depositTarget) => {
 	const { collection, community } = context;
 	const doi =
 		collection &&
 		(getCollectionDoi(collection) ||
-			(doiTarget === 'collection' && createDoi({ community, target: collection })));
+			(doiTarget === 'collection' && createDoi(community, collection, depositTarget)));
 
 	return {
 		collection: doi,
 	};
 };
 
-export const getDois = (context, doiTarget) => {
+export const getDois = (context, doiTarget, depositTarget) => {
 	const { community } = context;
 	const dois = {
-		community: createDoi({ community }),
-		...getPubDoiPart(context, doiTarget),
-		...getCollectionDoiPart(context, doiTarget),
+		community: createDoi(community, undefined, depositTarget),
+		...getPubDoiPart(context, doiTarget, depositTarget),
+		...getCollectionDoiPart(context, doiTarget, depositTarget),
 	};
 
 	return dois;
@@ -166,6 +159,7 @@ const filterForMutuallyApprovedEdges = (pubEdges) => {
 export default (
 	context,
 	doiTarget,
+	depositTarget,
 	timestamp = new Date().getTime(),
 	includeRelationships = true,
 ) => {
@@ -203,6 +197,7 @@ export default (
 	const dois = getDois(
 		pubEdge && pubEdge.relationType === RelationType.Supplement ? contextWithPubEdge : ctx,
 		doiTarget,
+		depositTarget,
 	);
 	const deposit = removeEmptyKeys(
 		doiBatch({

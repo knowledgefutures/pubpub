@@ -21,6 +21,7 @@ import { slugifyString } from 'utils/strings';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
+import { DepositTarget, PubPageData } from 'types';
 
 import DeletePub from './DeletePub';
 import Doi from './Doi';
@@ -29,7 +30,8 @@ import NodeLabelEditor from './NodeLabelEditor';
 
 type Props = {
 	settingsData: {
-		pubData: any;
+		pubData: PubPageData;
+		depositTarget?: DepositTarget;
 	};
 };
 
@@ -112,7 +114,7 @@ const PubSettings = (props: Props) => {
 					<InputField label="Title" error={!pubData.title ? 'Required' : null}>
 						<TitleEditor
 							className="bp3-input"
-							initialValue={pubData.htmlTitle}
+							initialValue={pubData.htmlTitle ?? undefined}
 							onInput={(nextHtmlTitle, nextTitle) =>
 								updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
 							}
@@ -244,6 +246,7 @@ const PubSettings = (props: Props) => {
 					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
+					depositTarget={settingsData.depositTarget}
 				/>
 			</SettingsSection>
 		);

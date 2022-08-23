@@ -5,6 +5,7 @@ import { Pub } from './pub';
 import { Page } from './page';
 
 import { ScopeSummary } from './scope';
+import { DepositTarget } from './depositTarget';
 
 export type CommunityHeroButton = {
 	title: string;
@@ -67,4 +68,5 @@ export type Community = {
 	scopeSummaryId: null | string;
 	scopeSummary?: ScopeSummary;
 	footerLogoLink?: string;
+	depositTarget?: DepositTarget;
 };

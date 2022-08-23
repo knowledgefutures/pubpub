@@ -1,6 +1,5 @@
-// Some overrides for specific communities.
-// TODO(ian): Handle this with the database instead.
 export const PUBPUB_DOI_PREFIX = '10.21428';
+
 const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';
@@ -151,17 +150,3 @@ export const communityDoiOverrides = [
 		key: 'ARCADIASCIENCE',
 	},
 ];
-
-export const getDoiOverrideByCommunityId = (communityId) => {
-	return communityDoiOverrides.find((override) =>
-		override.communityIds.some((id) => id === communityId),
-	);
-};
-
-export const choosePrefixByCommunityId = (communityId) => {
-	const matchingOverride = getDoiOverrideByCommunityId(communityId);
-	if (matchingOverride) {
-		return matchingOverride.prefix;
-	}
-	return PUBPUB_DOI_PREFIX;
-};

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { DOMOutputSpec } from 'prosemirror-model';
 import { useDocumentState, useDeferredNode } from '@pubpub/prosemirror-reactive';
 
-import { buildLabel } from '../utils/references';
+import { buildLabel, getReferenceableNodeType } from '../utils/references';
 import { NodeLabelMap, ReferenceableNodeType } from '../types';
 
 export default {
@@ -29,7 +29,7 @@ export default {
 							return null;
 						}
 
-						const nodeType = target.type.name;
+						const nodeType = getReferenceableNodeType(target);
 						const label = (nodeLabels as NodeLabelMap)[
 							nodeType as ReferenceableNodeType
 						];

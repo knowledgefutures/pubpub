@@ -14,7 +14,7 @@ export type NodeReference = {
 	label: string;
 };
 
-const getReferenceableNodeType = (node): ReferenceableNodeType =>
+export const getReferenceableNodeType = (node): ReferenceableNodeType =>
 	node.type.name === 'math_display' ? 'block_equation' : node.type.name;
 
 export const nodeDefaults = {

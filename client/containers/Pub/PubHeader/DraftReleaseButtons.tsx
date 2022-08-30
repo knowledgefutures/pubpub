@@ -44,12 +44,12 @@ const getCanCreateRelease = (latestRelease, latestKey) => {
 
 const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const { historyData, pubData, updatePubData } = props;
-	const { communityData, scopeData, featureFlags } = usePageContext();
+	const { communityData, scopeData } = usePageContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
 	const { isRelease, isReview } = pubData;
 
 	const renderForRelease = () => {
-		const { releases, releaseNumber, reviewHash } = pubData;
+		const { releases, releaseNumber } = pubData;
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<React.Fragment>
@@ -61,21 +61,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						outerLabel={{
 							top: 'edit this Pub',
 							bottom: 'go to draft',
-						}}
-					/>
-				)}
-				{featureFlags.reviews && (
-					<ResponsiveHeaderButton
-						icon="draw"
-						tagName="a"
-						href={pubUrl(communityData, pubData, {
-							accessHash: reviewHash,
-							historyKey: historyData.currentKey,
-							isReview: true,
-						})}
-						outerLabel={{
-							top: 'Create a review of this Pub',
-							bottom: 'go to the review page',
 						}}
 					/>
 				)}

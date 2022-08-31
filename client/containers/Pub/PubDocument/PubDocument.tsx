@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { usePageContext } from 'utils/hooks';
-import { PubHistoryViewer, ClientOnly } from 'components';
+import { PubHistoryViewer } from 'components';
 import {
 	PubEdgeListing,
 	Filter as PubEdgeFilter,
@@ -19,7 +19,6 @@ import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
-import Review from './Review/Review';
 
 require('./pubDocument.scss');
 
@@ -98,16 +97,6 @@ const PubDocument = () => {
 							onClose={() => historyData.setIsViewingHistory(false)}
 							onSetCurrentHistoryKey={historyData.setCurrentHistoryKey}
 						/>
-					)}
-
-					{isReview && (
-						<ClientOnly>
-							<Review
-								pubData={pubData}
-								updatePubData={updatePubData}
-								communityData={communityData}
-							/>
-						</ClientOnly>
 					)}
 				</div>
 			</div>

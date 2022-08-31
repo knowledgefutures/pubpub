@@ -10,6 +10,7 @@ require('./pubHeaderSticky.scss');
 
 const PubHeaderSticky = () => {
 	const { pubData } = usePubContext();
+
 	return (
 		<div className="pub-header-sticky-component">
 			<div className="sticky-title">{pubData.title}</div>

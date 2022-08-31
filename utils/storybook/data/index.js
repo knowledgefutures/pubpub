@@ -4,6 +4,8 @@ export const { locationData, loginData } = initialData;
 export { default as communityData } from './dataCommunity';
 export { default as collectionData } from './dataCollection';
 export { default as pubData } from './dataPub';
+export { default as spubData } from './dataSpub';
+export { default as pubReviewData } from './dataPubReview';
 export { default as attributionsData } from './dataAttributions';
 export { discussionsData } from './dataDiscussions';
 export { plainDoc, imageDoc, fullDoc } from './dataDocs';

@@ -115,6 +115,10 @@ $mobile-bottom-buttons-spacing: 10px;
 		}
 	}
 
+	.review-sticky-component {
+		padding-top: 37px;
+	}
+
 	@include mobile {
 		h1 {
 			font-size: 24px;

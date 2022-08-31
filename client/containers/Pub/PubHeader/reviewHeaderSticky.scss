@@ -1,15 +1,22 @@
 @import 'styles/variables.scss';
 @import '../pub.scss';
 
-.pub-header-sticky-component {
-	position: absolute;
-	bottom: 0px;
-	padding: 0em 1em;
+.review-header-sticky-component {
+	bottom: 0;
 	line-height: 37px;
-	width: 100%;
 	transition: 0.2s linear opacity;
-	display: flex;
+
 	color: inherit;
+
+	.sticky-section {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		padding: 0 25px;
+		.side-content {
+			position: relative;
+		}
+	}
 
 	.sticky-title {
 		overflow: hidden;
@@ -25,6 +32,7 @@
 		white-space: nowrap;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 
 		.bp3-button,
 		.bp3-icon {
@@ -32,10 +40,22 @@
 		}
 
 		.dot {
-			padding: 0em 0.3em;
+			padding: 0 0.3em;
 			height: 24px;
 			line-height: 24px;
 			display: block;
 		}
+	}
+
+	.sticky-review-text {
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 17px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+
+	.saving-text {
+		padding: 4px;
 	}
 }

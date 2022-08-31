@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 
-import { pubData } from 'utils/storybook/data';
+import { spubData } from 'utils/storybook/data';
 
 import SpubHeaderToolbar from './SpubHeaderToolbar';
 import { SpubHeaderTab } from '../SpubHeader';
@@ -12,7 +12,7 @@ const StatefulSpubHeaderToolBaraWrapper = () => {
 		<SpubHeaderToolbar
 			selectedTab={selectedTab}
 			onSelectTab={setSelectedTab}
-			submission={pubData.submission as unknown as any}
+			submission={spubData.submission as any}
 			validatedFields={{ title: true, abstract: true, description: true }}
 		/>
 	);

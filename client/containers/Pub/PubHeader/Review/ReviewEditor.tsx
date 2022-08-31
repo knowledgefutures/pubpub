@@ -3,8 +3,6 @@ import React from 'react';
 import { MinimalEditor } from 'components';
 import { DocJson } from 'types';
 
-require('./reviewEditor.scss');
-
 type Props = {
 	setReviewDoc: (doc: DocJson) => void;
 	reviewDoc: DocJson;
@@ -21,6 +19,7 @@ const ReviewEditor = (props: Props) => {
 				useFormattingBar
 				focusOnLoad={true}
 				initialContent={reviewDoc}
+				placeholder="Compose your review here..."
 			/>
 		</div>
 	);

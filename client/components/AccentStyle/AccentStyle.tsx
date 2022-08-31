@@ -68,6 +68,8 @@ const AccentStyle = function (props) {
 			.bp3-button.bp3-intent-primary.bp3-outlined:hover:not(.bp3-disabled) { background-color: ${baseMinimal}; color: ${baseColor}; }
 			.bp3-button.bp3-intent-primary.bp3-outlined:active:not(.bp3-disabled), .bp3-button.bp3-intent-primary.bp3-active:not(.bp3-disabled) { background-color: ${baseMinimalAction}; color: ${baseColor}; }
 
+			.bp3-button.bp3-intent-primary:not(.bp3-outlined).bp3-minimal { background-color: ${baseAction}; color: ${baseText}; }
+
 
 			.bp3-tag.bp3-intent-primary { background: ${baseColor}; color: ${baseText}; }
 			.bp3-tag.bp3-minimal.bp3-intent-primary { background-color: ${baseMinimal}; color: inherit; }

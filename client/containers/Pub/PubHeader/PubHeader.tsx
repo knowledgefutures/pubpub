@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
 
-import { GridWrapper, PubHeaderBackground } from 'components';
+import { GridWrapper, PubHeaderBackground, ClientOnly } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
@@ -12,6 +12,7 @@ import PubDetails from './details';
 import PubHeaderContent from './PubHeaderContent';
 import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
+import ReviewHeaderSticky from './ReviewHeaderSticky';
 
 require('./pubHeader.scss');
 
@@ -101,7 +102,13 @@ const PubHeader = (props: Props) => {
 				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			{sticky && <PubHeaderSticky />}
+			{!pubData.isReview && sticky ? (
+				<PubHeaderSticky />
+			) : (
+				<ClientOnly>
+					<ReviewHeaderSticky />
+				</ClientOnly>
+			)}
 		</PubHeaderBackground>
 	);
 };

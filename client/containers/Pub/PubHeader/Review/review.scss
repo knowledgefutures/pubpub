@@ -1,0 +1,18 @@
+.review-component {
+	position: absolute;
+	right: 0;
+	top: 100%;
+
+	.review-button {
+		padding-top: 18px;
+		.bp3-button-text {
+			color: white;
+		}
+	}
+
+	.review-border {
+		border-style: solid;
+		border-color: #dddddd;
+		padding: 18px;
+	}
+}

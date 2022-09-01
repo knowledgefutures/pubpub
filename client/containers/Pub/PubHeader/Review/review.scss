@@ -2,9 +2,20 @@
 	position: absolute;
 	right: 0;
 	top: 100%;
+	color: black;
 
 	.review-button {
 		padding-top: 18px;
+		.bp3-button {
+			.bp3-icon {
+				color: white !important;
+			}
+			&:hover {
+				.bp3-icon {
+					color: white !important;
+				}
+			}
+		}
 		.bp3-button-text {
 			color: white;
 		}

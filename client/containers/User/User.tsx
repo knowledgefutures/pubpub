@@ -30,12 +30,10 @@ const User = (props: Props) => {
 	});
 	const authoredPubs = communityPubs.filter((pub) => {
 		const collaborators = pub.attributions || [];
-		const isAuthor = collaborators.reduce((prev, curr) => {
-			if (curr.user.id === loginData.id && curr.isAuthor) {
-				return true;
-			}
-			return prev;
-		}, false);
+		const isAuthor = collaborators.some((collaborator) => {
+			const isCurrentProfileCollaborator = collaborator.user.id === userData.id;
+			return isCurrentProfileCollaborator && collaborator.isAuthor;
+		});
 		return isAuthor;
 	});
 	const pubsToRender = mode === 'authored' ? authoredPubs : communityPubs;

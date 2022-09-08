@@ -2,7 +2,6 @@ import { editorSchema, getDocForHtmlString, isEmptyDocNode, renderStatic } from 
 import { Node } from 'prosemirror-model';
 import React, { useCallback, useRef } from 'react';
 import { renderToString } from 'react-dom/server';
-import { useDocumentState } from '@pubpub/prosemirror-reactive';
 
 import { MinimalEditor } from 'components';
 import { usePubContext } from 'containers/Pub/pubHooks';
@@ -14,8 +13,10 @@ type Props = {
 };
 
 const SimpleEditor = (props: Props) => {
-	const { nodeLabels } = useDocumentState();
-	const { noteManager } = usePubContext();
+	const {
+		noteManager,
+		pubData: { nodeLabels },
+	} = usePubContext();
 	const { onChange, placeholder, initialHtmlString } = props;
 	const initialDoc = useRef<{ [key: string]: any }>();
 

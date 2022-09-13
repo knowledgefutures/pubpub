@@ -41,7 +41,7 @@ const SimpleEditor = (props: Props) => {
 
 			onChange(html);
 		},
-		[onChange],
+		[onChange, nodeLabels, noteManager],
 	);
 
 	return (

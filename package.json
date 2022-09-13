@@ -183,7 +183,7 @@
 		"yargs": "^13.2.4"
 	},
 	"engines": {
-		"node": "18.2.0"
+		"node": "18.7.0"
 	},
 	"devDependencies": {
 		"@storybook/addon-knobs": "^6.4.0",

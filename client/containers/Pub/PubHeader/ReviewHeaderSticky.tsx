@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@blueprintjs/core';
+import { Button, AnchorButton } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
@@ -19,9 +19,13 @@ const ReviewHeaderSticky = () => {
 	const { pubData, updatePubData } = usePubContext();
 	const {
 		communityData,
-		scopeData: { activePermissions, memberData },
+		scopeData: {
+			activePermissions: { canManage, canEdit },
+			memberData,
+		},
 		loginData: { fullName },
 	} = usePageContext();
+	const { viewHash } = pubData;
 
 	const [visible, setVisible] = useState(false);
 	const [reviewTitle, setReviewTitle] = useState('Untitled Review');
@@ -96,7 +100,22 @@ const ReviewHeaderSticky = () => {
 		/>
 	);
 	const reviewPath = `/dash/pub/${pubData.slug}/reviews/${reviewNumber}`;
-	const pubPath = pubUrl(communityData, pubData);
+	const isMember = memberData.length > 0;
+	const userFilter = canManage && isMember;
+	const pubPath = userFilter
+		? pubUrl(communityData, pubData)
+		: pubUrl(communityData, pubData, { accessHash: viewHash });
+	const isUser = !!(canEdit || fullName);
+	const reviewerFooterButtons = (
+		<React.Fragment>
+			<AnchorButton href={pubPath}>Return to Pub</AnchorButton>
+			{userFilter && (
+				<AnchorButton intent="primary" href={reviewPath}>
+					Go to Review
+				</AnchorButton>
+			)}
+		</React.Fragment>
+	);
 	return (
 		<div className="review-header-sticky-component container pub">
 			<div className="sticky-section">
@@ -125,11 +144,8 @@ const ReviewHeaderSticky = () => {
 							setReviewerName={setReviewerName}
 							createdReview={createdReview}
 							createError={createError}
-							activePermissions={activePermissions}
-							fullName={fullName}
-							memberData={memberData}
-							pubPath={pubPath}
-							reviewPath={reviewPath}
+							isUser={isUser}
+							reviewerFooterButtons={reviewerFooterButtons}
 						/>
 
 						<Button

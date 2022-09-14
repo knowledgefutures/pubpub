@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnchorButton, Callout, Classes, Dialog, InputGroup } from '@blueprintjs/core';
-import { PubPageData, ScopeData, Member } from 'types';
+import { PubPageData } from 'types';
 
 require('./reviewerDialog.scss');
 
@@ -15,11 +15,8 @@ type Props = {
 	setReviewerName: React.Dispatch<React.SetStateAction<string>>;
 	createdReview: boolean;
 	createError: any;
-	activePermissions: ScopeData['activePermissions'];
-	fullName: string | undefined;
-	memberData: Member[];
-	reviewPath: string;
-	pubPath: string;
+	isUser: boolean;
+	reviewerFooterButtons: React.ReactNode;
 };
 
 const ReviewerDialog = (props: Props) => {
@@ -34,15 +31,9 @@ const ReviewerDialog = (props: Props) => {
 		setReviewerName,
 		createdReview,
 		createError,
-		activePermissions,
-		fullName,
-		memberData,
-		pubPath,
-		reviewPath,
+		isUser,
+		reviewerFooterButtons,
 	} = props;
-	const { canManage } = activePermissions;
-	const isUser = !!(activePermissions.canEdit || fullName);
-	const isMember = memberData.length > 0;
 
 	const handleTitleOnBlur = (evt) => setReviewTitle(evt.target.value.trim());
 	const handleReviewerNameOnBlur = (evt) => setReviewerName(evt.target.value.trim());
@@ -101,14 +92,7 @@ const ReviewerDialog = (props: Props) => {
 					</div>
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
-					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
-						<AnchorButton href={pubPath}>Return to Pub</AnchorButton>
-						{canManage && isMember && (
-							<AnchorButton intent="primary" href={reviewPath}>
-								Go to Review
-							</AnchorButton>
-						)}
-					</div>
+					<div className={Classes.DIALOG_FOOTER_ACTIONS}>{reviewerFooterButtons}</div>
 				</div>
 			</React.Fragment>
 		);

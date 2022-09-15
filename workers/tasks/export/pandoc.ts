@@ -163,7 +163,7 @@ const callPandoc = (pandocJson: object, args: string[]) => {
 		input: JSON.stringify(pandocJson),
 		maxBuffer: 1024 * 1024 * 25,
 	});
-	return proc.stderr.toString();
+	return { error: proc.stderr.toString(), success: proc.status === 0 };
 };
 
 type ExportWithPandocOptions = {
@@ -194,8 +194,8 @@ export const exportWithPandoc = async (options: ExportWithPandocOptions) => {
 	}).asNode();
 	const pandocAst = runTransforms(preTransformedPandocAst);
 	const pandocJson = emitPandocJson(pandocAst);
-	const error = callPandoc(pandocJson, pandocArgs);
-	if (error) {
+	const { error, success } = callPandoc(pandocJson, pandocArgs);
+	if (!success) {
 		throw new Error(error);
 	}
 	// At this point, pandoc has written the document to our temp file. Here

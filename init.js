@@ -2,15 +2,21 @@
 const {
 	argv: { watch },
 } = require('yargs');
-const throng = require('throng');
+const path = require('path');
 
 const watchables = watch && (Array.isArray(watch) ? watch : [watch]).filter((x) => x);
 
-if (process.env.NODE_ENV === 'production') {
-	require('newrelic');
-}
+const main = async () => {
+	if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+		require(path.join(process.cwd(), 'config.js'));
+		const { setupLocalDatabase } = require('./localDatabase');
+		await setupLocalDatabase();
+	}
 
-throng({ workers: 1, lifetime: Infinity }, () => {
+	if (process.env.NODE_ENV === 'production') {
+		require('newrelic');
+	}
+
 	const loadServer = () => {
 		return require('./dist/server/server/server').startServer();
 	};
@@ -21,4 +27,6 @@ throng({ workers: 1, lifetime: Infinity }, () => {
 	} else {
 		loadServer();
 	}
-});
+};
+
+main();

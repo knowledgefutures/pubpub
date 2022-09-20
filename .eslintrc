@@ -21,7 +21,8 @@
 					["data", "./stories/data"],
 					["stubstub", "./stubstub"],
 					["utils", "./utils"],
-					["types", "./types"]
+					["types", "./types"],
+					["facets", "./facets"]
 				],
 				"extensions": [".js", ".ts", ".tsx"]
 			}

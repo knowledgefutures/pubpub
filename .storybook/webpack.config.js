@@ -49,6 +49,7 @@ module.exports = ({ config }) => {
 	config.resolve.alias['server'] = resolve(__dirname, '../server');
 	config.resolve.alias['utils'] = resolve(__dirname, '../utils');
 	config.resolve.alias['types'] = resolve(__dirname, '../types');
+	config.resolve.alias['facets'] = resolve(__dirname, '../facets');
 	config.node = {
 		...config.node,
 		fs: 'empty',

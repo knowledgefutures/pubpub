@@ -54,6 +54,10 @@ export default (sequelize, dataTypes) => {
 				defaultValue: true,
 				allowNull: false,
 			},
+			facetsMigratedAt: {
+				type: dataTypes.DATE,
+				allowNull: true,
+			},
 
 			/* Set by Associations */
 			draftId: { type: dataTypes.UUID, allowNull: false },

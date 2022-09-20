@@ -10,7 +10,8 @@
     "client/**/*",
     "types/**/*",
     "utils/**/*",
-    "workers/**/*"
+    "workers/**/*",
+    "facets/**/*",
   ],
   "exclude": [
     "../**/__tests__/**/*",

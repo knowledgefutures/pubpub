@@ -122,6 +122,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 							description: '',
 							image: collection.avatar,
 							unlisted: !collection.isPublic,
+							collection,
 						})}
 						bodyClassPrefix="layout"
 					/>,

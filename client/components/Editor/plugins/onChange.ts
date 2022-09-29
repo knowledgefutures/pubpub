@@ -9,7 +9,7 @@ import { domEventsPluginKey } from './domEvents';
 
 const changePluginKey = new PluginKey('onChange');
 
-const getRangeBoundingBox = (editorView, fromPos, toPos) => {
+export const getRangeBoundingBox = (editorView, fromPos, toPos) => {
 	const fromBoundingBox = editorView.coordsAtPos(fromPos);
 	const toBoundingBox = editorView.coordsAtPos(toPos);
 	return {

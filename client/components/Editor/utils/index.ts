@@ -12,3 +12,4 @@ export * from './renderStatic';
 export * from './schema';
 export * from './selection';
 export * from './view';
+export * from './code';

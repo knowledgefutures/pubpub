@@ -1,5 +1,7 @@
 import React from 'react';
+import { NodeSelection } from 'prosemirror-state';
 
+import { getRangeBoundingBox } from 'components/Editor/plugins/onChange';
 import { EditorChangeObject } from '../../Editor';
 
 import { GetBoundsFn, ControlsConfiguration } from '../types';
@@ -26,6 +28,20 @@ const createFloatingPositionGetter =
 		}
 		return { transform };
 	};
+
+const getCodeBlockParent = (editorChangeObject: EditorChangeObject) => {
+	const state = editorChangeObject.view.state;
+	const { $anchor } = state.selection;
+	const parentSelection = NodeSelection.create(
+		state.doc,
+		state.selection.$anchor.before($anchor.depth),
+	);
+	return getRangeBoundingBox(editorChangeObject.view, parentSelection.from, parentSelection.to);
+};
+
+export const positionNearParent = createFloatingPositionGetter((changeObject: EditorChangeObject) =>
+	getCodeBlockParent(changeObject),
+);
 
 export const positionNearLink = createFloatingPositionGetter(
 	(changeObject: EditorChangeObject) => changeObject.activeLink!.boundingBox,

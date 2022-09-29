@@ -52,9 +52,9 @@ export type ControlsFloatingPositionFn = (
 
 export type FormattingBarButtonDataControls = {
 	component: React.ComponentType<any>;
-	indicate: EditorChangeObjectDecider;
-	trigger: EditorChangeObjectDecider;
-	show: EditorChangeObjectDecider;
+	indicate: EditorChangeObjectDecider; // whether to highlight button
+	trigger: EditorChangeObjectDecider; // event-based whether to open node controls
+	show: EditorChangeObjectDecider; // state-based whether to display node controls
 	floatingPosition?: ControlsFloatingPositionFn;
 	enterKeyTriggers?: boolean;
 	captureFocusOnMount?: boolean;

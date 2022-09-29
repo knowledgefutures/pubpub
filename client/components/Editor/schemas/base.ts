@@ -197,6 +197,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		group: 'block',
 		attrs: {
 			id: { default: null },
+			language: { default: null },
 		},
 		code: true,
 		selectable: false,
@@ -206,6 +207,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				getAttrs: (node) => {
 					return {
 						id: (node as Element).getAttribute('id'),
+						language: (node as Element).getAttribute('language'),
 					};
 				},
 				preserveWhitespace: 'full',
@@ -214,7 +216,10 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		toDOM: (node) => {
 			return [
 				'pre',
-				{ ...(node.attrs.id && { id: node.attrs.id }) },
+				{
+					...(node.attrs.id && { id: node.attrs.id }),
+					...(node.attrs.language && { id: node.attrs.language }),
+				},
 				['code', 0],
 			] as DOMOutputSpec;
 		},

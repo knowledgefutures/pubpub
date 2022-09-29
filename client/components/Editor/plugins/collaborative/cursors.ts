@@ -107,7 +107,6 @@ export default (schema, props, collabDocPluginKey) => {
 			innerStyle += `.name.${formattedDataId}::after { background-color: ${cursorData.cursorColor} !important; } `;
 		}
 		style.innerHTML = innerStyle;
-		// console.timeEnd('redner2');
 		const selectionFrom = selection.from;
 		const selectionTo = selection.to;
 		const selectionHead = selection.head;

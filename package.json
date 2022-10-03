@@ -34,7 +34,7 @@
 		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./dist/server/client:./dist/server WORKER=true node dist/server/workers/init"
 	},
 	"dependencies": {
-		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#a0fe5661d122d04278fc769e0bcb5254785d7abe",
+		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17",
 		"@blueprintjs/core": "^3.24.0",
 		"@blueprintjs/icons": "^3.14.0",
 		"@blueprintjs/select": "^3.12.0",

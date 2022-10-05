@@ -6,6 +6,7 @@ import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { InitialData } from 'types';
 
 const client = algoliasearch(process.env.ALGOLIA_ID!, process.env.ALGOLIA_KEY!);
@@ -54,6 +55,7 @@ const createFilter = (
 app.get('/search', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 
 		const pubsSearchKey = client.generateSecuredApiKey(searchKey, {
 			filters: createFilter(
@@ -65,7 +67,6 @@ app.get('/search', async (req, res, next) => {
 		const pagesSearchKey = client.generateSecuredApiKey(searchKey, {
 			filters: createFilter(initialData, ['isPublic'], ['pageAccessIds']),
 		});
-
 		const searchData = {
 			searchId,
 			pubsSearchKey,
@@ -77,6 +78,7 @@ app.get('/search', async (req, res, next) => {
 			<Html
 				chunkName="Search"
 				initialData={initialData}
+				customScripts={customScripts}
 				viewData={{ searchData }}
 				headerComponents={generateMetaComponents({
 					initialData,

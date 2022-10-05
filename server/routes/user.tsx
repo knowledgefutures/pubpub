@@ -6,11 +6,13 @@ import { getUser } from 'server/utils/queryHelpers';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { isUserAffiliatedWithCommunity } from 'server/community/queries';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		const userData = await getUser(req.params.slug, initialData);
 		const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
 
@@ -29,6 +31,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 			<Html
 				chunkName="User"
 				initialData={initialData}
+				customScripts={customScripts}
 				viewData={{ userData }}
 				headerComponents={generateMetaComponents({
 					initialData,

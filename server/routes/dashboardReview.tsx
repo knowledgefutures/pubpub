@@ -13,7 +13,7 @@ app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => 
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const { scopeData, loginData } = initialData;
 		const { pubSlug, reviewNumber } = req.params;
 		const reviewData = await getReview(pubSlug, reviewNumber, initialData.communityData.id);

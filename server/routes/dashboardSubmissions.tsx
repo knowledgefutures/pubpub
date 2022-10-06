@@ -53,7 +53,7 @@ app.get(
 				return next();
 			}
 
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			if (!initialData.featureFlags.submissions) {
 				return next();
 			}

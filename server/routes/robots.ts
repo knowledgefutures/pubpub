@@ -24,7 +24,7 @@ app.get(
 	wrap(async (req, res) => {
 		let communityData;
 		if (hostIsValid(req, 'community')) {
-			const initData = await getInitialData(req, true);
+			const initData = await getInitialData(req, { isDashboard: true });
 			communityData = initData.communityData;
 		}
 

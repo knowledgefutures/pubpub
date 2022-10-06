@@ -33,7 +33,7 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			next();
 		}
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const {
 			scopeData: {
 				activePermissions: { canView },

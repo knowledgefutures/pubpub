@@ -1,4 +1,6 @@
-import { Collection, Community, Scope, DefinitelyHas, Member, MemberPermission, Pub } from 'types';
+import { Collection, Community, DefinitelyHas, Member, MemberPermission, Pub, Scope } from 'types';
+import { CascadedFacetsByKind } from 'facets';
+
 import { UserDismissableKey } from 'utils/userDismissable';
 
 export type LoginData = {
@@ -64,6 +66,7 @@ export type ScopeData = {
 	};
 	scope: Scope;
 	memberData: Member[];
+	facets?: CascadedFacetsByKind;
 };
 
 export type InitialCommunityData = DefinitelyHas<

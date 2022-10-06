@@ -13,7 +13,7 @@ app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 
 		if (!initialData.scopeData.activePermissions.canView) {
 			throw new ForbiddenError();

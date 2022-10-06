@@ -21,7 +21,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 			return res.redirect(`${req.path}/overview${queryString}`);
 		}
 
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const pubData = await getPubForRequest({
 			slug: req.params.pubSlug,
 			initialData,

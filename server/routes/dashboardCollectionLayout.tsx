@@ -9,7 +9,7 @@ import { handleErrors, NotFoundError } from 'server/utils/errors';
 
 app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 	try {
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const { activeCollection: collection } = initialData.scopeData.elements;
 
 		if (!initialData.scopeData.activePermissions.canView || !collection) {

@@ -18,7 +18,7 @@ app.get('/dash/overview', async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			next();
 		}
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const overviewData = await getCommunityOverview(initialData);
 		return renderToNodeStream(
 			res,

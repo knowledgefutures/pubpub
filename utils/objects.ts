@@ -22,3 +22,14 @@ export const pickKeys = <T extends Record<any, any>, K extends keyof T>(
 	});
 	return nextObject as Pick<T, K>;
 };
+
+export const mapObject = <Keys extends string, From, To>(
+	object: Record<Keys, From>,
+	mapper: (from: From) => To,
+) => {
+	const result: Partial<Record<Keys, To>> = {};
+	Object.keys(object).forEach((key: string) => {
+		result[key as Keys] = mapper(object[key as Keys]);
+	});
+	return result as Record<Keys, To>;
+};

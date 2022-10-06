@@ -183,3 +183,7 @@ export type SanitizedPubData = Pub & {
 	releases: Release[];
 	releaseNumber: number | null;
 };
+
+export type PubWithCollections = Pub & {
+	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
+};

@@ -7,23 +7,27 @@ import { MenuButton } from './MenuButton';
 export type MenuSelectItem<Value> = {
 	value: Value;
 	label: React.ReactNode;
+	icon?: React.ReactNode;
+	rightElement?: React.ReactNode;
 };
 
 export type MenuSelectItems<Value> = MenuSelectItem<Value>[];
 
+type MenuButtonProps = React.ComponentProps<typeof MenuButton>;
+
 type Props<Value> = {
 	'aria-label': string;
-	buttonProps?: React.ComponentProps<typeof MenuButton>['buttonProps'];
 	defaultLabel?: React.ReactNode;
 	disabled?: boolean;
 	icon?: IButtonProps['icon'];
 	items: MenuSelectItems<Value>;
 	onSelectValue: (value: Value) => unknown;
 	prefix?: React.ReactNode;
-	rightIcon?: string;
+	rightIcon?: IButtonProps['rightIcon'];
 	showTickIcon?: boolean;
 	value: null | Value;
-};
+	className?: string;
+} & Pick<MenuButtonProps, 'buttonProps' | 'placement'>;
 
 export const MenuSelect = <Values extends number | string>(props: Props<Values>) => {
 	const {
@@ -33,6 +37,8 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 		items,
 		onSelectValue,
 		buttonProps,
+		className,
+		placement,
 		showTickIcon = true,
 		prefix = null,
 		disabled = false,
@@ -52,14 +58,17 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 				</>
 			}
 			buttonProps={{ icon, rightIcon, outlined: true, ...buttonProps }}
+			className={className}
+			placement={placement}
 		>
 			{items.map((item) => (
 				<MenuItem
 					key={item.value}
-					icon={showTickIcon && (item === selectedItem ? 'tick' : 'blank')}
+					icon={showTickIcon ? (item === selectedItem ? 'tick' : 'blank') : item.icon}
 					active={item === selectedItem}
 					onClick={() => onSelectValue(item.value)}
 					text={item.label}
+					rightElement={item.rightElement}
 				/>
 			))}
 		</MenuButton>

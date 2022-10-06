@@ -161,7 +161,7 @@ class ImageUpload extends Component<Props, State> {
 			backgroundImage: `url("${this.state.imageBlob}")`,
 		};
 		return (
-			<div className="image-upload-component">
+			<div className="image-upload-component bp3-form-group">
 				{/* This label's target is properly nested, but rendered by renderInput() */}
 				{/* eslint-disable-next-line jsx-a11y/label-has-for */}
 				<label htmlFor={`input-${this.props.htmlFor}`}>
@@ -222,8 +222,10 @@ class ImageUpload extends Component<Props, State> {
 						)}
 					</div>
 					{this.renderInput()}
+					{this.props.helperText && (
+						<div className="bp3-form-helper-text">{this.props.helperText}</div>
+					)}
 				</label>
-				<div className="helper-text">{this.props.helperText}</div>
 				<Overlay
 					maxWidth={300}
 					isOpen={!!this.state.imageFile}

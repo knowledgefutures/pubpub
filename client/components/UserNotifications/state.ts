@@ -3,7 +3,7 @@ import {
 	ActivityItem,
 	PatchFnArg,
 	Pub,
-	Scope,
+	ScopeId,
 	Thread,
 	UserNotificationWithActivityItem,
 } from 'types';
@@ -114,7 +114,7 @@ const sortPubStates = (pubStates: PubNotificationsState[]) => {
 const renderActivityItems = (
 	unrenderedActivityItems: ActivityItem[],
 	initializer: NotificationsInitializer,
-	scope: Scope,
+	scope: ScopeId,
 ) => {
 	const otherActorsCount = -1 + new Set(unrenderedActivityItems.map((item) => item.actorId)).size;
 	return unrenderedActivityItems.map((item) =>

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Checkbox } from 'reakit/Checkbox';
 
-import { ActivityFilter, Scope } from 'types';
+import { ActivityFilter, ScopeId } from 'types';
 import { Icon, IconName } from 'components';
 
 require('./activityFilters.scss');
@@ -10,7 +10,7 @@ require('./activityFilters.scss');
 type Props = {
 	activeFilters: ActivityFilter[];
 	onUpdateActiveFilters: (nextFilters: ActivityFilter[]) => unknown;
-	scope: Scope;
+	scope: ScopeId;
 };
 
 type FilterLabel = {
@@ -49,7 +49,7 @@ const filtersByScopeKind = {
 	pub: sortedFilters(['member', 'review', 'discussion', 'pubEdge', 'submission']),
 };
 
-const getFiltersForScope = (scope: Scope) => {
+const getFiltersForScope = (scope: ScopeId) => {
 	if ('pubId' in scope && scope.pubId) {
 		return filtersByScopeKind.pub;
 	}

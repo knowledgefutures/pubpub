@@ -83,9 +83,27 @@ const settings: MenuItem = {
 	requiredPermission: 'manage',
 };
 
+const facets: MenuItem = {
+	title: 'Facets',
+	icon: 'facets',
+	dashboardMode: 'facets',
+	requiredPermission: 'manage',
+	shown: (context) => context.scopeData.activePermissions.isSuperAdmin,
+};
+
 export const menuItemsByScopeType = {
 	organization: [],
-	community: [overview, activity, pages, reviews, impact, members, settings],
-	collection: [overview, activity, layout, reviews, submissions, impact, members, settings],
-	pub: [overview, activity, reviews, connections, impact, members, settings],
+	community: [overview, activity, pages, reviews, impact, members, facets, settings],
+	collection: [
+		overview,
+		activity,
+		layout,
+		reviews,
+		submissions,
+		impact,
+		members,
+		facets,
+		settings,
+	],
+	pub: [overview, activity, reviews, connections, impact, members, facets, settings],
 } as const;

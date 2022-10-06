@@ -1,4 +1,4 @@
-import { Scope } from '../scope';
+import { ScopeId } from '../scope';
 
 import { CommunityActivityItem } from './community';
 import { CollectionActivityItem } from './collection';
@@ -48,7 +48,7 @@ export type ActivityItemsFetchResult = {
 };
 
 export type ActivityItemsRenderContext = ActivityItemsFetchResult & {
-	scope: Scope;
+	scope: ScopeId;
 };
 
 export { ActivityFilter } from './filters';

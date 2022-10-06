@@ -32,7 +32,7 @@ export const updateVisibility = async (options: UpdateOptions) => {
 
 type FilterUsersOptions = {
 	visibility: types.Visibility;
-	scope: types.Scope;
+	scope: types.ScopeId;
 	userIds: string[];
 };
 

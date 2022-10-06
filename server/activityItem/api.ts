@@ -1,7 +1,7 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { getScope } from 'server/utils/queryHelpers';
-import { ActivityFilter, Scope } from 'types';
+import { ActivityFilter, ScopeId } from 'types';
 
 import { fetchActivityItems } from './fetch';
 
@@ -10,7 +10,7 @@ const unwrapRequest = (req) => {
 	const { scope, offset, filters, limit } = body;
 	return {
 		filters: filters as ActivityFilter[],
-		scope: scope as Scope,
+		scope: scope as ScopeId,
 		userId: user?.id ?? null,
 		offset: parseInt(offset, 10),
 		limit: parseInt(limit, 10),

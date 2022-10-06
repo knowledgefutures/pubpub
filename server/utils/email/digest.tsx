@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
-import { ActivityAssociations, ActivityItem, Community, Scope, User } from 'types';
+import { ActivityAssociations, ActivityItem, Community, ScopeId, User } from 'types';
 import { Digest } from 'components/Email';
 import { globals, reset } from 'components/Email/styles';
 import { fetchActivityItems } from 'server/activityItem/fetch';
@@ -107,7 +107,7 @@ const dedupActivityItems =
 
 type GetDigestOptions = {
 	user: User;
-	scope: Scope;
+	scope: ScopeId;
 };
 
 export const getDigestData = async (options: GetDigestOptions) => {

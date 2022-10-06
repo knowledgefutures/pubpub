@@ -8,6 +8,7 @@ export { default as DashboardCollectionLayout } from './DashboardCollectionLayou
 export { default as DashboardCustomScripts } from './DashboardCustomScripts/DashboardCustomScripts';
 export { default as DashboardDiscussions } from './DashboardDiscussions/DashboardDiscussions';
 export { default as DashboardEdges } from './DashboardEdges/DashboardEdges';
+export { default as DashboardFacets } from './DashboardFacets/DashboardFacets';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export {

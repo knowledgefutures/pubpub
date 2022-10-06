@@ -36,12 +36,17 @@ export const usePersistableState = <T>(
 		}
 	};
 
+	const updatePersistedState = (next: Partial<T>) => {
+		setPersistedState((existingPersistedState) => ({ ...existingPersistedState, ...next }));
+	};
+
 	const persistUnpersistedState = () => _persist(unpersistedState);
 
 	useBeforeUnload(hasChanges);
 
 	return {
 		hasChanges,
+		updatePersistedState,
 		persist: persistUnpersistedState,
 		revert,
 		state,

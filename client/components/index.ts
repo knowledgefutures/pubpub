@@ -26,6 +26,7 @@ export { default as DownloadChooser } from './DownloadChooser/DownloadChooser';
 export { DragDropListing, DragDropOrdering, DragHandle } from './DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';
 export { default as Editor } from './Editor';
+export { default as FacetEditor } from './FacetEditor';
 export {
 	default as FacetsStateProvider,
 	FacetsState,
@@ -62,6 +63,7 @@ export {
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as MobileAware, MobileAwareRenderProps } from './MobileAware';
 export { default as NavBar } from './NavBar/NavBar';
+export { default as NavBuilder } from './NavBuilder/NavBuilder';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';
 export { default as Overlay } from './Overlay/Overlay';
 export { default as PagePreview } from './PagePreview/PagePreview';

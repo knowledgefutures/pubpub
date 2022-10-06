@@ -6,6 +6,8 @@ import {
 	Intent as BlueprintIntent,
 } from '@blueprintjs/core';
 
+import { PubPubIconName, pubPubIcons } from 'client/utils/icons';
+
 import customIcons from './customIcons';
 
 require('./icon.scss');
@@ -18,11 +20,10 @@ type Props = {
 	ariaLabel?: string;
 	className?: string;
 	color?: string;
-	icon: IconName;
 	iconSize?: number;
 	useColor?: boolean;
 	intent?: BlueprintIntent;
-};
+} & ({ icon: IconName } | { pubPubIcon: PubPubIconName });
 
 const Icon = (props: Props) => {
 	const {
@@ -30,11 +31,13 @@ const Icon = (props: Props) => {
 		ariaLabel = '',
 		className,
 		color,
-		icon,
 		iconSize = 16,
 		useColor = false,
 		intent,
 	} = props;
+
+	const icon = 'icon' in props ? props.icon : pubPubIcons[props.pubPubIcon];
+
 	if (customIcons[icon]) {
 		const { squareViewboxDimension, path, viewbox: providedViewbox } = customIcons[icon];
 		const viewbox =

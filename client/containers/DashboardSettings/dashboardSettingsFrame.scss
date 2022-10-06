@@ -1,0 +1,124 @@
+@import 'styles/mixins.scss';
+@import 'client/containers/App/BottomMenu/bottomMenu.scss';
+
+$gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
+$gentle-shadow-upside-down: 0 -4px 2px -2px rgba(black, 0.1);
+$sticky-controls-offset: 50px;
+$mobile-sticky-controls-padding: 10px;
+$mobile-sticky-controls-height: 60px;
+$mobile-sticky-controls-offset: 50px; // height of bottom menu
+
+@mixin problematically-small-desktop {
+	@include mobile(1125px) {
+		@content;
+	}
+}
+
+.dashboard-settings-frame-component {
+	.bp3-tabs.dashboard-settings-frame-tabs {
+		.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+			background-color: var(--community-accent-dark);
+		}
+		.bp3-tab.dashboard-settings-frame-tab {
+			display: flex;
+			align-items: center;
+			padding: 6px 0;
+			user-select: none;
+
+			.title {
+				margin-left: 5px;
+				@include problematically-small-desktop {
+					display: none;
+				}
+				@include mobile {
+					display: flex;
+				}
+			}
+		}
+	}
+
+	.bp3-button.dashboard-settings-frame-menu {
+		.bp3-button-text {
+			flex-grow: 1;
+		}
+	}
+
+	.dashboard-settings-frame-sticky-controls {
+		border-left: $sticky-controls-offset solid white;
+		margin-left: 0 - $sticky-controls-offset;
+		background: white;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		z-index: 8; // Seems to be needed to stay on top of .bp3-button-group .bp3-button.bp3-active
+		&.js-is-sticky {
+			box-shadow: $gentle-shadow;
+		}
+		.save-container {
+			display: flex;
+			flex-shrink: 0;
+			> :first-child {
+				margin-left: 10px;
+			}
+		}
+		@include mobile {
+			position: fixed;
+			border: none;
+			width: 100%;
+			margin: 0;
+			left: 0;
+			bottom: $bottom-menu-height;
+			height: $mobile-sticky-controls-height;
+			padding: $mobile-sticky-controls-padding;
+			box-shadow: $gentle-shadow-upside-down;
+			background-color: white;
+			& > * {
+				// Thicken up the dropdown and the button a little
+				height: 100%;
+				.bp3-button {
+					height: 100%;
+				}
+			}
+			.bp3-button {
+				background-color: white;
+			}
+			.autosave-indicator-component {
+				display: none;
+			}
+			&:before {
+				// This is just to use --community-accent-dark-faded (which has alpha)
+				// against a white background
+				content: '';
+				display: block;
+				position: absolute;
+				z-index: -1;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				background-color: var(--community-accent-dark-faded);
+			}
+		}
+	}
+
+	.dashboard-settings-frame-tab-panel {
+		margin-top: 2em;
+
+		@include mobile {
+			margin-top: 1em;
+		}
+
+		.settings-section-component:not(:last-child) {
+			margin-bottom: 3em;
+			@include mobile {
+				margin-bottom: 2em;
+			}
+		}
+	}
+}
+
+.dashboard-settings-frame-component__tabs-menu {
+	.bp3-menu-item {
+		align-items: center;
+	}
+}

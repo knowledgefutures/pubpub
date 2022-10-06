@@ -3,17 +3,19 @@ import { useUpdateEffect } from 'react-use';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { AttributionEditor, DashboardFrame, SettingsSection } from 'components';
-
-// TODO(ian): this should probably be moved somewhere else, but not sure where yet
+import { AttributionEditor, FacetEditor, SettingsSection } from 'components';
+import { pruneFalsyValues } from 'utils/arrays';
+import { ALL_FACET_DEFINITIONS, FacetName } from 'facets';
 import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
+import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 const CollectionSettings = () => {
 	const {
 		communityData,
+		featureFlags,
 		scopeData: {
 			elements: { activeCollection },
 		},
@@ -31,9 +33,12 @@ const CollectionSettings = () => {
 		}
 	}, [collection.slug, hasChanges]);
 
-	return (
-		<DashboardFrame className="collection-settings-component" title="Settings">
-			<SettingsSection title="Details">
+	const tabs: Subtab[] = pruneFalsyValues([
+		{
+			id: 'details',
+			title: 'Details',
+			icon: 'settings',
+			sections: [
 				<CollectionDetailsEditor
 					slugStatus={slugStatus}
 					communityData={communityData}
@@ -44,19 +49,15 @@ const CollectionSettings = () => {
 							window.location.href = getDashUrl({});
 						})
 					}
-				/>
-			</SettingsSection>
-			{collection.kind !== 'tag' && (
-				<SettingsSection title="Metadata" id="metadata">
-					<CollectionMetadataEditor
-						collection={collection}
-						communityData={communityData}
-						onUpdateCollection={updateCollection}
-					/>
-				</SettingsSection>
-			)}
-			{collection.kind !== 'tag' && (
-				<SettingsSection title="Attribution" id="attribution">
+				/>,
+			],
+		},
+		collection.kind !== 'tag' && {
+			id: 'contributors',
+			title: 'Contributors',
+			pubPubIcon: 'contributor',
+			sections: [
+				<SettingsSection title="Attribution" id="attribution" showTitle={false}>
 					<AttributionEditor
 						apiRoute="/api/collectionAttributions"
 						canEdit={true}
@@ -69,9 +70,42 @@ const CollectionSettings = () => {
 						}}
 						onUpdateAttributions={(attributions) => updateCollection({ attributions })}
 					/>
-				</SettingsSection>
-			)}
-		</DashboardFrame>
+				</SettingsSection>,
+			],
+		},
+		collection.kind !== 'tag' && {
+			id: 'metadata',
+			title: 'Metadata',
+			icon: 'heat-grid',
+			sections: [
+				<SettingsSection title="Metadata" id="metadata" showTitle={false}>
+					<CollectionMetadataEditor
+						collection={collection}
+						communityData={communityData}
+						onUpdateCollection={updateCollection}
+					/>
+				</SettingsSection>,
+			],
+		},
+		collection.kind !== 'tag' &&
+			featureFlags.showPubSettingsForCollection && {
+				id: 'pub-defaults',
+				title: 'Pub settings',
+				pubPubIcon: 'pub',
+				sections: Object.keys(ALL_FACET_DEFINITIONS).map((facetName) => (
+					<FacetEditor key={facetName} facetName={facetName as FacetName} />
+				)),
+			},
+	]);
+
+	return (
+		<DashboardSettingsFrame
+			id="collection-settings"
+			className="collection-settings-component"
+			tabs={tabs}
+			hasChanges={false}
+			persist={() => Promise.resolve()}
+		/>
 	);
 };
 

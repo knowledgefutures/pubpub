@@ -4,7 +4,7 @@ import { Button as RKButton } from 'reakit/Button';
 
 import { DatePicker } from 'components';
 import { getHostnameForUrl } from 'utils/pubEdge';
-import { ExternalPublication, Pub } from 'types';
+import { ExternalPublication } from 'types';
 
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
@@ -14,21 +14,19 @@ require('./pubEdge.scss');
 export type PubEdgeEditorProps = {
 	externalPublication: ExternalPublication;
 	onUpdateExternalPublication: (patch: Partial<ExternalPublication>) => unknown;
-	pubData: Pub;
+	pubEdgeDescriptionIsVisible: boolean;
 };
 
 const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 	const {
-		pubData,
 		externalPublication: { title, description, contributors, avatar, url, publicationDate },
+		pubEdgeDescriptionIsVisible,
 		onUpdateExternalPublication,
 	} = props;
-	const [open, setOpen] = useState(pubData.pubEdgeDescriptionVisible);
 
-	useEffect(
-		() => setOpen(pubData.pubEdgeDescriptionVisible),
-		[pubData.pubEdgeDescriptionVisible],
-	);
+	const [open, setOpen] = useState(pubEdgeDescriptionIsVisible);
+
+	useEffect(() => setOpen(pubEdgeDescriptionIsVisible), [pubEdgeDescriptionIsVisible]);
 
 	const renderPublicationDate = () => {
 		if (publicationDate) {

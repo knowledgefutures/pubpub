@@ -1,39 +1,20 @@
 import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
-import { licenses } from 'utils/licenses';
 
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
 const managerUpdatableFields = [
 	'avatar',
-	'citationInlineStyle',
-	'citationStyle',
 	'customPublishedAt',
 	'description',
 	'downloads',
-	'draftPermissions',
-	'headerBackgroundColor',
-	'headerBackgroundImage',
-	'headerStyle',
 	'labels',
-	'licenseSlug',
 	'slug',
 	'title',
 	'htmlTitle',
-	'nodeLabels',
-	'pubEdgeListingDefaultsToCarousel',
-	'pubEdgeDescriptionVisible',
 ];
 
 const adminUpdatableFields = ['doi'];
-
-const isValidLicenseSlugForCommunity = (community, licenseSlug) => {
-	return (
-		!licenseSlug ||
-		community.premiumLicenseFlag ||
-		!licenses.find((l) => l.slug === licenseSlug)?.requiresPremium
-	);
-};
 
 export const canCreatePub = async ({ userId, communityId, collectionId, createPubToken }) => {
 	if (userId) {
@@ -66,15 +47,10 @@ export const canCreatePub = async ({ userId, communityId, collectionId, createPu
 	return { create: false };
 };
 
-export const getUpdatablePubFields = async ({ userId, pubId, licenseSlug }) => {
+export const getUpdatablePubFields = async ({ userId, pubId }) => {
 	const {
-		elements: { activeCommunity },
 		activePermissions: { canManage, canAdmin },
 	} = await getScope({ pubId, loginId: userId });
-
-	if (!isValidLicenseSlugForCommunity(activeCommunity, licenseSlug)) {
-		return null;
-	}
 
 	if (canManage) {
 		if (canAdmin) {

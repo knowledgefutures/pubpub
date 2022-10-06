@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
+import { usePopoverState, PopoverDisclosure, Popover, PopoverState } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
 import { adaptDisclosureElementForBlueprintButton } from './blueprintAdapter';
@@ -11,6 +11,8 @@ type Props = {
 	children: React.ReactElement;
 	component: React.ComponentType<any>;
 	[key: string]: any;
+	placement?: PopoverState['placement'];
+	gutter?: number;
 };
 
 const PopoverButton = (props: Props) => {
@@ -19,9 +21,11 @@ const PopoverButton = (props: Props) => {
 		'aria-label': ariaLabel,
 		children,
 		className,
+		placement = 'bottom-end',
+		gutter = 5,
 		...restProps
 	} = props;
-	const popover = usePopoverState({ unstable_fixed: false, placement: 'bottom-end', gutter: 5 });
+	const popover = usePopoverState({ unstable_fixed: false, placement, gutter });
 	return (
 		<>
 			<PopoverDisclosure {...popover} {...children.props}>

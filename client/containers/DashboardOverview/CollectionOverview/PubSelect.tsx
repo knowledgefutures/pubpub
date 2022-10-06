@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 import { PubMenuItem, QueryListDropdown } from 'components';
+import { PubWithCollections } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
 
-import { PubWithCollections } from './types';
 import { LoadMorePubsRow } from '../overviewRows';
 
 type Props = {

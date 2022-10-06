@@ -1,6 +1,3 @@
-import { NodeLabelMap } from 'components/Editor';
-import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
-
 import { PubAttribution } from './attribution';
 import { Collection, CollectionPub } from './collection';
 import { Community } from './community';
@@ -69,9 +66,6 @@ export type Pub = {
 	htmlTitle: null | string;
 	description?: string;
 	avatar?: string;
-	headerStyle: 'white-blocks' | 'black-blocks' | 'dark' | 'light';
-	headerBackgroundColor?: string;
-	headerBackgroundImage?: string;
 	firstPublishedAt?: string;
 	lastPublishedAt?: string;
 	customPublishedAt?: string;
@@ -79,9 +73,6 @@ export type Pub = {
 	labels?: string[];
 	downloads?: any[];
 	metadata?: {};
-	licenseSlug?: string;
-	citationStyle?: CitationStyleKind;
-	citationInlineStyle?: CitationInlineStyleKind;
 	viewHash?: string;
 	editHash?: string;
 	reviewHash?: string;
@@ -98,9 +89,6 @@ export type Pub = {
 	crossrefDepositRecord?: CrossrefDepositRecord;
 	inboundEdges?: InboundEdge[];
 	outboundEdges?: OutboundEdge[];
-	pubEdgeListingDefaultsToCarousel?: boolean;
-	pubEdgeDescriptionVisible?: boolean;
-	nodeLabels?: NodeLabelMap;
 	draftId?: string;
 	draft?: Draft;
 	scopeSummaryId: null | string;

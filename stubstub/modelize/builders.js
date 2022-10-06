@@ -16,6 +16,7 @@ import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
 import { createPage } from 'server/page/queries';
+import { createCommunity } from 'server/community/queries';
 import { getEmptyDoc } from 'client/components/Editor';
 
 const builders = {};
@@ -59,12 +60,20 @@ builders.User = async (args = {}) => {
 };
 
 builders.Community = async (args = {}) => {
+	const { createFullCommunity, ...restArgs } = args;
 	const unique = uuid.v4();
-	return Community.create({
+	const sharedArgs = {
 		title: 'Community ' + unique,
 		subdomain: unique,
+		...restArgs,
+	};
+	if (createFullCommunity) {
+		const admin = await builders.User();
+		return createCommunity({ ...sharedArgs }, admin, false);
+	}
+	return Community.create({
 		navigation: [],
-		...args,
+		...sharedArgs,
 	});
 };
 

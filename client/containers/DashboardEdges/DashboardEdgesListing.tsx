@@ -11,7 +11,8 @@ import { ConfirmDialog, DragDropListing, PubEdgeListingCard } from 'components';
 import NewEdgeEditor from './NewEdgeEditor';
 
 export type DashboardEdgesListingProps = {
-	pubData: any;
+	pubId: string;
+	pubEdgeDescriptionIsVisible: boolean;
 	onUpdateEdge?: (pubEdge: PubEdge) => unknown;
 	onRemoveEdge?: (pubEdge: PubEdge) => unknown;
 	onReorderEdges?: (idxA: number, idxB: number) => unknown;
@@ -44,8 +45,9 @@ const DashboardEdgesListing = (props: DashboardEdgesListingProps) => {
 		onRemoveEdge = null,
 		onReorderEdges = null,
 		onUpdateEdgeApproval = null,
-		pubData,
+		pubId,
 		pubEdges,
+		pubEdgeDescriptionIsVisible,
 		renderEmptyState,
 	} = props;
 	const [editing, setEditing] = useState<PubEdge>();
@@ -66,7 +68,7 @@ const DashboardEdgesListing = (props: DashboardEdgesListingProps) => {
 			apiFetch.put('/api/pubEdges', {
 				pubEdgeId: edge.id,
 				...edge,
-				pubId: pubData.id,
+				pubId,
 				// Don't send the whole Pub, just the ID
 				targetPub: undefined,
 			}),
@@ -101,7 +103,7 @@ const DashboardEdgesListing = (props: DashboardEdgesListingProps) => {
 				)}
 				{editing?.id === pubEdge.id ? (
 					<NewEdgeEditor
-						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 						pubEdge={editing}
 						usedPubIds={[]}
 						onCancel={() => setEditing(undefined)}
@@ -113,7 +115,7 @@ const DashboardEdgesListing = (props: DashboardEdgesListingProps) => {
 					/>
 				) : (
 					<PubEdgeListingCard
-						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 						pubEdge={pubEdge}
 						isInboundEdge={isInbound}
 						accentColor="#ccc"

@@ -18,7 +18,7 @@ export type PubEdgeListingCardProps = {
 	parentPub?: {
 		title?: string;
 	};
-	pubData: any;
+	pubEdgeDescriptionIsVisible: boolean;
 	pubEdge: any;
 	pubEdgeElement?: React.ReactNode;
 	showIcon?: boolean;
@@ -39,7 +39,7 @@ const PubEdgeListingCard = (props: Props) => {
 		parentPub = null,
 		showIcon,
 		viewingFromSibling = false,
-		pubData,
+		pubEdgeDescriptionIsVisible = true,
 	} = props;
 	const viewingFromTarget = isViewingEdgeFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
 	const [hover, setHover] = useState(false);
@@ -122,7 +122,7 @@ const PubEdgeListingCard = (props: Props) => {
 					actsLikeLink={inPubBody}
 					pubEdge={pubEdge}
 					viewingFromTarget={viewingFromTarget}
-					showDescriptionByDefault={pubData.pubEdgeDescriptionVisible}
+					showDescriptionByDefault={pubEdgeDescriptionIsVisible}
 				/>
 			)}
 		</div>

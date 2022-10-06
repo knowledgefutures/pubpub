@@ -6,9 +6,7 @@ import { getSchemaForKind } from 'utils/collections/schemas';
 import { PopoverButton, PrimaryCollectionExplanation } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { Collection, CollectionPub } from 'types';
-
-import { PubWithCollections } from './types';
+import { Collection, CollectionPub, PubWithCollections } from 'types';
 
 type Props = {
 	collection: Collection;

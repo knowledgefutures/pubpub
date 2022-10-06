@@ -16,8 +16,9 @@ import {
 	includeUserModel,
 } from 'server/models';
 
-import { getLicenseForPub } from 'utils/licenses';
+import { renderLicenseForPub } from 'utils/licenses';
 import { getAllPubContributors } from 'utils/contributors';
+import { fetchFacetsForScope } from 'server/facets';
 import { PubMetadata } from './types';
 
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
@@ -66,9 +67,15 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 			},
 		],
 	});
+	const facets = await fetchFacetsForScope({ pubId });
 	const pubUrl = getUrlForPub(pubData, pubData.community);
 	const publishedDate = getPubPublishedDate(pubData);
-	const license = getLicenseForPub(pubData, pubData.community);
+	const license = renderLicenseForPub({
+		pub: pubData,
+		community: pubData.community,
+		collectionPubs: pubData.collectionPubs,
+		license: facets.License.value,
+	});
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');

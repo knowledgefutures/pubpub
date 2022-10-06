@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 
 import { PubEdge, PubEdgeEditor } from 'components';
 import { RelationType } from 'utils/pubEdge';
-import { ExternalPublication, Pub } from 'types';
+import { ExternalPublication } from 'types';
 
 const pubEdge = {
 	id: 'pub-edge-id',
@@ -36,14 +36,10 @@ const StatefulPreviewWrapper = () => {
 	);
 	return (
 		<PubEdgeEditor
+			pubEdgeDescriptionIsVisible
 			externalPublication={externalPublication}
 			onUpdateExternalPublication={(next) =>
 				setExternalPublication({ ...externalPublication, ...next })
-			}
-			pubData={
-				{
-					pubEdgeDescriptionVisible: true,
-				} as Pub
 			}
 		/>
 	);

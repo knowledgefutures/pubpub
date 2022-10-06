@@ -2,7 +2,7 @@ import React from 'react';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { DialogLauncher, PubThemePicker, PubShareDialog, PopoverButton } from 'components';
+import { DialogLauncher, PubShareDialog, PopoverButton, FacetEditor } from 'components';
 
 import { Callback, PatchFn, PubPageData } from 'types';
 import CitationsPreview from './CitationsPreview';
@@ -31,7 +31,7 @@ const UtilityButtons = (props: Props) => {
 			/>
 			{canManage && !isRelease && (
 				<PopoverButton
-					component={PubThemePicker}
+					component={() => <FacetEditor facetName="PubHeaderTheme" selfContained />}
 					className="pub-header-popover"
 					updatePubData={updatePubData}
 					pubData={pubData}

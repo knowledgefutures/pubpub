@@ -1,9 +1,10 @@
-/* eslint-disable no-console */
-import esm from 'esm';
+/* eslint-disable no-console, global-require */
+require('ts-node').register({
+	transpileOnly: true,
+	project: require('path').join(process.cwd(), 'tsconfig.server.json'),
+});
 
-import { setupTestDatabase, startTestDatabaseServer, initTestDatabase } from '../testDatabase';
-
-const esmRequire = esm(module);
+const { setupTestDatabase, startTestDatabaseServer, initTestDatabase } = require('../testDatabase');
 
 export default async () => {
 	process.env.TZ = 'UTC';
@@ -16,6 +17,7 @@ export default async () => {
 		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
 	}
-	const { sequelize } = esmRequire('../../server/models');
+	// eslint-disable-next-line global-require
+	const { sequelize } = require('../../server/models');
 	await sequelize.sync({ force: false });
 };

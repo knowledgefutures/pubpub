@@ -19,7 +19,7 @@ type Props = {
 
 const PubNotifications = (props: Props) => {
 	const { state, filterTerm, container } = props;
-	const { pub, community, threadStates, subscription, location } = state;
+	const { pub, community, threadStates, subscription, location, pubHeaderTheme } = state;
 	const [expanded, setExpanded] = useState(true);
 	const [initiallySubscribed] = useState(() => subscription?.status === 'active');
 	const { actions } = useNotificationsContext();
@@ -42,7 +42,12 @@ const PubNotifications = (props: Props) => {
 
 	return (
 		<div className={classNames('pub-notifications-component', derivedExpanded && 'expanded')}>
-			<PubHeaderBackground className="header" pubData={pub} communityData={community} blur>
+			<PubHeaderBackground
+				className="header"
+				pubHeaderTheme={pubHeaderTheme}
+				communityData={community}
+				blur
+			>
 				<div className="header-content">
 					<Button
 						disabled={expandedToShowSearchResults}

@@ -1,7 +1,7 @@
 import { Node } from 'prosemirror-model';
 import { useDocumentState, useTransactionState } from '@pubpub/prosemirror-reactive';
 
-import { isNodeLabelEnabled } from '../../utils';
+import { getEnabledNodeLabelConfiguration } from '../../utils';
 
 type CounterOptions = {
 	counterType?: string;
@@ -17,9 +17,9 @@ export const counter = (options: CounterOptions = {}) => {
 		let resolvedCounterType = counterType;
 
 		if (useNodeLabels) {
-			const maybeEnabledNode = isNodeLabelEnabled(node, nodeLabels);
-			if (maybeEnabledNode) {
-				resolvedCounterType = maybeEnabledNode;
+			const nodeLabelConfiguration = getEnabledNodeLabelConfiguration(node, nodeLabels);
+			if (nodeLabelConfiguration) {
+				resolvedCounterType = nodeLabelConfiguration.referenceableNodeType;
 			} else {
 				return null;
 			}

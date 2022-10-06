@@ -21,6 +21,7 @@ type Props = {
 	pubData: PubPageData;
 	initialMode?: string;
 	initialFilters?: string[];
+	pubEdgeDescriptionIsVisible: boolean;
 };
 
 const edgeUniqueFingerprint = (pubEdgeInContext, assertIsUnique) => {
@@ -113,6 +114,7 @@ const PubEdgeListing = (props: Props) => {
 		initialFilters = [Filter.Child],
 		isolated = false,
 		pubData,
+		pubEdgeDescriptionIsVisible,
 	} = props;
 	const [index, setIndex] = useState(0);
 	const [mode, setMode] = useState(initialMode);
@@ -192,7 +194,7 @@ const PubEdgeListing = (props: Props) => {
 			mode === Mode.Carousel
 				? activeEdgeInContext && (
 						<PubEdgeListingCard
-							pubData={pubData}
+							pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 							pubEdge={activeEdgeInContext.edge}
 							parentPub={activeEdgeInContext.parentPub}
 							accentColor={accentColor}
@@ -206,7 +208,7 @@ const PubEdgeListing = (props: Props) => {
 				  )
 				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling, parentPub }) => (
 						<PubEdgeListingCard
-							pubData={pubData}
+							pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 							key={edge.url}
 							pubEdge={edge}
 							parentPub={parentPub}

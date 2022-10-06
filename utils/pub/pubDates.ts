@@ -1,9 +1,6 @@
-import dateFormat from 'dateformat';
+import { formatDate, getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
 
-import { formatDate, getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
-import { getPrimaryCollection } from 'utils/collections/primary';
-
-import { DefinitelyHas, Maybe, CollectionPub, Pub } from 'types';
+import { Maybe, Pub } from 'types';
 
 export const getPubLatestReleasedDate = (pub: Pub) => {
 	if (pub.releases.length === 0) {
@@ -70,24 +67,4 @@ export const getPubUpdatedDate = ({
 		return pub.draft.latestKeyAt;
 	}
 	return null;
-};
-
-export const getPubCopyrightYear = (
-	pub: Pub & {
-		collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
-	},
-): string => {
-	const primaryCollection = getPrimaryCollection(pub.collectionPubs);
-	if (primaryCollection) {
-		const { metadata } = primaryCollection;
-		if (metadata) {
-			const { copyrightYear, date, publicationDate } = metadata;
-			const dateSource = copyrightYear || date || publicationDate;
-			if (dateSource && isValidDate(dateSource)) {
-				return dateFormat(getLocalDateMatchingUtcCalendarDate(dateSource), 'yyyy');
-			}
-		}
-	}
-	const pubPublishedDate = getPubPublishedDate(pub);
-	return pubPublishedDate ? dateFormat(pubPublishedDate, 'yyyy') : dateFormat('yyyy');
 };

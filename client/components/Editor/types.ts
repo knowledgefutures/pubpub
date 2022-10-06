@@ -14,7 +14,7 @@ export enum ReferenceableNodeType {
 	Video = 'video',
 	Audio = 'audio',
 	Table = 'table',
-	BlockEquation = 'block_equation',
+	Math = 'math',
 }
 
 export const referenceableNodeTypes = Object.values(ReferenceableNodeType);

@@ -5,6 +5,7 @@ import { GridWrapper, PubHeaderBackground, ClientOnly } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
+import { useFacetsQuery } from 'client/utils/useFacets';
 
 import { usePubContext } from '../pubHooks';
 import { mobileViewportCutoff } from './constants';
@@ -47,6 +48,7 @@ const PubHeader = (props: Props) => {
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState<number | null>(null);
 	const { viewportWidth } = useViewport();
+	const pubHeaderTheme = useFacetsQuery((F) => F.PubHeaderTheme);
 
 	const isMobile = viewportWidth && viewportWidth <= mobileViewportCutoff;
 
@@ -77,7 +79,7 @@ const PubHeader = (props: Props) => {
 	return (
 		<PubHeaderBackground
 			className={classNames('pub-header-component', showingDetails && 'showing-details')}
-			pubData={pubData}
+			pubHeaderTheme={pubHeaderTheme}
 			communityData={communityData}
 			ref={headerRef}
 			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}

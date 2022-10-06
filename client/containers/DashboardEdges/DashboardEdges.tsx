@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-	NonIdealState,
-	Switch,
-	Tab,
-	Tabs,
-	Radio,
-	RadioGroup,
-	Callout,
-	Intent,
-} from '@blueprintjs/core';
+import { NonIdealState, Tab, Tabs, Callout, Intent, Button } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { DashboardFrame } from 'components';
+import { useFacetsQuery } from 'client/utils/useFacets';
+import { DashboardFrame, PopoverButton, FacetEditor } from 'components';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { Pub, OutboundEdge, InboundEdge, PubEdge } from 'types';
@@ -43,13 +35,13 @@ const DashboardEdges = (props: Props) => {
 			activePermissions: { canManage: canManageEdges },
 		},
 	} = usePageContext();
-	const [persistedPubData, setPersistedPubData] = useState(pubData);
 	const [newEdge, setNewEdge] = useState<PubEdge | null>(null);
 	const { pendingPromise } = usePendingChanges();
 	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
 	const [errorCreatingEdge, setErrorCreatingEdge] = useState<string>();
 	const showOutboundEmptyState = !newEdge;
 
+	const { descriptionIsVisible } = useFacetsQuery((F) => F.PubEdgeDisplay);
 	const {
 		inboundEdges,
 		outboundEdges,
@@ -59,21 +51,6 @@ const DashboardEdges = (props: Props) => {
 		removeOutboundEdge,
 		updateInboundEdgeApproval,
 	} = useDashboardEdges(pubData);
-
-	const updatePub = async (patch: Partial<Pub>) => {
-		try {
-			setPersistedPubData({ ...persistedPubData, ...patch });
-			await apiFetch('/api/pubs', {
-				method: 'PUT',
-				body: JSON.stringify({
-					pubId: persistedPubData.id,
-					...patch,
-				}),
-			});
-		} catch {
-			setPersistedPubData(persistedPubData);
-		}
-	};
 
 	const saveNewEdge = (edge: PubEdge) => {
 		setIsCreatingEdge(true);
@@ -109,7 +86,7 @@ const DashboardEdges = (props: Props) => {
 				{canManageEdges && (
 					<NewEdgeEditor
 						usedPubIds={usedPubsIds}
-						pubData={persistedPubData}
+						pubEdgeDescriptionIsVisible={descriptionIsVisible}
 						pubEdge={newEdge}
 						onCancel={() => setNewEdge(null)}
 						onSave={saveNewEdge}
@@ -119,8 +96,9 @@ const DashboardEdges = (props: Props) => {
 					/>
 				)}
 				<DashboardEdgesListing
-					pubData={persistedPubData}
+					pubId={pubData.id}
 					pubEdges={outboundEdges}
+					pubEdgeDescriptionIsVisible={descriptionIsVisible}
 					onUpdateEdge={canManageEdges ? updateOutboundEdge : undefined}
 					onReorderEdges={canManageEdges ? reorderOutboundEdges : undefined}
 					onRemoveEdge={canManageEdges ? removeOutboundEdge : undefined}
@@ -146,8 +124,9 @@ const DashboardEdges = (props: Props) => {
 	const renderInboundEdgesTab = () => {
 		return (
 			<DashboardEdgesListing
-				pubData={persistedPubData}
+				pubId={pubData.id}
 				pubEdges={inboundEdges}
+				pubEdgeDescriptionIsVisible={descriptionIsVisible}
 				onUpdateEdgeApproval={canManageEdges ? updateInboundEdgeApproval : undefined}
 				isInbound={true}
 				renderEmptyState={() => (
@@ -161,10 +140,33 @@ const DashboardEdges = (props: Props) => {
 		);
 	};
 
+	const renderControls = () => {
+		if (canManageEdges) {
+			return (
+				<PopoverButton
+					aria-label="Edit look and feel of Connections"
+					component={() => (
+						<FacetEditor
+							selfContained
+							facetName="PubEdgeDisplay"
+							description="You can find these options in Pub Settings, too."
+						/>
+					)}
+				>
+					<Button outlined icon="clean" rightIcon="caret-down">
+						Look and Feel
+					</Button>
+				</PopoverButton>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<DashboardFrame
 			className="dashboard-edges-container"
 			title="Connections"
+			controls={renderControls()}
 			details={
 				<>
 					{frameDetails}{' '}
@@ -181,37 +183,6 @@ const DashboardEdges = (props: Props) => {
 				</>
 			}
 		>
-			{canManageEdges && (
-				<div className="default-settings">
-					<RadioGroup
-						inline
-						className="carousel-radio"
-						onChange={(evt) => {
-							const isCarousel =
-								(evt.target as HTMLInputElement).value === 'carousel';
-							updatePub({ pubEdgeListingDefaultsToCarousel: isCarousel });
-						}}
-						selectedValue={
-							persistedPubData.pubEdgeListingDefaultsToCarousel ? 'carousel' : 'list'
-						}
-						label="Show multiple Connections as:"
-					>
-						<Radio value="carousel">Carousel</Radio>
-						<Radio value="list">List</Radio>
-					</RadioGroup>
-					<Switch
-						inline
-						label="Show Description by default"
-						checked={persistedPubData.pubEdgeDescriptionVisible}
-						onChange={(event) =>
-							updatePub({
-								pubEdgeDescriptionVisible: (event.target as HTMLInputElement)
-									.checked,
-							})
-						}
-					/>
-				</div>
-			)}
 			<Tabs id="pub-dashboard-connections-tabs">
 				<Tab
 					id="created-by-this-pub"

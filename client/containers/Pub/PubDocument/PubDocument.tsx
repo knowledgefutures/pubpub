@@ -7,6 +7,7 @@ import {
 	Filter as PubEdgeFilter,
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
+import { useFacetsQuery } from 'client/utils/useFacets';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
@@ -33,6 +34,7 @@ const PubDocument = () => {
 	} = usePubContext();
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData } = usePageContext();
+	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const { isReview } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
@@ -65,6 +67,7 @@ const PubDocument = () => {
 					<PubEdgeListing
 						className="top-pub-edges"
 						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDisplay.descriptionIsVisible}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Parent]}
 						isolated
@@ -80,10 +83,11 @@ const PubDocument = () => {
 					<PubEdgeListing
 						className="bottom-pub-edges"
 						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDisplay.descriptionIsVisible}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Child, PubEdgeFilter.Sibling]}
 						initialMode={
-							pubData.pubEdgeListingDefaultsToCarousel
+							pubEdgeDisplay.defaultsToCarousel
 								? PubEdgeMode.Carousel
 								: PubEdgeMode.List
 						}

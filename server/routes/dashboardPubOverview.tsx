@@ -34,7 +34,11 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 			throw new ForbiddenError();
 		}
 
-		const citationData = await generateCitationHtml(pubData, initialData.communityData);
+		const citationData = await generateCitationHtml(
+			pubData,
+			initialData.communityData,
+			initialData.scopeData.facets!.CitationStyle!.value.citationStyle!,
+		);
 		const {
 			communityData: { id: communityId },
 			loginData: { id: userId },

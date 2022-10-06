@@ -1,6 +1,7 @@
 import { DOMOutputSpec, Node } from 'prosemirror-model';
 
 import { renderToKatexString } from 'utils/katex';
+import { ReferenceableNodeType } from '../types';
 
 import { counter } from './reactive/counter';
 
@@ -69,11 +70,12 @@ export default {
 			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
-			count: counter({ useNodeLabels: true }),
+			count: counter({ useNodeLabels: true, counterType: ReferenceableNodeType.Math }),
 		},
-		toDOM: (node: Node, { isReact } = { isReact: false }) =>
-			isReact
+		toDOM: (node: Node, { isReact } = { isReact: false }) => {
+			return isReact
 				? renderStaticMath(node, 'div', true)
-				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec),
+				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec);
+		},
 	},
 };

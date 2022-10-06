@@ -1,3 +1,4 @@
+import { CascadedFacetsForScopes } from 'facets';
 import { ActivityAssociations, ActivityItem, ActivityItemOfKind } from './activity';
 import { User } from './user';
 import { UserSubscription } from './userSubscription';
@@ -40,5 +41,6 @@ export type UserNotificationsFetchResult = {
 	notifications: UserNotificationWithActivityItem[];
 	associations: ActivityAssociations;
 	subscriptions: UserSubscription[];
+	facets: CascadedFacetsForScopes<'PubHeaderTheme'>;
 	notificationPreferences: UserNotificationPreferences;
 };

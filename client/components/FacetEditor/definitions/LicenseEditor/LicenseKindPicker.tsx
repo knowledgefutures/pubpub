@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { License } from 'facets';
-import { licenses } from 'utils/licenses';
+import { licenseDetailsByKind } from 'utils/licenses';
 import { usePageContext } from 'utils/hooks';
 import { MenuSelect, MenuSelectItem } from 'components/Menu';
 
@@ -16,7 +16,7 @@ const LicenseKindPicker = (props: Props) => {
 	} = usePageContext();
 
 	const menuItems: MenuSelectItem<Props['value']>[] = useMemo(() => {
-		return licenses
+		return Object.values(licenseDetailsByKind)
 			.filter((license) => {
 				if (license.requiresPremium && !premiumLicenseFlag) {
 					return false;
@@ -25,9 +25,9 @@ const LicenseKindPicker = (props: Props) => {
 			})
 			.map((license) => {
 				return {
-					value: license.slug as any,
+					value: license.kind as any,
 					label: license.short,
-					icon: <img width={75} alt="" src={`/static/license/${license.slug}.svg`} />,
+					icon: <img width={75} alt="" src={`/static/license/${license.kind}.svg`} />,
 				};
 			});
 	}, [premiumLicenseFlag]);

@@ -1,7 +1,7 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
-
 import { getScopeId } from 'facets';
+
 import { updateFacetsForScope } from './update';
 import { canUserUpdateFacetsForScope } from './permissions';
 

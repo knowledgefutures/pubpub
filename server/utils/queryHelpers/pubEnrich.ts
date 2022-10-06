@@ -73,7 +73,7 @@ export const getPubCitations = async (pubData, initialData, initialDoc) => {
 	const citationStyleFacet = facets!.CitationStyle.value!;
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
 		getStructuredCitationsForPub(citationStyleFacet, initialDoc),
-		generateCitationHtml(pubData, communityData),
+		generateCitationHtml(pubData, communityData, citationStyleFacet.citationStyle),
 	]);
 
 	return {

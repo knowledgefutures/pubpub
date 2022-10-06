@@ -9,6 +9,7 @@ require('./discussion/api');
 require('./doi/api');
 require('./editor/api');
 require('./export/api');
+require('./facets/api');
 require('./import/api');
 require('./layout/api');
 require('./logout/api');

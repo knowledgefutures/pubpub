@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import { calculateBackgroundColor } from 'utils/colors';
+import { FacetCascadedType, PubHeaderTheme } from 'facets';
+import { Pub } from 'types';
 
 require('./pubHeaderBackground.scss');
 
@@ -11,30 +13,35 @@ type Props = {
 	communityData: {
 		accentColorDark?: string;
 	};
-	pubData: {
-		headerBackgroundColor?: string;
-		headerBackgroundImage?: string;
-		headerStyle?: string;
-	};
 	blur?: boolean;
 	style?: any;
 	safetyLayer?: 'enabled' | 'full-height';
-};
+} & ({ pubData: Pub } | { pubHeaderTheme: FacetCascadedType<typeof PubHeaderTheme> });
 
 const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>) => {
 	const {
 		children = null,
 		className = '',
-		pubData,
 		communityData,
 		blur = false,
 		style = {},
 		safetyLayer = null,
 	} = props;
-	const { headerBackgroundColor, headerBackgroundImage } = pubData;
+
+	const { backgroundImage, backgroundColor, textStyle } = useMemo(() => {
+		if ('pubData' in props) {
+			const { headerStyle, headerBackgroundColor, headerBackgroundImage } = props.pubData;
+			return {
+				backgroundImage: headerBackgroundImage,
+				backgroundColor: headerBackgroundColor,
+				textStyle: headerStyle,
+			};
+		}
+		return props.pubHeaderTheme;
+	}, [props]);
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
-		headerBackgroundColor,
+		backgroundColor,
 		communityData.accentColorDark,
 	);
 
@@ -42,17 +49,17 @@ const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>)
 		<div
 			className={classNames(
 				'pub-header-background-component',
-				`pub-header-theme-${pubData.headerStyle}`,
+				`pub-header-theme-${textStyle}`,
 				className,
 			)}
 			style={style}
 			ref={ref}
 		>
 			<div className="background-element background-white-layer" />
-			{headerBackgroundImage && (
+			{backgroundImage && (
 				<div
 					className={classNames('background-element', 'background-image', blur && 'blur')}
-					style={{ backgroundImage: `url('${headerBackgroundImage}')` }}
+					style={{ backgroundImage: `url('${backgroundImage}')` }}
 				/>
 			)}
 			{effectiveBackgroundColor && (

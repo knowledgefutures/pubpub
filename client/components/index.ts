@@ -26,6 +26,12 @@ export { default as DownloadChooser } from './DownloadChooser/DownloadChooser';
 export { DragDropListing, DragDropOrdering, DragHandle } from './DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';
 export { default as Editor } from './Editor';
+export {
+	default as FacetsStateProvider,
+	FacetsState,
+	FacetState,
+	FacetsContext,
+} from './FacetsStateProvider';
 export { default as FileUploadButton } from './FileUploadButton/FileUploadButton';
 export { default as Footer } from './Footer/Footer';
 export { default as FormattingBar } from './FormattingBar/FormattingBar';

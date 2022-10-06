@@ -4,4 +4,3 @@ export { default as ControlsReference, ControlsReferencePopover } from './Contro
 export { default as ControlsMedia } from './ControlsMedia';
 export { default as ControlsTable } from './ControlsTable';
 export { default as ControlsMath } from './ControlsMath';
-export { default as ControlsCodeBlock } from './ControlsCodeBlock';

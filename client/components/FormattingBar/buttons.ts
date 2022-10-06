@@ -19,9 +19,8 @@ import {
 	superscriptToggle,
 } from '../Editor/commands';
 import { getCurrentNodeLabels, EditorChangeObject } from '../Editor';
-import { isInCodeBlock } from '../Editor/utils';
+
 import {
-	ControlsCodeBlock,
 	ControlsMath,
 	ControlsFootnoteCitation,
 	ControlsLink,
@@ -31,11 +30,7 @@ import {
 	ControlsTable,
 } from './controlComponents';
 import MediaButton from './FormattingBarMediaButton';
-import {
-	positionNearSelection,
-	positionNearLink,
-	positionNearParent,
-} from './controls/positioning';
+import { positionNearSelection, positionNearLink } from './controls/positioning';
 import {
 	FormattingBarButtonData,
 	FormattingBarButtonDataControls,
@@ -70,7 +65,7 @@ const nodeControls = (
 	};
 };
 
-const showOrTriggerTable = (editorChangeObject: EditorChangeObject): boolean => {
+const showOrTriggerTable = (editorChangeObject) => {
 	const { selectionInTable, selection } = editorChangeObject;
 	return (
 		selectionInTable &&
@@ -187,54 +182,6 @@ export const code: FormattingBarButtonData = {
 	command: codeToggle,
 };
 
-const showOrIndicate = (editorChangeObject: EditorChangeObject): boolean => {
-	if (!editorChangeObject.view) return false;
-	const state = editorChangeObject.view.state;
-	return isInCodeBlock(state);
-};
-
-export const codeBlock: FormattingBarButtonData = {
-	key: 'code-block',
-	title: 'Code Block',
-	icon: 'code-block',
-	insertNodeType: 'code_block',
-	controls: {
-		captureFocusOnMount: false,
-		component: ControlsCodeBlock,
-		trigger: triggerOnClick,
-		show: showOrIndicate,
-		indicate: showOrIndicate,
-		floatingPosition: positionNearParent,
-		showCloseButton: false,
-	},
-};
-
-export const table: FormattingBarButtonData = {
-	key: 'table',
-	title: 'Table',
-	icon: 'th',
-	insertNodeType: 'table',
-	controls: {
-		captureFocusOnMount: false,
-		indicate: ({ selectionInTable }) => selectionInTable,
-		show: showOrTriggerTable,
-		trigger: showOrTriggerTable,
-		floatingPosition: positionNearSelection,
-		component: ControlsTable,
-	},
-};
-
-export const math: FormattingBarButtonData = {
-	key: 'math',
-	title: 'Math',
-	icon: 'function',
-	insertNodeType: 'math_inline',
-	controls: nodeControls(ControlsMath, ['math_inline', 'math_display'], {
-		floatingPosition: positionNearSelection,
-		showCloseButton: false,
-	}),
-};
-
 export const subscript: FormattingBarButtonData = {
 	key: 'subscript',
 	title: 'Subscript',
@@ -306,6 +253,32 @@ export const horizontalRule: FormattingBarButtonData = {
 	icon: 'minus',
 };
 
+export const table: FormattingBarButtonData = {
+	key: 'table',
+	title: 'Table',
+	icon: 'th',
+	insertNodeType: 'table',
+	controls: {
+		captureFocusOnMount: false,
+		indicate: ({ selectionInTable }) => selectionInTable,
+		show: showOrTriggerTable,
+		trigger: showOrTriggerTable,
+		floatingPosition: positionNearSelection,
+		component: ControlsTable,
+	},
+};
+
+export const math: FormattingBarButtonData = {
+	key: 'math',
+	title: 'Math',
+	icon: 'function',
+	insertNodeType: 'math_inline',
+	controls: nodeControls(ControlsMath, ['math_inline', 'math_display'], {
+		floatingPosition: positionNearSelection,
+		showCloseButton: false,
+	}),
+};
+
 export const media: FormattingBarButtonData = {
 	key: 'media',
 	title: 'Media',
@@ -337,7 +310,6 @@ export const reviewButtonSet = [
 		numberedList,
 		blockquote,
 		code,
-		codeBlock,
 		subscript,
 		superscript,
 		strikethrough,
@@ -365,7 +337,6 @@ export const fullButtonSet = [
 		numberedList,
 		blockquote,
 		code,
-		codeBlock,
 		subscript,
 		superscript,
 		strikethrough,
@@ -390,7 +361,6 @@ export const layoutEditorButtonSet = [
 		numberedList,
 		blockquote,
 		code,
-		codeBlock,
 		subscript,
 		superscript,
 		strikethrough,

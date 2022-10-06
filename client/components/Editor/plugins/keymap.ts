@@ -18,36 +18,13 @@ import {
 } from 'prosemirror-commands';
 import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
 import { undo, redo } from 'prosemirror-history';
-import { Schema } from 'prosemirror-model';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { Selection, EditorState, Command, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
 import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
 
 import { splitBlockPreservingAttrs } from '../commands';
 
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
-
-type Direction = 'left' | 'up' | 'down' | 'right';
-type DispatchFn = (tr: Transaction) => void;
-const arrowHandler =
-	(dir: Direction): Command =>
-	(state: EditorState, dispatch?: DispatchFn, view?: EditorView): boolean => {
-		if (state.selection.empty && view && view.endOfTextblock(dir)) {
-			const side = dir === 'left' || dir === 'up' ? -1 : 1;
-			const $head = state.selection.$head;
-			const nextPos = Selection.near(
-				state.doc.resolve(side > 0 ? $head.after() : $head.before()),
-				side,
-			);
-			if (nextPos.$head && nextPos.$head.parent.type.name === 'code_block') {
-				dispatch?.(state.tr.setSelection(nextPos));
-				return true;
-			}
-		}
-		return false;
-	};
 
 // :: (Schema, ?Object) → Object
 // Inspect the given schema looking for marks and nodes from the
@@ -74,9 +51,9 @@ const arrowHandler =
 // * **Mod-BracketLeft** to `lift`
 // * **Escape** to `selectParentNode`
 
-export default (schema: Schema) => {
+export default (schema) => {
 	const keys = {};
-	const bind = (key: string, cmd: Command) => {
+	const bind = (key, cmd) => {
 		keys[key] = cmd;
 	};
 
@@ -122,7 +99,7 @@ export default (schema: Schema) => {
 		bind('Ctrl->', wrapIn(schema.nodes.blockquote));
 	}
 	if (schema.nodes.hard_break) {
-		const cmd = chainCommands(exitCode, (state: EditorState, dispatch) => {
+		const cmd = chainCommands(exitCode, (state, dispatch) => {
 			dispatch!(
 				state.tr.replaceSelectionWith(schema.nodes.hard_break.create()).scrollIntoView(),
 			);
@@ -153,7 +130,7 @@ export default (schema: Schema) => {
 	}
 	if (schema.nodes.horizontal_rule) {
 		bind('Mod-_', (state, dispatch) => {
-			dispatch?.(
+			dispatch(
 				state.tr
 					.replaceSelectionWith(schema.nodes.horizontal_rule.create())
 					.scrollIntoView(),
@@ -167,12 +144,6 @@ export default (schema: Schema) => {
 			'Backspace',
 			chainCommands(deleteSelection, mathBackspaceCmd, joinBackward, selectNodeBackward),
 		);
-	}
-	if (schema.nodes.code_block) {
-		bind('ArrowLeft', arrowHandler('left'));
-		bind('ArrowRight', arrowHandler('right'));
-		bind('ArrowDown', arrowHandler('down'));
-		bind('ArrowUp', arrowHandler('up'));
 	}
 
 	// All but the custom block splitting command in this chain are taken from the default

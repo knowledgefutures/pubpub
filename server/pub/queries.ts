@@ -1,4 +1,5 @@
 import striptags from 'striptags';
+import unescape from 'lodash.unescape';
 
 import { Collection, Community, Pub, PubAttribution, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
@@ -102,7 +103,7 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 		filteredValues.htmlTitle = filteredValues.title;
 	}
 	if (filteredValues.htmlTitle) {
-		filteredValues.title = striptags(filteredValues.htmlTitle);
+		filteredValues.title = unescape(striptags(filteredValues.htmlTitle));
 	}
 
 	return Pub.update(filteredValues, {

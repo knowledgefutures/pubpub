@@ -111,6 +111,7 @@
 		"lodash.pick": "^4.4.0",
 		"lodash.pickby": "^4.6.0",
 		"lodash.throttle": "^4.1.1",
+		"lodash.unescape": "^4.0.1",
 		"mailgun.js": "^2.0.1",
 		"mudder": "^1.0.4",
 		"mutationobserver-shim": "^0.3.3",

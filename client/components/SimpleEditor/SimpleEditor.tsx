@@ -5,6 +5,7 @@ import { renderToString } from 'react-dom/server';
 
 import { MinimalEditor } from 'components';
 import { usePubContext } from 'containers/Pub/pubHooks';
+import { useFacetsQuery } from 'client/utils/useFacets';
 
 type Props = {
 	initialHtmlString: string;
@@ -13,12 +14,10 @@ type Props = {
 };
 
 const SimpleEditor = (props: Props) => {
-	const {
-		noteManager,
-		pubData: { nodeLabels },
-	} = usePubContext();
+	const { noteManager } = usePubContext();
 	const { onChange, placeholder, initialHtmlString } = props;
 	const initialDoc = useRef<{ [key: string]: any }>();
+	const nodeLabels = useFacetsQuery((F) => F.NodeLabels);
 
 	if (!initialDoc.current) {
 		initialDoc.current = getDocForHtmlString(initialHtmlString, editorSchema).toJSON();

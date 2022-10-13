@@ -610,6 +610,304 @@ export default {
 	firebaseToken:
 		'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTU1NjYzODU3NCwiZXhwIjoxNTU2NjQyMTc0LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1pZTd5ZUBwdWJwdWItdjYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1pZTd5ZUBwdWJwdWItdjYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJ1aWQiOiJiMjQyZjYxNi03YWFhLTQ3OWMtOGVlNS0zOTMzZGNmNzA4NTkifQ.AFdYAfq3y1F1lgLfC0HKvfg4ZkqOP6draEEHBVDJM1ioxh8N9guJ6PM9rieoKry2UxNRCY3t9BttYXIffotOJLjj3L6MKq0FaOoEBycPZcrhqEQX43oTna54Zt54WD2ZKqGKO0TT1iUAdxJLJfqfthKe_o7IkXlc27z7uu09ek2RGBAvuiS10Jzc4j5urNQuLh6UFEVdoMaxBollkjEwK2wV333Df4TZ9jyfZCw7lR8VTPyXoXmVJbMUccLNM-i2tNO6FEqJ-C132qL19uGcw4LQtjwzSV0MQJJAhs16ZeEKPTkDF-XuOL-41ycq2tH0DBUlhHjAlhgbs53hCynVRg',
 	mode: 'manage',
+	submission: {
+		id: 'a0cb7ef9-3622-425b-bfda-796ba595e8ad',
+		status: 'incomplete',
+		submittedAt: null,
+		submissionWorkflowId: 'cfd3a60d-479b-463c-aa03-c25dffbe9be2',
+		pubId: '1caacd28-d286-42d4-abd2-f176a7c92096',
+		abstract: {
+			type: 'doc',
+			attrs: {
+				meta: {},
+			},
+			content: [
+				{
+					type: 'paragraph',
+				},
+			],
+		},
+		createdAt: '2022-10-05T15:10:06.897Z',
+		updatedAt: '2022-10-05T15:10:06.897Z',
+		submissionWorkflow: {
+			id: 'cfd3a60d-479b-463c-aa03-c25dffbe9be2',
+			title: 'Call For Submissions: Wub Wub Wub Wub',
+			collectionId: '5667b24a-2865-4d08-8c3f-56ea09fe6e66',
+			enabled: true,
+			instructionsText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'ns5yd3os2jp',
+							rtl: true,
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras ornare arcu dui vivamus arcu felis. In dictum non consectetur a erat nam. Eu turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Posuere urna nec tincidunt praesent semper. Velit scelerisque in dictum non consectetur a erat nam. Elementum tempus egestas sed sed risus pretium quam vulputate dignissim. Risus viverra adipiscing at in tellus integer. Mauris ultrices eros in cursus turpis massa. Senectus et netus et malesuada fames. Sapien et ligula ullamcorper malesuada proin libero. Blandit turpis cursus in hac. Augue neque gravida in fermentum et sollicitudin ac orci. Purus ut faucibus pulvinar elementum integer enim.',
+								type: 'text',
+							},
+						],
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nt9u0urpg0w',
+							rtl: null,
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Viverra mauris in aliquam sem fringilla ut morbi. Tortor id aliquet lectus proin. Aliquet bibendum enim facilisis gravida neque. Egestas diam in arcu cursus euismod quis viverra nibh cras. Scelerisque eleifend donec pretium vulputate sapien nec. Cras adipiscing enim eu turpis egestas. Eu mi bibendum neque egestas. Placerat in egestas erat imperdiet sed euismod nisi porta. Dolor sed viverra ipsum nunc aliquet bibendum enim facilisis gravida. Tristique magna sit amet purus gravida quis blandit. Ultrices dui sapien eget mi. Integer quis auctor elit sed vulputate. Tincidunt praesent semper feugiat nibh sed pulvinar proin gravida hendrerit. Amet mauris commodo quis imperdiet. A condimentum vitae sapien pellentesque habitant. Sapien et ligula ullamcorper malesuada. Purus in massa tempor nec feugiat nisl pretium. Amet justo donec enim diam vulputate. Sem integer vitae justo eget magna fermentum iaculis.',
+								type: 'text',
+							},
+						],
+					},
+					{
+						type: 'bullet_list',
+						attrs: {
+							id: 'npeux3btqti',
+							rtl: null,
+						},
+						content: [
+							{
+								type: 'list_item',
+								content: [
+									{
+										type: 'paragraph',
+										attrs: {
+											id: 'n8nyvdsm0fz',
+											rtl: null,
+											class: null,
+											textAlign: null,
+										},
+										content: [
+											{
+												text: 'Vitae justo eget magna fermentum. Bibendum est ultricies integer quis auctor elit sed vulputate. Enim tortor at auctor urna nunc id cursus metus.',
+												type: 'text',
+											},
+										],
+									},
+								],
+							},
+							{
+								type: 'list_item',
+								content: [
+									{
+										type: 'paragraph',
+										attrs: {
+											id: 'nl05bbb3pz9',
+											rtl: null,
+											class: null,
+											textAlign: null,
+										},
+										content: [
+											{
+												text: 'Elementum tempus egestas sed sed risus pretium quam vulputate dignissim.',
+												type: 'text',
+											},
+										],
+									},
+								],
+							},
+							{
+								type: 'list_item',
+								content: [
+									{
+										type: 'paragraph',
+										attrs: {
+											id: 'n8u6sxq3yr3',
+											rtl: null,
+											class: null,
+											textAlign: null,
+										},
+										content: [
+											{
+												text: 'Tortor id aliquet lectus proin. Aliquet bibendum enim facilisis gravida neque.',
+												type: 'text',
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nuqfcv5brki',
+							rtl: null,
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Elit ut aliquam purus sit amet luctus venenatis. Eros donec ac odio tempor orci dapibus ultrices in iaculis. Elementum eu facilisis sed odio morbi quis commodo. Tristique senectus et netus et malesuada fames. Vitae justo eget magna fermentum. Bibendum est ultricies integer quis auctor elit sed vulputate. Enim tortor at auctor urna nunc id cursus metus. Mi quis hendrerit dolor magna eget est lorem ipsum. Dictum at tempor commodo ullamcorper. Egestas integer eget aliquet nibh praesent. Sollicitudin tempor id eu nisl nunc mi ipsum. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. Sapien pellentesque habitant morbi tristique senectus. Nunc vel risus commodo viverra maecenas. Aliquam purus sit amet luctus venenatis lectus magna fringilla. Convallis tellus id interdum velit laoreet id donec ultrices. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Aliquet enim tortor at auctor urna nunc id cursus',
+								type: 'text',
+							},
+						],
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nf5422iyqsa',
+							rtl: null,
+							class: null,
+							textAlign: null,
+						},
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nf2js0k20k3',
+							rtl: null,
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'This latin and ion know, like why it sound funny, dead languages make me laugh',
+								type: 'text',
+							},
+						],
+					},
+				],
+			},
+			acceptedText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nt4smbj4czq',
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Hey okay, we are in 3 dimensions?',
+								type: 'text',
+							},
+						],
+					},
+				],
+			},
+			declinedText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nt4smbj4czq',
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Hey you not okay and thats tough, down bad fr',
+								type: 'text',
+							},
+						],
+					},
+				],
+			},
+			receivedEmailText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'njswvj2c3tt',
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Hello flatworld',
+								type: 'text',
+							},
+						],
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nl3kz7mgwai',
+							class: null,
+							textAlign: null,
+						},
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nnoizjiiu8p',
+							class: null,
+							textAlign: null,
+						},
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nncou2q0wip',
+							class: null,
+							textAlign: null,
+						},
+					},
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nnvr71vofd2',
+							class: null,
+							textAlign: null,
+						},
+					},
+				],
+			},
+			introText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						attrs: {
+							id: 'nmio3d0qvwu',
+							rtl: true,
+							class: null,
+							textAlign: null,
+						},
+						content: [
+							{
+								text: 'Ahhhhh! Ahhhhhhh! uhhh ahhhhhh',
+								type: 'text',
+							},
+						],
+					},
+				],
+			},
+			targetEmailAddresses: ['hello@pubpubdemosite.org'],
+			requireAbstract: true,
+			requireDescription: true,
+			createdAt: '2022-01-10T19:04:58.283Z',
+			updatedAt: '2022-06-13T18:36:28.602Z',
+		},
+	},
 	initialDoc: {
 		type: 'doc',
 		attrs: { meta: {} },

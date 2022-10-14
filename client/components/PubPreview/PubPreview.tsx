@@ -119,10 +119,16 @@ const PubPreview = (props: Props) => {
 								className="community-banner"
 								style={{ backgroundColor: communityData.accentColorDark }}
 							>
-								<img
-									alt={`in Community ${communityData.title}`}
-									src={resizedHeaderLogo}
-								/>
+								{resizedHeaderLogo ? (
+									<img
+										src={resizedHeaderLogo}
+										alt={`in Community ${communityData.title}`}
+									/>
+								) : (
+									<span style={{ color: communityData.accentColorLight }}>
+										{communityData.title}
+									</span>
+								)}
 							</a>
 						)}
 						<a href={pubLink} title={pubData.title}>

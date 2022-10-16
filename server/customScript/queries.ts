@@ -17,7 +17,14 @@ export const setCustomScriptForCommunity = async (
 	}
 };
 
-export const getCustomScriptsForCommunity = async (communityId: string): Promise<CustomScripts> => {
+// Bit of a hack: this function takes a nullable-ish communityId for ergonomics where it is called
+// with fake communityData when isBasePubPub = true.
+export const getCustomScriptsForCommunity = async (
+	communityId: null | undefined | string,
+): Promise<CustomScripts> => {
+	if (typeof communityId !== 'string') {
+		return { js: null, css: null };
+	}
 	const scripts = await CustomScript.findAll({ where: { communityId } });
 	const css = scripts.find((s) => s.type === 'css');
 	if (!communityCanUseCustomScripts(communityId)) {

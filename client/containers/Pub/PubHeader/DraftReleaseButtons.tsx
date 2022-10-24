@@ -2,12 +2,13 @@ import React from 'react';
 import TimeAgo from 'react-timeago';
 
 import { DialogLauncher, PubReleaseDialog, PubReleaseReviewDialog } from 'components';
+import { PatchFn, PubPageData } from 'types';
 import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 
-import { PatchFn, PubPageData } from 'types';
+import { usePubContext } from '../pubHooks';
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 
 require('./draftReleaseButtons.scss');
@@ -45,8 +46,10 @@ const getCanCreateRelease = (latestRelease, latestKey) => {
 const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const { historyData, pubData, updatePubData } = props;
 	const { communityData, scopeData } = usePageContext();
+	const { submissionState } = usePubContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
-	const { isRelease, isReview } = pubData;
+	const { isRelease, isReviewingPub } = pubData;
+	const shouldShowReleaseReviewButton = canCreateReviews && !isReviewingPub && !submissionState;
 
 	const renderForRelease = () => {
 		const { releases, releaseNumber } = pubData;
@@ -64,7 +67,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						}}
 					/>
 				)}
-				{!isReview && (
+				{!isReviewingPub && (
 					<Menu
 						className="releases-menu"
 						aria-label="Choose a historical release of this Pub"
@@ -138,7 +141,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
 					/>
 				)}
-				{canAdmin && !isReview && (
+				{canAdmin && !isReviewingPub && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton
@@ -167,7 +170,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						)}
 					</DialogLauncher>
 				)}
-				{canCreateReviews && !isReview && (
+				{shouldShowReleaseReviewButton && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton

@@ -34,7 +34,7 @@ const PubDocument = () => {
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
-	const { isReview } = pubData;
+	const { isReviewingPub } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
@@ -59,7 +59,7 @@ const PubDocument = () => {
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubMaintenanceNotice pubData={pubData} />
-					{!isReview && (
+					{!isReviewingPub && (
 						<PubHistoricalNotice pubData={pubData} historyData={historyData} />
 					)}
 					<PubEdgeListing
@@ -90,7 +90,7 @@ const PubDocument = () => {
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					{isViewingHistory && !isReview && (
+					{isViewingHistory && !isReviewingPub && (
 						<PubHistoryViewer
 							historyData={historyData}
 							pubData={pubData}

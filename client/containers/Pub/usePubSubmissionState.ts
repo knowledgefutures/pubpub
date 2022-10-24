@@ -40,7 +40,7 @@ const createSubmissionPreview = (doc: DocJson, abstract: DocJson) => {
 
 const getInitialSubmissionState = (pub: PubPageData): null | UpdatablePubSubmissionState => {
 	const { submission } = pub;
-	if (submission && !pub.isRelease && !pub.isReview) {
+	if (submission && !pub.isRelease && !pub.isReviewingPub) {
 		const { status } = submission;
 		return {
 			selectedTab: status === 'incomplete' ? 'instructions' : 'preview',

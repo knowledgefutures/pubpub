@@ -64,5 +64,6 @@ export const up = async () => {
 			}
 		},
 		50,
+		[['updatedAt', 'DESC']],
 	);
 };

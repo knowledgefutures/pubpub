@@ -9,7 +9,6 @@ import {
 	InputGroup,
 	NonIdealState,
 	ButtonGroup,
-	Divider,
 	Callout,
 } from '@blueprintjs/core';
 
@@ -36,24 +35,19 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		super(props);
 		const initialMetadata = this.normalizeMetadata(props.collection.metadata || {});
 		this.state = {
-			title: props.collection.title,
 			metadata: initialMetadata,
 			isGettingDoi: false,
-			isSaving: false,
 			deposited: false,
 			saved: false,
 		};
 		this.handleInputChange = this.handleInputChange.bind(this);
-		this.handleTitleChange = this.handleTitleChange.bind(this);
-		this.handleSaveClick = this.handleSaveClick.bind(this);
 		this.handleGetDoiClick = this.handleGetDoiClick.bind(this);
 	}
 
-	allFieldsValidate() {
+	allFieldsValidate(metadata) {
 		const {
 			collection: { kind },
 		} = this.props;
-		const { metadata } = this.state;
 		const fields = enumerateMetadataFields(metadata, kind);
 		return fields.reduce((value, nextField) => value && validateField(nextField), true);
 	}
@@ -91,44 +85,25 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 			});
 	}
 
-	handleSaveClick() {
-		const { communityData, collection, onUpdateCollection } = this.props;
-		const { metadata, title } = this.state;
-		this.setState({ isSaving: true, deposited: false, saved: false });
-		return apiFetch('/api/collections', {
-			method: 'PUT',
-			body: JSON.stringify({
-				metadata,
-				title,
-				id: collection.id,
-				communityId: communityData.id,
-			}),
-		})
-			.then(() => {
-				onUpdateCollection({ metadata, title });
-				this.setState({ isSaving: false, saved: true });
-			})
-			.catch(() => {
-				this.setState({ isSaving: false });
-			});
-	}
-
 	handleInputChange(field, value, pattern) {
+		const { onUpdateCollection } = this.props;
 		const { metadata } = this.state;
 		if (pattern && !new RegExp(pattern).test(value)) {
 			return;
 		}
-		this.setState({
-			metadata: this.normalizeMetadata({
-				...metadata,
-				[field]: value,
-			}),
+		const nextMetadata = this.normalizeMetadata({
+			...metadata,
+			[field]: value,
 		});
+		this.setState({
+			metadata: nextMetadata,
+		});
+		if (this.allFieldsValidate(nextMetadata)) {
+			onUpdateCollection({ metadata: nextMetadata });
+		}
 	}
 
-	handleTitleChange(e) {
-		this.setState({ title: e.target.value });
-	}
+	componentDidUpdate() {}
 
 	renderGetDoiButton() {
 		const { collection } = this.props;
@@ -141,7 +116,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				disabled={isGettingDoi}
 				onClick={this.handleGetDoiClick}
 			>
-				Re-deposit
+				Re-deposit to Crossref
 			</Button>
 		) : (
 			<ConfirmDialog
@@ -157,7 +132,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 						disabled={isGettingDoi}
 						onClick={open}
 					>
-						Deposit
+						Deposit to Crossref
 					</Button>
 				)}
 			</ConfirmDialog>
@@ -246,21 +221,10 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 	}
 
 	render() {
-		const { isSaving } = this.state;
 		return (
 			<div className="dashboard-content_collection-metadata-editor">
 				{this.renderFields()}
-				<ButtonGroup>
-					<Button
-						icon="tick"
-						disabled={isSaving || !this.allFieldsValidate()}
-						onClick={this.handleSaveClick}
-					>
-						Save changes
-					</Button>
-					<Divider />
-					{this.renderGetDoiButton()}
-				</ButtonGroup>
+				<ButtonGroup>{this.renderGetDoiButton()}</ButtonGroup>
 				{this.renderStatusMessage()}
 			</div>
 		);

@@ -10,14 +10,15 @@ import { sanitizePageHtml } from './sanitizePageHtml';
 
 export const createPage = async (inputValues, actorId = null) => {
 	if (inputValues.slug) {
+		const desiredSlug = slugifyString(inputValues.slug);
 		const slugStatus = await slugIsAvailable({
-			slug: slugifyString(inputValues.slug),
+			slug: desiredSlug,
 			communityId: inputValues.communityId,
 			activeElementId: null,
 		});
 
 		if (slugStatus === 'reserved') {
-			throw new PubPubError.ForbiddenSlugError(slugStatus);
+			throw new PubPubError.ForbiddenSlugError(desiredSlug, slugStatus);
 		}
 	}
 	return Page.create(
@@ -77,7 +78,7 @@ export const updatePage = async (inputValues, updatePermissions, actorId = null)
 			activeElementId: inputValues.pageId,
 		});
 		if (slugStatus !== 'available') {
-			throw new PubPubError.ForbiddenSlugError(slugStatus);
+			throw new PubPubError.ForbiddenSlugError(filteredValues.slug, slugStatus);
 		}
 	}
 	if (filteredValues.layout) {

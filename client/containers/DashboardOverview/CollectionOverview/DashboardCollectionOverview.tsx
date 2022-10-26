@@ -86,7 +86,7 @@ const DashboardCollectionOverview = (props: Props) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filter, setFilter] = useState<null | OverviewSearchFilter>(null);
 	const [pubsAddedToCollection, setPubsAddedToCollection] = useState<PubWithCollections[]>([]);
-	const { collection, updateCollection } = useCollectionState(initialCollection);
+	const { collection, updateCollection } = useCollectionState(initialCollection, true);
 	const query = filter?.query;
 	const isSearchingOrFiltering = !!searchTerm || !!query;
 	const canDragDrop = !isSearchingOrFiltering && canManage;

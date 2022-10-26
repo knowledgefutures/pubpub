@@ -7,6 +7,7 @@ export { default as Avatars } from './Avatars/Avatars';
 export { default as Byline } from './Byline/Byline';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as ClientOnly, ClientOnlyContext } from './ClientOnly/ClientOnly';
+export { default as CollectionAttributionEditor } from './CollectionAttributionEditor/CollectionAttributionEditor';
 export { default as CollectionMultiSelect } from './CollectionMultiSelect/CollectionMultiSelect';
 export { default as ColorInput } from './ColorInput/ColorInput';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';

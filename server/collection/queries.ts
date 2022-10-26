@@ -41,14 +41,15 @@ export const createCollection = async (
 	actorId?,
 ) => {
 	if (title) {
+		const desiredSlug = slug || slugifyString(title);
 		const slugStatus = await slugIsAvailable({
-			slug: slug || slugifyString(title),
+			slug: desiredSlug,
 			communityId,
 			activeElementId: id,
 		});
 
 		if (slugStatus === 'reserved') {
-			throw new PubPubError.ForbiddenSlugError(slugStatus);
+			throw new PubPubError.ForbiddenSlugError(desiredSlug, slugStatus);
 		}
 	}
 	return Community.findOne({ where: { id: communityId } }).then(async (community) => {
@@ -78,26 +79,23 @@ export const createCollection = async (
 
 export const updateCollection = async (inputValues, updatePermissions, actorId?) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
 		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
 
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 	if (filteredValues.slug) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
 		const slugStatus = await slugIsAvailable({
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 			slug: filteredValues.slug,
 			communityId: inputValues.communityId,
 			activeElementId: inputValues.collectionId,
 		});
 
 		if (slugStatus !== 'available') {
-			throw new PubPubError.ForbiddenSlugError(slugStatus);
+			throw new PubPubError.ForbiddenSlugError(filteredValues.slug, slugStatus);
 		}
 	}
 	await Collection.update(filteredValues, {

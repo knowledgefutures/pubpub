@@ -40,7 +40,7 @@ const CollectionDetailsEditor = (props: Props) => {
 				placeholder="title"
 				isRequired={true}
 				defaultValue={props.collection.title}
-				onBlur={(evt) => {
+				onChange={(evt) => {
 					if (evt.target.value) {
 						onUpdateCollection({ title: evt.target.value });
 					}
@@ -59,9 +59,12 @@ const CollectionDetailsEditor = (props: Props) => {
 				})}`}
 				onChange={(evt) => {
 					const { value } = evt.target;
-					setSlug(value ? slugifyString(value) : '');
+					const nextSlug = value ? slugifyString(value) : '';
+					setSlug(nextSlug);
+					if (nextSlug) {
+						onUpdateCollection({ slug: nextSlug });
+					}
 				}}
-				onBlur={() => slug && onUpdateCollection({ slug })}
 			/>
 			<FormGroup
 				helperText={

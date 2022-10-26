@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUpdateEffect } from 'react-use';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { AttributionEditor, FacetEditor, SettingsSection } from 'components';
+import { CollectionAttributionEditor, FacetEditor, SettingsSection } from 'components';
 import { pruneFalsyValues } from 'utils/arrays';
 import { ALL_FACET_DEFINITIONS, FacetName } from 'facets';
+import { AttributionWithUser } from 'types';
 import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 
 import CollectionDetailsEditor from './CollectionDetailsEditor';
@@ -20,8 +21,17 @@ const CollectionSettings = () => {
 			elements: { activeCollection },
 		},
 	} = usePageContext();
-	const { collection, updateCollection, deleteCollection, slugStatus, hasChanges } =
-		useCollectionState(activeCollection!);
+	const {
+		collection,
+		updateCollection,
+		deleteCollection,
+		slugStatus,
+		hasChanges,
+		persistCollection,
+	} = useCollectionState(activeCollection!);
+	const [collectionAttributions, setCollectionAttributions] = useState<AttributionWithUser[]>(
+		collection.attributions as AttributionWithUser[],
+	);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {
@@ -53,27 +63,6 @@ const CollectionSettings = () => {
 			],
 		},
 		collection.kind !== 'tag' && {
-			id: 'contributors',
-			title: 'Contributors',
-			pubPubIcon: 'contributor',
-			sections: [
-				<SettingsSection title="Attribution" id="attribution" showTitle={false}>
-					<AttributionEditor
-						apiRoute="/api/collectionAttributions"
-						canEdit={true}
-						hasEmptyState={false}
-						attributions={collection.attributions!}
-						listOnBylineText="List on Collection byline"
-						identifyingProps={{
-							collectionId: collection.id,
-							communityId: communityData.id,
-						}}
-						onUpdateAttributions={(attributions) => updateCollection({ attributions })}
-					/>
-				</SettingsSection>,
-			],
-		},
-		collection.kind !== 'tag' && {
 			id: 'metadata',
 			title: 'Metadata',
 			icon: 'heat-grid',
@@ -83,6 +72,23 @@ const CollectionSettings = () => {
 						collection={collection}
 						communityData={communityData}
 						onUpdateCollection={updateCollection}
+					/>
+				</SettingsSection>,
+			],
+		},
+		collection.kind !== 'tag' && {
+			id: 'contributors',
+			title: 'Contributors',
+			pubPubIcon: 'contributor',
+			hideSaveButton: true,
+			sections: [
+				<SettingsSection title="Attribution" id="attribution" showTitle={false}>
+					<CollectionAttributionEditor
+						canEdit
+						attributions={collectionAttributions!}
+						onUpdateAttributions={setCollectionAttributions}
+						collectionId={collection.id}
+						communityId={communityData.id}
 					/>
 				</SettingsSection>,
 			],
@@ -103,8 +109,8 @@ const CollectionSettings = () => {
 			id="collection-settings"
 			className="collection-settings-component"
 			tabs={tabs}
-			hasChanges={false}
-			persist={() => Promise.resolve()}
+			hasChanges={hasChanges}
+			persist={persistCollection}
 		/>
 	);
 };

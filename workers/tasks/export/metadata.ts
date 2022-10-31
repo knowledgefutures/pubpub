@@ -19,6 +19,7 @@ import {
 import { renderLicenseForPub } from 'utils/licenses';
 import { getAllPubContributors } from 'utils/contributors';
 import { fetchFacetsForScope } from 'server/facets';
+
 import { PubMetadata } from './types';
 
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
@@ -81,6 +82,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	const attributions = getAllPubContributors(pubData, 'contributors', false, true);
+
 	return {
 		title: pubData.title,
 		slug: pubData.slug,
@@ -97,7 +99,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		attributions,
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
-		nodeLabels: pubData.nodeLabels,
+		nodeLabels: facets.NodeLabels.value,
 		publisher: pubData.community.publishAs,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 		license,

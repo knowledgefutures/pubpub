@@ -32,6 +32,7 @@ export type FacetDefinition<
 	Name extends string = string,
 	Props extends FacetProps = FacetProps,
 > = FacetOptions<Name, Props> & {
+	readonly props: Props;
 	__facet: true;
 };
 
@@ -49,15 +50,11 @@ export type FacetInstanceStack<Def extends FacetDefinition> = WithFacetSource<
 	FacetInstanceType<Def>
 >[];
 
-export type PropCascadeContribution<Prop extends FacetProp> = Prop['cascade'] extends 'merge'
-	? Partial<TypeOfFacetProp<Prop>>
-	: Prop['cascade'] extends 'concat'
+export type PropCascadeContribution<Prop extends FacetProp> = Prop['cascade'] extends 'concat'
 	? TypeOfFacetProp<Prop> & any[]
 	: NullableTypeOfFacetProp<Prop>;
 
-export type PropCascadeResult<Prop extends FacetProp> = Prop['cascade'] extends 'merge'
-	? Partial<TypeOfFacetProp<Prop>>
-	: Prop['cascade'] extends 'concat'
+export type PropCascadeResult<Prop extends FacetProp> = Prop['cascade'] extends 'concat'
 	? TypeOfFacetProp<Prop> & any[]
 	: CascadedTypeOfFacetProp<Prop>;
 

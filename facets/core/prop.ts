@@ -2,7 +2,7 @@ import { FacetPropType, NullableTypeOfPropType, TypeOfFacetPropType } from './pr
 
 type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
 
-export type CascadeStrategy = 'overwrite' | 'merge' | 'concat';
+export type CascadeStrategy = 'overwrite' | 'concat';
 
 export type FacetPropOptions<
 	// The PropType of the prop.
@@ -13,6 +13,8 @@ export type FacetPropOptions<
 	// determine statically whether a facet prop will ever be null and adjust its TypeScript
 	// definitions accordingly.
 	RootValue extends NullableTypeOfPropType<PropType>,
+	// The way this prop should cascade (defaults to overwriting values from upper scopes)
+	Cascade extends CascadeStrategy = 'overwrite',
 	// When we provide a defaultValue to a facet, it may be `null`.
 	DefaultValue = NullableTypeOfPropType<PropType>,
 > = {
@@ -23,7 +25,7 @@ export type FacetPropOptions<
 	// `rootValue`, this value will actually be stored on a facet instance.
 	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
-	cascade?: CascadeStrategy;
+	cascade?: Cascade;
 	// A human-readable label for this prop
 	label?: string;
 };
@@ -63,9 +65,10 @@ export const prop = <
 	Cascade extends CascadeStrategy = 'overwrite',
 >(
 	propType: PropType,
-	options: FacetPropOptions<PropType, RootValue>,
+	options: FacetPropOptions<PropType, RootValue, Cascade>,
 ): FacetProp<PropType, RootValue, Cascade> => {
-	const cascade = (options.cascade ?? 'overwrite') as Cascade;
+	const { cascade: providedCascade } = options;
+	const cascade: Cascade = providedCascade ?? ('overwrite' as Cascade);
 	return {
 		...options,
 		propType,

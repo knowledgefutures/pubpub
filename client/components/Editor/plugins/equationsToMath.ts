@@ -27,9 +27,13 @@ const getEquationTranslationTransactionForState = (editorState: EditorState) => 
 				? mathDisplayType
 				: null;
 		if (replacementNodeType) {
+			// There are some equation nodes floating around out there with node.attrs.value = ''
+			// But Prosemirror does not permit text nodes containing the empty string.
+			// So, as a hack, we replace '' with ' '
+			const replacementValue = node.attrs.value === '' ? ' ' : node.attrs.value;
 			const replacementNode = replacementNodeType.create(
 				null,
-				editorState.schema.text(node.attrs.value),
+				editorState.schema.text(replacementValue),
 			);
 			replacements.push({ pos, replacementNode });
 			mustReturnTransaction = true;

@@ -19,8 +19,8 @@ const defaultProps = {
 
 const UserNav = function (props) {
 	const tabs = [
-		{ id: 0, label: `All Pubs (${props.allPubsCount})`, path: '' },
-		{ id: 1, label: `Authored Pubs (${props.authoredPubsCount})`, path: '/authored' },
+		{ id: 0, label: 'All Pubs', path: '', count: props.allPubsCount },
+		{ id: 1, label: 'Authored Pubs', path: '/authored', count: props.authoredPubsCount },
 		// { id: 1, label: 'All Pubs', path: '/pubs' },
 		// { id: 2, label: 'Discussions', path: '/discussions' },
 	];
@@ -41,8 +41,9 @@ const UserNav = function (props) {
 										? 'true'
 										: 'false'
 								}
+								data-tab-related-count={tab.count}
 							>
-								{tab.label}
+								{tab.label} {typeof tab.count !== 'undefined' && `(${tab.count})`}
 							</a>
 						);
 					})}

@@ -76,6 +76,20 @@ const PubHeader = (props: Props) => {
 		setShowingDetails(!showingDetails);
 	};
 
+	const renderStickyPart = () => {
+		if (sticky) {
+			if (pubData.isReviewingPub) {
+				return (
+					<ClientOnly>
+						<ReviewHeaderSticky />
+					</ClientOnly>
+				);
+			}
+			return <PubHeaderSticky />;
+		}
+		return null;
+	};
+
 	return (
 		<PubHeaderBackground
 			className={classNames('pub-header-component', showingDetails && 'showing-details')}
@@ -104,13 +118,7 @@ const PubHeader = (props: Props) => {
 				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			{!pubData.isReview && sticky ? (
-				<PubHeaderSticky />
-			) : (
-				<ClientOnly>
-					<ReviewHeaderSticky />
-				</ClientOnly>
-			)}
+			{renderStickyPart()}
 		</PubHeaderBackground>
 	);
 };

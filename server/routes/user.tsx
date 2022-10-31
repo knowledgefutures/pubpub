@@ -12,7 +12,9 @@ import { isUserAffiliatedWithCommunity } from 'server/community/queries';
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
-		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
+		const customScripts = !initialData.locationData.isBasePubPub
+			? await getCustomScriptsForCommunity(initialData.communityData.id)
+			: undefined;
 		const userData = await getUser(req.params.slug, initialData);
 		const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
 

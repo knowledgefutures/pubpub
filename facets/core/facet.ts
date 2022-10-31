@@ -49,17 +49,17 @@ export type FacetInstanceStack<Def extends FacetDefinition> = WithFacetSource<
 	FacetInstanceType<Def>
 >[];
 
-export type PropCascadeContribution<Prop extends FacetProp> = {
-	overwrite: NullableTypeOfFacetProp<Prop>;
-	concat: TypeOfFacetProp<Prop> & any[];
-	merge: Partial<TypeOfFacetProp<Prop>>;
-}[Prop['cascade']];
+export type PropCascadeContribution<Prop extends FacetProp> = Prop['cascade'] extends 'merge'
+	? Partial<TypeOfFacetProp<Prop>>
+	: Prop['cascade'] extends 'concat'
+	? TypeOfFacetProp<Prop> & any[]
+	: NullableTypeOfFacetProp<Prop>;
 
-export type PropCascadeResult<Prop extends FacetProp> = {
-	overwrite: CascadedTypeOfFacetProp<Prop>;
-	concat: TypeOfFacetProp<Prop> & any[];
-	merge: Partial<TypeOfFacetProp<Prop>>;
-}[Prop['cascade']];
+export type PropCascadeResult<Prop extends FacetProp> = Prop['cascade'] extends 'merge'
+	? Partial<TypeOfFacetProp<Prop>>
+	: Prop['cascade'] extends 'concat'
+	? TypeOfFacetProp<Prop> & any[]
+	: CascadedTypeOfFacetProp<Prop>;
 
 export type FacetPropCascadeResult<Prop extends FacetProp> = {
 	value: PropCascadeResult<Prop>;

@@ -2,14 +2,6 @@ import { FacetPropType, NullableTypeOfPropType, TypeOfFacetPropType } from './pr
 
 type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
 
-export type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
-	// Any prop type can use the `overwrite` strategy
-	| 'overwrite'
-	// Only props that are objects can object-merge during cascade" {...a, ...b}
-	| (TypeOfFacetPropType<PropType> extends Record<string, any> ? 'merge' : never)
-	// Only props that are arrays can array-merge during cascasde: [...a, ...b]
-	| (TypeOfFacetPropType<PropType> extends any[] ? 'concat' : never);
-
 export type CascadeStrategy = 'overwrite' | 'merge' | 'concat';
 
 export type FacetPropOptions<
@@ -31,7 +23,7 @@ export type FacetPropOptions<
 	// `rootValue`, this value will actually be stored on a facet instance.
 	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
-	cascade?: AvailableCascadeStrategyForPropType<PropType>;
+	cascade?: CascadeStrategy;
 	// A human-readable label for this prop
 	label?: string;
 };
@@ -39,6 +31,7 @@ export type FacetPropOptions<
 export type FacetProp<
 	PropType extends FacetPropType = FacetPropType,
 	RootValue extends NullableTypeOfPropType<PropType> = NullableTypeOfPropType<PropType>,
+	Cascade extends CascadeStrategy = any,
 > =
 	// Everything in the FacetPropOptions above...
 	Omit<FacetPropOptions<PropType, RootValue>, 'cascade'> & {
@@ -46,7 +39,7 @@ export type FacetProp<
 		// Plus the provided propType.
 		propType: PropType;
 		// Plus a non-nullable cascade strategy with a default value applied.
-		cascade: CascadeStrategy;
+		cascade: Cascade;
 	};
 
 export type RootValueOfFacetProp<Prop extends FacetProp> = Prop['rootValue'];
@@ -67,11 +60,12 @@ export type CascadedTypeOfFacetProp<Prop extends FacetProp> =
 export const prop = <
 	PropType extends FacetPropType,
 	RootValue extends NullableTypeOfPropType<PropType>,
+	Cascade extends CascadeStrategy = 'overwrite',
 >(
 	propType: PropType,
 	options: FacetPropOptions<PropType, RootValue>,
-): FacetProp<PropType, RootValue> => {
-	const cascade: AvailableCascadeStrategyForPropType<PropType> = options.cascade ?? 'overwrite';
+): FacetProp<PropType, RootValue, Cascade> => {
+	const cascade = (options.cascade ?? 'overwrite') as Cascade;
 	return {
 		...options,
 		propType,

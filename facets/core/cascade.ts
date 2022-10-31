@@ -21,7 +21,7 @@ function cascadeProp<Prop extends FacetProp>(
 		type PropWithCascade = Prop & { cascade: 'overwrite' };
 		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
-			.reduce((a, b) => b ?? a, null);
+			.reduce((a, b) => b ?? a, null as any);
 		return {
 			sources: sources as WithFacetSource<PropCascadeContribution<PropWithCascade>>[],
 			value,

@@ -32,8 +32,12 @@ export const nodeDefaults = {
 
 export const buildLabel = (node: Node, customBlockName?: string) => {
 	const {
-		attrs: { count, label },
+		attrs: { count, label, hideLabel },
 	} = node;
+
+	if (hideLabel) {
+		return null;
+	}
 
 	const nodeType = getReferenceableNodeType(node);
 

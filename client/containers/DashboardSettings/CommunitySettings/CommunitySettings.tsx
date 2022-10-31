@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import pick from 'lodash.pick';
 
 import { Community, PageContext } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -17,8 +18,9 @@ import HomepageBannerSettings from './HomepageBannerSettings';
 import SocialSettings from './SocialSettings';
 import CommunityPubSettings from './CommunityPubSettings';
 
-const attributesRequiringRefresh = [
-	'subdomain',
+const attributesRequiringRefresh = ['subdomain'];
+
+const attributesToUpdateGlobally = [
 	'accentColorDark',
 	'accentColorLight',
 	'headerColorType',
@@ -52,6 +54,7 @@ const CommunitySettings = () => {
 		if (mustRefreshAfterPersist(persistedCommunityData, update)) {
 			window.location.href = getDashUrl({ mode: 'settings' });
 		}
+		pageContext.updateCommunity(pick(update, attributesToUpdateGlobally));
 	});
 
 	const previewContext: PageContext = useMemo(() => {

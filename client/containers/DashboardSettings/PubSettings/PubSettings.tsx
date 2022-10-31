@@ -127,7 +127,7 @@ const PubSettings = (props: Props) => {
 					/>
 					<Button
 						disabled={
-							!headerBackgroundImage || pubData.avatar !== headerBackgroundImage
+							!headerBackgroundImage || pubData.avatar === headerBackgroundImage
 						}
 						onClick={() => updatePubData({ avatar: headerBackgroundImage! })}
 					>

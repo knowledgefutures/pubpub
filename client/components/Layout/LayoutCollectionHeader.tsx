@@ -35,7 +35,7 @@ const MetadataDetails = (props: Props) => {
 
 	const excludedMetadataFields = ['doi', 'url'];
 	const fields = getOrderedCollectionMetadataFields(collection).filter(
-		(x) => !excludedMetadataFields.includes[x.name],
+		(x) => !excludedMetadataFields.includes(x.name),
 	);
 
 	return (
@@ -70,7 +70,6 @@ const LayoutCollectionHeader = (props: Props) => {
 	const bylineContributors = contributors.filter((c) => c.isAuthor);
 	const schema = getSchemaForKind(collection.kind)!;
 	const doi = getCollectionDoi(collection);
-
 	const detailsRowElements = [
 		!hideCollectionKind && (
 			<div className="collection-kind" key={0}>

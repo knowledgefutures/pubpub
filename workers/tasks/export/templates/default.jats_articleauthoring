@@ -14,57 +14,68 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
+$if(subtitle)$
+<subtitle>${subtitle}</subtitle>
+$endif$
 </title-group>
 $endif$
 $if(author)$
 <contrib-group>
 $for(author)$
-<contrib contrib-type="author"$if(author.equal-contrib)$ equal-contrib="true"$endif$>
+<contrib contrib-type="author"$if(author.equal-contrib)$ equal-contrib="yes"$endif$$if(author.cor-id)$ corresp="yes"$endif$>
 $if(author.orcid)$
 <contrib-id contrib-id-type="orcid">$author.orcid$</contrib-id>
 $endif$
 $if(author.surname)$
 <name>
-<surname>$author.surname$</surname>
-<given-names>$author.given-names$</given-names>
+<surname>$if(author.non-dropping-particle)$${author.non-dropping-particle} $endif$${author.surname}</surname>
+<given-names>${author.given-names}$if(author.dropping-particle)$ ${author.dropping-particle}$endif$</given-names>
+$if(author.prefix)$
+<prefix>${author.suffix}</prefix>
+$endif$
+$if(author.suffix)$
+<suffix>${author.suffix}</suffix>
+$endif$
 </name>
 $elseif(author.name)$
 <string-name>$author.name$</string-name>
 $else$
 <string-name>$author$</string-name>
 $endif$
+$for(author.affiliation)$
+${ it:affiliations.jats() }
+$endfor$
 $if(author.email)$
 <email>$author.email$</email>
 $endif$
-$for(author.affiliation)$
-<xref ref-type="aff" rid="aff-$author.affiliation$"/>
-$endfor$
 $if(author.cor-id)$
 <xref ref-type="corresp" rid="cor-$author.cor-id$"><sup>*</sup></xref>
 $endif$
 </contrib>
 $endfor$
-${ affiliations.jats() }
 </contrib-group>
 $endif$
-$if(copyright)$
 <permissions>
-$if(copyright.statement)$
+$for(copyright.statement)$
 <copyright-statement>$copyright.statement$</copyright-statement>
-$endif$
-$if(copyright.year)$
+$endfor$
+$for(copyright.year)$
 <copyright-year>$copyright.year$</copyright-year>
-$endif$
-$if(copyright.holder)$
+$endfor$
+$for(copyright.holder)$
 <copyright-holder>$copyright.holder$</copyright-holder>
-$endif$
+$endfor$
 $if(copyright.text)$
 <license license-type="$copyright.type$" xlink:href="$copyright.link$">
 <license-p>$copyright.text$</license-p>
 </license>
 $endif$
+$for(license)$
+<license$if(it.type)$ license-type="${it.type}"$endif$$if(it.link)$ xlink:href="${it.link}"$endif$>
+<license-p>$if(it.text)$${it.text}$else$${it}$endif$</license-p>
+</license>
+$endfor$
 </permissions>
-$endif$
 <abstract>
 $abstract$
 </abstract>

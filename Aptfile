@@ -1,6 +1,6 @@
 # Pandoc is central to the Pub import and export features
 
-https://github.com/jgm/pandoc/releases/download/2.18/pandoc-2.18-1-amd64.deb
+https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb
 
 # xsltproc is ued to extract bibliographies from XML (JATS) files on import
 

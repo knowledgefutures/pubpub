@@ -23,6 +23,9 @@ body {
     font-size: 0.9em;
     padding: 1em;
   }
+  h1 {
+    font-size: 1.8em;
+  }
 }
 @media print {
   body {
@@ -73,6 +76,19 @@ blockquote {
   border-left: 2px solid #e6e6e6;
   color: #606060;
 }
+$if(abstract)$
+div.abstract {
+  margin: 2em 2em 2em 2em;
+  text-align: left;
+  font-size: 85%;
+}
+div.abstract-title {
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+  margin-bottom: 0.5em;
+}
+$endif$
 code {
   font-family: $if(monofont)$$monofont$$else$Menlo, Monaco, 'Lucida Console', Consolas, monospace$endif$;
 $if(monobackgroundcolor)$
@@ -135,16 +151,27 @@ header {
 #TOC li {
   list-style: none;
 }
+#TOC ul {
+  padding-left: 1.3em;
+}
+#TOC > ul {
+  padding-left: 0;
+}
 #TOC a:not(:hover) {
   text-decoration: none;
 }
 $endif$
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
 $if(quotes)$
 q { quotes: "“" "”" "‘" "’"; }
 $endif$

@@ -12,7 +12,7 @@ import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
 import { PandocTarget } from 'utils/export/formats';
 
 import { rules } from '../import/rules';
-import { getTmpFileForExtension } from './util';
+import { getAffiliations, getDedupedAffliations, getTmpFileForExtension } from './util';
 import { NotesData, PubMetadata, PandocFlag } from './types';
 import { runTransforms } from './transforms';
 import {
@@ -73,16 +73,25 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 		doi,
 		citationStyle,
 		license,
+		pubUrl,
 	} = pubMetadata;
 	const cslFile = getPathToCslFileForCitationStyleKind(citationStyle);
+	const dedupedAffiliations = getDedupedAffliations(attributions);
+	const formattedAffiliations = dedupedAffiliations.map((aff, affIndex) => {
+		return { id: affIndex, organization: aff };
+	});
 	const formattedAttributions = attributions.map((attr) => {
 		if (pandocTarget === 'jats_archiving') {
 			const publicEmail = 'publicEmail' in attr.user ? attr.user.publicEmail : null;
+			const affiliationIds = getAffiliations(attr).map((aff) => {
+				return dedupedAffiliations.indexOf(aff);
+			});
 			return {
 				...(attr.user.lastName && { surname: attr.user.lastName }),
 				...(attr.user.firstName && { 'given-names': attr.user.firstName }),
 				...(publicEmail && { email: publicEmail }),
 				...(attr.user.orcid && { orcid: attr.user.orcid }),
+				...(attr.affiliation && { affiliation: affiliationIds }),
 			};
 		}
 		return attr.user.fullName;
@@ -114,6 +123,8 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 			type: license.short,
 			...(license.link && { link: license.link }),
 		},
+		affiliation: formattedAffiliations,
+		uri: pubUrl,
 		...(primaryCollectionMetadata && {
 			article: {
 				...(primaryCollectionMetadata.issue && { issue: primaryCollectionMetadata.issue }),

@@ -1,4 +1,4 @@
-/* eslint-disable global-require, no-console */
+/* eslint-disable no-console */
 import path from 'path';
 // eslint-disable-next-line import/no-unresolved
 import { Worker } from 'worker_threads';
@@ -13,9 +13,6 @@ const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;
 let currentWorkerThreads = 0;
 
-if (process.env.NODE_ENV !== 'production') {
-	require(path.join(process.cwd(), 'config'));
-}
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',

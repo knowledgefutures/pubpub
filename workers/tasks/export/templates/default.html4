@@ -23,12 +23,12 @@ $endif$
 $for(css)$
   <link rel="stylesheet" href="$css$" type="text/css" />
 $endfor$
-$if(math)$
-  $math$
-$endif$
 $for(header-includes)$
   $header-includes$
 $endfor$
+$if(math)$
+  $math$
+$endif$
 </head>
 <body>
 $for(include-before)$
@@ -45,6 +45,12 @@ $for(author)$
 $endfor$
 $if(date)$
 <h3 class="date">$date$</h3>
+$endif$
+$if(abstract)$
+<div class="abstract">
+<div class="abstract-title">$abstract-title$</div>
+$abstract$
+</div>
 $endif$
 </div>
 $endif$

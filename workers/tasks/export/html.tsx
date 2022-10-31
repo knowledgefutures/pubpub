@@ -4,13 +4,14 @@ import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { AttributionWithUser, DocJson } from 'types';
+import { DocJson } from 'types';
 import { renderStatic, editorSchema } from 'components/Editor';
 import { intersperse, unique } from 'utils/arrays';
+import { getDedupedAffliations, digestCitation, getAffiliations } from './util';
 import { renderNotesForListing } from '../../../utils/notes';
 
 import { NotesData, PubMetadata } from './types';
-import { digestCitation } from './util';
+
 import SimpleNotesList from './SimpleNotesList';
 
 const nonExportableNodeTypes = ['discussion'];
@@ -203,24 +204,8 @@ const renderFrontMatter = (metadata: PubMetadata) => {
 		license,
 	} = metadata;
 
-	const getAffiliations = (attr: AttributionWithUser) =>
-		!attr?.affiliation?.length
-			? []
-			: attr.affiliation
-					.split(';')
-					.map((x) => x.trim())
-					.filter(Boolean);
+	const affiliations = getDedupedAffliations(attributions);
 
-	const affiliations = [
-		...new Set(
-			attributions
-				.reduce((all, attr) => {
-					all.push(...getAffiliations(attr));
-					return all;
-				}, [] as string[])
-				.filter(Boolean),
-		),
-	];
 	return (
 		<section className="cover">
 			<h3 className="top-heading-items">{renderHeadingItems(metadata)}</h3>

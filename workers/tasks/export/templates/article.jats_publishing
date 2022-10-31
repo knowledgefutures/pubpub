@@ -81,19 +81,28 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
+$if(subtitle)$
+<subtitle>${subtitle}</subtitle>
+$endif$
 </title-group>
 $endif$
 $if(author)$
 <contrib-group>
 $for(author)$
-<contrib contrib-type="author"$if(author.equal-contrib)$ equal-contrib="true"$endif$>
+<contrib contrib-type="author"$if(author.equal-contrib)$ equal-contrib="yes"$endif$$if(author.cor-id)$ corresp="yes"$endif$>
 $if(author.orcid)$
 <contrib-id contrib-id-type="orcid">$author.orcid$</contrib-id>
 $endif$
 $if(author.surname)$
 <name>
-<surname>$author.surname$</surname>
-<given-names>$author.given-names$</given-names>
+<surname>$if(author.non-dropping-particle)$${author.non-dropping-particle} $endif$$author.surname$</surname>
+<given-names>$author.given-names$$if(author.dropping-particle)$ ${author.dropping-particle}$endif$</given-names>
+$if(author.prefix)$
+<prefix>${author.suffix}</prefix>
+$endif$
+$if(author.suffix)$
+<suffix>${author.suffix}</suffix>
+$endif$
 </name>
 $elseif(author.name)$
 <string-name>$author.name$</string-name>
@@ -103,15 +112,25 @@ $endif$
 $if(author.email)$
 <email>$author.email$</email>
 $endif$
+$-- if affiliations are listed separately, then create links. Otherwise
+$-- include them here.
+$if(affiliation)$
 $for(author.affiliation)$
 <xref ref-type="aff" rid="aff-$author.affiliation$"/>
 $endfor$
+$else$
+$for(author.affiliation)$
+${ it:affiliations.jats() }
+$endfor$
+$endif$
 $if(author.cor-id)$
 <xref ref-type="corresp" rid="cor-$author.cor-id$"><sup>*</sup></xref>
 $endif$
 </contrib>
 $endfor$
-${ affiliations.jats() }
+$for(affiliation)$
+${ it:affiliations.jats() }
+$endfor$
 </contrib-group>
 $endif$
 $if(article.author-notes)$
@@ -159,24 +178,30 @@ $if(history)$
 <history>
 </history>
 $endif$
-$if(copyright)$
 <permissions>
-$if(copyright.statement)$
+$for(copyright.statement)$
 <copyright-statement>$copyright.statement$</copyright-statement>
-$endif$
-$if(copyright.year)$
+$endfor$
+$for(copyright.year)$
 <copyright-year>$copyright.year$</copyright-year>
-$endif$
-$if(copyright.holder)$
+$endfor$
+$for(copyright.holder)$
 <copyright-holder>$copyright.holder$</copyright-holder>
-$endif$
+$endfor$
 $if(copyright.text)$
 <license license-type="$copyright.type$" xlink:href="$copyright.link$">
 <license-p>$copyright.text$</license-p>
 </license>
 $endif$
-</permissions>
+$for(license)$
+<license$if(it.type)$ license-type="${it.type}"$endif$>
+$if(it.link)$
+<ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/">${it.link}</ali:license_ref>
 $endif$
+<license-p>$if(it.text)$${it.text}$else$${it}$endif$</license-p>
+</license>
+$endfor$
+</permissions>
 $if(abstract)$
 <abstract>
 $abstract$
@@ -194,6 +219,9 @@ $if(article.funding-statement)$
 <funding-statement>$article.funding-statement$</funding-statement>
 </funding-group>
 $endif$
+$if(uri)$
+<self-uri xlink:href="$uri$">This pub is available from $uri$</self-uri>
+$endif$
 </article-meta>
 $if(notes)$
 <notes>$notes$</notes>
@@ -208,4 +236,3 @@ $back$
 $endif$
 </back>
 </article>
-

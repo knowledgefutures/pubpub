@@ -16,7 +16,7 @@ import HeaderSettings from './HeaderSettings';
 import FooterSettings from './FooterSettings';
 import HomepageBannerSettings from './HomepageBannerSettings';
 import SocialSettings from './SocialSettings';
-import CommunityPubSettings from './CommunityPubSettings';
+import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -142,7 +142,7 @@ const CommunitySettings = () => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				<CommunityPubSettings />,
+				<CommunityOrCollectionLevelPubSettings />,
 			],
 		},
 	];

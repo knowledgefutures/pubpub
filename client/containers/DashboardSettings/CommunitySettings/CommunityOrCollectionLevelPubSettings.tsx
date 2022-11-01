@@ -11,7 +11,7 @@ const facetsInOrder: FacetName[] = [
 	'PubEdgeDisplay',
 ];
 
-const CommunityPubSettings = () => {
+const CommunityOrCollectionLevelPubSettings = () => {
 	return (
 		<>
 			{facetsInOrder.map((facetName) => (
@@ -21,4 +21,4 @@ const CommunityPubSettings = () => {
 	);
 };
 
-export default CommunityPubSettings;
+export default CommunityOrCollectionLevelPubSettings;

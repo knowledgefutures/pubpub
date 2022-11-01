@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBeforeUnload, useUpdateEffect } from 'react-use';
-import { Button, Spinner, Tab, Tabs } from '@blueprintjs/core';
+import { Button, Spinner, Tab, Tabs, Tooltip } from '@blueprintjs/core';
 import classNames from 'classnames';
 
 import { ScopeData } from 'types';
@@ -62,7 +62,7 @@ const DashboardSettingsFrame = (props: Props) => {
 		hasChanges: hasNonFacetsChanges,
 		persist: persistNonFacets,
 	} = props;
-	const { isMobile } = useViewport();
+	const { isMobile, viewportWidth } = useViewport();
 	const { pendingCount } = usePendingChanges();
 	const { locationData, scopeData } = usePageContext();
 	const { hasPersistableChanges: hasFacetsChanges, persistFacets } = useFacetsState();
@@ -71,6 +71,8 @@ const DashboardSettingsFrame = (props: Props) => {
 	const stickyControlsRef = useRef<null | HTMLDivElement>(null);
 	const hasChanges = hasNonFacetsChanges || hasFacetsChanges;
 	const isSavingAutomatically = pendingCount > 0;
+	const isProblematicallySmallDesktop =
+		typeof viewportWidth === 'number' && viewportWidth <= 1125;
 
 	const [currentTabId, setCurrentTabId] = useState(() => {
 		const { subMode } = locationData.params;
@@ -151,6 +153,14 @@ const DashboardSettingsFrame = (props: Props) => {
 
 	const renderTab = (tab: Subtab) => {
 		const { id: tabId, title, ...iconProps } = tab;
+
+		const iconBullet = <IconBullet selected={tabId === currentTabId} {...iconProps} />;
+		const wrappedIconBullet = isProblematicallySmallDesktop ? (
+			<Tooltip content={title}>{iconBullet}</Tooltip>
+		) : (
+			iconBullet
+		);
+
 		return (
 			<Tab
 				id={tabId}
@@ -159,7 +169,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				panelClassName="dashboard-settings-frame-tab-panel"
 				title={
 					<>
-						<IconBullet selected={tabId === currentTabId} {...iconProps} />
+						{wrappedIconBullet}
 						<div className="title">{title}</div>
 					</>
 				}

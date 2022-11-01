@@ -18,6 +18,11 @@ const CopyrightSelectionPicker = (props: Props) => {
 		onUpdateValue({ ...value, ...next });
 	};
 
+	const handleYearChangeFromInput = (evt: any) => {
+		const { value: valueAsString } = evt.target;
+		onUpdateValue({ year: parseInt(valueAsString, 10), choice: 'choose-here' });
+	};
+
 	return (
 		<>
 			<RadioGroup
@@ -33,12 +38,8 @@ const CopyrightSelectionPicker = (props: Props) => {
 				disabled={choice !== 'choose-here'}
 				value={year ?? currentYear}
 				placeholder="1999"
-				onValueChange={(nextYear) =>
-					handleChange({
-						choice: 'choose-here',
-						year: nextYear,
-					})
-				}
+				onBlur={handleYearChangeFromInput}
+				onKeyDown={(e) => e.key === 'Enter' && handleYearChangeFromInput(e)}
 			/>
 		</>
 	);

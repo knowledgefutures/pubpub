@@ -1,5 +1,6 @@
 import { Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
+import { Selection } from 'prosemirror-state';
 
 export const updateNodeAttrsById = (editorView: EditorView, id: string, attrs: Node['attrs']) => {
 	const {
@@ -33,4 +34,11 @@ export const insertNodeIntoEditor = (view: EditorView, nodeType: string, attrs?:
 		const transaction = tr.replaceSelectionWith(node);
 		view.dispatch(transaction);
 	}
+};
+
+export const isDescendantOf = (nodeTypeName: string, selection: Selection): boolean => {
+	const { $anchor } = selection;
+	for (let d = $anchor.depth; d > 0; d--)
+		if ($anchor.node(d).type.name === nodeTypeName) return true;
+	return false;
 };

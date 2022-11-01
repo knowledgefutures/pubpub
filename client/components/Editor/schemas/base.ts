@@ -196,6 +196,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		content: 'text*',
 		group: 'block',
 		attrs: {
+			lang: { default: 'javascript' },
 			id: { default: null },
 		},
 		code: true,

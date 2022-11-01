@@ -118,7 +118,7 @@ const PubMenu = (props: Props) => {
 	const renderNonTagButtons = () => {
 		return (
 			<>
-				{collection.isPublic && renderPrimaryCollectionButton()}
+				{renderPrimaryCollectionButton()}
 				<MenuButton
 					aria-label="Collection context hint"
 					buttonProps={{

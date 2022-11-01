@@ -3,7 +3,7 @@ import { Collection, CollectionPub } from 'types';
 
 const isPrimaryCollectionCandidate = (collectionPub: CollectionPub) => {
 	const { collection } = collectionPub;
-	return collection && collection.kind !== 'tag' && collection.isPublic;
+	return collection && collection.kind !== 'tag';
 };
 
 export const getPrimaryCollection = (collectionPubs: CollectionPub[]) => {

@@ -8,7 +8,14 @@ import { Banner, DashboardFrame, DragDropListing, DragHandle } from 'components'
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { indexByProperty } from 'utils/arrays';
-import { Collection, CollectionPub, Maybe, DefinitelyHas, UserScopeVisit } from 'types';
+import {
+	Collection,
+	CollectionPub,
+	PubWithCollections,
+	Maybe,
+	DefinitelyHas,
+	UserScopeVisit,
+} from 'types';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
@@ -23,7 +30,6 @@ import {
 	OverviewSearchFilter,
 } from '../helpers';
 import { PubOverviewRow, LoadMorePubsRow, SpecialRow } from '../overviewRows';
-import { PubWithCollections } from './types';
 import { useCollectionPubs, useCollectionState } from './collectionState';
 import CollectionControls from './CollectionControls';
 import PubMenu from './PubMenu';
@@ -80,7 +86,7 @@ const DashboardCollectionOverview = (props: Props) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filter, setFilter] = useState<null | OverviewSearchFilter>(null);
 	const [pubsAddedToCollection, setPubsAddedToCollection] = useState<PubWithCollections[]>([]);
-	const { collection, updateCollection } = useCollectionState(initialCollection);
+	const { collection, updateCollection } = useCollectionState(initialCollection, true);
 	const query = filter?.query;
 	const isSearchingOrFiltering = !!searchTerm || !!query;
 	const canDragDrop = !isSearchingOrFiltering && canManage;

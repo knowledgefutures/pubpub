@@ -1,120 +1,72 @@
 import React, { useState } from 'react';
-import { useBeforeUnload } from 'react-use';
-import { Button, Tooltip } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 
 import {
-	Icon,
-	DashboardFrame,
 	DatePicker,
 	DownloadChooser,
 	SettingsSection,
 	ImageUpload,
 	InputField,
-	LicenseSelect,
 	PubAttributionEditor,
-	PubThemePicker,
 	PubCollectionsListing,
+	FacetEditor,
 	TitleEditor,
 } from 'components';
+import { Pub, PubWithCollections } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
-import { DepositTarget, PubPageData } from 'types';
+import { usePersistableState } from 'client/utils/usePersistableState';
 
+import { useFacetsQuery } from 'client/utils/useFacets';
+import LabelWithInfo from '../LabelWithInfo';
 import DeletePub from './DeletePub';
 import Doi from './Doi';
-import CitationChooser from './CitationChooser';
-import NodeLabelEditor from './NodeLabelEditor';
+import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {
-		pubData: PubPageData;
-		depositTarget?: DepositTarget;
+		pubData: PubWithCollections;
 	};
 };
 
 const PubSettings = (props: Props) => {
 	const { settingsData } = props;
 	const { scopeData, communityData } = usePageContext();
+	const { pendingPromise } = usePendingChanges();
 	const {
 		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
-	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
-	const [pendingPubData, setPendingPubData] = useState({});
-	const [isPersisting, setIsPersisting] = useState(false);
-	const { pendingPromise } = usePendingChanges();
 
-	const hasPendingChanges = Object.keys(pendingPubData).length > 0;
-	const pubData = { ...persistedPubData, ...pendingPubData };
-	const description = pubData.description || '';
-
-	useBeforeUnload(
-		hasPendingChanges,
-		'You have unsaved changes to this Pub. Are you sure you want to navigate away?',
-	);
-
-	const updatePubData = (values) => {
-		setPendingPubData({ ...pendingPubData, ...values });
-	};
-
-	const updatePersistedPubData = (values) => {
-		setPersistedPubData({ ...persistedPubData, ...values });
-	};
-
-	const handleSaveChanges = () => {
-		setIsPersisting(true);
-		return pendingPromise(
-			apiFetch('/api/pubs', {
-				method: 'PUT',
-				body: JSON.stringify({
-					...pendingPubData,
-					pubId: pubData.id,
-					communityId: communityData.id,
-				}),
-			}),
-		)
-			.then(() => {
-				const nextPubData = { ...persistedPubData, ...pendingPubData };
-				setPendingPubData({});
-				setIsPersisting(false);
-				setPersistedPubData(nextPubData);
-				if (persistedPubData.slug !== nextPubData.slug) {
-					window.location.href = getDashUrl({
-						pubSlug: nextPubData.slug,
-						mode: 'settings',
-					});
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-				setIsPersisting(false);
+	const [collectionPubs, setCollectionPubs] = useState(settingsData.pubData.collectionPubs);
+	const {
+		state: pubData,
+		hasChanges,
+		update: updatePubData,
+		updatePersistedState: updatePersistedPubData,
+		persistedState: persistedPubData,
+		persist,
+	} = usePersistableState<Pub>(settingsData.pubData, async (update) => {
+		await pendingPromise(apiFetch.put('/api/pubs', { pubId: pubData.id, ...update }));
+		if (update.slug && update.slug !== settingsData.pubData.slug) {
+			window.location.href = getDashUrl({
+				pubSlug: update.slug,
+				mode: 'settings',
 			});
-	};
-
-	const renderControls = () => {
-		const canPersistChanges = hasPendingChanges && pubData.title && pubData.slug;
-		return (
-			<Button
-				type="button"
-				intent="primary"
-				text="Save Changes"
-				disabled={!canPersistChanges}
-				loading={isPersisting}
-				onClick={handleSaveChanges}
-			/>
-		);
-	};
+		}
+	});
+	const headerBackgroundImage = useFacetsQuery((F) => F.PubHeaderTheme.backgroundImage);
 
 	const renderDetails = () => {
 		return (
 			<React.Fragment>
-				<SettingsSection title="Details">
+				<SettingsSection title="Details" showTitle={false}>
 					<InputField label="Title" error={!pubData.title ? 'Required' : null}>
 						<TitleEditor
 							className="bp3-input"
-							initialValue={pubData.htmlTitle ?? undefined}
+							initialValue={pubData.htmlTitle ?? pubData.title}
 							onInput={(nextHtmlTitle, nextTitle) =>
 								updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
 							}
@@ -145,7 +97,7 @@ const PubSettings = (props: Props) => {
 						placeholder="Enter description"
 						helperText={`${(pubData.description || '').length}/280 characters`}
 						isTextarea={true}
-						value={description}
+						value={pubData.description || ''}
 						onChange={(evt) =>
 							updatePubData({
 								description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
@@ -156,23 +108,10 @@ const PubSettings = (props: Props) => {
 					<ImageUpload
 						htmlFor="avatar-upload"
 						label={
-							<span>
-								Preview Image
-								<Tooltip
-									content={
-										<span>
-											Image to be associated with this pub when it is shown in{' '}
-											<br />
-											other pages as part a preview link or in a listing of
-											pubs.
-										</span>
-									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-									tooltipClassName="bp3-dark"
-								>
-									<Icon icon="info-sign" />
-								</Tooltip>
-							</span>
+							<LabelWithInfo
+								label="Preview Image"
+								info="This image is shown as a preview from Pages and other Pubs."
+							/>
 						}
 						canClear={true}
 						key={pubData.avatar}
@@ -187,8 +126,10 @@ const PubSettings = (props: Props) => {
 						}
 					/>
 					<Button
-						disabled={pubData.avatar === pubData.headerBackgroundImage}
-						onClick={() => updatePubData({ avatar: pubData.headerBackgroundImage })}
+						disabled={
+							!headerBackgroundImage || pubData.avatar === headerBackgroundImage
+						}
+						onClick={() => updatePubData({ avatar: headerBackgroundImage! })}
 					>
 						Use header image as preview
 					</Button>
@@ -198,55 +139,25 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderLicense = () => {
-		return (
-			<SettingsSection title="License">
-				<LicenseSelect
-					persistSelections={false}
-					pubData={pubData}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(license: any) => void' is not assignable to... Remove this comment to see the full error message
-					onSelect={(license) => updatePubData({ licenseSlug: license.slug })}
-				>
-					{({ title, icon }) => (
-						<Button icon={icon} text={title} rightIcon="caret-down" />
-					)}
-				</LicenseSelect>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="License" />;
 	};
 
 	const renderTheme = () => {
-		return (
-			<SettingsSection title="Theme">
-				<PubThemePicker
-					updatePubData={updatePubData}
-					pubData={pubData}
-					communityData={communityData}
-				/>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="PubHeaderTheme" />;
 	};
 
 	const renderCitationChooser = () => {
-		return (
-			<SettingsSection title="Citation Style">
-				<CitationChooser
-					pubData={pubData}
-					communityId={communityData.id}
-					onSetCitations={(citationUpdate) => updatePersistedPubData(citationUpdate)}
-				/>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="CitationStyle" />;
 	};
 
 	const renderDoi = () => {
 		return (
-			<SettingsSection title="DOI">
+			<SettingsSection title="DOI" showTitle={false}>
 				<Doi
 					pubData={persistedPubData}
 					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
-					depositTarget={settingsData.depositTarget}
 				/>
 			</SettingsSection>
 		);
@@ -254,7 +165,7 @@ const PubSettings = (props: Props) => {
 
 	const renderAttributions = () => {
 		return (
-			<SettingsSection title="Attributions">
+			<SettingsSection title="Attributions" showTitle={false}>
 				<PubAttributionEditor
 					pubData={pubData}
 					communityData={communityData}
@@ -267,7 +178,15 @@ const PubSettings = (props: Props) => {
 
 	const renderFormattedDownload = () => {
 		return (
-			<SettingsSection title="Download">
+			<SettingsSection
+				title="Download"
+				description={
+					<>
+						You can add a file that users can download for this Pub, in addition to the
+						ones that PubPub automatically generates.
+					</>
+				}
+			>
 				<DownloadChooser
 					pubData={pubData}
 					communityId={communityData.id}
@@ -279,14 +198,12 @@ const PubSettings = (props: Props) => {
 
 	const renderCollections = () => {
 		return (
-			<SettingsSection title="Collections">
+			<SettingsSection title="Collections" showTitle={false}>
 				<PubCollectionsListing
 					pub={pubData}
 					allCollections={communityData.collections}
-					collectionPubs={pubData.collectionPubs}
-					updateCollectionPubs={(nextCollectionPubs) =>
-						updatePersistedPubData({ collectionPubs: nextCollectionPubs })
-					}
+					collectionPubs={collectionPubs}
+					updateCollectionPubs={setCollectionPubs}
 					canManage={canManage}
 				/>
 			</SettingsSection>
@@ -302,30 +219,61 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderNodeLabelEditor = () => {
-		return (
-			<SettingsSection title="Item Labels" id="block-labels">
-				<NodeLabelEditor pubData={persistedPubData} updatePubData={updatePubData} />
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="NodeLabels" />;
 	};
 
+	const renderConnectionsSettings = () => {
+		return <FacetEditor facetName="PubEdgeDisplay" />;
+	};
+
+	const tabs: Subtab[] = [
+		{
+			id: 'details',
+			title: 'Details',
+			icon: 'settings',
+			sections: [renderDetails, renderLicense, renderFormattedDownload, renderDelete],
+		},
+		{
+			id: 'look-and-feel',
+			title: 'Look & Feel',
+			icon: 'palette',
+			sections: [
+				renderTheme,
+				renderCitationChooser,
+				renderNodeLabelEditor,
+				renderConnectionsSettings,
+			],
+		},
+		{
+			id: 'contributors',
+			title: 'Contributors',
+			pubPubIcon: 'contributor',
+			hideSaveButton: true,
+			sections: [renderAttributions],
+		},
+		{
+			id: 'collections',
+			title: 'Collections',
+			pubPubIcon: 'collection',
+			hideSaveButton: true,
+			sections: [renderCollections],
+		},
+		{
+			id: 'doi',
+			title: 'DOI',
+			icon: 'barcode',
+			hideSaveButton: true,
+			sections: [renderDoi],
+		},
+	];
+
 	return (
-		<DashboardFrame
-			className="pub-settings-container"
-			title="Settings"
-			controls={renderControls()}
-		>
-			{renderDetails()}
-			{renderLicense()}
-			{renderTheme()}
-			{renderCitationChooser()}
-			{renderDoi()}
-			{renderAttributions()}
-			{renderFormattedDownload()}
-			{renderCollections()}
-			{renderNodeLabelEditor()}
-			{renderDelete()}
-		</DashboardFrame>
+		<DashboardSettingsFrame
+			tabs={tabs}
+			id="pub-settings"
+			hasChanges={hasChanges}
+			persist={persist}
+		/>
 	);
 };
 export default PubSettings;

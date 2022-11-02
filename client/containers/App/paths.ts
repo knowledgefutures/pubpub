@@ -12,6 +12,7 @@ import {
 	DashboardCustomScripts,
 	DashboardDiscussions,
 	DashboardEdges,
+	DashboardFacets,
 	DashboardImpact,
 	DashboardMembers,
 	DashboardReview,
@@ -70,6 +71,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardEdges: {
 			ActiveComponent: DashboardEdges,
+			isDashboard: true,
+		},
+		DashboardFacets: {
+			ActiveComponent: DashboardFacets,
 			isDashboard: true,
 		},
 		DashboardImpact: {

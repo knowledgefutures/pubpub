@@ -70,7 +70,7 @@ export const destroyMember = ({ memberId, actorId = null }) => {
 };
 
 export const getMembersForScope = async (
-	scope: types.Scope,
+	scope: types.ScopeId,
 ): Promise<types.SequelizeModel<types.Member>[]> => {
 	if ('pubId' in scope && scope.pubId) {
 		const collectionPubs = await CollectionPub.findAll({

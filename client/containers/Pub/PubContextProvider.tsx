@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { NodeLabelMap } from 'client/components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { PatchFn, PubPageData } from 'types';
 
 import { useLazyRef } from 'client/utils/useLazyRef';
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { getPubHeadings, PubHeading } from './PubHeader/headerUtils';
 import {
 	PubSubmissionState,
@@ -42,7 +42,6 @@ export type PubContextType = {
 const shimPubContextProps = {
 	inPub: false,
 	pubData: {
-		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
 		releases: [],
 		releaseNumber: 0,
@@ -72,14 +71,13 @@ export const PubContextProvider = (props: Props) => {
 		editorChangeObject: collabData.editorChangeObject,
 	});
 	const pubBodyState = usePubBodyState({ pubData, collabData, historyData, submissionState });
+	const { citationStyle, inlineCitationStyle } = useFacetsQuery((F) => F.CitationStyle, {
+		fallback: () => ({ citationStyle: 'apa', inlineCitationStyle: 'count' }),
+	});
 
 	const { current: noteManager } = useLazyRef(
 		() =>
-			new NoteManager(
-				pubData.citationStyle,
-				pubData.citationInlineStyle,
-				pubData.initialStructuredCitations,
-			),
+			new NoteManager(citationStyle, inlineCitationStyle, pubData.initialStructuredCitations),
 	);
 
 	const pubHeadings = useMemo(

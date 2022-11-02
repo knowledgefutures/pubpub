@@ -3,11 +3,12 @@ import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
 
-import { DocJson, Pub } from 'types';
+import { DocJson } from 'types';
 import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
 import { expiringPromise } from 'utils/promises';
+import { CitationStyle, FacetCascadedType } from 'facets';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -122,14 +123,17 @@ export const getStructuredCitations = async (
 	return structuredCitationsMap;
 };
 
-export const getStructuredCitationsForPub = (pubData: Pub, pubDoc: DocJson) => {
+export const getStructuredCitationsForPub = (
+	citationStyleFacet: FacetCascadedType<typeof CitationStyle>,
+	pubDoc: DocJson,
+) => {
 	const pubDocNode = jsonToNode(pubDoc);
-	const { citationStyle = 'apa-7', citationInlineStyle = 'count' } = pubData;
+	const { citationStyle = 'apa-7', inlineCitationStyle = 'count' } = citationStyleFacet;
 	const { footnotes, citations } = getNotesByKindFromDoc(pubDocNode);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];
-	return getStructuredCitations(structuredValuesInDoc, citationStyle, citationInlineStyle);
+	return getStructuredCitations(structuredValuesInDoc, citationStyle, inlineCitationStyle);
 };
 
 export const getPathToCslFileForCitationStyleKind = (kind: CitationStyleKind) => {

@@ -134,7 +134,7 @@ app.get(
 			return next();
 		}
 
-		const { communityData } = await getInitialData(req, true);
+		const { communityData } = await getInitialData(req, { isDashboard: true });
 		const sitemapFileStream = await getSitemapIndex(communityData, 'sitemap-index.xml');
 
 		res.header('Content-Encoding', 'gzip');
@@ -158,7 +158,7 @@ app.get(
 			return res.sendStatus(404);
 		}
 
-		const { communityData } = await getInitialData(req, true);
+		const { communityData } = await getInitialData(req, { isDashboard: true });
 		const sitemapFileStream = await getSitemapIndex(
 			communityData,
 			sitemapIndexOrSitemapFilename,

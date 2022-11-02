@@ -7,15 +7,10 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubForRequest } from 'server/utils/queryHelpers';
-import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 
 const getSettingsData = async (pubSlug, initialData) => {
-	const baseSettingsData = {
-		depositTarget: await getCommunityDepositTarget(initialData.communityData.id),
-	};
 	if (pubSlug) {
 		return {
-			...baseSettingsData,
 			pubData: await getPubForRequest({
 				slug: pubSlug,
 				initialData,
@@ -23,17 +18,24 @@ const getSettingsData = async (pubSlug, initialData) => {
 			}),
 		};
 	}
-	return baseSettingsData;
+	return {};
 };
 
 app.get(
-	['/dash/settings', '/dash/collection/:collectionSlug/settings', '/dash/pub/:pubSlug/settings'],
+	[
+		'/dash/settings',
+		'/dash/collection/:collectionSlug/settings',
+		'/dash/pub/:pubSlug/settings',
+		'/dash/settings/:subMode',
+		'/dash/collection/:collectionSlug/settings/:subMode',
+		'/dash/pub/:pubSlug/settings/:subMode',
+	],
 	async (req, res, next) => {
 		try {
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			const settingsData = await getSettingsData(req.params.pubSlug, initialData);
 
 			if (!initialData.scopeData.activePermissions.canView) {
@@ -45,7 +47,7 @@ app.get(
 				<Html
 					chunkName="DashboardSettings"
 					initialData={initialData}
-					viewData={{ settingsData }}
+					viewData={{ settingsData, subMode: req.params.subMode }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: `Settings · ${initialData.scopeData.elements.activeTarget.title}`,

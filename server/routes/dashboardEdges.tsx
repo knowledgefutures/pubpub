@@ -17,7 +17,7 @@ app.get(
 				return next();
 			}
 			const { pubSlug } = req.params;
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			const pubData = await getPubForRequest({
 				slug: pubSlug,
 				initialData,

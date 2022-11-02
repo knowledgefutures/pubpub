@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { ViewportSize } from 'types';
+
 type Options = {
 	withEarlyMeasurement?: boolean;
 };
@@ -24,6 +26,9 @@ export const useViewport = (options: Options = {}) => {
 	const [viewportHeight, setViewportHeight] = useState<number | null>(
 		withEarlyMeasurement ? earlyViewportHeight : null,
 	);
+	const isMobile = typeof viewportWidth === 'number' ? viewportWidth <= 750 : null;
+	const viewportSize: null | ViewportSize =
+		isMobile === null ? null : isMobile ? 'mobile' : 'desktop';
 
 	useEffect(() => {
 		setViewportWidth(window.innerWidth);
@@ -39,6 +44,7 @@ export const useViewport = (options: Options = {}) => {
 	return {
 		viewportWidth,
 		viewportHeight,
-		isMobile: typeof viewportWidth === 'number' ? viewportWidth <= 750 : null,
+		viewportSize,
+		isMobile,
 	};
 };

@@ -1,5 +1,7 @@
 @import 'styles/mixins.scss';
 
+$bottom-menu-height: 50px;
+
 .bottom-menu-component {
 	background: var(--community-accent-dark);
 	.side-title {
@@ -107,7 +109,7 @@
 			width: auto;
 		}
 		.mode-button {
-			height: 50px;
+			height: $bottom-menu-height;
 			justify-content: left;
 			padding-left: 20px;
 			flex-direction: row;
@@ -145,7 +147,7 @@
 		a {
 			padding: 0px !important;
 			.menu {
-				height: 50px;
+				height: $bottom-menu-height;
 				display: flex;
 				flex-direction: row;
 				align-items: center;

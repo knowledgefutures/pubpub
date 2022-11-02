@@ -1,0 +1,17 @@
+.autosave-indicator-component {
+	color: #999;
+	display: flex;
+	align-items: center;
+	opacity: 0;
+	transition: 100ms opacity ease-out;
+	font-style: italic;
+
+	&[aria-hidden='false'] {
+		opacity: 1;
+	}
+
+	.bp3-spinner,
+	.bp3-icon {
+		margin-right: 6px;
+	}
+}

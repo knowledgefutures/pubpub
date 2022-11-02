@@ -5,6 +5,7 @@ import { Menu, MenuItem, Tag } from '@blueprintjs/core';
 import { Review, SanitizedPubData } from 'types';
 import { ContributorsList, DashboardFrame, PubHeaderBackground, PubTitle } from 'components';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { formatDate } from 'utils/dates';
 import { getAllPubContributors } from 'utils/contributors';
 import { getDashUrl } from 'utils/dashboard';
@@ -23,6 +24,8 @@ const PubOverview = (props: Props) => {
 	const { pubData } = props;
 	const { communityData } = usePageContext();
 	const { description } = pubData;
+
+	const pubHeaderTheme = useFacetsQuery((F) => F.PubHeaderTheme);
 
 	const renderSection = (sectionTitle, sectionText) => {
 		return (
@@ -120,8 +123,8 @@ const PubOverview = (props: Props) => {
 	return (
 		<DashboardFrame className="pub-overview-component" title="Overview">
 			<PubHeaderBackground
+				pubHeaderTheme={pubHeaderTheme}
 				className="pub-header-component"
-				pubData={pubData}
 				communityData={communityData}
 				safetyLayer="full-height"
 			>

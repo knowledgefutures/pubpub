@@ -46,7 +46,7 @@ const PubBottom = (props: Props) => {
 						searchPlaceholder="Search references..."
 					/>
 				)}
-				<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
+				<LicenseSection />
 				{showDiscussions && (
 					<DiscussionsSection
 						pubData={pubData}

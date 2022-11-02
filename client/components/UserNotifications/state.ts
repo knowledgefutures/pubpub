@@ -3,7 +3,7 @@ import {
 	ActivityItem,
 	PatchFnArg,
 	Pub,
-	Scope,
+	ScopeId,
 	Thread,
 	UserNotificationWithActivityItem,
 } from 'types';
@@ -114,7 +114,7 @@ const sortPubStates = (pubStates: PubNotificationsState[]) => {
 const renderActivityItems = (
 	unrenderedActivityItems: ActivityItem[],
 	initializer: NotificationsInitializer,
-	scope: Scope,
+	scope: ScopeId,
 ) => {
 	const otherActorsCount = -1 + new Set(unrenderedActivityItems.map((item) => item.actorId)).size;
 	return unrenderedActivityItems.map((item) =>
@@ -152,7 +152,7 @@ const createInitialPubState = (
 	notifications: UserNotificationWithActivityItem[],
 	initializer: NotificationsInitializer,
 ): PubNotificationsState => {
-	const { associations, subscriptions } = initializer;
+	const { associations, subscriptions, facets } = initializer;
 	const location = { pubId: pub.id };
 	const notificationsByThread = bucketBy(notifications, (n) => n.activityItem.payload.threadId);
 	const subscription = subscriptions.find((s) => s.pubId === pub.id) ?? null;
@@ -166,6 +166,7 @@ const createInitialPubState = (
 				pub,
 			),
 	);
+	const pubHeaderTheme = facets.pub[pub.id].PubHeaderTheme.value;
 	const sortedThreadStates = sortThreadStates(threadStates);
 	return {
 		location,
@@ -175,6 +176,7 @@ const createInitialPubState = (
 		threadStates: sortedThreadStates,
 		initiallyUnread: threadStates.some((state) => state.initiallyUnread),
 		latestUnreadTimestamp: sortedThreadStates[0].latestUnreadTimestamp,
+		pubHeaderTheme,
 	};
 };
 

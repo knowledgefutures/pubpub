@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 
+import { isProd } from 'utils/environment';
+
 const defaultBody = { username: 'PubPub', unfurl_links: true };
 
 export const postToSlack = async (body: Record<string, any>) => {
@@ -20,27 +22,29 @@ export const postToSlack = async (body: Record<string, any>) => {
 	}
 };
 
-export const postToSlackAboutNewCommunity = (
+export const postToSlackAboutNewCommunity = async (
 	title: string,
 	subdomain: string,
 	adminName: string,
 	adminEmail: string,
 ) => {
-	const url = `https://${subdomain}.pubpub.org`;
-	return postToSlack({
-		icon_emoji: ':bowtie:',
-		attachments: [
-			{
-				fallback: `*${title}*\n<${url}>\n_${adminName} (${adminEmail})_`,
-				pretext: 'New community created!',
-				color: 'good',
-				fields: [
-					{
-						title: `${title}`,
-						value: `${url}\n_${adminName} (${adminEmail})_`,
-					},
-				],
-			},
-		],
-	});
+	if (isProd()) {
+		const url = `https://${subdomain}.pubpub.org`;
+		await postToSlack({
+			icon_emoji: ':bowtie:',
+			attachments: [
+				{
+					fallback: `*${title}*\n<${url}>\n_${adminName} (${adminEmail})_`,
+					pretext: 'New community created!',
+					color: 'good',
+					fields: [
+						{
+							title: `${title}`,
+							value: `${url}\n_${adminName} (${adminEmail})_`,
+						},
+					],
+				},
+			],
+		});
+	}
 };

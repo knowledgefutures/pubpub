@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { LicenseSelect } from 'components';
+import { FacetEditor, PopoverButton } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getLicenseForPub } from 'utils/licenses';
-import { PubPageData } from 'types';
+import { renderLicenseForPub } from 'utils/licenses';
+import { useFacetsQuery } from 'client/utils/useFacets';
 
-import PubBottomSection, { SectionBullets, AccentedIconButton } from './PubBottomSection';
+import { usePubContext } from '../../pubHooks';
+import PubBottomSection, { AccentedIconButton, SectionBullets } from './PubBottomSection';
 
-type Props = {
-	pubData: PubPageData;
-	updateLocalData: (...args: any[]) => any;
-};
-
-const LicenseSection = (props: Props) => {
-	const { pubData, updateLocalData } = props;
+const LicenseSection = () => {
+	const { pubData } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
-	const { link, full, slug, summary } = getLicenseForPub(pubData, communityData);
+	const license = useFacetsQuery((F) => F.License);
+	const { collectionPubs } = pubData;
+
+	const { link, full, kind, summary } = useMemo(
+		() =>
+			renderLicenseForPub({
+				pub: pubData,
+				community: communityData,
+				license,
+				collectionPubs,
+			}),
+		[pubData, communityData, license, collectionPubs],
+	);
 
 	return (
 		<PubBottomSection
@@ -35,7 +43,7 @@ const LicenseSection = (props: Props) => {
 							<img
 								width={75}
 								alt=""
-								src={`/static/license/${slug}.svg`}
+								src={`/static/license/${kind}.svg`}
 								className="license-image"
 							/>
 							{full} {summary && `(${summary})`}
@@ -44,21 +52,19 @@ const LicenseSection = (props: Props) => {
 				</React.Fragment>
 			}
 			iconItems={({ iconColor }) => {
-				if (scopeData.activePermissions.canManage) {
-					return (
-						<LicenseSelect pubData={pubData as any} updateLocalData={updateLocalData}>
-							{({ isPersisting }) => (
-								<AccentedIconButton
-									accentColor={iconColor}
-									icon="edit"
-									title="Select Pub license"
-									loading={isPersisting}
-								/>
-							)}
-						</LicenseSelect>
-					);
+				if (!scopeData.activePermissions.canManage) {
+					return null;
 				}
-				return null;
+				return (
+					<PopoverButton
+						component={() => <FacetEditor facetName="License" selfContained />}
+						placement="top-end"
+						aria-label="Edit license"
+						facetName="License"
+					>
+						<AccentedIconButton icon="edit" accentColor={iconColor} />
+					</PopoverButton>
+				);
 			}}
 		/>
 	);

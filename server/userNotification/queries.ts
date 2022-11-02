@@ -7,6 +7,7 @@ import {
 	getOrCreateUserNotificationPreferences,
 	updateUserNotificationPreferences,
 } from 'server/userNotificationPreferences/queries';
+import { fetchFacetsForScopeIds } from 'server/facets';
 
 type FetchOptions = {
 	userId: string;
@@ -94,7 +95,9 @@ export const fetchUserNotifications = async (
 		'activityItem'
 	>[] = [...(maybeUnreadNotifications || []), ...readNotifications];
 
-	const [subscriptions, associations] = await Promise.all([
+	const allPubIds = allNotifications.map((n) => n.activityItem.pubId);
+
+	const [subscriptions, associations, facets] = await Promise.all([
 		UserSubscription.findAll({
 			where: {
 				userId,
@@ -104,12 +107,14 @@ export const fetchUserNotifications = async (
 		fetchAssociationsForActivityItems(
 			allNotifications.map((notification) => notification.activityItem),
 		),
+		fetchFacetsForScopeIds({ pub: allPubIds }, ['PubHeaderTheme']),
 	]);
 
 	return {
 		notifications: allNotifications.map((n) => n.toJSON()),
 		associations,
 		subscriptions,
+		facets,
 		notificationPreferences,
 	};
 };

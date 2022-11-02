@@ -17,10 +17,12 @@ class PubPubBaseError extends Error {
 
 export const PubPubError = {
 	ForbiddenSlugError: class extends PubPubBaseError {
+		readonly desiredSlug: string;
 		readonly slugStatus: ForbiddenSlugStatus;
 
-		constructor(slugStatus: ForbiddenSlugStatus) {
+		constructor(desiredSlug: string, slugStatus: ForbiddenSlugStatus) {
 			super(PubPubApplicationError.ForbiddenSlug, 'Forbidden slug');
+			this.desiredSlug = desiredSlug;
 			this.slugStatus = slugStatus;
 		}
 	},
@@ -92,7 +94,11 @@ export const handleErrors = (req, res, next) => {
 
 export const errorMiddleware = (err, _, res, next) => {
 	if (err instanceof PubPubError.ForbiddenSlugError) {
-		res.status(400).json({ type: err.type, slugStatus: err.slugStatus });
+		res.status(400).json({
+			type: err.type,
+			slugStatus: err.slugStatus,
+			desiredSlug: err.desiredSlug,
+		});
 	} else if (err instanceof HTTPStatusError) {
 		if (!res.headersSent) {
 			res.status(err.status).send(err.message);

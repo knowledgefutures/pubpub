@@ -1,0 +1,39 @@
+@import 'styles/mixins.scss';
+
+$icon-container-size: 32px;
+$icon-container-size-mobile: 28px;
+
+.icon-bullet-component {
+	box-sizing: border-box;
+	width: $icon-container-size;
+	height: $icon-container-size;
+	border-radius: $icon-container-size;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--community-accent-dark-faded);
+	color: rgb(42, 42, 42);
+	border: 1px solid #ddd;
+
+	&.selected {
+		color: white;
+		transition: 0.1s all ease-out;
+		background-color: var(--community-accent-dark);
+		border-color: var(--community-accent-dark);
+		.bp3-icon {
+			opacity: 1;
+		}
+	}
+
+	.bp3-icon {
+		opacity: 0.5;
+		position: relative;
+		z-index: 1;
+	}
+
+	&.small {
+		width: $icon-container-size-mobile;
+		height: $icon-container-size-mobile;
+	}
+}

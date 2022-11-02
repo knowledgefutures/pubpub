@@ -19,7 +19,7 @@ app.get(
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			// const discussionsData = await getDiscussions(initialData);
 			const discussionsData = {};
 			return renderToNodeStream(

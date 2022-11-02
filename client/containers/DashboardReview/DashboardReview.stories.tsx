@@ -14,7 +14,7 @@ storiesOf('containers/DashboardReview', module).add('default', () => (
 		<AccentStyle communityData={communityData} isNavHidden={false} />
 
 		<div style={{ padding: '20px', maxWidth: '1240px' }}>
-			<DashboardReview reviewData={reviewData} />
+			<DashboardReview reviewData={reviewData as any} />
 		</div>
 	</div>
 ));

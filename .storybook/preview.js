@@ -5,7 +5,7 @@ import { addDecorator, addParameters } from '@storybook/react';
 import { PubContextProvider } from 'client/containers/Pub/PubContextProvider';
 import { PageContext } from 'utils/hooks';
 import { communityData, locationData, loginData, scopeData, pubData } from 'utils/storybook/data';
-import { AccentStyle } from 'components';
+import { AccentStyle, FacetsStateProvider } from 'components';
 
 const pageContext = {
 	communityData,
@@ -28,10 +28,14 @@ require('styles/base.scss');
 addDecorator((storyFn) => {
 	return (
 		<PageContext.Provider value={pageContext}>
-			<PubContextProvider pubData={pubData}>
-				<AccentStyle communityData={communityData} isNavHidden={false} />
-				{storyFn()}
-			</PubContextProvider>
+			<FacetsStateProvider
+				options={{ currentScope: scopeData.scope, cascadeResults: scopeData.facets }}
+			>
+				<PubContextProvider pubData={pubData}>
+					<AccentStyle communityData={communityData} isNavHidden={false} />
+					{storyFn()}
+				</PubContextProvider>
+			</FacetsStateProvider>
 		</PageContext.Provider>
 	);
 });

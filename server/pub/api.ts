@@ -106,11 +106,10 @@ app.post(
 app.put(
 	'/api/pubs',
 	wrap(async (req, res) => {
-		const { userId, pubId, licenseSlug } = getRequestIds(req);
+		const { userId, pubId } = getRequestIds(req);
 		const updatableFields = await getUpdatablePubFields({
 			userId,
 			pubId,
-			licenseSlug,
 		});
 		if (updatableFields) {
 			const updateResult = await updatePub(req.body, updatableFields, userId);

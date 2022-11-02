@@ -8,6 +8,7 @@ require('./collection'); // Route: /collection/:id
 require('./dashboardActivity');
 require('./dashboardDiscussions');
 require('./dashboardEdges');
+require('./dashboardFacets');
 require('./dashboardImpact');
 require('./dashboardMembers');
 require('./dashboardCommunityOverview');

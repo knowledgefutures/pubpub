@@ -57,7 +57,7 @@ const templates = {
 
 app.get('/email/:templateSlug', async (req, res, next) => {
 	try {
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const {
 			communityData: community,
 			loginData: { id: userId },

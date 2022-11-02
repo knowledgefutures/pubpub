@@ -46,4 +46,5 @@ export type PubGetOptions = {
 	getReviews?: boolean;
 	getEdgesOptions?: PubEdgeIncludesOptions;
 	getSubmissions?: boolean;
+	getFacets?: boolean;
 };

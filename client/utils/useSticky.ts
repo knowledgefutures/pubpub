@@ -7,6 +7,7 @@ type Options = {
 	offset?: number;
 	isActive?: boolean;
 	target: string | HTMLElement;
+	verticalPosition?: 'top' | 'bottom';
 };
 
 const useOrFakeResizeObserver = (onResize: Callback) => {
@@ -32,12 +33,13 @@ const useOrFakeResizeObserver = (onResize: Callback) => {
 };
 
 export const useSticky = (options: Options) => {
-	const { target, offset = 0, isActive = true } = options;
+	const { target, offset = 0, isActive = true, verticalPosition = 'top' } = options;
 	const stickyInstanceRef = useRef<null | StickyBits>(null);
 
 	useEffect(() => {
-		if (isActive) {
+		if (isActive && target) {
 			stickyInstanceRef.current = stickybits(target, {
+				verticalPosition,
 				stickyBitStickyOffset: offset,
 				useStickyClasses: true,
 			});
@@ -50,10 +52,9 @@ export const useSticky = (options: Options) => {
 			};
 		}
 		return () => {};
-	}, [isActive, offset, target]);
+	}, [isActive, offset, target, verticalPosition]);
 
 	useOrFakeResizeObserver(() => stickyInstanceRef.current && stickyInstanceRef.current.update());
-	return stickyInstanceRef.current;
 };
 
 export const isSticky = (element: HTMLElement) => {

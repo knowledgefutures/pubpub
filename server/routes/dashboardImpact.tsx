@@ -15,7 +15,7 @@ app.get(
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			const { activeTargetType, activeTarget } = initialData.scopeData.elements;
 			const impactData = {
 				baseToken: generateMetabaseToken(activeTargetType, activeTarget.id, 'base'),

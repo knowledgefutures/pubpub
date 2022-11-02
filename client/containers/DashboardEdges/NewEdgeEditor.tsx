@@ -5,7 +5,7 @@ import React from 'react';
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
 import { assert } from 'utils/assert';
 
-import { Pub, PubEdge } from 'types';
+import { PubEdge } from 'types';
 import { PubEdgeEditor, PubEdgeListingCard } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 
@@ -17,7 +17,7 @@ type Props = {
 	onCancel: () => unknown;
 	onChange: (edge: PubEdge) => unknown;
 	onSave: (edge: PubEdge) => Promise<any> | void;
-	pubData: Pub;
+	pubEdgeDescriptionIsVisible: boolean;
 	pubEdge: PubEdge | null;
 	usedPubIds: string[];
 	loading?: boolean;
@@ -47,12 +47,12 @@ const NewEdgeEditor = (props: Props) => {
 		onChange,
 		onCancel,
 		onSave,
-		pubData,
 		pubEdge,
 		usedPubIds,
 		loading,
 		error,
 		saveButtonLabel,
+		pubEdgeDescriptionIsVisible,
 	} = props;
 
 	const currentRelationName =
@@ -141,12 +141,13 @@ const NewEdgeEditor = (props: Props) => {
 					</Button>
 				</div>
 				<PubEdgeListingCard
-					pubData={pubData}
 					isInboundEdge={false}
 					pubEdge={pubEdge}
+					pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 					pubEdgeElement={
 						externalPublication && (
 							<PubEdgeEditor
+								pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
 								externalPublication={externalPublication}
 								onUpdateExternalPublication={(update) =>
 									onChange({
@@ -154,7 +155,6 @@ const NewEdgeEditor = (props: Props) => {
 										externalPublication: { ...externalPublication, ...update },
 									})
 								}
-								pubData={pubData}
 							/>
 						)
 					}

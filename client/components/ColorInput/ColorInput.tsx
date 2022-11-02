@@ -55,7 +55,7 @@ const ColorInput = function (props) {
 				}
 				interactionKind={PopoverInteractionKind.CLICK}
 				position={Position.BOTTOM}
-				usePortal={false}
+				minimal
 			>
 				{typeof props.children === 'function' ? (
 					props.children(props.value)

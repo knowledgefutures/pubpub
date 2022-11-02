@@ -9,7 +9,8 @@ export type DashboardMode =
 	| 'reviews'
 	| 'scripts'
 	| 'settings'
-	| 'submissions';
+	| 'submissions'
+	| 'facets';
 
 type GetDashUrlOptions = {
 	pubSlug?: string;

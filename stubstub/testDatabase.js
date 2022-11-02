@@ -81,10 +81,12 @@ export const startTestDatabaseServer = async () => {
 	if (!hasbin.all.sync(requiredBinaries)) {
 		throwBinariesWarning();
 	}
-	return spawn('pg_ctl', ['start', '-w'], {
+	const child = spawn('pg_ctl', ['start', '-w'], {
 		env: {
 			...process.env,
 			PGDATA: pgDataPath,
 		},
 	});
+	child.on('error', (err) => console.error(err));
+	return child;
 };

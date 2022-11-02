@@ -13,7 +13,7 @@ app.get('/dash/scripts', async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			next();
 		}
-		const initialData = await getInitialData(req, true);
+		const initialData = await getInitialData(req, { isDashboard: true });
 		const { scopeData, communityData } = initialData;
 
 		if (!scopeData.activePermissions.canAdminCommunity) {

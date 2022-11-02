@@ -127,6 +127,7 @@ storiesOf('components/PubEdgeListing', module).add('header', () => (
 	<StoryContainer>
 		<PubEdgeListing
 			accentColor="#A22E37"
+			pubEdgeDescriptionIsVisible
 			pubData={pubData}
 			initialFilters={[Filter.Parent]}
 			isolated
@@ -136,6 +137,6 @@ storiesOf('components/PubEdgeListing', module).add('header', () => (
 
 storiesOf('components/PubEdgeListing', module).add('footer', () => (
 	<StoryContainer>
-		<PubEdgeListing accentColor="#A22E37" pubData={pubData} />
+		<PubEdgeListing accentColor="#A22E37" pubEdgeDescriptionIsVisible pubData={pubData} />
 	</StoryContainer>
 ));

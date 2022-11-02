@@ -15,7 +15,7 @@ app.get(
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
-			const initialData = await getInitialData(req, true);
+			const initialData = await getInitialData(req, { isDashboard: true });
 			const membersData = await getMembers(initialData);
 
 			if (!initialData.scopeData.activePermissions.canView) {

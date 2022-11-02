@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePageContext } from 'utils/hooks';
-import CommunitySettings from './CommunitySettings';
+import CommunitySettings from './CommunitySettings/CommunitySettings';
 import CollectionSettings from './CollectionSettings';
 import PubSettings from './PubSettings';
 

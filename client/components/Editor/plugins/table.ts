@@ -40,13 +40,13 @@ class PubTableView extends TableView {
 	syncCaption(node) {
 		const { dom } = this as any as { dom: HTMLElement };
 		const label = buildLabel(node);
-		if (label) {
-			const table = dom.querySelector('table');
-			if (table) {
-				const existingCaption = table.querySelector('caption');
-				if (existingCaption && existingCaption.parentNode === table) {
-					existingCaption.remove();
-				}
+		const table = dom.querySelector('table');
+		if (table) {
+			const existingCaption = table.querySelector('caption');
+			if (existingCaption && existingCaption.parentNode === table) {
+				existingCaption.remove();
+			}
+			if (label) {
 				const caption = document.createElement('caption');
 				caption.innerHTML = label;
 				table.append(caption);

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CollectionPub, Pub, Collection, Community, DefinitelyHas, SlugStatus } from 'types';
+import { CollectionPub, Pub, Collection, Community, DefinitelyHas, SlugStatus, Maybe } from 'types';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { usePendingChanges, usePageContext } from 'utils/hooks';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
@@ -138,7 +138,17 @@ export const useCollectionPubs = (options: UseCollectionPubsOptions) => {
 	};
 };
 
-export const useCollectionState = <C extends Collection>(initialCollection: C) => {
+const getSlugStatus = (error: Maybe<Record<string, any>>, currentSlug: string): SlugStatus => {
+	if (error && error.desiredSlug === currentSlug && error.type === 'forbidden-slug') {
+		return error.slugStatus;
+	}
+	return 'available';
+};
+
+export const useCollectionState = <C extends Collection>(
+	initialCollection: C,
+	persistOnUpdate = false,
+) => {
 	const { updateCollection: updateCollectionGlobally, communityData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
@@ -155,10 +165,9 @@ export const useCollectionState = <C extends Collection>(initialCollection: C) =
 	);
 
 	const collection = useMemo(() => linkCollection(state, communityData), [state, communityData]);
-	const slugStatus: SlugStatus =
-		error?.type === 'forbidden-slug' ? error.slugStatus : 'available';
+	const slugStatus: SlugStatus = getSlugStatus(error, state.slug);
 
-	const updateCollection = (next) => update(next, true);
+	const updateCollection = (next) => update(next, persistOnUpdate);
 
 	const deleteCollection = () =>
 		pendingPromise(

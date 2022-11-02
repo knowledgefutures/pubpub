@@ -1,0 +1,45 @@
+$grid-color: #ccc;
+$dark-blue: #137cbd;
+$light-blue: #48aff0;
+$padding: 4px;
+$border-radius: 3px;
+
+@mixin selection-row {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 10px;
+	max-width: 350px;
+}
+
+@mixin selectable {
+	cursor: pointer;
+	display: flex;
+	flex-basis: 0;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	padding: $padding;
+	border-radius: 4px;
+	.example {
+		margin-left: #{0 - $border-radius};
+		border: $border-radius solid transparent;
+	}
+	.label {
+		margin-top: 4px;
+		font-size: 12px;
+		max-width: 80px;
+		color: #6e6e6e;
+		user-select: none;
+	}
+	.selectable {
+		&:hover {
+			box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+			&:not(.selected) {
+				border: 3px solid $dark-blue;
+			}
+		}
+		&.selected {
+			border: 3px solid $light-blue !important;
+		}
+	}
+}

@@ -7,6 +7,7 @@ export { default as Avatars } from './Avatars/Avatars';
 export { default as Byline } from './Byline/Byline';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as ClientOnly, ClientOnlyContext } from './ClientOnly/ClientOnly';
+export { default as CollectionAttributionEditor } from './CollectionAttributionEditor/CollectionAttributionEditor';
 export { default as CollectionMultiSelect } from './CollectionMultiSelect/CollectionMultiSelect';
 export { default as ColorInput } from './ColorInput/ColorInput';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
@@ -26,6 +27,13 @@ export { default as DownloadChooser } from './DownloadChooser/DownloadChooser';
 export { DragDropListing, DragDropOrdering, DragHandle } from './DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';
 export { default as Editor } from './Editor';
+export { default as FacetEditor } from './FacetEditor';
+export {
+	default as FacetsStateProvider,
+	FacetsState,
+	FacetState,
+	FacetsContext,
+} from './FacetsStateProvider';
 export { default as FileUploadButton } from './FileUploadButton/FileUploadButton';
 export { default as Footer } from './Footer/Footer';
 export { default as FormattingBar } from './FormattingBar/FormattingBar';
@@ -40,7 +48,6 @@ export { default as Layout } from './Layout/Layout';
 export { default as LayoutEditor } from './LayoutEditor/LayoutEditor';
 export { default as LegalBanner } from './LegalBanner/LegalBanner';
 export { default as LengthIndicator } from './LengthIndicator/LengthIndicator';
-export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
 export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
 export { default as InheritedMembersBlock } from './Members/InheritedMembersBlock';
 export { default as MemberRow } from './Members/MemberRow';
@@ -56,6 +63,7 @@ export {
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as MobileAware, MobileAwareRenderProps } from './MobileAware';
 export { default as NavBar } from './NavBar/NavBar';
+export { default as NavBuilder } from './NavBuilder/NavBuilder';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';
 export { default as Overlay } from './Overlay/Overlay';
 export { default as PagePreview } from './PagePreview/PagePreview';
@@ -80,7 +88,6 @@ export { default as PubPreview } from './PubPreview/PubPreview';
 export { default as PubReleaseDialog } from './PubReleaseDialog/PubReleaseDialog';
 export { default as PubReleaseReviewDialog } from './PubReleaseReviewDialog/PubReleaseReviewDialog';
 export { default as PubShareDialog } from './PubShareDialog/PubShareDialog';
-export { default as PubThemePicker } from './PubThemePicker/PubThemePicker';
 export { default as PubTitle } from './PubTitle/PubTitle';
 export { default as ReferencesDropdown } from './ReferencesDropdown/ReferencesDropdown';
 export { default as QueryListDropdown } from './QueryListDropdown/QueryListDropdown';

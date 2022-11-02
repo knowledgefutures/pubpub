@@ -1,4 +1,5 @@
 import { Community } from 'server/models';
+import 'server/hooks';
 
 import { buildImportPlan, printImportPlan } from './plan';
 import { resolveImportPlan } from './resolve';

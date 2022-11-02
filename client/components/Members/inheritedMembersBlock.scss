@@ -2,7 +2,7 @@
 
 .inherited-members-block-component {
 	background: #f9f9f9;
-	outline: 10px solid #f9f9f9;
+	padding: 10px;
 	border-radius: 4px;
 	&:not(:last-child) {
 		margin-bottom: 1em;

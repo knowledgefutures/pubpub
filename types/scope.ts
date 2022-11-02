@@ -1,4 +1,6 @@
-export type Scope = { communityId: string } & ({ pubId: string } | { collectionId: string } | {});
+export type ScopeId = { communityId: string } & ({ pubId: string } | { collectionId: string } | {});
+
+export type SingleScopeId = { communityId: string } | { pubId: string } | { collectionId: string };
 
 export type ScopeSummary = {
 	collections: number;

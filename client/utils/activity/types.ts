@@ -1,12 +1,18 @@
 import React from 'react';
 
-import { ActivityAssociations, ActivityItemKind, InsertableActivityItem, Scope, User } from 'types';
+import {
+	ActivityAssociations,
+	ActivityItemKind,
+	InsertableActivityItem,
+	ScopeId,
+	User,
+} from 'types';
 import { IconName } from 'components';
 
 // Information we'll pass around about the current render
 export type ActivityRenderContext = {
 	associations: ActivityAssociations;
-	scope: Scope;
+	scope: ScopeId;
 	userId: null | string;
 	otherActorsCount?: number;
 };
@@ -48,7 +54,7 @@ export type RenderedActivityItem = {
 	// The time associated with this item.
 	timestamp: Date;
 	// The Scope associated with this item, which can be used for filtering.
-	scope: Scope;
+	scope: ScopeId;
 	// The user who performed the action
 	actor: null | User;
 };

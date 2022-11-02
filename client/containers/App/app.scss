@@ -78,10 +78,9 @@
 			padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
 			@include mobile {
 				width: 100%;
-				padding: 10px;
+				padding: 15px;
 				padding-top: 50px;
 				margin-left: 0px;
-				overflow-y: scroll;
 			}
 		}
 	}

@@ -72,3 +72,8 @@ sup {
 		text-decoration: underline;
 	}
 }
+
+@mixin subheading {
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}

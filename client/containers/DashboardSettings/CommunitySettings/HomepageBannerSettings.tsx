@@ -26,11 +26,14 @@ const HomepageBannerSettings = (props: Props) => {
 		heroImage,
 		heroTitle,
 		heroText,
-		heroPrimaryButton = { title: '', url: '' },
-		heroSecondaryButton = { title: '', url: '' },
+		heroPrimaryButton: providedHeroPrimaryButton,
+		heroSecondaryButton: providedHeroSecondaryButton,
 		heroAlign = 'left',
 	} = communityData;
 	const activeHeroTextColor = heroTextColor || '#FFFFFF';
+
+	const heroPrimaryButton = providedHeroPrimaryButton || { title: '', url: '' };
+	const heroSecondaryButton = providedHeroSecondaryButton || { title: '', url: '' };
 
 	return (
 		<>

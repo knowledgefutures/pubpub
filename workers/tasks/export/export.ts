@@ -46,7 +46,7 @@ export const exportTask = async ({ exportId }) => {
 		}
 	}
 	if (url === undefined) {
-		url = (await uploadDocument(pubId, tmpFile, extension)) as string;
+		url = await uploadDocument(pubId, tmpFile, extension);
 	}
 	await assignFileToExportById(exportId, url);
 	return { url };

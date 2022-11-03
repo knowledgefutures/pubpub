@@ -22,3 +22,7 @@ export const expiringPromise = <Arguments extends any[], ReturnType>(
 		});
 	};
 };
+
+export const sleep = (timeMs: number) => {
+	return new Promise((resolve) => setTimeout(resolve, timeMs));
+};

@@ -1,5 +1,6 @@
 import fs from 'fs';
-import AWS from 'aws-sdk';
+
+import { createPubPubS3Client } from 'server/utils/s3';
 
 import { backupsS3Bucket } from './constants';
 import { BackupFile } from './types';
@@ -10,18 +11,12 @@ const getS3Instance = () => {
 	if (!accessKeyId || !secretAccessKey) {
 		throw new Error('Missing AWS backup credentials in environment');
 	}
-	return new AWS.S3({ accessKeyId, secretAccessKey });
+	return createPubPubS3Client({ accessKeyId, secretAccessKey, bucket: backupsS3Bucket });
 };
 
 const s3 = getS3Instance();
 
 export const uploadFileToS3 = (file: BackupFile, uploadId: string) => {
 	const readableStream = fs.createReadStream(file.localPath);
-	return s3
-		.upload({
-			Key: `${uploadId}/${file.remotePath}`,
-			Bucket: backupsS3Bucket,
-			Body: readableStream,
-		})
-		.promise();
+	return s3.uploadFile(`${uploadId}/${file.remotePath}`, readableStream);
 };

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { google } = require('googleapis');
+const { google } = require('google-auth-library');
 const request = require('request');
 
 const TOKEN_EXPIRY_MINS = 30;

@@ -1,13 +1,11 @@
 import fs from 'fs';
-import AWS from 'aws-sdk';
 
 import { isProd } from 'utils/environment';
 import { generateHash } from 'utils/hashes';
+import { assetsClient } from 'server/utils/s3';
 
+import { sleep } from 'utils/promises';
 import { extensionFor } from './util';
-
-AWS.config.setPromisesDependency(Promise);
-const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
 
 export const getUrlForAssetKey = (assetKey) => `https://assets.pubpub.org/${assetKey}`;
 
@@ -19,55 +17,34 @@ export const generateAssetKeyForFile = (filePath) => {
 	return `${folderName}/${randomness}${now}.${fileExtension}`;
 };
 
-const blockForAssetFile = (assetKey) =>
-	new Promise((resolve, reject) => {
-		let attempts = 0;
-		const checkForFile = () => {
-			// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-			s3bucket
-				.headObject({ Key: assetKey })
-				.promise()
-				.then(resolve)
-				.catch(() => {
-					if (attempts > 5) {
-						return reject();
-					}
-					attempts += 1;
-					return setTimeout(() => {
-						checkForFile();
-					}, 1000);
-				});
-		};
-		checkForFile();
+const blockForAssetFile = (assetKey: string) =>
+	new Promise<void>(async (resolve, reject) => {
+		for (let i = 0; i < 5; i++) {
+			// eslint-disable-next-line no-await-in-loop
+			const exists = await assetsClient.checkIfFileExists(assetKey);
+			if (exists) {
+				return resolve();
+			}
+			// eslint-disable-next-line no-await-in-loop
+			await sleep(1000);
+		}
+		return reject();
 	});
 
 export const downloadFileFromAssetStore = (assetKey: string, filePath: string) =>
 	new Promise(async (resolve, reject) => {
 		await blockForAssetFile(assetKey);
 		const writeStream = fs.createWriteStream(filePath);
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-		s3bucket
-			.getObject({ Key: assetKey })
-			.createReadStream()
+		const fileStream = await assetsClient.downloadFile(assetKey);
+		fileStream
 			.pipe(writeStream)
 			.on('error', (error) => reject(error))
 			.on('close', () => resolve(filePath));
 	});
 
-export const uploadFileToAssetStore = (filePath: string, givenAssetKey?: string) => {
+export const uploadFileToAssetStore = async (filePath: string, givenAssetKey?: string) => {
 	const assetKey = givenAssetKey || generateAssetKeyForFile(filePath);
-	const params = {
-		Key: assetKey,
-		Body: fs.createReadStream(filePath),
-		ACL: 'public-read',
-	};
-	return new Promise((resolve, reject) => {
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-		s3bucket.upload(params, (err) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(assetKey);
-		});
-	});
+	const readStream = fs.createReadStream(filePath);
+	await assetsClient.uploadFile(assetKey, readStream);
+	return assetKey;
 };

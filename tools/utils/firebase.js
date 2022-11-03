@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { google } = require('googleapis');
+const { JWT } = require('google-auth-library');
 const request = require('request');
 
 const TOKEN_EXPIRY_MINS = 30;
@@ -67,7 +67,7 @@ const createFirebaseClient = (url, serviceAccountB64) => {
 
 	const generateAccessToken = async () =>
 		new Promise((resolve, reject) => {
-			const jwtClient = new google.auth.JWT(
+			const jwtClient = new JWT(
 				serviceAccount.client_email,
 				null,
 				serviceAccount.private_key,

@@ -1,4 +1,3 @@
-import AWS from 'aws-sdk';
 import { SitemapAndIndexStream, SitemapStream } from 'sitemap';
 import * as stream from 'stream';
 import { promisify } from 'util';
@@ -10,23 +9,23 @@ import app, { wrap } from 'server/server';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { communityUrl, pubUrl, pageUrl } from 'utils/canonicalUrls';
+import { createPubPubS3Client } from 'server/utils/s3';
 
-const s3 = new AWS.S3({ params: { Bucket: 'sitemaps.pubpub.org' } });
+const s3 = createPubPubS3Client({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+	bucket: 'sitemaps.pubpub.org',
+	ACL: 'public-read',
+});
+
 const pipeline = promisify(stream.pipeline);
 const keyPrefix = isProd() ? 'prod' : 'dev';
 
 const uploadFromStream = (key) => {
 	const pass = new stream.PassThrough();
-	const params = { Key: key, Body: pass, ACL: 'public-read' };
-
-	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-	s3.upload(params, (err) => {
-		if (err) {
-			console.error(err);
-		}
-		pass.end();
-	});
-
+	s3.uploadFile(key, pass, true)
+		.then(() => pass.end())
+		.catch((err) => console.error(err));
 	return pass;
 };
 
@@ -35,20 +34,20 @@ const getSitemapKey = (community, { filename, index = 'index' } = {}) =>
 	`${keyPrefix}/${community.id}/${filename || `sitemap-${index}.xml`}.gz`;
 
 const shouldGenerateSitemapIndex = async (community) => {
-	try {
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-		const metadata = await s3.headObject({ Key: getSitemapKey(community) }).promise();
-		// Re-generate the sitemap index if sitemap has not been updated within
-		// the last 24 hours.
-		// @ts-expect-error ts-migrate(2363) FIXME: The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
-		return Date.now() - metadata.LastModified >= 8.64e7;
-	} catch (err) {
-		return true;
+	const sitemapKey = getSitemapKey(community);
+	const metadata = await s3.retrieveFileHead(sitemapKey);
+	if (metadata) {
+		const { LastModified: lastModified } = metadata;
+		if (lastModified) {
+			return Date.now() - lastModified.valueOf() >= 8.64e7;
+		}
 	}
+	return true;
 };
 
 const maybeGenerateSitemapIndex = async (community) => {
-	if (!(await shouldGenerateSitemapIndex(community))) {
+	const shouldGenerate = await shouldGenerateSitemapIndex(community);
+	if (!shouldGenerate) {
 		return false;
 	}
 
@@ -115,16 +114,9 @@ const maybeGenerateSitemapIndex = async (community) => {
 
 const getSitemapIndex = async (community, targetFilename) => {
 	await maybeGenerateSitemapIndex(community);
-
-	const indexParams = {
-		Key: getSitemapKey(community, { filename: targetFilename }),
-	};
-
-	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-	await s3.waitFor('objectExists', indexParams).promise();
-
-	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-	return s3.getObject(indexParams).createReadStream();
+	const sitemapKey = getSitemapKey(community, { filename: targetFilename });
+	await s3.waitForFileToExist(sitemapKey, 15);
+	return s3.downloadFile(sitemapKey);
 };
 
 app.get(

@@ -34,6 +34,7 @@
 		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./dist/server/client:./dist/server WORKER=true node dist/server/workers/init"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.137.0",
 		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17",
 		"@blueprintjs/core": "^3.24.0",
 		"@blueprintjs/icons": "^3.14.0",
@@ -55,7 +56,6 @@
 		"@types/styled-components": "^5.1.12",
 		"algoliasearch": "^4.2.0",
 		"amqplib": "^0.5.3",
-		"aws-sdk": "^2.814.0",
 		"big-json": "^2.0.2",
 		"body-parser": "^1.19.0",
 		"bourbon": "^5.1.0",
@@ -89,7 +89,7 @@
 		"firebase-server": "^1.1.0",
 		"fs-extra": "^8.1.0",
 		"fuzzysearch": "^1.0.3",
-		"googleapis": "^40.0.0",
+		"google-auth-library": "^8.1.1",
 		"graphlib": "^2.1.8",
 		"html-minifier": "^4.0.0",
 		"iframe-resizer-react": "^1.0.4",

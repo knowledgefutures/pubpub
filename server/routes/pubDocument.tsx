@@ -3,6 +3,7 @@ import slowDown from 'express-slow-down';
 
 import { getPubPageContextTitle } from 'utils/pubPageTitle';
 import { getPrimaryCollection } from 'utils/collections/primary';
+import { pubUrl } from 'utils/canonicalUrls';
 import { getPdfDownloadUrl, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import Html from 'server/Html';
@@ -58,6 +59,7 @@ const renderPubDocument = (res, pubData, initialData, customScripts) => {
 				initialData,
 				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),
 				publishedAt: getPubPublishedDate(pubData),
+				canonicalUrl: pubUrl(initialData.communityData, pubData),
 				textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
 				title: pubData.title,
 				unlisted: !pubData.isRelease,

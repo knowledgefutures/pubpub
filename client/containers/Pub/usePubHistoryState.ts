@@ -5,8 +5,7 @@ import { EditorView } from 'prosemirror-view';
 import { PubHistoryState, PubPageData, PubDraftInfo, DocJson } from 'types';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-
-import { useIdlyUpdatedState } from './useIdlyUpdatedState';
+import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 
 type Options = {
 	pubData: PubPageData;

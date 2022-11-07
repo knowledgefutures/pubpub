@@ -5,6 +5,7 @@ import { PatchFn, PubPageData } from 'types';
 
 import { useLazyRef } from 'client/utils/useLazyRef';
 import { useFacetsQuery } from 'client/utils/useFacets';
+import { IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 import { getPubHeadings, PubHeading } from './PubHeader/headerUtils';
 import {
 	PubSubmissionState,
@@ -13,7 +14,6 @@ import {
 } from './usePubSubmissionState';
 import { usePubCollabState, PubCollabState } from './usePubCollabState';
 import { usePubHistoryState } from './usePubHistoryState';
-import { IdlePatchFn, useIdlyUpdatedState } from './useIdlyUpdatedState';
 import { PubBodyState, usePubBodyState } from './usePubBodyState';
 import { usePubSuspendWhileTyping } from './PubSuspendWhileTyping';
 

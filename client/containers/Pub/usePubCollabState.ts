@@ -6,8 +6,7 @@ import { getRandomColor } from 'utils/colors';
 import { usePageContext } from 'utils/hooks';
 import { EditorChangeObject } from 'components/Editor';
 import { initFirebase } from 'client/utils/firebaseClient';
-
-import { useIdlyUpdatedState } from './useIdlyUpdatedState';
+import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 
 type CollabUser = {
 	id: null | string;

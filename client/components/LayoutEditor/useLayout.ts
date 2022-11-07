@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { generateHash } from 'utils/hashes';
 import { LayoutBlock } from 'utils/layout/types';
@@ -9,36 +9,31 @@ type ChangeHandler = (newLayout: LayoutBlock[]) => unknown;
 export const useLayout = (initialLayout: LayoutBlock[], onChange: ChangeHandler) => {
 	const [layout, setLayout] = useState(initialLayout);
 
-	useEffect(() => void onChange(layout), [layout, onChange]);
+	const onUpdateLayout = (fn: LayoutUpdateFn) => {
+		const newLayout = [...layout];
+		const nextLayout = fn(newLayout);
+		onChange(nextLayout);
+		setLayout(nextLayout);
+	};
 
-	const onUpdateLayout = useCallback((fn: LayoutUpdateFn) => {
-		setLayout((currentLayout) => fn([...currentLayout]));
-	}, []);
+	const changeLayout = (index: number, newContent: LayoutBlock['content']) => {
+		onUpdateLayout((newLayout) => {
+			newLayout[index].content = newContent;
+			return newLayout;
+		});
+	};
 
-	const changeLayout = useCallback(
-		(index: number, newContent: LayoutBlock['content']) => {
-			onUpdateLayout((newLayout) => {
-				newLayout[index].content = newContent;
-				return newLayout;
-			});
-		},
-		[onUpdateLayout],
-	);
-
-	const changeLayoutPartial = useCallback(
-		(index: number, update: Partial<LayoutBlock['content']>) => {
-			onUpdateLayout((newLayout) => {
-				const block = newLayout[index];
-				const nextBlock = { ...block, content: { ...block.content, ...update } };
-				return [
-					...newLayout.slice(0, index),
-					nextBlock,
-					...newLayout.slice(index + 1),
-				] as LayoutBlock[];
-			});
-		},
-		[onUpdateLayout],
-	);
+	const changeLayoutPartial = (index: number, update: Partial<LayoutBlock['content']>) => {
+		onUpdateLayout((newLayout) => {
+			const block = newLayout[index];
+			const nextBlock = { ...block, content: { ...block.content, ...update } };
+			return [
+				...newLayout.slice(0, index),
+				nextBlock,
+				...newLayout.slice(index + 1),
+			] as LayoutBlock[];
+		});
+	};
 
 	const insertBlock = (
 		index: number,

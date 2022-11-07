@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { AnchorButton, Button } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
@@ -6,7 +6,7 @@ import { communityUrl } from 'utils/canonicalUrls';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { slugifyString } from 'utils/strings';
-import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
+import { LayoutPubsByBlock } from 'utils/layout';
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSlugError } from 'client/utils/slug';
 
@@ -82,7 +82,7 @@ const DashboardPage = (props: Props) => {
 	const slugError = getSlugError(slug, slugStatus);
 
 	useUpdateEffect(() => {
-		if (!hasChanges && slug) {
+		if (!hasChanges) {
 			window.history.replaceState(
 				{},
 				'',
@@ -93,11 +93,6 @@ const DashboardPage = (props: Props) => {
 			);
 		}
 	}, [slug, hasChanges]);
-
-	const handleLayoutChange = useCallback(
-		(newLayout: LayoutBlock[]) => updatePageData({ layout: newLayout }),
-		[updatePageData],
-	);
 
 	const renderControls = () => {
 		const canPersistChanges = hasChanges && title && (slug || !persistedPageData.slug);
@@ -215,7 +210,7 @@ const DashboardPage = (props: Props) => {
 		return (
 			<SettingsSection title="Layout">
 				<LayoutEditor
-					onChange={handleLayoutChange}
+					onChange={(newLayout) => updatePageData({ layout: newLayout })}
 					initialLayout={layout}
 					initialLayoutPubsByBlock={layoutPubsByBlock}
 					communityData={communityData}

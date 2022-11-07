@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Node } from 'prosemirror-model';
 
 import { GridWrapper } from 'components';
@@ -7,7 +7,6 @@ import Editor, { EditorChangeObject } from 'components/Editor';
 
 import { LayoutBlockText } from 'utils/layout';
 import { DocJson } from 'types';
-import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 
 type Content = LayoutBlockText['content'];
 
@@ -19,8 +18,7 @@ type Props = {
 
 const LayoutEditorText = (props: Props) => {
 	const { onChange, content, layoutIndex } = props;
-	const [editorChangeObject, setEditorChangeObject] =
-		useIdlyUpdatedState<null | EditorChangeObject>(null);
+	const [editorChangeObject, setEditorChangeObject] = useState<EditorChangeObject>();
 	const editorWrapperRef = useRef<null | HTMLDivElement>(null);
 
 	const handleEdit = useCallback(

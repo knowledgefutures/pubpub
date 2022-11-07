@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { DefinitelyHas, Submission, PubPageData, DocJson } from 'types';
 import { EditorChangeObject, isEmptyDoc } from 'client/components/Editor';
 
-import { IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 import { SpubHeaderTab } from './SpubHeader/SpubHeader';
+import { IdlePatchFn, useIdlyUpdatedState } from './useIdlyUpdatedState';
 
 type Options = {
 	pubData: PubPageData;

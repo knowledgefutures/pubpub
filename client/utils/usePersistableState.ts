@@ -1,64 +1,86 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { useBeforeUnload } from 'react-use';
+import useStateRef from 'react-usestateref';
 
-export const usePersistableState = <T>(
+type UpdateFnArg<T> = Partial<T> | ((current: T) => T);
+
+export const usePersistableState = <T extends Record<string, any>>(
 	initialPersistedState: T | (() => T),
 	persistFn: (update: Partial<T>, full: T) => Promise<void>,
 	initialUnpersistedState: Partial<T> = {},
 ) => {
-	const [persistedState, setPersistedState] = useState(initialPersistedState);
+	const [persistedState, setPersistedState, persistedStateRef] =
+		useStateRef(initialPersistedState);
+	const [unpersistedState, setUnpersistedState, unpersistedStateRef] =
+		useStateRef(initialUnpersistedState);
+
 	const [isPersisting, setIsPersisting] = useState(false);
-	const [unpersistedState, setUnpersistedState] = useState(initialUnpersistedState);
 	const [error, setError] = useState(null as any);
-	const state = { ...persistedState, ...unpersistedState };
 	const hasChanges = Object.keys(unpersistedState).length > 0;
+
+	const state = useMemo(
+		() => ({ ...persistedState, ...unpersistedState }),
+		[persistedState, unpersistedState],
+	);
 
 	const persistFnRef = useRef(persistFn);
 	persistFnRef.current = persistFn;
 
-	const _persist = useCallback(
-		(partialState: Partial<T>) => {
-			const nextPersistedState = { ...persistedState, ...partialState };
-			const latestPersistFn = persistFnRef.current;
-			setIsPersisting(true);
-			return latestPersistFn(partialState, nextPersistedState)
-				.then(() => {
-					setError(null);
-					setPersistedState(nextPersistedState);
-					setUnpersistedState({});
-				})
-				.catch((err) => setError(err))
-				.finally(() => setIsPersisting(false));
-		},
-		// "Missing dependency: T"
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[persistedState],
-	);
+	const persist = useCallback(() => {
+		const unpersistedStateNow = unpersistedStateRef.current;
+		const nextPersistedState = {
+			...persistedStateRef.current,
+			...unpersistedStateNow,
+		};
+		const latestPersistFn = persistFnRef.current;
+		setIsPersisting(true);
+		return latestPersistFn(unpersistedStateNow, nextPersistedState)
+			.then(() => {
+				setError(null);
+				setPersistedState(nextPersistedState);
+				setUnpersistedState({});
+			})
+			.catch((err) => setError(err))
+			.finally(() => setIsPersisting(false));
+	}, [persistedStateRef, setPersistedState, setUnpersistedState, unpersistedStateRef]);
 
-	const revert = () => setUnpersistedState({});
+	const revert = useCallback(() => {
+		setUnpersistedState({});
+	}, [setUnpersistedState]);
 
 	const update = useCallback(
-		(next: Partial<T>, andPersist = false) => {
-			setUnpersistedState((current) => ({ ...current, ...next }));
+		(next: UpdateFnArg<T>, andPersist = false) => {
+			setUnpersistedState((current) => {
+				const updatedState =
+					typeof next === 'function'
+						? next({ ...persistedStateRef.current, ...current })
+						: next;
+				console.log(updatedState);
+				return { ...current, ...updatedState };
+			});
 			if (andPersist) {
-				_persist(next);
+				persist();
 			}
 		},
-		[_persist],
+		[persist, persistedStateRef, setUnpersistedState],
 	);
 
-	const updatePersistedState = (next: Partial<T>) => {
-		setPersistedState((existingPersistedState) => ({ ...existingPersistedState, ...next }));
-	};
-
-	const persistUnpersistedState = () => _persist(unpersistedState);
+	const updatePersistedState = useCallback(
+		(next: UpdateFnArg<T>) => {
+			setPersistedState((current) => {
+				const updatedState = typeof next === 'function' ? next(current) : next;
+				return { ...current, ...updatedState };
+			});
+		},
+		[setPersistedState],
+	);
 
 	useBeforeUnload(hasChanges);
 
 	return {
 		hasChanges,
 		updatePersistedState,
-		persist: persistUnpersistedState,
+		persist,
 		revert,
 		state,
 		unpersistedState,

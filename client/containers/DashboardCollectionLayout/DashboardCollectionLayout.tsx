@@ -13,6 +13,7 @@ import {
 import { usePageContext } from 'utils/hooks';
 import { Collection, Pub } from 'types';
 import { LayoutPubsByBlock } from 'utils/layout';
+import { usePersistableState } from 'client/utils/usePersistableState';
 import * as api from 'client/utils/collections/api';
 
 require('./dashboardCollectionLayout.scss');
@@ -23,39 +24,36 @@ type Props = {
 };
 
 const DashboardCollectionLayout = (props: Props) => {
+	const { collection: initialCollection } = props;
 	const { communityData } = usePageContext();
-	const [persistedCollectionData, setPersistedCollectionData] = useState(props.collection);
-	const [pendingCollectionData, setPendingCollectionData] = useState<Partial<Collection>>({});
-	const [isPersisting, setIsPersisting] = useState(false);
-	const collection = { ...persistedCollectionData, ...pendingCollectionData };
-	const [isUsingBlocks, setIsUsingBlocks] = useState(!collection.pageId);
-	const { layout = { blocks: [] } } = collection;
-	const hasPendingChanges = Object.keys(pendingCollectionData).length > 0;
-	const canPersistChanges = hasPendingChanges && (isUsingBlocks || collection.pageId);
-
-	const handleSaveChanges = useCallback(async () => {
-		setIsPersisting(true);
-		await api.updateCollection({
+	const {
+		state: collection,
+		update: updateCollection,
+		persist: handleSaveChanges,
+		hasChanges,
+		isPersisting,
+	} = usePersistableState(initialCollection, (updatedCollection) =>
+		api.updateCollection({
 			communityId: communityData.id,
 			collectionId: collection.id,
-			updatedCollection: pendingCollectionData,
-		});
-		setIsPersisting(false);
-		setPersistedCollectionData((data) => ({ ...data, ...pendingCollectionData }));
-		setPendingCollectionData({});
-	}, [collection.id, communityData.id, pendingCollectionData]);
-
-	const updateCollection = useCallback(
-		(update: Partial<Collection>) =>
-			setPendingCollectionData((data) => ({ ...data, ...update })),
-		[],
+			updatedCollection,
+		}),
 	);
+
+	const [isUsingBlocks, setIsUsingBlocks] = useState(!collection.pageId);
+	const canPersistChanges = hasChanges && (isUsingBlocks || collection.pageId);
+	const layout = collection.layout || { blocks: [] };
 
 	const updateLayout = useCallback(
 		(update: Partial<Collection['layout']>) =>
-			setPendingCollectionData((data) => ({ ...data, layout: { ...layout, ...update } })),
-		[layout],
+			updateCollection((data) => ({
+				...data,
+				layout: { ...data.layout, ...update },
+			})),
+		[updateCollection],
 	);
+
+	const updateBlocks = useCallback((blocks) => updateLayout({ blocks }), [updateLayout]);
 
 	useUpdateEffect(() => {
 		if (isUsingBlocks) {
@@ -64,7 +62,7 @@ const DashboardCollectionLayout = (props: Props) => {
 	}, [isUsingBlocks, updateCollection]);
 
 	useBeforeUnload(
-		hasPendingChanges,
+		hasChanges,
 		'You have unsaved changes to this Collection. Are you sure you want to navigate away?',
 	);
 
@@ -148,7 +146,7 @@ const DashboardCollectionLayout = (props: Props) => {
 						initialLayoutPubsByBlock={props.layoutPubsByBlock}
 						collection={collection}
 						communityData={communityData}
-						onChange={(blocks) => updateLayout({ blocks })}
+						onChange={updateBlocks}
 					/>
 				</SettingsSection>
 			)}

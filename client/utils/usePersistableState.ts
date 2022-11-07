@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useBeforeUnload } from 'react-use';
 
 export const usePersistableState = <T>(
@@ -13,28 +13,39 @@ export const usePersistableState = <T>(
 	const state = { ...persistedState, ...unpersistedState };
 	const hasChanges = Object.keys(unpersistedState).length > 0;
 
-	const _persist = (partialState: Partial<T>) => {
-		const nextPersistedState = { ...persistedState, ...partialState };
-		setIsPersisting(true);
-		return persistFn(partialState, nextPersistedState)
-			.then(() => {
-				setError(null);
-				setPersistedState(nextPersistedState);
-				setUnpersistedState({});
-			})
-			.catch((err) => setError(err))
-			.finally(() => setIsPersisting(false));
-	};
+	const persistFnRef = useRef(persistFn);
+	persistFnRef.current = persistFn;
+
+	const _persist = useCallback(
+		(partialState: Partial<T>) => {
+			const nextPersistedState = { ...persistedState, ...partialState };
+			const latestPersistFn = persistFnRef.current;
+			setIsPersisting(true);
+			return latestPersistFn(partialState, nextPersistedState)
+				.then(() => {
+					setError(null);
+					setPersistedState(nextPersistedState);
+					setUnpersistedState({});
+				})
+				.catch((err) => setError(err))
+				.finally(() => setIsPersisting(false));
+		},
+		// "Missing dependency: T"
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[persistedState],
+	);
 
 	const revert = () => setUnpersistedState({});
 
-	const update = (next: Partial<T>, andPersist = false) => {
-		const nextState = { ...unpersistedState, ...next };
-		setUnpersistedState(nextState);
-		if (andPersist) {
-			_persist(nextState);
-		}
-	};
+	const update = useCallback(
+		(next: Partial<T>, andPersist = false) => {
+			setUnpersistedState((current) => ({ ...current, ...next }));
+			if (andPersist) {
+				_persist(next);
+			}
+		},
+		[_persist],
+	);
 
 	const updatePersistedState = (next: Partial<T>) => {
 		setPersistedState((existingPersistedState) => ({ ...existingPersistedState, ...next }));

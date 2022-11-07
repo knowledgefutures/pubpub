@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { usePrevious } from 'react-use';
 
 import { Pub } from 'types';
@@ -66,6 +66,11 @@ export const useLayoutPubs = (
 		initialPubsByBlock.pubIdsByBlockId,
 	);
 
+	const pubsByBlockId = useMemo(
+		() => resolveLayoutPubsByBlock({ pubIdsByBlockId, pubsById }, layout),
+		[pubIdsByBlockId, pubsById, layout],
+	);
+
 	useEffect(() => {
 		if (previousLayout && layout && previousLayout !== layout) {
 			const previousPubBlocks = getPubBlocks(previousLayout);
@@ -92,7 +97,7 @@ export const useLayoutPubs = (
 	}, [previousLayout, layout, pubsById, collectionId]);
 
 	return {
-		pubsByBlockId: resolveLayoutPubsByBlock({ pubIdsByBlockId, pubsById }, layout),
+		pubsByBlockId,
 		allPubs: Object.values(pubsById),
 		loadingPubs: requestCount !== 0,
 	};

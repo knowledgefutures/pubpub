@@ -266,7 +266,7 @@ app.get(
 			return next();
 		}
 
-		const initialData = await getInitialData(req);
+		const initialData = await getInitialDataForPub(req);
 		const { historyKey: historyKeyString, pubSlug } = req.params;
 		const { canView } = initialData.scopeData.activePermissions;
 		const { hasHistoryKey, historyKey } = checkHistoryKey(historyKeyString);

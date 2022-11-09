@@ -51,10 +51,15 @@ const PubSettings = (props: Props) => {
 	} = usePersistableState<Pub>(settingsData.pubData, async (update) => {
 		await pendingPromise(apiFetch.put('/api/pubs', { pubId: pubData.id, ...update }));
 		if (update.slug && update.slug !== settingsData.pubData.slug) {
-			window.location.href = getDashUrl({
-				pubSlug: update.slug,
-				mode: 'settings',
-			});
+			// The setTimeout() gives the usePersistableState hook a chance to disable its
+			// onBeforeUnload hook. which triggers a browser popup asking the user if they really
+			// want to navigate away.
+			setTimeout(() => {
+				window.location.href = getDashUrl({
+					pubSlug: update.slug,
+					mode: 'settings',
+				});
+			}, 0);
 		}
 	});
 	const headerBackgroundImage = useFacetsQuery((F) => F.PubHeaderTheme.backgroundImage);

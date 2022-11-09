@@ -12,7 +12,8 @@ export type PandocNote = {
 	id: string;
 	cslJson: Record<string, any>;
 	hasStructuredContent: boolean;
-	unstructuredHtml: string;
+	unstructuredHtml: null | undefined | string;
+	structuredHtml: null | undefined | string;
 };
 
 export type PandocNotes = Record<string, PandocNote>;
@@ -76,12 +77,20 @@ export const getPandocNotesById = (notesData: NotesData): PandocNotes => {
 	const notes = [...citations, ...footnotes];
 	const index: PandocNotes = {};
 	notes.forEach((note) => {
+		const { unstructuredValue: unstructuredHtml, structuredValue } = note;
 		const { hasStructuredContent, cslJson } = getCslJsonForNote(note, renderedStructuredValues);
+		const structuredHtmlFullOfDivs = renderedStructuredValues[structuredValue]?.html;
+		const structuredHtmlWithBareStyling = structuredHtmlFullOfDivs
+			? sanitizeHtml(structuredHtmlFullOfDivs, {
+					allowedTags: ['b', 'i', 'strong', 'em', 'a'],
+			  })
+			: null;
 		index[note.id] = {
 			id: getIdForNote(cslJson, note.id),
 			cslJson,
 			hasStructuredContent,
-			unstructuredHtml: note.unstructuredValue,
+			unstructuredHtml,
+			structuredHtml: structuredHtmlWithBareStyling,
 		};
 	});
 	return index;

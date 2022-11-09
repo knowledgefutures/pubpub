@@ -147,104 +147,98 @@ const ScopeDropdown = (props: Props) => {
 		<div className={classNames('scope-dropdown-component', isDashboard && 'in-dashboard')}>
 			{isDashboard && <div className="intro">Select Scope:</div>}
 			<div className="scopes">
-				{scopes.map((scope, index) => {
-					return (
-						<MenuItem
-							href={scope.href}
-							key={scope.type}
-							text={
-								<div className={`scope-item item-${index}`}>
-									<div className="content">
-										<div className="top">
-											<Icon
-												icon={scope.icon}
-												iconSize={scope.iconSize || 10}
-											/>
-											{scope.type}
-										</div>
-										<div className="bottom">
-											<Avatar
-												avatar={scope.avatar}
-												initials={scope.title[0]}
-												width={18}
-												isBlock={true}
-											/>
-											{scope.title}
-										</div>
+				{scopes.map((scope, index) => (
+					<MenuItem
+						href={scope.href}
+						key={scope.type}
+						text={
+							<div className={`scope-item item-${index}`}>
+								<div className="content">
+									<div className="top">
+										<Icon icon={scope.icon} iconSize={scope.iconSize || 10} />
+										{scope.type}
 									</div>
-									{scope.showSettings && scope.type !== 'Page' && (
-										<div className="settings">
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'settings',
-												})}
-											>
-												<Icon icon={pubPubIcons.settings} iconSize={12} />
-											</a>
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'members',
-												})}
-											>
-												<Icon icon={pubPubIcons.member} iconSize={12} />
-											</a>
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'impact',
-												})}
-											>
-												<Icon icon={pubPubIcons.impact} iconSize={12} />
-											</a>
-											{scope.type === 'Collection' && (
-												<a
-													href={getDashUrl({
-														collectionSlug:
-															scope.slugs &&
-															scope.slugs.collectionSlug,
-														pubSlug: scope.slugs && scope.slugs.pubSlug,
-														mode: 'layout',
-													})}
-												>
-													<Icon icon={pubPubIcons.layout} iconSize={12} />
-												</a>
-											)}
-											<a
-												href={`/${
-													(scope.slugs &&
-														scope.slugs.pubSlug &&
-														'pub/' + scope.slugs.pubSlug) ||
-													(scope.slugs && scope.slugs.collectionSlug)
-												}`}
-											>
-												<Icon icon="globe" iconSize={12} />
-											</a>
-										</div>
-									)}
-									{scope.showSettings && scope.type === 'Page' && (
-										<div className="settings">
-											<a
-												href={`/${
-													(scope.slugs && scope.slugs.pageSlug) || '/'
-												}`}
-											>
-												<Icon icon="globe" iconSize={12} />
-											</a>
-										</div>
-									)}
+									<div className="bottom">
+										<Avatar
+											avatar={scope.avatar}
+											initials={scope.title[0]}
+											width={18}
+											isBlock={true}
+										/>
+										{scope.title}
+									</div>
 								</div>
-							}
-						/>
-					);
-				})}
+								{scope.showSettings && scope.type !== 'Page' && (
+									<div className="settings">
+										<a
+											href={getDashUrl({
+												collectionSlug:
+													scope.slugs && scope.slugs.collectionSlug,
+												pubSlug: scope.slugs && scope.slugs.pubSlug,
+												mode: 'settings',
+											})}
+										>
+											<Icon icon={pubPubIcons.settings} iconSize={12} />
+										</a>
+										<a
+											href={getDashUrl({
+												collectionSlug:
+													scope.slugs && scope.slugs.collectionSlug,
+												pubSlug: scope.slugs && scope.slugs.pubSlug,
+												mode: 'members',
+											})}
+										>
+											<Icon icon={pubPubIcons.member} iconSize={12} />
+										</a>
+										<a
+											href={getDashUrl({
+												collectionSlug:
+													scope.slugs && scope.slugs.collectionSlug,
+												pubSlug: scope.slugs && scope.slugs.pubSlug,
+												mode: 'impact',
+											})}
+										>
+											<Icon icon={pubPubIcons.impact} iconSize={12} />
+										</a>
+										{scope.type === 'Collection' && (
+											<a
+												href={getDashUrl({
+													collectionSlug:
+														scope.slugs && scope.slugs.collectionSlug,
+													pubSlug: scope.slugs && scope.slugs.pubSlug,
+													mode: 'layout',
+												})}
+											>
+												<Icon icon={pubPubIcons.layout} iconSize={12} />
+											</a>
+										)}
+										<a
+											href={`/${
+												(scope.slugs?.pubSlug &&
+													`pub/${scope.slugs.pubSlug}`) ||
+												scope.slugs?.collectionSlug ||
+												''
+											}`}
+										>
+											<Icon icon="globe" iconSize={12} />
+										</a>
+									</div>
+								)}
+								{scope.showSettings && scope.type === 'Page' && (
+									<div className="settings">
+										<a
+											href={`/${
+												(scope.slugs && scope.slugs.pageSlug) || '/'
+											}`}
+										>
+											<Icon icon="globe" iconSize={12} />
+										</a>
+									</div>
+								)}
+							</div>
+						}
+					/>
+				))}
 			</div>
 		</div>
 	);

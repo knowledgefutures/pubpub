@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Button } from '@blueprintjs/core';
+import { Button, Classes } from '@blueprintjs/core';
 
 import { InputField } from 'components';
 import { usePendingChanges } from 'utils/hooks';
@@ -41,7 +41,7 @@ const PageDelete = (props: Props) => {
 	}, [communityId, pageData.id, pendingPromise]);
 
 	return isForbidden ? (
-		<div className="bp3-callout bp3-intent-danger">
+		<div className={`${Classes.CALLOUT} ${Classes.INTENT_DANGER}`}>
 			<h5>Delete Page from Community</h5>
 			<p>
 				<b>{pageData.title}</b> cannot be deleted because it is the home page for this
@@ -49,7 +49,7 @@ const PageDelete = (props: Props) => {
 			</p>
 		</div>
 	) : (
-		<div className="bp3-callout bp3-intent-danger">
+		<div className={`${Classes.CALLOUT} ${Classes.INTENT_DANGER}`}>
 			<h5>Delete Page from Community</h5>
 			<p>Deleting a Page is permanent.</p>
 			<p>
@@ -66,7 +66,7 @@ const PageDelete = (props: Props) => {
 			<div className="delete-button-wrapper">
 				<Button
 					type="button"
-					className="bp3-intent-danger"
+					className={Classes.INTENT_DANGER}
 					text="Delete Page"
 					disabled={deleteString !== pageData.title}
 					loading={isDeleting}

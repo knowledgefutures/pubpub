@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 #search-container {
 	padding: 2em 0em;
 	.search-header {
@@ -17,20 +21,20 @@
 			text-decoration: none;
 		}
 	}
-	.bp3-input-group input {
+	.#{$bp}-input-group input {
 		margin-bottom: 1em;
 		font-size: 35px;
 		font-weight: 200;
 		height: 70px;
 		line-height: 70px;
 	}
-	.bp3-input-action {
+	.#{$bp}-input-action {
 		margin-top: 7px;
 	}
-	.bp3-tabs {
+	.#{$bp}-tabs {
 		border-bottom: 1px solid #ccc;
 	}
-	.bp3-spinner {
+	.#{$bp}-spinner {
 		width: 35px;
 		margin: 13px;
 	}

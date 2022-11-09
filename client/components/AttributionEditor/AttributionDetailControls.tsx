@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
+import { Checkbox, Classes, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
 import { AttributionWithUser } from 'types';
@@ -63,7 +63,7 @@ const AttributionDetailControls = (props: Props) => {
 					},
 					placeholder: 'Add roles...',
 					tagProps: {
-						className: 'bp3-minimal bp3-intent-primary',
+						className: `${Classes.MINIMAL} ${Classes.INTENT_PRIMARY}`,
 					},
 					inputProps: {
 						placeholder: 'Add roles...',
@@ -80,7 +80,7 @@ const AttributionDetailControls = (props: Props) => {
 				}}
 				noResults={<MenuItem disabled>No Matching Roles</MenuItem>}
 				popoverProps={{
-					popoverClassName: 'bp3-minimal',
+					popoverClassName: Classes.MINIMAL,
 					position: Position.BOTTOM_LEFT,
 					modifiers: {
 						preventOverflow: {

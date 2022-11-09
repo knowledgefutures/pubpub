@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
 
 import { GridWrapper, InputField } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -100,7 +100,7 @@ const PasswordReset = (props: Props) => {
 							<Button
 								name="create"
 								type="submit"
-								className="bp3-button bp3-intent-primary create-account-button"
+								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
 								onClick={handlePostPasswordReset}
 								text="Reset Password"
 								disabled={!email}
@@ -122,7 +122,7 @@ const PasswordReset = (props: Props) => {
 
 				{/* Show Error message if invalid hash */}
 				{resetHash && !passwordResetData.hashIsValid && (
-					<div className="bp3-callout bp3-intent-danger">
+					<div className={`${Classes.CALLOUT} ${Classes.INTENT_DANGER}`}>
 						Invalid hash. Try <a href="/password-reset">resetting your password</a>{' '}
 						again.
 					</div>
@@ -141,7 +141,7 @@ const PasswordReset = (props: Props) => {
 							<Button
 								name="create"
 								type="submit"
-								className="bp3-button bp3-intent-primary create-account-button"
+								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
 								onClick={handlePutPasswordReset}
 								text="Set New Password"
 								disabled={!password}
@@ -161,7 +161,7 @@ const PasswordReset = (props: Props) => {
 						action={
 							<AnchorButton
 								href="/login"
-								className="bp3-intent-primary bp3-large"
+								className={`${Classes.INTENT_PRIMARY} ${Classes.LARGE}`}
 								text="Login with new password"
 							/>
 						}

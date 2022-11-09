@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .contributors-list_contributor-component {
 	display: flex;
 	margin-bottom: 8px;
@@ -41,7 +45,7 @@
 		align-items: center;
 		margin-top: 3px;
 		font-size: 12px;
-		.bp3-icon {
+		.#{$bp}-icon {
 			margin-right: 3px;
 		}
 	}

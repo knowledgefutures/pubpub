@@ -1,7 +1,11 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @mixin button-colors {
-	.bp3-button.bp3-minimal {
+	.#{$bp}-button.#{$bp}-minimal {
 		color: currentColor;
-		.bp3-icon {
+		.#{$bp}-icon {
 			color: currentColor;
 		}
 	}
@@ -13,14 +17,14 @@
 	display: flex;
 	align-items: center;
 
-	.bp3-button {
+	.#{$bp}-button {
 		padding: 0px 10px;
 	}
 }
 
-// AccentStyle.tsx provides a very specific color selector for buttons under .bp3-dark
+// AccentStyle.tsx provides a very specific color selector for buttons under .bp[#]-dark
 // so we need to be even more specific about overriding it here.
-.bp3-dark {
+.#{$bp}-dark {
 	.global-controls-component {
 		@include button-colors;
 	}

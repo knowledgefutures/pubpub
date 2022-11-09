@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AnchorButton } from '@blueprintjs/core';
+import { AnchorButton, Classes } from '@blueprintjs/core';
 
 import Overlay from 'components/Overlay/Overlay';
 import ImageCropper from 'components/ImageCropper/ImageCropper';
@@ -161,19 +161,19 @@ class ImageUpload extends Component<Props, State> {
 			backgroundImage: `url("${this.state.imageBlob}")`,
 		};
 		return (
-			<div className="image-upload-component bp3-form-group">
+			<div className={`image-upload-component ${Classes.FORM_GROUP}`}>
 				{/* This label's target is properly nested, but rendered by renderInput() */}
 				{/* eslint-disable-next-line jsx-a11y/label-has-for */}
 				<label htmlFor={`input-${this.props.htmlFor}`}>
 					{this.props.label}
 					{this.props.isRequired && (
-						<span className="bp3-text-muted required-text"> (required)</span>
+						<span className={`${Classes.TEXT_MUTED} required-text`}> (required)</span>
 					)}
 					{this.props.label && <br />}
 
 					{(this.state.uploading || !this.state.imageBlob) && (
 						<AnchorButton
-							className="upload-button bp3-minimal"
+							className={`upload-button ${Classes.MINIMAL}`}
 							style={buttonStyle}
 							loading={this.state.uploading}
 							title="Upload new header image"
@@ -194,7 +194,7 @@ class ImageUpload extends Component<Props, State> {
 					<div className="image-options">
 						{!this.state.uploading && this.state.imageBlob && (
 							<AnchorButton
-								className="bp3-minimal"
+								className={Classes.MINIMAL}
 								title="Upload new header image"
 								aria-label="Upload new header image"
 								icon={<Icon icon="edit2" />}
@@ -202,7 +202,7 @@ class ImageUpload extends Component<Props, State> {
 						)}
 						{!this.state.uploading && this.state.imageBlob && (
 							<AnchorButton
-								className="bp3-minimal"
+								className={Classes.MINIMAL}
 								href={this.state.imageBlob}
 								target="_blank"
 								icon="download"
@@ -213,7 +213,7 @@ class ImageUpload extends Component<Props, State> {
 						)}
 						{!this.state.uploading && this.state.imageBlob && this.props.canClear && (
 							<AnchorButton
-								className="bp3-minimal bp3-intent-danger"
+								className={`${Classes.MINIMAL} ${Classes.INTENT_DANGER}`}
 								icon="trash"
 								title="Remove header image"
 								aria-label="Remove header image"
@@ -223,7 +223,7 @@ class ImageUpload extends Component<Props, State> {
 					</div>
 					{this.renderInput()}
 					{this.props.helperText && (
-						<div className="bp3-form-helper-text">{this.props.helperText}</div>
+						<div className={Classes.FORM_HELPER_TEXT}>{this.props.helperText}</div>
 					)}
 				</label>
 				<Overlay

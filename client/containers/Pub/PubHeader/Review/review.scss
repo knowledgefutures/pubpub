@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .review-component {
 	position: absolute;
 	right: 0;
@@ -6,17 +10,17 @@
 
 	.review-button {
 		padding-top: 18px;
-		.bp3-button {
-			.bp3-icon {
+		.#{$bp}-button {
+			.#{$bp}-icon {
 				color: white !important;
 			}
 			&:hover {
-				.bp3-icon {
+				.#{$bp}-icon {
 					color: white !important;
 				}
 			}
 		}
-		.bp3-button-text {
+		.#{$bp}-button-text {
 			color: white;
 		}
 	}

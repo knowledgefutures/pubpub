@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../overviewStyles.scss';
 
 .kind-toggle-component[type='checkbox'] {
@@ -8,7 +12,7 @@
 	border-radius: 2px;
 	padding: 4px 8px;
 
-	.bp3-icon {
+	.#{$bp}-icon {
 		margin-right: 4px;
 		margin-top: 1px;
 	}

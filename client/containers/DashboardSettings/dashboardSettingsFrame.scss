@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 @import 'client/containers/App/BottomMenu/bottomMenu.scss';
 
@@ -15,11 +19,11 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
 }
 
 .dashboard-settings-frame-component {
-	.bp3-tabs.dashboard-settings-frame-tabs {
-		.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+	.#{$bp}-tabs.dashboard-settings-frame-tabs {
+		.#{$bp}-tab-indicator-wrapper .#{$bp}-tab-indicator {
 			background-color: var(--community-accent-dark);
 		}
-		.bp3-tab.dashboard-settings-frame-tab {
+		.#{$bp}-tab.dashboard-settings-frame-tab {
 			display: flex;
 			align-items: center;
 			padding: 6px 0;
@@ -37,8 +41,8 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
 		}
 	}
 
-	.bp3-button.dashboard-settings-frame-menu {
-		.bp3-button-text {
+	.#{$bp}-button.dashboard-settings-frame-menu {
+		.#{$bp}-button-text {
 			flex-grow: 1;
 		}
 	}
@@ -50,7 +54,7 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		z-index: 8; // Seems to be needed to stay on top of .bp3-button-group .bp3-button.bp3-active
+		z-index: 8; // Seems to be needed to stay on top of .bp[#]-button-group .bp[#]-button.bp[#]-active
 		&.js-is-sticky {
 			box-shadow: $gentle-shadow;
 		}
@@ -75,11 +79,11 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
 			& > * {
 				// Thicken up the dropdown and the button a little
 				height: 100%;
-				.bp3-button {
+				.#{$bp}-button {
 					height: 100%;
 				}
 			}
-			.bp3-button {
+			.#{$bp}-button {
 				background-color: white;
 			}
 			.autosave-indicator-component {
@@ -118,7 +122,7 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
 }
 
 .dashboard-settings-frame-component__tabs-menu {
-	.bp3-menu-item {
+	.#{$bp}-menu-item {
 		align-items: center;
 	}
 }

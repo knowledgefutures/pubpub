@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../PubHeader/themes.scss';
 @import '../pub.scss';
 
@@ -5,14 +9,14 @@
 	margin-top: 25px;
 	margin-bottom: 25px;
 
-	.bp3-callout {
+	.#{$bp}-callout {
 		padding-top: 15px;
 		padding-bottom: 15px;
 
-		&.bp3-callout-icon {
+		&.#{$bp}-callout-icon {
 			padding-left: 45px;
 
-			.bp3-icon:first-child {
+			.#{$bp}-icon:first-child {
 				left: 15px;
 				top: 15px;
 			}

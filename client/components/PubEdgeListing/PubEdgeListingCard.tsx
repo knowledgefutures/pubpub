@@ -1,6 +1,6 @@
+import React, { useState, useCallback } from 'react';
 import { Icon } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React, { useState, useCallback } from 'react';
 
 import { PubEdge } from 'components';
 import { toTitleCase } from 'utils/strings';

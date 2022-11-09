@@ -1,9 +1,13 @@
-.pub-share-dialog-component.bp3-dialog {
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.pub-share-dialog-component.#{$bp}-dialog {
 	width: 1000px;
 	max-width: 90vw;
 	max-height: 90vh;
 
-	.bp3-dialog-body {
+	.#{$bp}-dialog-body {
 		display: flex;
 		overflow: hidden;
 		margin: 10px;
@@ -30,7 +34,7 @@
 
 	.hash-row {
 		margin-bottom: 10px;
-		.bp3-button {
+		.#{$bp}-button {
 			display: flex;
 			justify-content: flex-start;
 			width: 160px;
@@ -63,7 +67,7 @@
 	}
 
 	@media screen and (max-width: 800px) {
-		.bp3-dialog-body {
+		.#{$bp}-dialog-body {
 			flex-direction: column-reverse;
 			.pane {
 				flex-basis: unset;

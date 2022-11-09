@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Color from 'color';
-import { AnchorButton, Tooltip } from '@blueprintjs/core';
+import { AnchorButton, Classes, Tooltip } from '@blueprintjs/core';
 
 import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -88,7 +88,7 @@ class LayoutBanner extends Component<Props, State> {
 
 		const button = (
 			<AnchorButton
-				className="bp3-large"
+				className={Classes.LARGE}
 				onClick={onButtonClick}
 				loading={this.state.isLoading}
 				text={buttonText}

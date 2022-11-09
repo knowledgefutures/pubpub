@@ -1,4 +1,8 @@
-.pub-menu-item-component.bp3-menu-item {
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.pub-menu-item-component.#{$bp}-menu-item {
 	display: flex;
 	cursor: pointer;
 	max-width: 600px;

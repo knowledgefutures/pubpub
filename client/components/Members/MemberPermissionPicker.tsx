@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Classes } from '@blueprintjs/core';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -73,7 +74,7 @@ const MemberPermissionPicker = (props: Props) => {
 	const activePrivileges = privileges[activeTargetType];
 	return (
 		<div className="member-permission-picker-component">
-			<style>{`.active .header-row .bp3-icon { background: ${communityData.accentColorDark}}`}</style>
+			<style>{`.active .header-row .${Classes.ICON} { background: ${communityData.accentColorDark}}`}</style>
 			<div className="picker-column">
 				<div className="header-row" />
 				{activePrivileges.map((item) => {

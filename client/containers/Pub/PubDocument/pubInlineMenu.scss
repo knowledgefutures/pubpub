@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-inline-menu-component {
 	display: flex;
 	align-items: center;
@@ -6,13 +10,13 @@
 	background-color: #444;
 	color: white;
 	z-index: 20;
-	.bp3-button.bp3-minimal,
-	.bp3-button.bp3-minimal.bp3-active {
+	.#{$bp}-button.#{$bp}-minimal,
+	.#{$bp}-button.#{$bp}-minimal.#{$bp}-active {
 		color: white;
 		&:hover {
 			color: white;
 		}
-		.bp3-icon {
+		.#{$bp}-icon {
 			color: inherit;
 		}
 	}

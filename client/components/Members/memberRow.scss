@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 
 .member-row-component {
@@ -47,7 +51,7 @@
 	}
 }
 
-.bp3-menu.member-permission-select {
+.#{$bp}-menu.member-permission-select {
 	padding: 1em;
 	@include mobile {
 		padding: 0.5em;

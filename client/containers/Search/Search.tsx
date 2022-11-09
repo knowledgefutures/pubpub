@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
-import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
+import { Button, Classes, InputGroup, NonIdealState, Spinner, Tab, Tabs } from '@blueprintjs/core';
 
 import { Icon } from 'components';
 import { getResizedUrl } from 'utils/images';
@@ -238,7 +238,7 @@ const Search = (props: Props) => {
 							<div>
 								{searchResults.map(renderSearchResult)}
 								{numPages > 1 && (
-									<div className="bp3-button-group bp3-large">
+									<div className={`${Classes.BUTTON_GROUP} ${Classes.LARGE}`}>
 										{pages.map((pageItem, index) => {
 											const key = `page-button-${index}`;
 											return (

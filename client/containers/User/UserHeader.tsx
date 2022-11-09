@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
+import { Classes } from '@blueprintjs/core';
 
 require('./userHeader.scss');
 
@@ -66,7 +67,7 @@ const UserHeader = function (props) {
 					<div>
 						<a
 							href={`/user/${props.userData.slug}/edit`}
-							className="bp3-button bp3-intent-primary"
+							className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
 						>
 							Edit Profile
 						</a>
@@ -86,7 +87,7 @@ const UserHeader = function (props) {
 							return (
 								<a
 									key={`link-${link.id}`}
-									className={`bp3-button bp3-minimal ${
+									className={`${Classes.BUTTON} ${Classes.MINIMAL} ${
 										!link.href ? 'no-click' : ''
 									}`}
 									href={link.href}

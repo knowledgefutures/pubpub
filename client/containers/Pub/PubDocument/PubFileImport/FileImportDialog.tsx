@@ -281,8 +281,8 @@ const FileImportDialog = ({
 							icon="refresh"
 							text="Force retry import"
 						/>
-						<li className="bp3-menu-header">
-							<h6 className="bp3-heading">Experimental flags</h6>
+						<li className={Classes.MENU_HEADER}>
+							<h6 className={Classes.HEADING}>Experimental flags</h6>
 						</li>
 						{importerFlagNames.map((flag) => {
 							const isSelected = !!importerFlags[flag];

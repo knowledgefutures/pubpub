@@ -1,15 +1,19 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @mixin white-buttons {
-	.bp3-button,
-	.bp3-button:hover {
+	.#{$bp}-button,
+	.#{$bp}-button:hover {
 		color: white !important;
-		.bp3-icon {
+		.#{$bp}-icon {
 			color: white !important;
 		}
-		&.bp3-disabled {
+		&.#{$bp}-disabled {
 			opacity: 0.5;
 		}
 	}
-	.bp3-button.bp3-active {
+	.#{$bp}-button.#{$bp}-active {
 		background: rgba(255, 255, 255, 0.2);
 	}
 }
@@ -45,7 +49,7 @@
 		position: relative;
 		padding-top: 5px;
 		padding-bottom: 5px;
-		.bp3-button {
+		.#{$bp}-button {
 			display: flex;
 			line-height: 1;
 			min-width: auto;
@@ -61,14 +65,14 @@
 			height: 2px;
 		}
 		&.open {
-			.bp3-button {
+			.#{$bp}-button {
 				&:hover {
 					background: none;
 				}
 			}
 			@include white-buttons();
 			&:not(.detached) {
-				.bp3-button {
+				.#{$bp}-button {
 					border-bottom-left-radius: 0;
 					border-bottom-right-radius: 0;
 				}
@@ -76,14 +80,14 @@
 		}
 		&.has-label {
 			&.open {
-				.bp3-button {
+				.#{$bp}-button {
 					color: white;
 				}
 			}
-			.bp3-button {
+			.#{$bp}-button {
 				display: inline-flex;
 				align-items: center;
-				.bp3-icon {
+				.#{$bp}-icon {
 					margin-left: -2px;
 					margin-right: 5px;
 				}
@@ -110,7 +114,7 @@
 			.formatting-bar-button {
 				padding-top: 2px;
 				padding-bottom: 2px;
-				.bp3-button {
+				.#{$bp}-button {
 					padding: 5px 10px;
 				}
 			}
@@ -178,7 +182,7 @@
 		flex-shrink: 0;
 		padding-left: 5px;
 	}
-	*:focus:not(:disabled):not(.bp3-tab) {
+	*:focus:not(:disabled):not(.#{$bp}-tab) {
 		outline: none;
 		box-shadow: inset 0px 0px 0px 2px white !important;
 	}

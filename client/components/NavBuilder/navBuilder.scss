@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .nav-builder-component {
 	.new-items {
 		padding: 10px;
@@ -12,7 +16,7 @@
 	.page-autocomplete-component {
 		display: inline-block;
 		width: 200px;
-		.bp3-popover-target .bp3-icon {
+		.#{$bp}-popover-target .#{$bp}-icon {
 			opacity: 0.5;
 			margin-left: 7px;
 			font-size: 14px;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
-import { Button } from '@blueprintjs/core';
+import { Button, Classes } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
 
@@ -63,7 +63,7 @@ const FormattingBarControlsContainer = (props: Props) => {
 			aria-label={`Editing ${title} options`}
 			className={classNames(
 				'formatting-bar-controls-container-component',
-				kind === 'floating' && 'floating bp3-elevation-2',
+				kind === 'floating' && `floating ${Classes.ELEVATION_2}`,
 				isFullScreenWidth && 'full-screen-width',
 			)}
 			style={{ background: accentColor, ...style }}

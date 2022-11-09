@@ -1,8 +1,12 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .collection-multi-select-component {
-	.bp3-input {
+	.#{$bp}-input {
 		min-width: 250px;
 	}
-	.bp3-tag-input-values {
+	.#{$bp}-tag-input-values {
 		margin-right: 20px;
 	}
 }

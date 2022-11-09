@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 
 .pub-settings-container_doi-component {
@@ -5,7 +9,7 @@
 		font-family: 'Courier', monospace;
 	}
 
-	.bp3-callout {
+	.#{$bp}-callout {
 		margin-bottom: 20px;
 
 		&:not(:first-child) {
@@ -16,7 +20,7 @@
 	> .doi {
 		max-width: 416px;
 
-		.bp3-input-group {
+		.#{$bp}-input-group {
 			font-family: 'Courier', monospace;
 			font-size: 14px;
 			margin-bottom: 12px;
@@ -36,7 +40,7 @@
 			}
 		}
 
-		.bp3-button {
+		.#{$bp}-button {
 			margin-right: 8px;
 		}
 	}

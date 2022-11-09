@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 @import './themes.scss';
 
@@ -187,7 +191,7 @@ $mobile-bottom-buttons-spacing: 10px;
 					}
 				}
 				.click-to-copy {
-					.bp3-button {
+					.#{$bp}-button {
 						color: inherit;
 					}
 				}

@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { Button, Icon, Switch } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React, { useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { PubEdge } from 'types';

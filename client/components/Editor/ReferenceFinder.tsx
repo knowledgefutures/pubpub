@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Menu, MenuItem } from '@blueprintjs/core';
+import { Classes, Menu, MenuItem } from '@blueprintjs/core';
 
 import { buildLabel, getNodeLabelText, NodeReference } from './utils';
 import { NodeLabelMap } from './types';
@@ -31,7 +31,7 @@ const ReferenceFinder = (props: ReferenceFinderProps) => {
 	);
 
 	return (
-		<Menu className="reference-finder-component bp3-elevation-1">
+		<Menu className={`reference-finder-component ${Classes.ELEVATION_1}`}>
 			{menuItems.length > 0 ? menuItems : <MenuItem text="No items to reference" disabled />}
 		</Menu>
 	);

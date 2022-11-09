@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Color from 'color';
-import { ButtonGroup, Button } from '@blueprintjs/core';
+import { Button, ButtonGroup, Classes } from '@blueprintjs/core';
 
 import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import InputField from 'components/InputField/InputField';
@@ -226,7 +226,7 @@ class LayoutEditorBanner extends Component<Props> {
 					<div className="line-break" />
 
 					<InputField label="Banner Button Type">
-						<div className="bp3-button-group bp3-select">
+						<div className={`${Classes.BUTTON_GROUP} ${Classes.SELECT}`}>
 							<select value={buttonType} onChange={this.setButtonType}>
 								<option value="none">None</option>
 								<option value="create-pub">Create Pub</option>
@@ -309,7 +309,7 @@ class LayoutEditorBanner extends Component<Props> {
 								)}
 								{this.props.content.showButton && (
 									<Button
-										className="bp3-large"
+										className={Classes.LARGE}
 										onClick={() => {}}
 										text={buttonText}
 									/>

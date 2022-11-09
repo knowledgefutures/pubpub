@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../overviewStyles.scss';
 
 .recent-visit-list-component {
@@ -5,7 +9,7 @@
 	.entry {
 		display: flex;
 		align-items: flex-start;
-		.bp3-icon {
+		.#{$bp}-icon {
 			margin-top: 2px;
 			color: $light-grey;
 		}

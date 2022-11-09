@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Classes, Icon as BlueprintIcon } from '@blueprintjs/core';
 
 import {
 	NavbarItem,
@@ -56,7 +57,11 @@ const NavBar = function (props) {
 					disclosure={
 						<li className="dropdown">
 							<span className="title">{item.title}</span>
-							<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
+							<BlueprintIcon
+								tagName="span"
+								icon="caret-down"
+								className={`${Classes.ICON_STANDARD} ${Classes.ALIGN_RIGHT}`}
+							/>
 						</li>
 					}
 					className="nav-bar-popover"

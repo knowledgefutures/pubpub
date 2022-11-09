@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Overlay as BlueprintOverlay } from '@blueprintjs/core';
+import { Overlay as BlueprintOverlay, Classes } from '@blueprintjs/core';
 
 require('./overlay.scss');
 
@@ -19,7 +19,7 @@ const defaultProps = {
 const Overlay = function (props) {
 	return (
 		<BlueprintOverlay
-			className="bp3-overlay-scroll-container"
+			className={Classes.OVERLAY_SCROLL_CONTAINER}
 			isOpen={props.isOpen}
 			onClose={props.onClose}
 			transitionName="pub-overlay"
@@ -35,7 +35,9 @@ const Overlay = function (props) {
 					}
 				`}
 			</style>
-			<div className="overlay-wrapper bp3-card bp3-elevation-2">{props.children}</div>
+			<div className={`overlay-wrapper ${Classes.CARD} ${Classes.ELEVATION_2}`}>
+				{props.children}
+			</div>
 		</BlueprintOverlay>
 	);
 };

@@ -1,7 +1,11 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../DashboardOverview/overviewStyles.scss';
 
 .submission-items-component {
-	.bp3-non-ideal-state {
+	.#{$bp}-non-ideal-state {
 		margin-top: $empty-state-margin-top;
 	}
 }

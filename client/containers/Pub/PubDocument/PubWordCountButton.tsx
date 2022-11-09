@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Popover, Button, Icon } from '@blueprintjs/core';
+import { Button, Classes, Icon, Popover } from '@blueprintjs/core';
 
 import { Node } from 'prosemirror-model';
 
@@ -46,7 +46,7 @@ const PubHeaderFormattingWordCountButton = (props: Props) => {
 		>
 			<Button
 				role="button"
-				className="bp3-button bp3-minimal"
+				className={`${Classes.BUTTON} ${Classes.MINIMAL}`}
 				onClick={() => setOpen(!open)}
 				onBlur={() => setOpen(false)}
 			>

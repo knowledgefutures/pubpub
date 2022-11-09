@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Icon, Spinner, Tooltip } from '@blueprintjs/core';
+import { Button, Classes, Icon, Spinner, Tooltip } from '@blueprintjs/core';
 
 import { Menu, MenuItem } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -127,8 +127,8 @@ const Download = (props: Props) => {
 		>
 			{formattedDownload && (
 				<React.Fragment>
-					<li className="bp3-menu-header">
-						<h6 className="bp3-heading">Formatted Download</h6>
+					<li className={Classes.MENU_HEADER}>
+						<h6 className={Classes.HEADING}>Formatted Download</h6>
 					</li>
 					<MenuItem
 						dismissOnClick={false}
@@ -142,8 +142,8 @@ const Download = (props: Props) => {
 					/>
 				</React.Fragment>
 			)}
-			<li className="bp3-menu-header">
-				<h6 className="bp3-heading">Auto Generated Download</h6>
+			<li className={Classes.MENU_HEADER}>
+				<h6 className={Classes.HEADING}>Auto Generated Download</h6>
 			</li>
 			{formatTypes.map((type, i) => {
 				const shouldRenderButton = downloadUrl && selectedType?.format === type.format;

@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-collections-listing-component_collection-title {
 	flex: 1;
 	display: flex;
@@ -46,7 +50,7 @@
 		margin-bottom: 10px;
 	}
 
-	.bp3-non-ideal-state {
+	.#{$bp}-non-ideal-state {
 		margin-top: 2em;
 	}
 

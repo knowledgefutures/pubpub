@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Classes } from '@blueprintjs/core';
 
 require('./sharingCard.scss');
 
@@ -20,7 +21,7 @@ const SharingCard = function (props) {
 	return (
 		<div
 			className={`sharing-card-component ${props.isAddCard ? 'add' : ''} ${
-				props.isFlatCard ? 'flat bp3-elevation-0' : 'bp3-elevation-1'
+				props.isFlatCard ? `flat ${Classes.ELEVATION_0}` : Classes.ELEVATION_1
 			}`}
 		>
 			<div className="content">{props.content}</div>

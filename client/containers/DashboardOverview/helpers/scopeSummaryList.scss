@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../overviewStyles.scss';
 
 .scope-summary-list-component {
@@ -8,7 +12,7 @@
 		font-size: 16px;
 		display: flex;
 		align-items: center;
-		.bp3-icon {
+		.#{$bp}-icon {
 			color: $light-grey;
 		}
 		.label {

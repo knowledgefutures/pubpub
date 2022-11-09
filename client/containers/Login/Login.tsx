@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
 import { Avatar, GridWrapper, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -63,7 +63,7 @@ const Login = () => {
 
 	return (
 		<div id="login-container">
-			<GridWrapper containerClassName="small" columnClassName="bp3-elevation">
+			<GridWrapper containerClassName="small">
 				{!loginData.id && (
 					<div>
 						<h1>Login</h1>
@@ -91,7 +91,7 @@ const Login = () => {
 								<Button
 									name="login"
 									type="submit"
-									className="bp3-button bp3-intent-primary"
+									className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
 									onClick={onLoginSubmit}
 									text="Login"
 									loading={loginLoading}
@@ -118,12 +118,12 @@ const Login = () => {
 						action={
 							<div>
 								<AnchorButton
-									className="bp3-large action-button"
+									className={`${Classes.LARGE} action-button`}
 									text="View Profile"
 									href={`/user/${loginData.slug}`}
 								/>
 								<Button
-									className="bp3-large action-button"
+									className={`${Classes.LARGE} action-button`}
 									text="Logout"
 									onClick={onLogoutSubmit}
 									loading={logoutLoading}

@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 @import 'styles/typography.scss';
 
@@ -205,7 +209,7 @@
 		display: inline;
 		margin-left: 4px;
 		margin-right: 4px;
-		.bp3-input {
+		.#{$bp}-input {
 			font-size: 1em;
 		}
 	}

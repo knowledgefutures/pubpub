@@ -1,6 +1,6 @@
+import React, { ClipboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { useBeforeUnload } from 'react-use';
-import React, { ClipboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ClientOnly } from 'components';
 

@@ -1,9 +1,13 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .input-field-component {
 	textarea {
 		min-height: 56px;
 		resize: vertical;
 	}
-	&.bp3-form-group label.bp3-label {
+	&.#{$bp}-form-group label.#{$bp}-label {
 		margin-bottom: 0px;
 	}
 	.color-input-component {

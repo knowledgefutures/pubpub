@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
 	Button,
-	InputGroup,
 	Checkbox,
-	Position,
+	Classes,
+	InputGroup,
 	Popover,
 	PopoverInteractionKind,
+	Position,
 } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
@@ -190,7 +191,9 @@ const Footer = (props: Props) => {
 											<span>
 												<Popover
 													interactionKind={PopoverInteractionKind.HOVER}
-													popoverClassName="bp3-popover-content-sizing"
+													popoverClassName={
+														Classes.POPOVER_CONTENT_SIZING
+													}
 													position={Position.RIGHT}
 												>
 													<p>

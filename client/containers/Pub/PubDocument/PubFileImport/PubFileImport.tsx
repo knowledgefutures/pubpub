@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AnchorButton } from '@blueprintjs/core';
+import { AnchorButton, Classes } from '@blueprintjs/core';
 import { viewIsEmpty } from 'components/Editor';
 
 import FileImportDialog from './FileImportDialog';
@@ -42,7 +42,7 @@ const PubFileImport = (props: Props) => {
 				<div className="pub-file-import-component">
 					<AnchorButton
 						type="button"
-						className="bp3-intent-primary bp3-large"
+						className={`${Classes.INTENT_PRIMARY} ${Classes.LARGE}`}
 						outlined
 						onClick={() => setIsDialogOpen(true)}
 						text={

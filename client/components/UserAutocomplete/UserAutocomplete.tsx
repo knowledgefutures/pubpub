@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { MenuItem, Position } from '@blueprintjs/core';
+import { Classes, MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 
 import { Avatar } from 'components';
@@ -93,8 +93,8 @@ class UserAutocomplete extends Component<Props, State> {
 									onClick={handleClick}
 									className={
 										modifiers.active
-											? 'bp3-menu-item bp3-active'
-											: 'bp3-menu-item'
+											? `${Classes.MENU_ITEM} ${Classes.ACTIVE}`
+											: Classes.MENU_ITEM
 									}
 								>
 									{item.fullName && (

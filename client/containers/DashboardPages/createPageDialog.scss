@@ -1,6 +1,10 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .create-page-dialog-component {
 	// Specificity hack
-	&.bp3-dialog {
+	&.#{$bp}-dialog {
 		padding-bottom: 0px;
 	}
 

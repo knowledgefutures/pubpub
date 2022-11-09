@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { AnchorButton, Intent } from '@blueprintjs/core';
+import { AnchorButton, Classes, Intent } from '@blueprintjs/core';
 
 import { CommunityHeroButton } from 'types';
 import { GridWrapper, GlobalControls } from 'components';
@@ -45,7 +45,7 @@ const Header = (props: Props) => {
 		}
 		const heroTextColor = communityData.heroTextColor || communityData.accentTextColor;
 		if (heroTextColor === '#FFFFFF') {
-			dynamicComponentClasses += ' bp3-dark';
+			dynamicComponentClasses += ` ${Classes.DARK}`;
 		}
 		return dynamicComponentClasses;
 	};
@@ -60,7 +60,7 @@ const Header = (props: Props) => {
 			communityData.useHeaderGradient &&
 			communityData.heroBackgroundImage
 		) {
-			dynamicMainClasses += ' gradient bp3-dark';
+			dynamicMainClasses += ` gradient ${Classes.DARK}`;
 		}
 		return dynamicMainClasses;
 	};

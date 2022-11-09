@@ -1,10 +1,10 @@
-import { editorSchema, getDocForHtmlString, isEmptyDocNode, renderStatic } from 'components/Editor';
-import { Node } from 'prosemirror-model';
 import React, { useCallback, useRef } from 'react';
+import { Node } from 'prosemirror-model';
 import { renderToString } from 'react-dom/server';
 
 import { MinimalEditor } from 'components';
 import { usePubContext } from 'containers/Pub/pubHooks';
+import { editorSchema, getDocForHtmlString, isEmptyDocNode, renderStatic } from 'components/Editor';
 import { useFacetsQuery } from 'client/utils/useFacets';
 
 type Props = {

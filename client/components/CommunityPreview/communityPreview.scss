@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .community-preview-component {
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -32,7 +36,7 @@
 		opacity: 0.85;
 		margin-top: 1em;
 	}
-	&.bp3-skeleton {
+	&.#{$bp}-skeleton {
 		padding: 0em;
 		.logo {
 			width: calc(95% - 1em);

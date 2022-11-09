@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 
 @import './shared.scss';
@@ -41,13 +45,13 @@
 		.target-email-input {
 			display: flex;
 			max-width: 800px;
-			> .bp3-tag-input {
+			> .#{$bp}-tag-input {
 				flex: 1 0 50%;
 				margin-right: 10px;
 			}
 			@include mobile {
 				flex-direction: column;
-				> .bp3-input-group {
+				> .#{$bp}-input-group {
 					margin-bottom: 10px;
 					margin-right: 0px;
 				}

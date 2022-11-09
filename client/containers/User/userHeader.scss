@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .user-header-component {
 	&:after {
 		display: table;
@@ -13,7 +17,7 @@
 			margin: 20px 0px;
 		}
 	}
-	.bp3-button .bp3-icon:first-child:last-child {
+	.#{$bp}-button .#{$bp}-icon:first-child:last-child {
 		margin: 0px 5px 0px 0px;
 	}
 	.details {

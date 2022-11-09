@@ -1,6 +1,6 @@
+import React from 'react';
 import { Button, Callout } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React from 'react';
 
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
 import { assert } from 'utils/assert';

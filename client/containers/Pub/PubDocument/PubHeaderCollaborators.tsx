@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from '@blueprintjs/core';
+import { Classes, Tooltip } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
 import { PubCollabState } from '../usePubCollabState';
@@ -47,7 +47,7 @@ const PubHeaderCollaborators = (props: Props) => {
 					return (
 						<div className="avatar-wrapper" key={`present-avatar-${collaborator.id}`}>
 							{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: any; tooltipCl... Remove this comment to see the full error message */}
-							<Tooltip content={collaborator.name} tooltipClassName="bp3-dark">
+							<Tooltip content={collaborator.name} tooltipClassName={Classes.DARK}>
 								<Avatar
 									/* Cast initials to string since
 									the anonymous Avatar is a int count */

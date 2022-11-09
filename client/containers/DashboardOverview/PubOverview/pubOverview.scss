@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 @import 'styles/mixins.scss';
 
@@ -120,10 +124,10 @@ $outer-padding: 26px;
 			border: 1px solid #ddd;
 			padding: 10px;
 		}
-		.bp3-non-ideal-state {
+		.#{$bp}-non-ideal-state {
 			margin: 2em 0em;
 		}
-		.bp3-tag {
+		.#{$bp}-tag {
 			text-transform: capitalize;
 			&.open,
 			&.closed,
@@ -161,7 +165,7 @@ $outer-padding: 26px;
 			.note {
 				opacity: 0.8;
 			}
-			.bp3-tag {
+			.#{$bp}-tag {
 				margin-right: 0.5em;
 			}
 		}

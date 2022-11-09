@@ -1,8 +1,12 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-download-component {
 	.formatted-button {
 		margin-bottom: 1em;
 	}
-	.bp3-menu-item-label {
+	.#{$bp}-menu-item-label {
 		min-width: 20px;
 	}
 }

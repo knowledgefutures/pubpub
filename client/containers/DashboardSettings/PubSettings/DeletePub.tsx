@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from '@blueprintjs/core';
+import { Button, Classes } from '@blueprintjs/core';
 
 import { InputField } from 'components';
 import { getDashUrl } from 'utils/dashboard';
@@ -55,7 +55,7 @@ class DeletePub extends Component<Props, State> {
 			normalizeTitle(this.props.pubData.title) === normalizeTitle(this.state.title);
 
 		return (
-			<div className="bp3-callout bp3-intent-danger">
+			<div className={`${Classes.CALLOUT} ${Classes.INTENT_DANGER}`}>
 				<p>
 					<b>Deleting a Pub is permanent - it cannot be undone.</b>
 				</p>
@@ -73,7 +73,7 @@ class DeletePub extends Component<Props, State> {
 
 				<Button
 					type="button"
-					className="bp3-intent-danger"
+					className={Classes.INTENT_DANGER}
 					text="Delete Pub"
 					loading={this.state.isLoading}
 					onClick={this.handleDelete}

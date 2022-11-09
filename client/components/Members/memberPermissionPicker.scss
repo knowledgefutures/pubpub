@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .member-permission-picker-component {
 	display: flex;
 	button.picker-column {
@@ -28,7 +32,7 @@
 		font-weight: 600;
 		text-transform: capitalize;
 	}
-	.bp3-icon {
+	.#{$bp}-icon {
 		border-radius: 16px;
 		margin-top: 10px;
 	}

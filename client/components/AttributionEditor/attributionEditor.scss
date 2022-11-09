@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 
 .attribution-editor-component {
@@ -42,7 +46,7 @@
 			display: flex;
 			align-items: flex-start;
 			margin-right: 1em;
-			.bp3-checkbox {
+			.#{$bp}-checkbox {
 				margin-bottom: 0px;
 				margin-right: 2em;
 				margin-top: 7px;
@@ -69,7 +73,7 @@
 				@include mobile {
 					display: flex;
 					flex-direction: row;
-					.bp3-input-group {
+					.#{$bp}-input-group {
 						margin-right: 5px;
 						min-width: 120px;
 					}

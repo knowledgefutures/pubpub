@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { AnchorButton, Button } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
 import { communityUrl } from 'utils/canonicalUrls';
@@ -164,14 +164,14 @@ const DashboardPage = (props: Props) => {
 					/>
 				)}
 				<InputField label="Width">
-					<div className="bp3-button-group">
+					<div className={Classes.BUTTON_GROUP}>
 						<Button
-							className={isNarrowWidth ? '' : 'bp3-active'}
+							className={isNarrowWidth ? '' : Classes.ACTIVE}
 							onClick={() => updatePageData({ isNarrowWidth: false })}
 							text="Wide"
 						/>
 						<Button
-							className={isNarrowWidth ? 'bp3-active' : ''}
+							className={isNarrowWidth ? Classes.ACTIVE : ''}
 							onClick={() => updatePageData({ isNarrowWidth: true })}
 							text="Narrow"
 						/>
@@ -179,15 +179,15 @@ const DashboardPage = (props: Props) => {
 				</InputField>
 				{!isHome && (
 					<InputField label="Privacy">
-						<div className="bp3-button-group">
+						<div className={Classes.BUTTON_GROUP}>
 							<Button
-								className={isPublic ? 'bp3-active' : ''}
+								className={isPublic ? Classes.ACTIVE : ''}
 								onClick={() => updatePageData({ isPublic: true })}
 								text="Public"
 								icon="globe"
 							/>
 							<Button
-								className={isPublic ? '' : 'bp3-active'}
+								className={isPublic ? '' : Classes.ACTIVE}
 								onClick={() => updatePageData({ isPublic: false })}
 								text="Private"
 								icon="lock"

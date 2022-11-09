@@ -1,7 +1,11 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-toc-component {
 	overflow: auto;
 	max-width: 350px;
-	.bp3-menu-item {
+	.#{$bp}-menu-item {
 		line-height: 1.2;
 		&.level-2 {
 			padding-left: 1.5em;

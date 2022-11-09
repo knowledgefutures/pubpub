@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../../styles/variables.scss';
 
 $border-style: 1px solid #ddd;
@@ -28,8 +32,8 @@ $mobile-viewport-cutoff: 500px;
 	}
 }
 
-.user-notifications-button.bp3-button {
-	.bp3-icon {
+.user-notifications-button.#{$bp}-button {
+	.#{$bp}-icon {
 		// There is a truly terrible selector overriding this in Blueprint
 		color: currentColor !important;
 	}
@@ -39,7 +43,7 @@ $mobile-viewport-cutoff: 500px;
 	}
 }
 
-.user-notifications-component.bp3-card {
+.user-notifications-component.#{$bp}-card {
 	width: 420px;
 	padding: 0;
 	overflow: hidden;
@@ -82,9 +86,9 @@ $mobile-viewport-cutoff: 500px;
 		.header-content {
 			display: flex;
 
-			.bp3-button {
+			.#{$bp}-button {
 				color: inherit;
-				.bp3-icon {
+				.#{$bp}-icon {
 					color: inherit;
 				}
 			}

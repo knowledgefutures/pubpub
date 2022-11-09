@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .nav-bar-component {
 	height: 40px;
 	overflow: hidden;
@@ -82,7 +86,7 @@
 		text-transform: uppercase;
 		text-decoration: inherit;
 		// font-weight: 500;
-		.bp3-icon {
+		.#{$bp}-icon {
 			font-size: 14px;
 			margin-left: 0.25em;
 			position: relative;
@@ -95,13 +99,13 @@
 	}
 }
 .nav-bar-popover {
-	.bp3-icon-lock2 {
+	.#{$bp}-icon-lock2 {
 		font-size: 14px;
 		padding-right: 0.15em;
 		position: relative;
 		top: -1px;
 	}
-	.bp3-icon-share {
+	.#{$bp}-icon-share {
 		padding: 3px;
 		opacity: 0.7;
 	}

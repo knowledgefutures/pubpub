@@ -1,5 +1,13 @@
 import React from 'react';
-import { Popover, PopoverInteractionKind, Position, Menu, MenuItem } from '@blueprintjs/core';
+import {
+	Button,
+	Classes,
+	Menu,
+	MenuItem,
+	Popover,
+	PopoverInteractionKind,
+	Position,
+} from '@blueprintjs/core';
 
 import { Page } from 'types';
 import { LayoutBlock, PubSortOrder } from 'utils/layout/types';
@@ -148,41 +156,41 @@ const LayoutEditorInsert = (props: Props) => {
 					<Menu>
 						{showCollectionHeaderBlock && (
 							<>
-								<li className="bp3-menu-header">
+								<li className={Classes.MENU_HEADER}>
 									<h6>Collection Header Block</h6>
 								</li>
 								{generateMenuItem(collectionHeaderBlock)}
 							</>
 						)}
-						<li className="bp3-menu-header">
+						<li className={Classes.MENU_HEADER}>
 							<h6>
 								Pubs Block
 								<Icon icon="widget-header" />
 							</h6>
 						</li>
 						{getPubsBlocks(pubSort).map((item) => generateMenuItem(item))}
-						<li className="bp3-menu-header">
+						<li className={Classes.MENU_HEADER}>
 							<h6>
 								Banner Block
 								<Icon icon="vertical-distribution" />
 							</h6>
 						</li>
 						{bannerBlocks.map((item) => generateMenuItem(item))}
-						<li className="bp3-menu-header">
+						<li className={Classes.MENU_HEADER}>
 							<h6>
 								Text Block
 								<Icon icon="new-text-box" />
 							</h6>
 						</li>
 						{textBlocks.map((item) => generateMenuItem(item))}
-						<li className="bp3-menu-header">
+						<li className={Classes.MENU_HEADER}>
 							<h6>
 								HTML Block
 								<Icon icon="code" />
 							</h6>
 						</li>
 						{htmlBlocks.map((item) => generateMenuItem(item))}
-						<li className="bp3-menu-header">
+						<li className={Classes.MENU_HEADER}>
 							<h6>
 								Collections & Pages Block
 								<Icon icon="application" />
@@ -193,14 +201,12 @@ const LayoutEditorInsert = (props: Props) => {
 				}
 				interactionKind={PopoverInteractionKind.CLICK}
 				position={Position.BOTTOM}
-				popoverClassName="bp3-minimal"
+				popoverClassName={Classes.MINIMAL}
 				transitionDuration={-1}
 				inheritDarkTheme={false}
 				usePortal={false}
 			>
-				<button type="button" className="bp3-button bp3-icon-add">
-					Add Block
-				</button>
+				<Button icon="add">Add Block</Button>
 			</Popover>
 			<div className="center-line" />
 		</div>

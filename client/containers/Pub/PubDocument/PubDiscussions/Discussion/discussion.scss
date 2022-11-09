@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 .discussion-component {
 	position: relative;
@@ -10,7 +14,7 @@
 		position: absolute;
 		top: 0;
 		right: 0;
-		.bp3-icon {
+		.#{$bp}-icon {
 			transform: rotate(45deg);
 		}
 	}
@@ -58,7 +62,7 @@
 		.actions {
 			white-space: nowrap;
 		}
-		.bp3-button {
+		.#{$bp}-button {
 			min-height: 17px;
 		}
 	}

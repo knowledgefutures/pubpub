@@ -191,6 +191,7 @@
 		"node": "18.7.0"
 	},
 	"devDependencies": {
+		"@blueprintjs/eslint-plugin": "^2.5.2",
 		"@storybook/addon-knobs": "^6.4.0",
 		"@storybook/addon-storyshots": "^6.4.0",
 		"@storybook/addon-viewport": "^6.4.0",

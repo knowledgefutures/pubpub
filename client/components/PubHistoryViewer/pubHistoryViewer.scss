@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-history-viewer-component {
 	display: flex;
 	position: relative;
@@ -20,7 +24,7 @@
 	.title-and-spinner {
 		display: flex;
 		align-items: center;
-		.bp3-spinner {
+		.#{$bp}-spinner {
 			opacity: 0;
 			transition: 0.1s ease-out opacity;
 			margin-left: 5px;
@@ -29,7 +33,7 @@
 
 	&.loading {
 		.title-and-spinner {
-			.bp3-spinner {
+			.#{$bp}-spinner {
 				opacity: 1;
 			}
 		}
@@ -39,18 +43,18 @@
 		display: flex;
 		justify-content: space-evenly;
 		margin-bottom: 5px;
-		.bp3-popover-wrapper {
+		.#{$bp}-popover-wrapper {
 			flex: unset;
 		}
 	}
 
-	.bp3-slider {
+	.#{$bp}-slider {
 		margin-bottom: 40px;
-		.bp3-slider-label {
+		.#{$bp}-slider-label {
 			white-space: nowrap;
 		}
-		.bp3-slider-axis {
-			& > .bp3-slider-label {
+		.#{$bp}-slider-axis {
+			& > .#{$bp}-slider-label {
 				transform: translate(0, 20px);
 				&:first-child {
 					left: 0;
@@ -66,7 +70,7 @@
 		}
 	}
 
-	ul.bp3-menu {
+	ul.#{$bp}-menu {
 		position: relative;
 		overflow: auto;
 		border-radius: 4px;

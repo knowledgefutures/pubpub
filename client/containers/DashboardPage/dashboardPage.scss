@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .dashboard-page-container {
 	h1 {
 		a {
@@ -34,12 +38,12 @@
 		height: 41px;
 		overflow: hidden;
 		margin: 20px 0px 40px;
-		.bp3-tabs {
+		.#{$bp}-tabs {
 			overflow: hidden;
 			overflow-x: scroll;
 			padding-bottom: 50px;
 		}
-		.bp3-tab {
+		.#{$bp}-tab {
 			text-decoration: none;
 		}
 	}

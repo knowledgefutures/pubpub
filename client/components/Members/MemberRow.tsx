@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import dateFormat from 'dateformat';
-import { Button, Tag } from '@blueprintjs/core';
+import { Button, Classes, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
 import { MenuButton } from 'components/Menu';
@@ -180,7 +180,7 @@ const MemberRow = (props: Props) => {
 		const permissionSelector = onUpdate && (
 			<MenuButton
 				aria-label="Select member permissions"
-				className="member-permission-select bp3-elevation-3"
+				className={`member-permission-select ${Classes.ELEVATION_3}`}
 				placement="bottom-end"
 				buttonProps={{
 					className: 'permission-button',

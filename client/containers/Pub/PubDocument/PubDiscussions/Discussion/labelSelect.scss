@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .label-select-component {
 	.save-button {
 		margin-bottom: 4px;
@@ -7,12 +11,12 @@
 		width: 18px;
 		margin-right: 10px;
 		border-radius: 2px;
-		.bp3-icon-tick {
+		.#{$bp}-icon-tick {
 			padding: 2px;
 			color: white;
 		}
 	}
-	.bp3-icon-endorsed {
+	.#{$bp}-icon-endorsed {
 		margin-left: 10px;
 		opacity: 0.25;
 		&.active {

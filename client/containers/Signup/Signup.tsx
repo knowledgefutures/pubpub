@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, NonIdealState } from '@blueprintjs/core';
+import { Button, Classes, NonIdealState } from '@blueprintjs/core';
 
 import { GridWrapper, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -71,7 +71,7 @@ const Signup = () => {
 							<Button
 								name="signup"
 								type="submit"
-								className="bp3-button bp3-intent-primary"
+								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
 								onClick={onSignupSubmit}
 								text="Signup"
 								disabled={!email}
@@ -101,7 +101,7 @@ const Signup = () => {
 							<Button
 								name="resendEmail"
 								type="button"
-								className="bp3-button"
+								className={Classes.BUTTON}
 								onClick={onSignupSubmit}
 								text="Resend Email"
 								loading={postSignupIsLoading}

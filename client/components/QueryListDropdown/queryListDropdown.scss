@@ -1,7 +1,11 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 
 .query-list-dropdown-component {
-	.bp3-popover-content > .search-wrapper {
+	.#{$bp}-popover-content > .search-wrapper {
 		width: 400px;
 		max-height: 400px;
 		@include mobile {
@@ -10,10 +14,10 @@
 		}
 		display: flex;
 		flex-direction: column;
-		.bp3-input-group {
+		.#{$bp}-input-group {
 			z-index: 1;
 		}
-		.bp3-menu {
+		.#{$bp}-menu {
 			flex-grow: 1;
 			overflow: auto;
 			min-height: 0;

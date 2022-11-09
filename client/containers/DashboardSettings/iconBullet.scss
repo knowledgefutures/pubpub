@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/mixins.scss';
 
 $icon-container-size: 32px;
@@ -21,12 +25,12 @@ $icon-container-size-mobile: 28px;
 		transition: 0.1s all ease-out;
 		background-color: var(--community-accent-dark);
 		border-color: var(--community-accent-dark);
-		.bp3-icon {
+		.#{$bp}-icon {
 			opacity: 1;
 		}
 	}
 
-	.bp3-icon {
+	.#{$bp}-icon {
 		opacity: 0.5;
 		position: relative;
 		z-index: 1;

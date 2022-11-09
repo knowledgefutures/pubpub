@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Classes, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 
 import { Icon, IconName } from 'components';
 
@@ -84,11 +84,11 @@ const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, r
 			aria-label={formattingItem.ariaTitle || formattingItem.title}
 			aria-pressed={formattingItem.isToggle ? isActive : undefined}
 			className={classNames(
-				'bp3-button',
-				'bp3-minimal',
-				!isOpen && !isIndicated && isActive && 'bp3-active',
-				isSmall && 'bp3-small',
-				!isOpen && !isIndicated && disabled && 'bp3-disabled',
+				Classes.BUTTON,
+				Classes.MINIMAL,
+				!isOpen && !isIndicated && isActive && Classes.ACTIVE,
+				isSmall && Classes.SMALL,
+				!isOpen && !isIndicated && disabled && Classes.DISABLED,
 			)}
 			style={getInnerStyle(accentColor, isOpen, isDetached)}
 			onClick={() => onClick(formattingItem)}

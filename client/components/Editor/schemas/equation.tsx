@@ -1,5 +1,5 @@
-import { DOMOutputSpec, Node } from 'prosemirror-model';
 import React from 'react';
+import { DOMOutputSpec, Node } from 'prosemirror-model';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';

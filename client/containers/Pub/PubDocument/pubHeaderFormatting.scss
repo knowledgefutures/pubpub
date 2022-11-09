@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../PubHeader/pubHeader.scss';
 
 .pub-draft-header-component {
@@ -21,13 +25,13 @@
 	.spacer {
 		flex: 1 1 auto;
 	}
-	.bp3-callout {
+	.#{$bp}-callout {
 		display: inline;
 	}
 	// .left-section {
 	// 	flex-grow: 1;
 	// 	flex-shrink: 1;
-	// 	.bp3-callout {
+	// 	.#{$bp}-callout {
 	// 		display: inline;
 	// 	}
 	// }

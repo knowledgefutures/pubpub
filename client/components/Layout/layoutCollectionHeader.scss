@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../../styles/variables.scss';
 
 $details-row-margin: 12px;
@@ -76,7 +80,7 @@ $mobile-viewport-cutoff: 500px;
 		.collection-kind {
 			display: flex;
 			align-items: center;
-			.bp3-icon {
+			.#{$bp}-icon {
 				color: #555;
 				margin-right: 4px;
 			}

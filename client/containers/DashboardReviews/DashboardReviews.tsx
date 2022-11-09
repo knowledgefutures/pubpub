@@ -19,7 +19,7 @@ const DashboardReviews = (props: Props) => {
 	const renderReviewerByline = (reviewers: Reviewer[] | undefined) => {
 		return reviewers
 			? reviewers.map((reviewer) => {
-					return <span>{reviewer.name}</span>;
+					return <span key={reviewer.id}>{reviewer.name}</span>;
 			  })
 			: '';
 	};

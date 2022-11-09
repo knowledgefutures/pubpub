@@ -1,15 +1,19 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-file-import-component {
 	height: 0px;
 	position: relative;
 	top: -175px;
 	text-align: center;
-	.bp3-intent-primary {
+	.#{$bp}-intent-primary {
 		-webkit-appearance: none;
 	}
 	input {
 		display: none;
 	}
-	.bp3-button-text {
+	.#{$bp}-button-text {
 		div:first-child {
 			font-size: 1.25em;
 			padding: 3px 0px 7px;

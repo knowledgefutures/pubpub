@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
+import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
 
 import { GridWrapper, InputField, ImageUpload, Icon } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -210,7 +210,7 @@ const UserCreate = (props: Props) => {
 					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; description: Element; visua... Remove this comment to see the full error message
 					visual="error"
 					action={
-						<a href="/signup" className="bp3-button">
+						<a href="/signup" className={Classes.BUTTON}>
 							Signup
 						</a>
 					}
@@ -286,7 +286,7 @@ const UserCreate = (props: Props) => {
 							})}
 						{!!expandables.filter((item) => !item.isVisible).length && (
 							<InputField label="Add More">
-								<div className="bp3-button-group">
+								<div className={Classes.BUTTON_GROUP}>
 									{expandables
 										.filter((item) => {
 											return !item.isVisible;
@@ -296,7 +296,7 @@ const UserCreate = (props: Props) => {
 												<button
 													type="button"
 													key={`button-${item.label}`}
-													className="bp3-button expandable"
+													className={`${Classes.BUTTON} expandable`}
 													onClick={item.action}
 												>
 													{item.icon}
@@ -308,7 +308,7 @@ const UserCreate = (props: Props) => {
 							</InputField>
 						)}
 
-						<InputField wrapperClassName="bp3-callout" label="Stay Up To Date">
+						<InputField wrapperClassName={Classes.CALLOUT} label="Stay Up To Date">
 							<Checkbox
 								label="Subscribe to our feature release & community newsletter."
 								checked={subscribed}
@@ -346,7 +346,7 @@ const UserCreate = (props: Props) => {
 							<Button
 								name="create"
 								type="submit"
-								className="bp3-button bp3-intent-primary create-account-button"
+								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
 								onClick={onCreateSubmit}
 								text="Create Account"
 								disabled={!firstName || !lastName || !password || !acceptTerms}

@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 
 $pub-body-font-size: if-is-export(14px, 20px);
@@ -182,7 +186,7 @@ $pub-body-font-size: if-is-export(14px, 20px);
 	.editor.ProseMirror {
 		min-height: 150px;
 	}
-	.bp3-callout.working-draft {
+	.#{$bp}-callout.working-draft {
 		display: flex;
 		align-items: center;
 		span {

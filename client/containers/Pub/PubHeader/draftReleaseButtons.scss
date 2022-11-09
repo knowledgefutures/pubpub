@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .releases-menu {
 	max-height: 400px;
 	overflow-y: auto;
@@ -8,7 +12,7 @@
 		.release-menu-item {
 			padding: 10px 10px;
 			min-width: 250px;
-			.bp3-icon {
+			.#{$bp}-icon {
 				margin-left: 5px;
 				margin-top: 5px;
 				color: #888888;

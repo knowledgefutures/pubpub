@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .formatting-bar_media-component {
 	display: flex;
 	height: 430px;
@@ -21,7 +25,7 @@
 			.drag-message {
 				text-align: center;
 			}
-			.bp3-icon {
+			.#{$bp}-icon {
 				color: #666;
 				margin-bottom: 0.5em;
 			}
@@ -59,10 +63,10 @@
 			}
 		}
 	}
-	.bp3-menu {
+	.#{$bp}-menu {
 		min-width: auto;
 	}
-	.bp3-menu-item {
+	.#{$bp}-menu-item {
 		padding-right: 1em;
 		align-items: center;
 	}

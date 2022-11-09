@@ -1,9 +1,13 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../overviewStyles.scss';
 @import 'styles/variables.scss';
 
 .primary-collection-swap-popover {
 	max-width: 300px;
-	.bp3-divider {
+	.#{$bp}-divider {
 		margin: 10px 0;
 	}
 }

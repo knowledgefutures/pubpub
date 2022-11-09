@@ -1,12 +1,16 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .label-filter-component {
 	min-width: 250px;
 	.action-button {
 		float: right;
 	}
-	.bp3-menu-header {
+	.#{$bp}-menu-header {
 		margin-bottom: 15px;
 	}
-	.bp3-fill {
+	.#{$bp}-fill {
 		margin-bottom: 10px;
 	}
 	li {
@@ -40,14 +44,14 @@
 			width: 30px;
 			margin-right: 10px;
 		}
-		.bp3-icon-small-tick {
+		.#{$bp}-icon-small-tick {
 			&:before {
 				color: white;
 			}
 		}
 	}
 	.title,
-	.bp3-input {
+	.#{$bp}-input {
 		// vertical-align: middle;
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -56,7 +60,7 @@
 		pointer-events: none;
 		opacity: 0.75;
 	}
-	.bp3-icon-endorsed {
+	.#{$bp}-icon-endorsed {
 		&:before {
 			opacity: 0.25;
 		}
@@ -67,7 +71,7 @@
 		}
 	}
 }
-.bp3-popover.color-select-popover {
+.#{$bp}-popover.color-select-popover {
 	.color-select-menu {
 		width: 150px;
 		min-width: 150px;
@@ -84,7 +88,7 @@
 			}
 		}
 	}
-	.bp3-popover-arrow {
+	.#{$bp}-popover-arrow {
 		display: block;
 	}
 }

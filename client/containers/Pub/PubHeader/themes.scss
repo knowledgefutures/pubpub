@@ -128,7 +128,7 @@ $off-black: #333;
 @mixin blocks-box-theme($background-color, $highlight) {
 	$box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
 	.text-wrapper,
-	.bp3-editable-text-content,
+	.#{vendor.$bp-namespace}-editable-text-content,
 	.title-group-component .published-date,
 	.title-group-component .title-editor-component {
 		/* Ways of accomplishing this effect: */
@@ -142,7 +142,7 @@ $off-black: #333;
 			padding: 2px 10px;
 		}
 	}
-	.bp3-editable-text-input {
+	.#{vendor.$bp-namespace}-editable-text-input {
 		color: black;
 	}
 	.pub-header-themed-box {
@@ -197,18 +197,19 @@ $off-black: #333;
 	@include color-theme(white, $off-white);
 	@include translucent-box-theme(white, $box-shadow);
 
-	.bp3-editable-text {
+	.#{vendor.$bp-namespace}-editable-text {
 		&:hover:before {
 			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
 				inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 			background-color: transparent;
 		}
-		&.bp3-editable-text-editing:before {
+		&.#{vendor.$bp-namespace}-editable-text-editing:before {
 			box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
 				inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 			background-color: rgba(0, 0, 0, 0.35);
 		}
-		&.bp3-editable-text-placeholder > .bp3-editable-text-content,
+		&.#{vendor.$bp-namespace}-editable-text-placeholder
+			> .#{vendor.$bp-namespace}-editable-text-content,
 		::placeholder {
 			color: inherit;
 			opacity: 0.75;

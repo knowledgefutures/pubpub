@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 #community-create-container {
 	padding: 40px 0px;
 	background-repeat: repeat;
@@ -17,7 +21,7 @@
 		margin-top: 40px;
 		font-size: 1.25em;
 	}
-	.bp3-non-ideal-state {
+	.#{$bp}-non-ideal-state {
 		// margin-top: 20px;
 	}
 	.color-swatch {

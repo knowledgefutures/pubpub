@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .pub-edge-listing-controls-component {
 	align-items: center;
 	display: flex;
@@ -26,7 +30,7 @@
 		padding: 0;
 	}
 
-	.bp3-control-indicator {
+	.#{$bp}-control-indicator {
 		width: 14px;
 		height: 14px;
 

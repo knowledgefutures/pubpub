@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @mixin text-fields {
 	input[type='text'] {
 		border-radius: 2px;
@@ -28,29 +32,29 @@
 		height: unset;
 	}
 
-	.bp3-slider {
-		.bp3-slider-track {
+	.#{$bp}-slider {
+		.#{$bp}-slider-track {
 			background: rgba(255, 255, 255, 0.2);
 		}
-		.bp3-slider-progress:not(:last-child) {
+		.#{$bp}-slider-progress:not(:last-child) {
 			background: white;
 		}
-		.bp3-slider-handle:focus {
+		.#{$bp}-slider-handle:focus {
 			outline: 1.5px solid white;
 		}
 	}
 
-	.bp3-spinner {
-		.bp3-spinner-track {
+	.#{$bp}-spinner {
+		.#{$bp}-spinner-track {
 			stroke: white;
 		}
 	}
 
-	.bp3-tabs {
+	.#{$bp}-tabs {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		.bp3-tab {
+		.#{$bp}-tab {
 			&[aria-selected='true'] {
 				color: white;
 				&:hover {
@@ -65,10 +69,10 @@
 				}
 			}
 		}
-		.bp3-tab-indicator {
+		.#{$bp}-tab-indicator {
 			background: white;
 		}
-		.bp3-tab-panel {
+		.#{$bp}-tab-panel {
 			flex-grow: 1;
 			margin-top: 9px;
 		}
@@ -102,7 +106,7 @@
 		height: 100%;
 		overflow: hidden;
 		& > *:not(:last-child) {
-			label.bp3-control {
+			label.#{$bp}-control {
 				margin-bottom: 0;
 			}
 			margin-bottom: 9px;
@@ -132,7 +136,7 @@
 			display: flex;
 			flex-grow: 1;
 		}
-		.bp3-control.bp3-disabled {
+		.#{$bp}-control.#{$bp}-disabled {
 			color: rgba(white, 0.6);
 		}
 	}
@@ -198,10 +202,10 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		.bp3-button.label-type-menu {
+		.#{$bp}-button.label-type-menu {
 			margin-right: 5px;
 		}
-		.bp3-input-group {
+		.#{$bp}-input-group {
 			flex-grow: 1;
 		}
 	}
@@ -214,7 +218,7 @@
 
 	.source-control {
 		.controls {
-			.bp3-input-group {
+			.#{$bp}-input-group {
 				width: 100%;
 			}
 		}

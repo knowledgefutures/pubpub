@@ -1,6 +1,6 @@
+import React from 'react';
 import { Text } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React from 'react';
 
 require('./lengthIndicator.scss');
 

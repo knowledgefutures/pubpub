@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reakit/Button';
+import { Classes } from '@blueprintjs/core';
 
 import { Byline, PreviewImage } from 'components';
 
@@ -33,13 +34,13 @@ const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
 		id,
 		bylineProps = {},
 	} = props;
-	const skeletonClass = classNames(isSkeleton && 'bp3-skeleton');
+	const skeletonClass = classNames(isSkeleton && Classes.SKELETON);
 
 	const className = classNames(
-		'bp3-menu-item',
+		Classes.MENU_ITEM,
 		'pub-menu-item-component',
 		active && 'active',
-		disabled && 'bp3-disabled',
+		disabled && Classes.DISABLED,
 		isSkeleton && 'is-skeleton',
 		!onClick && 'unselectable',
 	);

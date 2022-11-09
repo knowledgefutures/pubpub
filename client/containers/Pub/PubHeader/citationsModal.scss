@@ -1,5 +1,9 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .citations-modal-component {
-	&.bp3-dialog {
+	&.#{$bp}-dialog {
 		// specificity hack
 		width: 50vw;
 	}

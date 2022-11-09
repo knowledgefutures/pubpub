@@ -1,5 +1,9 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .dropdown-button {
-	.bp3-icon {
+	.#{$bp}-icon {
 		vertical-align: top;
 		margin-right: 3px;
 	}

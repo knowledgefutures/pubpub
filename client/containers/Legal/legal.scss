@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 
 #legal-container {
@@ -6,7 +10,7 @@
 	}
 
 	.legal-settings {
-		.bp3-card {
+		.#{$bp}-card {
 			margin-bottom: 15px;
 		}
 	}

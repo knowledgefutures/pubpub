@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import uuidv4 from 'uuid/v4';
-import { Button } from '@blueprintjs/core';
+import { Button, Classes } from '@blueprintjs/core';
 
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
@@ -60,7 +60,7 @@ const PubInlineMenu = () => {
 
 	return (
 		<div
-			className="pub-inline-menu-component bp3-elevation-2"
+			className={`pub-inline-menu-component ${Classes.ELEVATION_2}`}
 			style={{ position: 'absolute', top: topPosition, left: selectionBoundingBox.left }}
 		>
 			{renderFormattingBar()}

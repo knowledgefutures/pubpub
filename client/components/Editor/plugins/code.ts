@@ -22,7 +22,7 @@ const createSelect = (
 	wrapper.classList.add(Classes.HTML_SELECT, 'codeblock-select-wrapper');
 	const select = document.createElement('select');
 	const carets = document.createElement('span');
-	carets.classList.add(Classes.ICON, 'bp3-icon-caret-down');
+	carets.classList.add(Classes.ICON, `${Classes.ICON}-caret-down`);
 	wrapper.append(select);
 	wrapper.append(carets);
 	select.className = 'codeblock-select';

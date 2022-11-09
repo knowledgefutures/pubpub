@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .layout-editor-insert-component {
 	text-align: center;
 	position: relative;
@@ -10,7 +14,7 @@
 		left: 0;
 		top: calc(50% - 1px);
 	}
-	.bp3-menu {
+	.#{$bp}-menu {
 		h6 svg {
 			float: right;
 			opacity: 0.5;

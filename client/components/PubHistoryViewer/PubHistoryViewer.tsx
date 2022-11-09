@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import { Button, ButtonGroup, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
+import { Button, ButtonGroup, Classes, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
 
 import { ClickToCopyButton } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -227,7 +227,7 @@ const PubHistoryViewer = (props: Props) => {
 			currentDate && dateString === currentDate.toDateString() ? historyScrollRef : null;
 		const header = (
 			<h6 ref={maybeScrollRef}>
-				<li className="bp3-menu-header">{dateString}</li>
+				<li className={Classes.MENU_HEADER}>{dateString}</li>
 			</h6>
 		);
 		const menuItems = dateEntries.map(renderMenuItemForEntry);

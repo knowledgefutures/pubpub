@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import '../PubHeader/pubHeader.scss';
 @import './styles.scss';
 

@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .expand-button-component {
 	position: absolute;
 	bottom: -1em;
@@ -31,7 +35,7 @@
 	}
 }
 
-html:not(.bp3-focus-disabled) {
+html:not(.#{$bp}-focus-disabled) {
 	.expand-button-component:focus {
 		.icon-container {
 			display: flex;

@@ -1,4 +1,11 @@
 {
+	// This "exclude" solves a specific problem that I (Ian, 2022) have been having related to
+	// this VSCode issue: https://github.com/microsoft/vscode/issues/31188. VSCode uses this file
+	// to detect files in the working directory that should be excluded. I don't believe this
+	// should have any effect on our TS builds since "exclude" only removes files from the "include"
+	// array (which we specify in the client/server specific .tsconfig.json files) and those don't
+	// contain node_modules/ or dist/ to begin with.
+	"exclude": ["**/node_modules/*", "**/dist/*"],
 	"compilerOptions": {
 		/* Visit https://aka.ms/tsconfig.json to read more about this file */
 

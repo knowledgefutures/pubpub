@@ -12,7 +12,7 @@ import {
 	FacetEditor,
 	TitleEditor,
 } from 'components';
-import { Pub, PubWithCollections } from 'types';
+import { DepositTarget, Pub, PubWithCollections } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -29,6 +29,7 @@ import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 type Props = {
 	settingsData: {
 		pubData: PubWithCollections;
+		depositTarget?: DepositTarget;
 	};
 };
 
@@ -163,6 +164,7 @@ const PubSettings = (props: Props) => {
 					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
+					depositTarget={settingsData.depositTarget}
 				/>
 			</SettingsSection>
 		);

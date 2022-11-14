@@ -61,11 +61,11 @@ const maybeAddKeyTimestampPair = (key, timestamp) => {
 };
 
 export const getPubDraftDoc = async (
-	pubId: string,
+	pubIdOrRef: string | firebase.database.Reference,
 	historyKey: null | number = null,
 	createMissingCheckpoints = false,
 ): Promise<PubDraftInfo> => {
-	const draftRef = await getPubDraftRef(pubId);
+	const draftRef = typeof pubIdOrRef === 'string' ? await getPubDraftRef(pubIdOrRef) : pubIdOrRef;
 	const [
 		{ doc, docIsFromCheckpoint, key: currentKey, timestamp: currentTimestamp, checkpointMap },
 		{ timestamp: firstTimestamp, key: firstKey },

@@ -1,6 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import classNames from 'classnames';
-import { Button, ButtonGroup, Classes, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
+import {
+	AnchorButton,
+	Button,
+	ButtonGroup,
+	Classes,
+	Menu,
+	MenuItem,
+	Slider,
+	Spinner,
+	Tooltip,
+} from '@blueprintjs/core';
 
 import { ClickToCopyButton } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -8,6 +18,9 @@ import { useSticky } from 'client/utils/useSticky';
 import { formatDate } from 'utils/dates';
 import { pubUrl } from 'utils/canonicalUrls';
 import { Pub, PubHistoryState } from 'types';
+
+import { renderTimeLabelForDate } from './utils';
+import RestoreHistoryDialog from './RestoreHistoryDialog';
 
 require('./pubHistoryViewer.scss');
 
@@ -61,6 +74,7 @@ const dateReleases = (releases) => {
 			type: 'release',
 			date: new Date(release.createdAt),
 			releaseNumber: index + 1,
+			historyKey: release.historyKey,
 		};
 	});
 };
@@ -100,7 +114,12 @@ const PubHistoryViewer = (props: Props) => {
 	const { timestamps, latestKey, currentKey, outstandingRequests, loadedIntoHistory } =
 		historyData;
 	const { releases } = pubData;
-	const { communityData } = usePageContext();
+	const {
+		communityData,
+		scopeData: {
+			activePermissions: { canEdit },
+		},
+	} = usePageContext();
 	const [sliderValue, setSliderValue] = useState(currentKey);
 	const historyScrollRef = useRef<null | HTMLHeadingElement>(null);
 	const hasScrolledRef = useRef<null | boolean>(null);
@@ -108,14 +127,25 @@ const PubHistoryViewer = (props: Props) => {
 	const hasMeaningfulHistory = latestKey >= 0;
 	historyScrollRef.current = null;
 
-	const currentDate = getDateForHistoryKey(currentKey, timestamps);
-	const edits = dateTimestamps(timestamps);
-	const datedReleases = dateReleases(releases);
-	const entries = [
-		{ type: 'created', date: new Date(pubData.createdAt) },
-		...edits,
-		...datedReleases,
-	].sort((a, b) => (a.date > b.date ? 1 : -1));
+	const currentDate = useMemo(
+		() => getDateForHistoryKey(currentKey, timestamps),
+		[currentKey, timestamps],
+	);
+
+	const entries = useMemo(() => {
+		const edits = dateTimestamps(timestamps);
+		const datedReleases = dateReleases(releases);
+		return [
+			{ type: 'created', date: new Date(pubData.createdAt) },
+			...edits,
+			...datedReleases,
+		].sort((a, b) => (a.date > b.date ? 1 : -1));
+	}, [pubData.createdAt, releases, timestamps]);
+
+	const releaseHistoryKeys = useMemo(
+		() => new Set(entries.filter((e) => e.type === 'release').map((e) => e.historyKey)),
+		[entries],
+	);
 
 	useSticky({
 		target: '.pub-history-viewer-component',
@@ -155,8 +185,7 @@ const PubHistoryViewer = (props: Props) => {
 		const historyKey = sliderVal - 1;
 		const dateForStep = getDateForHistoryKey(historyKey, timestamps);
 		if (dateForStep) {
-			const date = formatDate(dateForStep);
-			const time = formatDate(dateForStep, { includeDate: false, includeTime: true });
+			const { date, time } = renderTimeLabelForDate(dateForStep);
 			return (
 				<span className="date-and-time">
 					<span className="date">{date}</span> <span className="time">{time}</span>
@@ -173,6 +202,10 @@ const PubHistoryViewer = (props: Props) => {
 			const {
 				range: [startKey, endKey],
 			} = entry;
+			if (releaseHistoryKeys.has(startKey)) {
+				// Don't show an entry that duplicates the entry for a Release
+				return null;
+			}
 			const containsCurrentKey = currentKey >= startKey && currentKey <= endKey;
 			const dateString = formatDate(date, { includeTime: true, includeDate: false });
 			return (
@@ -187,7 +220,7 @@ const PubHistoryViewer = (props: Props) => {
 			);
 		}
 		if (entry.type === 'release') {
-			const { releaseNumber } = entry;
+			const { releaseNumber, historyKey } = entry;
 			const dateString = formatDate(date, {
 				includeTime: true,
 				includeDate: false,
@@ -195,12 +228,24 @@ const PubHistoryViewer = (props: Props) => {
 			});
 			return (
 				<MenuItem
-					text={`Release ${dateString}`}
+					className="release-menu-item"
+					text={`Released ${dateString}`}
 					intent="success"
 					icon="document-share"
 					key={key}
-					href={pubUrl(communityData, pubData, { releaseNumber })}
-					target="_blank"
+					onClick={() => onSetCurrentHistoryKey(historyKey)}
+					labelElement={
+						<Tooltip content="Visit this Release" position="top">
+							<AnchorButton
+								small
+								minimal
+								icon="circle-arrow-right"
+								className="visit-release-button"
+								href={pubUrl(communityData, pubData, { releaseNumber })}
+								target="_blank"
+							/>
+						</Tooltip>
+					}
 				/>
 			);
 		}
@@ -271,12 +316,26 @@ const PubHistoryViewer = (props: Props) => {
 						})}
 						beforeCopyPrompt="Copy link to this point in history"
 					>
-						{(handleClick) => (
-							<Button minimal icon="link" onClick={handleClick}>
-								Link here
-							</Button>
-						)}
+						{(handleClick) => <Button minimal icon="link" onClick={handleClick} />}
 					</ClickToCopyButton>
+					{canEdit && (
+						<Tooltip content="Restore to this point in history">
+							<RestoreHistoryDialog
+								historyKey={currentKey}
+								dateForHistoryKey={currentDate}
+								onRestore={onClose}
+							>
+								{(options) => (
+									<Button
+										minimal
+										icon="undo"
+										disabled={isLoadingHistory || currentKey === latestKey}
+										onClick={options.open}
+									/>
+								)}
+							</RestoreHistoryDialog>
+						</Tooltip>
+					)}
 					<Button
 						minimal
 						icon="chevron-right"

@@ -77,4 +77,18 @@ $bp: vendor.$bp-namespace;
 		background: darken(white, 4%);
 		border: 4px solid darken(white, 4%);
 	}
+
+	.release-menu-item {
+		align-items: center;
+		.visit-release-button {
+			color: white;
+			opacity: 0;
+		}
+		&:hover,
+		&:focus-within {
+			.visit-release-button {
+				opacity: 1;
+			}
+		}
+	}
 }

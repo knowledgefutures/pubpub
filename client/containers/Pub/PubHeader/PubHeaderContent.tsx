@@ -83,11 +83,7 @@ const PubHeaderContent = (props: Props) => {
 		<div className="pub-header-content-component">
 			{renderTop()}
 			<TitleGroup pubData={pubData} updatePubData={updateAndSavePubData} />
-			<UtilityButtons
-				onShowHeaderDetails={onShowHeaderDetails}
-				pubData={pubData}
-				updatePubData={updateAndSavePubData}
-			/>
+			<UtilityButtons onShowHeaderDetails={onShowHeaderDetails} pubData={pubData} />
 			{!isInMaintenanceMode && (
 				<DraftReleaseButtons
 					pubData={pubData}

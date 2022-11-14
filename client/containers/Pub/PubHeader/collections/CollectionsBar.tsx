@@ -114,9 +114,8 @@ const CollectionsBar = (props: Props) => {
 		return (
 			<PopoverButton
 				className="collections-bar-component_collections-popover"
-				component={PubCollectionsListing}
+				component={() => <PubCollectionsListing {...pubCollectionsListingProps} />}
 				aria-label="Add or edit Pub Collections"
-				{...pubCollectionsListingProps}
 			>
 				{button}
 			</PopoverButton>

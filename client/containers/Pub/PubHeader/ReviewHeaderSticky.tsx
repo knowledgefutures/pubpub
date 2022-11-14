@@ -3,7 +3,7 @@ import { Button, AnchorButton } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
-import { Icon } from 'components';
+import { PopoverButton } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { useLocalStorage } from 'client/utils/useLocalStorage';
 import { getEmptyDoc } from 'client/components/Editor';
@@ -34,7 +34,6 @@ const ReviewHeaderSticky = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [createdReview, setCreatedReview] = useState(false);
-	const [showReview, setShowReview] = useState(true);
 	const [reviewNumber, setReviewNumber] = useState(0);
 	const [saved, setSaved] = useState(false);
 
@@ -90,15 +89,6 @@ const ReviewHeaderSticky = () => {
 			});
 	};
 
-	const renderReview = () => (
-		<Review
-			communityData={communityData}
-			onSubmit={() => setVisible(true)}
-			isLoading={isLoading}
-			review={review}
-			updateReview={updatingReviewDoc}
-		/>
-	);
 	const reviewPath = `/dash/pub/${pubData.slug}/reviews/${reviewNumber}`;
 	const isMember = memberData.length > 0;
 	const userFilter = canManage && isMember;
@@ -121,7 +111,6 @@ const ReviewHeaderSticky = () => {
 			<div className="sticky-section">
 				<div className="sticky-title">{pubData.title}</div>
 				<div className="side-content">
-					{showReview && renderReview()}
 					<div className="sticky-buttons">
 						<div className="sticky-review-text">review</div>
 						{isSaving && (
@@ -147,12 +136,20 @@ const ReviewHeaderSticky = () => {
 							isUser={isUser}
 							reviewerFooterButtons={reviewerFooterButtons}
 						/>
-
-						<Button
-							minimal
-							icon={<Icon icon="expand-all" />}
-							onClick={() => setShowReview(!showReview)}
-						/>
+						<PopoverButton
+							aria-label="Open Review dropdown"
+							component={() => (
+								<Review
+									communityData={communityData}
+									onSubmit={() => setVisible(true)}
+									isLoading={isLoading}
+									review={review}
+									updateReview={updatingReviewDoc}
+								/>
+							)}
+						>
+							<Button minimal icon="expand-all" />
+						</PopoverButton>
 					</div>
 				</div>
 			</div>

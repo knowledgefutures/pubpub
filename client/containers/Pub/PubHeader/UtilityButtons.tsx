@@ -4,7 +4,7 @@ import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { DialogLauncher, PubShareDialog, PopoverButton, FacetEditor } from 'components';
 
-import { Callback, PatchFn, PubPageData } from 'types';
+import { Callback, PubPageData } from 'types';
 import CitationsPreview from './CitationsPreview';
 import Download from './Download';
 import PubToc from './PubToc';
@@ -14,12 +14,11 @@ import Social from './Social';
 type Props = {
 	onShowHeaderDetails: Callback;
 	pubData: PubPageData;
-	updatePubData: PatchFn<PubPageData>;
 };
 
 const UtilityButtons = (props: Props) => {
-	const { onShowHeaderDetails, pubData, updatePubData } = props;
-	const { communityData, scopeData } = usePageContext();
+	const { onShowHeaderDetails, pubData } = props;
+	const { scopeData } = usePageContext();
 	const { isRelease, membersData } = pubData;
 	const { canManage } = scopeData.activePermissions;
 	return (
@@ -33,9 +32,6 @@ const UtilityButtons = (props: Props) => {
 				<PopoverButton
 					component={() => <FacetEditor facetName="PubHeaderTheme" selfContained />}
 					className="pub-header-popover"
-					updatePubData={updatePubData}
-					pubData={pubData}
-					communityData={communityData}
 					aria-label="Pub header theme options"
 				>
 					<SmallHeaderButton label="Edit theme" labelPosition="left" icon="clean" />
@@ -68,9 +64,8 @@ const UtilityButtons = (props: Props) => {
 				</DialogLauncher>
 			)}
 			<PopoverButton
-				component={CitationsPreview}
+				component={() => <CitationsPreview pubData={pubData} />}
 				className="pub-header-popover"
-				pubData={pubData}
 				aria-label="Cite this Pub"
 			>
 				<SmallHeaderButton

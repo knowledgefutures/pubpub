@@ -60,7 +60,6 @@ const LicenseSection = () => {
 						component={() => <FacetEditor facetName="License" selfContained />}
 						placement="top-end"
 						aria-label="Edit license"
-						facetName="License"
 					>
 						<AccentedIconButton icon="edit" accentColor={iconColor} />
 					</PopoverButton>

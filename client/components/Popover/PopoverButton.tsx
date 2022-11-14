@@ -9,21 +9,19 @@ type Props = {
 	'aria-label': string;
 	className?: string;
 	children: React.ReactElement;
-	component: React.ComponentType<any>;
-	[key: string]: any;
+	component: () => React.ReactNode;
 	placement?: PopoverState['placement'];
 	gutter?: number;
 };
 
 const PopoverButton = (props: Props) => {
 	const {
-		component: Component,
+		component,
 		'aria-label': ariaLabel,
 		children,
 		className,
 		placement = 'bottom-end',
 		gutter = 5,
-		...restProps
 	} = props;
 	const popover = usePopoverState({ unstable_fixed: false, placement, gutter });
 	return (
@@ -44,9 +42,7 @@ const PopoverButton = (props: Props) => {
 				tabIndex={0}
 				{...popover}
 			>
-				<Card elevation={2}>
-					<Component {...restProps} />
-				</Card>
+				<Card elevation={2}>{component()}</Card>
 			</Popover>
 		</>
 	);

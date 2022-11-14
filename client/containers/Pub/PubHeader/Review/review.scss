@@ -3,11 +3,6 @@
 $bp: vendor.$bp-namespace;
 
 .review-component {
-	position: absolute;
-	right: 0;
-	top: 100%;
-	color: black;
-
 	.review-button {
 		padding-top: 18px;
 		.#{$bp}-button {

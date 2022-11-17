@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import { WorkerTask, Export } from 'server/models';
 import { addWorkerTask } from 'server/utils/workers';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { getReleasesForPub } from 'server/release/queries';
 import { getExportFormats } from 'utils/export/formats';
 
 export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
@@ -45,17 +46,29 @@ export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 	return { taskId: task.id };
 };
 
-export const createLatestPubExports = async (pubId) => {
-	const {
-		historyData: { latestKey },
-	} = await getPubDraftDoc(pubId);
+export const createPubExportsForHistoryKey = async (pubId: string, historyKey: number) => {
 	await Promise.all(
 		getExportFormats().map((format) =>
 			getOrStartExportTask({
 				pubId,
 				format,
-				historyKey: latestKey,
+				historyKey,
 			}),
 		),
 	);
+};
+
+export const createPubExportsForLatestRelease = async (pubId: string) => {
+	const releases = await getReleasesForPub(pubId);
+	const latestRelease = releases[releases.length - 1];
+	if (latestRelease) {
+		await createPubExportsForHistoryKey(pubId, latestRelease.historyKey);
+	}
+};
+
+export const createLatestPubExports = async (pubId: string) => {
+	const {
+		historyData: { latestKey },
+	} = await getPubDraftDoc(pubId);
+	await createPubExportsForHistoryKey(pubId, latestKey);
 };

@@ -128,3 +128,7 @@ export const createRelease = async ({
 
 	return release.toJSON();
 };
+
+export const getReleasesForPub = (pubId: string): Promise<ReleaseType[]> => {
+	return Release.findAll({ where: { pubId } });
+};

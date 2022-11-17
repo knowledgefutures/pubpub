@@ -5,7 +5,7 @@ import { createReviewer } from 'server/reviewer/queries';
 
 import { getLatestKeyInPubDraft } from 'server/utils/firebaseAdmin';
 
-import { DocJson } from 'types';
+import { DocJson, User } from 'types';
 import {
 	createCreatedThreadEvent,
 	createClosedThreadEvent,
@@ -13,7 +13,7 @@ import {
 	createReleasedEvent,
 } from '../threadEvent/queries';
 import { createRelease } from '../release/queries';
-import { createThreadComment } from '../threadComment/queries';
+import { createThreadComment, CreateThreadOptions } from '../threadComment/queries';
 
 type CreateReviewOptions = {
 	pubId: string;
@@ -23,20 +23,19 @@ type CreateReviewOptions = {
 	text?: string;
 	content?: DocJson;
 	reviewerName?: string;
+	userData: User;
 };
 
-export const createReview = async (
-	{
-		pubId,
-		title,
-		releaseRequested,
-		reviewContent,
-		text,
-		content,
-		reviewerName,
-	}: CreateReviewOptions,
+export const createReview = async ({
+	pubId,
+	title,
+	releaseRequested,
+	reviewContent,
+	text,
+	content,
+	reviewerName,
 	userData,
-) => {
+}: CreateReviewOptions) => {
 	const userId = userData?.id || null;
 	const reviews = await ReviewNew.findAll({
 		where: {
@@ -76,11 +75,16 @@ export const createReview = async (
 		id: reviewData.id,
 		name: userData?.fullName || reviewerName || 'anonymous',
 	});
-
 	if (userId) {
 		await createCreatedThreadEvent(userData, threadId);
 		if (text) {
-			await createThreadComment({ threadId, content, text }, userData);
+			const options = {
+				text,
+				content,
+				threadId,
+				userId,
+			} as CreateThreadOptions;
+			await createThreadComment(options);
 		}
 	}
 

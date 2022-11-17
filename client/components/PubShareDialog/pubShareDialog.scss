@@ -37,7 +37,11 @@ $bp: vendor.$bp-namespace;
 		.#{$bp}-button {
 			display: flex;
 			justify-content: flex-start;
-			width: 160px;
+			width: 163px;
+		}
+
+		.#{$bp}-input-group .#{bp3}-input {
+			height: 100%;
 		}
 	}
 

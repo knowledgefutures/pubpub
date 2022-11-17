@@ -48,15 +48,14 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const { communityData, scopeData } = usePageContext();
 	const { submissionState } = usePubContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
-	const { isRelease, isReviewingPub } = pubData;
+	const { isRelease, isReviewingPub, isAVisitingCommenter } = pubData;
 	const shouldShowReleaseReviewButton = canCreateReviews && !isReviewingPub && !submissionState;
-
 	const renderForRelease = () => {
 		const { releases, releaseNumber } = pubData;
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<React.Fragment>
-				{(canView || canViewDraft) && (
+				{(canView || canViewDraft) && !isAVisitingCommenter && (
 					<ResponsiveHeaderButton
 						icon="edit"
 						tagName="a"
@@ -141,7 +140,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
 					/>
 				)}
-				{canAdmin && !isReviewingPub && (
+				{canAdmin && !isReviewingPub && !isAVisitingCommenter && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton
@@ -170,7 +169,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						)}
 					</DialogLauncher>
 				)}
-				{shouldShowReleaseReviewButton && (
+				{shouldShowReleaseReviewButton && !isAVisitingCommenter && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton

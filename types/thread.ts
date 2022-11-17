@@ -2,6 +2,11 @@ import { User } from './user';
 import { Discussion } from './discussion';
 import { Review } from './review';
 
+export type Commenter = {
+	id: string;
+	name: string;
+};
+
 export type ThreadEvent = {
 	id: string;
 	type?: string;
@@ -19,6 +24,7 @@ export type ThreadComment = {
 	userId: string;
 	threadId: string;
 	author?: User;
+	commenter?: Commenter;
 };
 
 export type Thread = {

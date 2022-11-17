@@ -14,7 +14,6 @@ import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { generateHash } from 'utils/hashes';
 import {
 	getPubForRequest,
 	getMembers,
@@ -28,7 +27,6 @@ import {
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
-import { Pub } from 'server/models';
 
 const getInitialDataForPub = (req) => getInitialData(req, { includeFacets: true });
 
@@ -74,11 +72,13 @@ const getEnrichedPubData = async ({
 	initialData,
 	historyKey = null,
 	releaseNumber = null,
+	isAVisitingCommenter = false,
 }: {
 	pubSlug: string;
 	initialData: InitialData;
 	historyKey?: null | number;
 	releaseNumber?: null | number;
+	isAVisitingCommenter?: boolean;
 }) => {
 	const pubData = await getPubForRequest({
 		slug: pubSlug,
@@ -87,21 +87,10 @@ const getEnrichedPubData = async ({
 		getSubmissions: true,
 		getDraft: true,
 		getDiscussions: true,
+		isAVisitingCommenter,
 	});
-
 	if (!pubData) {
 		throw new ForbiddenError();
-	}
-
-	if (!pubData.reviewHash) {
-		const reviewHash = generateHash(8);
-		Pub.update(
-			{ reviewHash },
-			{
-				where: { id: pubData.id },
-			},
-		);
-		pubData.reviewHash = reviewHash;
 	}
 
 	const { isRelease } = pubData;
@@ -123,8 +112,8 @@ const getEnrichedPubData = async ({
 			? findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id })
 			: null,
 	]);
-	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
 
+	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
 	return {
 		subscription: subscription?.toJSON() ?? null,
 		...pubData,
@@ -289,5 +278,62 @@ app.get(
 		}));
 		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		return renderPubDocument(res, pubData, initialData, customScripts);
+	}),
+);
+
+app.get(
+	['/pub/:pubSlug/comment/:historyKey/'],
+	wrap(async (req, res, next) => {
+		if (!hostIsValid(req, 'community')) {
+			return next();
+		}
+
+		const initialData = await getInitialDataForPub(req);
+		const { historyKey: historyKeyString, pubSlug } = req.params;
+		const { canView } = initialData.scopeData.activePermissions;
+		const { hasHistoryKey, historyKey } = checkHistoryKey(historyKeyString);
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
+
+		if (!canView) {
+			throw new NotFoundError();
+		}
+
+		const pubData = await getEnrichedPubData({
+			pubSlug,
+			initialData,
+			historyKey: hasHistoryKey ? historyKey : null,
+			isAVisitingCommenter: true,
+		});
+
+		return renderPubDocument(res, pubData, initialData, customScripts);
+	}),
+);
+
+app.get(
+	['/pub/:pubSlug/comment/release/:releaseNumber'],
+	wrap(async (req, res, next) => {
+		if (!hostIsValid(req, 'community')) {
+			return next();
+		}
+		try {
+			const { releaseNumber: releaseNumberString, pubSlug } = req.params;
+			const initialData = await getInitialDataForPub(req);
+			const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
+			const releaseNumber = parseInt(releaseNumberString, 10);
+			if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
+				throw new NotFoundError();
+			}
+
+			const pubData = await getEnrichedPubData({
+				pubSlug,
+				releaseNumber,
+				initialData,
+				isAVisitingCommenter: true,
+			});
+
+			return renderPubDocument(res, pubData, initialData, customScripts);
+		} catch (err) {
+			return handleErrors(req, res, next)(err);
+		}
 	}),
 );

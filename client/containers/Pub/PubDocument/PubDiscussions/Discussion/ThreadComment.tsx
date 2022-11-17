@@ -9,6 +9,7 @@ import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { Callback } from 'types';
+import { getPartsOfFullName } from 'utils/names';
 
 require('./threadComment.scss');
 
@@ -32,7 +33,6 @@ const ThreadComment = (props: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState<null | EditorChangeObject>(null);
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
-
 	const handlePutThreadComment = (threadCommentUpdates) => {
 		return apiFetch('/api/threadComment', {
 			method: 'PUT',
@@ -83,20 +83,28 @@ const ThreadComment = (props: Props) => {
 			/>
 		);
 	};
-
+	const commenterName = discussionData.commenter?.name;
 	return (
 		<div className={classNames('thread-comment-component', isPreview && 'is-preview')}>
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}
-					initials={threadCommentData.author.initials}
-					avatar={threadCommentData.author.avatar}
+					initials={
+						threadCommentData.author
+							? threadCommentData.author.intials
+							: commenterName
+							? getPartsOfFullName(commenterName).initials
+							: '?'
+					}
+					avatar={threadCommentData.author?.avatar}
 				/>
 			</div>
 			<div className="content-wrapper">
 				<div className="item-header">
 					<span className="name">
-						{threadCommentData.author.fullName}
+						{threadCommentData.author
+							? threadCommentData.author.fullName
+							: commenterName ?? 'anonymous'}
 						{isPreview ? ': ' : ''}
 					</span>
 

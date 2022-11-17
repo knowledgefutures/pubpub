@@ -39,6 +39,7 @@ sequelize.idType = {
 export const Collection = sequelize.import('./collection/model');
 export const CollectionAttribution = sequelize.import('./collectionAttribution/model');
 export const CollectionPub = sequelize.import('./collectionPub/model');
+export const Commenter = sequelize.import('./commenter/model');
 export const Community = sequelize.import('./community/model');
 export const CommunityAdmin = sequelize.import('./communityAdmin/model');
 export const CrossrefDepositRecord = sequelize.import('./crossrefDepositRecord/model');

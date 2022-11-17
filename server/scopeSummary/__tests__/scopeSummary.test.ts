@@ -5,6 +5,7 @@ import { Pub, Collection, Community, ScopeSummary } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createDiscussion } from 'server/discussion/queries';
 import { createReview } from 'server/review/queries';
+import { DocJson } from 'types';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { summarizePub, summarizeCollection, summarizeCommunity } from '../queries';
@@ -200,21 +201,19 @@ describe('scopeSummary hooks', () => {
 
 	it('updates ScopeSummaries when a Discussion is created', async () => {
 		const { community, p1, c1, chattyUser } = models;
-		await createDiscussion(
-			{
-				pubId: p1.id,
-				text: 'hi',
-				content: {},
-				historyKey: 0,
-				visibilityAccess: 'members',
-				initAnchorData: {
-					exact: 'hi',
-					from: 0,
-					to: 0,
-				},
+		await createDiscussion({
+			pubId: p1.id,
+			text: 'hi',
+			content: {} as DocJson,
+			historyKey: 0,
+			visibilityAccess: 'members',
+			initAnchorData: {
+				exact: 'hi',
+				from: 0,
+				to: 0,
 			},
-			chattyUser.id,
-		);
+			userId: chattyUser.id,
+		});
 		await Promise.all([
 			expectSummaryFor({ pubId: p1.id }, { discussions: 4 }),
 			expectSummaryFor({ collectionId: c1.id }, { pubs: 2, discussions: 4 }),
@@ -227,7 +226,7 @@ describe('scopeSummary hooks', () => {
 
 	it('updates ScopeSummaries when a Review is created', async () => {
 		const { community, p2, c1, chattyUser } = models;
-		await createReview({ pubId: p2.id }, chattyUser);
+		await createReview({ pubId: p2.id, userData: chattyUser });
 		await Promise.all([
 			expectSummaryFor({ pubId: p2.id }, { reviews: 3 }),
 			expectSummaryFor({ collectionId: c1.id }, { pubs: 2, reviews: 3 }),

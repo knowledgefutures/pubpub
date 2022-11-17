@@ -10,17 +10,30 @@ const getRequestIds = (req) => {
 		communityId: req.body.communityId,
 		pubId: req.body.pubId,
 		reviewId: req.body.reviewId || null,
+		reviewAccessHash: req.body.reviewAccessHash,
 	};
 };
 
 app.post('/api/reviews', (req, res) => {
 	const requestIds = getRequestIds(req);
-	getPermissions(requestIds, req.body.accessHash)
+	getPermissions(requestIds)
 		.then((permissions) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createReview(req.body, req.user);
+			const { pubId, title, releaseRequested, reviewContent, text, content, reviewerName } =
+				req.body;
+
+			return createReview({
+				pubId,
+				title,
+				releaseRequested,
+				reviewContent,
+				text,
+				content,
+				reviewerName,
+				userData: req.user,
+			});
 		})
 		.then((newReview) => {
 			return res.status(201).json(newReview);
@@ -33,7 +46,7 @@ app.post('/api/reviews', (req, res) => {
 
 app.post('/api/reviews/release', (req, res) => {
 	const requestIds = getRequestIds(req);
-	getPermissions(requestIds, req.body.accessHash)
+	getPermissions(requestIds)
 		.then((permissions) => {
 			if (!permissions.createRelease) {
 				throw new Error('Not Authorized');
@@ -51,7 +64,7 @@ app.post('/api/reviews/release', (req, res) => {
 
 app.put('/api/reviews', (req, res) => {
 	const requestIds = getRequestIds(req);
-	getPermissions(requestIds, req.body.accessHash)
+	getPermissions(requestIds)
 		.then((permissions) => {
 			if (!permissions.update) {
 				throw new Error('Not Authorized');
@@ -68,7 +81,7 @@ app.put('/api/reviews', (req, res) => {
 });
 
 app.delete('/api/reviews', (req, res) => {
-	getPermissions(getRequestIds(req), req.body.accessHash)
+	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.destroy) {
 				throw new Error('Not Authorized');

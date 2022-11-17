@@ -2,13 +2,14 @@ import { Pub } from 'server/models';
 import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId, pubId }, accessHash) => {
+export const getPermissions = async ({ userId, communityId, pubId, reviewAccessHash }) => {
 	if (!communityId || !pubId) {
 		return {};
 	}
 
 	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
-	const hasAccessHash = pub?.reviewHash === accessHash;
+	const hasAccessHash = pub?.reviewHash === reviewAccessHash;
+
 	const scopeData = await getScope({
 		communityId,
 		pubId,

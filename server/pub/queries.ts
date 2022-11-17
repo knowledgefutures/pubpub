@@ -35,6 +35,7 @@ export const createPub = async (
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
 			reviewHash: generateHash(8),
+			commentHash: generateHash(8),
 			draftId: draft.id,
 			...restArgs,
 		},

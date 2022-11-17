@@ -2,6 +2,7 @@ import { modelize, setup } from 'stubstub';
 
 import { UserSubscription } from 'server/models';
 
+import { DocJson } from 'types';
 import { createThreadComment } from '../queries';
 
 const models = modelize`
@@ -41,7 +42,12 @@ describe('createThreadComment()', () => {
 					[willNotBeSubscribed, 0],
 				] as const
 			).map(async ([user, count]) => {
-				await createThreadComment({ text: '', content: {}, threadId: thread.id }, user);
+				await createThreadComment({
+					text: '',
+					content: {} as DocJson,
+					threadId: thread.id,
+					userId: user.id,
+				});
 				expect(
 					await UserSubscription.count({
 						where: { userId: user.id, threadId: thread.id },

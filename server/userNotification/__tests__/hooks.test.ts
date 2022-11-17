@@ -3,6 +3,8 @@ import { createThreadComment } from 'server/threadComment/queries';
 import { finishDeferredTasks } from 'server/utils/deferred';
 import { modelize, setup, teardown } from 'stubstub';
 
+import { DocJson } from 'types';
+
 const models = modelize`
     User rando {}
     User chattyUser {}
@@ -95,13 +97,12 @@ describe('UserNotifications created when ActivityItems are created', () => {
 			sickOfThisThreadUser,
 			pub,
 		} = models;
-		const threadComment = await createThreadComment(
-			{
-				text: 'Hello members',
-				threadId: membersThread.id,
-			},
-			chattyUser,
-		);
+		const threadComment = await createThreadComment({
+			text: 'Hello members',
+			threadId: membersThread.id,
+			userId: chattyUser.id,
+			content: {} as DocJson,
+		});
 		await finishDeferredTasks();
 		const activityItem = await ActivityItem.findOne({
 			where: { pubId: pub.id, kind: 'pub-discussion-comment-added' },
@@ -135,13 +136,12 @@ describe('UserNotifications created when ActivityItems are created', () => {
 	it('creates the right notifications for a public Discussion ThreadComment', async () => {
 		const { chattyUser, inactiveSubscriptionUser, rando, pubSubscriber, publicThread, pub } =
 			models;
-		const threadComment = await createThreadComment(
-			{
-				text: 'Hello world',
-				threadId: publicThread.id,
-			},
-			chattyUser,
-		);
+		const threadComment = await createThreadComment({
+			text: 'Hello world',
+			threadId: publicThread.id,
+			userId: chattyUser.id,
+			content: {} as DocJson,
+		});
 		await finishDeferredTasks();
 		const activityItem = await ActivityItem.findOne({
 			where: { pubId: pub.id, kind: 'pub-discussion-comment-added' },
@@ -172,13 +172,12 @@ describe('UserNotifications created when ActivityItems are created', () => {
 
 	it('creates the right notifications for a members-only Review ThreadComment', async () => {
 		const { chattyUser, communityAdmin, pubSubscriber, reviewThread, pub } = models;
-		const threadComment = await createThreadComment(
-			{
-				text: 'Hello world',
-				threadId: reviewThread.id,
-			},
-			chattyUser,
-		);
+		const threadComment = await createThreadComment({
+			text: 'Hello world',
+			threadId: reviewThread.id,
+			userId: chattyUser.id,
+			content: {} as DocJson,
+		});
 		await finishDeferredTasks();
 		const activityItem = await ActivityItem.findOne({
 			where: { pubId: pub.id, kind: 'pub-review-comment-added' },

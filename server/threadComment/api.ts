@@ -14,6 +14,7 @@ const getRequestIds = (req) => {
 		pubId: req.body.pubId,
 		communityId: req.body.communityId,
 		accessHash: req.body.accessHash,
+		commentAccessHash: req.body.commentAccessHash,
 	};
 };
 
@@ -25,7 +26,9 @@ app.post(
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
-		const newThreadComment = await createThreadComment(req.body, req.user);
+		const userId = (req.user?.id as string) || null;
+		const options = { ...req.body, userId };
+		const newThreadComment = await createThreadComment(options);
 		return res.status(201).json(newThreadComment);
 	}),
 );

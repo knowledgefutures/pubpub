@@ -1,4 +1,5 @@
-import { Discussion } from 'server/models';
+import { Discussion, Pub } from 'server/models';
+import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
 import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 
@@ -8,11 +9,14 @@ export const getCreatePermission = async ({
 	communityId,
 	accessHash,
 	visibilityAccess,
+	commentAccessHash,
 }) => {
-	if (!userId) {
+	if (!userId && !commentAccessHash) {
 		return false;
 	}
 
+	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
+	const hasAccessHash = pub?.commentHash === commentAccessHash;
 	const scopeData = await getScope({
 		communityId,
 		pubId,
@@ -22,7 +26,7 @@ export const getCreatePermission = async ({
 
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const nonMembersVisibility = visibilityAccess && visibilityAccess !== 'members';
-	return canView || (canCreateDiscussions && nonMembersVisibility);
+	return canView || (canCreateDiscussions && nonMembersVisibility) || hasAccessHash;
 };
 
 export const getUpdatePermissions = async ({ discussionId, userId, pubId, communityId }) => {

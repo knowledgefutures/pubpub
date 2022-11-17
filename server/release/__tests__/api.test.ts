@@ -11,6 +11,7 @@ import {
 import { DiscussionAnchor, Doc, Export, Release } from 'server/models';
 import { getExportFormats } from 'utils/export/formats';
 import { createDiscussion } from 'server/discussion/queries';
+import { DocJson } from 'types';
 
 const models = modelize`
 	Community community {
@@ -69,22 +70,20 @@ const createDiscussionForPub = ({
 	historyKey: number;
 	visibilityAccess?: 'public' | 'members';
 }) => {
-	return createDiscussion(
-		{
-			pubId,
-			visibilityAccess,
-			text: 'whatever',
-			content: {},
-			historyKey,
-			initAnchorData: {
-				from,
-				to,
-				exact: 'whatever',
-			},
-			...rest,
+	return createDiscussion({
+		pubId,
+		visibilityAccess,
+		text: 'whatever',
+		content: {} as DocJson,
+		historyKey,
+		initAnchorData: {
+			from,
+			to,
+			exact: 'whatever',
 		},
+		...rest,
 		userId,
-	);
+	});
 };
 
 const determinizeAnchor = determinize(['historyKey', 'selection']);

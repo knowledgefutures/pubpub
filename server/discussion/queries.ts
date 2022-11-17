@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { ForbiddenError } from 'server/utils/errors';
 import {
+	Commenter,
 	Discussion,
 	DiscussionAnchor,
 	Thread,
@@ -12,7 +13,8 @@ import {
 } from 'server/models';
 import { getReadableDateInYear } from 'utils/dates';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
-import { VisibilityAccess } from 'types';
+import { createNewThreadWithComment } from 'server/thread/queries';
+import { VisibilityAccess, DocJson } from 'types';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
@@ -21,6 +23,7 @@ const findDiscussionWithUser = (id) =>
 		},
 		include: [
 			includeUserModel({ as: 'author' }),
+			{ model: Commenter, as: 'commenter' },
 			{ model: DiscussionAnchor, as: 'anchors' },
 			{
 				model: Visibility,
@@ -51,7 +54,7 @@ type CreateDiscussionOpts = {
 	discussionId?: string;
 	title?: string;
 	text: string;
-	content: {};
+	content: DocJson;
 	historyKey: number;
 	visibilityAccess: 'members' | 'public';
 	initAnchorData: {
@@ -61,9 +64,11 @@ type CreateDiscussionOpts = {
 		from: number;
 		to: number;
 	};
+	commenterName?: string;
+	userId?: string;
 };
 
-export const createDiscussion = async (options: CreateDiscussionOpts, userId: string) => {
+export const createDiscussion = async (options: CreateDiscussionOpts) => {
 	const {
 		pubId,
 		discussionId,
@@ -73,7 +78,12 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		historyKey,
 		visibilityAccess,
 		initAnchorData,
+		commenterName,
+		userId,
 	} = options;
+
+	const user = userId || null;
+	const commenter = commenterName || null;
 
 	const discussions = await Discussion.findAll({
 		where: { pubId },
@@ -93,23 +103,23 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	const dateString = getReadableDateInYear(new Date());
 	const generatedTitle = `New Discussion on ${dateString}`;
 
-	const newThread = await Thread.create({});
+	const { threadId, commenterId } = await createNewThreadWithComment({
+		text,
+		content,
+		commenterName: commenter,
+		userId: user,
+	});
+
 	const newVisibility = await Visibility.create({ access: visibilityAccess });
 	const newDiscussion = await Discussion.create({
 		id: discussionId,
 		title: title || generatedTitle,
 		number: maxThreadNumber + 1,
-		threadId: newThread.id,
+		threadId,
 		visibilityId: newVisibility.id,
 		userId,
 		pubId,
-	});
-
-	await ThreadComment.create({
-		text,
-		content,
-		userId,
-		threadId: newThread.id,
+		commenterId,
 	});
 
 	if (initAnchorData) {

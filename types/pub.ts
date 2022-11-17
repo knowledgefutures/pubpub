@@ -76,6 +76,7 @@ export type Pub = {
 	viewHash?: string;
 	editHash?: string;
 	reviewHash?: string;
+	commentHash?: string;
 	communityId: string;
 	community?: Community;
 	discussions?: Discussion[];
@@ -123,8 +124,10 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 		viewHash: Maybe<string>;
 		editHash: Maybe<string>;
 		reviewHash: Maybe<string>;
+		commentHash: Maybe<string>;
 		isRelease: boolean;
 		isReviewingPub: boolean;
+		isAVisitingCommenter: boolean;
 		isInMaintenanceMode?: boolean;
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
@@ -162,10 +165,12 @@ export type SanitizedPubData = Pub & {
 	viewHash: string | null;
 	editHash: string | null;
 	reviewHash: string | null;
+	commentHash: string | null;
 	attributions: PubAttribution[];
 	discussions: Discussion[];
 	collectionPubs: CollectionPubWithAttributions[];
 	isRelease: boolean;
+	isAVisitingCommenter: boolean;
 	releases: Release[];
 	releaseNumber: number | null;
 };

@@ -6,16 +6,22 @@ import sanitizeReviews from './reviewsSanitize';
 import { sanitizePubEdges } from './sanitizePubEdge';
 
 const sanitizeHashes = (pubData, activePermissions) => {
-	const { editHash, viewHash } = pubData;
+	const { editHash, viewHash, commentHash, reviewHash } = pubData;
 	const { canView, canViewDraft, canEdit, canEditDraft } = activePermissions;
 	return {
 		viewHash: canView || canViewDraft ? viewHash : null,
 		editHash: canEdit || canEditDraft ? editHash : null,
+		commentHash: canView ? commentHash : null,
+		reviewHash: canView ? reviewHash : null,
 	};
 };
 
-const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease: boolean) => {
-	const shownVisibilityAccess = isRelease ? 'public' : 'members';
+const filterDiscussionsByDraftOrRelease = (
+	discussions: Discussion[],
+	isRelease: boolean,
+	isAVisitingCommenter: boolean,
+) => {
+	const shownVisibilityAccess = isRelease && isAVisitingCommenter ? 'public' : 'members';
 	return discussions.filter(
 		(discussion) => discussion.visibility.access === shownVisibilityAccess,
 	);
@@ -34,11 +40,11 @@ export default (
 	pubData,
 	initialData,
 	releaseNumber: number | null = null,
+	isAVisitingCommenter: boolean = false,
 ): null | SanitizedPubData => {
 	const { loginData, scopeData } = initialData;
 	const { activePermissions } = scopeData;
 	const { canView, canViewDraft } = activePermissions;
-
 	const hasPubMemberAccess = pubData.members.some((member) => {
 		return member.userId === initialData.loginData.id;
 	});
@@ -76,7 +82,6 @@ export default (
 			return null;
 		}
 	}
-
 	// TODO(ian): completely unsure why we can't just the `order` parameter within the `include`
 	// object for the query made above, but it doesn't seem to work.
 	const sortedReleases = pubData.releases
@@ -86,7 +91,7 @@ export default (
 	const discussions =
 		pubData.discussions &&
 		sanitizeDiscussions(
-			filterDiscussionsByDraftOrRelease(pubData.discussions, isRelease),
+			filterDiscussionsByDraftOrRelease(pubData.discussions, isRelease, isAVisitingCommenter),
 			activePermissions,
 			loginData.id,
 		);
@@ -107,6 +112,7 @@ export default (
 		exports: getFilteredExports(pubData, isRelease),
 		collectionPubs: filteredCollectionPubs,
 		isRelease,
+		isAVisitingCommenter,
 		releases: sortedReleases,
 		releaseNumber,
 	};

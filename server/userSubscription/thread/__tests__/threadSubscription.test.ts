@@ -3,6 +3,7 @@ import { modelize, login, setup, teardown } from 'stubstub';
 import { UserSubscription } from 'server/models';
 import { updateVisibility } from 'server/visibility/queries';
 import { createThreadComment } from 'server/threadComment/queries';
+import { DocJson } from 'types';
 
 const models = modelize`
     Community {
@@ -189,10 +190,12 @@ describe('Visibility hooks updating UserSubscriptions', () => {
 describe('ThreadComment hooks creating UserSubscriptions', () => {
 	it('Automatically subscribes users to a thread when they add a comment', async () => {
 		const { toBeCommentedOnThread, rando } = models;
-		await createThreadComment(
-			{ text: 'bahhh', content: {}, threadId: toBeCommentedOnThread.id },
-			rando,
-		);
+		await createThreadComment({
+			text: 'bahhh',
+			content: {} as DocJson,
+			threadId: toBeCommentedOnThread.id,
+			userId: rando.id,
+		});
 		expect(
 			await UserSubscription.findOne({
 				where: { userId: rando.id, threadId: toBeCommentedOnThread.id },
@@ -206,10 +209,12 @@ describe('ThreadComment hooks creating UserSubscriptions', () => {
 
 	it('Does not un-mute existing subscriptions when users add a comment', async () => {
 		const { toBeCommentedOnThread, mutedThisThreadUser, mutedSubscription } = models;
-		await createThreadComment(
-			{ text: 'bahhh', content: {}, threadId: toBeCommentedOnThread.id },
-			mutedThisThreadUser,
-		);
+		await createThreadComment({
+			text: 'bahhh',
+			content: {} as DocJson,
+			threadId: toBeCommentedOnThread.id,
+			userId: mutedThisThreadUser.id,
+		});
 		expect(
 			await UserSubscription.findOne({
 				where: { userId: mutedThisThreadUser.id, threadId: toBeCommentedOnThread.id },

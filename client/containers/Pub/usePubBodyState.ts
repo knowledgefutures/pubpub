@@ -27,6 +27,7 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			isRelease,
 			isReviewingPub,
 			discussions,
+			isAVisitingCommenter,
 		},
 		submissionState,
 		historyData: { currentKey, isViewingHistory, historyDoc, historyDocEditorKey },
@@ -124,12 +125,23 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			initialHistoryKey: initialDocKey,
 			initialContent: initialDoc,
 			includeCollabPlugin: false,
-			includeDiscussionsPlugin: false,
-			discussionAnchors: null,
-			canCreateAnchoredDiscussions: false,
+			includeDiscussionsPlugin: true,
+			discussionAnchors,
+			canCreateAnchoredDiscussions: true,
 		};
 	}
-
+	if (isAVisitingCommenter) {
+		return {
+			editorKey: 'commenting',
+			isReadOnly: true,
+			initialHistoryKey: initialDocKey,
+			initialContent: initialDoc,
+			includeCollabPlugin: false,
+			includeDiscussionsPlugin: false,
+			discussionAnchors,
+			canCreateAnchoredDiscussions: true,
+		};
+	}
 	return {
 		editorKey: firebaseDraftRef ? 'ready' : 'unready',
 		isReadOnly: !(canEdit || canEditDraft),

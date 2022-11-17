@@ -42,6 +42,7 @@ export default (sequelize, dataTypes) => {
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
 			reviewHash: { type: dataTypes.STRING },
+			commentHash: { type: dataTypes.STRING },
 			nodeLabels: { type: dataTypes.JSONB },
 
 			pubEdgeListingDefaultsToCarousel: {

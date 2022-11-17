@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AnchorButton, Button, Intent } from '@blueprintjs/core';
+import React, { useState, useEffect, useCallback } from 'react';
+import { AnchorButton, Button, Intent, InputGroup } from '@blueprintjs/core';
 
 import Editor, {
 	getText,
@@ -36,12 +36,20 @@ type Props = OwnProps & typeof defaultProps;
 const DiscussionInput = (props: Props) => {
 	const { discussionData, isPubBottomInput } = props;
 	const { pubData, historyData, collabData, updateLocalData } = usePubContext();
-	const { loginData, locationData, communityData } = usePageContext();
+	const {
+		loginData,
+		locationData,
+		communityData,
+		scopeData: {
+			activePermissions: { canEdit },
+		},
+	} = usePageContext();
 	const pubView = collabData.editorChangeObject!.view;
 	const [changeObject, setChangeObject] = useState<any>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
+	const [commenterName, setCommenterName] = useState('');
 	const isNewThread = !discussionData.number;
 	const inputView = changeObject?.view;
 
@@ -63,6 +71,8 @@ const DiscussionInput = (props: Props) => {
 				communityId: communityData.id,
 				content: getJSON(changeObject?.view),
 				text: getText(changeObject?.view) || '',
+				commentAccessHash: pubData.commentHash,
+				commenterName,
 			}),
 		});
 
@@ -102,9 +112,10 @@ const DiscussionInput = (props: Props) => {
 				text: getText(changeObject?.view) || '',
 				initAnchorData,
 				visibilityAccess: pubData.isRelease ? 'public' : 'members',
+				commentAccessHash: pubData.commentHash,
+				commenterName,
 			}),
 		});
-
 		updateLocalData('pub', {
 			discussions: [...pubData.discussions, outputData],
 		});
@@ -121,12 +132,43 @@ const DiscussionInput = (props: Props) => {
 	const redirectString = `?redirect=${locationData.path}${
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
+
+	const canComment = isLoggedIn || pubData.isAVisitingCommenter;
+	const isUser = !!(canEdit || loginData.fullName);
+
+	const handleCommenterNameOnBlur = (evt) => {
+		if (evt.key === 'Enter') {
+			evt.currentTarget.blur();
+		}
+	};
+	const handleInputChange = useCallback(
+		(e) => {
+			setCommenterName(e.target.value);
+		},
+		[setCommenterName],
+	);
+	const renderUserNameInput = () => {
+		return (
+			!isUser &&
+			pubData.isAVisitingCommenter && (
+				<div className="simple-input">
+					<p>Add your name?</p>
+					<InputGroup
+						value={commenterName}
+						onChange={handleInputChange}
+						onBlur={handleCommenterNameOnBlur}
+						placeholder="Enter name here..."
+					/>
+				</div>
+			)
+		);
+	};
 	return (
 		<div className="thread-comment-component input">
 			<div className="avatar-wrapper">
 				<Avatar width={18} initials={loginData.initials} avatar={loginData.avatar} />
 			</div>
-			{!isLoggedIn && (
+			{!canComment && (
 				<React.Fragment>
 					<AnchorButton
 						className="discussion-primary-button"
@@ -146,17 +188,20 @@ const DiscussionInput = (props: Props) => {
 					)}
 				</React.Fragment>
 			)}
-			{isLoggedIn && !isNewThread && !didFocus && (
-				<input
-					type="text"
-					className="simple-input"
-					placeholder="Add a reply..."
-					onFocus={() => {
-						setDidFocus(true);
-					}}
-				/>
+			{canComment && !isNewThread && !didFocus && (
+				<div>
+					<input
+						type="text"
+						className="simple-input"
+						placeholder="Add a reply..."
+						onFocus={() => {
+							setDidFocus(true);
+						}}
+					/>
+					{renderUserNameInput()}
+				</div>
 			)}
-			{isLoggedIn && (isNewThread || didFocus) && (
+			{canComment && (isNewThread || didFocus) && (
 				<div className="content-wrapper">
 					<div className="discussion-body-wrapper editable">
 						<FormattingBar
@@ -171,6 +216,7 @@ const DiscussionInput = (props: Props) => {
 								setChangeObject(editorChangeObject);
 							}}
 						/>
+						<div>{renderUserNameInput()}</div>
 					</div>
 					<Button
 						className="discussion-primary-button"

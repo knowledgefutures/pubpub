@@ -26,6 +26,10 @@ const redirectHosts = {
 		'/': 'https://www.knowledgefutures.org',
 		'*': 'https://notes.knowledgefutures.org$1',
 	},
+	'rapidreviewscovid19.mitpress.mit.edu': {
+		'/': 'https://rrid.mitpress.mit.edu',
+		'*': 'https://rrid.mitpress.mit.edu$1',
+	},
 	'blog.pubpub.org': {
 		'*': 'https://notes.knowledgefutures.org$1',
 	},

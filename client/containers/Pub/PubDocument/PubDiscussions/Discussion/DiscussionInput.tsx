@@ -151,7 +151,7 @@ const DiscussionInput = (props: Props) => {
 		return (
 			!isUser &&
 			pubData.isAVisitingCommenter && (
-				<div className="simple-input">
+				<div className="simple-input guest-name-input">
 					<p>Add your name?</p>
 					<InputGroup
 						value={commenterName}
@@ -189,7 +189,7 @@ const DiscussionInput = (props: Props) => {
 				</React.Fragment>
 			)}
 			{canComment && !isNewThread && !didFocus && (
-				<div>
+				<>
 					<input
 						type="text"
 						className="simple-input"
@@ -199,7 +199,7 @@ const DiscussionInput = (props: Props) => {
 						}}
 					/>
 					{renderUserNameInput()}
-				</div>
+				</>
 			)}
 			{canComment && (isNewThread || didFocus) && (
 				<div className="content-wrapper">
@@ -216,7 +216,7 @@ const DiscussionInput = (props: Props) => {
 								setChangeObject(editorChangeObject);
 							}}
 						/>
-						<div>{renderUserNameInput()}</div>
+						{renderUserNameInput()}
 					</div>
 					<Button
 						className="discussion-primary-button"

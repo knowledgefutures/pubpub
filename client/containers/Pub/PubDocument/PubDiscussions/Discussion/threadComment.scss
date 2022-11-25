@@ -74,6 +74,16 @@
 		width: 100%;
 		font-style: italic;
 	}
+
+	.guest-name-input {
+		display: none;
+	}
+	&:focus-within {
+		.guest-name-input {
+			display: block;
+		}
+	}
+
 	.discussion-primary-button,
 	.discussion-cancel-button {
 		margin-bottom: 1em;

@@ -28,14 +28,14 @@ export default {
 				},
 			},
 		],
-		toDOM: (node, { isReact } = { isReact: false }) => {
+		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
 			return [
 				'span',
 				{
 					'data-node-type': 'math-inline',
 					'data-value': node.attrs.value,
 				},
-				renderHtmlChildren(isReact, node.attrs.html),
+				renderHtmlChildren(isStaticallyRendered, node.attrs.html),
 			] as DOMOutputSpec;
 		},
 		inline: true,
@@ -74,7 +74,7 @@ export default {
 			},
 		],
 		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-		toDOM: (node: Node, { isReact } = {}) => {
+		toDOM: (node: Node, { isStaticallyRendered } = {}) => {
 			if (node.attrs.renderForPandoc) {
 				return (
 					<script
@@ -92,7 +92,7 @@ export default {
 					'data-value': node.attrs.value,
 				},
 				['span'],
-				renderHtmlChildren(isReact, node.attrs.html),
+				renderHtmlChildren(isStaticallyRendered, node.attrs.html),
 				[
 					'span',
 					{ class: 'equation-label', spellcheck: 'false' },

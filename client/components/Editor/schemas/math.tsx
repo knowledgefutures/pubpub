@@ -56,8 +56,8 @@ export default {
 	math_inline: {
 		...inlineMathSchema,
 		group: 'inline',
-		toDOM: (node: Node, { isReact } = { isReact: false }) =>
-			isReact
+		toDOM: (node: Node, { isStaticallyRendered } = { isStaticallyRendered: false }) =>
+			isStaticallyRendered
 				? renderStaticMath(node, 'math-inline', false)
 				: (['math-inline', { class: 'math-node' }, 0] as DOMOutputSpec),
 	},
@@ -72,8 +72,8 @@ export default {
 		reactiveAttrs: {
 			count: counter({ useNodeLabels: true, counterType: ReferenceableNodeType.Math }),
 		},
-		toDOM: (node: Node, { isReact } = { isReact: false }) => {
-			return isReact
+		toDOM: (node: Node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
+			return isStaticallyRendered
 				? renderStaticMath(node, 'div', true)
 				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec);
 		},

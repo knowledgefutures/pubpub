@@ -1,8 +1,7 @@
 import { Fragment, Node } from 'prosemirror-model';
-import { EditorView, NodeView, Decoration } from 'prosemirror-view';
+import { NodeViewConstructor, NodeView } from 'prosemirror-view';
 
-type NodeViewArgs = [Node, EditorView, boolean | (() => number), Decoration[]];
-type NodeViewConstructor = (...args: NodeViewArgs) => MathNodeView;
+type MathNodeViewConstructor = (...args: Parameters<NodeViewConstructor>) => MathNodeView;
 
 interface MathNodeView extends NodeView {
 	_node: Node;
@@ -20,8 +19,8 @@ const addCountToNode = (node: Node, count: number) => {
 	return node.copy(contentWithCount);
 };
 
-export const mathViewOverrideWithCount = (constructor: NodeViewConstructor) => {
-	return (...args: NodeViewArgs) => {
+export const mathViewOverrideWithCount = (constructor: MathNodeViewConstructor) => {
+	return (...args: Parameters<NodeViewConstructor>) => {
 		const delegate = constructor(...args);
 		const { renderMath } = delegate;
 		const boundRenderMath = renderMath.bind(delegate);

@@ -21,8 +21,8 @@ import { undo, redo } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
-import { codeBlockArrowHandlers } from 'prosemirror-codemirror-block';
 
+import { codeBlockArrowHandlers } from './code';
 import { splitBlockPreservingAttrs } from '../commands';
 
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;

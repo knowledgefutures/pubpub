@@ -18,6 +18,8 @@ import { getReactedDoc } from '@pubpub/prosemirror-reactive';
 
 import { DocJson } from 'types';
 
+import { getCodeHighlightStyles } from './codeHighlightStyle';
+
 const parseStyleToObject = (style) => {
 	try {
 		const styleObj = {};
@@ -136,7 +138,7 @@ const createOutputSpecFromNode = (node, schema, context) => {
 
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 	const outputSpec = fillHoleInSpec(
-		nodeSpec.toDOM(hydratedNode, { ...context, isReact: true }),
+		nodeSpec.toDOM(hydratedNode, { ...context, isStaticallyRendered: true }),
 		childSpecs,
 	);
 
@@ -163,8 +165,22 @@ export const renderStatic = ({
 	context = {},
 }) => {
 	const finalDoc = reactedDoc || getReactedDocFromJson(doc, schema, noteManager, nodeLabels);
-	return finalDoc.content.map((node, index) => {
+	const styles = { code_block: getCodeHighlightStyles(finalDoc) };
+	const styleElements = Object.keys(styles).reduce((memo, key) => {
+		if (styles[key]) {
+			return [
+				...memo,
+				React.createElement('style', {
+					key,
+					dangerouslySetInnerHTML: { __html: styles },
+				}),
+			];
+		}
+		return memo;
+	}, [] as any[]);
+	const docElements = finalDoc.content.map((node, index) => {
 		const outputSpec = createOutputSpecFromNode(node, schema, context);
 		return createReactFromOutputSpec(outputSpec, index);
 	});
+	return [...styleElements, ...docElements];
 };

@@ -192,34 +192,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 			return ['li', 0] as DOMOutputSpec;
 		},
 	},
-	code_block: {
-		content: 'text*',
-		group: 'block',
-		attrs: {
-			lang: { default: 'javascript' },
-			id: { default: null },
-		},
-		code: true,
-		selectable: false,
-		parseDOM: [
-			{
-				tag: 'pre',
-				getAttrs: (node) => {
-					return {
-						id: (node as Element).getAttribute('id'),
-					};
-				},
-				preserveWhitespace: 'full',
-			},
-		],
-		toDOM: (node) => {
-			return [
-				'pre',
-				{ ...(node.attrs.id && { id: node.attrs.id }) },
-				['code', 0],
-			] as DOMOutputSpec;
-		},
-	},
 	text: {
 		inline: true,
 		group: 'inline',

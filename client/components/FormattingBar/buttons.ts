@@ -70,7 +70,7 @@ const showOrTriggerTable = (editorChangeObject: EditorChangeObject): boolean => 
 	return (
 		selectionInTable &&
 		triggerOnClick(editorChangeObject) &&
-		(selection.empty || selection.$anchorCell)
+		(selection.empty || (selection as any).$anchorCell)
 	);
 };
 

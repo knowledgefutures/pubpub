@@ -1,14 +1,41 @@
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { undo, redo } from 'prosemirror-history';
-import {
-	CodeBlockSettings,
-	codeMirrorBlockPlugin,
-	defaultSettings,
-	languageLoaders,
-	legacyLanguageLoaders,
-} from 'prosemirror-codemirror-block';
 import { EditorView } from 'prosemirror-view';
 import { Node } from 'prosemirror-model';
 import { Classes } from '@blueprintjs/core';
+
+import { CodeBlockSettings, LanguageLoaders } from './types';
+import { codeMirrorBlockNodeView } from './codeMirrorBlockNodeView';
+import { codeBlockArrowHandlers } from './utils';
+import { CodeBlockLanguages } from './languages';
+import { defaultSettings } from './defaults';
+import languageLoaders from './languageLoaders';
+import parsers from './parsers';
+
+export const codeMirrorBlockKey = new PluginKey('codemirror-block');
+
+const codeMirrorBlockPlugin = (settings: CodeBlockSettings) => {
+	return new Plugin({
+		key: codeMirrorBlockKey,
+		props: {
+			nodeViews: {
+				code_block: codeMirrorBlockNodeView(settings),
+			},
+		},
+	});
+};
+
+export {
+	codeMirrorBlockNodeView,
+	codeBlockArrowHandlers,
+	codeMirrorBlockPlugin,
+	CodeBlockSettings,
+	LanguageLoaders,
+	CodeBlockLanguages,
+	defaultSettings,
+	parsers,
+	languageLoaders,
+};
 
 const createSelect = (
 	settings: CodeBlockSettings,
@@ -56,13 +83,14 @@ const createSelect = (
 	return () => {};
 };
 
-export default (schema) => {
+export default (schema, pluginsOptions) => {
 	if (schema.nodes.code_block) {
 		return [
 			codeMirrorBlockPlugin({
 				...defaultSettings,
+				readOnly: pluginsOptions.isReadOnly,
 				createSelect,
-				languageLoaders: { ...languageLoaders, ...legacyLanguageLoaders },
+				languageLoaders,
 				undo,
 				redo,
 			}),

@@ -41,7 +41,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node, { isReact } = { isReact: false }) => {
+		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
 			const figcaptionId = `${node.attrs.id}-figure-caption`;
 			return [
 				'figure',
@@ -72,7 +72,7 @@ export default {
 							{ spellcheck: 'false' },
 							builtLabel,
 						]),
-						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
+						renderHtmlChildren(isStaticallyRendered, node.attrs.caption, 'div'),
 					]),
 				],
 			] as unknown as DOMOutputSpec;

@@ -63,7 +63,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node, { isReact } = { isReact: false }) => {
+		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
 			const { url, align, id, altText, caption, fullResolution, size, href } = node.attrs;
 
 			const width = align === 'breakout' ? 1920 : 800;
@@ -115,7 +115,7 @@ export default {
 							{ spellcheck: 'false' },
 							builtLabel,
 						]),
-						renderHtmlChildren(isReact, caption, 'div'),
+						renderHtmlChildren(isStaticallyRendered, caption, 'div'),
 					]),
 				],
 			] as unknown as DOMOutputSpec;

@@ -128,17 +128,21 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		margin: 1em 0em;
 	}
 	pre {
-		background: rgba(0, 0, 0, 0.05);
-		padding: 20px;
 		box-shadow: none;
 		white-space: pre;
 		overflow: hidden;
 		overflow-x: auto;
 		code {
+			display: inline-block;
 			white-space: pre;
 			background-color: transparent;
 			padding: 0em;
 		}
+	}
+	pre.codeblock-wrapper {
+		// accomodate language dropdown without showing overflow
+		margin-bottom: 0;
+		padding-bottom: 30px;
 	}
 	code {
 		background-color: rgba(27, 31, 35, 0.06);

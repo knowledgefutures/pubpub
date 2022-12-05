@@ -2,6 +2,7 @@ import { baseNodes, baseMarks } from './base';
 import citation from './citation';
 import equation from './equation';
 import math from './math';
+import code from './code';
 import file from './file';
 import footnote from './footnote';
 import iframe from './iframe';
@@ -14,6 +15,7 @@ import deprecated from './deprecated';
 
 export const defaultNodes = {
 	...baseNodes,
+	...code,
 	...citation,
 	...equation,
 	...math,

@@ -1,0 +1,1 @@
+The contents of this directory are largely sourced from the npm package [`prosemirror-codemirror-block`](https://gitlab.com/emergence-engineering/prosemirror-codemirror-block/-/blob/main/README.md) by [Viktor Váczi](https://emergence-engineering.com/cv/viktor) at [Emergence Engineering](https://emergence-engineering.com/)

@@ -58,14 +58,8 @@ type GetPubForRequestOptions = PubGetOptions & {
 };
 
 export const getPubForRequest = async (options: GetPubForRequestOptions) => {
-	const {
-		slug,
-		initialData,
-		releaseNumber = null,
-		isAVisitingCommenter,
-		...pubGetOptions
-	} = options;
+	const { slug, initialData, releaseNumber = null, ...pubGetOptions } = options;
 	const communityId = initialData.communityData.id;
 	const pubData = await getPub({ slug, communityId }, pubGetOptions);
-	return sanitizePub(pubData, initialData, releaseNumber, isAVisitingCommenter);
+	return sanitizePub(pubData, initialData, releaseNumber);
 };

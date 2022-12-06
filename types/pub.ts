@@ -170,7 +170,6 @@ export type SanitizedPubData = Pub & {
 	discussions: Discussion[];
 	collectionPubs: CollectionPubWithAttributions[];
 	isRelease: boolean;
-	isAVisitingCommenter: boolean;
 	releases: Release[];
 	releaseNumber: number | null;
 };

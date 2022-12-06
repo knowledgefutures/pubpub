@@ -26,6 +26,12 @@ type PubShareDialogProps = SharedProps & {
 	onClose: (...args: any[]) => any;
 };
 
+type UrlOptions = {
+	isDraft?: boolean;
+	historyKey?: number;
+	isReview?: boolean;
+};
+
 const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => {
 	if (canModifyMembers) {
 		const containingPubsString =
@@ -42,7 +48,7 @@ const AccessHashOptions = (props: SharedProps) => {
 	const { pubData } = props;
 	const { communityData, featureFlags } = usePageContext();
 	const { historyData } = usePubContext();
-	const { commentHash, reviewHash, viewHash, editHash, releases, isRelease } = pubData;
+	const { commentHash, reviewHash, viewHash, editHash, isRelease } = pubData;
 	const renderCopyLabelComponent = (label, url) => {
 		return (
 			<ControlGroup className="hash-row">
@@ -54,13 +60,10 @@ const AccessHashOptions = (props: SharedProps) => {
 		);
 	};
 	const isDraft = !isRelease;
-	const createAccessUrl = (accessHash, options) =>
+
+	const createAccessUrl = (accessHash: string | undefined, options?: UrlOptions) =>
 		pubUrl(communityData, pubData, { accessHash, ...options });
-	const reviewAccessUrl = createAccessUrl(reviewHash, {
-		historyKey: historyData.currentKey,
-		isReview: true,
-	});
-	const releaseCount = releases ? releases.length : 0;
+
 	return (
 		<div className="access-hash-options">
 			<p>
@@ -72,18 +75,22 @@ const AccessHashOptions = (props: SharedProps) => {
 				renderCopyLabelComponent(
 					'Draft Comment',
 					createAccessUrl(commentHash, {
-						isComment: true,
 						historyKey: historyData.currentKey,
+						isDraft: true,
 					}),
 				)}
 			{featureFlags.comments &&
 				pubData.releases.length > 0 &&
-				renderCopyLabelComponent(
-					'Release Comment',
-					createAccessUrl(commentHash, { isComment: true, releaseNumber: releaseCount }),
-				)}
+				renderCopyLabelComponent('Release Comment', createAccessUrl(commentHash))}
 			{editHash && renderCopyLabelComponent('Edit', createAccessUrl(editHash, { isDraft }))}
-			{featureFlags.reviews && renderCopyLabelComponent('Review', reviewAccessUrl)}
+			{featureFlags.reviews &&
+				renderCopyLabelComponent(
+					'Draft Feedback',
+					createAccessUrl(reviewHash, { isDraft }),
+				)}
+			{featureFlags.reviews &&
+				pubData.releases.length > 0 &&
+				renderCopyLabelComponent('Release Feedback', createAccessUrl(reviewHash))}
 		</div>
 	);
 };

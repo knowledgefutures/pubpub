@@ -36,7 +36,6 @@ export default (
 	pubData,
 	initialData,
 	releaseNumber: number | null = null,
-	isAVisitingCommenter: boolean = false,
 ): null | SanitizedPubData => {
 	const { loginData, scopeData } = initialData;
 	const { activePermissions } = scopeData;
@@ -108,7 +107,6 @@ export default (
 		exports: getFilteredExports(pubData, isRelease),
 		collectionPubs: filteredCollectionPubs,
 		isRelease,
-		isAVisitingCommenter,
 		releases: sortedReleases,
 		releaseNumber,
 	};

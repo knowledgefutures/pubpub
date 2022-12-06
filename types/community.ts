@@ -1,11 +1,11 @@
 import { CommunityNavigationEntry } from 'client/utils/navigation';
 
 import { Collection } from './collection';
-import { Pub } from './pub';
-import { Page } from './page';
-
-import { ScopeSummary } from './scope';
 import { DepositTarget } from './depositTarget';
+import { Page } from './page';
+import { Pub } from './pub';
+import { ScopeSummary } from './scope';
+import { SpamTag } from './spam';
 
 export type CommunityHeroButton = {
 	title: string;
@@ -69,4 +69,6 @@ export type Community = {
 	scopeSummary?: ScopeSummary;
 	footerLogoLink?: string;
 	depositTarget?: DepositTarget;
+	spamTagId: null | string;
+	spamTag?: null | SpamTag;
 };

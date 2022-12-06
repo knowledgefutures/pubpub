@@ -70,6 +70,7 @@ export const ReviewEvent = sequelize.import('./reviewEvent/model');
 export const ScopeSummary = sequelize.import('./scopeSummary/model');
 export const Submission = sequelize.import('./submission/model');
 export const Signup = sequelize.import('./signup/model');
+export const SpamTag = sequelize.import('./spamTag/model');
 export const SubmissionWorkflow = sequelize.import('./submissionWorkflow/model');
 export const ReviewNew = sequelize.import('./review/model');
 export const Reviewer = sequelize.import('./reviewer/model');

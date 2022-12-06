@@ -14,6 +14,7 @@ import {
 	SubmissionWorkflow,
 } from 'server/models';
 
+import { isUserSuperAdmin } from 'server/user/queries';
 import { FacetsError } from 'facets';
 import { fetchFacetsForScope } from 'server/facets';
 import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
@@ -308,11 +309,6 @@ getScopeMemberData = async (scopeInputs, scopeElements) => {
 	});
 };
 
-export const checkIfSuperAdmin = (userId) => {
-	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
-	return adminIds.includes(userId);
-};
-
 getActivePermissions = async (
 	scopeInputs,
 	scopeElements,
@@ -320,7 +316,7 @@ getActivePermissions = async (
 	scopeMemberData,
 ) => {
 	const { activePub, activeCollection, activeCommunity, inactiveCollections } = scopeElements;
-	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
+	const isSuperAdmin = await isUserSuperAdmin({ userId: scopeInputs.loginId });
 	const permissionLevels: MemberPermission[] = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
 	[activePub, activeCollection, activeCommunity, ...inactiveCollections]

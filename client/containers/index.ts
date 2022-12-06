@@ -34,5 +34,6 @@ export { default as Legal } from './Legal/Legal';
 export { default as Pub } from './Pub/Pub';
 export { default as Search } from './Search/Search';
 export { default as Signup } from './Signup/Signup';
+export { default as SuperAdminDashboard } from './SuperAdminDashboard';
 export { default as User } from './User/User';
 export { default as UserCreate } from './UserCreate/UserCreate';

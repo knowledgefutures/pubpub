@@ -32,6 +32,7 @@ builders.User = async (args = {}) => {
 		initials = firstName.slice(0, 1).toUpperCase() + lastName.slice(0, 1).toUpperCase(),
 		password = 'password123',
 		id,
+		isSuperAdmin,
 	} = args;
 	const sha3hashedPassword = SHA3(password).toString(encHex);
 	return new Promise((resolve, reject) =>
@@ -44,6 +45,7 @@ builders.User = async (args = {}) => {
 				email,
 				slug,
 				initials,
+				isSuperAdmin,
 				passwordDigest: 'sha512',
 			},
 			sha3hashedPassword,

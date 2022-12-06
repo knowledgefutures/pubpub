@@ -8,13 +8,13 @@ import app from 'server/server';
 import { User } from 'server/models';
 
 type SetPasswordData = { hash: string; salt: string };
-type Step1Result = [types.User, null] | [null, types.User];
-type Step2Result = [types.User, null] | [null, SetPasswordData];
-type Step3Result = [types.User, null] | [null, types.User[][]];
+type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields];
+type Step2Result = [types.UserWithPrivateFields, null] | [null, SetPasswordData];
+type Step3Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields[][]];
 
 app.post('/api/login', (req, res, next) => {
-	const authenticate = new Promise<types.User | null>((resolve, reject) => {
-		passport.authenticate('local', (authErr: Error, user: types.User) => {
+	const authenticate = new Promise<types.UserWithPrivateFields | null>((resolve, reject) => {
+		passport.authenticate('local', (authErr: Error, user: types.UserWithPrivateFields) => {
 			if (authErr) {
 				return reject(authErr);
 			}
@@ -29,7 +29,7 @@ app.post('/api/login', (req, res, next) => {
 			}
 
 			/* If authentication did not succeed, we need to check if a legacy hash is valid */
-			const findUser: Promise<types.User | null> = User.findOne({
+			const findUser: Promise<types.UserWithPrivateFields | null> = User.findOne({
 				where: { email: req.body.email },
 			});
 

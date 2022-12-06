@@ -21,6 +21,10 @@ export type User = MinimalUser & {
 	twitter: string;
 	github: string;
 	googleScholar: string;
+};
+
+export type UserWithPrivateFields = User & {
+	isSuperAdmin: boolean;
 	passwordDigest: string;
 	hash: string;
 	salt: string;

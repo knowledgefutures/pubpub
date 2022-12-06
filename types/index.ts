@@ -9,6 +9,7 @@ export * from './discussion';
 export * from './doc';
 export * from './facets';
 export * from './featureFlag';
+export * from './landingPageFeature';
 export * from './json';
 export * from './license';
 export * from './member';

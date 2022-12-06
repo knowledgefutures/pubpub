@@ -1,3 +1,5 @@
+import { isProd } from 'utils/environment';
+
 require('./activityItem/api');
 require('./collectionAttribution/api');
 require('./collection/api');
@@ -11,6 +13,7 @@ require('./editor/api');
 require('./export/api');
 require('./facets/api');
 require('./import/api');
+require('./landingPageFeature/api');
 require('./layout/api');
 require('./logout/api');
 require('./login/api');
@@ -41,7 +44,7 @@ require('./userNotificationPreferences/api');
 require('./userSubscription/api');
 require('./workerTask/api');
 
-if (process.env.NODE_ENV !== 'production') {
+if (!isProd()) {
 	// eslint-disable-next-line global-require
 	require('./dev/api');
 }

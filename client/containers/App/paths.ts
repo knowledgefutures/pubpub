@@ -33,6 +33,7 @@ import {
 	Pub,
 	Search,
 	Signup,
+	SuperAdminDashboard,
 	User,
 	UserCreate,
 } from 'containers';
@@ -180,6 +181,12 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: Signup,
 			hideNav: true,
 			hideFooter: true,
+		},
+		SuperAdminDashboard: {
+			ActiveComponent: SuperAdminDashboard,
+			hideNav: true,
+			hideFooter: true,
+			hideHeader: true,
 		},
 		User: {
 			ActiveComponent: User,

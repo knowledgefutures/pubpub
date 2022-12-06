@@ -1,0 +1,29 @@
+$accent: #ed1c24;
+
+.superadmin-dashboard-component {
+	.supreme {
+		background-color: $accent;
+		color: white;
+		padding: 2px 8px;
+		letter-spacing: -0.01em;
+		font-style: italic;
+	}
+
+	.superadmin-tab-links {
+		margin-bottom: 1em;
+		a.link {
+			text-decoration: none;
+			font-size: 14px;
+			margin-right: 10px;
+			padding: 3px;
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+			&.current {
+				color: white;
+				background-color: black;
+			}
+		}
+	}
+}

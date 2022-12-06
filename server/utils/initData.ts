@@ -46,6 +46,7 @@ export const getInitialData = async (
 		avatar: user.avatar,
 		title: user.title,
 		gdprConsent: user.gdprConsent,
+		isSuperAdmin: user.isSuperAdmin,
 	};
 
 	const shouldForceBasePubPub = !!(isDevelopment() && process.env.FORCE_BASE_PUBPUB);

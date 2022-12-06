@@ -72,6 +72,7 @@ const CommunitySettings = () => {
 			},
 			loginData: {
 				id: null,
+				isSuperAdmin: false,
 			},
 		};
 	}, [pageContext, communityData]);

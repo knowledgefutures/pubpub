@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import { promisify } from 'util';
 
+import * as types from 'types';
 import { User, Signup } from 'server/models';
 import { slugifyString } from 'utils/strings';
 import { subscribeUser } from 'server/utils/mailchimp';
@@ -58,43 +59,44 @@ export const createUser = (inputValues) => {
 
 export const updateUser = (inputValues, updatePermissions, req) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
 		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 	if (filteredValues.slug) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
 	}
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'firstName' does not exist on type '{}'.
 	if (filteredValues.firstName) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'firstName' does not exist on type '{}'.
 		filteredValues.firstName = filteredValues.firstName.trim();
 	}
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'lastName' does not exist on type '{}'.
 	if (filteredValues.lastName) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'lastName' does not exist on type '{}'.
 		filteredValues.lastName = filteredValues.lastName.trim();
 	}
 
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'firstName' does not exist on type '{}'.
 	if (filteredValues.firstName && filteredValues.lastName) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'fullName' does not exist on type '{}'.
 		filteredValues.fullName = `${filteredValues.firstName} ${filteredValues.lastName}`;
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'initials' does not exist on type '{}'.
 		filteredValues.initials = `${filteredValues.firstName[0]}${filteredValues.lastName[0]}`;
 	}
+
+	// A bit of extra paranoia
+	delete filteredValues.isSuperAdmin;
 
 	return User.update(filteredValues, {
 		where: { id: inputValues.userId },
 	}).then(() => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'fullName' does not exist on type '{}'.
 		if (req.user.fullName !== filteredValues.fullName) {
 			updateUserData(req.user.id);
 		}
 		return filteredValues;
 	});
+};
+
+export const isUserSuperAdmin = async ({ userId }: { userId: undefined | null | string }) => {
+	if (userId) {
+		const user: types.UserWithPrivateFields = await User.findOne({ where: { id: userId } });
+		return user.isSuperAdmin;
+	}
+	return false;
 };

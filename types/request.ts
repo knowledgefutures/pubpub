@@ -21,6 +21,7 @@ export type LoginData = {
 	avatar?: string;
 	title?: string;
 	gdprConsent?: string;
+	isSuperAdmin: boolean;
 };
 
 export type LocationData = {

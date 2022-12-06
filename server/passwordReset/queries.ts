@@ -32,7 +32,7 @@ export const createPasswordReset = (
 	return User.findOne({
 		where: email ? { email } : { id: user.id },
 	})
-		.then((userData: types.User) => {
+		.then((userData: types.UserWithPrivateFields) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}
@@ -47,7 +47,7 @@ export const createPasswordReset = (
 				individualHooks: true,
 			});
 		})
-		.then((updatedUserData: types.User[][]) => {
+		.then((updatedUserData: types.UserWithPrivateFields[][]) => {
 			const updatedUser = updatedUserData[1][0];
 			return sendPasswordResetEmail({
 				toEmail: updatedUser.email,
@@ -69,7 +69,7 @@ export const updatePasswordReset = (
 	return User.findOne({
 		where: whereQuery,
 	})
-		.then((userData: types.User | null) => {
+		.then((userData: types.UserWithPrivateFields | null) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}

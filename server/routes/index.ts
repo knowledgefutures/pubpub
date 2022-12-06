@@ -40,6 +40,7 @@ require('./login'); // Route: '/login'
 require('./legal'); // Route: '/legal'
 require('./search'); // Route: '/search'
 require('./signup'); // Route: '/signup'
+require('./superAdminDashboard'); // Route: /superadmin
 require('./passwordReset'); // Route: ['/password-reset', '/password-reset/:resetHash/:slug']
 require('./userCreate'); // Route: '/user/create/:hash'
 require('./user'); // Route: ['/user/:slug', '/user/:slug/:mode']

@@ -54,6 +54,7 @@ export const ExternalPublication = sequelize.import('./externalPublication/model
 export const FeatureFlag = sequelize.import('./featureFlag/model');
 export const FeatureFlagUser = sequelize.import('./featureFlagUser/model');
 export const FeatureFlagCommunity = sequelize.import('./featureFlagCommunity/model');
+export const LandingPageFeature = sequelize.import('./landingPageFeature/model');
 export const Member = sequelize.import('./member/model');
 export const Merge = sequelize.import('./merge/model');
 export const Organization = sequelize.import('./organization/model');

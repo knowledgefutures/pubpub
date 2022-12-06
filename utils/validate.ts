@@ -17,7 +17,7 @@ export type ValidationResult<Rec extends AnyRecord> = {
 	validatedFields: ValidatedFields<Rec>;
 };
 
-export const isNonEmptyString = (str: string) => str.length > 0;
+export const isNonEmptyString = (str: string) => typeof str === 'string' && str.length > 0;
 
 export const isNonEmptyDocJson = (docJson: DocJson) => {
 	return !isEmptyDoc(docJson);
@@ -43,6 +43,7 @@ export const isValidEmailList = (emailList: string[]) =>
 export const validate = <Rec extends AnyRecord>(
 	rec: Rec,
 	validator: RecordValidator<Rec>,
+	requireFullRecord = false,
 ): ValidationResult<Rec> => {
 	const validatedFields = Object.entries(rec).reduce(
 		(partial: Partial<ValidatedFields<Rec>>, [key, value]) => {
@@ -57,8 +58,11 @@ export const validate = <Rec extends AnyRecord>(
 		},
 		{},
 	) as ValidatedFields<Rec>;
+	const isValidated = requireFullRecord
+		? Object.keys(validator).every((key) => validatedFields[key])
+		: !Object.values(validatedFields).some((val) => !val);
 	return {
 		validatedFields,
-		isValidated: !Object.values(validatedFields).some((val) => !val),
+		isValidated,
 	};
 };

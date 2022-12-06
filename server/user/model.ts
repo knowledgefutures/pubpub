@@ -53,6 +53,7 @@ export default (sequelize, dataTypes) => {
 			hash: { type: dataTypes.TEXT, allowNull: false },
 			salt: { type: dataTypes.TEXT, allowNull: false },
 			gdprConsent: { type: dataTypes.BOOLEAN, defaultValue: null },
+			isSuperAdmin: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 		},
 		{
 			classMethods: {

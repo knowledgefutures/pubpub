@@ -4,7 +4,11 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import DragDropListing, { Props as DragDropListingProps, MinimalItem } from './DragDropListing';
 
 type Props<Item extends MinimalItem> = {
-	onReorderItems: (reorderedItems: Item[]) => unknown;
+	onReorderItems: (
+		reorderedItems: Item[],
+		reorderedItem: Item,
+		destinationIndex: number,
+	) => unknown;
 	getReorderedItem?: (item: Item, listWithItemRemoved: Item[]) => Item;
 } & Omit<DragDropListingProps<Item>, 'droppableId'>;
 
@@ -22,7 +26,7 @@ const DragDropOrdering = <Item extends MinimalItem>(props: Props<Item>) => {
 				? getReorderedItem(removedItem, nextItems)
 				: removedItem;
 			nextItems.splice(destinationIndex, 0, reorderedItem);
-			onReorderItems(nextItems);
+			onReorderItems(nextItems, reorderedItem, destinationIndex);
 		}
 	};
 

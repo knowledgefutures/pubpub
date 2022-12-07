@@ -172,7 +172,7 @@ export const renderStatic = ({
 				...memo,
 				React.createElement('style', {
 					key,
-					dangerouslySetInnerHTML: { __html: styles },
+					dangerouslySetInnerHTML: { __html: styles[key] },
 				}),
 			];
 		}

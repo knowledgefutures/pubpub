@@ -40,3 +40,11 @@ export const setAppCommit = (appCommitHash) => {
 export const getAppCommit = () => {
 	return appCommit;
 };
+
+export const canSelectCommunityForDevelopment = () => {
+	return isDevelopment() || isQubQub();
+};
+
+export const shouldForceBasePubPub = () => {
+	return process.env.FORCE_BASE_PUBPUB === 'true' && canSelectCommunityForDevelopment();
+};

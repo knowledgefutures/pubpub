@@ -41,6 +41,12 @@ export class HTTPStatusError extends Error {
 	}
 }
 
+export class BadRequestError extends HTTPStatusError {
+	constructor(sourceError?: Error) {
+		super(400, sourceError);
+	}
+}
+
 export class ForbiddenError extends HTTPStatusError {
 	constructor(sourceError?: Error) {
 		super(403, sourceError);

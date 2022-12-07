@@ -7,7 +7,7 @@ import {
 	DevCommunitySwitcherMenu,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { isDevelopment } from 'utils/environment';
+import { canSelectCommunityForDevelopment } from 'utils/environment';
 import { pubPubIcons } from 'client/utils/icons';
 
 import UserMenu from './UserMenu';
@@ -116,7 +116,7 @@ const GlobalControls = (props: Props) => {
 
 	return (
 		<div className="global-controls-component">
-			{isDevelopment() && (
+			{canSelectCommunityForDevelopment() && (
 				<DevCommunitySwitcherMenu
 					disclosure={
 						<GlobalControlsButton

@@ -1,4 +1,4 @@
-import { Collection, Community, Page, Member, ScopeSummary } from 'server/models';
+import { Collection, Community, Page, Member, ScopeSummary, SpamTag } from 'server/models';
 import { Community as CommunityType, DefinitelyHas } from 'types';
 
 export default (
@@ -30,6 +30,10 @@ export default (
 			{
 				model: ScopeSummary,
 				as: 'scopeSummary',
+			},
+			{
+				model: SpamTag,
+				as: 'spamTag',
 			},
 		],
 	}).then((communityResult) => {

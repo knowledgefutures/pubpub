@@ -13,7 +13,7 @@ import {
 	LoadMorePubsRow,
 	SpecialRow,
 } from '../overviewRows';
-import { KindToggle, OverviewSearchFilter, OverviewSearchGroup } from '../helpers';
+import { KindToggle, PubsOverviewSearchFilter, OverviewSearchGroup } from '../helpers';
 
 require('./communityItems.scss');
 
@@ -36,7 +36,7 @@ const getSearchPlaceholderText = (showCollections: boolean, showPubs: boolean) =
 const CommunityItems = (props: Props) => {
 	const { collections: allCollections, initialPubs, initiallyLoadedAllPubs } = props;
 	const [searchTerm, setSearchTerm] = useState('');
-	const [filter, setFilter] = useState<null | OverviewSearchFilter>(null);
+	const [filter, setFilter] = useState<null | PubsOverviewSearchFilter>(null);
 	const [showPubs, setShowPubs] = useState(true);
 	const [showCollections, setShowCollections] = useState(true);
 	const query = filter?.query;

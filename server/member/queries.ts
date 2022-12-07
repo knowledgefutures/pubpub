@@ -96,3 +96,17 @@ export const getMembersForScope = async (
 	}
 	return Member.findAll({ where: { communityId: scope.communityId } });
 };
+
+type IsUserMemberOfScopeOptions = {
+	userId: null | string;
+	scope: types.ScopeId;
+};
+
+export const isUserMemberOfScope = async (options: IsUserMemberOfScopeOptions) => {
+	const { userId, scope } = options;
+	if (!userId) {
+		return false;
+	}
+	const membersOfScope = await getMembersForScope(scope);
+	return membersOfScope.some((member) => member.userId === userId);
+};

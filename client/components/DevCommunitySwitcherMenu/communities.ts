@@ -9,6 +9,7 @@ type CommunityOption = {
 // eslint-disable-next-line import/no-mutable-exports
 let communities: CommunityOption[] = [];
 
+// Don't compile these into the prod build
 if (process.env.NODE_ENV !== 'production') {
 	communities = [
 		{ title: 'PubPub Demo Site', subdomain: 'demo', icon: 'build' },

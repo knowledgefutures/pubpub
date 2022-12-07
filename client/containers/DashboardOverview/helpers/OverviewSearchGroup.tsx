@@ -11,19 +11,23 @@ require('./overviewSearchGroup.scss');
 
 type SearchTermCallback = (q: string) => unknown;
 
-type Props = {
+type Props<QueryType> = {
 	placeholder: string;
+	initialSearchTerm?: string;
 	onUpdateSearchTerm?: SearchTermCallback;
 	onCommitSearchTerm?: SearchTermCallback;
-	onChooseFilter?: (q: OverviewSearchFilter) => unknown;
+	onChooseFilter?: (q: OverviewSearchFilter<QueryType>) => unknown;
 	rightControls?: React.ReactNode;
-	filters?: OverviewSearchFilter[];
-	filter?: OverviewSearchFilter;
+	filters?: OverviewSearchFilter<QueryType>[];
+	filter?: OverviewSearchFilter<QueryType>;
 };
 
-const OverviewSearchGroup = (props: Props) => {
+const OverviewSearchGroup = <SearchQueryType extends Record<string, any>>(
+	props: Props<SearchQueryType>,
+) => {
 	const {
 		placeholder,
+		initialSearchTerm,
 		onCommitSearchTerm,
 		onUpdateSearchTerm,
 		rightControls,
@@ -43,7 +47,10 @@ const OverviewSearchGroup = (props: Props) => {
 		if (providedFilters) {
 			return providedFilters;
 		}
-		return getDefaultOverviewSearchFilters({ userId, isViewMember: canView });
+		return getDefaultOverviewSearchFilters({
+			userId,
+			isViewMember: canView,
+		}) as OverviewSearchFilter<any>[];
 	}, [userId, canView, providedFilters]);
 
 	const handleChange = useCallback(
@@ -97,6 +104,7 @@ const OverviewSearchGroup = (props: Props) => {
 			<div className={classNames('search-bar', isSearchFocused && 'search-focused')}>
 				<Icon icon="search" className="search-icon" iconSize={16} />
 				<input
+					defaultValue={initialSearchTerm}
 					placeholder={placeholder}
 					onFocus={() => setIsSearchFocused(true)}
 					onBlur={() => setIsSearchFocused(false)}
@@ -109,5 +117,4 @@ const OverviewSearchGroup = (props: Props) => {
 	);
 };
 
-export { OverviewSearchFilter };
 export default OverviewSearchGroup;

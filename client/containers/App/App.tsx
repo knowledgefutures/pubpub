@@ -18,6 +18,7 @@ import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
 import BottomMenu from './BottomMenu';
+import SpamBanner from './SpamBanner';
 
 import getPaths from './paths';
 import { usePageState } from './usePageState';
@@ -55,6 +56,7 @@ const App = (props: Props) => {
 			>
 				<RKProvider>
 					<div id="app" className={classNames({ dashboard: isDashboard })}>
+						{communityData.spamTag?.status === 'confirmed-spam' && <SpamBanner />}
 						<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 						{(locationData.isDuqDuq || locationData.isQubQub) && (
 							<div className="duqduq-warning">Development Environment</div>

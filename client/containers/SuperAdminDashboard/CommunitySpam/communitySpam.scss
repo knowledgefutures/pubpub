@@ -1,0 +1,8 @@
+.community-spam-component {
+	.communities {
+		margin-top: 10px;
+		> :not(:last-child) {
+			margin-bottom: 5px;
+		}
+	}
+}

@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 
 import { isProd } from 'utils/environment';
+import { getSuperAdminTabUrl } from 'utils/superAdmin';
+import { isDangerousSpamScore } from 'server/spamTag/score';
 
 const defaultBody = { username: 'PubPub', unfurl_links: true };
 
@@ -27,20 +29,32 @@ export const postToSlackAboutNewCommunity = async (
 	subdomain: string,
 	adminName: string,
 	adminEmail: string,
+	spamScore: undefined | null | number,
 ) => {
 	if (isProd()) {
 		const url = `https://${subdomain}.pubpub.org`;
+		const spamDashUrl = `https://pubpub.org${getSuperAdminTabUrl('spam')}?q=${url}`;
+		const spamScorePart = typeof spamScore === 'number' ? `\nSpam score: ${spamScore}` : '';
 		await postToSlack({
 			icon_emoji: ':bowtie:',
 			attachments: [
 				{
 					fallback: `*${title}*\n<${url}>\n_${adminName} (${adminEmail})_`,
-					pretext: 'New community created!',
+					pretext: 'New Community created!',
 					color: 'good',
 					fields: [
 						{
 							title: `${title}`,
-							value: `${url}\n_${adminName} (${adminEmail})_`,
+							value: `${url}\n_${adminName} (${adminEmail})_${spamScorePart}`,
+						},
+					],
+					actions: [
+						{
+							type: 'button',
+							text: 'Manage in Spam Dashboard',
+							style:
+								spamScore && isDangerousSpamScore(spamScore) ? 'danger' : 'default',
+							url: spamDashUrl,
 						},
 					],
 				},

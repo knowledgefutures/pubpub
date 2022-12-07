@@ -32,6 +32,7 @@ require('./reviewer/api');
 require('./rss/api');
 require('./search/api');
 require('./signup/api');
+require('./spamTag/api');
 require('./subscribe/api');
 require('./submissionWorkflow/api');
 require('./submission/api');

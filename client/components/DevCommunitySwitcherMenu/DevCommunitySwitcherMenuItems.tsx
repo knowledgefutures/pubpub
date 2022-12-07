@@ -25,7 +25,7 @@ const DevCommunitySwitcherMenuItems = () => {
 				icon="text-highlight"
 				onClick={selectDevSubdomain}
 			/>
-			<MenuItemDivider />
+			{communities.length > 0 && <MenuItemDivider />}
 			{communities.map(({ title, subdomain, icon }) => (
 				<MenuItem
 					key={subdomain}

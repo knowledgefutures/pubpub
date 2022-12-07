@@ -1,12 +1,15 @@
 import queryString from 'query-string';
 
 import * as types from 'types';
-import { isProd, isDuqDuq, isQubQub, getAppCommit, isDevelopment } from 'utils/environment';
+import { isProd, isDuqDuq, isQubQub, getAppCommit, shouldForceBasePubPub } from 'utils/environment';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { UserNotification } from 'server/models';
 
 import { getDismissedUserDismissables } from 'server/userDismissable/queries';
+import { isUserMemberOfScope } from 'server/member/queries';
+import { isUserSuperAdmin } from 'server/user/queries';
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
+import { PubPubError } from './errors';
 
 const getNotificationData = async (
 	userId: null | string,
@@ -49,8 +52,6 @@ export const getInitialData = async (
 		isSuperAdmin: user.isSuperAdmin,
 	};
 
-	const shouldForceBasePubPub = !!(isDevelopment() && process.env.FORCE_BASE_PUBPUB);
-
 	/* Gather location data */
 	const locationData = {
 		hostname: req.hostname,
@@ -59,7 +60,7 @@ export const getInitialData = async (
 		query: req.query,
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
 		isDashboard,
-		isBasePubPub: shouldForceBasePubPub || hostname === 'www.pubpub.org',
+		isBasePubPub: shouldForceBasePubPub() || hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),
 		isQubQub: isQubQub(),
@@ -111,6 +112,20 @@ export const getInitialData = async (
 			? { subdomain: hostname.replace('.pubpub.org', '') }
 			: { domain: hostname };
 	const communityData = await getCommunity(locationData, whereQuery);
+
+	if (communityData.spamTag?.status === 'confirmed-spam') {
+		const [isMemberOfCommunity, isSuperadmin] = await Promise.all([
+			isUserMemberOfScope({
+				userId: loginData.id,
+				scope: { communityId: communityData.id },
+			}),
+			isUserSuperAdmin({ userId: loginData.id }),
+		]);
+		if (!isMemberOfCommunity && !isSuperadmin) {
+			throw new PubPubError.CommunityIsSpamError();
+		}
+	}
+
 	if (
 		communityData.domain &&
 		whereQuery.subdomain &&

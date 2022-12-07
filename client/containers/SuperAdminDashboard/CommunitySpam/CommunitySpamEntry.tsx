@@ -20,7 +20,7 @@ const getIntentForSpamScore = (spamScore: number): Intent => {
 	if (spamScore > 1) {
 		return 'warning';
 	}
-	return 'primary';
+	return 'none';
 };
 
 const CommunitySpamEntry = (props: Props) => {

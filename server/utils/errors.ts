@@ -4,6 +4,7 @@ import { ForbiddenSlugStatus } from 'types';
 
 export enum PubPubApplicationError {
 	ForbiddenSlug = 'forbidden-slug',
+	CommunityIsSpam = 'community-is-spam',
 }
 
 class PubPubBaseError extends Error {
@@ -24,6 +25,11 @@ export const PubPubError = {
 			super(PubPubApplicationError.ForbiddenSlug, 'Forbidden slug');
 			this.desiredSlug = desiredSlug;
 			this.slugStatus = slugStatus;
+		}
+	},
+	CommunityIsSpamError: class extends PubPubBaseError {
+		constructor() {
+			super(PubPubApplicationError.CommunityIsSpam, 'Community is spam');
 		}
 	},
 };
@@ -61,7 +67,10 @@ export class NotFoundError extends HTTPStatusError {
 
 export const handleErrors = (req, res, next) => {
 	return (err) => {
-		if (err.message === 'Community Not Found') {
+		if (
+			err.message === 'Community Not Found' ||
+			err instanceof PubPubError.CommunityIsSpamError
+		) {
 			return res
 				.status(404)
 				.sendFile(resolve(__dirname, '../errorPages/communityNotFound.html'));

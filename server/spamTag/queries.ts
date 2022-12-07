@@ -50,7 +50,7 @@ export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommuni
 	const { communityId, status } = options;
 	const spamTag = await getSpamTagForCommunity(communityId);
 	if (spamTag) {
-		await spamTag.update({ status, statusUpdatedAt: new Date() as any });
+		await spamTag.update({ status, statusUpdatedAt: new Date().toISOString() });
 	} else {
 		throw new Error('Community is missing a SpamTag');
 	}

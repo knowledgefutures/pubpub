@@ -1,0 +1,19 @@
+.spam-banner-component {
+	position: fixed;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	background: sienna;
+	color: white;
+	padding: 20px;
+	width: 100%;
+	z-index: 100;
+
+	a {
+		color: white;
+	}
+
+	> .text {
+		margin-left: 10px;
+	}
+}

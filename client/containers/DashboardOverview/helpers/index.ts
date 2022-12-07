@@ -5,4 +5,4 @@ export { default as OverviewSearchGroup } from './OverviewSearchGroup';
 export { default as QuickActions, QuickAction } from './QuickActions';
 export { default as ScopeSummaryList } from './ScopeSummaryList';
 export { default as RecentVisitList } from './RecentVisitList';
-export { OverviewSearchFilter } from './filters';
+export { PubsOverviewSearchFilter } from './filters';

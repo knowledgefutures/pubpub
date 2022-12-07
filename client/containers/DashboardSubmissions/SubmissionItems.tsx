@@ -8,7 +8,7 @@ import { collectionUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
 import { OverviewRows, LoadMorePubsRow, SpecialRow } from '../DashboardOverview/overviewRows';
-import { OverviewSearchGroup, OverviewSearchFilter } from '../DashboardOverview/helpers';
+import { OverviewSearchGroup, PubsOverviewSearchFilter } from '../DashboardOverview/helpers';
 
 import { PubWithSubmission } from './types';
 import SubmissionRow from './SubmissionRow';
@@ -37,13 +37,13 @@ const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 	},
 };
 
-const pendingSearchFilter: OverviewSearchFilter = {
+const pendingSearchFilter: PubsOverviewSearchFilter = {
 	id: 'received',
 	title: 'Received',
 	query: queriesForSubmissionPubs.received,
 };
 
-const overviewSearchFilters: OverviewSearchFilter[] = [
+const overviewSearchFilters: PubsOverviewSearchFilter[] = [
 	pendingSearchFilter,
 	{ id: 'accepted', title: 'Accepted', query: queriesForSubmissionPubs.accepted },
 	{ id: 'declined', title: 'Declined', query: queriesForSubmissionPubs.declined },
@@ -54,7 +54,7 @@ const SubmissionItems = (props: Props) => {
 	const { collection, initialPubs, initiallyLoadedAllPubs, acceptSubmissionsToggle } = props;
 	const { communityData } = usePageContext();
 	const [searchTerm, setSearchTerm] = useState('');
-	const [filter, setFilter] = useState<OverviewSearchFilter>(pendingSearchFilter);
+	const [filter, setFilter] = useState<PubsOverviewSearchFilter>(pendingSearchFilter);
 	const isSearchingOrFiltering = !!filter || !!searchTerm;
 
 	const {

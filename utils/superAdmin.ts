@@ -1,4 +1,4 @@
-export const superAdminTabKinds = ['landingPageFeatures'] as const;
+export const superAdminTabKinds = ['landingPageFeatures', 'spam'] as const;
 
 export const getSuperAdminTabUrl = (tabKind: SuperAdminTabKind) => {
 	return `/superadmin/${tabKind}` as const;

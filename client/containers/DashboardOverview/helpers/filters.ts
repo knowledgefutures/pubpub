@@ -1,11 +1,13 @@
 import { PubsQuery } from 'types';
 import { pruneFalsyValues } from 'utils/arrays';
 
-export type OverviewSearchFilter = {
+export type OverviewSearchFilter<QueryType> = {
 	id: string;
 	title: string;
-	query: null | Partial<PubsQuery>;
+	query: null | QueryType;
 };
+
+export type PubsOverviewSearchFilter = OverviewSearchFilter<Partial<PubsQuery>>;
 
 type GetDefaultOverviewSearchFiltersOptions = {
 	isViewMember: boolean;
@@ -14,7 +16,7 @@ type GetDefaultOverviewSearchFiltersOptions = {
 
 export const getDefaultOverviewSearchFilters = (
 	options: GetDefaultOverviewSearchFiltersOptions,
-): OverviewSearchFilter[] => {
+): PubsOverviewSearchFilter[] => {
 	const { isViewMember, userId } = options;
 	return pruneFalsyValues([
 		{ id: 'all', title: 'All', query: null },

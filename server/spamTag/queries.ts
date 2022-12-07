@@ -36,14 +36,21 @@ type UpdateSpamTagForCommunityOptions = {
 	status: SpamStatus;
 };
 
-export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommunityOptions) => {
-	const { communityId, status } = options;
+export const getSpamTagForCommunity = async (
+	communityId: string,
+): Promise<null | types.SequelizeModel<types.SpamTag>> => {
 	const { spamTag } = await Community.findOne({
 		where: { id: communityId },
 		include: [{ model: SpamTag, as: 'spamTag' }],
 	});
+	return spamTag ?? null;
+};
+
+export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommunityOptions) => {
+	const { communityId, status } = options;
+	const spamTag = await getSpamTagForCommunity(communityId);
 	if (spamTag) {
-		await spamTag.update({ status, statusUpdatedAt: new Date() });
+		await spamTag.update({ status, statusUpdatedAt: new Date() as any });
 	} else {
 		throw new Error('Community is missing a SpamTag');
 	}

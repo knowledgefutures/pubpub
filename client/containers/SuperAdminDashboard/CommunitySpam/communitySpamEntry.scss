@@ -1,0 +1,48 @@
+.community-spam-entry-component {
+	border-radius: 2px;
+	border: 1px solid #eee;
+	padding: 10px;
+
+	& > *:not(:last-child) {
+		margin-bottom: 6px;
+	}
+
+	.title {
+		font-size: 16px;
+		font-weight: 500;
+
+		> a {
+			text-decoration: none;
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.description {
+		font-style: italic;
+	}
+
+	.fields-report {
+		details > summary {
+			user-select: none;
+		}
+		pre {
+			background: #eee;
+			padding: 5px;
+		}
+	}
+
+	.details {
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		> .tags {
+			display: flex;
+			& > *:not(:last-child) {
+				margin-right: 4px;
+			}
+		}
+	}
+}

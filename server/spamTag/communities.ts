@@ -25,6 +25,7 @@ const getWhereQueryPartForUrl = (searchTerm: string) => {
 
 const getWhereQueryPartForFreeformEntry = (searchTerm: string) => {
 	const normalizedQuery = `%${searchTerm.trim()}%`;
+
 	return {
 		[Op.or]: [
 			{ title: { [Op.iLike]: normalizedQuery } },

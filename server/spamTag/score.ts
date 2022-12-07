@@ -105,3 +105,7 @@ export const getSuspectedCommunitySpamVerdict = (community: types.Community): ty
 		spamScoreComputedAt: new Date().toISOString(),
 	};
 };
+
+export const isDangerousSpamScore = (score: number) => {
+	return score >= 1;
+};

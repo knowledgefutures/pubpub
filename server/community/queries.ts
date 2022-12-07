@@ -18,6 +18,8 @@ import { isProd } from 'utils/environment';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { updateCommunityData } from 'server/utils/search';
+import { defer } from 'server/utils/deferred';
+import { getSpamTagForCommunity } from 'server/spamTag/queries';
 
 export const createCommunity = (inputValues, userData, alertAndSubscribe = true) => {
 	const newCommunityId = uuidv4();
@@ -90,13 +92,17 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 		})
 		.then(() => {
 			if (alertAndSubscribe && isProd()) {
-				subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
-				postToSlackAboutNewCommunity(
-					inputValues.title,
-					subdomain,
-					userData.fullName,
-					userData.email,
-				);
+				defer(async () => {
+					subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
+					const spamTag = await getSpamTagForCommunity(newCommunityId);
+					await postToSlackAboutNewCommunity(
+						inputValues.title,
+						subdomain,
+						userData.fullName,
+						userData.email,
+						spamTag?.spamScore,
+					);
+				});
 			}
 			return Member.create(
 				{

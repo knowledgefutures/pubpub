@@ -69,13 +69,12 @@ export const queryCommunitiesForSpamManagement = (
 		attributes: ['id', 'title', 'subdomain', 'domain', 'description', 'createdAt'],
 		limit,
 		offset,
-		subQuery: false,
 		order: getQueryOrdering(ordering),
 		include: [
 			{
 				model: SpamTag,
 				as: 'spamTag',
-				distinct: true,
+				required: true,
 				...getSpamTagStatusWhereQuery(status),
 			},
 		],

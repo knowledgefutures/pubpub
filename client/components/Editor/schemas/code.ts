@@ -24,9 +24,12 @@ const fromLezer = (source: string, tree: Tree) => {
 
 const renderStaticCode = (node: Node): DOMOutputSpec => {
 	const parser = parsers[node.attrs.lang];
-	const tree = parser.parse(node.textContent);
-	const children = fromLezer(node.textContent, tree as unknown as Tree);
-	return ['pre', ['code', ...children]] as DOMOutputSpec;
+	if (parser) {
+		const tree = parser.parse(node.textContent);
+		const children = fromLezer(node.textContent, tree as unknown as Tree);
+		return ['pre', ['code', ...children]] as DOMOutputSpec;
+	}
+	return ['pre', ['code', node.textContent]] as DOMOutputSpec;
 };
 
 const codeSchema: { [key: string]: NodeSpec } = {
@@ -34,7 +37,7 @@ const codeSchema: { [key: string]: NodeSpec } = {
 		content: 'text*',
 		group: 'block',
 		attrs: {
-			lang: { default: 'javascript' },
+			lang: { default: null },
 			id: { default: null },
 		},
 		code: true,

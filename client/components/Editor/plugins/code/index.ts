@@ -70,7 +70,7 @@ const createSelect = (
 	dom.prepend(wrapper);
 	select.onchange = async (e) => {
 		if (!(e.target instanceof HTMLSelectElement)) return;
-		const lang = e.target.value;
+		const lang = e.target.value === 'none' ? null : e.target.value;
 		if (typeof getPos === 'function') {
 			view.dispatch(
 				view.state.tr.setNodeMarkup(getPos(), undefined, {

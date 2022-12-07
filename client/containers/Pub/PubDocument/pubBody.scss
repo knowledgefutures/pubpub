@@ -133,7 +133,7 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		overflow: hidden;
 		overflow-x: auto;
 		code {
-			display: inline-block;
+			display: block;
 			white-space: pre;
 			background-color: transparent;
 			padding: 0em;

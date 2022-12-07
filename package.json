@@ -169,7 +169,7 @@
 		"prosemirror-schema-table": "^0.22.0",
 		"prosemirror-state": "^1.4.2",
 		"prosemirror-suggest": "^0.7.6",
-		"prosemirror-tables": "^1.2.5",
+		"prosemirror-tables": "^1.1.1",
 		"prosemirror-transform": "^1.2.5",
 		"prosemirror-view": "^1.29.0",
 		"query-string": "^6.4.0",

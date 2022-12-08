@@ -5,7 +5,7 @@ import { useUpdateEffect } from 'react-use';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { OverviewSearchGroup } from 'client/containers/DashboardOverview/helpers';
 
-import { filters } from './filters';
+import { filters, filtersById } from './filters';
 import { CommunityWithSpam } from './types';
 import { useSpamCommunities } from './useSpamCommunities';
 import CommunitySpamEntry from './CommunitySpamEntry';
@@ -19,7 +19,7 @@ type Props = {
 
 const CommunitySpam = (props: Props) => {
 	const { communities: initialCommunities, searchTerm: initialSearchTerm } = props;
-	const [filter, setFilter] = useState(filters[0]);
+	const [filter, setFilter] = useState(filtersById[initialSearchTerm ? 'recent' : 'unreviewed']);
 	const [searchTerm, setSearchTerm] = useState(initialSearchTerm ?? '');
 
 	const { communities, isLoading, loadMoreCommunities, mayLoadMoreCommunities } =

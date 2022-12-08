@@ -1,5 +1,6 @@
 import { OverviewSearchFilter } from 'client/containers/DashboardOverview/helpers/filters';
 import { SpamCommunityQuery } from 'types';
+import { indexById } from 'utils/arrays';
 
 export type SpamCommunitiesFilter = OverviewSearchFilter<
 	Pick<SpamCommunityQuery, 'status' | 'ordering'>
@@ -39,3 +40,5 @@ export const filters: SpamCommunitiesFilter[] = [
 		},
 	},
 ];
+
+export const filtersById = indexById(filters);

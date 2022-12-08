@@ -9,6 +9,7 @@ import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communities';
+import { filtersById as spamFiltersById } from 'client/containers/SuperAdminDashboard/CommunitySpam/filters';
 
 const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.LocationData) => {
 	if (tabKind === 'landingPageFeatures') {
@@ -16,16 +17,13 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	}
 	if (tabKind === 'spam') {
 		const searchTerm = locationData.query.q ?? null;
+		const { query } = spamFiltersById[searchTerm ? 'recent' : 'unreviewed'];
 		return {
 			searchTerm,
 			communities: await queryCommunitiesForSpamManagement({
-				status: ['unreviewed'],
 				limit: 50,
 				searchTerm,
-				ordering: {
-					field: 'spam-score',
-					direction: 'DESC',
-				},
+				...query!,
 			}),
 		};
 	}

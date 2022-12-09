@@ -73,7 +73,7 @@ const redirectHosts = {
 		'/pub/publishing-round-one/release/1':
 			'https://research.arcadiascience.com/pub/perspective-publishing-round-one/release/1',
 		'/pub/*/comment/*':
-			'https://research.arcadiascience.com/pub/$1/comment/$2'
+			'https://research.arcadiascience.com/pub/$1/comment/$2',
 	},
 };
 

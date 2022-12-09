@@ -72,7 +72,8 @@ const redirectHosts = {
 			'https://research.arcadiascience.com/pub/perspective-publishing-round-one',
 		'/pub/publishing-round-one/release/1':
 			'https://research.arcadiascience.com/pub/perspective-publishing-round-one/release/1',
-		'/pub/*/comment/*': 'https://research.arcadiascience.com/pub/$1/$2',
+		'/pub/idea-defining-actin/comment/release/1*':
+			'https://research.arcadiascience.com/pub/idea-defining-actin$1',
 	},
 };
 

@@ -25,6 +25,24 @@ const CommunityServices = () => {
 				'We ingest finalized, copyedited content into PubPub for you, assure its quality, implement necessary revisions, assign DOIs (if applicable), and implement any Pub design. Content on PubPub does not require typesetting and can be exported to many different file types, including PDF.',
 		},
 		{
+			title: 'Copyediting',
+			options: {
+				None: ['Requires Content Production'],
+				'Low Volume': ['Do not Include', 'Include'],
+				'Medium Volume': ['Do not Include', 'Include'],
+				'High Volume': ['Do not Include', 'Include'],
+			},
+			prices: {
+				None: ['$0'],
+				'Low Volume': ['$0', '$2,000 - $3,000'],
+				'Medium Volume': ['$0', '$3,000 - $5,000'],
+				'High Volume': ['$0', '$5,000+'],
+			},
+			initOption: 0,
+			description:
+				'Our copyeditors edit and format articles for grammar, clarity, and style requirements. Average turnaround time: 1 week.',
+		},
+		{
 			title: 'Embedded Managing Editor',
 			options: {
 				None: ['Requires Content Production'],
@@ -42,6 +60,51 @@ const CommunityServices = () => {
 			description:
 				'We assign one person from our team to work as your dedicated production point person. This work includes regular calls, communication with authors, and providing general publication strategy as well as insights. Teams who find this service most useful include those that publish on a regular basis but do not have the internal bandwidth to manage these activities nor the budget to hire an additional full-time person to do so.',
 		},
+		{
+			title: 'Text to Audio',
+			options: ['None', 'Low Volume', 'Medium Volume', 'High Volume'],
+			tooltips: [
+				'',
+				'~10 articles or chapters per year',
+				'~20-30 articles or chapters per year',
+				'50+ articles or chapters per year',
+			],
+			prices: ['$0', '$1,500 - $2,000', '$3,000 - $4,000', '$5,000+'],
+			initOption: 0,
+			description:
+				"We'll enhance your community's accessibility and expand its reach by generating crisp audio versions of your text with support for 100+ natural sounding synthetic narration voices in 70+ languages. Our editors will proof listen to ensure high quality sound delivery and accuracy.",
+		},
+		{
+			title: 'Archiving & Indexing',
+			options: ['None', 'Low Volume', 'Medium Volume', 'High Volume'],
+			tooltips: [
+				'',
+				'~10 articles or chapters per year',
+				'~20-30 articles or chapters per year',
+				'50+ articles or chapters per year',
+			],
+			prices: ['$0', '$2,500 - $3,000', '$4,000 - $5,000', '$6,000+'],
+			initOption: 0,
+			description:
+				"We'll work in partnership to enhance discoverability of your publications with customizable XML transformation and, or project support for relevant A&I services. For example: PubMed Central, Web of Science, Scopus, EBSCOhost, ProQuest, HeinOnline, Directory of Open Access Journals (DOAJ), Directory of Open Access Books (DOAB), and others.",
+		},
+		{
+			title: 'Interactives',
+			options: ['Do not Include', 'Include'],
+			prices: ['$0', '$500/interactive'],
+			initOption: 0,
+			description:
+				'We work with you or directly with your authors to develop media and/or interactive elements to enhance your Community. Our focus is always on more effectively communicating the message(s) of your content.',
+		},
+		{
+			title: 'OER Course Presentations',
+			options: ['Do not Include', 'Include'],
+			prices: ['$0', '$5,000 - $10,000 / presentation'],
+			initOption: 0,
+			description:
+				"We'll provide technical and design support to convert curricula into interactive course presentations featuring interactive summaries, multiple-choice questions, videos, and various other H5P content types necessary to convey learning objectives.",
+		},
+
 		{
 			title: 'Community Structure and Design',
 			options: ['Do not Include', 'Include'],
@@ -66,14 +129,7 @@ const CommunityServices = () => {
 			description:
 				"We offer two recorded training sessions of up to 90 minutes on a one-off or ongoing (yearly) basis for your team. These sessions cover basics on how to use PubPub, specifics on your group's workflow, and leave plenty of time for your team to practice and ask questions.",
 		},
-		{
-			title: 'Interactives',
-			options: ['Do not Include', 'Include'],
-			prices: ['$0', '$500/interactive'],
-			initOption: 0,
-			description:
-				'We work with you or directly with your authors to develop media and/or interactive elements to enhance your Community. Our focus is always on more effectively communicating the message(s) of your content.',
-		},
+
 		{
 			title: 'Branding',
 			options: ['Do not Include', 'Include'],
@@ -131,13 +187,14 @@ const CommunityServices = () => {
 				return prev;
 			}
 			const selectedOptionIndex = formDetails[curr];
-			const isManagingEditor = curr === 'Embedded Managing Editor';
+			const isContentProductionDependent =
+				curr === 'Embedded Managing Editor' || curr === 'Copyediting';
 			const currentContentProductionSelection =
 				services[0].options[formDetails['Content Production']];
-			const options = isManagingEditor
+			const options = isContentProductionDependent
 				? service.options[currentContentProductionSelection]
 				: service.options;
-			const prices = isManagingEditor
+			const prices = isContentProductionDependent
 				? service.prices[currentContentProductionSelection]
 				: service.prices;
 
@@ -267,7 +324,7 @@ const CommunityServices = () => {
 						submit the form. We'll then be in touch to schedule a call.
 					</p>
 					{services.map((service, index) => {
-						if (index === 1) {
+						if (index === 1 || index === 2) {
 							const currentContentProductionSelection =
 								services[0].options[formDetails['Content Production']];
 							return (
@@ -326,12 +383,12 @@ const CommunityServices = () => {
 				<p className="mitops">
 					For publishing services such as peer-review, copyediting, and research support,
 					we partner with MITops. The{' '}
-					<a href="https://mitops.mit.edu/services">
+					<a href="https://mitpress.mit.edu/mitops/">
 						full list of services offered by MITops
 					</a>{' '}
 					is available on their site. Please{' '}
-					<a href="https://mitops.mit.edu/contact">contact them directly</a> to inquire
-					about their offering.
+					<a href="https://mitpress.mit.edu/contact-us/">contact them directly</a> to
+					inquire about their offering.
 				</p>
 				<h2>See what we can do together!</h2>
 				<p>

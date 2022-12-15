@@ -16,7 +16,7 @@ type MetaProps = {
 	contextTitle?: string;
 	description?: string;
 	image?: string;
-	attributions?: any[];
+	attributions?: Attribution[];
 	doi?: string;
 	publishedAt?: null | Date;
 	unlisted?: boolean;
@@ -28,7 +28,7 @@ type MetaProps = {
 };
 
 const contributorRoles = ['Writing – Review & Editing', 'Editor', 'Series Editor'];
-const sortAttributions = (foo, bar) => {
+const sortAttributions = (foo: Attribution, bar: Attribution) => {
 	if (foo.order < bar.order) {
 		return -1;
 	}
@@ -220,14 +220,21 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (attributions) {
-		const authors = attributions.sort(sortAttributions).filter((item) => {
-			return item.isAuthor && !item.roles;
-		});
+		const authors: Attribution[] = [];
+		const contributors: Attribution[] = [];
 
 		const getPrimaryRole = (contributor: Attribution) => contributor.roles?.[0];
-		const contributors = attributions.sort(sortAttributions).filter((item) => {
-			const primaryRole = getPrimaryRole(item);
-			return item.isAuthor && primaryRole && contributorRoles.includes(primaryRole);
+
+		attributions.sort(sortAttributions).forEach((attribution) => {
+			if (!attribution.isAuthor) {
+				return;
+			}
+			const primaryRole = getPrimaryRole(attribution);
+			if (primaryRole && contributorRoles.includes(primaryRole)) {
+				contributors.push(attribution);
+			} else {
+				authors.push(attribution);
+			}
 		});
 
 		const citationAuthorTags = authors.map((author) => {

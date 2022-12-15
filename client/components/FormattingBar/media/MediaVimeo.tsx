@@ -81,7 +81,12 @@ class MediaVimeo extends Component<Props, State> {
 				/>
 				{this.state.isValid && (
 					<div className="preview-wrapper">
-						<iframe frameBorder="none" src={this.state.embedUrl} title="URL preview" />
+						<iframe
+							frameBorder="none"
+							src={this.state.embedUrl}
+							title="URL preview"
+							allowFullScreen
+						/>
 					</div>
 				)}
 				{!this.state.isValid && (

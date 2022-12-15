@@ -53,7 +53,12 @@ class MediaIframe extends Component<Props, State> {
 				/>
 				{isValid && (
 					<div className="preview-wrapper">
-						<iframe frameBorder="none" src={this.state.url} title="URL preview" />
+						<iframe
+							frameBorder="none"
+							src={this.state.url}
+							title="URL preview"
+							allowFullScreen
+						/>
 					</div>
 				)}
 				{!isValid && (

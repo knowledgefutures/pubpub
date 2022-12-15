@@ -47,6 +47,7 @@ export default {
 						src: node.attrs.url,
 						height: node.attrs.height,
 						'aria-describedby': figcaptionId,
+						allowfullscreen: 'true',
 					},
 				],
 				[

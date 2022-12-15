@@ -9,13 +9,13 @@ const buildRobotsFile = (community) => {
 	if (community) {
 		return stripIndent(`
 			User-agent: *
-			Disallow:
+			Disallow: /login?redirect=*
 			Sitemap: ${communityUrl(community)}/sitemap-index.xml
 		`).trim();
 	}
 	return stripIndent(`
 		User-agent: *
-		Disallow:
+		Disallow: /login?redirect=*
 	`).trim();
 };
 

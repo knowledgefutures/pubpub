@@ -1,10 +1,20 @@
+@import 'styles/mixins.scss';
+
 /* This clunky table, tableWrapper thing is because */
 /* isReadOnly removes the wrapping div, so margins don't */
 /* collapse as expected in all situations. */
 .tableWrapper {
 	margin: 1em 0;
+	@include mobile {
+		overflow-x: scroll;
+	}
 	table {
 		margin: 0em;
+		@include mobile {
+			width: auto;
+			max-width: fit-content;
+			table-layout: auto;
+		}
 	}
 }
 
@@ -25,6 +35,14 @@ table caption {
 	/* :last-child does not work here because the table plugin inserts nodes when resizing */
 	& > p:last-of-type:last-of-type {
 		margin-bottom: 0;
+	}
+}
+
+@include mobile {
+	th,
+	td {
+		min-width: 140px;
+		width: auto;
 	}
 }
 

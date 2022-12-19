@@ -31,6 +31,7 @@ const commandFiles = {
 	depositCollectionPubs: './depositCollectionPubs',
 	emailActivityDigest: './emailActivityDigest',
 	emailUsers: './emailUsers',
+	encrypt: './encrypt',
 	exportCollection: './exportCollection',
 	figurelist: './figurelist',
 	firebaseDownload: './firebaseDownload',

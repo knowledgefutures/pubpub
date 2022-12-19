@@ -1,6 +1,7 @@
 /* eslint-disable global-require, no-console */
 import { aes256Encrypt, aes256Decrypt } from '../utils/crypto';
 
+// usage: npm run tools encrypt -- --text=text_to_encrypt
 try {
 	require('../config.js');
 } catch {
@@ -9,7 +10,7 @@ try {
 
 const { argv } = require('yargs');
 
-const text = argv._[0];
+const text = argv.text;
 const decrypt = argv.decrypt ?? false;
 const initVec = argv['init-vec'];
 const key = argv.key?.toString() ?? process.env.AES_ENCRYPTION_KEY;

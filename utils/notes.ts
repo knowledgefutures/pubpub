@@ -40,12 +40,17 @@ const getAlphabetizableValue = (note: RenderedNote) => {
 		.trim();
 };
 
-const getRenderedNotes = (
-	notes: Note[],
-	renderedStructuredValues: RenderedStructuredValues,
-	includeNumbers: boolean,
-): RenderedNote[] => {
-	return unique(notes, (note) => note.fingerprint).map((note, index) => {
+type RenderNoteOptions = {
+	notes: Note[];
+	renderedStructuredValues: RenderedStructuredValues;
+	includeNumbers: boolean;
+	isFootnote: boolean;
+};
+
+const getRenderedNotes = (options: RenderNoteOptions): RenderedNote[] => {
+	const { notes, renderedStructuredValues, includeNumbers, isFootnote } = options;
+	const notesObject = isFootnote ? notes : unique(notes, (note) => note.fingerprint);
+	return notesObject.map((note, index) => {
 		return {
 			...note,
 			...(includeNumbers && { number: index + 1 }),
@@ -77,12 +82,18 @@ export const renderNotesForListing = (
 ): ByNoteKind<RenderedNote[]> => {
 	const { citations, footnotes, citationInlineStyle, renderedStructuredValues } = options;
 	const shouldAlphabetizeCitations = citationInlineStyle !== 'count';
-	const renderedFootnotes = getRenderedNotes(footnotes, renderedStructuredValues, true);
-	const renderedCitations = getRenderedNotes(
-		citations,
+	const renderedFootnotes = getRenderedNotes({
+		notes: footnotes,
 		renderedStructuredValues,
-		!shouldAlphabetizeCitations,
-	);
+		includeNumbers: true,
+		isFootnote: true,
+	});
+	const renderedCitations = getRenderedNotes({
+		notes: citations,
+		renderedStructuredValues,
+		includeNumbers: !shouldAlphabetizeCitations,
+		isFootnote: false,
+	});
 	return {
 		footnotes: renderedFootnotes,
 		citations: shouldAlphabetizeCitations

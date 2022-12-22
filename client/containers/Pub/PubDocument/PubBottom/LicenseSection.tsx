@@ -61,7 +61,11 @@ const LicenseSection = () => {
 						placement="top-end"
 						aria-label="Edit license"
 					>
-						<AccentedIconButton icon="edit" accentColor={iconColor} />
+						<AccentedIconButton
+							aria-label="Edit Pub license"
+							icon="edit"
+							accentColor={iconColor}
+						/>
 					</PopoverButton>
 				);
 			}}

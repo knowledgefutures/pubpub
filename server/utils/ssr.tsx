@@ -174,7 +174,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 				...outputComponents,
 				<meta key="c10" name="citation_conference_title" content={collection.title} />,
 				<meta key="c11" name="citation_conferenceName" content={collection.title} />,
-				<meta key="c9" name="citation_date" content={collection.metadata?.date} />,
+				<meta key="c12" name="citation_date" content={collection.metadata?.date} />,
 			];
 		}
 	}

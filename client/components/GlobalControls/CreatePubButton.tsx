@@ -25,6 +25,7 @@ const CreatePubButton = () => {
 	return (
 		<GlobalControlsButton
 			loading={isLoading}
+			aria-label="Create Pub"
 			onClick={handleCreatePub}
 			desktop={{ text: 'Create Pub' }}
 			mobile={{ icon: 'pubDocNew' }}

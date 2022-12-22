@@ -49,6 +49,7 @@ const PubHeaderFormattingWordCountButton = (props: Props) => {
 				className={`${Classes.BUTTON} ${Classes.MINIMAL}`}
 				onClick={() => setOpen(!open)}
 				onBlur={() => setOpen(false)}
+				aria-label="Word count"
 			>
 				<Icon icon="timeline-line-chart" />
 			</Button>

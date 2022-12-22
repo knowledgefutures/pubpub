@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Popover, Position } from '@blueprintjs/core';
+import { Popover } from 'components/Popover';
 
 import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'types';
@@ -51,7 +51,9 @@ const DiscussionsSection = (props: Props) => {
 			return (
 				<React.Fragment>
 					<Popover
-						minimal
+						aria-label="Sort comments"
+						preventBodyScroll={false}
+						gutter={0}
 						content={
 							<SortList
 								selected={sortMode}
@@ -60,17 +62,17 @@ const DiscussionsSection = (props: Props) => {
 								}}
 							/>
 						}
-						position={Position.BOTTOM_RIGHT}
-						transitionDuration={-1}
 					>
 						<AccentedIconButton
 							accentColor={iconColor}
+							aria-label="Sort comments"
 							icon="sort"
-							title="Sort comments"
 						/>
 					</Popover>
 					<Popover
-						minimal
+						aria-label="Filter comments"
+						preventBodyScroll={false}
+						gutter={0}
 						content={
 							<FilterMenu
 								pubData={pubData}
@@ -94,15 +96,13 @@ const DiscussionsSection = (props: Props) => {
 								updateLocalData={updateLocalData}
 							/>
 						}
-						transitionDuration={-1}
-						position={Position.BOTTOM_RIGHT}
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; minimal: true; content:... Remove this comment to see the full error message
 						close
 					>
 						<AccentedIconButton
 							accentColor={iconColor}
+							aria-label="Filter comments"
 							icon="filter"
-							title="Filter comments"
 						/>
 					</Popover>
 					{userId && featureFlags.notifications && (

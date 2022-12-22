@@ -40,8 +40,16 @@ const NavBar = function (props) {
 					// eslint-disable-next-line react/no-array-index-key
 					key={index}
 					href={subitem.href}
-					icon={subitem.isPrivate && <Icon icon="lock2" iconSize={14} />}
-					rightElement={subitem.isExternal && <Icon icon="share" iconSize={14} />}
+					icon={
+						subitem.isPrivate && (
+							<Icon icon="lock2" className="lock-icon" iconSize={14} />
+						)
+					}
+					rightElement={
+						subitem.isExternal && (
+							<Icon icon="share" className="external-icon" iconSize={14} />
+						)
+					}
 					text={subitem.title}
 				/>
 			);
@@ -72,15 +80,15 @@ const NavBar = function (props) {
 			);
 		}
 		return (
-			<a href={item.href} key={`nav-item-${item.id}`}>
-				<li>
-					{item.isPrivate && <Icon icon="lock2" iconSize={14} />}
+			<li key={`nav-item-${item.id}`}>
+				<a href={item.href}>
+					{item.isPrivate && <Icon icon="lock2" className="lock-icon" iconSize={14} />}
 					<span className="title">{item.title}</span>
 					{item.isExternal && (
 						<Icon icon="share" iconSize={11} className="external-icon" />
 					)}
-				</li>
-			</a>
+				</a>
+			</li>
 		);
 	};
 
@@ -90,15 +98,11 @@ const NavBar = function (props) {
 				<ul className="social-list">
 					{socialItems.map((item) => {
 						return (
-							<a
-								href={item.url}
-								key={`social-item-${item.id}`}
-								aria-label={item.title}
-							>
-								<li>
+							<li key={`social-item-${item.id}`}>
+								<a href={item.url} aria-label={item.title}>
 									<Icon icon={item.icon} />
-								</li>
-							</a>
+								</a>
+							</li>
 						);
 					})}
 				</ul>

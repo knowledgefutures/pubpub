@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from '@blueprintjs/core';
+import { Card, Classes, Switch } from '@blueprintjs/core';
 
 import LabelFilter from './LabelFilter';
 
@@ -21,7 +21,7 @@ const FilterMenu = (props: Props) => {
 		onShowAnchoredComments,
 	} = props;
 	return (
-		<div className="filter-menu-component">
+		<Card className={`filter-menu-component ${Classes.ELEVATION_1}`}>
 			<Switch
 				label="Browse archived comments"
 				checked={isBrowsingArchive}
@@ -35,7 +35,7 @@ const FilterMenu = (props: Props) => {
 				onChange={(e) => onShowAnchoredComments(e.target.checked)}
 			/>
 			<LabelFilter {...(props as any)} />
-		</div>
+		</Card>
 	);
 };
 export default FilterMenu;

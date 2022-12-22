@@ -116,22 +116,25 @@ const Footer = (props: Props) => {
 					{isBasePubPub && (
 						<React.Fragment>
 							<div className="title">
-								<a href="https://pubpub.org">
+								<a href="https://pubpub.org" aria-label="Website">
 									<img className="logo" src={pubpubLogo} alt="PubPub logo" />
 								</a>
 								<ul className="social-list">
 									<li>
-										<a href="https://twitter.com/pubpub">
+										<a href="https://twitter.com/pubpub" aria-label="Twitter">
 											<Icon icon="twitter" />
 										</a>
 									</li>
 									<li>
-										<a href="mailto:hello@pubpub.org?subject=Contact">
+										<a
+											href="mailto:hello@pubpub.org?subject=Contact"
+											aria-label="Contact via email"
+										>
 											<Icon icon="envelope" />
 										</a>
 									</li>
 									<li>
-										<a href="https://github.com/pubpub">
+										<a href="https://github.com/pubpub" aria-label="GitHub">
 											<Icon icon="github" />
 										</a>
 									</li>
@@ -253,11 +256,11 @@ const Footer = (props: Props) => {
 						<ul className="social-list">
 							{socialItems.map((item) => {
 								return (
-									<a href={item.url} key={`social-item-${item.id}`}>
-										<li>
+									<li key={`social-item-${item.id}`}>
+										<a href={item.url} aria-label={item.title}>
 											<Icon icon={item.icon} />
-										</li>
-									</a>
+										</a>
+									</li>
 								);
 							})}
 						</ul>

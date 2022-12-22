@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { dispatchEmptyTransaction } from 'components/Editor';
-import { NonIdealState } from '@blueprintjs/core';
+import { NonIdealState } from 'components';
 
 import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'types';

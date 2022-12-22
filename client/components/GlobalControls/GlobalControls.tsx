@@ -37,6 +37,7 @@ const GlobalControls = (props: Props) => {
 		return (
 			<GlobalControlsButton
 				href="/search"
+				aria-label="Search"
 				desktop={{ text: 'Search' }}
 				mobile={{ icon: 'search' }}
 			/>
@@ -67,6 +68,7 @@ const GlobalControls = (props: Props) => {
 				<UserNotificationsPopover>
 					{({ hasUnreadNotifications }) => (
 						<GlobalControlsButton
+							aria-label="Notifications inbox"
 							mobileOrDesktop={{
 								icon: hasUnreadNotifications ? 'inbox-update' : 'inbox',
 							}}

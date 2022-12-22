@@ -64,6 +64,7 @@ export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as MobileAware, MobileAwareRenderProps } from './MobileAware';
 export { default as NavBar } from './NavBar/NavBar';
 export { default as NavBuilder } from './NavBuilder/NavBuilder';
+export { default as NonIdealState } from './NonIdealState/NonIdealState';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';
 export { default as Overlay } from './Overlay/Overlay';
 export { default as PagePreview } from './PagePreview/PagePreview';

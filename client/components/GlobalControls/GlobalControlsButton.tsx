@@ -43,7 +43,6 @@ const resolveDisplayOptionsProps = (
 
 const GlobalControlsButton = React.forwardRef((props: Props, ref: React.Ref<unknown>) => {
 	const { href, onClick, className, minimal = true, ...buttonProps } = props;
-
 	const renderMobileOrDesktopButton = (
 		isMobileButton: boolean,
 		renderProps: MobileAwareRenderProps,

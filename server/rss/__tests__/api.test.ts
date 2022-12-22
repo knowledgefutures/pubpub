@@ -29,3 +29,9 @@ it('respects query parameters', async () => {
 		.expect(200);
 	expect(countItems(body.text)).toEqual(2);
 });
+
+it('responds with 404 when requested from base pubpub', async () => {
+	process.env.FORCE_BASE_PUBPUB = 'true';
+	const agent = await login();
+	await agent.get(`/rss.xml`).expect(404);
+});

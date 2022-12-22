@@ -205,8 +205,7 @@ class LabelFilter extends Component<Props, State> {
 												content={
 													label.publicApply ? (
 														<span>
-															All discussion authors can apply this
-															label.
+															All discussants can apply this label.
 														</span>
 													) : (
 														<span>
@@ -305,9 +304,7 @@ class LabelFilter extends Component<Props, State> {
 									<Tooltip
 										content={
 											label.publicApply ? (
-												<span>
-													All discussion authors can apply this label.
-												</span>
+												<span>All discussants can apply this label.</span>
 											) : (
 												<span>Only managers can apply this label.</span>
 											)

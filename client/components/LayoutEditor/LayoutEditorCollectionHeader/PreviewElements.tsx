@@ -19,7 +19,7 @@ const PreviewElements = (props: Props) => {
 			<Checkbox
 				checked={!hideByline}
 				onChange={() => onChange({ hideByline: !hideByline })}
-				label="Byline"
+				label="Attributions"
 			/>
 			<Checkbox
 				disabled={hideByline}

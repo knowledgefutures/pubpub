@@ -133,7 +133,7 @@ const DashboardEdges = (props: Props) => {
 					<NonIdealState
 						icon="layout-auto"
 						title="No connections from other Pubs"
-						description="When other authors add connections to this Pub, they will be listed here."
+						description="Corresponding connections will be created here when users connect to this Pub from another."
 					/>
 				)}
 			/>

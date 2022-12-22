@@ -76,7 +76,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 			}
 			bylineElement={
 				<TagInput
-					placeholder="Add authors for this publication"
+					placeholder="Add contributors to this publication"
 					values={contributors}
 					onChange={(value) =>
 						void onUpdateExternalPublication({ contributors: value as string[] })

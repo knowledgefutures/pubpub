@@ -53,7 +53,7 @@ const TitleGroup = (props: Props) => {
 
 	const renderBylineEmptyState = () => {
 		if (canModify) {
-			return <span className="pub-header-themed-secondary">Edit byline</span>;
+			return <span className="pub-header-themed-secondary">Edit Pub contributors</span>;
 		}
 		return null;
 	};

@@ -21,7 +21,7 @@ const CollectionAttributionEditor = (props: Props) => {
 			canEdit={canEdit}
 			hasEmptyState={false}
 			attributions={attributions!}
-			listOnBylineText="List on Collection byline"
+			listOnBylineText="Collection byline attribution"
 			promiseWrapper={pendingPromise}
 			onUpdateAttributions={onUpdateAttributions}
 			identifyingProps={{

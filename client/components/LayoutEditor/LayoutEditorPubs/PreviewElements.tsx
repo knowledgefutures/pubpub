@@ -18,7 +18,7 @@ type PreviewElementField =
 	| 'hideEdges';
 
 const labelsForPreviewElementFields: Record<PreviewElementField, string> = {
-	hideByline: 'Byline',
+	hideByline: 'Attributions',
 	hideContributors: 'Contributors',
 	hideDates: 'Dates',
 	hideDescription: 'Description',

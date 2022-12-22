@@ -99,8 +99,8 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 			<Button
 				aria-label={
 					ignored
-						? `Add ${name} to Pub attribution`
-						: `Remove ${name} from Pub attribution`
+						? `Add ${name} to Pub contributors`
+						: `Remove ${name} from Pub contributors`
 				}
 				onClick={handleToggleIgnored}
 				icon={ignored ? 'small-plus' : 'small-cross'}
@@ -247,7 +247,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 		if (attributions && attributions.length) {
 			return (
 				<>
-					<h6>Authors</h6>
+					<h6>Attributions</h6>
 					{attributions.map((attr, index) => (
 						<ProposedAttribution
 							// eslint-disable-next-line react/no-array-index-key

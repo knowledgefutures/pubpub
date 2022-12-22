@@ -116,7 +116,7 @@ class LabelSelect extends Component<Props, State> {
 												<Tooltip
 													content={
 														label.publicApply
-															? 'All discussion authors can apply this label.'
+															? 'All discussants can apply this label.'
 															: 'Only managers can apply this label.'
 													}
 												>

@@ -10,7 +10,7 @@ import DiscussionReanchor from './DiscussionReanchor';
 
 const sortLabels = {
 	chronological: 'Sort chronologically',
-	alphabetical: 'Sort by author surname',
+	alphabetical: 'Sort by contributor surname',
 } as const;
 
 export type SortType = keyof typeof sortLabels;

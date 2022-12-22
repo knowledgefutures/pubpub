@@ -61,7 +61,7 @@ const getQuickActionsForCollection = (collection: Collection): QuickAction[] => 
 			href: getDashUrl({ collectionSlug, mode: 'settings', section: 'metadata' }),
 		},
 		collection.kind !== 'tag' && {
-			label: 'Edit attribution',
+			label: 'Edit contributors',
 			icon: 'edit',
 			href: getDashUrl({ collectionSlug, mode: 'settings', section: 'attribution' }),
 		},

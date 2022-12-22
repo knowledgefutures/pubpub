@@ -24,7 +24,7 @@ type OwnProps = {
 };
 
 const defaultProps = {
-	listOnBylineText: 'List on byline',
+	listOnBylineText: 'Byline attribution',
 	onPersistStateChange: () => {},
 	promiseWrapper: (x) => x,
 	hasEmptyState: true,

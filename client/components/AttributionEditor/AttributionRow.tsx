@@ -93,7 +93,7 @@ const AttributionRow = (props: Props) => {
 								marginRight: '1em',
 							}}
 						>
-							Listed on byline
+							Assigned byline attribution
 						</span>
 					)}
 					{!canEdit &&

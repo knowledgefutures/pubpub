@@ -12,7 +12,11 @@ type Props = {
 const BylineEditButton = (props: Props) => {
 	const { onClick } = props;
 	return (
-		<Button className="byline-edit-button-component" onClick={onClick} aria-label="Edit byline">
+		<Button
+			className="byline-edit-button-component"
+			onClick={onClick}
+			aria-label="Edit Pub contributors"
+		>
 			<div className="icon-box pub-header-themed-box pub-header-themed-box-hover-target">
 				<Icon icon="edit2" iconSize={14} />
 			</div>

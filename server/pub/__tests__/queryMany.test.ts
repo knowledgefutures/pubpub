@@ -245,7 +245,7 @@ describe('queryPubIds', () => {
 		]);
 	});
 
-	it('Filters for Pubs by a title or author term', async () => {
+	it('Filters for Pubs by a title or contributor term', async () => {
 		const { p1, p2, p4 } = models;
 		await expectPubIdsForQuery({ ordering: collectionRankOrdering, term: 'please' }, [p1]);
 		await expectPubIdsForQuery({ ordering: collectionRankOrdering, term: 'guy' }, [p2]);

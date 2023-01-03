@@ -118,7 +118,7 @@ export const getDoiData = (
 		collectionId && findCollection(collectionId),
 		pubId && findPrimaryCollectionPubForPub(pubId),
 		pubId && findPub(pubId),
-		getCommunityDepositTarget(communityId),
+		getCommunityDepositTarget(communityId, true),
 	]).then(([community, collection, collectionPub, pub, depositTarget]) => {
 		const resolvedCollection = collectionPub ? collectionPub.collection : collection;
 		return createDeposit(

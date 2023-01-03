@@ -7,7 +7,7 @@ import { aes256Decrypt } from 'utils/crypto';
 import { expect } from 'utils/assert';
 
 const getDoiLogin = async (communityId: string) => {
-	const depositTarget = await getCommunityDepositTarget(communityId);
+	const depositTarget = await getCommunityDepositTarget(communityId, true);
 	if (depositTarget) {
 		const { username, password, passwordInitVec } = depositTarget;
 		if (username && password && passwordInitVec) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import queryString from 'query-string';
+import queryString, { ParsedQuery } from 'query-string';
 
 import Html from 'server/Html';
 import app from 'server/server';
@@ -10,7 +10,12 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCommunityOverview } from 'server/utils/queryHelpers';
 
 app.get('/dash', (req, res) => {
-	res.redirect(queryString.stringifyUrl({ url: '/dash/overview', query: req.query }));
+	res.redirect(
+		queryString.stringifyUrl({
+			url: '/dash/overview',
+			query: req.query as ParsedQuery,
+		}),
+	);
 });
 
 app.get('/dash/overview', async (req, res, next) => {

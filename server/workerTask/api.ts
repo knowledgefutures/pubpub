@@ -3,7 +3,7 @@ import app from 'server/server';
 import { getWorkerTask } from './queries';
 
 app.get('/api/workerTasks', (req, res) => {
-	return getWorkerTask(req.query)
+	return getWorkerTask(req.query as { workerTaskId: string })
 		.then((workerTaskData) => {
 			return res.status(201).json(workerTaskData);
 		})

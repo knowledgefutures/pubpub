@@ -7,6 +7,7 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { generateMetabaseToken } from 'server/utils/metabase';
+import { User } from 'types';
 
 app.get('/admin', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {
@@ -29,7 +30,7 @@ app.get('/admin', (req, res, next) => {
 				'6ddd7a7b-c542-4127-b403-33a67eb40ff3',
 				'd29eed4d-d754-4f8c-975e-b34826e6b8d2',
 			];
-			if (!users.includes(user.id)) {
+			if (!users.includes((user as User).id)) {
 				throw new Error('Page Not Found');
 			}
 			const impactData = {

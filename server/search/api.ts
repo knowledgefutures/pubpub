@@ -3,7 +3,7 @@ import app from 'server/server';
 import { getSearchUsers } from './queries';
 
 app.get('/api/search/users', (req, res) => {
-	return getSearchUsers(req.query.q)
+	return getSearchUsers(req.query.q as string)
 		.then((searchResults) => {
 			return res.status(200).json(searchResults);
 		})

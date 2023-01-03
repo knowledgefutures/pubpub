@@ -1,4 +1,5 @@
 import app from 'server/server';
+import { expect } from 'utils/assert';
 
 import { getPermissions } from './permissions';
 import { createReview, createReviewRelease, updateReview, destroyReview } from './queries';
@@ -32,7 +33,7 @@ app.post('/api/reviews', (req, res) => {
 				text,
 				content,
 				reviewerName,
-				userData: req.user,
+				userData: expect(req.user),
 			});
 		})
 		.then((newReview) => {

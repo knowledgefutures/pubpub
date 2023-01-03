@@ -1,5 +1,5 @@
 import React from 'react';
-import queryString from 'query-string';
+import queryString, { ParsedQuery } from 'query-string';
 
 import Html from 'server/Html';
 import app from 'server/server';
@@ -23,7 +23,7 @@ app.get('/dash/collection/:collectionSlug', (req, res) => {
 	res.redirect(
 		queryString.stringifyUrl({
 			url: `/dash/collection/${collectionSlug}/overview`,
-			query: req.query,
+			query: req.query as ParsedQuery,
 		}),
 	);
 });

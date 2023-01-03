@@ -1,5 +1,6 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
+import { expect } from 'utils/assert';
 
 import { canManipulateSpamTags } from './permissions';
 import { updateSpamTagForCommunity } from './queries';
@@ -20,7 +21,9 @@ app.put(
 
 app.post('/api/spamTags/queryCommunitiesForSpam', async (req, res) => {
 	const { offset, limit, searchTerm, status, ordering } = req.body;
-	const canQuery = await canManipulateSpamTags({ userId: req.user?.id });
+	const canQuery = await canManipulateSpamTags({
+		userId: expect(req.user).id,
+	});
 	if (!canQuery) {
 		throw new ForbiddenError();
 	}

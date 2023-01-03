@@ -19,6 +19,7 @@ setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 
 import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
+import { deduplicateSlash } from './middleware/deduplicateSlash';
 
 import { sequelize, User } from './models';
 import './hooks';
@@ -60,6 +61,7 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
 	app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
+app.use(deduplicateSlash());
 app.use(noSlash());
 app.use(compression());
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -97,6 +99,7 @@ app.use((req, res, next) => {
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
 	if (hostname.indexOf('.pubpub.org') > -1) {
+		// @ts-expect-error
 		req.session.cookie.domain = '.pubpub.org';
 	}
 	next();
@@ -125,6 +128,7 @@ app.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.
 /* -------------------- */
 app.use((req, res, next) => {
 	if (req.headers.communityhostname) {
+		// @ts-expect-error
 		req.headers.host = req.headers.communityhostname;
 	}
 	if (process.env.PUBPUB_LOCAL_COMMUNITY || req.hostname.indexOf('localhost') > -1) {
@@ -162,11 +166,15 @@ app.use(errorMiddleware);
 /* ------------ */
 const port = process.env.PORT || 9876;
 export const startServer = () => {
-	return app.listen(port, (err) => {
-		if (err) {
-			console.error(err);
-		}
-		console.info('----\n==> 🌎  API is running on port %s', port);
-		console.info('==> 💻  Send requests to http://localhost:%s', port);
-	});
+	return app.listen(
+		port,
+		// @ts-expect-error
+		(err) => {
+			if (err) {
+				console.error(err);
+			}
+			console.info('----\n==> 🌎  API is running on port %s', port);
+			console.info('==> 💻  Send requests to http://localhost:%s', port);
+		},
+	);
 };

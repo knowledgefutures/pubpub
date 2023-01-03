@@ -1,10 +1,11 @@
 import app from 'server/server';
+import { User } from 'types';
 
 import { createPasswordReset, updatePasswordReset } from './queries';
 
 app.post('/api/password-reset', (req, res) => {
 	const user = req.user || {};
-	return createPasswordReset(req.body, user, req.hostname)
+	return createPasswordReset(req.body, user as User, req.hostname)
 		.then(() => {
 			return res.status(200).json('success');
 		})
@@ -16,7 +17,7 @@ app.post('/api/password-reset', (req, res) => {
 
 app.put('/api/password-reset', (req, res) => {
 	const user = req.user || {};
-	return updatePasswordReset(req.body, user)
+	return updatePasswordReset(req.body, user as User)
 		.then(() => {
 			return res.status(200).json('success');
 		})

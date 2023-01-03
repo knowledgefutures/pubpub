@@ -3,7 +3,12 @@ import React from 'react';
 import * as types from 'types';
 import Html from 'server/Html';
 import app from 'server/server';
-import { superAdminTabKinds, SuperAdminTabKind, getSuperAdminTabUrl } from 'utils/superAdmin';
+import {
+	superAdminTabKinds,
+	SuperAdminTabKind,
+	getSuperAdminTabUrl,
+	isSuperAdminTabKind,
+} from 'utils/superAdmin';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -38,7 +43,7 @@ app.get('/superadmin', async (_, res) => {
 app.get('/superadmin/:tabKind', async (req, res, next) => {
 	try {
 		const { tabKind } = req.params;
-		if (!superAdminTabKinds.includes(tabKind)) {
+		if (!isSuperAdminTabKind(tabKind)) {
 			throw new NotFoundError();
 		}
 		const initialData = await getInitialData(req);

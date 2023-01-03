@@ -33,10 +33,10 @@ app.get('/api/editor/embed', (req, res) => {
 		soundcloud: `https://soundcloud.com/oembed?url=${input}&format=json`,
 		twitter: `https://publish.twitter.com/oembed?url=${input}&format=json`,
 	};
-	const oembedUrl = oembedUrls[type];
+	const oembedUrl = oembedUrls[type as string];
 	if (!oembedUrl) {
 		if (type === 'github') {
-			const githubParts = input.split('/');
+			const githubParts = (input as string).split('/');
 			// GitHub API requests require a user agent: https://developer.github.com/v3/#user-agent-required
 			return request(`https://api.github.com/gists/${githubParts[githubParts.length - 1]}`, {
 				json: true,

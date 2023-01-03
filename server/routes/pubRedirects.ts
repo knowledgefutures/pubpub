@@ -1,4 +1,4 @@
-import queryString from 'query-string';
+import queryString, { ParsedQuery } from 'query-string';
 
 import { isDuqDuq } from 'utils/environment';
 import app from 'server/server';
@@ -64,7 +64,10 @@ app.get('/pub/:slug', async (req, res, next) => {
 				? `${prefix}/release/${pubData.releases.length}`
 				: `${prefix}/draft`;
 
-		const redirectUrl = queryString.stringifyUrl({ url: baseUrl, query: req.query });
+		const redirectUrl = queryString.stringifyUrl({
+			url: baseUrl,
+			query: req.query as ParsedQuery,
+		});
 		return res.redirect(redirectUrl);
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
@@ -94,7 +97,10 @@ app.get(
 				? `${prefix}/release/${parseInt(versionNumber, 10)}`
 				: prefix;
 
-			const redirectUrl = queryString.stringifyUrl({ url: baseUrl, query: req.query });
+			const redirectUrl = queryString.stringifyUrl({
+				url: baseUrl,
+				query: req.query as ParsedQuery,
+			});
 			return res.redirect(redirectUrl);
 		} catch (err) {
 			return handleErrors(req, res, next)(err);

@@ -68,6 +68,8 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	} = initialData.communityData;
 
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
+	const isPub = !!initialData.scopeData?.elements.activePub;
+	const useCollectionTitle = !isPub && collection?.title;
 	const favicon = initialData.communityData.favicon;
 	const avatar = image || initialData.communityData.avatar;
 	const titleWithContext = contextTitle ? `${title} · ${contextTitle}` : title;
@@ -92,12 +94,20 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 			<meta
 				key="t2"
 				property="og:title"
-				content={collection?.kind === 'book' ? collection.title : title}
+				content={useCollectionTitle ? collection.title : title}
 			/>,
 			<meta key="t3" name="twitter:title" content={titleWithContext} />,
 			<meta key="t4" name="twitter:image:alt" content={titleWithContext} />,
-			<meta key="t5" name="citation_title" content={collection?.title ?? title} />,
-			<meta key="t6" name="dc.title" content={collection?.title ?? title} />,
+			<meta
+				key="t5"
+				name="citation_title"
+				content={useCollectionTitle ? collection.title : title}
+			/>,
+			<meta
+				key="t6"
+				name="dc.title"
+				content={useCollectionTitle ? collection.title : title}
+			/>,
 		];
 	}
 
@@ -122,13 +132,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 			<meta
 				key="u2"
 				property="og:type"
-				content={
-					collection?.kind === 'book'
-						? 'book'
-						: url.indexOf('/pub/') > -1
-						? 'article'
-						: 'website'
-				}
+				content={collection?.kind === 'book' ? 'book' : isPub ? 'article' : 'website'}
 			/>,
 		];
 	}

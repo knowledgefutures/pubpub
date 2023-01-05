@@ -3,6 +3,7 @@
 $bp: vendor.$bp-namespace;
 
 @import 'styles/variables.scss';
+@import '../pub.scss';
 
 $pub-body-font-size: if-is-export(14px, 20px);
 
@@ -30,6 +31,10 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		font-weight: 500;
 		font-family: $header-font;
 		letter-spacing: 1px;
+		@include pub-compact-view {
+			overflow-y: hidden;
+			overflow-x: auto;
+		}
 		a {
 			text-decoration: underline;
 		}
@@ -98,6 +103,10 @@ $pub-body-font-size: if-is-export(14px, 20px);
 
 	p {
 		margin: 0em 0em 1em;
+		@include pub-compact-view {
+			overflow-y: hidden;
+			overflow-x: auto;
+		}
 	}
 
 	ul > li::marker {

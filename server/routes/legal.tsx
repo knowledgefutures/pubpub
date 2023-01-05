@@ -14,6 +14,9 @@ app.get('/tos', (_, res) => res.redirect('/legal/terms'));
 app.get('/legal', (_, res) => res.redirect('/legal/terms'));
 
 app.get('/legal/:tab', (req, res, next) => {
+	if (!['terms', 'privacy', 'aup', 'settings'].includes(req.params.tab)) {
+		return next();
+	}
 	return getInitialData(req)
 		.then((initialData) => {
 			return renderToNodeStream(

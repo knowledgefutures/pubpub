@@ -10,6 +10,9 @@ type Props = {
 const LoginButton = (props: Props) => {
 	const { locationData } = props;
 	const { path, queryString } = locationData;
+	if (['/login', '/signup'].includes(path)) {
+		return null;
+	}
 	const redirectString = `?redirect=${path}${queryString.length > 1 ? queryString : ''}`;
 	const loginHref = `/login${redirectString}`;
 	return (

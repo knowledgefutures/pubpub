@@ -65,6 +65,7 @@ export type Pub = {
 	title: string;
 	htmlTitle: null | string;
 	description?: string;
+	htmlDescription?: string;
 	avatar?: string;
 	firstPublishedAt?: string;
 	lastPublishedAt?: string;

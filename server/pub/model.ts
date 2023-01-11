@@ -21,6 +21,12 @@ export default (sequelize, dataTypes) => {
 					len: [0, 280],
 				},
 			},
+			htmlDescription: {
+				type: dataTypes.TEXT,
+				validate: {
+					len: [0, 280],
+				},
+			},
 			avatar: { type: dataTypes.TEXT },
 			headerStyle: {
 				type: dataTypes.ENUM,

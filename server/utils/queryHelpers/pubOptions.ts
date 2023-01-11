@@ -74,6 +74,7 @@ export default ({
 			'title',
 			'htmlTitle',
 			'description',
+			'htmlDescription',
 			'labels',
 			'avatar',
 			'doi',

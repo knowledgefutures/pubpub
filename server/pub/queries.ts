@@ -107,6 +107,13 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 		filteredValues.title = unescape(striptags(filteredValues.htmlTitle));
 	}
 
+	if (filteredValues.description && !filteredValues.htmlDescription) {
+		filteredValues.htmlDescription = filteredValues.description;
+	}
+	if (filteredValues.htmlDescription) {
+		filteredValues.description = unescape(striptags(filteredValues.htmlDescription));
+	}
+
 	return Pub.update(filteredValues, {
 		where: { id: inputValues.pubId },
 		individualHooks: true,

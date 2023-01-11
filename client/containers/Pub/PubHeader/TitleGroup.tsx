@@ -16,7 +16,7 @@ type Props = {
 
 const TitleGroup = (props: Props) => {
 	const { pubData, updatePubData } = props;
-	const { title, htmlTitle, description, isRelease } = pubData;
+	const { title, htmlTitle, description, htmlDescription, isRelease } = pubData;
 	const { communityData, scopeData, featureFlags } = usePageContext();
 	const { submissionState } = usePubContext();
 	const isUnsubmitted = submissionState?.submission.status === 'incomplete';
@@ -66,9 +66,16 @@ const TitleGroup = (props: Props) => {
 		[updatePubData],
 	);
 
+	const onDescritptionEditorChange = useCallback(
+		(nextHtmlDescription: string, nextDescription: string) => {
+			updatePubData({ description: nextDescription, htmlDescription: nextHtmlDescription });
+		},
+		[updatePubData],
+	);
+
 	return (
 		<div className="title-group-component">
-			{featureFlags.htmlTitles ? (
+			{featureFlags.htmlPubHeaderValues ? (
 				<h1 className="title">
 					<TitleEditor
 						initialValue={htmlTitle ?? title}
@@ -86,17 +93,26 @@ const TitleGroup = (props: Props) => {
 					placeholder="Add a Pub title"
 				/>
 			)}
-			{(canModify || description) && (
-				<EditableHeaderText
-					text={description}
-					updateText={(text) => updatePubData({ description: text })}
-					canEdit={canModify}
-					tagName="p"
-					className="description pub-header-themed-secondary"
-					placeholder="Add a description for this Pub"
-					maxLength={280}
-				/>
-			)}
+			{(canModify || description) &&
+				(featureFlags.htmlPubHeaderValues ? (
+					<TitleEditor
+						initialValue={htmlDescription ?? description}
+						isReadOnly={!canModify}
+						onChange={onDescritptionEditorChange}
+						placeholder="Add a description for this Pub"
+						maxLength={280}
+					/>
+				) : (
+					<EditableHeaderText
+						text={description}
+						updateText={(text) => updatePubData({ description: text })}
+						canEdit={canModify}
+						tagName="p"
+						className="description pub-header-themed-secondary"
+						placeholder="Add a description for this Pub"
+						maxLength={280}
+					/>
+				))}
 			<PubByline
 				pubData={pubData as any}
 				renderSuffix={() => !isRelease && renderBylineEditor()}

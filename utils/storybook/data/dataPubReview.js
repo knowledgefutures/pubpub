@@ -7,6 +7,7 @@ export default {
 	htmlTitle: null,
 	description:
 		'The first computing machines were so large they filled entire rooms. Today they are ubiquitous, built invisibly into our environments. While it is tempting to view this change within a predetermined space of progress, we can still shape the future on our own terms.',
+	htmlDescription: null,
 	avatar: 'https://assets.pubpub.org/9pi1c5c6/41554230047846.jpeg',
 	headerBackgroundColor: 'dark',
 	headerStyle: 'light',

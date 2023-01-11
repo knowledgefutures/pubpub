@@ -14,7 +14,7 @@ const PubTitle = (props: Props) => {
 		pubData: { title, htmlTitle },
 	} = props;
 	const { featureFlags } = usePageContext();
-	const shouldUseHtmlTitle = providedShouldUseHtmlTitle || featureFlags.htmlTitles;
+	const shouldUseHtmlTitle = providedShouldUseHtmlTitle || featureFlags.htmlPubHeaderValues;
 
 	if (shouldUseHtmlTitle && htmlTitle) {
 		// eslint-disable-next-line react/no-danger

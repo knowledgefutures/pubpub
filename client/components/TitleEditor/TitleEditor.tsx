@@ -3,6 +3,12 @@ import classNames from 'classnames';
 import { useBeforeUnload } from 'react-use';
 
 import { ClientOnly } from 'components';
+import {
+	trimDocumentFragment,
+	parseDom,
+	sanitizeDocumentFragment,
+	isChildOf,
+} from './titleEditorFunctions';
 
 require('./titleEditor.scss');
 
@@ -13,57 +19,10 @@ type Props = {
 	onInput?: (html: string, text: string) => void;
 	className?: string;
 	placeholder?: string;
+	maxLength?: number;
 };
 
-const SUPPORTED_DECORATIONS = new Set(['i', 'em', 'b', 'strong']);
-
-function isChildOf(descendant: Node, ancestor: Node) {
-	let node: Node | null = descendant;
-	while (node !== null) {
-		if (node === ancestor) return true;
-		node = node.parentNode;
-	}
-	return false;
-}
-
-function stripAttrs(element: Element) {
-	while (element.attributes.length > 0) {
-		element.removeAttribute(element.attributes[0].name);
-	}
-}
-
-function sanitizeElement(element: Element) {
-	if (!SUPPORTED_DECORATIONS.has(element.tagName.toLowerCase())) {
-		const parent = element.parentNode!;
-		if (element.textContent !== null && element.textContent.length > 0) {
-			const textNode = document.createTextNode(element.textContent ?? '');
-			parent.replaceChild(textNode, element);
-		} else {
-			parent.removeChild(element);
-		}
-		return;
-	}
-	stripAttrs(element);
-	if (element.nodeType === Node.ELEMENT_NODE) {
-		for (let i = element.children.length - 1; i >= 0; i--) {
-			sanitizeElement(element.children[i]);
-		}
-	} else if (element.nodeType === Node.TEXT_NODE) {
-		element.textContent = element.textContent?.replace(/[\r\n]+/gm, '') ?? null;
-	}
-}
-
-function sanitizeDocumentFragment(doc: DocumentFragment) {
-	for (let i = doc.children.length - 1; i >= 0; i--) {
-		sanitizeElement(doc.children[i]);
-	}
-}
-
-function parseDom(html: string) {
-	const template = document.createElement('template');
-	template.innerHTML = html;
-	return template;
-}
+const SUPPORTED_KEYS = new Set(['Backspace', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
 
 const commonProps = {
 	role: 'textbox',
@@ -72,7 +31,14 @@ const commonProps = {
 };
 
 export default function TitleEditor(props: Props) {
-	const { initialValue = '', onChange, onInput, isReadOnly = false, ...restProps } = props;
+	const {
+		initialValue = '',
+		onChange,
+		onInput,
+		isReadOnly = false,
+		maxLength = Infinity,
+		...restProps
+	} = props;
 	const node = useRef<HTMLDivElement>(null);
 	const init = useRef(false);
 	const [focused, setFocused] = useState(false);
@@ -94,6 +60,9 @@ export default function TitleEditor(props: Props) {
 			const html = event.clipboardData.getData('text/html');
 			const dom = parseDom(html);
 			sanitizeDocumentFragment(dom.content);
+			if (maxLength !== null)
+				trimDocumentFragment(dom.content, maxLength - editor.textContent!.length);
+
 			let pasted = false;
 			// execCommand is a deprecated API, but it's still found in most
 			// browsers and is the easist way to support undo/redo without
@@ -113,22 +82,33 @@ export default function TitleEditor(props: Props) {
 				range.collapse(false);
 			}
 		},
-		[node],
+		[node, maxLength],
 	);
 
-	const handleKeyDown = useCallback((event) => {
-		if (event.key === 'Enter') {
-			event.preventDefault();
-		} else if (event.key.toLowerCase() === 'u' && event.metaKey) {
-			event.preventDefault();
-		} else if (event.key.toLowerCase() === 'b' && event.metaKey) {
-			event.preventDefault();
-			document.execCommand('Bold', false);
-		} else if (event.key.toLowerCase() === 'i' && event.metaKey) {
-			event.preventDefault();
-			document.execCommand('Italic', false);
-		}
-	}, []);
+	const handleKeyDown = useCallback(
+		(event) => {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+			} else if (event.key.toLowerCase() === 'u' && event.metaKey) {
+				event.preventDefault();
+			} else if (event.key.toLowerCase() === 'b' && event.metaKey) {
+				event.preventDefault();
+				document.execCommand('Bold', false);
+			} else if (event.key.toLowerCase() === 'i' && event.metaKey) {
+				event.preventDefault();
+				document.execCommand('Italic', false);
+			} else if (
+				!SUPPORTED_KEYS.has(event.key) &&
+				event.metaKey === false &&
+				(getSelection() === null || getSelection()?.toString() === '') &&
+				node.current &&
+				node.current.innerText.length >= maxLength
+			) {
+				event.preventDefault();
+			}
+		},
+		[node, maxLength],
+	);
 
 	// contenteditable inserts a <br> when it contains an element (e.g. <b>,
 	// <em>, etc.) and its contents are cleared.

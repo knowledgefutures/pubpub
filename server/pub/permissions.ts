@@ -7,6 +7,7 @@ const managerUpdatableFields = [
 	'avatar',
 	'customPublishedAt',
 	'description',
+	'htmlDescription',
 	'downloads',
 	'labels',
 	'slug',

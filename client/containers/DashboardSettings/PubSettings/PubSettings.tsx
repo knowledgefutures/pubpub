@@ -35,7 +35,7 @@ type Props = {
 
 const PubSettings = (props: Props) => {
 	const { settingsData } = props;
-	const { scopeData, communityData } = usePageContext();
+	const { scopeData, communityData, featureFlags } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 	const {
 		activePermissions: { canAdminCommunity, canManage },
@@ -98,19 +98,42 @@ const PubSettings = (props: Props) => {
 							}
 						/>
 					</InputField>
-					<InputField
-						label="Description"
-						placeholder="Enter description"
-						helperText={`${(pubData.description || '').length}/280 characters`}
-						isTextarea={true}
-						value={pubData.description || ''}
-						onChange={(evt) =>
-							updatePubData({
-								description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
-							})
-						}
-						error={undefined}
-					/>
+					{featureFlags.htmlPubHeaderValues ? (
+						<InputField
+							label="Description"
+							placeholder="Enter description"
+							helperText={`${(pubData.description || '').length}/280 characters`}
+							error={undefined}
+						>
+							<TitleEditor
+								className={Classes.INPUT}
+								initialValue={pubData.htmlDescription ?? pubData.description}
+								onInput={(nextHtmlDescription, nextDescription) =>
+									updatePubData({
+										htmlDescription: nextHtmlDescription,
+										description: nextDescription,
+									})
+								}
+								maxLength={280}
+							/>
+						</InputField>
+					) : (
+						<InputField
+							label="Description"
+							placeholder="Enter description"
+							helperText={`${(pubData.description || '').length}/280 characters`}
+							isTextarea={true}
+							value={pubData.description || ''}
+							onChange={(evt) =>
+								updatePubData({
+									description: evt.target.value
+										.substring(0, 280)
+										.replace(/\n/g, ' '),
+								})
+							}
+							error={undefined}
+						/>
+					)}
 					<ImageUpload
 						htmlFor="avatar-upload"
 						label={

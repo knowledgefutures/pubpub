@@ -22,8 +22,8 @@ type Props = {
 
 const PubOverview = (props: Props) => {
 	const { pubData } = props;
-	const { communityData } = usePageContext();
-	const { description } = pubData;
+	const { communityData, featureFlags } = usePageContext();
+	const { description, htmlDescription } = pubData;
 
 	const pubHeaderTheme = useFacetsQuery((F) => F.PubHeaderTheme);
 
@@ -132,7 +132,20 @@ const PubOverview = (props: Props) => {
 					<h1 className="title">
 						<PubTitle pubData={pubData} />
 					</h1>
-					{description && <div className="description">{description}</div>}
+					{description && (
+						<div className="description">
+							{featureFlags.htmlPubHeaderValues ? (
+								<span
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={{
+										__html: htmlDescription ?? description ?? '',
+									}}
+								/>
+							) : (
+								description
+							)}
+						</div>
+					)}
 					{renderPubDates()}
 				</div>
 			</PubHeaderBackground>

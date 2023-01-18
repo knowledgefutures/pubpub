@@ -129,10 +129,7 @@ class Doi extends Component<Props, State> {
 	}
 
 	disabledDueToUnmanagedPrefix() {
-		return (
-			this.props.depositTarget &&
-			!(this.props.depositTarget.password && this.props.depositTarget.username)
-		);
+		return this.props.depositTarget && !this.props.depositTarget.isPubPubManaged;
 	}
 
 	handleDeposit(doi) {

@@ -11,8 +11,14 @@ export function deduplicateSlash() {
 		if (duplicateSlashMatches === null) {
 			return next();
 		}
-		const correctedUrl = parse(req.url);
-		correctedUrl.pathname = expect(correctedUrl.pathname).replace(DUPLICATE_SLASH_PATTERN, '/');
-		res.redirect(301, format(correctedUrl));
+		const parsedUrl = parse(req.url);
+		parsedUrl.pathname = expect(parsedUrl.pathname).replace(DUPLICATE_SLASH_PATTERN, '/');
+		const correctedUrl = format(parsedUrl);
+		// Since we search for duplicate slashes before parsing the URL there are some false
+		// positives we should ignore, such as when the slashes are part of the query string
+		if (correctedUrl === req.url) {
+			return next();
+		}
+		res.redirect(301, correctedUrl);
 	};
 }

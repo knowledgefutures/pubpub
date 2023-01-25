@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
@@ -42,7 +42,7 @@ export const hydrateWrapper = (Component) => {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'sentryIsActive' does not exist on type '... Remove this comment to see the full error message
 			window.sentryIsActive = true;
 			Sentry.init({
-				dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
+				dsn: 'https://28b2ae6e574a49dfbc894d8793b36f0d@o31718.ingest.sentry.io/4504532925349888',
 				environment: isProd ? 'prod' : 'dev',
 				release: appCommit,
 			});

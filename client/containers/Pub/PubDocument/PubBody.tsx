@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { useBeforeUnload } from 'react-use';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import { useDebouncedCallback } from 'use-debounce/lib';
 
 import { Editor } from 'components';

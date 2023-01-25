@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import { Node } from 'prosemirror-model';
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { collabDocPluginKey } from './collaborative';
@@ -60,15 +60,8 @@ export default () => {
 				const transactionMetadata = getTransactionMetadata(tr, state);
 				if (!hasCaptured) {
 					hasCaptured = true;
-					let theError: Error;
-					try {
-						throw new Error('Uh-oh!');
-					} catch (err: any) {
-						theError = err;
-					}
-					Sentry.captureEvent({
-						message: 'Evil Prosemirror Transaction',
-						contexts: { transactionMetadata, error: theError },
+					Sentry.captureException(new Error('Evil Prosemirror Transaction'), {
+						contexts: { transactionMetadata },
 					});
 				}
 			}

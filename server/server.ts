@@ -60,6 +60,13 @@ if (process.env.NODE_ENV === 'production') {
 	});
 	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
 	app.use(enforce.HTTPS({ trustProtoHeader: true }));
+	// Send a sentry warning after 25 seconds of request processing
+	app.use((req, res, next) => {
+		res.setTimeout(25000, () => {
+			Sentry.captureMessage('Slow request warning');
+		});
+		next();
+	});
 }
 app.use(deduplicateSlash());
 app.use(noSlash());

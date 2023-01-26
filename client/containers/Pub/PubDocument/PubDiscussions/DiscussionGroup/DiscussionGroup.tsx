@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import classNames from 'classnames';
 import DiscussionNav from './DiscussionNav';
 import Discussion from '../Discussion';
@@ -28,7 +29,7 @@ const DiscussionGroup = (props: Props) => {
 		prevConvertedDiscussionIds,
 	} = props;
 	const [activeThreadHover, setActiveThreadHover] = useState(undefined);
-	const [activeThread, setActiveThread] = useState(undefined);
+	const [activeThread, setActiveThread] = useState<null | string>(null);
 	const [isExpanded, setExpanded] = useState(false);
 
 	const mainRect = mainContentRef.current.getBoundingClientRect();

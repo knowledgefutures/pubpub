@@ -13,7 +13,7 @@ type OwnProps = {
 	discussions: any[];
 	activeThreadHover?: string;
 	setActiveThreadHover: (...args: any[]) => any;
-	activeThread?: string;
+	activeThread: null | string;
 	setActiveThread: (...args: any[]) => any;
 	isExpanded: boolean;
 	setExpanded: (...args: any[]) => any;
@@ -21,7 +21,6 @@ type OwnProps = {
 
 const defaultProps = {
 	activeThreadHover: undefined,
-	activeThread: undefined,
 };
 
 const getLabelForDiscussion = (discussion) =>
@@ -115,7 +114,11 @@ const DiscussionNav = (props: Props) => {
 	return (
 		<span className="discussion-nav-component" style={accentStyle}>
 			<style>{`.d-${activeThreadHover}, .lh-${activeThreadHover} { background-color: rgba(0, 0, 0, 0.2) !important; }`}</style>
-			<style>{`.d-${activeThread}, .lh-${activeThread} { background-color: ${fadedAccentColorDark} !important; }`}</style>
+			{activeThread && (
+				<style>
+					{`.d-${activeThread}, .lh-${activeThread} { background-color: var(--pubpub-active-discussion-highlight-color, ${fadedAccentColorDark}) }`}
+				</style>
+			)}
 			{bubbleThreads.map(bubbleRenderer)}
 			{!!overflowThreads.length && (
 				<Popover

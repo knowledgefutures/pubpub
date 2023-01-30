@@ -1,40 +1,46 @@
 import { QueryTypes, Op } from 'sequelize';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 
 import * as types from 'types';
-import { knex, sequelize, Pub } from 'server/models';
+import { knexInstance, sequelize, Pub } from 'server/models';
 import { buildPubOptions, sanitizePub } from 'server/utils/queryHelpers';
 import { InitialData, PubsQuery, PubGetOptions, SanitizedPubData } from 'types';
 
 const defaultColumns = {
 	pubId: 'Pubs.id',
-	title: knex.raw('lower("Pubs"."title")'),
+	title: knexInstance.raw('lower("Pubs"."title")'),
 	creationDate: 'Pubs.createdAt',
-	isReleased: knex.raw('array_remove(array_agg("Releases"."id"), null) != Array[]::uuid[]'),
-	collectionIds: knex.raw('array_agg(distinct "CollectionPubs"."collectionId")'),
-	publishDate: knex.raw('coalesce("Pubs"."customPublishedAt", min("Releases"."createdAt"))'),
-	updatedDate: knex.raw('greatest("Pubs"."updatedAt", max("Drafts"."latestKeyAt"))'),
+	isReleased: knexInstance.raw(
+		'array_remove(array_agg("Releases"."id"), null) != Array[]::uuid[]',
+	),
+	collectionIds: knexInstance.raw('array_agg(distinct "CollectionPubs"."collectionId")'),
+	publishDate: knexInstance.raw(
+		'coalesce("Pubs"."customPublishedAt", min("Releases"."createdAt"))',
+	),
+	updatedDate: knexInstance.raw('greatest("Pubs"."updatedAt", max("Drafts"."latestKeyAt"))'),
 };
 
 const createColumns = (query: PubsQuery) => {
 	const { scopedCollectionId, term, ordering, relatedUserIds: queryRelatedUserIds } = query;
 	const collectionRank = scopedCollectionId
-		? knex.raw('(array_agg("scopedCollectionPub"."rank"))[1]')
-		: knex.raw('(array_agg("CollectionPubs"."rank"))[1]');
+		? knexInstance.raw('(array_agg("scopedCollectionPub"."rank"))[1]')
+		: knexInstance.raw('(array_agg("CollectionPubs"."rank"))[1]');
 	const authorNames =
 		term &&
-		knex.raw(
+		knexInstance.raw(
 			'array_cat(array_agg("attributionUser"."fullName"), array_agg("PubAttributions"."name"))',
 		);
 	const hasReviews =
 		typeof query.hasReviews === 'boolean' &&
-		knex.raw('array_remove(array_agg("ReviewNews"."id"), null) != Array[]::uuid[]');
+		knexInstance.raw('array_remove(array_agg("ReviewNews"."id"), null) != Array[]::uuid[]');
 	const submittedDate =
 		ordering?.field === 'submittedDate' &&
-		knex.raw('(array_agg("Submissions"."submittedAt"))[1]');
+		knexInstance.raw('(array_agg("Submissions"."submittedAt"))[1]');
 	const relatedUserIds =
 		!!queryRelatedUserIds &&
-		knex.raw('array_cat(array_agg("Members"."userId"), array_agg("PubAttributions"."userId"))');
+		knexInstance.raw(
+			'array_cat(array_agg("Members"."userId"), array_agg("PubAttributions"."userId"))',
+		);
 	return {
 		...defaultColumns,
 		collectionRank,
@@ -47,13 +53,13 @@ const createColumns = (query: PubsQuery) => {
 
 const createInnerWhereClause = (query: PubsQuery) => {
 	const { withinPubIds, excludePubIds, communityId } = query;
-	return (builder: QueryBuilder) => {
+	return (builder: Knex.QueryBuilder) => {
 		builder.where({ 'Pubs.communityId': communityId });
 		if (excludePubIds) {
-			builder.whereNot({ 'Pubs.id': knex.raw('some(?::uuid[])', [excludePubIds]) });
+			builder.whereNot({ 'Pubs.id': knexInstance.raw('some(?::uuid[])', [excludePubIds]) });
 		}
 		if (withinPubIds) {
-			builder.where({ 'Pubs.id': knex.raw('some(?::uuid[])', [withinPubIds]) });
+			builder.where({ 'Pubs.id': knexInstance.raw('some(?::uuid[])', [withinPubIds]) });
 		}
 	};
 };
@@ -61,13 +67,13 @@ const createInnerWhereClause = (query: PubsQuery) => {
 const createJoins = (query: PubsQuery) => {
 	const { scopedCollectionId, term, hasReviews, submissionStatuses, ordering, relatedUserIds } =
 		query;
-	return (builder: QueryBuilder) => {
+	return (builder: Knex.QueryBuilder) => {
 		if (scopedCollectionId) {
 			builder.innerJoin(
 				{ scopedCollectionPub: 'CollectionPubs' },
 				{
 					'scopedCollectionPub.pubId': 'Pubs.id',
-					'scopedCollectionPub.collectionId': knex.raw('?', scopedCollectionId),
+					'scopedCollectionPub.collectionId': knexInstance.raw('?', scopedCollectionId),
 				},
 			);
 		}
@@ -79,7 +85,7 @@ const createJoins = (query: PubsQuery) => {
 		}
 		if (submissionStatuses || ordering?.field === 'submittedDate') {
 			const joinOnStatuses = submissionStatuses && {
-				'Submissions.status': knex.raw('some(?::text[])', [submissionStatuses]),
+				'Submissions.status': knexInstance.raw('some(?::text[])', [submissionStatuses]),
 			};
 			builder.innerJoin('Submissions', {
 				'Submissions.pubId': 'Pubs.id',
@@ -103,7 +109,7 @@ const createJoins = (query: PubsQuery) => {
 const createOuterWhereClause = (query: PubsQuery) => {
 	const { isReleased, hasReviews, collectionIds, excludeCollectionIds, term, relatedUserIds } =
 		query;
-	return (builder: QueryBuilder) => {
+	return (builder: Knex.QueryBuilder) => {
 		if (typeof isReleased === 'boolean') {
 			builder.where({ isReleased });
 		}
@@ -130,7 +136,7 @@ const createOuterWhereClause = (query: PubsQuery) => {
 
 const createOrderLimitOffset = (query: PubsQuery) => {
 	const { offset, limit, ordering } = query;
-	return (builder: QueryBuilder) => {
+	return (builder: Knex.QueryBuilder) => {
 		if (ordering) {
 			const { field, direction } = ordering;
 			const rawQueryString = [
@@ -158,10 +164,10 @@ const getPubIdsQuery = (query: PubsQuery) => {
 	const orderLimitOffset = createOrderLimitOffset(query);
 	const innerWhereClause = createInnerWhereClause(query);
 	const outerWhereClause = createOuterWhereClause(query);
-	return knex
+	return knexInstance
 		.select('pubId')
-		.from(function (this: QueryBuilder) {
-			const outer = this.from(function (this: QueryBuilder) {
+		.from(function (this: Knex.QueryBuilder) {
+			const outer = this.from(function (this: Knex.QueryBuilder) {
 				this.columns(columns)
 					.select()
 					.from('Pubs')

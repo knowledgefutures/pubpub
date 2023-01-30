@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 import Sequelize from 'sequelize';
-import knexJs from 'knex';
+import { knex } from 'knex';
 
 import { createSequelizeModelsFromFacetDefinitions } from './facets/create';
 
@@ -19,7 +19,7 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	},
 });
 
-export const knex = knexJs({ client: 'pg' });
+export const knexInstance = knex({ client: 'pg' });
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */

@@ -1,10 +1,6 @@
 import * as types from 'types';
 import { Discussion, Pub, ReviewNew, Visibility, Thread } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
-import {
-	createThreadCommentWithUserOrCommenter,
-	CreateThreadWithCommentOptions,
-} from 'server/threadComment/queries';
 
 type FilterUsersOptions = {
 	userIds: string[];
@@ -68,22 +64,6 @@ export const canUserSeeThread = async (options: CanUserSeeThreadOptions): Promis
 	return maybeUserId === userId;
 };
 
-export const createNewThreadWithComment = async (options: CreateThreadWithCommentOptions) => {
-	const { text, content, userId, commenterName } = options;
-	const newThread = await Thread.create({});
-
-	const { threadCommentId, commenterId } = await createThreadCommentWithUserOrCommenter(
-		{
-			text,
-			content,
-			userId,
-			commenterName,
-		},
-		newThread.id,
-	);
-	return {
-		threadId: newThread.id,
-		threadCommentId,
-		commenterId,
-	};
+export const createThread = async (): Promise<types.Thread> => {
+	return Thread.create({});
 };

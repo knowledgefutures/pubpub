@@ -198,7 +198,9 @@ const getActivityItemAssociationIds = (
 			thread.add(item.payload.threadId);
 			if (item.payload.threadComment) {
 				threadComment.add(item.payload.threadComment.id);
-				user.add(item.payload.threadComment.userId);
+				if (item.payload.threadComment.userId) {
+					user.add(item.payload.threadComment.userId);
+				}
 			}
 		} else if (item.kind === 'pub-review-comment-added') {
 			review.add(item.payload.review.id);

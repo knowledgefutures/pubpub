@@ -1,5 +1,4 @@
-/* eslint-disable no-restricted-syntax */
-import { ForbiddenError } from 'server/utils/errors';
+/* eslint-disable no-restricted-syntax */ import { ForbiddenError } from 'server/utils/errors';
 import {
 	Commenter,
 	Discussion,
@@ -11,10 +10,11 @@ import {
 	Visibility,
 	includeUserModel,
 } from 'server/models';
+import { VisibilityAccess, DocJson } from 'types';
 import { getReadableDateInYear } from 'utils/dates';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
-import { createNewThreadWithComment } from 'server/thread/queries';
-import { VisibilityAccess, DocJson } from 'types';
+import { createThreadComment } from 'server/threadComment/queries';
+import { createThread } from 'server/thread/queries';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
@@ -82,9 +82,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts) => {
 		userId,
 	} = options;
 
-	const user = userId || null;
-	const commenter = commenterName || null;
-
 	const discussions = await Discussion.findAll({
 		where: { pubId },
 		attributes: ['id', 'pubId', 'number'],
@@ -103,24 +100,32 @@ export const createDiscussion = async (options: CreateDiscussionOpts) => {
 	const dateString = getReadableDateInYear(new Date());
 	const generatedTitle = `New Discussion on ${dateString}`;
 
-	const { threadId, commenterId } = await createNewThreadWithComment({
-		text,
-		content,
-		commenterName: commenter,
-		userId: user,
-	});
+	const [newVisibility, newThread] = await Promise.all([
+		Visibility.create({ access: visibilityAccess }),
+		createThread(),
+	]);
 
-	const newVisibility = await Visibility.create({ access: visibilityAccess });
 	const newDiscussion = await Discussion.create({
 		id: discussionId,
 		title: title || generatedTitle,
 		number: maxThreadNumber + 1,
-		threadId,
+		threadId: newThread.id,
 		visibilityId: newVisibility.id,
 		userId,
 		pubId,
-		commenterId,
 	});
+
+	const { commenterId } = await createThreadComment({
+		text,
+		content,
+		commenterName,
+		userId,
+		threadId: newThread.id,
+	});
+
+	if (commenterId) {
+		await Discussion.update({ commenterId });
+	}
 
 	if (initAnchorData) {
 		const { from, to, exact, prefix, suffix } = initAnchorData;

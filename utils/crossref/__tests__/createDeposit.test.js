@@ -341,7 +341,7 @@ describe('createDeposit', () => {
 		);
 	});
 
-	it.only('uses a DepositTarget to produce a doi prefix', () => {
+	it('uses a DepositTarget to produce a doi prefix', () => {
 		const depositTarget = { doiPrefix: 'abc' };
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { doi, ...pubWithouDoi } = pub;

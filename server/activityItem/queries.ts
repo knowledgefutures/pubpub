@@ -310,6 +310,7 @@ export const createPubReviewCreatedActivityItem = async (reviewId: string) => {
 		id: threadComment.id,
 		text: threadComment.text,
 		userId: threadComment.userId,
+		commenterId: threadComment.commenterId,
 	};
 
 	return createActivityItem({
@@ -357,6 +358,7 @@ export const createPubReviewCommentAddedActivityItem = async (
 				id: threadComment.id,
 				text: threadComment.text,
 				userId: threadComment.userId,
+				commenterId: threadComment.commenterId,
 			},
 			pub: { title: pub.title },
 		},
@@ -553,6 +555,7 @@ export const createPubDiscussionCommentAddedActivityItem = async (
 				id: threadCommentId,
 				text: threadComment.text,
 				userId: threadComment.userId,
+				commenterId: threadComment.commenterId,
 			},
 		},
 	});

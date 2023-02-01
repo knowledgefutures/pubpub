@@ -2,7 +2,9 @@ import { ThreadComment, includeUserModel, Commenter } from 'server/models';
 import * as types from 'types';
 import { createCommenter } from '../commenter/queries';
 
-const findThreadCommentWithUser = (id) =>
+const findThreadCommentWithUser = (
+	id: string,
+): Promise<types.DefinitelyHas<types.ThreadComment, 'author' | 'commenter'>> =>
 	ThreadComment.findOne({
 		where: { id },
 		include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
@@ -15,14 +17,20 @@ export type CreateThreadWithCommentOptions = {
 	commenterName: null | string;
 };
 
-export const createThreadCommentWithUserOrCommenter = async (
-	options: CreateThreadWithCommentOptions,
-	threadId: string,
-) => {
-	const { text, content, userId, commenterName } = options;
+export type CreateThreadCommentOptions = {
+	text: string;
+	content: types.DocJson;
+	threadId: string;
+	commenterName?: null | string;
+	userId?: null | string;
+};
+
+export const createThreadComment = async (options: CreateThreadCommentOptions) => {
+	const { text, content, userId, commenterName, threadId } = options;
+
 	const newCommenter = commenterName && (await createCommenter({ name: commenterName }));
 	const userIdOrCommenterId = newCommenter ? { commenterId: newCommenter.id } : { userId };
-	const commenter = newCommenter && 'id' in newCommenter ? newCommenter : null;
+
 	const threadComment = await ThreadComment.create({
 		text,
 		content,
@@ -30,30 +38,7 @@ export const createThreadCommentWithUserOrCommenter = async (
 		...userIdOrCommenterId,
 	});
 
-	return { threadCommentId: threadComment.id, commenterId: commenter?.id };
-};
-
-export type CreateThreadOptions = {
-	text: string;
-	content: types.DocJson;
-	threadId: string;
-	commenterName?: string;
-	userId?: string;
-};
-
-export const createThreadComment = async (options: CreateThreadOptions) => {
-	const { text, content, commenterName, threadId, userId } = options;
-
-	const user = userId || null;
-	const commenter = commenterName || null;
-
-	const { threadCommentId } = await createThreadCommentWithUserOrCommenter(
-		{ text, content, userId: user, commenterName: commenter },
-		threadId,
-	);
-
-	const threadCommentWithUser = await findThreadCommentWithUser(threadCommentId);
-	return threadCommentWithUser;
+	return findThreadCommentWithUser(threadComment.id);
 };
 
 export const updateThreadComment = (inputValues, updatePermissions) => {

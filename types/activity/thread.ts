@@ -8,7 +8,8 @@ export type ThreadActivityItemBase = InsertableActivityItemBase & {
 		threadComment: {
 			id: string;
 			text: string;
-			userId: string;
+			userId: null | string;
+			commenterId: null | string;
 		};
 	};
 };

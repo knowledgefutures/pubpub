@@ -18,7 +18,7 @@ const createActivityItem = async (threadComment: types.ThreadComment) => {
 				where: { threadId: threadComment.threadId },
 			});
 			const isReply = numberOfCommentsInThread > 1;
-			await createPubDiscussionCommentAddedActivityItem(
+			return createPubDiscussionCommentAddedActivityItem(
 				discussion.id,
 				threadComment.id,
 				isReply,
@@ -26,9 +26,10 @@ const createActivityItem = async (threadComment: types.ThreadComment) => {
 		}
 		if (parent.type === 'review') {
 			const { value: review } = parent;
-			await createPubReviewCommentAddedActivityItem(review.id, threadComment.id);
+			return createPubReviewCommentAddedActivityItem(review.id, threadComment.id);
 		}
 	}
+	return null;
 };
 
 ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {

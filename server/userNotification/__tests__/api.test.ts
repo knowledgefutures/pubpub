@@ -24,6 +24,7 @@ const fakePayload: PubDiscussionCommentAddedActivityItem['payload'] = {
 		id: uuid(),
 		text: 'hmm',
 		userId: uuid(),
+		commenterId: null,
 	},
 	threadId: uuid(),
 	discussionId: uuid(),

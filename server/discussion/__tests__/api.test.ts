@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 import { Discussion, Thread, ThreadComment } from 'server/models';
 
@@ -151,16 +151,33 @@ it('forbids guests from making comments with visibilityAccess=members', async ()
 		.expect(403);
 });
 
-it('creates a database entry', async () => {
+it('creates a database entry (and an ActivityItem)', async () => {
 	const { guest, releasePub } = models;
 	const agent = await login(guest);
 
 	const {
 		body: { id: discussionId },
-	} = await agent
-		.post('/api/discussions')
-		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!', visibilityAccess: 'public' }))
-		.expect(201);
+	} = await expectCreatedActivityItem(
+		agent
+			.post('/api/discussions')
+			.send(
+				makeDiscussion({
+					pub: releasePub,
+					text: 'Hello world!',
+					visibilityAccess: 'public',
+				}),
+			)
+			.expect(201),
+	).toMatchObject({
+		actorId: guest.id,
+		pubId: releasePub.id,
+		kind: 'pub-discussion-comment-added',
+		payload: {
+			threadComment: {
+				text: 'Hello world!',
+			},
+		},
+	});
 
 	const discussion = await Discussion.findOne({ where: { id: discussionId } });
 	const relatedThread = await Thread.findOne({

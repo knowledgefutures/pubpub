@@ -2,7 +2,7 @@ import React from 'react';
 
 import { NodeLabels } from 'facets';
 
-import { createFacetEditor } from '../../createFacetEditor';
+import { createFacetKindEditor } from '../../createFacetKindEditor';
 import NodeLabelEditor from './NodeLabelEditor';
 
 const description = (
@@ -14,7 +14,7 @@ const description = (
 	</>
 );
 
-export default createFacetEditor(NodeLabels, {
+export default createFacetKindEditor(NodeLabels, {
 	description,
 	propEditors: {
 		image: NodeLabelEditor,

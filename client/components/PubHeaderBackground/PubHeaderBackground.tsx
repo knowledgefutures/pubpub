@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { calculateBackgroundColor } from 'utils/colors';
-import { FacetCascadedType, PubHeaderTheme } from 'facets';
+import { FacetValue, PubHeaderTheme } from 'facets';
 
 require('./pubHeaderBackground.scss');
 
@@ -15,7 +15,7 @@ type Props = {
 	blur?: boolean;
 	style?: any;
 	safetyLayer?: 'enabled' | 'full-height';
-	pubHeaderTheme: FacetCascadedType<typeof PubHeaderTheme>;
+	pubHeaderTheme: FacetValue<typeof PubHeaderTheme>;
 };
 
 const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>) => {

@@ -1,7 +1,7 @@
 import {
 	FacetCascadeResult,
 	FacetDefinition,
-	FacetInstanceType,
+	FacetInstance,
 	FacetSourceScope,
 	Facets,
 } from 'facets';
@@ -13,8 +13,8 @@ export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 	persistedCascadeResult: FacetCascadeResult<Def>;
 	cascadeResult: FacetCascadeResult<Def>;
 	latestAndPossiblyInvalidCascadeResult: FacetCascadeResult<Def>;
-	persistableChanges: Partial<FacetInstanceType<Def>>;
-	invalidProps: Partial<Record<keyof FacetInstanceType<Def>, true>>;
+	persistableChanges: Partial<FacetInstance<Def>>;
+	invalidProps: Partial<Record<keyof FacetInstance<Def>, true>>;
 	hasInvalidChanges: boolean;
 	hasPersistableChanges: boolean;
 	isPersisting: boolean;

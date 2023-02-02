@@ -1,5 +1,5 @@
 import { RenderedActivityItem } from 'client/utils/activity/types';
-import { FacetCascadedType, PubHeaderTheme } from 'facets';
+import { FacetValue, PubHeaderTheme } from 'facets';
 import {
 	Pub,
 	Thread,
@@ -39,7 +39,7 @@ export type ThreadNotificationsState = InitialState & {
 export type PubNotificationsState = InitialState & {
 	location: PubLocation;
 	pub: Pub;
-	pubHeaderTheme: FacetCascadedType<typeof PubHeaderTheme>;
+	pubHeaderTheme: FacetValue<typeof PubHeaderTheme>;
 	community: Community;
 	threadStates: ThreadNotificationsState[];
 	subscription: null | UserSubscription;

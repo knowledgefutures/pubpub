@@ -41,14 +41,12 @@ export type CascadedFacetType<Def extends FacetDefinition> = FacetPropsDefinitio
 	never
 >;
 
-export type FacetInstanceType<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<
+export type FacetInstance<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<
 	Def['props'],
 	null
 >;
 
-export type FacetInstanceStack<Def extends FacetDefinition> = WithFacetSource<
-	FacetInstanceType<Def>
->[];
+export type FacetInstanceStack<Def extends FacetDefinition> = WithFacetSource<FacetInstance<Def>>[];
 
 export type PropCascadeContribution<Prop extends FacetProp> = Prop['cascade'] extends 'concat'
 	? TypeOfFacetProp<Prop> & any[]
@@ -63,12 +61,12 @@ export type FacetPropCascadeResult<Prop extends FacetProp> = {
 	sources: WithFacetSource<PropCascadeContribution<Prop>>[];
 };
 
-export type FacetCascadedType<Def extends FacetDefinition> = {
+export type FacetValue<Def extends FacetDefinition> = {
 	[K in keyof Def['props']]: PropCascadeResult<Def['props'][K]>;
 };
 
 export type FacetCascadeResult<Def extends FacetDefinition> = {
-	value: FacetCascadedType<Def>;
+	value: FacetValue<Def>;
 	props: { [K in keyof Def['props']]: FacetPropCascadeResult<Def['props'][K]> };
 	stack: FacetInstanceStack<Def>;
 };

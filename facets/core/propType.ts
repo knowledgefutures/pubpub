@@ -9,7 +9,6 @@ type FacetPropTypeOptions<
 	Extension extends AnyExtension = AnyExtension,
 > = {
 	name?: string;
-	identity?: any;
 	schema: Schema;
 	postgresType: PostgresDatatype;
 	extension?: Extension;

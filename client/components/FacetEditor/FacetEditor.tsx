@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { FacetInstanceType, Facet, Facets } from 'facets';
+import { FacetInstance, Facet, Facets } from 'facets';
 import { useFacetsState } from 'client/utils/useFacets';
 
 import {
@@ -33,7 +33,7 @@ function FacetEditor<Def extends Facet>(props: Props<Def>) {
 	const { cascadeResult, isPersisting } = facets[name]!;
 
 	const updateThisFacet = useCallback(
-		(patch: Partial<FacetInstanceType<Def>>) => {
+		(patch: Partial<FacetInstance<Def>>) => {
 			updateFacet(name, patch);
 			if (selfContained) {
 				persistFacets();

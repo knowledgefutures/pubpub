@@ -15,15 +15,10 @@ export type FacetPropOptions<
 	RootValue extends NullableTypeOfPropType<PropType>,
 	// The way this prop should cascade (defaults to overwriting values from upper scopes)
 	Cascade extends CascadeStrategy = 'overwrite',
-	// When we provide a defaultValue to a facet, it may be `null`.
-	DefaultValue = NullableTypeOfPropType<PropType>,
 > = {
 	// The value of this prop at the "root" of PubPub -- in the absence of any other facet instances
 	// that override it, what value does this prop have?
 	rootValue: RootValue;
-	// The default value of this prop, if not explicitly provided to createFacet(). By contrast with
-	// `rootValue`, this value will actually be stored on a facet instance.
-	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
 	cascade?: Cascade;
 	// A human-readable label for this prop

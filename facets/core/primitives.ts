@@ -30,7 +30,6 @@ export const choice = <T extends string, U extends [T, ...T[]]>(
 	values: U,
 ): FacetPropType<z.ZodEnum<U>, { values: U }> => {
 	return propType({
-		identity: choice,
 		schema: z.enum(values),
 		postgresType: 'varchar',
 		extension: { values },

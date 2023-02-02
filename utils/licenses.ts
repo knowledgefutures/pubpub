@@ -1,4 +1,4 @@
-import { FacetCascadedType, License } from 'facets';
+import { FacetValue, License } from 'facets';
 import { DefinitelyHas, Pub, Community, CollectionPub } from 'types';
 import { LicenseDetails, LicenseKind, RenderedLicense } from 'types/license';
 import { getPublisherString } from 'utils/community';
@@ -66,7 +66,7 @@ export const licenseDetailsByKind: { [L in LicenseKind]: LicenseDetails<L> } = {
 };
 
 type RenderLicenseForPubOptions = {
-	license: FacetCascadedType<typeof License>;
+	license: FacetValue<typeof License>;
 	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 	pub: Pub;
 	community: Community;

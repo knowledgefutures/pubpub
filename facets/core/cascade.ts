@@ -1,7 +1,7 @@
 import type { FacetProp, NullableTypeOfFacetProp } from './prop';
 import type {
 	FacetDefinition,
-	FacetCascadedType,
+	FacetValue,
 	FacetPropCascadeResult,
 	WithFacetSource,
 	PropCascadeContribution,
@@ -56,6 +56,6 @@ export function cascade<Def extends FacetDefinition>(
 	}) as FacetCascadeResult<Def>['props'];
 	const value = mapFacet(def, (key) => {
 		return props[key].value;
-	}) as FacetCascadedType<Def>;
+	}) as FacetValue<Def>;
 	return { props, value, stack };
 }

@@ -1,7 +1,7 @@
 import { CitationStyle, citationStyleKind, inlineCitationStyleKind } from 'facets';
 import { citationStyles, citationInlineStyles } from 'utils/citations';
 
-import { createFacetEditor } from '../../createFacetEditor';
+import { createFacetKindEditor } from '../../createFacetKindEditor';
 import { dropdown } from '../../propTypeEditors';
 
 const CitationStyleDropdown = dropdown<typeof citationStyleKind>({
@@ -24,7 +24,7 @@ const InlineCitationStyleDropdown = dropdown<typeof inlineCitationStyleKind>({
 	})(),
 });
 
-export default createFacetEditor(CitationStyle, {
+export default createFacetKindEditor(CitationStyle, {
 	propEditors: {
 		citationStyle: CitationStyleDropdown,
 		inlineCitationStyle: InlineCitationStyleDropdown,

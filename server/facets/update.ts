@@ -1,6 +1,6 @@
 import {
 	Facet,
-	FacetInstanceType,
+	FacetInstance,
 	ALL_FACET_DEFINITIONS,
 	parsePartialFacetInstance,
 	SingleScopeId,
@@ -9,7 +9,7 @@ import {
 } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
 
-type UpdateFacetByName<Name extends FacetName> = Partial<FacetInstanceType<Facets[Name]>>;
+type UpdateFacetByName<Name extends FacetName> = Partial<FacetInstance<Facets[Name]>>;
 type UpdateFacetsQuery = Partial<{
 	[Name in FacetName]: UpdateFacetByName<Name>;
 }>;

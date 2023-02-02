@@ -3,7 +3,7 @@ import { GetState, SetState } from 'zustand';
 import {
 	FacetDefinition,
 	FacetInstanceStack,
-	FacetInstanceType,
+	FacetInstance,
 	FacetSourceScope,
 	FacetName,
 	Facets,
@@ -18,7 +18,7 @@ import { FacetsState, FacetState } from '../types';
 function applyPatchToStack<Def extends FacetDefinition>(
 	def: Def,
 	stack: FacetInstanceStack<Def>,
-	patch: Partial<FacetInstanceType<Def>>,
+	patch: Partial<FacetInstance<Def>>,
 	scope: FacetSourceScope,
 ): FacetInstanceStack<Def> {
 	const patchableIndex = stack.findIndex(
@@ -76,7 +76,7 @@ function getCascadeResultForPatch<Def extends FacetDefinition>(
 	def: Def,
 	stack: FacetInstanceStack<Def>,
 	scope: FacetSourceScope,
-	patch: Partial<FacetInstanceType<Def>>,
+	patch: Partial<FacetInstance<Def>>,
 ): FacetCascadeResult<Def> {
 	const nextStack = applyPatchToStack(def, stack, patch, scope);
 	return cascade(def, nextStack);
@@ -86,7 +86,7 @@ export function updateFacet<Name extends FacetName>(
 	get: GetState<FacetsState>,
 	set: SetState<FacetsState>,
 	name: Name,
-	patch: Partial<FacetInstanceType<Facets[Name]>>,
+	patch: Partial<FacetInstance<Facets[Name]>>,
 ) {
 	const { facets, currentScope } = get();
 	const facetState: undefined | FacetState = facets[name];

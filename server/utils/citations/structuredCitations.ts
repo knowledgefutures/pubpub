@@ -8,7 +8,7 @@ import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
 import { expiringPromise } from 'utils/promises';
-import { CitationStyle, FacetCascadedType } from 'facets';
+import { CitationStyle, FacetValue } from 'facets';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -124,7 +124,7 @@ export const getStructuredCitations = async (
 };
 
 export const getStructuredCitationsForPub = (
-	citationStyleFacet: FacetCascadedType<typeof CitationStyle>,
+	citationStyleFacet: FacetValue<typeof CitationStyle>,
 	pubDoc: DocJson,
 ) => {
 	const pubDocNode = jsonToNode(pubDoc);

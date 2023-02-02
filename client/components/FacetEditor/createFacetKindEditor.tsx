@@ -9,7 +9,7 @@ import {
 	SpecificFacetEditorProps,
 } from './types';
 
-export function createFacetEditor<Def extends FacetDefinition>(
+export function createFacetKindEditor<Def extends FacetDefinition>(
 	facetDefinition: Def,
 	options: FacetEditorCreationOptions<Def>,
 ): FacetEditorComponent<Def> {

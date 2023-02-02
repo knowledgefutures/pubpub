@@ -1,9 +1,4 @@
-import {
-	FacetDefinition,
-	FacetDoesNotExistError,
-	FacetInstanceType,
-	parseFacetInstance,
-} from 'facets';
+import { FacetDefinition, FacetDoesNotExistError, FacetInstance, parseFacetInstance } from 'facets';
 import { facetModels } from 'server/models';
 import { indexByProperty } from 'utils/arrays';
 import { mapObject } from 'utils/objects';
@@ -11,7 +6,7 @@ import { mapObject } from 'utils/objects';
 export const loadFacetInstancesForBindingIds = async <Def extends FacetDefinition>(
 	facetDefinition: Def,
 	facetBindingIds: string[],
-): Promise<Record<string, FacetInstanceType<Def>>> => {
+): Promise<Record<string, FacetInstance<Def>>> => {
 	const { name } = facetDefinition;
 	const FacetModel = facetModels[name];
 	if (FacetModel) {

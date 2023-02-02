@@ -11,12 +11,11 @@ type Column = {
 const getSequelizePropDefinition = (prop: FacetProp<any, any>): Column => {
 	const {
 		propType: { postgresType },
-		defaultValue,
 	} = prop;
 	return {
 		type: postgresType,
 		allowNull: true,
-		defaultValue: defaultValue ?? null,
+		defaultValue: null,
 	};
 };
 

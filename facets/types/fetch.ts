@@ -1,6 +1,6 @@
 import { Writeable, FacetBinding, DefinitelyHas } from 'types';
 
-import { FacetCascadeResult, FacetDefinition, FacetInstanceType } from '../core';
+import { FacetCascadeResult, FacetDefinition, FacetInstance } from '../core';
 import { FacetName, Facets, Facet } from '../definitions';
 import { ByScopeKind } from './scopes';
 
@@ -23,7 +23,7 @@ export type ByFacetKind<T> = Writeable<{ [K in keyof Facets]?: T }>;
 
 export type FacetInstancesByBindingId<Def extends FacetDefinition> = Record<
 	string,
-	FacetInstanceType<Def>
+	FacetInstance<Def>
 >;
 
 export type FacetInstancesByKind = ByFacetKind<FacetInstancesByBindingId<Facet>>;

@@ -4,7 +4,7 @@ import {
 	CascadedFacetType,
 	FacetCascadeResult,
 	FacetDefinition,
-	FacetInstanceType,
+	FacetInstance,
 	FacetProp,
 	FacetPropType,
 	FacetSourceScope,
@@ -53,7 +53,7 @@ export type GenericFacetEditorProps<Def extends FacetDefinition> = {
 	displayStyle?: FacetEditorDisplayStyle;
 	selfContained?: boolean;
 	isPersisting?: boolean;
-	onUpdateValue: (patch: Partial<FacetInstanceType<Def>>) => unknown;
+	onUpdateValue: (patch: Partial<FacetInstance<Def>>) => unknown;
 };
 
 export type FacetEditorCreationOptions<Def extends FacetDefinition> = Pick<

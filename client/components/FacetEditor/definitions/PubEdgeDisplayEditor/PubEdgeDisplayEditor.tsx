@@ -1,6 +1,6 @@
 import { PubEdgeDisplay } from 'facets';
 
-import { createFacetEditor } from '../../createFacetEditor';
+import { createFacetKindEditor } from '../../createFacetKindEditor';
 import { radio } from '../../propTypeEditors';
 
 const DefaultsToCarouselSelector = radio({
@@ -17,7 +17,7 @@ const DescriptionIsVisibleSelector = radio({
 	],
 });
 
-export default createFacetEditor(PubEdgeDisplay, {
+export default createFacetKindEditor(PubEdgeDisplay, {
 	propEditors: {
 		defaultsToCarousel: DefaultsToCarouselSelector,
 		descriptionIsVisible: DescriptionIsVisibleSelector,

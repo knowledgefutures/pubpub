@@ -1,11 +1,11 @@
-import { FacetCascadedType, License } from 'facets';
+import { FacetValue, License } from 'facets';
 import { CollectionPub, DefinitelyHas, Pub } from 'types';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
 import { getPubPublishedDate } from './pubDates';
 
 type GetPubCopyrightOptions = {
-	license: FacetCascadedType<typeof License>;
+	license: FacetValue<typeof License>;
 	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 	pub: Pub;
 };

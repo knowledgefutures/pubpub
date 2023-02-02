@@ -5,18 +5,17 @@ import { ALL_FACET_DEFINITIONS, FacetName, FacetProp, FacetProps } from '../../f
 type Column = {
 	type: typeof DataTypes[keyof typeof DataTypes];
 	allowNull: true;
-	defaultValue: any;
+	defaultValue: null;
 };
 
 const getSequelizePropDefinition = (prop: FacetProp<any, any>): Column => {
 	const {
 		propType: { postgresType },
-		defaultValue,
 	} = prop;
 	return {
 		type: postgresType,
 		allowNull: true,
-		defaultValue: defaultValue ?? null,
+		defaultValue: null,
 	};
 };
 

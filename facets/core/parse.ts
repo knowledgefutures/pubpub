@@ -1,4 +1,4 @@
-import { FacetDefinition, FacetInstanceType } from './facet';
+import { FacetDefinition, FacetInstance } from './facet';
 import { FacetParseError } from './errors';
 
 type ParseResult<
@@ -13,14 +13,14 @@ function parsePartialOrEntireFacetInstance<
 	Def extends FacetDefinition,
 	InstanceKey extends keyof Def['props'],
 	AllowPartialInstance extends boolean,
-	ThrowErrorOnFailure extends boolean,
-	ParsedType = Pick<FacetInstanceType<Def>, InstanceKey>,
+	ThrowErrorOnInvalidProps extends boolean,
+	ParsedType = Pick<FacetInstance<Def>, InstanceKey>,
 >(
 	definition: Def,
 	instance: Record<InstanceKey, any>,
-	throwErrorOnFailure: ThrowErrorOnFailure,
+	throwErrorOnInvalidProps: ThrowErrorOnInvalidProps,
 	allowPartialInstance: AllowPartialInstance,
-): ParseResult<ParsedType, ThrowErrorOnFailure> {
+): ParseResult<ParsedType, ThrowErrorOnInvalidProps> {
 	const { props } = definition;
 	const valid: Partial<ParsedType> = {};
 	const invalid: Partial<Record<keyof ParsedType, true>> = {};
@@ -44,37 +44,37 @@ function parsePartialOrEntireFacetInstance<
 			throw new FacetParseError(definition, propName);
 		}
 	});
-	if (throwErrorOnFailure) {
+	if (throwErrorOnInvalidProps) {
 		const invalidKeys = Object.keys(invalid);
 		if (invalidKeys.length > 0) {
 			throw new FacetParseError(definition, invalidKeys);
 		}
 		const returnValue: ParseResult<ParsedType, true> = { valid: valid as ParsedType, invalid };
-		return returnValue as ParseResult<ParsedType, ThrowErrorOnFailure>;
+		return returnValue as ParseResult<ParsedType, ThrowErrorOnInvalidProps>;
 	}
 	const returnValue: ParseResult<ParsedType, false> = { valid, invalid };
-	return returnValue as ParseResult<ParsedType, ThrowErrorOnFailure>;
+	return returnValue as ParseResult<ParsedType, ThrowErrorOnInvalidProps>;
 }
 
 export function parsePartialFacetInstance<
 	Def extends FacetDefinition,
 	InstanceKey extends keyof Def['props'],
-	ThrowErrorOnFailure extends boolean,
+	ThrowErrorOnInvalidProps extends boolean,
 >(
 	definition: Def,
 	instance: Record<InstanceKey, any>,
-	throwErrorOnFailure: ThrowErrorOnFailure = false as ThrowErrorOnFailure,
+	throwErrorOnInvalidProps: ThrowErrorOnInvalidProps = false as ThrowErrorOnInvalidProps,
 ) {
-	return parsePartialOrEntireFacetInstance(definition, instance, throwErrorOnFailure, true);
+	return parsePartialOrEntireFacetInstance(definition, instance, throwErrorOnInvalidProps, true);
 }
 
 export function parseFacetInstance<
 	Def extends FacetDefinition,
-	ThrowErrorOnFailure extends boolean,
+	ThrowErrorOnInvalidProps extends boolean,
 >(
 	definition: Def,
 	instance: Record<keyof Def['props'], any>,
-	throwErrorOnFailure: ThrowErrorOnFailure = false as ThrowErrorOnFailure,
+	throwErrorOnInvalidProps: ThrowErrorOnInvalidProps = false as ThrowErrorOnInvalidProps,
 ) {
-	return parsePartialOrEntireFacetInstance(definition, instance, throwErrorOnFailure, false);
+	return parsePartialOrEntireFacetInstance(definition, instance, throwErrorOnInvalidProps, false);
 }

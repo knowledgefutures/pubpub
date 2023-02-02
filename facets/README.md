@@ -114,6 +114,10 @@ Adding foreign key support to Facets would be a big project involving some Postg
 
 There's currently no way to turn off cascading for a facet, or to only allow it to bind to certain scope types. But neither would be terribly hard to implement!
 
+## Do I need a special permissions structure or read-only/derived values?
+
+Facets are currently writable by all members of a scope with `manage` permission or higher. There's also no facility for creating read-only or derived facet props. Both of these things would be relatively simple to add, though.
+
 # Anatomy of a facet definition
 
 Here I'll omitting some TypeScript generics-plumbing for the sake of readability, and I'll speak somewhat loosely about types. TL;DR:

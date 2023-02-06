@@ -30,8 +30,6 @@ export const createPub = async (
 			title: `${titleKind} on ${dateString}`,
 			slug: newPubSlug,
 			communityId,
-			headerBackgroundColor: 'light',
-			headerStyle: 'dark',
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
 			reviewHash: generateHash(8),

@@ -1,6 +1,7 @@
 import {
 	CommunityCreatedActivityItem,
 	CommunityUpdatedActivityItem,
+	FacetsActivityItem,
 	MemberActivityItem,
 } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
@@ -11,7 +12,8 @@ import { getCommunityFromContext } from './util';
 type AcceptedItem =
 	| CommunityCreatedActivityItem
 	| CommunityUpdatedActivityItem
-	| MemberActivityItem;
+	| MemberActivityItem
+	| FacetsActivityItem;
 
 const prefix = 'the Community';
 

@@ -51,7 +51,6 @@ const pubData = {
 	canManage: false,
 	collectionPubs: [],
 	releases: [],
-	licenseSlug: 'cc-by',
 } as unknown as PubPageData;
 
 storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module)

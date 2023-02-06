@@ -1,17 +1,16 @@
 /* eslint-disable no-restricted-syntax */
-import * as models from '../../server/models';
-
 import { parse } from './parse';
 import { link } from './link';
 import { builders } from './builders';
 import { buildProxyObject } from './proxy';
+import { sequelizeModels } from './models';
 
 const buildForModelName = async (modelName, args) => {
 	const builderFn = builders[modelName];
 	if (builderFn) {
 		return builderFn(args);
 	}
-	const Model = models[modelName];
+	const Model = sequelizeModels[modelName];
 	return Model.create(args);
 };
 

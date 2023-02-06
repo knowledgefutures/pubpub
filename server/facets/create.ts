@@ -47,6 +47,12 @@ export const createSequelizeModelsFromFacetDefinitions = (sequelize: Sequelize) 
 			onDelete: 'CASCADE',
 		});
 		modelsByName[name] = FacetModel;
+		if (!process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB) {
+			// HACK(ian): Don't import this file while setting up the test DB because it has too
+			// many non-relative imports (see the comment in stubstub/global/setup.js for context).
+			// eslint-disable-next-line global-require
+			require('./hooks').createSequelizeHooksForFacetModel(facet, FacetModel);
+		}
 	});
 	return {
 		facetModels: modelsByName as Record<FacetName, any>,

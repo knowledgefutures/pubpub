@@ -74,14 +74,13 @@ app.post(
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
-	const { communityId, collectionId, pubId, licenseSlug, createPubToken } = req.body;
+	const { communityId, collectionId, pubId, createPubToken } = req.body;
 	return {
 		userId: user.id,
 		communityId,
 		collectionId,
 		createPubToken,
 		pubId,
-		licenseSlug,
 	};
 };
 

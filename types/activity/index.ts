@@ -2,6 +2,7 @@ import { ScopeId } from '../scope';
 
 import { CommunityActivityItem } from './community';
 import { CollectionActivityItem } from './collection';
+import { FacetsActivityItem } from './facets';
 import { PageActivityItem } from './page';
 import { PubActivityItem } from './pub';
 import { MemberActivityItem } from './member';
@@ -10,6 +11,7 @@ import { SubmissionActivityItem } from './submission';
 
 export * from './community';
 export * from './collection';
+export * from './facets';
 export * from './page';
 export * from './pub';
 export * from './member';
@@ -18,6 +20,7 @@ export * from './submission';
 export type InsertableActivityItem =
 	| CommunityActivityItem
 	| CollectionActivityItem
+	| FacetsActivityItem
 	| PageActivityItem
 	| PubActivityItem
 	| MemberActivityItem

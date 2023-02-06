@@ -1,4 +1,9 @@
-import { CollectionActivityItem, MemberActivityItem, SubmissionActivityItem } from 'types';
+import {
+	CollectionActivityItem,
+	FacetsActivityItem,
+	MemberActivityItem,
+	SubmissionActivityItem,
+} from 'types';
 import { getDashUrl } from 'utils/dashboard';
 
 import { TitleRenderer } from '../types';
@@ -7,7 +12,8 @@ import { getCollectionFromContext } from './util';
 type AcceptedItem =
 	| CollectionActivityItem
 	| SubmissionActivityItem
-	| (MemberActivityItem & { collectionId: string });
+	| (MemberActivityItem & { collectionId: string })
+	| (FacetsActivityItem & { collectionId: string });
 
 const prefix = 'the Collection';
 

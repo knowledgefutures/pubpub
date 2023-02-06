@@ -13,6 +13,26 @@ export default (sequelize, dataTypes) => {
 				{ fields: ['collectionId'], method: 'BTREE' },
 				{ fields: ['pubId'], method: 'BTREE' },
 			],
+			classMethods: {
+				associate: (models) => {
+					const { FacetBinding, Community, Collection, Pub } = models;
+					FacetBinding.belongsTo(Community, {
+						onDelete: 'CASCADE',
+						as: 'community',
+						foreignKey: 'communityId',
+					});
+					FacetBinding.belongsTo(Collection, {
+						onDelete: 'CASCADE',
+						as: 'collection',
+						foreignKey: 'collectionId',
+					});
+					FacetBinding.belongsTo(Pub, {
+						onDelete: 'CASCADE',
+						as: 'pub',
+						foreignKey: 'pubId',
+					});
+				},
+			},
 		},
 	);
 };

@@ -6,7 +6,7 @@ import {
 	MemberRemovedActivityItem,
 } from 'types';
 
-import { memberTitle, membershipScopeTitle } from '../titles';
+import { memberTitle, scopeTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type Titles = 'member' | 'scope';
@@ -15,7 +15,7 @@ export const renderMemberCreated = itemRenderer<MemberCreatedActivityItem, Title
 	icon: 'people',
 	titleRenderers: {
 		member: memberTitle,
-		scope: membershipScopeTitle,
+		scope: scopeTitle,
 	},
 	message: ({ item, titles }) => {
 		const { actor, member, scope } = titles;
@@ -32,7 +32,7 @@ export const renderMemberUpdated = itemRenderer<MemberUpdatedActivityItem, Title
 	icon: 'people',
 	titleRenderers: {
 		member: memberTitle,
-		scope: membershipScopeTitle,
+		scope: scopeTitle,
 	},
 	message: ({ item, titles }) => {
 		const { actor, member, scope } = titles;
@@ -57,7 +57,7 @@ export const renderMemberRemoved = itemRenderer<MemberRemovedActivityItem, Title
 	icon: 'people',
 	titleRenderers: {
 		member: memberTitle,
-		scope: membershipScopeTitle,
+		scope: scopeTitle,
 	},
 	message: ({ titles }) => {
 		const { actor, member, scope } = titles;

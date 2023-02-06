@@ -23,7 +23,7 @@ const splitQueryFromAssertion = (result: Record<string, any>) => {
 	return { query, assertion };
 };
 
-export const expectCreatedActivityItem = <Result extends Record<string, any>>(
+export const expectCreatedActivityItem = <Result = Record<string, any>>(
 	promise: Promise<Result>,
 ): ExpectCreatedActivityItemResult<Result> => {
 	const cutoffTime = new Date();

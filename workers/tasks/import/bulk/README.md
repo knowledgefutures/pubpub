@@ -381,18 +381,18 @@ Note that these special values can be composed, to useful effect. We might find 
 
 ```
 ---
-coverImage: cover-image-for-this-post.jpg
+thumbnail: cover-image-for-this-post.jpg
 ---
 ```
 
-We can extract the relative file path with `$metadata` and tell the importer to upload the resolved file as the Pub's `headerBackgroundImage` as follows: 
+We can extract the relative file path with `$metadata` and tell the importer to upload the resolved file as the Pub's `avatar` as follows: 
 
 ```yaml
 # config.pubpub.yaml
 type: pub
-headerBackgroundImage:
+avatar:
   $sourceFile:
-    $metadata: coverImage
+    $metadata: thumbnail
 ```
 
 # Directive options
@@ -456,19 +456,7 @@ _The remainder of the options map directly to attributes on the Pub model._
 
 **`avatar: string`**
 
-**`headerStyle: string`**
-
-**`headerBackgroundColor: string`**
-
-**`headerBackgroundImage: string`**
-
 **`customPublishedAt: string`**: a date given in ISO 8601 format.
-
-**`licenseSlug: string`**
-
-**`citationStyle: string`**
-
-**`citationInlineStyle: string`**
 
 # Recipes
 

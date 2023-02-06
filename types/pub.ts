@@ -67,8 +67,6 @@ export type Pub = {
 	description?: string;
 	htmlDescription?: string;
 	avatar?: string;
-	firstPublishedAt?: string;
-	lastPublishedAt?: string;
 	customPublishedAt?: string;
 	doi: null | string;
 	labels?: string[];

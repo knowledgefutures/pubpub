@@ -5,8 +5,6 @@ export default {
 	description: null,
 	avatar: null,
 	useHeaderImage: null,
-	firstPublishedAt: '2019-03-01T21:58:52.271Z',
-	lastPublishedAt: '2019-03-01T21:58:52.271Z',
 	draftEditHash: 'd7w62ax0',
 	draftViewHash: 'tuhe3bup',
 	doi: '10.21428/eea8ec7d.1519656b',

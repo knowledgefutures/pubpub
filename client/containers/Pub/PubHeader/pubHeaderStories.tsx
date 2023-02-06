@@ -94,7 +94,6 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				...altPubData,
 				description: null,
 				canManage: false,
-				headerStyle: 'dark',
 			}}
 			historyData={historyData}
 		/>
@@ -103,7 +102,6 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			pubData={{
 				...altPubData,
 				description: null,
-				headerStyle: 'white-blocks',
 				avatar: 'https://i.imgur.com/s9Gj6o6.png',
 			}}
 			historyData={historyData}
@@ -113,7 +111,6 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			pubData={{
 				...altPubData,
 				collectionPubs: [],
-				headerStyle: 'black-blocks',
 				avatar: 'https://i.imgur.com/kts3zH1.jpg',
 			}}
 			historyData={historyData}

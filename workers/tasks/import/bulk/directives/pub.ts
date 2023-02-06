@@ -31,16 +31,10 @@ type FileEntry = { tmpPath: string; clientPath: string; label: null | string };
 const pubAttributesFromMetadata = ['title', 'description', 'slug', 'customPublishedAt', 'metadata'];
 const pubAttributesFromDirective = [
 	'avatar',
-	'citationInlineStyle',
-	'citationStyle',
 	'customPublishedAt',
 	'description',
 	'doi',
 	'downloads',
-	'headerBackgroundColor',
-	'headerBackgroundImage',
-	'headerStyle',
-	'licenseSlug',
 	'slug',
 	'title',
 ];

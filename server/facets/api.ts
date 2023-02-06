@@ -1,5 +1,5 @@
 import app, { wrap } from 'server/server';
-import { ForbiddenError } from 'server/utils/errors';
+import { BadRequestError, ForbiddenError } from 'server/utils/errors';
 import { getScopeId } from 'facets';
 
 import { updateFacetsForScope } from './update';
@@ -14,7 +14,11 @@ app.post(
 		if (!canUpdate) {
 			throw new ForbiddenError();
 		}
-		await updateFacetsForScope(scopeId, facets);
+		try {
+			await updateFacetsForScope(scopeId, facets, req.user?.id);
+		} catch (err) {
+			throw new BadRequestError();
+		}
 		return res.status(200).json({});
 	}),
 );

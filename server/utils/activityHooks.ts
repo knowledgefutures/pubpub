@@ -22,6 +22,7 @@ type CreateActivityHooksOptions<
 	InstanceProperties extends MinimalInstanceProperties,
 	ModelSingleton = SequelizeModelSingleton<InstanceProperties>,
 > = {
+	// It would be better to use ModelType from sequelize here, but this produces error ts(2684)
 	Model: ModelSingleton;
 	onModelCreated?: (actorId: null | string, modelId: string) => Promise<void>;
 	onModelUpdated?: (

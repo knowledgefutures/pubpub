@@ -27,8 +27,6 @@ export default {
 			description:
 				'Odit occaecati itaque quia consequatur nihil optio voluptas expedita. Asperiores impedit impedit quod unde sapiente excepturi. Qui voluptatem numquam et qui. Hic occaecati harum numquam ipsam et fuga et consequatur. Nostrum illo rerum.',
 			avatar: 'http://lorempixel.com/480/480/?rand=185',
-			firstPublishedAt: '2017-09-01T15:28:08.013Z',
-			lastPublishedAt: '2017-09-01T15:28:08.013Z',
 			headerImage: 'http://lorempixel.com/1200/480/?rand=4624',
 			createdAt: '2017-09-01T15:28:08.013Z',
 			updatedAt: '2017-09-01T15:28:08.013Z',
@@ -69,8 +67,6 @@ export default {
 			description:
 				'Impedit odio ex adipisci. Aliquid eveniet error numquam dicta. Libero amet cupiditate autem minima ullam velit rerum architecto. Iusto rem inventore quis quo qui repellat et atque. Dolore eos perspiciatis. Molestiae voluptatem ut pariatur aliquam est eos quidem. aasd sd de sijf8.',
 			avatar: 'http://lorempixel.com/480/480/?rand=202',
-			firstPublishedAt: '2017-09-01T15:28:08.013Z',
-			lastPublishedAt: '2017-09-01T15:28:08.013Z',
 			headerImage: 'http://lorempixel.com/1200/480/?rand=7982',
 			createdAt: '2017-09-01T15:28:08.013Z',
 			updatedAt: '2017-09-01T15:28:08.013Z',
@@ -102,8 +98,6 @@ export default {
 			description:
 				'Facere esse officia autem repudiandae autem est illum. Nobis asperiores nulla nam cupiditate. Et voluptas fuga aut. Labore esse vel optio.',
 			avatar: 'http://lorempixel.com/480/480/?rand=9101',
-			firstPublishedAt: '2017-09-01T15:28:08.013Z',
-			lastPublishedAt: '2017-09-01T15:28:08.013Z',
 			headerImage: 'http://lorempixel.com/1200/480/?rand=9371',
 			createdAt: '2017-09-01T15:28:08.013Z',
 			updatedAt: '2017-09-01T15:28:08.013Z',

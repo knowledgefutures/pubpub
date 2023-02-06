@@ -6,7 +6,7 @@ A **facet** is a kind of structured data that attaches to any kind of **scope**:
 
 _I want to add a new facet:_
 
-1. First, read [Are facets the right choice for my new feature?](#are-facets-the-right-choice-for-my-new-feature) It's possible that you actually don't want a facet for your use case, or you may have to plan some  work on the Facets system itself into your project. That could be fun!
+1. First, read [Are facets the right choice for my new feature?](#are-facets-the-right-choice-for-my-new-feature) It's possible that you actually don't want a facet for your use case, or you may have to plan some work on the Facets system itself into your project. That could be fun!
 
 2. Then, read [Anatomy of a facet definition](#anatomy-of-a-facet-definition). Armed with this, and cribbing from the existing facets, add a new definition to `facets/definitions`. Make sure to export the facet by name in `index.ts`, and also add it to `ALL_FACET_DEFINITIONS`.
 
@@ -23,16 +23,17 @@ _I want to work with an existing facet:_
 6. If you want to query or update a facet from somewhere in non-client code (an unusual server method, a worker task, a tool, or something else), read up on [fetching](#fetching-specific-facets-or-facets-for-many-scopes) and [updating](#updating-facets-for-a-single-scope) facet values.
 
 7. If you want to update the structure of a facet, you'll need to do so more or less manually, using a Sequelize migration. [This section](#migrations-for-facet-definitions) goes into a bit more detail.
+
 # Introduction
 
 At the highest level, facets are:
 
-- Made of _props_ — they're just objects with properties, one layer deep
-- Defined in a backend-agnostic way in the `facets/definitions` directory
-- Stored in regular Postgres tables managed by Sequelize
-- ✨ _Cascading_ ✨ — values from parent scopes are used as defaults by their descendants
-- Useful for storing serializable data — less so anything that requires associations or foreign keys
-- Readable to the world. Writable by any `Member` of a scope with `manage`-level permissions or higher.
+-   Made of _props_ — they're just objects with properties, one layer deep
+-   Defined in a backend-agnostic way in the `facets/definitions` directory
+-   Stored in regular Postgres tables managed by Sequelize
+-   ✨ _Cascading_ ✨ — values from parent scopes are used as defaults by their descendants
+-   Useful for storing serializable data — less so anything that requires associations or foreign keys
+-   Readable to the world. Writable by any `Member` of a scope with `manage`-level permissions or higher.
 
 If you haven't already, you should start by visiting `facets/definitions` to get a feel for how we define facets in practice.
 
@@ -40,9 +41,9 @@ If you haven't already, you should start by visiting `facets/definitions` to get
 
 Consider two throughlines of PubPub's evolution over the years:
 
-- Users like that PubPub's unopinionated scope names — Community, Collection and Pub — can flex to cover periodicals, books, conferences, and works less easily categorized. But while the names are unopinionated, the implementations aren't. There is often a single "PubPub way" to do something that falls out of emergent behavior, but it isn't always discovered through experimentation or self-expression. For some users, our nouns feel like just another box.
+-   Users like that PubPub's unopinionated scope names — Community, Collection and Pub — can flex to cover periodicals, books, conferences, and works less easily categorized. But while the names are unopinionated, the implementations aren't. There is often a single "PubPub way" to do something that falls out of emergent behavior, but it isn't always discovered through experimentation or self-expression. For some users, our nouns feel like just another box.
 
-- Users have always wanted "cascading Pub settings" to keep the look and feel of their Community consistent — if they prefer a certain Pub header style, and a certain citation format, they shouldn't have to configure those for each new Pub. Instead they can set the style once on the Community, and let it "cascade" down into the Pubs.
+-   Users have always wanted "cascading Pub settings" to keep the look and feel of their Community consistent — if they prefer a certain Pub header style, and a certain citation format, they shouldn't have to configure those for each new Pub. Instead they can set the style once on the Community, and let it "cascade" down into the Pubs.
 
 Facets were born from the implementation of "cascading Pub settings" in the second point, but they are also a big step towards addressing the first. With facets, we aim to grow the set of capabilities shared by all scopes, giving users more ways to structure their Communities. In time, the practical differences between our scope types may become a blurry formality. We might even choose to migrate them to a generic `Scope` that has no properties until facets are applied to it.
 
@@ -62,18 +63,18 @@ Don't try to parse this out right now — but try to hold it in your head as you
 
 Here are three different things that you might informally refer to as a "facet":
 
-- A **facet definition** (`FacetDefinition`) is a JavaScript object that describes the properties that a kind of facet has. We derive a TypeScript type and a Sequelize-backed database table from this.
+-   A **facet definition** (`FacetDefinition`) is a JavaScript object that describes the properties that a kind of facet has. We derive a TypeScript type and a Sequelize-backed database table from this.
 
-- A **facet instance** (`FacetInstance<Definition>`) is a JavaScript object that satisfies a facet definition. These are attached to a scope and stored in entries of the Postgres table for its `Definition`. We mostly manipulate these in server-side CRUD code.
+-   A **facet instance** (`FacetInstance<Definition>`) is a JavaScript object that satisfies a facet definition. These are attached to a scope and stored in entries of the Postgres table for its `Definition`. We mostly manipulate these in server-side CRUD code.
 
-- A **facet value** (`FacetValue<Definition>`) is a **read-only value** computed on the fly by examining the facet instances of a scope and its ancestors, and "cascading" its values, generally so that lower scopes take precedence. This is what client-side code will see as the facet value for a scope. We don't persist these anywhere, but we could as a caching optimization.
+-   A **facet value** (`FacetValue<Definition>`) is a **read-only value** computed on the fly by examining the facet instances of a scope and its ancestors, and "cascading" its values, generally so that lower scopes take precedence. This is what client-side code will see as the facet value for a scope. We don't persist these anywhere, but we could as a caching optimization.
 
 These are listed in order of durability. **Facet definitions** are hard-coded in our source; **facet instances** live in our database; **facet values** are ephemeral and exist in memory and on the wire.
 
 Let's reconsider our maxim using these new terms:
 
-> Every scope has exactly one `FacetValue<Def>` for each `FacetDefinition` 
-> 
+> Every scope has exactly one `FacetValue<Def>` for each `FacetDefinition`
+>
 > ... _(which is computed from the `FacetInstance<Def>` database entries for the scope and its parents)_.
 
 # Are facets the right choice for my new feature?
@@ -84,19 +85,19 @@ Glad you asked! Here are some things to consider. You might find some dealbreake
 
 The current Facets system is best understood as an implementation of "cascading Pub settings" for these Pub settings:
 
-- Header theme
-- Citation style
-- License
-- In-text node labels
-- Look and feel of Connections
+-   Header theme
+-   Citation style
+-   License
+-   In-text node labels
+-   Look and feel of Connections
 
 All of these settings are _only_ relevant on the Pub routes under `/pub/<slug>`, and in the Dashboard for that Pub. They do _not_ appear, for instance, when this Pub is rendered as part of a long list of Pubs in a Collection layout.
 
 Therefore, we haven't done any optimization of bulk-loading of facets for many Pubs at once. This may be too slow as-is. So if your facet will need to be loaded for hundreds of scopes at once, you might want to:
 
-- Not use a facet
-- Benchmark to be very sure it's okay to use facets in this case. You might need to load only a few scopes, or maybe you're building a worker task, where latency is less important.
-- Embark an an optimization project like the one sketched out in [Sketch: Improving bulk facet load performance with archetypes](#sketch-improving-bulk-facet-load-performance-with-archetypes).
+-   Not use a facet
+-   Benchmark to be very sure it's okay to use facets in this case. You might need to load only a few scopes, or maybe you're building a worker task, where latency is less important.
+-   Embark an an optimization project like the one sketched out in [Sketch: Improving bulk facet load performance with archetypes](#sketch-improving-bulk-facet-load-performance-with-archetypes).
 
 ## Do I want to write queries against the facet?
 
@@ -122,9 +123,9 @@ Facets are currently writable by all members of a scope with `manage` permission
 
 Here I'll omitting some TypeScript generics-plumbing for the sake of readability, and I'll speak somewhat loosely about types. TL;DR:
 
-- A `FacetDefinition` is made of a name, label, and some `FacetProps`.
-- A `FacetProp` is made of a name, label, a default value, and a `FacetPropType`.
-- A `FacetPropType` is a wrapper around a [`zod`](https://github.com/colinhacks/zod) type definition. We derive a TS and a Postgres type from it.
+-   A `FacetDefinition` is made of a name, label, and some `FacetProps`.
+-   A `FacetProp` is made of a name, label, a default value, and a `FacetPropType`.
+-   A `FacetPropType` is a wrapper around a [`zod`](https://github.com/colinhacks/zod) type definition. We derive a TS and a Postgres type from it.
 
 Feel free to allow along using the examples in `facets/definitions`.
 
@@ -142,9 +143,9 @@ facet({
 
 It takes as arguments:
 
-- A `name` for the facet. By convention, this is `PascalCased`.
-- An optional `label` for the facet — a very short description that may appear in the UI.
-- A `props` that describe its properties.
+-   A `name` for the facet. By convention, this is `PascalCased`.
+-   An optional `label` for the facet — a very short description that may appear in the UI.
+-   A `props` that describe its properties.
 
 > ⚠️ By convention, a facet is exported from `facets/definitions/index.ts` using a symbol name that matches its `name` property. We must also add it to `ALL_FACET_DEFINITIONS` in that file. (This is important, and is something we could choose to enforce programmatically in the future.)
 
@@ -187,9 +188,9 @@ prop(propType: FacetPropType, options: {
 
 The `propType` argument is (and must be) a JavaScript object, _not_ a TypeScript type. From it, we infer `T`, a TypeScript type corresponding to `propType` (more on the why and how of this soon). The rest of the prop definition is:
 
-- A `label` which is short, human-readable, and may appear in the UI.
-- A `rootValue` that can be used as the top of the cascade. This is a kind of default value — it's the value the prop takes on if it's not specified at any specific scope.
-- a `cascade` value that explains how the prop should cascade from scope to scope (see  [Advanced: cascade strategies](#advanced-cascade-strategies)).
+-   A `label` which is short, human-readable, and may appear in the UI.
+-   A `rootValue` that can be used as the top of the cascade. This is a kind of default value — it's the value the prop takes on if it's not specified at any specific scope.
+-   a `cascade` value that explains how the prop should cascade from scope to scope (see [Advanced: cascade strategies](#advanced-cascade-strategies)).
 
 (To learn more about `rootValue` and `cascade`, see the section on Cascading, below.)
 
@@ -228,10 +229,10 @@ propType({
 
 Taking these values:
 
-- `name` is a string that exists for debugging purposes.
-- `schema` is a zod schema (e.g. `z.string()`) that defines this type.
-- `postgresType` is the Postgres datatype that we'll use to store values of this `propType` in the database. It must accept a JSON-serialized version of `schema` — so it will probably be `'jsonb'` unless it's a scalar type.
-- `extension` holds some context-specific extras that application code can use. This is usually duplicating some of the internals of `schema`, which is closed for inspection after it's created.
+-   `name` is a string that exists for debugging purposes.
+-   `schema` is a zod schema (e.g. `z.string()`) that defines this type.
+-   `postgresType` is the Postgres datatype that we'll use to store values of this `propType` in the database. It must accept a JSON-serialized version of `schema` — so it will probably be `'jsonb'` unless it's a scalar type.
+-   `extension` holds some context-specific extras that application code can use. This is usually duplicating some of the internals of `schema`, which is closed for inspection after it's created.
 
 The `facets/core/primitives.ts` file holds prop types for your usual scalar types: strings, booleans, and numbers. You'll want to import and reuse those instead of re-rolling them. Thus, future uses of `propType()` should probably be for specific JSON object shapes — the `NodeLabels` facet has some good examples of non-scalar facet prop types.
 
@@ -257,7 +258,7 @@ export const integer = propType({
 [`zod`](https://github.com/colinhacks/zod) lets us define TypeScript types (compile-time constructs which are erased at runtime) using JavaScript objects (which can be examined at runtime). It gives us runtime and compile-time versions of a type that are kept in lockstep. Here is a minimal Zod example:
 
 ```ts
-import { z } from "zod";
+import { z } from 'zod';
 
 const User = z.object({ username: z.string() });
 type User = z.infer<typeof User>; // { username: string }
@@ -271,8 +272,8 @@ Zod is a well-tested, widely-used elaboration on this idea. It's _great_ for Fac
 
 There are a _lot_ of types are exported from the `facets` directory. Knowing what these ones mean will help you get a handle on the rest. Refer also to:
 
-- The [Some Terminology](#some-terminology) section for details on the difference between facet definitions, instances, and values
-- The [Cascading, nullability, and root values](#cascading-nullability-and-root-values) section (just below) for more details on the relationship between prop nullability and cascading.
+-   The [Some Terminology](#some-terminology) section for details on the difference between facet definitions, instances, and values
+-   The [Cascading, nullability, and root values](#cascading-nullability-and-root-values) section (just below) for more details on the relationship between prop nullability and cascading.
 
 ## `FacetName`
 
@@ -297,10 +298,10 @@ Here's a simplified example of a facet cascade. We have three `FacetInstance<T>`
 ```ts
 // Using an imaginary, simplified cascade() function
 const cascadedValue = cascade([
-    { backgroundImage: null, backgroundColor: "#0f0", textStyle: "white-blocks" }, // From Community
-    { backgroundImage: null, backgroundColor: "#00f", textStyle: "dark" }, // From Collection
-    { backgroundImage: "test.png", backgroundColor: null, textStyle: "light" }, // From Pub
-])
+	{ backgroundImage: null, backgroundColor: '#0f0', textStyle: 'white-blocks' }, // From Community
+	{ backgroundImage: null, backgroundColor: '#00f', textStyle: 'dark' }, // From Collection
+	{ backgroundImage: 'test.png', backgroundColor: null, textStyle: 'light' }, // From Pub
+]);
 ```
 
 Partially evaluated, the cascade looks a little like this:
@@ -400,7 +401,6 @@ FacetValue<typeof PubHeaderTheme> = {
 
 ## There's more to know about cascading
 
-
 See the [section on `cascade()`](#cascade) for the full story on how this function really works, and [Advanced: cascade strategies](#advanced-cascade-strategies) for additional context on how the `cascade()` to learn how to cascade values from scope to scope in other ways, e.g. by appending them to an array instead of overwriting them.
 
 # Utilities to create, parse, and cascade facets
@@ -440,8 +440,8 @@ parseFacetInstance<Def extends FacetDefinition>(
 
 This looks at the `instance` object (which could be anything) and parses it into an object with `{ valid, invalid }` properties:
 
-- `valid` contains a `Partial<FacetInstance<Def>>` with the part of the given `instance` with valid prop values.
-- `invalid` contains any invalid values from `instance`.
+-   `valid` contains a `Partial<FacetInstance<Def>>` with the part of the given `instance` with valid prop values.
+-   `invalid` contains any invalid values from `instance`.
 
 The function throws a `FacetParseError` if there are missing keys in `instance`. If `throwErrorOnInvalidProps` is set, the function will throw a `FacetParseError` if there are any props in `invalid`.
 
@@ -471,14 +471,12 @@ cascade<Def extends FacetDefinition>(
 This is the real version of the toy `cascade` function introduced earlier. Using it requires a `FacetInstanceStack<Def>` which is a heavy piece of machinery:
 
 ```ts
-type FacetSourceScope =
-	| { kind: 'community' | 'collection' | 'pub'; id: string }
-	| { kind: 'root' };
+type FacetSourceScope = { kind: 'community' | 'collection' | 'pub'; id: string } | { kind: 'root' };
 
 type FacetInstanceStack = {
-    scope: FacetSourceScope;
-    facetBindingId: null | string;
-    value: FacetInstance<Def>;
+	scope: FacetSourceScope;
+	facetBindingId: null | string;
+	value: FacetInstance<Def>;
 }[];
 ```
 
@@ -526,10 +524,11 @@ CREATE TABLE "PubHeaderTheme" (
 _These models are exported on the `facetModels` object in `server/models`. But you'll rarely need to work with them directly._
 
 We have columns for:
-- A unique primary key
-- The three actual facet props `{ backgroundImage, backgroundColor, textStyle }`
-- The `{ createdAt, updatedAt }` that Sequelize helpfully adds to tables
-- A `facetBindingId`. Hmm, what's that?
+
+-   A unique primary key
+-   The three actual facet props `{ backgroundImage, backgroundColor, textStyle }`
+-   The `{ createdAt, updatedAt }` that Sequelize helpfully adds to tables
+-   A `facetBindingId`. Hmm, what's that?
 
 ## The `FacetBindings` table
 
@@ -557,10 +556,10 @@ JOIN License ON License.facetBindingId = FacetBindings.id
 ```
 
 > ℹ️ Aside: this extra layer of indirection presents a design tradeoff. Queries would be faster if we joined facet tables (e.g. `License`) directly to scope tables (e.g. `Pub`). But as Facets evolves, there may be more information to store about a facet instance's relationship to a scope:
-> 
-> - Is it enabled?
-> - Is it part of a Release?
-> - Does it apply to this scope, or only this scope's children?
+>
+> -   Is it enabled?
+> -   Is it part of a Release?
+> -   Does it apply to this scope, or only this scope's children?
 >
 > ...which could be a lot to store directly on the facet instance tables. This is the basis on which the `FacetBinding` design was chosen.
 
@@ -568,8 +567,8 @@ JOIN License ON License.facetBindingId = FacetBindings.id
 
 Facet tables face a usual limitations of Sequelize models: migrations must be written by hand. Specifically, this means:
 
-- A file in `tools/migrations` should imperatively add/remove columns from the relevant table in concert with the facet schema change in `facets/definitions`.
-- A file in the `tools/migrations/data` may need to specify a data migration, to backfill values into the new column.
+-   A file in `tools/migrations` should imperatively add/remove columns from the relevant table in concert with the facet schema change in `facets/definitions`.
+-   A file in the `tools/migrations/data` may need to specify a data migration, to backfill values into the new column.
 
 We might consider writing an automated system for this (and thus for Sequelize in general), or eventually moving to a different ORM with better migration tooling that Facets can tap into.
 
@@ -597,8 +596,8 @@ Just pass `includeFacets: true` in the options object:
 
 ```ts
 const scopeData = await getScope({
-    pubId: whatever.pubId,
-    includeFacets: true,
+	pubId: whatever.pubId,
+	includeFacets: true,
 });
 ```
 
@@ -620,10 +619,7 @@ fetchFacetsForScope(
 The `SingleScopeId` type is defined in `types/scope.ts`:
 
 ```ts
-type SingleScopeId =
-    | { communityId: string } 
-    | { pubId: string } 
-    | { collectionId: string };
+type SingleScopeId = { communityId: string } | { pubId: string } | { collectionId: string };
 ```
 
 The return value of this function is a record mapping facet names to `FacetCascadeResult` values (these are discussed in some detail in [the documentation for `cascade()`](#cascade). It would look a little like this:
@@ -649,17 +645,12 @@ The `ByScopeKind<T>` type asks you to break down your inputs by scope kind:
 
 ```ts
 const scopeIds: Partial<ByScopeKind<string[]>> = {
-    // These are implied to be Pub IDs
-    pub: [
-        'a5b02ab4-16d4-4242-a091-cedb0fefc602',
-        'd3b593db-8388-4d9a-b933-435d268d8f0e',
-    ],
-    // These are implied to be Community IDs
-    community: [
-        '7243a1cc-c66d-4878-8a6f-9202cce5215d',
-    ],
-    // We can omit Collection IDs since this is a partial record
-}
+	// These are implied to be Pub IDs
+	pub: ['a5b02ab4-16d4-4242-a091-cedb0fefc602', 'd3b593db-8388-4d9a-b933-435d268d8f0e'],
+	// These are implied to be Community IDs
+	community: ['7243a1cc-c66d-4878-8a6f-9202cce5215d'],
+	// We can omit Collection IDs since this is a partial record
+};
 ```
 
 The function returns cascade results in a similar `ByScopeKind` format:
@@ -726,13 +717,12 @@ The Facets system uses single a [`zustand`](https://github.com/pmndrs/zustand) s
 
 The `useFacetsState` and `useFacetsQuery` hooks are available to interact with this store.
 
-
 ## `useFacetsState`
 
 > ℹ️ You might not need to use this hook directly:
 >
-> - If only want to _read_ a facet value, use `useFacetsQuery` instead.
-> - If you want to let users _update_ a facet value, you should strongly consider using the `<FacetEditor>` component.
+> -   If only want to _read_ a facet value, use `useFacetsQuery` instead.
+> -   If you want to let users _update_ a facet value, you should strongly consider using the `<FacetEditor>` component.
 
 This hook provides the following API (with some generics smoothed over):
 
@@ -782,6 +772,7 @@ type FacetsState = {
 This is a lot of detail — it's mostly accessed by the `<FacetEditor>` component.
 
 ## `useFacetsQuery`
+
 ```ts
 useFacetsQuery<T>(
     facetsQuery: FacetsQuery<T>,
@@ -792,23 +783,23 @@ useFacetsQuery<T>(
 This is much easier to understand with a few examples:
 
 ```ts
-const pubHeaderTheme = useFacetsQuery(F => F.PubHeaderTheme);
+const pubHeaderTheme = useFacetsQuery((F) => F.PubHeaderTheme);
 
-const copyrightYear = useFacetsQuery(F => F.License.copyrightSelection.year!);
+const copyrightYear = useFacetsQuery((F) => F.License.copyrightSelection.year!);
 
-const { imageLabel, videoLabel } = useFacetsQuery(F => {
-    return {
-        imageLabel: F.NodeLabels.image,
-        videoLabel: F.NodeLabels.video,
-    };
+const { imageLabel, videoLabel } = useFacetsQuery((F) => {
+	return {
+		imageLabel: F.NodeLabels.image,
+		videoLabel: F.NodeLabels.video,
+	};
 });
 ```
 
 The `facetsQuery` function takes an argument (typically named `F`) containing a `Record<string, FacetValue>`: the cascaded values for all facets. You can do whatever you want with that argument:
 
-- Return it directly
-- Return a single facet value
-- Return another value derived from one or more facet values
+-   Return it directly
+-   Return a single facet value
+-   Return another value derived from one or more facet values
 
 This query-style API is inspired by, and designed to hook into, Zustand's API for slicing small values out of large state stores for more efficient updates. Therefore, you should try to query minimal, even scalar, values from the facets store to prevent unnecessary React updates.
 
@@ -816,18 +807,18 @@ This hook takes a `FacetsQueryOptions<T>` value, which you may not need to use:
 
 ```ts
 type FacetsQueryOptions<T> = {
-    fallback?: () => T;
-    level?: 'persisted' | 'current' | 'latest';
-}
+	fallback?: () => T;
+	level?: 'persisted' | 'current' | 'latest';
+};
 ```
 
 `fallback` provides a fallback value in the same shape that `facetsQuery` returns. You should provide this if you're building a reusable component that might be rendered on a page where `initialData.scopeData.facets` is not provided (and the store is thus unavailable). Otherwise, the hook will throw an error.
 
 `levels` describes a level of "real-timeness" for the value. Its options are:
 
-- `persisted`: the facet state persisted to the server. Reads from `persistedCascadeResult` in the store.
-- `current`: the latest valid facet state on the client. Reads from `cascadeResult` in the store. _(Default)_
-- `latest`: the latest (and possible invalid) facet state on the client. Reads from `latestAndPossiblyInvalidCascadeResult` in the store.
+-   `persisted`: the facet state persisted to the server. Reads from `persistedCascadeResult` in the store.
+-   `current`: the latest valid facet state on the client. Reads from `cascadeResult` in the store. _(Default)_
+-   `latest`: the latest (and possible invalid) facet state on the client. Reads from `latestAndPossiblyInvalidCascadeResult` in the store.
 
 `current` is the default — so if you don't provide an options object, you'll get _valid_ facet prop values, possibly with unsaved changes.
 
@@ -841,7 +832,6 @@ This is also `<FacetEditor>`, in its `selfContained` look and feel:
 
 <img width="300" src="https://user-images.githubusercontent.com/2208769/216369854-73a41bc7-36c8-4097-a681-a2abfdd5067b.png" />
 
-
 If you're building UI that lets users update a facet value, you're encouraged to give them a `<FacetEditor>` instance to work with. This provides a consistent look and feel for updating facets, including feedback about where values are cascading from. The basic API is dead simple:
 
 ```ts
@@ -852,10 +842,10 @@ With these props:
 
 ```ts
 type FacetEditorProps = {
-    facetName: string;
-    // Use a compact visual style with a spinner -- appropriate for popovers.
-    selfContained?: boolean;
-}
+	facetName: string;
+	// Use a compact visual style with a spinner -- appropriate for popovers.
+	selfContained?: boolean;
+};
 ```
 
 ## Usage with `<PopoverButton>`
@@ -864,15 +854,11 @@ It's common use in conjunction with our `PopoverButton` from `components`:
 
 ```ts
 <PopoverButton
-    component={() => <FacetEditor facetName="License" selfContained />}
-    placement="top-end"
-    aria-label="Edit license"
+	component={() => <FacetEditor facetName="License" selfContained />}
+	placement="top-end"
+	aria-label="Edit license"
 >
-    <AccentedIconButton
-        aria-label="Edit Pub license"
-        icon="edit"
-        accentColor={iconColor}
-    />
+	<AccentedIconButton aria-label="Edit Pub license" icon="edit" accentColor={iconColor} />
 </PopoverButton>
 ```
 
@@ -912,13 +898,13 @@ export default createFacetKindEditor(PubHeaderTheme, {
 All we're doing is mapping the facet's props to specific components, like `BackgroundImagePicker`. This component explicitly declares its props:
 
 ```ts
-type Props = FacetPropEditorProps<Facet<'PubHeaderTheme'>, 'backgroundColor'>
+type Props = FacetPropEditorProps<Facet<'PubHeaderTheme'>, 'backgroundColor'>;
 ```
 
 Your new facet editors should follow this pattern exactly — it will help constrain TypeScript errors to convenient places (like the prop editor component body) as you work. In practice, your component editors will receive these props:
 
-- `value: T` — holds the current prop value
-- `onUpdateValue: (update: T) => void` — lets you update the value.
+-   `value: T` — holds the current prop value
+-   `onUpdateValue: (update: T) => void` — lets you update the value.
 
 ### Registering your new editor component with `<FacetEditor>`
 
@@ -929,7 +915,7 @@ const editorsForFacets = {
 	CitationStyle: CitationStyleEditor,
 	PubEdgeDisplay: PubEdgeDisplayEditor,
 	PubHeaderTheme: PubHeaderThemeEditor,
-    // ...
+	// ...
 };
 ```
 
@@ -943,11 +929,11 @@ In the future, we could even use a set of generic prop editors to automatically 
 
 ```ts
 const automaticallyGenerateFacetEditor = (def: FacetDefinition) => {
-    return createFacetKindEditor(
-        def, 
-        mapFacet(def, (key, prop) => guessBestPropEditor(prop.propType))
-    );
-}
+	return createFacetKindEditor(
+		def,
+		mapFacet(def, (key, prop) => guessBestPropEditor(prop.propType)),
+	);
+};
 ```
 
 There are a few such generic prop editors already in `client/components/FacetEditor/propTypeEditors`.
@@ -956,8 +942,8 @@ There are a few such generic prop editors already in `client/components/FacetEdi
 
 Recall that there is a `cascade: CascadeStrategy` option available when creating a facet prop with `prop()`. We haven't used it at all throughout this guide — and, in fact, the production Facets system doesn't use it at all. But there are actually two "cascade strategies" we can use for props:
 
-- `overwrite`: values from lower scopes overwrite those from higher scopes
-- `concat`: values from lower scopes are concatenated to higher scopes as `[...higher, ...lower]`
+-   `overwrite`: values from lower scopes overwrite those from higher scopes
+-   `concat`: values from lower scopes are concatenated to higher scopes as `[...higher, ...lower]`
 
 As this implies, the `concat` strategy can only be used for props whose `propType` matches an array — for instance, using `arrayOf(string)` from pieces we find in `primitives.ts`. We don't use this anywhere yet, but it could be really powerful for things like attributions, which should cascade additively from higher scopes to lower ones.
 
@@ -969,15 +955,15 @@ _See [Are facets the right choice for my new feature?](#are-facets-the-right-cho
 
 Imagine that we want to facet-ize the following Pub properties:
 
-- `title`
-- `description`
-- `attributions`
-- `previewImage`
+-   `title`
+-   `description`
+-   `attributions`
+-   `previewImage`
 
 These are all loaded for each Pub in a Page or Collection layout, so loading these facets for hundreds of Pubs needs to be fast. Here are two reasons this might be too slow:
 
-- We must load `FacetInstances` for all the Pubs' parent scopes (Collections and Communities) to produce the correct, cascaded `FacetValue`
-- The `FacetInstances` are spread across many small tables which must be individually joined.
+-   We must load `FacetInstances` for all the Pubs' parent scopes (Collections and Communities) to produce the correct, cascaded `FacetValue`
+-   The `FacetInstances` are spread across many small tables which must be individually joined.
 
 Ideally, we'd store the pre-cascaded values for each of these facets in a _single table_ that can be referenced when these facets need to be loaded. Taking [overt inspiration](https://rust-tutorials.github.io/entity-component-scrapyard/03-Archetypes/archetype-explanation.html) from [Entity Component system](https://en.wikipedia.org/wiki/Entity_component_system) architecture, let's call this a "facet archetype".
 
@@ -985,16 +971,11 @@ We want our archetypes to inherit the guarantees around type-safety, runtime-agn
 
 ```ts
 // We are in a hypothetical facets/archetypes/pubInLayout.ts
-import { Title, Description, Attributions, PreviewImage } from "facets/definitions";
+import { Title, Description, Attributions, PreviewImage } from 'facets/definitions';
 
 export const PubInLayout = archetype({
-    facets: [
-        Title,
-        Description,
-        Attributions,
-        PreviewImage
-    ],
-    scopes: ['pub'],
+	facets: [Title, Description, Attributions, PreviewImage],
+	scopes: ['pub'],
 });
 ```
 
@@ -1011,40 +992,34 @@ FacetArchetypeValue<typeof PubInLayout> = {
 
 Our server-side function `createSequelizeModelsFromFacetDefinitions` would then read from the `facets/archetypes` directory to create a new table for each archetype. This table would flatten the props of the constituent facets in a predictable way, e.g. turning `PreviewImage.url` into a column called `PreviewImage__url`.
 
-
 When it creates this table, this function can also reference the tables it's created for each individual facet, and automatically generate Sequelize hooks to recompute the archetype row whenever one of its dependency facets updates.
 
 An _extremely_ loose sketch:
 
 ```ts
-const dependencyFacetNames = [
-    'Title',
-    'Description',
-    'Attributions',
-    'PreviewImage',
-];
+const dependencyFacetNames = ['Title', 'Description', 'Attributions', 'PreviewImage'];
 
-dependencyFacetNames.forEach(facetName => {
-    const FacetModel = facetModels[facetName];
-    // Also include .afterCreate and .afterDestroy equivalents...
-    FacetModel.afterUpdate((title) => {
-        const facetBinding = await FacetBinding.findOne({
-            where: { id: title.facetBidingId },
-        });
-        const pubs = await getChildPubsIncludingSelfForScopeIds(facetBinding);
-        // In reality, do all this in parallel:
-        for (const pub of pubs) {
-            const currentFacetValues = await fetchFacetsForScope(
-                { pubId: pub.id },
-                dependencyFacetNames,
-            );
-            await facetArchetypes.PubInLayout.update(
-                // This would turn e.g. `url` into `PreviewImage__url`.
-                prefixKeysForArchetype(PubInLayout, currentFacetValues),
-                { where: { pubId: pub.id } },
-            );
-        }
-    });
+dependencyFacetNames.forEach((facetName) => {
+	const FacetModel = facetModels[facetName];
+	// Also include .afterCreate and .afterDestroy equivalents...
+	FacetModel.afterUpdate((title) => {
+		const facetBinding = await FacetBinding.findOne({
+			where: { id: title.facetBidingId },
+		});
+		const pubs = await getChildPubsIncludingSelfForScopeIds(facetBinding);
+		// In reality, do all this in parallel:
+		for (const pub of pubs) {
+			const currentFacetValues = await fetchFacetsForScope(
+				{ pubId: pub.id },
+				dependencyFacetNames,
+			);
+			await facetArchetypes.PubInLayout.update(
+				// This would turn e.g. `url` into `PreviewImage__url`.
+				prefixKeysForArchetype(PubInLayout, currentFacetValues),
+				{ where: { pubId: pub.id } },
+			);
+		}
+	});
 });
 ```
 

@@ -1,6 +1,7 @@
 export * from './collection';
 export * from './community';
 export * from './discussion';
+export * from './facet';
 export * from './page';
 export * from './pub';
 export * from './pubEdge';

@@ -6,6 +6,7 @@ import {
 	CollectionPubRemovedActivityItem,
 	MemberActivityItem,
 	SubmissionActivityItem,
+	FacetsActivityItem,
 } from 'types';
 import { PubTitle } from 'components';
 import { getDashUrl } from 'utils/dashboard';
@@ -15,6 +16,7 @@ import { getPubFromContext } from './util';
 
 type AcceptedItem =
 	| (MemberActivityItem & { pubId: string })
+	| (FacetsActivityItem & { pubId: string })
 	| PubActivityItem
 	| CollectionPubCreatedActivityItem
 	| CollectionPubRemovedActivityItem

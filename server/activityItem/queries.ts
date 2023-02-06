@@ -1,5 +1,11 @@
 import * as types from 'types';
 import {
+	createEmptyFacetInstance,
+	FacetDefinition,
+	FacetInstanceWithBinding,
+	parsePartialFacetInstance,
+} from 'facets';
+import {
 	Collection,
 	CollectionPub,
 	Community,
@@ -15,8 +21,10 @@ import {
 	Thread,
 	ThreadComment,
 	SubmissionWorkflow,
+	FacetBinding,
 } from 'server/models';
 
+import { getScopeIdForFacetBinding } from 'server/facets';
 import { getDiffsForPayload, getChangeFlagsForPayload, createActivityItem } from './utils';
 
 const resolvePartialMemberItem = async (member: types.Member) => {
@@ -599,4 +607,38 @@ export const createSubmissionUpdatedActivityItem = async (
 	}
 
 	return null;
+};
+
+// Before there's an actual facet instance associated with a scope in the DB, we treat that scope
+// as having a totally empty facet instance (with all null props). So we don't bother to treat
+// creating and updating facet instances as two separate kinds of events -- they're all "updates"
+// to the facet instance at that scope, from the perspective of the rest of the system.
+export const createFacetInstanceUpdatedActivityItem = async (
+	FacetModel: any,
+	facetDefinition: FacetDefinition,
+	actorId: null | string,
+	facetModelInstanceId: string,
+	previousModelInstance: null | Record<string, any>,
+) => {
+	const facetInstance: types.SequelizeModel<FacetInstanceWithBinding<any>> =
+		await FacetModel.findOne({
+			where: { id: facetModelInstanceId },
+			include: [{ model: FacetBinding, as: 'facetBinding' }],
+		});
+	const { valid: newProps } = parsePartialFacetInstance(facetDefinition, facetInstance.toJSON());
+	const oldProps = previousModelInstance
+		? parsePartialFacetInstance(facetDefinition, previousModelInstance).valid
+		: createEmptyFacetInstance(facetDefinition);
+	const scopeId = await getScopeIdForFacetBinding(facetInstance.facetBinding);
+	return createActivityItem({
+		kind: 'facet-instance-updated',
+		actorId,
+		communityId: scopeId.communityId,
+		collectionId: 'collectionId' in scopeId ? scopeId.collectionId : undefined,
+		pubId: 'pubId' in scopeId ? scopeId.pubId : undefined,
+		payload: {
+			facetName: facetDefinition.name,
+			facetProps: getDiffsForPayload(newProps, oldProps, Object.keys(facetDefinition.props)),
+		},
+	});
 };

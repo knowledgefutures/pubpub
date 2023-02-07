@@ -7,9 +7,11 @@ assignees: ''
 
 ---
 
-_Before filing your bug report, please search existing issues to make sure a similar one doesn't already exist. If one does, please leave a comment or reaction in support of the issue rather than creating a new one._
+<!--
+Before filing your bug report, please search existing issues to make sure a similar one doesn't already exist. If one does, please leave a comment or reaction in support of the issue rather than creating a new one.
 
-_To fill out the report, please leave the below headers (**) in tact, and fill out each section. If a section isn't applicable, leave it blank or write n/a under it. Please do not delete any template sections._
+To fill out the report, please fill out each section below. If a section isn't applicable, leave it blank or write n/a under it. Please do not delete any template sections.
+-->
 
 ### What went wrong, step-by-step?
 1.
@@ -25,7 +27,7 @@ _To fill out the report, please leave the below headers (**) in tact, and fill o
 ### What browser/operating system were you using?
 
 
-===
+## Optional
 
 
 ### Have any screenshots? (Attach them by dragging the image here)

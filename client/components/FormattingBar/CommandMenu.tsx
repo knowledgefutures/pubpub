@@ -3,25 +3,25 @@ import classNames from 'classnames';
 
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 import { EditorChangeObject } from 'components/Editor';
-import { CommandSpec } from 'components/Editor/commands/types';
+import {
+	CommandDefinition,
+	CommandMenuEntry,
+	CommandStates,
+} from 'components/Editor/commands/types';
 
-import { useCommandStates, WithCommandState } from './hooks/useCommandStates';
+import { useCommandStates } from './hooks/useCommandStates';
 
-type CommandDefinition = {
-	key: string;
-	title: React.ReactNode;
-	icon?: string;
-	command: CommandSpec;
+export type CommandMenuDisclosureProps = {
+	commands: CommandMenuEntry[][];
+	commandStates: CommandStates;
+	disclosureElementProps: any;
 };
 
 type Props = {
-	disclosure: (
-		commands: ReturnType<typeof useCommandStates>,
-		disclosureProps: any,
-	) => React.ReactNode;
+	disclosure: (disclosureProps: CommandMenuDisclosureProps) => React.ReactNode;
 	className?: string;
 	editorChangeObject: EditorChangeObject;
-	commands: CommandDefinition[][];
+	commands: CommandMenuEntry[][];
 	markActiveItems?: boolean;
 };
 
@@ -29,27 +29,28 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 	const {
 		editorChangeObject: { view },
 		className = '',
-		commands: statelessCommands,
+		commands,
 		disclosure,
 		markActiveItems = true,
 		...restProps
 	} = props;
 
-	const commands = useCommandStates({
-		commands: statelessCommands,
+	const commandStates = useCommandStates({
+		commands,
 		view,
 		state: view?.state,
 	});
 
-	const renderMenuItemForCommand = (defn: WithCommandState<CommandDefinition>) => {
-		const { title, icon, key, commandState } = defn;
+	const renderMenuItemForCommandDefinition = (defn: CommandDefinition) => {
+		const { title, icon, key } = defn;
+		const commandState = commandStates[key];
 		return (
 			<MenuItem
 				key={key}
 				active={markActiveItems && commandState?.isActive}
 				disabled={!commandState?.canRun}
 				text={title}
-				icon={icon}
+				icon={icon ?? (commandState?.isActive ? 'tick' : 'blank')}
 				onClick={() => {
 					commandState?.run();
 					view.focus();
@@ -58,11 +59,25 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 		);
 	};
 
+	const renderMenuItemForCommandEntry = (entry: CommandMenuEntry) => {
+		const { key, title, icon } = entry;
+		if ('commands' in entry) {
+			return (
+				<MenuItem text={title} key={key} icon={icon}>
+					{entry.commands.map((defn) => renderMenuItemForCommandDefinition(defn))}
+				</MenuItem>
+			);
+		}
+		return renderMenuItemForCommandDefinition(entry);
+	};
+
 	return (
 		<Menu
 			ref={ref}
 			{...restProps}
-			disclosure={(dp) => disclosure(commands, dp)}
+			disclosure={(disclosureElementProps) =>
+				disclosure({ commands, commandStates, disclosureElementProps })
+			}
 			menuStyle={{ zIndex: 20 }}
 			className={classNames('command-menu-component', className)}
 		>
@@ -71,7 +86,7 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 					// eslint-disable-next-line react/no-array-index-key
 					<React.Fragment key={index}>
 						{index > 0 && <MenuItemDivider />}
-						{section.map(renderMenuItemForCommand)}
+						{section.map(renderMenuItemForCommandEntry)}
 					</React.Fragment>
 				);
 			})}

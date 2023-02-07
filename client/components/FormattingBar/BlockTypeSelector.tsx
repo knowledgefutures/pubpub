@@ -13,7 +13,8 @@ import {
 } from 'components/Editor/commands';
 import { EditorChangeObject } from 'components/Editor';
 
-import CommandMenu from './CommandMenu';
+import CommandMenu, { CommandMenuDisclosureProps } from './CommandMenu';
+import { CommandDefinition } from '../Editor/commands/types';
 
 require('./blockTypeSelector.scss');
 
@@ -82,37 +83,59 @@ const blockTypeDefinitions = [
 const BlockTypeSelector = React.forwardRef((props: Props, ref) => {
 	const { editorChangeObject, isSmall, ...restProps } = props;
 
+	const renderDisclosure = (disclosureProps: CommandMenuDisclosureProps) => {
+		const { commands, commandStates, disclosureElementProps } = disclosureProps;
+		const { ref: innerRef, ...restDisclosureElementProps } = disclosureElementProps;
+		const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
+
+		const activeCommandEntry = commandsFlat.reduce((found, entry) => {
+			if (found) {
+				return found;
+			}
+			const commandState = commandStates[entry.key];
+			if (commandState?.isActive && 'command' in entry) {
+				return entry;
+			}
+			return null;
+		}, null as null | CommandDefinition);
+
+		const matchingBlockType = blockTypeDefinitions.find(
+			(def) => def.command === activeCommandEntry?.command,
+		);
+
+		const runnableCommandEntries = commandsFlat.filter((command) => {
+			const commandState = commandStates[command.key];
+			return commandState?.canRun;
+		});
+
+		const effectiveBlockType = matchingBlockType || paragraphBlockType;
+
+		return (
+			<Button
+				minimal
+				className="block-type-selector-component"
+				rightIcon="caret-down"
+				elementRef={innerRef}
+				{...restDisclosureElementProps}
+				disabled={runnableCommandEntries.length < 2}
+				small={isSmall}
+			>
+				{effectiveBlockType.label}
+			</Button>
+		);
+	};
+
 	return (
 		<CommandMenu
 			className="block-type-selector-menu pub-body-styles"
 			aria-label="Choose text formatting"
 			ref={ref}
 			commands={[blockTypeDefinitions]}
-			disclosure={(commands, { ref: innerRef, ...disclosureProps }) => {
-				const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
-				const activeCommandEntry = commandsFlat.find((c) => c.commandState?.isActive);
-				const canRunCommandEntries = commandsFlat.filter((c) => c.commandState?.canRun);
-				const effectiveBlockType =
-					blockTypeDefinitions.find(
-						(def) => def.command === activeCommandEntry?.command,
-					) || paragraphBlockType;
-				return (
-					<Button
-						minimal
-						className="block-type-selector-component"
-						rightIcon="caret-down"
-						elementRef={innerRef}
-						{...disclosureProps}
-						disabled={canRunCommandEntries.length < 2}
-						small={isSmall}
-					>
-						{effectiveBlockType.label}
-					</Button>
-				);
-			}}
+			disclosure={renderDisclosure}
 			editorChangeObject={editorChangeObject}
 			{...restProps}
 		/>
 	);
 });
+
 export default BlockTypeSelector;

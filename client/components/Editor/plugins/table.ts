@@ -1,10 +1,9 @@
 import { keymap } from 'prosemirror-keymap';
 import { DOMSerializer } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
-// @ts-expect-error ts-migrate(2305) FIXME: Module '"../../../../node_modules/prosemirror-tabl... Remove this comment to see the full error message
-import { columnResizing, tableEditing, goToNextCell, TableView } from 'prosemirror-tables';
+import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
 
-import { buildLabel } from '../utils';
+import { TableView } from '../views';
 
 function wrapDomSerializer(domSerializer: DOMSerializer) {
 	return Object.assign(Object.create(domSerializer), {
@@ -22,49 +21,6 @@ function wrapDomSerializer(domSerializer: DOMSerializer) {
 	});
 }
 
-/**
- * Synchronize the reactive id attribute of default prosemirror-tables NodeView.
- */
-class PubTableView extends TableView {
-	constructor(node, ...rest) {
-		super(node, ...rest);
-		this.sync(node);
-	}
-
-	update(node, decorations) {
-		const shouldUpdate = super.update(node, decorations);
-		this.sync(node);
-		return shouldUpdate;
-	}
-
-	syncCaption(node) {
-		const { dom } = this as any as { dom: HTMLElement };
-		const label = buildLabel(node);
-		const table = dom.querySelector('table');
-		if (table) {
-			const existingCaption = table.querySelector('caption');
-			if (existingCaption && existingCaption.parentNode === table) {
-				existingCaption.remove();
-			}
-			if (label) {
-				const caption = document.createElement('caption');
-				caption.innerHTML = label;
-				table.append(caption);
-			}
-		}
-	}
-
-	syncId(node) {
-		const { dom } = this as any as { dom: HTMLElement };
-		dom.setAttribute('id', node.attrs.id);
-	}
-
-	sync(node) {
-		this.syncId(node);
-		this.syncCaption(node);
-	}
-}
-
 export default (schema, props) => {
 	if (!schema.nodes.table) {
 		return [];
@@ -80,7 +36,7 @@ export default (schema, props) => {
 			https://github.com/ProseMirror/prosemirror-tables/blob/master/src/columnresizing.js#L10
 		*/
 		// according to the docs, View accepts a NodeView constructor, not an instance.
-		return [columnResizing({ handleWidth: -1, View: PubTableView as any })];
+		return [columnResizing({ handleWidth: -1, View: TableView })];
 	}
 
 	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'false' is not assignable to para... Remove this comment to see the full error message
@@ -89,9 +45,7 @@ export default (schema, props) => {
 	document.execCommand('enableInlineTableEditing', false, false);
 
 	return [
-		columnResizing({
-			View: PubTableView as any,
-		}),
+		columnResizing({ View: TableView }),
 		tableEditing(),
 		keymap({
 			Tab: goToNextCell(1),

@@ -2,7 +2,7 @@ import { Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
 import { Dispatch } from './types';
-import { createCommandSpec } from './util';
+import { cacheForEditorState, createCommandSpec } from './util';
 
 type AlignmentType = 'left' | 'center' | 'right';
 type NodeAlignmentValue = null | 'center' | 'right';
@@ -42,13 +42,7 @@ const getSharedAlignmentType = (nodes: NodePos[]) => {
 	return null;
 };
 
-let alignableNodesCache: null | { state: EditorState; result: AlignableNodesResult } = null;
-const getAlignableNodes = (state: EditorState): AlignableNodesResult => {
-	if (alignableNodesCache?.state === state) {
-		// Cheap way to cache the results of this function, which will be called several times
-		// per EditorState during a given transaction.
-		return alignableNodesCache.result;
-	}
+const getAlignableNodes = cacheForEditorState((state: EditorState): AlignableNodesResult => {
 	const { selection, doc } = state;
 	const alignableNodes: NodePos[] = [];
 	selection.ranges.forEach(({ $from, $to }) => {
@@ -58,13 +52,11 @@ const getAlignableNodes = (state: EditorState): AlignableNodesResult => {
 			}
 		});
 	});
-	const result = {
+	return {
 		alignableNodes,
 		sharedAlignmentType: getSharedAlignmentType(alignableNodes),
 	};
-	alignableNodesCache = { state, result };
-	return result;
-};
+});
 
 const alignNodes = (
 	nodes: NodePos[],

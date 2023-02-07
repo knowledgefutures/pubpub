@@ -39,7 +39,7 @@ const ControlsMath = (props: Props) => {
 		key: 'toggle-math-display-label',
 		title: 'Toggle label',
 		label: `${otherVisibility.label} label`,
-		icon: otherVisibility.icon,
+		icon: otherVisibility.icon as any,
 		command: mathToggleLabel,
 	};
 

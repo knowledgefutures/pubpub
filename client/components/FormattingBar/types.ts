@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { DefinitelyHas } from 'types';
+import { IconName } from 'components';
 
 import { EditorChangeObject } from '../Editor';
 import { CommandSpec } from '../Editor/commands/types';
@@ -68,7 +70,7 @@ export type FormattingBarButtonData = {
 	popover?: FormattingBarButtonPopover;
 	title: string;
 	ariaTitle?: string;
-	icon: string;
+	icon: IconName;
 	isToggle?: boolean;
 	label?: string;
 	isDisabled?: EditorChangeObjectDecider;

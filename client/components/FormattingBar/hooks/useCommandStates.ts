@@ -2,59 +2,45 @@ import { useMemo } from 'react';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { CommandSpec, CommandState } from 'components/Editor/commands/types';
+import { mapObject } from 'utils/objects';
 
-import { deepMap } from '../utils';
-
-type CommandEntry = {
-	key: string;
-	command?: CommandSpec;
-};
+import { CommandSpec, CommandMenuEntry, CommandStates } from 'components/Editor/commands/types';
 
 type CommandStateGetter = ReturnType<CommandSpec>;
 
-type Options<T extends CommandEntry> = {
-	commands: T[][];
+type Options = {
+	commands: CommandMenuEntry[][];
 	view: EditorView;
 	state?: EditorState;
 };
 
-export type WithCommandState<T extends CommandEntry> = T & { commandState?: CommandState };
-
-const getStateGetters = (entries: CommandEntry[] | CommandEntry[][], view: EditorView) => {
+const getStateGetters = (entries: CommandMenuEntry[] | CommandMenuEntry[][], view: EditorView) => {
 	let res: Record<string, CommandStateGetter> = {};
-	entries.forEach((item) => {
-		if (Array.isArray(item)) {
-			res = { ...res, ...getStateGetters(item, view) };
+	entries.forEach((entry: CommandMenuEntry | CommandMenuEntry[]) => {
+		if (Array.isArray(entry)) {
+			res = { ...res, ...getStateGetters(entry, view) };
 		}
-		if ('command' in item && item.command) {
-			res[item.key] = item.command(view);
+		if ('command' in entry && entry.command) {
+			res[entry.key] = entry.command(view);
+		}
+		if ('commands' in entry && entry.commands) {
+			res = { ...res, ...getStateGetters(entry.commands, view) };
 		}
 	});
 	return res;
 };
 
-const getState = <T extends CommandEntry>(
-	commands: T[][],
+const getStates = (
 	stateGetters: Record<string, CommandStateGetter>,
 	editorState?: EditorState,
-): WithCommandState<T>[][] => {
+): CommandStates => {
 	if (!editorState) {
-		return commands;
+		return {};
 	}
-	return deepMap(commands, (entry) => {
-		const getter = stateGetters[entry.key];
-		if (getter) {
-			return {
-				...entry,
-				commandState: getter(editorState),
-			};
-		}
-		return entry;
-	});
+	return mapObject(stateGetters, (getter) => getter(editorState));
 };
 
-export const useCommandStates = <T extends CommandEntry>(options: Options<T>) => {
+export const useCommandStates = (options: Options) => {
 	const { commands, view, state } = options;
 
 	const stateGettersByKey = useMemo(() => {
@@ -66,8 +52,8 @@ export const useCommandStates = <T extends CommandEntry>(options: Options<T>) =>
 	}, [view]);
 
 	const commandStates = useMemo(
-		() => getState(commands, stateGettersByKey, state),
-		[commands, stateGettersByKey, state],
+		() => getStates(stateGettersByKey, state),
+		[stateGettersByKey, state],
 	);
 
 	return commandStates;

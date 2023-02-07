@@ -1,5 +1,9 @@
 @import 'styles/mixins.scss';
 
+@mixin smaller-font {
+	font-size: 0.8em;
+}
+
 /* This clunky table, tableWrapper thing is because */
 /* isReadOnly removes the wrapping div, so margins don't */
 /* collapse as expected in all situations. */
@@ -11,9 +15,15 @@
 	table {
 		margin: 0em;
 		@include mobile {
+			@include smaller-font();
 			width: auto;
 			max-width: fit-content;
 			table-layout: auto;
+		}
+	}
+	&[data-smaller-font='true'] {
+		table {
+			@include smaller-font();
 		}
 	}
 }

@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { EditorChangeObject, insertNodeIntoEditor } from 'components/Editor';
 
+import { CommandState, CommandStates } from 'client/components/Editor/commands/types';
 import { FormattingBarButtonData, ControlsConfiguration } from '../types';
 import { resolveControlsConfiguration } from '../controls';
 import { deepMap } from '../utils';
 import { useInteractionCount } from './useInteractionCount';
-import { useCommandStates, WithCommandState } from './useCommandStates';
+import { useCommandStates } from './useCommandStates';
 
 type Options = {
 	buttons: FormattingBarButtonData[][];
@@ -20,10 +21,12 @@ type IntermediateState = {
 	setOpenedButton: (button: null | FormattingBarButtonData) => unknown;
 	editorChangeObject: EditorChangeObject;
 	controlsDetached: boolean;
+	commandStates: CommandStates;
 };
 
 export type ButtonState = {
-	button: WithCommandState<FormattingBarButtonData>;
+	button: FormattingBarButtonData;
+	commandState?: CommandState;
 	isOpen: boolean;
 	isIndicated: boolean;
 	isDisabled: boolean;
@@ -33,11 +36,8 @@ export type ButtonState = {
 	onClick: () => unknown;
 };
 
-const isButtonDisabled = (
-	button: WithCommandState<FormattingBarButtonData>,
-	state: IntermediateState,
-) => {
-	const { commandState } = button;
+const isButtonDisabled = (button: FormattingBarButtonData, state: IntermediateState) => {
+	const commandState = state.commandStates[button.key];
 	if (typeof button.isDisabled === 'function' && button.isDisabled(state.editorChangeObject)) {
 		return true;
 	}
@@ -47,30 +47,29 @@ const isButtonDisabled = (
 	return false;
 };
 
-const isButtonActive = (button: WithCommandState<FormattingBarButtonData>) => {
-	const { commandState } = button;
+const isButtonActive = (button: FormattingBarButtonData, state: IntermediateState) => {
+	const commandState = state.commandStates[button.key];
 	if (commandState) {
 		return commandState.isActive;
 	}
 	return false;
 };
 
-const getButtonState = (
-	button: WithCommandState<FormattingBarButtonData>,
-	state: IntermediateState,
-): ButtonState => {
+const getButtonState = (button: FormattingBarButtonData, state: IntermediateState): ButtonState => {
 	const {
 		openedButton,
 		setOpenedButton,
 		indicatedButtons,
 		controlsDetached,
+		commandStates,
 		editorChangeObject: { view },
 	} = state;
 	const isDisabled = isButtonDisabled(button, state);
 	const isOpen = openedButton?.key === button.key;
 	const isIndicated = indicatedButtons.some((b) => b.key === button.key);
-	const isActive = isButtonActive(button);
+	const isActive = isButtonActive(button, state);
 	const isDetached = isOpen && controlsDetached;
+	const commandState = commandStates[button.key];
 	return {
 		button,
 		isDisabled,
@@ -86,7 +85,6 @@ const getButtonState = (
 				insertNodeIntoEditor(view, button.insertNodeType);
 				view.focus();
 			} else {
-				const { commandState } = button;
 				commandState?.run();
 				view.focus();
 			}
@@ -94,10 +92,8 @@ const getButtonState = (
 	};
 };
 
-const getButtonStates = (
-	buttons: WithCommandState<FormattingBarButtonData>[][],
-	state: IntermediateState,
-) => deepMap(buttons, (button) => getButtonState(button, state));
+const getButtonStates = (buttons: FormattingBarButtonData[][], state: IntermediateState) =>
+	deepMap(buttons, (button) => getButtonState(button, state));
 
 export const useControlsState = (options: Options) => {
 	const { buttons, editorChangeObject, controlsConfiguration } = options;
@@ -106,7 +102,7 @@ export const useControlsState = (options: Options) => {
 	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
 	const editorElement = editorChangeObject.view?.dom;
 
-	const buttonsWithCommandState = useCommandStates<FormattingBarButtonData>({
+	const commandStates = useCommandStates({
 		view: editorChangeObject.view,
 		state: editorChangeObject.view?.state,
 		commands: buttons,
@@ -124,11 +120,12 @@ export const useControlsState = (options: Options) => {
 		openedButton,
 	);
 
-	const buttonStates = getButtonStates(buttonsWithCommandState, {
+	const buttonStates = getButtonStates(buttons, {
 		indicatedButtons,
 		openedButton,
 		setOpenedButton,
 		editorChangeObject,
+		commandStates,
 		controlsDetached: resolvedControlsConfiguration?.kind === 'floating',
 	});
 

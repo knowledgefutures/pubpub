@@ -12,21 +12,24 @@ import {
 	tableDeleteColumn,
 	tableDeleteRow,
 	tableMergeCells,
+	tableSetBreakoutSize,
 	tableSplitCell,
 	tableToggleHeaderCell,
 	tableToggleHeaderColumn,
 	tableToggleHeaderRow,
 	tableToggleLabel,
+	tableToggleSmallerFont,
 } from 'components/Editor/commands';
 
-import CommandMenu from '../CommandMenu';
+import { CommandMenuEntry } from 'client/components/Editor/commands/types';
+import CommandMenu, { CommandMenuDisclosureProps } from '../CommandMenu';
 
 type Props = {
 	editorChangeObject: EditorChangeObject;
 	onClose: () => unknown;
 };
 
-const rowCommands = [
+const rowCommands: CommandMenuEntry[] = [
 	{
 		key: 'table-add-row-before',
 		title: 'Add row before',
@@ -53,7 +56,7 @@ const rowCommands = [
 	},
 ];
 
-const columnCommands = [
+const columnCommands: CommandMenuEntry[] = [
 	{
 		key: 'table-add-column-before',
 		title: 'Add column before',
@@ -80,7 +83,7 @@ const columnCommands = [
 	},
 ];
 
-const buttonCommands = [
+const cellCommands: CommandMenuEntry[] = [
 	{
 		key: 'table-merge-cells',
 		title: 'Merge cells',
@@ -99,11 +102,45 @@ const buttonCommands = [
 		icon: 'header',
 		command: tableToggleHeaderCell,
 	},
+];
+
+const wholeTableCommands: CommandMenuEntry[] = [
 	{
-		key: 'table-toggle-label',
-		title: 'Toggle label',
-		icon: 'tag',
+		key: 'table-hide-label',
+		title: 'Hide label',
 		command: tableToggleLabel,
+	},
+	{
+		key: 'table-toggle-smaller-font',
+		title: 'Use smaller font',
+		command: tableToggleSmallerFont,
+	},
+	{
+		key: 'table-breakout-submenu',
+		title: 'Breakout',
+		icon: 'fullscreen',
+		commands: [
+			{
+				key: 'table-no-breakout',
+				title: 'Keep in column',
+				command: tableSetBreakoutSize(null),
+			},
+			{
+				key: 'table-breakout-50',
+				title: 'Breakout: 50%',
+				command: tableSetBreakoutSize(50),
+			},
+			{
+				key: 'table-breakout-75',
+				title: 'Breakout: 75%',
+				command: tableSetBreakoutSize(75),
+			},
+			{
+				key: 'table-breakout-100',
+				title: 'Breakout: 100%',
+				command: tableSetBreakoutSize(100),
+			},
+		],
 	},
 	{
 		key: 'table-delete',
@@ -118,16 +155,11 @@ const ControlsTable = (props: Props) => {
 	const { view } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
 
-	const renderDisclosure = (_, { ref, ...disclosureProps }) => {
-		return (
-			<Button
-				minimal
-				rightIcon="caret-down"
-				elementRef={ref}
-				icon="th"
-				{...disclosureProps}
-			/>
-		);
+	const renderDisclosure = (disclosureProps: CommandMenuDisclosureProps) => {
+		const {
+			disclosureElementProps: { ref, ...restProps },
+		} = disclosureProps;
+		return <Button minimal rightIcon="caret-down" elementRef={ref} icon="th" {...restProps} />;
 	};
 
 	useEffect(() => {
@@ -144,7 +176,7 @@ const ControlsTable = (props: Props) => {
 				aria-label="Table options"
 				as={CommandMenu as any}
 				disclosure={renderDisclosure}
-				commands={[rowCommands, columnCommands, buttonCommands]}
+				commands={[rowCommands, columnCommands, cellCommands, wholeTableCommands]}
 				editorChangeObject={editorChangeObject}
 				markActiveItems={false}
 				{...toolbar}

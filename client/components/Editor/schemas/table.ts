@@ -1,7 +1,9 @@
 import { tableNodes } from 'prosemirror-tables';
-import { DOMOutputSpec, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
+import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
+
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
+
 import { counter } from './reactive/counter';
 import { label } from './reactive/label';
 import { buildLabel } from '../utils/references';
@@ -51,7 +53,14 @@ table.onInsert = (view) => {
 // Enhance table node with reactive attributes.
 const { toDOM: tableToDOM } = table;
 
-table.attrs = { ...table.attrs, id: { default: null }, hideLabel: { default: false } };
+table.attrs = {
+	...table.attrs,
+	id: { default: null },
+	hideLabel: { default: false },
+	align: { default: null },
+	size: { default: null },
+	smallerFont: { default: false },
+};
 table.reactive = true;
 table.reactiveAttrs = {
 	count: counter({ useNodeLabels: true }),
@@ -65,14 +74,24 @@ table.parseDOM![0].getAttrs = (node) => {
 };
 
 table.toDOM = (node: ProsemirrorNode) => {
+	const { id, align, size, smallerFont } = node.attrs;
 	const spec = tableToDOM!(node);
-
-	return pruneFalsyValues([
+	const tableSpec = pruneFalsyValues([
 		spec[0],
-		{ id: node.attrs.id },
 		withValue(buildLabel(node), (builtLabel) => ['caption', builtLabel]),
 		spec[1],
-	]) as unknown as DOMOutputSpec;
+	]);
+	return [
+		'div',
+		{
+			class: 'tableWrapper',
+			id,
+			'data-align': align,
+			'data-size': size,
+			'data-smaller-font': smallerFont,
+		},
+		tableSpec,
+	];
 };
 
 export default pmTableNodes;

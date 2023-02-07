@@ -25,3 +25,18 @@ export const createTypeToggle = <S extends SchemaType>(options: CreateToggleOpti
 		};
 	});
 };
+
+export const cacheForEditorState = <RestArgs extends any[], Returned>(
+	fn: (state: EditorState, ...restArgs: RestArgs[]) => Returned,
+): typeof fn => {
+	let cache: null | { state: EditorState; result: Returned } = null;
+	return (...args) => {
+		const [state] = args;
+		if (cache && cache.state === state) {
+			return cache.result;
+		}
+		const result = fn(...args);
+		cache = { state, result };
+		return result;
+	};
+};

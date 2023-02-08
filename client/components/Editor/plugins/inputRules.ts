@@ -104,6 +104,32 @@ const inlineMathRule = (
 // textblock starting with two dollar signs into a math block.
 const blockMathRule = (nodeType) => makeBlockMathInputRule(REGEX_BLOCK_MATH_DOLLARS, nodeType);
 
+const HTTP_MAILTO_REGEX = new RegExp(
+	// eslint-disable-next-line no-useless-escape
+	/(?:(?:(https|http|ftp)+):\/\/)?(?:\S+(?::\S*)?(@))?(?:(?:([a-z0-9][a-z0-9\-]*)?[a-z0-9]+)(?:\.(?:[a-z0-9\-])*[a-z0-9]+)*(?:\.(?:[a-z]{2,})(:\d{1,5})?))(?:\/[^\s]*)?\s $/,
+);
+
+function linkRule(markType: MarkType) {
+	return new InputRule(
+		HTTP_MAILTO_REGEX,
+		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
+			const resolvedStart = state.doc.resolve(start);
+			if (!resolvedStart.parent.type.allowsMarkType(markType)) return null;
+			const attrs = { type: match[2] === '@' ? 'email' : 'uri' };
+			const link = match[0].substring(0, match[0].length - 1);
+			const linkAttrs =
+				attrs.type === 'email'
+					? { href: 'mailto:' + link }
+					: { href: link, target: '_blank' };
+			const linkTo = markType.create(linkAttrs);
+			return state.tr
+				.removeMark(start, end, markType)
+				.addMark(start, end, linkTo)
+				.insertText(match[5], start);
+		},
+	);
+}
+
 // : (Schema) → Plugin
 // A set of input rules for creating the basic block quotes, lists,
 // code blocks, and heading.
@@ -124,5 +150,6 @@ export default (schema) => {
 		);
 	if (schema.nodes.math_display) rules.push(blockMathRule(schema.nodes.math_display));
 	if (schema.marks.code) rules.push(inlineCodeRule(schema.marks.code));
+	if (schema.marks.link) rules.push(linkRule(schema.marks.link));
 	return inputRules({ rules });
 };

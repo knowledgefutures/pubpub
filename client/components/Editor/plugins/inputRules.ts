@@ -106,7 +106,7 @@ const blockMathRule = (nodeType) => makeBlockMathInputRule(REGEX_BLOCK_MATH_DOLL
 
 const HTTP_MAILTO_REGEX = new RegExp(
 	// eslint-disable-next-line no-useless-escape
-	/(?:(?:(https|http|ftp)+):\/\/)?(?:\S+(?::\S*)?(@))?(?:(?:([a-z0-9][a-z0-9\-]*)?[a-z0-9]+)(?:\.(?:[a-z0-9\-])*[a-z0-9]+)*(?:\.(?:[a-z]{2,})(:\d{1,5})?))(?:\/[^\s]*)?\s $/,
+	/(?:(?:(https|http|ftp)+):\/\/)?(?:\S+(?::\S*)?(@))?(?:(?:([a-z0-9][a-z0-9\-]*)?[a-z0-9]+)(?:\.(?:[a-z0-9\-])*[a-z0-9]+)*(?:\.(?:[a-z]{2,})(:\d{1,5})?))(?:\/[^\s]*)?\s$/,
 );
 
 function linkRule(markType: MarkType) {
@@ -114,18 +114,18 @@ function linkRule(markType: MarkType) {
 		HTTP_MAILTO_REGEX,
 		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
 			const resolvedStart = state.doc.resolve(start);
-			if (!resolvedStart.parent.type.allowsMarkType(markType)) return null;
+			if (!resolvedStart.parent.type.allowsMarkType(markType)) return state.tr;
 			const attrs = { type: match[2] === '@' ? 'email' : 'uri' };
 			const link = match[0].substring(0, match[0].length - 1);
 			const linkAttrs =
 				attrs.type === 'email'
 					? { href: 'mailto:' + link }
 					: { href: link, target: '_blank' };
-			const linkTo = markType.create(linkAttrs);
-			return state.tr
-				.removeMark(start, end, markType)
-				.addMark(start, end, linkTo)
-				.insertText(match[5], start);
+			const fragment = Fragment.fromArray([
+				state.schema.text(link, [state.schema.mark(markType, linkAttrs)]),
+				state.schema.text(' '),
+			]);
+			return state.tr.replaceWith(start, end, fragment);
 		},
 	);
 }
@@ -135,6 +135,7 @@ function linkRule(markType: MarkType) {
 // code blocks, and heading.
 export default (schema) => {
 	const rules = smartQuotes.concat(ellipsis, emDash);
+	if (schema.marks.link) rules.unshift(linkRule(schema.marks.link));
 	if (schema.nodes.blockquote) rules.push(blockQuoteRule(schema.nodes.blockquote));
 	if (schema.nodes.ordered_list) rules.push(orderedListRule(schema.nodes.ordered_list));
 	if (schema.nodes.bullet_list) rules.push(bulletListRule(schema.nodes.bullet_list));
@@ -150,6 +151,5 @@ export default (schema) => {
 		);
 	if (schema.nodes.math_display) rules.push(blockMathRule(schema.nodes.math_display));
 	if (schema.marks.code) rules.push(inlineCodeRule(schema.marks.code));
-	if (schema.marks.link) rules.push(linkRule(schema.marks.link));
 	return inputRules({ rules });
 };

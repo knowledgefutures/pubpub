@@ -43,8 +43,9 @@ const getActiveSlugClassName = (initialData: InitialData, viewData?: any) => {
 	if (viewData?.pageData?.slug) {
 		return `active-page-${viewData.pageData.slug}`;
 	}
-	if (initialData.scopeData.elements && 'slug' in initialData.scopeData.elements.activeTarget) {
-		return `active-${initialData.scopeData.elements.activeTargetType}-${initialData.scopeData.elements.activeTarget.slug}`;
+	const activeTarget = initialData?.scopeData?.elements?.activeTarget;
+	if (activeTarget && 'slug' in activeTarget) {
+		return `active-${initialData.scopeData.elements.activeTargetType}-${activeTarget.slug}`;
 	}
 	return '';
 };

@@ -5,6 +5,7 @@ import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { apiFetch } from 'client/utils/apiFetch';
+import { ORCID_PATTERN } from 'utils/orcid';
 
 require('./userEdit.scss');
 
@@ -118,6 +119,9 @@ class UserEdit extends Component<Props, State> {
 	}
 
 	render() {
+		const orcidMatches = this.state.orcid.match(ORCID_PATTERN);
+		const orcidInvalid = orcidMatches === null && this.state.orcid !== '';
+		const orcid = orcidMatches ? orcidMatches[0] : this.state.orcid;
 		const expandables = [
 			{
 				label: 'Location',
@@ -140,11 +144,18 @@ class UserEdit extends Component<Props, State> {
 			{
 				label: 'Orcid',
 				// icon: `${Classes.ICON}-orcid`,
-				helperText: `https://orcid.org/${this.state.orcid}`,
+				helperText: `https://orcid.org/${orcid}`,
 				value: this.state.orcid,
 				onChange: (evt) => {
-					this.setState({ orcid: evt.target.value, hasChanged: true });
+					this.setState({
+						orcid: evt.target.value,
+						hasChanged: true,
+					});
 				},
+				onBlur: () => {
+					this.setState({ orcid, hasChanged: true });
+				},
+				placeholder: '0000-0000-0000-0000',
 			},
 			{
 				label: 'Github',
@@ -246,7 +257,15 @@ class UserEdit extends Component<Props, State> {
 									label={item.label}
 									value={item.value}
 									onChange={item.onChange}
+									onBlur={item.onBlur}
 									helperText={item.helperText}
+									error={
+										(item.label === 'Orcid' &&
+											orcidInvalid &&
+											'Invalid Orcid') ||
+										undefined
+									}
+									placeholder={item.placeholder}
 								/>
 							);
 						})}
@@ -265,7 +284,8 @@ class UserEdit extends Component<Props, State> {
 									disabled={
 										!this.state.firstName ||
 										!this.state.lastName ||
-										!this.state.hasChanged
+										!this.state.hasChanged ||
+										orcidInvalid
 									}
 									loading={this.state.putUserIsLoading}
 								/>

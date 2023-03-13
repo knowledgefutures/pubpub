@@ -6,6 +6,7 @@ import { User, Signup } from 'server/models';
 import { slugifyString } from 'utils/strings';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { updateUserData } from 'server/utils/search';
+import { ORCID_PATTERN } from 'utils/orcid';
 
 export const createUser = (inputValues) => {
 	const email = inputValues.email.toLowerCase().trim();
@@ -78,6 +79,10 @@ export const updateUser = (inputValues, updatePermissions, req) => {
 	if (filteredValues.firstName && filteredValues.lastName) {
 		filteredValues.fullName = `${filteredValues.firstName} ${filteredValues.lastName}`;
 		filteredValues.initials = `${filteredValues.firstName[0]}${filteredValues.lastName[0]}`;
+	}
+
+	if (filteredValues.orcid && (filteredValues.orcid as string).match(ORCID_PATTERN) === null) {
+		throw new Error('Invalid ORCID');
 	}
 
 	// A bit of extra paranoia

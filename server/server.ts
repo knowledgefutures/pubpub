@@ -22,6 +22,7 @@ import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 
 import { sequelize, User } from './models';
+import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
 import './hooks';
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
@@ -118,6 +119,7 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(User.createStrategy());
+passport.use('zotero', zoteroAuthStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 

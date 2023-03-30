@@ -1,0 +1,22 @@
+.citation-builder-component {
+	display: flex;
+
+	.zotero-link-button {
+		flex: 1 0 auto;
+		margin-left: 10px;
+	}
+
+	.citation-select {
+		max-height: 400px;
+		overflow: scroll;
+		width: 100%;
+	}
+
+	.citation-label {
+		span {
+			display: block;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+}

@@ -21,3 +21,4 @@ export { default as sanitizeReviews } from './reviewsSanitize';
 export { default as buildPubOptions } from './pubOptions';
 export { getCommunityOverview } from './communityOverview';
 export { getCollectionOverview } from './collectionOverview';
+export { default as getIntegrations } from './integrationGet';

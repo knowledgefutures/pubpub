@@ -1,6 +1,7 @@
 import { isProd } from 'utils/environment';
 
 require('./activityItem/api');
+require('./citation/api');
 require('./collectionAttribution/api');
 require('./collection/api');
 require('./collectionPub/api');
@@ -13,6 +14,7 @@ require('./editor/api');
 require('./export/api');
 require('./facets/api');
 require('./import/api');
+require('./integrationDataOAuth1/api');
 require('./landingPageFeature/api');
 require('./layout/api');
 require('./logout/api');
@@ -44,6 +46,7 @@ require('./userNotification/api');
 require('./userNotificationPreferences/api');
 require('./userSubscription/api');
 require('./workerTask/api');
+require('./zoteroIntegration/api');
 
 if (!isProd()) {
 	// eslint-disable-next-line global-require

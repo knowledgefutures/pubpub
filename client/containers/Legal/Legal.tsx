@@ -3,6 +3,7 @@ import { Menu, MenuItem } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { Integration } from 'types';
 
 import PrivacySettings from './PrivacySettings';
 import Terms from './Terms';
@@ -11,7 +12,11 @@ import AUP from './AUP';
 
 require('./legal.scss');
 
-const Legal = () => {
+type Props = {
+	integrations: Integration[];
+};
+
+const Legal = (props: Props) => {
 	const {
 		locationData,
 		loginData,
@@ -20,7 +25,7 @@ const Legal = () => {
 	const { tab } = locationData.params;
 	return (
 		<>
-			<style>{`#legal-container .main-content a { color: ${accentColorDark}; }`}</style>
+			<style>{`#legal-container .main-content p > a { color: ${accentColorDark}; }`}</style>
 			<div id="legal-container">
 				<GridWrapper containerClassName="legal" columnClassName="legal-columns">
 					<div className="side-content">
@@ -55,7 +60,12 @@ const Legal = () => {
 						{tab === 'terms' && <Terms hostname={locationData.hostname} />}
 						{tab === 'privacy' && <PrivacyPolicy />}
 						{tab === 'aup' && <AUP />}
-						{tab === 'settings' && <PrivacySettings isLoggedIn={!!loginData.id} />}
+						{tab === 'settings' && (
+							<PrivacySettings
+								isLoggedIn={!!loginData.id}
+								integrations={props.integrations}
+							/>
+						)}
 					</div>
 				</GridWrapper>
 			</div>

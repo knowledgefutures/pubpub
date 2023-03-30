@@ -37,6 +37,7 @@ require('./landing'); // Route: '/'
 
 /* Routes for all */
 require('./login'); // Route: '/login'
+require('./authenticate'); // Route: '/auth'
 require('./legal'); // Route: '/legal'
 require('./search'); // Route: '/search'
 require('./signup'); // Route: '/signup'

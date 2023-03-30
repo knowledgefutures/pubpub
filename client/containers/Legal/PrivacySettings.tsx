@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { AnchorButton, Card, Switch } from '@blueprintjs/core';
+import { AnchorButton, Button, Card, Switch } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
+import { Integration } from 'types';
 import { getGdprConsentElection, updateGdprConsent } from 'client/utils/legal/gdprConsent';
 
 type PrivacySettingsProps = {
+	integrations: Integration[];
 	isLoggedIn: boolean;
 };
 
@@ -22,6 +25,13 @@ data associated with that account, be deleted.
 %0D%0A%0D%0A
 I understand that this action may be irreversible.
 `;
+
+const possibleIntegrations = [
+	{
+		name: 'zotero',
+		authUrl: '/auth/zotero',
+	},
+];
 
 const ThirdPartyAnalyticsCard = () => {
 	const { loginData } = usePageContext();
@@ -73,7 +83,21 @@ const ThirdPartyAnalyticsCard = () => {
 };
 
 const PrivacySettings = (props: PrivacySettingsProps) => {
-	const { isLoggedIn } = props;
+	const { isLoggedIn, integrations } = props;
+	const initialActiveIntegration = integrations.map(({ name }) => name);
+	const [unusedIntegrations, setUnusedIntegrations] = useState<string[]>(
+		possibleIntegrations
+			.map(({ name }) => name)
+			.filter((name) => !initialActiveIntegration.includes(name)),
+	);
+	const onDeleteIntegration = (integration: Integration) => () => {
+		apiFetch
+			.delete('/api/integrationDataOAuth1', { id: integration.integrationDataOAuth1Id })
+			.then(() => {
+				setUnusedIntegrations([...unusedIntegrations, integration.name]);
+			});
+	};
+
 	return (
 		<div className="privacy-settings">
 			<ThirdPartyAnalyticsCard />
@@ -92,6 +116,27 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 							Request data export
 						</AnchorButton>
 					</Card>
+					{possibleIntegrations.map((i) => {
+						const integration = integrations.find(({ name }) => name === i.name);
+						return (
+							<Card key={i.name}>
+								<h5>{i.name} integration</h5>
+								<p>
+									Deleting the integration will purge your {i.name} credentials
+									from our database.
+								</p>
+								{!unusedIntegrations.includes(i.name) && integration ? (
+									<Button
+										intent="danger"
+										text="Remove"
+										onClick={onDeleteIntegration(integration)}
+									/>
+								) : (
+									<AnchorButton text="Activate" href={i.authUrl} />
+								)}
+							</Card>
+						);
+					})}
 					<Card>
 						<h5>Account deletion</h5>
 						<p>

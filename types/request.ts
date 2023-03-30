@@ -6,6 +6,7 @@ import {
 	MemberPermission,
 	Pub,
 	ScopeId,
+	Integration,
 } from 'types';
 import { CascadedFacetsByKind } from 'facets';
 
@@ -22,6 +23,7 @@ export type LoginData = {
 	title?: string;
 	gdprConsent?: string;
 	isSuperAdmin: boolean;
+	integrations?: Integration[];
 };
 
 export type LocationData = {

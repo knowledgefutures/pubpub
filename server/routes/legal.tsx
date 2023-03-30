@@ -6,6 +6,7 @@ import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { getIntegrations } from 'server/utils/queryHelpers';
 
 app.get('/privacy', (_, res) => res.redirect('/legal/privacy'));
 app.get('/privacy/policy', (_, res) => res.redirect('/legal/privacy'));
@@ -17,14 +18,16 @@ app.get('/legal/:tab', (req, res, next) => {
 	if (!['terms', 'privacy', 'aup', 'settings'].includes(req.params.tab)) {
 		return next();
 	}
-	return getInitialData(req)
-		.then((initialData) => {
+	const userId = req.user?.id;
+	return Promise.all([getInitialData(req), userId ? getIntegrations(userId) : []])
+		.then(([initialData, integrations]) => {
 			return renderToNodeStream(
 				res,
 				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; chunkName: string; init... Remove this comment to see the full error message
 				<Html
 					chunkName="Legal"
 					initialData={initialData}
+					viewData={{ integrations }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: `Legal · ${initialData.communityData.title}`,

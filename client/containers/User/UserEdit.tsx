@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Button, Callout, Intent } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
@@ -13,288 +13,264 @@ type Props = {
 	userData: any;
 };
 
-type State = any;
+const UserEdit = (props: Props) => {
+	const { userData } = props;
+	const [hasChanged, setHasChanged] = useState(false);
+	const [firstName, setFirstName] = useState(userData.firstName || '');
+	const [lastName, setLastName] = useState(userData.lastName || '');
+	const [title, setTitle] = useState(userData.title || '');
+	const [bio, setBio] = useState(userData.bio || '');
+	const [avatar, setAvatar] = useState(userData.avatar);
+	const [location, setLocation] = useState(userData.location || '');
+	const [website, setWebsite] = useState(userData.website || '');
+	const [orcid, setOrcid] = useState(userData.orcid || '');
+	const [github, setGithub] = useState(userData.github || '');
+	const [twitter, setTwitter] = useState(userData.twitter || '');
+	const [facebook, setFacebook] = useState(userData.facebook || '');
+	const [googleScholar, setGoogleScholar] = useState(userData.googleScholar || '');
+	const [putUserIsLoading, setPutUserIsLoading] = useState(false);
+	const [putUserError, setPutUserError] = useState('');
+	const [postResetIsLoading, setPostResetIsLoading] = useState(false);
+	const [postResetError, setPostResetError] = useState('');
+	const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
-class UserEdit extends Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			hasChanged: false,
-			firstName: props.userData.firstName || '',
-			lastName: props.userData.lastName || '',
-			title: props.userData.title || '',
-			bio: props.userData.bio || '',
-			avatar: props.userData.avatar,
-			location: props.userData.location || '',
-			website: props.userData.website || '',
-			orcid: props.userData.orcid || '',
-			github: props.userData.github || '',
-			twitter: props.userData.twitter || '',
-			facebook: props.userData.facebook || '',
-			googleScholar: props.userData.googleScholar || '',
-			putUserIsLoading: false,
-			putUserError: undefined,
-			postResetIsLoading: false,
-			postResetError: undefined,
-			showResetConfirmation: false,
-		};
-		this.onFirstNameChange = this.onFirstNameChange.bind(this);
-		this.onLastNameChange = this.onLastNameChange.bind(this);
-		this.onTitleChange = this.onTitleChange.bind(this);
-		this.onBioChange = this.onBioChange.bind(this);
-		this.onAvatarChange = this.onAvatarChange.bind(this);
-		this.handleSaveDetails = this.handleSaveDetails.bind(this);
-		this.handlePasswordReset = this.handlePasswordReset.bind(this);
-	}
+	const withHasChanged = (handlerFn) => (e) => {
+		setHasChanged(true);
+		handlerFn(e);
+	};
 
-	onFirstNameChange(evt) {
-		this.setState({ firstName: evt.target.value, hasChanged: true });
-	}
+	const onFirstNameChange = (e) => {
+		setFirstName(e.target.value);
+	};
 
-	onLastNameChange(evt) {
-		this.setState({ lastName: evt.target.value, hasChanged: true });
-	}
+	const onLastNameChange = (e) => {
+		setLastName(e.target.value);
+	};
 
-	onTitleChange(evt) {
-		this.setState({
-			title: evt.target.value.substring(0, 70).replace(/\n/g, ' '),
-			hasChanged: true,
-		});
-	}
+	const onTitleChange = (e) => {
+		setTitle(e.target.value.substring(0, 70).replace(/\n/g, ' '));
+	};
 
-	onBioChange(evt) {
-		this.setState({
-			bio: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
-			hasChanged: true,
-		});
-	}
+	const onBioChange = (e) => {
+		setBio(e.target.substring(0, 280).replace(/\n/g, ' '));
+	};
 
-	onAvatarChange(val) {
-		this.setState({ avatar: val, hasChanged: true });
-	}
+	const onAvatarChange = (val) => {
+		setAvatar(val);
+	};
 
-	handleSaveDetails(evt) {
+	const handleSaveDetails = (evt) => {
 		evt.preventDefault();
 		const newUserObject = {
-			userId: this.props.userData.id,
-			firstName: this.state.firstName,
-			lastName: this.state.lastName,
-			avatar: this.state.avatar,
-			title: this.state.title,
-			bio: this.state.bio,
-			location: this.state.location,
-			website: this.state.website,
-			orcid: this.state.orcid,
-			github: this.state.github,
-			twitter: this.state.twitter,
-			facebook: this.state.facebook,
-			googleScholar: this.state.googleScholar,
+			userId: userData.id,
+			firstName,
+			lastName,
+			avatar,
+			title,
+			bio,
+			location,
+			website,
+			orcid,
+			github,
+			twitter,
+			facebook,
+			googleScholar,
 		};
 
-		this.setState({ putUserIsLoading: true, putUserError: undefined });
+		setPutUserIsLoading(true);
+		setPutUserError('');
 		return apiFetch('/api/users', {
 			method: 'PUT',
 			body: JSON.stringify(newUserObject),
 		})
 			.then(() => {
-				window.location.href = `/user/${this.props.userData.slug}`;
+				window.location.href = `/user/${userData.slug}`;
 			})
 			.catch((err) => {
-				this.setState({ putUserIsLoading: false, putUserError: err });
+				setPutUserIsLoading(true);
+				setPutUserError(err);
 			});
-	}
+	};
 
-	handlePasswordReset() {
-		this.setState({ postResetIsLoading: true });
+	const handlePasswordReset = () => {
+		setPostResetIsLoading(true);
 		return apiFetch('/api/password-reset', {
 			method: 'POST',
 			body: JSON.stringify({}),
 		})
 			.then(() => {
-				this.setState({ postResetIsLoading: false, showResetConfirmation: true });
+				setPostResetIsLoading(false);
+				setShowResetConfirmation(true);
 			})
 			.catch(() => {
-				this.setState({ postResetIsLoading: false, postResetError: 'Error' });
+				setPostResetIsLoading(false);
+				setPostResetError('Error');
 			});
-	}
+	};
 
-	render() {
-		const orcidMatches = this.state.orcid.match(ORCID_PATTERN);
-		const orcidInvalid = orcidMatches === null && this.state.orcid !== '';
-		const orcid = orcidMatches ? orcidMatches[0] : this.state.orcid;
-		const expandables = [
-			{
-				label: 'Location',
-				showTextOnButton: true,
-				// icon: `${Classes.ICON}-map-marker`,
-				value: this.state.location,
-				onChange: (evt) => {
-					this.setState({ location: evt.target.value, hasChanged: true });
-				},
+	const orcidMatches = orcid.match(ORCID_PATTERN);
+	const isOrcidInvalid = orcidMatches === null && orcid !== '';
+	const matchedOrcid = orcidMatches ? orcidMatches[0] : orcid;
+	const expandables = [
+		{
+			label: 'Location',
+			showTextOnButton: true,
+			// icon: `${Classes.ICON}-map-marker`,
+			value: location,
+			onChange: (evt) => {
+				setLocation(evt.target.value);
 			},
-			{
-				label: 'Website',
-				showTextOnButton: true,
-				// icon: `${Classes.ICON}-link`,
-				value: this.state.website,
-				onChange: (evt) => {
-					this.setState({ website: evt.target.value, hasChanged: true });
-				},
+		},
+		{
+			label: 'Website',
+			showTextOnButton: true,
+			// icon: `${Classes.ICON}-link`,
+			value: website,
+			onChange: (evt) => {
+				setWebsite(evt.target.value);
 			},
-			{
-				label: 'Orcid',
-				// icon: `${Classes.ICON}-orcid`,
-				helperText: `https://orcid.org/${orcid}`,
-				value: this.state.orcid,
-				onChange: (evt) => {
-					this.setState({
-						orcid: evt.target.value,
-						hasChanged: true,
-					});
-				},
-				onBlur: () => {
-					this.setState({ orcid, hasChanged: true });
-				},
-				placeholder: '0000-0000-0000-0000',
+		},
+		{
+			label: 'Orcid',
+			// icon: `${Classes.ICON}-orcid`,
+			helperText: `https://orcid.org/${orcid}`,
+			value: orcid,
+			onChange: (evt) => {
+				setOrcid(evt.target.value);
 			},
-			{
-				label: 'Github',
-				// icon: `${Classes.ICON}-github`,
-				helperText: `https://github.com/${this.state.github}`,
-				value: this.state.github,
-				onChange: (evt) => {
-					this.setState({ github: evt.target.value, hasChanged: true });
-				},
+			onBlur: () => {
+				setOrcid(matchedOrcid);
 			},
-			{
-				label: 'Twitter',
-				// icon: `${Classes.ICON}-twitter`,
-				helperText: `https://twitter.com/${this.state.twitter}`,
-				value: this.state.twitter,
-				onChange: (evt) => {
-					this.setState({ twitter: evt.target.value, hasChanged: true });
-				},
+			placeholder: '0000-0000-0000-0000',
+		},
+		{
+			label: 'Github',
+			// icon: `${Classes.ICON}-github`,
+			helperText: `https://github.com/${github}`,
+			value: github,
+			onChange: (evt) => {
+				setGithub(evt.target.value);
 			},
-			{
-				label: 'Facebook',
-				// icon: `${Classes.ICON}-facebook`,
-				helperText: `https://facebook.com/${this.state.facebook}`,
-				value: this.state.facebook,
-				onChange: (evt) => {
-					this.setState({ facebook: evt.target.value, hasChanged: true });
-				},
+		},
+		{
+			label: 'Twitter',
+			// icon: `${Classes.ICON}-twitter`,
+			helperText: `https://twitter.com/${twitter}`,
+			value: twitter,
+			onChange: (evt) => {
+				setTwitter(evt.target.value);
 			},
-			{
-				label: 'Google Scholar',
-				// icon: `${Classes.ICON}-google-scholar`,
-				helperText: `https://scholar.google.com/citations?user=${this.state.googleScholar}`,
-				value: this.state.googleScholar,
-				onChange: (evt) => {
-					this.setState({ googleScholar: evt.target.value, hasChanged: true });
-				},
+		},
+		{
+			label: 'Facebook',
+			// icon: `${Classes.ICON}-facebook`,
+			helperText: `https://facebook.com/${facebook}`,
+			value: facebook,
+			onChange: (evt) => {
+				setFacebook(evt.target.value);
 			},
-		];
-		return (
-			<div className="user-edit-component">
-				<GridWrapper containerClassName="narrow nav">
-					<h1>Edit User Details</h1>
-					<form onSubmit={this.handleSaveDetails}>
-						<InputField
-							label="First Name"
-							isRequired={true}
-							value={this.state.firstName}
-							onChange={this.onFirstNameChange}
-						/>
-						<InputField
-							label="Last Name"
-							isRequired={true}
-							value={this.state.lastName}
-							onChange={this.onLastNameChange}
-						/>
-						<InputField label="Password">
-							{this.state.showResetConfirmation ? (
-								<Callout icon="tick" intent={Intent.SUCCESS}>
-									Password reset requested. Check your email for reset
-									instructions.
-								</Callout>
-							) : (
-								<InputField
-									error={this.state.postResetError && 'Error Requesting Reset'}
-								>
-									<Button
-										text="Request Password Reset"
-										onClick={this.handlePasswordReset}
-										disabled={this.state.showResetConfirmation}
-										loading={this.state.postResetIsLoading}
-									/>
-								</InputField>
-							)}
-						</InputField>
-						<ImageUpload
-							htmlFor="avatar-upload"
-							label="Avatar Image"
-							defaultImage={this.state.avatar}
-							onNewImage={this.onAvatarChange}
-							useCrop={true}
-						/>
-						<InputField
-							label="Title"
-							value={this.state.title}
-							onChange={this.onTitleChange}
-							helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
-						/>
-						<InputField
-							label="Bio"
-							isTextarea={true}
-							value={this.state.bio}
-							onChange={this.onBioChange}
-							helperText={`${this.state.bio.length}/280 characters`}
-						/>
-						{expandables.map((item) => {
-							return (
-								<InputField
-									key={`input-field-${item.label}`}
-									label={item.label}
-									value={item.value}
-									onChange={item.onChange}
-									onBlur={item.onBlur}
-									helperText={item.helperText}
-									error={
-										(item.label === 'Orcid' &&
-											orcidInvalid &&
-											'Invalid Orcid') ||
-										undefined
-									}
-									placeholder={item.placeholder}
-								/>
-							);
-						})}
-						<p>Privacy</p>
-						<p className="privacy">
-							To request account deletion or data export, visit your{' '}
-							<a href="/legal/settings">privacy settings page</a>.
-						</p>
-						<div className="buttons">
-							<InputField error={this.state.putUserError && 'Error Saving Details'}>
+		},
+		{
+			label: 'Google Scholar',
+			// icon: `${Classes.ICON}-google-scholar`,
+			helperText: `https://scholar.google.com/citations?user=${googleScholar}`,
+			value: googleScholar,
+			onChange: (evt) => {
+				setGoogleScholar(evt.target.value);
+			},
+		},
+	];
+	return (
+		<div className="user-edit-component">
+			<GridWrapper containerClassName="narrow nav">
+				<h1>Edit User Details</h1>
+				<form onSubmit={handleSaveDetails}>
+					<InputField
+						label="First Name"
+						isRequired={true}
+						value={firstName}
+						onChange={withHasChanged(onFirstNameChange)}
+					/>
+					<InputField
+						label="Last Name"
+						isRequired={true}
+						value={lastName}
+						onChange={withHasChanged(onLastNameChange)}
+					/>
+					<InputField label="Password">
+						{showResetConfirmation ? (
+							<Callout icon="tick" intent={Intent.SUCCESS}>
+								Password reset requested. Check your email for reset instructions.
+							</Callout>
+						) : (
+							<InputField error={postResetError && 'Error Requesting Reset'}>
 								<Button
-									type="submit"
-									intent={Intent.PRIMARY}
-									text="Save Details"
-									onClick={this.handleSaveDetails}
-									disabled={
-										!this.state.firstName ||
-										!this.state.lastName ||
-										!this.state.hasChanged ||
-										orcidInvalid
-									}
-									loading={this.state.putUserIsLoading}
+									text="Request Password Reset"
+									onClick={handlePasswordReset}
+									disabled={showResetConfirmation}
+									loading={postResetIsLoading}
 								/>
 							</InputField>
-						</div>
-					</form>
-				</GridWrapper>
-			</div>
-		);
-	}
-}
+						)}
+					</InputField>
+					<ImageUpload
+						htmlFor="avatar-upload"
+						label="Avatar Image"
+						defaultImage={avatar}
+						onNewImage={withHasChanged(onAvatarChange)}
+						useCrop={true}
+					/>
+					<InputField
+						label="Title"
+						value={title}
+						onChange={withHasChanged(onTitleChange)}
+						helperText={`${title.length}/70 characters. Displayed by your name on discussions.`}
+					/>
+					<InputField
+						label="Bio"
+						isTextarea={true}
+						value={bio}
+						onChange={withHasChanged(onBioChange)}
+						helperText={`${bio.length}/280 characters`}
+					/>
+					{expandables.map((item) => {
+						return (
+							<InputField
+								key={`input-field-${item.label}`}
+								label={item.label}
+								value={item.value}
+								onChange={withHasChanged(item.onChange)}
+								onBlur={withHasChanged(item.onBlur)}
+								helperText={item.helperText}
+								error={
+									(item.label === 'Orcid' && isOrcidInvalid && 'Invalid Orcid') ||
+									undefined
+								}
+								placeholder={item.placeholder}
+							/>
+						);
+					})}
+					<p>Privacy</p>
+					<p className="privacy">
+						To request account deletion or data export, visit your{' '}
+						<a href="/legal/settings">privacy settings page</a>.
+					</p>
+					<div className="buttons">
+						<InputField error={putUserError && 'Error Saving Details'}>
+							<Button
+								type="submit"
+								intent={Intent.PRIMARY}
+								text="Save Details"
+								onClick={handleSaveDetails}
+								disabled={!firstName || !lastName || !hasChanged || isOrcidInvalid}
+								loading={putUserIsLoading}
+							/>
+						</InputField>
+					</div>
+				</form>
+			</GridWrapper>
+		</div>
+	);
+};
+
 export default UserEdit;

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { Classes } from '@blueprintjs/core';
 import { Maybe } from 'types';
 
 type EventHandler<E extends Event> = (evt: E) => unknown;
@@ -14,7 +15,7 @@ type FocusTrapOptions = {
 
 const captureEventOptions = { capture: true };
 
-const isChildOfReakitPortal = (node: Node) => {
+const isChildOfVendorPortal = (node: Node) => {
 	const ancestors: Node[] = [];
 	ancestors.push(node);
 	while (node.parentElement) {
@@ -23,7 +24,11 @@ const isChildOfReakitPortal = (node: Node) => {
 	}
 	return ancestors
 		.filter((ancestor): ancestor is Element => ancestor instanceof Element)
-		.some((ancestor) => ancestor.classList?.contains('__reakit-portal'));
+		.some(
+			(ancestor) =>
+				ancestor.classList?.contains('__reakit-portal') || // child of Reakit portal
+				ancestor.classList?.contains(Classes.PORTAL), // child of BlueprintJS protal
+		);
 };
 
 const rememberScrollPosition = () => {
@@ -38,7 +43,7 @@ const rememberScrollPosition = () => {
 };
 
 const isTargetOutsideOfRoot = (rootElement, target) => {
-	return !rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target));
+	return !rootElement || (!rootElement.contains(target) && !isChildOfVendorPortal(target));
 };
 
 // This implementation heavily inspired by the wonder-blocks focus trap:
@@ -128,7 +133,7 @@ export const useFocusTrap = ({
 				// Keep track of our scroll position so we can restore it later
 				lastGoodScrollPosition.current = rememberScrollPosition();
 			} else {
-				if (isChildOfReakitPortal(target)) {
+				if (isChildOfVendorPortal(target)) {
 					return;
 				}
 

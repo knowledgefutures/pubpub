@@ -108,10 +108,10 @@ export default function Deposit(props: Props) {
 
 		if ('pub' in props) {
 			params.append('pubId', props.pub.id);
-			params.append('target', 'collection');
+			params.append('target', 'pub');
 		} else {
 			params.append('collectionId', props.collection.id);
-			params.append('target', 'pub');
+			params.append('target', 'collection');
 		}
 
 		const { dois } = await apiFetch(`/api/generateDoi?${params.toString()}`);

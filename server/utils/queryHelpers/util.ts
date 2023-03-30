@@ -8,7 +8,6 @@ import {
 } from 'server/models';
 
 export const stripFalsyIdsFromQuery = (whereQueryObject) => {
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'fromEntries' does not exist on type 'Obj... Remove this comment to see the full error message
 	return Object.fromEntries(Object.entries(whereQueryObject).filter((entry) => entry[1]));
 };
 

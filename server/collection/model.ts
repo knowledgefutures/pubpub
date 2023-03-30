@@ -40,6 +40,7 @@ export default (sequelize, dataTypes) => {
 						Collection,
 						CollectionAttribution,
 						CollectionPub,
+						Community,
 						CrossrefDepositRecord,
 						SubmissionWorkflow,
 						Member,
@@ -71,6 +72,10 @@ export default (sequelize, dataTypes) => {
 					Collection.belongsTo(ScopeSummary, {
 						as: 'scopeSummary',
 						foreignKey: 'scopeSummaryId',
+					});
+					Collection.belongsTo(Community, {
+						as: 'community',
+						foreignKey: 'communityId',
 					});
 				},
 			},

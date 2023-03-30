@@ -1,0 +1,20 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.update-doi {
+	.#{$bp}-button {
+		margin-right: 8px;
+	}
+	.#{$bp}-input-group {
+		font-family: 'Courier', monospace;
+		font-size: 14px;
+		margin-bottom: 12px;
+
+		.doi-prefix {
+			display: flex;
+			margin-left: 5px;
+			line-height: 30px;
+		}
+	}
+}

@@ -1,12 +1,17 @@
 import app, { wrap } from 'server/server';
-import { ForbiddenError } from 'server/utils/errors';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { PubGetOptions, PubsQuery } from 'types';
 import { indexByProperty } from 'utils/arrays';
-import { PubsQuery, PubGetOptions } from 'types';
+import { transformPubToResource } from 'deposit/transform/pub';
+import { generateDoi } from 'server/doi/queries';
+import { assert, expect } from 'utils/assert';
+import { prepareResource, submitResource } from 'deposit/datacite/deposit';
+import { assertValidResource } from 'deposit/validate';
 
-import { canCreatePub, getUpdatablePubFields, canDestroyPub } from './permissions';
-import { createPub, updatePub, destroyPub } from './queries';
-import { queryPubIds, getPubsById } from './queryMany';
+import { canCreatePub, canDestroyPub, getUpdatablePubFields } from './permissions';
+import { createPub, destroyPub, findPub, updatePub } from './queries';
+import { getPubsById, queryPubIds } from './queryMany';
 
 type ManyRequestParams = {
 	query: Omit<PubsQuery, 'communityId'>;
@@ -117,6 +122,7 @@ app.put(
 		throw new ForbiddenError();
 	}),
 );
+
 app.delete(
 	'/api/pubs',
 	wrap(async (req, res) => {
@@ -127,5 +133,95 @@ app.delete(
 			return res.status(200).json({});
 		}
 		throw new ForbiddenError();
+	}),
+);
+
+app.get(
+	'/api/pub/:pubId/resource',
+	wrap(async (req, res) => {
+		const { pubId } = req.params;
+		const pub = await findPub(pubId);
+		if (!pub) {
+			return new NotFoundError();
+		}
+		const resource = await transformPubToResource(
+			// @ts-expect-error
+			pub.get({ plain: true }),
+			pub.community,
+		);
+		return res.status(200).json(resource);
+	}),
+);
+
+app.post(
+	'/api/pub/:pubId/doi',
+	wrap(async (req, res) => {
+		const { pubId } = req.params;
+		const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
+		try {
+			assert(expect(pubFields).includes('doi'));
+		} catch {
+			throw new ForbiddenError();
+		}
+		const pub = await findPub(pubId);
+		if (!pub) {
+			return new NotFoundError();
+		}
+		const dois = await generateDoi(
+			{ communityId: pub.communityId, pubId, collectionId: undefined },
+			'pub',
+		);
+		const resource = await transformPubToResource(
+			// @ts-expect-error
+			pub.get({ plain: true }),
+			pub.community,
+		);
+		try {
+			assertValidResource(resource);
+		} catch (error) {
+			return res.status(400).json({ error: (error as Error).message });
+		}
+		try {
+			const { resourceAst } = await submitResource(pub, resource, expect(dois.pub), {
+				pubId,
+			});
+			return res.status(200).json(resourceAst);
+		} catch (error) {
+			return res.status(400).json({ error: (error as Error).message });
+		}
+	}),
+);
+
+app.post(
+	'/api/pub/:pubId/doi/preview',
+	wrap(async (req, res) => {
+		const { pubId } = req.params;
+		const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
+		try {
+			assert(expect(pubFields).includes('doi'));
+		} catch {
+			throw new ForbiddenError();
+		}
+		const pub = await findPub(pubId);
+		const dois = await generateDoi(
+			{ communityId: pub.communityId, pubId, collectionId: undefined },
+			'pub',
+		);
+		const resource = await transformPubToResource(
+			// @ts-expect-error
+			pub.get({ plain: true }),
+			pub.community,
+		);
+		try {
+			assertValidResource(resource);
+		} catch (error) {
+			return res.status(400).json({ error: (error as Error).message });
+		}
+		try {
+			const { resourceAst } = await prepareResource(pub, resource, expect(dois.pub));
+			return res.status(200).json(resourceAst);
+		} catch (error) {
+			return res.status(400).json({ error: (error as Error).message });
+		}
 	}),
 );

@@ -9,7 +9,7 @@ import { DepositTarget } from 'server/models';
 export const getCommunityDepositTarget = async (
 	communityId: string,
 	includeCredentials = false,
-): Promise<types.Maybe<types.DepositTarget>> => {
+): Promise<types.DepositTarget | undefined> => {
 	const depositTarget = await DepositTarget.findOne({
 		where: {
 			communityId,

@@ -8,6 +8,7 @@ export type LicenseDetails<Kind extends LicenseKind = LicenseKind> = {
 	short: string;
 	version: string | null;
 	link: string | null;
+	spdxIdentifier: string | null;
 	requiresPremium?: true;
 };
 

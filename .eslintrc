@@ -22,7 +22,8 @@
 					["stubstub", "./stubstub"],
 					["utils", "./utils"],
 					["types", "./types"],
-					["facets", "./facets"]
+					["facets", "./facets"],
+					["deposit", "./deposit"]
 				],
 				"extensions": [".js", ".ts", ".tsx"]
 			}

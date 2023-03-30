@@ -69,3 +69,10 @@ export const canDestroyPub = async ({ userId, pubId }) => {
 	} = await getScope({ pubId, loginId: userId });
 	return canManage;
 };
+
+export const canDepositPub = async ({ userId, pubId }) => {
+	const {
+		activePermissions: { canManage },
+	} = await getScope({ pubId, loginId: userId });
+	return canManage;
+};

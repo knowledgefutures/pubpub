@@ -52,7 +52,7 @@ export type PubVersion = {
 	pubId?: string;
 };
 
-export type CrossrefDepositRecord = {
+export type DepositRecord = {
 	id: string;
 	depositJson?: {};
 };
@@ -86,7 +86,8 @@ export type Pub = {
 	reviews?: Review[];
 	releases: Release[];
 	pubVersions?: PubVersion[];
-	crossrefDepositRecord?: CrossrefDepositRecord;
+	crossrefDepositRecordId?: string;
+	crossrefDepositRecord?: DepositRecord;
 	inboundEdges?: InboundEdge[];
 	outboundEdges?: OutboundEdge[];
 	draftId?: string;
@@ -95,6 +96,8 @@ export type Pub = {
 	scopeSummary: ScopeSummary;
 	submission?: Submission;
 };
+
+export type PubWithConnections = DefinitelyHas<Pub, 'inboundEdges' | 'outboundEdges'>;
 
 export type PubDocInfo = {
 	initialDoc: DocJson;

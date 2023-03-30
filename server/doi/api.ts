@@ -1,8 +1,10 @@
+import xmlbuilder from 'xmlbuilder';
+
 import { Release } from 'server/models';
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { parentToSupplementNeedsDoiError } from 'utils/crossref/createDeposit';
-import xmlbuilder from 'xmlbuilder';
+
 import { getPermissions } from './permissions';
 import { generateDoi, getDoiData, setDoiData } from './queries';
 

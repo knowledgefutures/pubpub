@@ -1,9 +1,10 @@
-import { Collection, Community } from 'server/models';
+import { Collection, CollectionAttribution, Community, includeUserModel } from 'server/models';
 import { slugIsAvailable, findAcceptableSlug } from 'server/utils/slugs';
 import { normalizeMetadataToKind } from 'utils/collections/metadata';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { PubPubError } from 'server/utils/errors';
+import * as types from 'types';
 
 export const generateDefaultCollectionLayout = () => {
 	return {
@@ -113,3 +114,19 @@ export const destroyCollection = (inputValues, actorId?) => {
 		actorId,
 	});
 };
+
+const findCollectionOptions = {
+	include: [
+		{
+			model: CollectionAttribution,
+			as: 'attributions',
+			include: [includeUserModel({ as: 'user', required: false })],
+		},
+		{ model: Community, as: 'community' },
+	],
+};
+
+export const findCollection = (
+	collectionId: string,
+): Promise<types.DefinitelyHas<types.Collection, 'community' | 'attributions'>> =>
+	Collection.findOne({ where: { id: collectionId }, ...findCollectionOptions });

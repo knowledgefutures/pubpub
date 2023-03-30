@@ -338,9 +338,63 @@ class Doi extends Component<Props, State> {
 		);
 	}
 
-	renderContent() {
-		const { pubData, canIssueDoi } = this.props;
+	renderCrossrefDeposit() {
+		const { pubData } = this.props;
 		const { justSetDoi } = this.state;
+		return (
+			<FormGroup
+				helperText={
+					pubData.doi &&
+					!justSetDoi && (
+						<>
+							If you&apos;ve changed aspects of this pub and wish to update its DOI
+							deposit, you can do so here. In the future, PubPub will resubmit such
+							changes automatically.{' '}
+							{this.isDoiEditable() && (
+								<>
+									{' '}
+									PubPub will automatically assign a DOI if the suffix is left
+									blank. Please note that{' '}
+									<strong>
+										once submitted, the DOI will no longer be editable.
+									</strong>
+								</>
+							)}
+						</>
+					)
+				}
+			>
+				{this.disabledDueToParentWithoutDoi() && (
+					<Callout intent="warning">
+						This Pub cannot be deposited to Crossref because it is{' '}
+						{this.renderParentEdgeRelation()} its parent Pub, and its parent Pub does
+						not have a DOI.
+					</Callout>
+				)}
+				{this.disabledDueToNoReleases() && (
+					<Callout intent="warning">
+						This Pub cannot be deposited to Crossref because it has no published
+						releases.
+					</Callout>
+				)}
+				<AssignDoi
+					communityData={this.props.communityData}
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '(doi: any) => void' is not assignable to typ... Remove this comment to see the full error message
+					onDeposit={this.handleDeposit}
+					pubData={this.props.pubData}
+					target="pub"
+					disabled={
+						this.disabledDueToParentWithoutDoi() ||
+						this.disabledDueToNoReleases() ||
+						this.disabledDueToUnmanagedPrefix()
+					}
+				/>
+			</FormGroup>
+		);
+	}
+
+	renderContent() {
+		const { canIssueDoi } = this.props;
 
 		if (!canIssueDoi) {
 			return (
@@ -356,55 +410,7 @@ class Doi extends Component<Props, State> {
 				{this.renderStatusMessage()}
 				{this.renderCollectionContextMessage()}
 				{this.renderDoi()}
-
-				<FormGroup
-					helperText={
-						pubData.doi &&
-						!justSetDoi && (
-							<>
-								If you&apos;ve changed aspects of this pub and wish to update its
-								DOI deposit, you can do so here. In the future, PubPub will resubmit
-								such changes automatically.{' '}
-								{this.isDoiEditable() && (
-									<>
-										{' '}
-										PubPub will automatically assign a DOI if the suffix is left
-										blank. Please note that{' '}
-										<strong>
-											once submitted, the DOI will no longer be editable.
-										</strong>
-									</>
-								)}
-							</>
-						)
-					}
-				>
-					{this.disabledDueToParentWithoutDoi() && (
-						<Callout intent="warning">
-							This Pub cannot be deposited to Crossref because it is{' '}
-							{this.renderParentEdgeRelation()} its parent Pub, and its parent Pub
-							does not have a DOI.
-						</Callout>
-					)}
-					{this.disabledDueToNoReleases() && (
-						<Callout intent="warning">
-							This Pub cannot be deposited to Crossref because it has no published
-							releases.
-						</Callout>
-					)}
-					<AssignDoi
-						communityData={this.props.communityData}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(doi: any) => void' is not assignable to typ... Remove this comment to see the full error message
-						onDeposit={this.handleDeposit}
-						pubData={this.props.pubData}
-						target="pub"
-						disabled={
-							this.disabledDueToParentWithoutDoi() ||
-							this.disabledDueToNoReleases() ||
-							this.disabledDueToUnmanagedPrefix()
-						}
-					/>
-				</FormGroup>
+				{this.renderCrossrefDeposit()}
 			</>
 		);
 	}

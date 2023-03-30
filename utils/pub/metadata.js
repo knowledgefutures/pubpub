@@ -98,3 +98,9 @@ export const getGoogleScholarNotes = (notes) => {
 			return unique.includes(noteArray.join(';')) ? unique : [...unique, noteArray.join(';')];
 		}, []);
 };
+
+export const getWordAndCharacterCountsFromDoc = (node) => {
+	const text = node.textBetween(0, node.content.size, ' ', ' ');
+	const words = text.split(' ').filter((word) => word !== '');
+	return [words.length, text.length];
+};

@@ -1,23 +1,24 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "noEmit": false,
-    "outDir": "dist/server",
-    "incremental": true,
-  },
-  "include": [
-    "server/**/*",
-    "client/**/*",
-    "types/**/*",
-    "utils/**/*",
-    "workers/**/*",
-    "facets/**/*",
-  ],
-  "exclude": [
-    "../**/__tests__/**/*",
-    "../**/__test__/**/*",
-    "../**/*.test.ts",
-    "../**/*.test.js",
-    "../**/*.stories.tsx"
-  ]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"outDir": "dist/server",
+		"incremental": true
+	},
+	"include": [
+		"server/**/*",
+		"client/**/*",
+		"types/**/*",
+		"utils/**/*",
+		"workers/**/*",
+		"facets/**/*",
+		"deposit/**/*"
+	],
+	"exclude": [
+		"../**/__tests__/**/*",
+		"../**/__test__/**/*",
+		"../**/*.test.ts",
+		"../**/*.test.js",
+		"../**/*.stories.tsx"
+	]
 }

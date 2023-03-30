@@ -1,18 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Button, Classes, Icon, Popover } from '@blueprintjs/core';
-
 import { Node } from 'prosemirror-model';
+
+import { getWordAndCharacterCountsFromDoc } from 'utils/pub/metadata';
 
 require('./pubWordCountButton.scss');
 
 type Props = {
 	doc: Node;
-};
-
-const getWordAndCharacterCountsFromDoc = (node: Node) => {
-	const text = node.textBetween(0, node.content.size, ' ', ' ');
-	const words = text.split(' ').filter((word) => word !== '');
-	return [words.length, text.length];
 };
 
 const PubHeaderFormattingWordCountButton = (props: Props) => {

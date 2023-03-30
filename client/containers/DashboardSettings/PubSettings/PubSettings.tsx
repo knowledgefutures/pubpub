@@ -11,6 +11,7 @@ import {
 	PubCollectionsListing,
 	FacetEditor,
 	TitleEditor,
+	Deposit,
 } from 'components';
 import { DepositTarget, Pub, PubWithCollections } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -23,7 +24,6 @@ import { usePersistableState } from 'client/utils/usePersistableState';
 import { useFacetsQuery } from 'client/utils/useFacets';
 import LabelWithInfo from '../LabelWithInfo';
 import DeletePub from './DeletePub';
-import Doi from './Doi';
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
@@ -182,10 +182,10 @@ const PubSettings = (props: Props) => {
 	const renderDoi = () => {
 		return (
 			<SettingsSection title="DOI" showTitle={false}>
-				<Doi
-					pubData={persistedPubData}
+				<Deposit
+					pub={persistedPubData}
 					communityData={communityData}
-					updatePubData={updatePersistedPubData}
+					updatePub={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
 					depositTarget={settingsData.depositTarget}
 				/>

@@ -14,3 +14,8 @@ poppler-utils
 # imagemagick is used to convert other images to web-friendly formats
 
 imagemagick
+
+# libxml contains xmllint which is used to validate Datacite and Crossref deposits against an XSD schema
+
+libxml2
+libxml2-utils

@@ -21,6 +21,7 @@ import { apiFetch } from 'client/utils/apiFetch';
 require('./collectionMetadataEditor.scss');
 
 type Props = {
+	allowUpdateDoi?: boolean;
 	collection: Collection;
 	communityData: any;
 	onUpdateCollection: (update: Partial<Collection>) => unknown;
@@ -224,7 +225,9 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		return (
 			<div className="dashboard-content_collection-metadata-editor">
 				{this.renderFields()}
-				<ButtonGroup>{this.renderGetDoiButton()}</ButtonGroup>
+				{this.props.allowUpdateDoi !== false && (
+					<ButtonGroup>{this.renderGetDoiButton()}</ButtonGroup>
+				)}
 				{this.renderStatusMessage()}
 			</div>
 		);

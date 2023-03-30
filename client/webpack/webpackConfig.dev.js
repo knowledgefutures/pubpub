@@ -19,6 +19,7 @@ module.exports = {
 			client: resolve(__dirname, '../../client'),
 			components: resolve(__dirname, '../../client/components'),
 			containers: resolve(__dirname, '../../client/containers'),
+			deposit: resolve(__dirname, '../../deposit'),
 			server: resolve(__dirname, '../../server'),
 			utils: resolve(__dirname, '../../utils'),
 			types: resolve(__dirname, '../../types'),
@@ -55,6 +56,7 @@ module.exports = {
 				test: /\.(js|jsx|ts|tsx)$/,
 				include: [
 					resolve(__dirname, '../'),
+					resolve(__dirname, '../../deposit'),
 					resolve(__dirname, '../../utils'),
 					resolve(__dirname, '../../types'),
 					resolve(__dirname, '../../facets'),

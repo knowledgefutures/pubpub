@@ -1,0 +1,9 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.deposit {
+	.#{$bp}-callout {
+		margin: 1em 0;
+	}
+}

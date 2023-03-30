@@ -41,7 +41,6 @@ const getAttributions = async (author) => {
 };
 
 const stripFalseyValues = (object) =>
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'fromEntries' does not exist on type 'Obj... Remove this comment to see the full error message
 	Object.fromEntries(Object.entries(object).filter((kv) => kv[1]));
 
 export const getProposedMetadata = async (meta) => {
@@ -57,7 +56,6 @@ export const getProposedMetadata = async (meta) => {
 };
 
 export const getRawMetadata = (meta) => {
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'fromEntries' does not exist on type 'Obj... Remove this comment to see the full error message
 	return Object.fromEntries(
 		Object.entries(meta).map(([key, value]) => [key, metaValueToJsonSerializable(value)]),
 	);

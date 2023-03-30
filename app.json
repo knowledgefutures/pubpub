@@ -13,6 +13,7 @@
 		"test": {
 			"addons": ["heroku-postgresql:in-dyno"],
 			"buildpacks": [
+				{ "url": "https://github.com/heroku/heroku-buildpack-apt.git" },
 				{ "url": "https://github.com/heroku/heroku-buildpack-jvm-common.git" },
 				{ "url": "heroku/nodejs" }
 			],
@@ -27,6 +28,10 @@
 			}
 		},
 		"review": {
+			"buildpacks": [
+				{ "url": "https://github.com/heroku/heroku-buildpack-apt.git" },
+				{ "url": "heroku/nodejs" }
+			],
 			"formation": {
 				"web": {
 					"quantity": 1,

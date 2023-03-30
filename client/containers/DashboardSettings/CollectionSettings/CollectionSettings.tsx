@@ -5,15 +5,25 @@ import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { CollectionAttributionEditor, SettingsSection } from 'components';
 import { pruneFalsyValues } from 'utils/arrays';
-import { AttributionWithUser } from 'types';
-import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
+import { AttributionWithUser, DepositTarget } from 'types';
+import Deposit from 'client/components/Deposit/Deposit';
 
+import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 import CommunityOrCollectionLevelPubSettings from '../CommunitySettings/CommunityOrCollectionLevelPubSettings';
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
-const CollectionSettings = () => {
+type Props = {
+	settingsData: {
+		depositTarget: DepositTarget;
+	};
+};
+
+const CollectionSettings = (props: Props) => {
+	const {
+		settingsData: { depositTarget },
+	} = props;
 	const {
 		communityData,
 		scopeData: {
@@ -71,6 +81,7 @@ const CollectionSettings = () => {
 						collection={collection}
 						communityData={communityData}
 						onUpdateCollection={updateCollection}
+						allowUpdateDoi={depositTarget.service !== 'datacite'}
 					/>
 				</SettingsSection>,
 			],
@@ -98,6 +109,21 @@ const CollectionSettings = () => {
 			pubPubIcon: 'pub',
 			sections: [<CommunityOrCollectionLevelPubSettings />],
 		},
+		collection.kind !== 'tag' &&
+			depositTarget.service === 'datacite' && {
+				id: 'doi',
+				title: 'DOI',
+				icon: 'barcode',
+				sections: [
+					<Deposit
+						depositTarget={depositTarget}
+						canIssueDoi
+						collection={collection}
+						communityData={communityData}
+						updateCollection={() => {}}
+					/>,
+				],
+			},
 	]);
 
 	return (

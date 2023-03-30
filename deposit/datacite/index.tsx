@@ -198,7 +198,7 @@ export function createDeposit(resource: Resource) {
 			<subjects />
 			<dates>
 				<date dateType="Created">{createdDate}</date>
-				{exists(updatedDate) && <date dateType="Updated">{updatedDate}</date>}
+				{exists(updatedDate) ? <date dateType="Updated">{updatedDate}</date> : undefined}
 			</dates>
 			<descriptions>
 				{resource.descriptions.map((description) => (
@@ -230,7 +230,7 @@ export function createDeposit(resource: Resource) {
 					.filter((contribution) => !contribution.isAttribution)
 					.map(renderContributor)}
 			</contributors>
-			<sizes>{wordCount && <size>{`${wordCount.value} words`}</size>}</sizes>
+			<sizes>{wordCount ? <size>{`${wordCount.value} words`}</size> : undefined}</sizes>
 			<alternateIdentifiers>
 				<alternateIdentifier
 					// @ts-expect-error
@@ -246,7 +246,7 @@ export function createDeposit(resource: Resource) {
 				{resource.relationships
 					.filter(isInterWorkRelationship)
 					.map(renderRelatedIdentifier)}
-				{issn && (
+				{issn ? (
 					<relatedIdentifier
 						resourceTypeGeneral="Journal"
 						relationType="IsPartOf"
@@ -254,8 +254,8 @@ export function createDeposit(resource: Resource) {
 					>
 						{issn}
 					</relatedIdentifier>
-				)}
-				{eissn && (
+				) : undefined}
+				{eissn ? (
 					<relatedIdentifier
 						resourceTypeGeneral="Journal"
 						relationType="IsPartOf"
@@ -263,8 +263,8 @@ export function createDeposit(resource: Resource) {
 					>
 						{eissn}
 					</relatedIdentifier>
-				)}
-				{isbn && (
+				) : undefined}
+				{isbn ? (
 					<relatedIdentifier
 						resourceTypeGeneral="Book"
 						relationType="IsPartOf"
@@ -272,7 +272,7 @@ export function createDeposit(resource: Resource) {
 					>
 						{isbn}
 					</relatedIdentifier>
-				)}
+				) : undefined}
 			</relatedIdentifiers>
 			<version>1.0</version>
 			<formats>

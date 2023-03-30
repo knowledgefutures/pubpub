@@ -103,17 +103,17 @@ export default function Deposit(props: Props) {
 	};
 	const onGenerate = async () => {
 		const params = new URLSearchParams({
-			target: 'pub',
 			communityId: props.communityData.id,
 		});
 
 		if ('pub' in props) {
 			params.append('pubId', props.pub.id);
+			params.append('target', 'collection');
 		} else {
 			params.append('collectionId', props.collection.id);
+			params.append('target', 'pub');
 		}
 
-		// Fetch a DOI preview which contains a newly generated DOI.
 		const { dois } = await apiFetch(`/api/generateDoi?${params.toString()}`);
 		const doi = 'pub' in props ? dois.pub : dois.collection;
 

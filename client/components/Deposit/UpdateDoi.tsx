@@ -42,8 +42,6 @@ export function UpdateDoi(props: Props) {
 		);
 	}
 
-	console.log(props.loading);
-
 	return (
 		<FormGroup
 			label="DOI Suffix"

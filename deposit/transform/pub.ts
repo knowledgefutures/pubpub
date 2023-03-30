@@ -1,14 +1,18 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
+import { Node } from 'prosemirror-model';
+import { buildSchema } from 'client/components/Editor/utils/schema';
 import { getPrimaryParentPubEdge, sanitizePubEdges } from 'deposit/utils';
 import { fetchFacetsForScope } from 'server/facets';
+import { Doc } from 'server/models';
 import * as types from 'types';
 import { exists, expect } from 'utils/assert';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { licenseDetailsByKind } from 'utils/licenses';
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
+import { getWordAndCharacterCountsFromDoc } from 'utils/pub/metadata';
 import { sortByRank } from 'utils/rank';
 import {
 	AnyResource,
@@ -20,6 +24,8 @@ import {
 	ResourceRelationship,
 } from '../resource';
 import { transformCollectionToResource } from './collection';
+
+const schema = buildSchema();
 
 const attributionRoleToResourceContributorRole: Record<string, ResourceContributorRole> = {
 	'Writing – Review & Editing': 'Editor',
@@ -186,6 +192,24 @@ export async function transformPubToResource(
 			relation: pubPrimaryCollection.kind === 'book' ? 'Part' : 'Publication',
 			resource: await transformCollectionToResource(pubPrimaryCollection, community),
 		});
+	}
+
+	const release = expect(pub.releases[pub.releases.length - 1]);
+	const releaseDoc = await Doc.findByPk(release.docId);
+	const releaseDocNode = Node.fromJSON(schema, releaseDoc.content);
+	pubResource.summaries.push({
+		kind: 'WordCount',
+		value: getWordAndCharacterCountsFromDoc(releaseDocNode)[0],
+		lang: 'eng',
+	});
+	const depositJson = pub.crossrefDepositRecord?.depositJson;
+	pubResource.meta['created-date'] = expect(pub.releases[0]).createdAt.toString();
+	if (depositJson) {
+		const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
+		const dateOfLatestRelease = new Date(release.createdAt);
+		if (dateOfLastDeposit.getTime() !== dateOfLatestRelease.getTime()) {
+			pubResource.meta['updated-date'] = dateOfLatestRelease.toString();
+		}
 	}
 	return pubResource;
 }

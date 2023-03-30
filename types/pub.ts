@@ -54,7 +54,7 @@ export type PubVersion = {
 
 export type DepositRecord = {
 	id: string;
-	depositJson?: {};
+	depositJson?: any;
 };
 
 export type Pub = {

@@ -13,10 +13,6 @@ export function loadScopeResourceMeta(scope: Scope, scopeResource: Resource, sco
 		identifierKind: 'DOI',
 		identifierValue: scopeDoi,
 	});
-	scopeResource.meta['created-date'] = scope.createdAt.toString();
-	if (scope.updatedAt !== scope.createdAt) {
-		scopeResource.meta['updated-date'] = scope.updatedAt.toString();
-	}
 	scopeResource.meta.publisher = scope.community.publishAs || 'PubPub';
 }
 

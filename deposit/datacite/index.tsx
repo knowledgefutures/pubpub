@@ -230,7 +230,7 @@ export function createDeposit(resource: Resource) {
 					.filter((contribution) => !contribution.isAttribution)
 					.map(renderContributor)}
 			</contributors>
-			<sizes>{wordCount && <size>${wordCount.value} words</size>}</sizes>
+			<sizes>{wordCount && <size>{`${wordCount.value} words`}</size>}</sizes>
 			<alternateIdentifiers>
 				<alternateIdentifier
 					// @ts-expect-error

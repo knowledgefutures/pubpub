@@ -107,5 +107,14 @@ export async function transformCollectionToResource(
 			});
 		}
 	}
+	const depositJson = collection.crossrefDepositRecord?.depositJson;
+	collectionResource.meta['created-date'] = collection.createdAt.toString();
+	if (depositJson) {
+		const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
+		const dateOfLatestUpdate = new Date(collection.updatedAt);
+		if (dateOfLastDeposit.getTime() !== dateOfLatestUpdate.getTime()) {
+			collectionResource.meta['updated-date'] = dateOfLatestUpdate.toString();
+		}
+	}
 	return collectionResource;
 }

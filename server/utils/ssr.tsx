@@ -65,13 +65,15 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		title: communityTitle,
 		citeAs: communityCiteAs,
 		publishAs: communityPublisher,
+		twitter: communityTwitter,
 	} = initialData.communityData;
 
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
 	const isPub = !!initialData.scopeData?.elements?.activePub;
 	const useCollectionTitle = !isPub && collection?.title;
 	const favicon = initialData.communityData.favicon;
-	const avatar = image || initialData.communityData.avatar;
+	const imageOrAvatar = image || initialData.communityData.avatar;
+	const twitterCardType = image ? 'summary_large_image' : 'summary';
 	const titleWithContext = contextTitle ? `${title} · ${contextTitle}` : title;
 	let outputComponents: any[] = [];
 	if (!initialData.locationData.isBasePubPub) {
@@ -197,6 +199,13 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
+	if (communityTwitter) {
+		outputComponents = [
+			...outputComponents,
+			<meta name="twitter:creator" content={`@${communityTwitter}`} />,
+		];
+	}
+
 	if (description) {
 		outputComponents = [
 			...outputComponents,
@@ -206,13 +215,13 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
-	if (avatar) {
+	if (imageOrAvatar) {
 		outputComponents = [
 			...outputComponents,
-			<meta key="i1" property="og:image" content={avatar} />,
-			<meta key="i2" property="og:image:url" content={avatar} />,
+			<meta key="i1" property="og:image" content={imageOrAvatar} />,
+			<meta key="i2" property="og:image:url" content={imageOrAvatar} />,
 			<meta key="i3" property="og:image:width" content="500" />,
-			<meta key="i4" name="twitter:image" content={avatar} />,
+			<meta key="i4" name="twitter:image" content={imageOrAvatar} />,
 		];
 	}
 
@@ -343,7 +352,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	outputComponents = [
 		...outputComponents,
 		<meta key="misc1" property="fb:app_id" content="924988584221879" />,
-		<meta key="misc2" name="twitter:card" content="summary" />,
+		<meta key="misc2" name="twitter:card" content={twitterCardType} />,
 		<meta key="misc3" name="twitter:site" content="@pubpub" />,
 	];
 

@@ -13,3 +13,11 @@ $bp: vendor.$bp-namespace;
 		flex: initial;
 	}
 }
+
+.#{$bp}-tooltip {
+	.#{$bp}-popover-content {
+		.datacite-deposit-attr-tooltip {
+			font-family: 'Courier New', Courier, monospace;
+		}
+	}
+}

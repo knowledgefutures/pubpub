@@ -197,7 +197,11 @@ export default function Deposit(props: Props) {
 						/>
 					)}
 					{!disabledDueToNoReleases && (
-						<DataciteDeposit {...props} onDepositSuccess={onDepositSuccess} />
+						<DataciteDeposit
+							{...props}
+							key={String(persistingDoiSuffix)}
+							onDepositSuccess={onDepositSuccess}
+						/>
 					)}
 				</>
 			);

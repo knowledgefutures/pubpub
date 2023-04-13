@@ -19,6 +19,7 @@ import {
 import { DepositTarget } from 'types';
 import { exists, expect } from 'utils/assert';
 import { aes256Decrypt } from 'utils/crypto';
+import { ORCID_PATTERN } from 'utils/orcid';
 
 function transformResourceKindToDataciteResourceType(kind: ResourceKind) {
 	switch (kind) {
@@ -98,13 +99,15 @@ function transformResourceRelationToDataciteRelationType(
 }
 
 function renderCreator(contribution: ResourceContribution) {
+	const orcidMatches = contribution.contributor.orcid?.match(ORCID_PATTERN);
+	const orcid = orcidMatches?.[0];
 	return (
 		<creator>
 			<creatorName>{contribution.contributor.name}</creatorName>
-			{contribution.contributor.orcid ? (
+			{orcid ? (
 				// @ts-expect-error
 				<nameIdentifier schemeURI="https://orcid.org/" nameIdentifierScheme="ORCID">
-					{contribution.contributor.orcid}
+					{orcid}
 					{/* @ts-expect-error */}
 				</nameIdentifier>
 			) : undefined}
@@ -117,6 +120,8 @@ function renderCreator(contribution: ResourceContribution) {
 }
 
 function renderContributor(contribution: ResourceContribution) {
+	const orcidMatches = contribution.contributor.orcid?.match(ORCID_PATTERN);
+	const orcid = orcidMatches?.[0];
 	return (
 		<contributor
 			contributorType={transformResourceContributorRoleToDataciteContributorType(
@@ -124,6 +129,13 @@ function renderContributor(contribution: ResourceContribution) {
 			)}
 		>
 			<contributorName>{contribution.contributor.name}</contributorName>
+			{orcid ? (
+				// @ts-expect-error
+				<nameIdentifier schemeURI="https://orcid.org/" nameIdentifierScheme="ORCID">
+					{orcid}
+					{/* @ts-expect-error */}
+				</nameIdentifier>
+			) : undefined}
 			{contribution.contributorAffiliation ? (
 				// @ts-expect-error
 				<affiliation>{contribution.contributorAffiliation}</affiliation>

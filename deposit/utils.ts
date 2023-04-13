@@ -6,9 +6,12 @@ import { AnyResource, Resource } from './resource';
 function filterForMutuallyApprovedEdges(pubEdges: PubEdge[]) {
 	let i = 0;
 	while (i < pubEdges.length) {
-		const { approvedByTarget, relationType } = pubEdges[i];
+		const { approvedByTarget, relationType, externalPublicationId } = pubEdges[i];
 		if (
 			(relationType === RelationType.Supplement || relationType === RelationType.Preprint) &&
+			// We don't filter external publication connections since they cannot be
+			// approved (they exist off PubPub).
+			!externalPublicationId &&
 			!approvedByTarget
 		) {
 			pubEdges.splice(i, 1);

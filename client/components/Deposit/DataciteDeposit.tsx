@@ -1,5 +1,5 @@
 import { Callout } from '@blueprintjs/core';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { assert, expect } from 'utils/assert';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -82,6 +82,13 @@ export default function DataciteDeposit(props: Props) {
 	}, [status, fetchDepositPreview, submitDeposit]);
 	const depositRecord =
 		'pub' in props ? props.pub.crossrefDepositRecord : props.collection.crossrefDepositRecord;
+	const pub = 'pub' in props ? props.pub : undefined;
+
+	useEffect(() => {
+		if (pub && pub.releases.length > 0) {
+			fetchDepositPreview();
+		}
+	}, [pub, fetchDepositPreview]);
 
 	return (
 		<div className="datacite-deposit">

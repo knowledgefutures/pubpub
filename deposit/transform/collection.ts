@@ -52,12 +52,14 @@ export async function transformCollectionToResource(
 	const facets = await fetchFacetsForScope({ collectionId: collection.id }, ['License']);
 	const license = licenseDetailsByKind[facets.License.value.kind];
 	const contributions: ResourceContribution[] =
-		collection.attributions?.flatMap(
-			(attribution) =>
-				attribution.roles?.map((role) =>
-					transformCollectionAttributionToResourceContribution(attribution, role),
-				) ?? transformCollectionAttributionToResourceContribution(attribution, 'Other'),
-		) ?? [];
+		collection.attributions
+			?.sort((a, b) => a.order - b.order)
+			.map((attribution) =>
+				transformCollectionAttributionToResourceContribution(
+					attribution,
+					attribution.roles?.[0] ?? 'Other',
+				),
+			) ?? [];
 	const collectionResource: Resource = {
 		kind: getResourceKindForCollection(collection),
 		title: collection.title,

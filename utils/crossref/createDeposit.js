@@ -110,8 +110,10 @@ const getPubDoiPart = (context, doiTarget, depositTarget) => {
 		assertParentToSupplementHasDoi(parentPub);
 
 		doi = createComponentDoi(parentPub, pub);
+	} else if (pub.crossrefDepositRecordId) {
+		doi = pub.doi;
 	} else {
-		doi = pub.doi || createDoi(community, pub, depositTarget);
+		doi = createDoi(community, pub, depositTarget);
 	}
 
 	return { pub: doi };

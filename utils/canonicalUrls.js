@@ -28,9 +28,6 @@ export const pubShortUrl = (pub) => {
 };
 
 export const pubUrl = (community, pub, options = {}) => {
-	const skipCommunity = community === null || isQubQub();
-	const baseCommunityUrl = skipCommunity ? '' : communityUrl(community);
-	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
 	const {
 		isDraft,
 		historyKey,
@@ -41,7 +38,14 @@ export const pubUrl = (community, pub, options = {}) => {
 		query,
 		download,
 		hash,
+		absolute,
 	} = options;
+
+	// Include the community in the URL if the absolute flag is set to true.
+	const skipCommunity = absolute ? false : community === null || isQubQub();
+	const baseCommunityUrl = skipCommunity ? '' : communityUrl(community);
+
+	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
 
 	if (download) {
 		const downloadType = typeof download === 'string' ? `/${download}` : '';

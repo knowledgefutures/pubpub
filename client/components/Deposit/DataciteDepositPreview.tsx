@@ -1,4 +1,4 @@
-import { IconName, ITreeNode, Tree } from '@blueprintjs/core';
+import { Classes, IconName, ITreeNode, Tree, Tooltip } from '@blueprintjs/core';
 import React, { MouseEvent, useCallback, useLayoutEffect, useMemo, useReducer } from 'react';
 
 import { expect } from 'utils/assert';
@@ -87,11 +87,15 @@ const supportedAttributes = new Set([
 	'descriptionType',
 	'relatedItemType',
 	'relationType',
+	'nameIdentifierScheme',
+	'schemeURI',
 ]);
+
+const dateNodes = new Set(['date']);
 
 function depositNodeToBlueprintTreeNode(node: DepositNode): ITreeNode | undefined {
 	if (node.type === 'text') {
-		return { id: node.value, label: node.value };
+		return { id: `${node.type}:${node.value}`, label: node.value };
 	}
 	const icon = nodeNameToIcon[node.name];
 	if (node.children.length === 0) {
@@ -101,18 +105,38 @@ function depositNodeToBlueprintTreeNode(node: DepositNode): ITreeNode | undefine
 		node.attributes &&
 		Object.entries(node.attributes).filter(([key]) => supportedAttributes.has(key));
 	const label =
-		node.name +
-		(nodeAttrs && nodeAttrs.length > 0
-			? `(${nodeAttrs.map(([key, value]) => `${key}=${value}`).join(',')})`
-			: '');
-	const id = node.name + ',' + label;
-	const sharedAttrs = { id, label, icon: icon as IconName };
+		nodeAttrs && nodeAttrs.length > 0 ? (
+			<Tooltip
+				className={Classes.TOOLTIP_INDICATOR}
+				content={
+					<div className="datacite-deposit-attr-tooltip">
+						{nodeAttrs.map(([key, value]) => (
+							<React.Fragment key={key}>
+								<dt>{key}</dt>
+								<dd>{String(value)}</dd>
+							</React.Fragment>
+						))}
+					</div>
+				}
+			>
+				{node.name}
+			</Tooltip>
+		) : (
+			node.name
+		);
+	const sharedAttrs = {
+		id: `${node.type}:${node.name}:${JSON.stringify(nodeAttrs)}`,
+		label,
+		icon: icon as IconName,
+	};
 	if (node.children.length === 1) {
 		if (node.children[0].type === 'text') {
 			const firstChild = node.children[0];
 			return {
 				...sharedAttrs,
-				secondaryLabel: firstChild.value,
+				secondaryLabel: dateNodes.has(node.name)
+					? new Date(firstChild.value).toString()
+					: firstChild.value,
 			};
 		}
 		return {

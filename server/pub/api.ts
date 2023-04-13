@@ -141,7 +141,7 @@ app.get(
 	wrap(async (req, res) => {
 		const { pubId } = req.params;
 		const pub = await findPub(pubId);
-		if (!pub) {
+		if (!pub || pub.releases.length === 0) {
 			return new NotFoundError();
 		}
 		const resource = await transformPubToResource(

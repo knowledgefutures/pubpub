@@ -56,6 +56,9 @@ export async function submitResource(
 	const depositResult = await (scope.crossrefDepositRecordId
 		? updateDataciteDoiMetadata
 		: createDataciteDoiWithMetadata)(resourceXml, resourceUrl, scopeDoi, depositTarget);
+	if (depositResult.errors?.length > 0) {
+		throw new Error('An unexpected error occurred when submitting the deposit to DataCite');
+	}
 	await Promise.all([
 		persistDoiData(
 			requestIds,

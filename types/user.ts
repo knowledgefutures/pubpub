@@ -21,6 +21,7 @@ export type User = MinimalUser & {
 	twitter: string;
 	github: string;
 	googleScholar: string;
+	authRedirectHost?: string;
 };
 
 export type UserWithPrivateFields = User & {

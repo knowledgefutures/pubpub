@@ -38,6 +38,7 @@ export default (sequelize, dataTypes) => {
 					isLowercase: true,
 				},
 			},
+			authRedirectHost: { type: dataTypes.TEXT },
 			location: { type: dataTypes.TEXT },
 			website: { type: dataTypes.TEXT },
 			facebook: { type: dataTypes.TEXT },

@@ -19,7 +19,12 @@ export const updateNodeAttrsById = (editorView: EditorView, id: string, attrs: N
 		}
 	});
 	if (foundNode && foundNodePos !== null) {
-		tr.setNodeMarkup(foundNodePos, undefined, { ...(foundNode as Node).attrs, ...attrs });
+		tr.setNodeMarkup(
+			foundNodePos,
+			undefined,
+			{ ...(foundNode as Node).attrs, ...attrs },
+			(foundNode as any).marks,
+		);
 		editorView.dispatch(tr);
 	}
 };

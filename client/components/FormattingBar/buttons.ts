@@ -19,6 +19,11 @@ import {
 	subscriptToggle,
 	superscriptToggle,
 } from '../Editor/commands';
+import {
+	acceptSuggestedEditSpec,
+	rejectSuggestedEditSpec,
+	toggleSuggestedEditsSpec,
+} from '../Editor/plugins/suggestedEdits';
 import { getCurrentNodeLabels, EditorChangeObject } from '../Editor';
 import {
 	ControlsMath,
@@ -303,6 +308,28 @@ export const simpleMedia: FormattingBarButtonData = {
 	isMedia: true,
 };
 
+export const suggestedEditsToggle: FormattingBarButtonData = {
+	key: 'suggested-edits-toggle',
+	title: 'Toggle suggestion mode',
+	icon: 'highlight',
+	isToggle: true,
+	command: toggleSuggestedEditsSpec,
+};
+
+export const suggestedEditsReject: FormattingBarButtonData = {
+	key: 'suggested-edits-reject',
+	title: 'Reject suggestion',
+	icon: 'cross',
+	command: rejectSuggestedEditSpec,
+};
+
+export const suggestedEditsAccept: FormattingBarButtonData = {
+	key: 'suggested-edits-accept',
+	title: 'Accept suggestion',
+	icon: 'tick',
+	command: acceptSuggestedEditSpec,
+};
+
 export const minimalButtonSet = [[strong, em, link, rightToLeft, math]];
 export const abstractButtonSet = [[strong, em, link, rightToLeft, math]];
 export const reviewButtonSet = [
@@ -327,7 +354,12 @@ export const reviewButtonSet = [
 ];
 
 export const discussionButtonSet = [[strong, em, link], [rightToLeft], [simpleMedia]];
-export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
+
+export const inlineMenuButtonSet = [
+	[heading1, heading2, strong, em, link],
+	[suggestedEditsReject, suggestedEditsAccept],
+];
+
 export const workflowButtonSet = [
 	[heading1, heading2, strong, em, link],
 	[rightToLeft],
@@ -337,6 +369,7 @@ export const workflowButtonSet = [
 export const fullButtonSet = [
 	[alignLeft, alignCenter, alignRight],
 	[rightToLeft],
+	[suggestedEditsToggle, suggestedEditsReject, suggestedEditsAccept],
 	[
 		strong,
 		em,

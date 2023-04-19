@@ -21,20 +21,12 @@ type InitialValuesOptions = {
 	nodeLabels: NodeLabelMap;
 	initialContent: DocJson;
 	isReadOnly: boolean;
-	nodeOptions: Record<string, any>;
 };
 
 const getInitialOptions = (options: InitialValuesOptions) => {
-	const {
-		nodeLabels,
-		noteManager,
-		customMarks,
-		customNodes,
-		initialContent,
-		isReadOnly,
-		nodeOptions,
-	} = options;
-	const schema = buildSchema(customNodes, customMarks, nodeOptions);
+	const { nodeLabels, noteManager, customMarks, customNodes, initialContent, isReadOnly } =
+		options;
+	const schema = buildSchema(customNodes, customMarks);
 	const hydratedDoc = schema.nodeFromJSON(initialContent);
 	const initialDocNode = isReadOnly ? addTemporaryIdsToDoc(hydratedDoc) : hydratedDoc;
 	const staticContent = renderStatic({

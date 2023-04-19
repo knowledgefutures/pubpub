@@ -1,9 +1,11 @@
 import { Node } from 'prosemirror-model';
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Step, ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
 import { generateHash } from '../utils';
+
+export const idsPluginKey = new PluginKey('ids');
 
 const isPasteStep = (step: Step): step is ReplaceStep | ReplaceAroundStep =>
 	'from' in step && 'slice' in step;
@@ -53,6 +55,7 @@ const getIdsTransactionForState = (
 						pos,
 						node.type,
 						updatedNodeAttrsWithNewRandomId(node),
+						node.marks,
 					);
 				} else {
 					// If it is in the pasted range, but we haven't seen the ID
@@ -69,23 +72,38 @@ const getIdsTransactionForState = (
 				// If it's not in pasted range and we've seen the ID, that means it's
 				// a duplicate from before the time of unique IDs. Change the ID.
 				mustReturnTransaction = true;
-				transaction.setNodeMarkup(pos, node.type, updatedNodeAttrsWithNewRandomId(node));
+				transaction.setNodeMarkup(
+					pos,
+					node.type,
+					updatedNodeAttrsWithNewRandomId(node),
+					node.marks,
+				);
 			} else {
 				seenIds.add(node.attrs.id);
 				if (possibleChangesForPastedNodes[node.attrs.id]) {
 					const newChange = possibleChangesForPastedNodes[node.attrs.id];
 					mustReturnTransaction = true;
-					transaction.setNodeMarkup(newChange.offset, newChange.type, newChange.attrs);
+					transaction.setNodeMarkup(
+						newChange.offset,
+						newChange.type,
+						newChange.attrs,
+						node.marks,
+					);
 				}
 			}
 		} else if (nodeTypeHasId) {
 			// If it doesn't have an ID, assign one as long as its
 			// schema supports ID fields.
 			mustReturnTransaction = true;
-			transaction.setNodeMarkup(pos, node.type, updatedNodeAttrsWithNewRandomId(node));
+			transaction.setNodeMarkup(
+				pos,
+				node.type,
+				updatedNodeAttrsWithNewRandomId(node),
+				node.marks,
+			);
 		}
 	});
-
+	transaction.setMeta(idsPluginKey, true);
 	return mustReturnTransaction ? transaction : null;
 };
 
@@ -94,6 +112,7 @@ export default (_, props) => {
 		return [];
 	}
 	return new Plugin({
+		key: idsPluginKey,
 		view: (editorView: EditorView) => {
 			const transaction = getIdsTransactionForState(editorView.state);
 			if (transaction) {

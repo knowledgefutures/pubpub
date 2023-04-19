@@ -35,7 +35,6 @@ type Props = {
 	initialContent?: DocJson;
 	isReadOnly?: boolean;
 	nodeLabels?: NodeLabelMap;
-	nodeOptions?: Record<string, any>;
 	onEdit?: OnEditFn;
 	onChange?: (editorChangeObject: EditorChangeObject) => unknown;
 	onError?: (err: Error) => unknown;
@@ -59,7 +58,6 @@ const Editor = (props: Props) => {
 		enableSuggestions = false,
 		initialContent: providedInitialContent,
 		isReadOnly = false,
-		nodeOptions = {},
 		onChange,
 		onError,
 		onEdit,
@@ -76,7 +74,6 @@ const Editor = (props: Props) => {
 
 	const { initialDocNode, schema, staticContent } = useInitialValues({
 		nodeLabels,
-		nodeOptions,
 		noteManager,
 		customNodes,
 		customMarks,

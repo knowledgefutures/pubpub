@@ -55,10 +55,15 @@ export const tableToggleLabel = createTableCommandSpec(
 		const table = findCurrentTable(state);
 		if (table) {
 			const { tr } = state;
-			tr.setNodeMarkup(table.pos, table.node.type, {
-				...table.node.attrs,
-				hideLabel: !table.node.attrs.hideLabel,
-			});
+			tr.setNodeMarkup(
+				table.pos,
+				table.node.type,
+				{
+					...table.node.attrs,
+					hideLabel: !table.node.attrs.hideLabel,
+				},
+				table.node.marks,
+			);
 			if (dispatch) {
 				dispatch(tr);
 			}

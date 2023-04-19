@@ -21,10 +21,15 @@ export default (_, props) => {
 						.replace(/\s/gi, '-');
 					if (!node.attrs.fixedId && node.attrs.id !== newId) {
 						changedId = true;
-						transaction.setNodeMarkup(offset, node.type, {
-							...node.attrs,
-							id: newId,
-						});
+						transaction.setNodeMarkup(
+							offset,
+							node.type,
+							{
+								...node.attrs,
+								id: newId,
+							},
+							node.marks,
+						);
 					}
 				}
 			});

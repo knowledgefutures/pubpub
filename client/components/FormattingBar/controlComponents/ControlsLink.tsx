@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDebounce } from 'use-debounce';
-import { moveToEndOfSelection } from 'components/Editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
+import { useDebounce } from 'use-debounce';
+import { useUpdateEffect } from 'react-use';
+
+import { moveToEndOfSelection } from 'components/Editor';
 import { usePubContext } from 'containers/Pub/pubHooks';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
@@ -36,7 +38,7 @@ const ControlsLink = (props: Props) => {
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(() => activeLink.updateAttrs({ href: debouncedHref }), [debouncedHref]);
+	useUpdateEffect(() => activeLink.updateAttrs({ href: debouncedHref }), [debouncedHref]);
 
 	useEffect(() => {
 		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.

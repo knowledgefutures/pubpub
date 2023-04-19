@@ -41,15 +41,16 @@ async function main() {
 				members,
 				async ({ user }) => {
 					try {
+						const email = (user as any).email;
 						// eslint-disable-next-line no-console
-						console.log(`user ${user.id} ${user.email}`);
+						console.log(`user ${user.id} ${email}`);
 						// Create an activity digest email
 						const scope = { communityId: community.id };
 						const digest = await renderDigestEmail(community, { scope, user });
 						if (digest === null) return;
 						await mg.messages.create('mg.pubpub.org', {
 							from: 'PubPub Team <hello@mg.pubpub.org>',
-							to: [user.email],
+							to: [email],
 							subject: `${community.title} daily activity digest`,
 							html: digest,
 							'h:Reply-To': 'hello@pubpub.org',

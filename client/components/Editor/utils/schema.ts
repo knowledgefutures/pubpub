@@ -1,27 +1,26 @@
 import { Schema } from 'prosemirror-model';
 
+import { mapObject } from 'utils/objects';
 import { defaultNodes, defaultMarks } from 'components/Editor/schemas';
+import {
+	marks as suggestedEditMarks,
+	amendNodeSpecWithSuggestedEdits,
+} from 'components/Editor/plugins/suggestedEdits/schema';
 
-export const buildSchema = (customNodes = {}, customMarks = {}, nodeOptions = {}) => {
-	const schemaNodes = {
-		...defaultNodes,
-		...customNodes,
-	};
+export const buildSchema = (customNodes = {}, customMarks = {}) => {
+	const schemaNodes = mapObject(
+		{
+			...defaultNodes,
+			...customNodes,
+		},
+		(nodeSpec, nodeKey) => amendNodeSpecWithSuggestedEdits(nodeKey, nodeSpec),
+	);
+
 	const schemaMarks = {
 		...defaultMarks,
 		...customMarks,
+		...suggestedEditMarks,
 	};
-
-	/* Overwrite defaultOptions with custom supplied nodeOptions */
-	Object.keys(nodeOptions).forEach((nodeKey) => {
-		const nodeSpec = schemaNodes[nodeKey];
-		if (nodeSpec) {
-			schemaNodes[nodeKey].defaultOptions = {
-				...nodeSpec.defaultOptions,
-				...nodeOptions[nodeKey],
-			};
-		}
-	});
 
 	/* Filter out undefined (e.g. overwritten) nodes and marks */
 	Object.keys(schemaNodes).forEach((nodeKey) => {

@@ -1,0 +1,77 @@
+@use 'sass:math';
+
+$addition: forestgreen;
+$modification: gold;
+$removal: red;
+
+@mixin block-border($kind, $color, $border-total-width: 8px, $border-visible-fraction: 0.2) {
+	$width-var: var(--suggestion-#{$kind}-width);
+	--suggestion-#{$kind}-width: #{$border-total-width};
+	border-width: 0 0 0 $width-var;
+	border-style: solid;
+	border-image: linear-gradient(
+			to right,
+			$color 0,
+			$color 100% * $border-visible-fraction,
+			transparent 100% * $border-visible-fraction,
+			transparent 100%
+		)
+		1 100%;
+	transform: translateX(calc(-1 * $width-var));
+
+	* {
+		--suggestion-#{$kind}-width: 0px;
+	}
+}
+
+@mixin corner-triangle($size, $color) {
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-width: $size $size 0 0;
+		border-color: $color transparent transparent transparent;
+	}
+}
+
+span[data-suggestion-mark='true'][data-suggestion-kind='addition'] {
+	background-color: rgba($addition, 0.2);
+}
+
+span[data-suggestion-mark='true'][data-suggestion-kind='removal'] {
+	text-decoration: 2px $removal line-through;
+}
+
+span[data-suggestion-mark='true'][data-suggestion-kind='modification'] {
+	background-color: rgba($modification, 0.2);
+}
+
+> *[data-suggestion-kind='addition'] {
+	@include block-border('addition', rgba($addition, 0.5));
+}
+
+> *[data-suggestion-kind='removal'] {
+	@include block-border('removal', rgba($removal, 0.5));
+}
+
+> *[data-suggestion-kind='modification'] {
+	@include block-border('modifciation', rgba($modification, 0.5));
+}
+
+p > *[data-suggestion-kind='modification'] {
+	background-color: rgba($modification, 0.2);
+}
+
+.tableWrapper:not([data-suggestion-kind='addition']) {
+	tr > *[data-suggestion-kind='addition'] {
+		@include corner-triangle(6px, $addition);
+	}
+
+	tr > *[data-suggestion-kind='removal'] {
+		@include corner-triangle(6px, $removal);
+	}
+}

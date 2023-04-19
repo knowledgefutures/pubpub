@@ -41,16 +41,20 @@ const FormattingBar = (props: Props) => {
 		controlsConfiguration = {},
 		isTranslucent = false,
 		citationStyle = 'apa-7',
-		buttons,
 	} = props;
 
 	const editorChangeObject = propsEditorChangeObject || shimEditorChangeObject;
-	const { communityData } = usePageContext();
+	const { communityData, featureFlags } = usePageContext();
+	// Hide suggested edits buttons when feature flag is off
+	const buttons = featureFlags.suggestedEdits
+		? props.buttons
+		: props.buttons.map((arr) => {
+				return arr.filter((button) => !button.key.startsWith('suggested-edits'));
+		  });
 	const buttonElementRefs = useRefMap();
 	const wrapperRef = useRef<null | HTMLDivElement>(null);
 	const toolbar = useToolbarState({ loop: true });
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
-
 	const {
 		openedButton,
 		setOpenedButton,

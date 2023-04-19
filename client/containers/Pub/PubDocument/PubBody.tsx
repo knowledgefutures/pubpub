@@ -9,6 +9,8 @@ import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
 import { EditorChangeObject, CollaborativeEditorStatus } from 'client/components/Editor';
 
 import { useFacetsQuery } from 'client/utils/useFacets';
+import buildSuggestedEdits from 'client/components/Editor/plugins/suggestedEdits';
+import { usePageContext } from 'utils/hooks';
 import { usePubContext } from '../pubHooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import PubErrorAlert from './PubErrorAlert';
@@ -47,6 +49,7 @@ const PubBody = (props: Props) => {
 	const [lastSavedTime, setLastSavedTime] = useState<number | null>(null);
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const nodeLabels = useFacetsQuery((F) => F.NodeLabels);
+	const { featureFlags } = usePageContext();
 
 	useBeforeUnload(
 		(status === 'saving' || status === 'disconnected') && !editorErrorTime,
@@ -108,7 +111,10 @@ const PubBody = (props: Props) => {
 				onError={handleError}
 				discussionsOptions={discussionOptions}
 				collaborativeOptions={collaborativeOptions}
-				customPlugins={{ malformedDocPlugin }}
+				customPlugins={{
+					malformedDocPlugin,
+					suggestedEdits: featureFlags.suggestedEdits ? buildSuggestedEdits : null,
+				}}
 			/>
 			<PubErrorAlert
 				pubErrorOccurredAt={editorErrorTime}

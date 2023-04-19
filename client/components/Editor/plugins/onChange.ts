@@ -131,10 +131,15 @@ const updateAttrs = (isNode, editorView) => {
 		const start = editorView.state.selection.from;
 		if (start !== undefined) {
 			const oldNodeAttrs = editorView.state.selection.node.attrs;
-			const transaction = editorView.state.tr.setNodeMarkup(start, null, {
-				...oldNodeAttrs,
-				...newAttrs,
-			});
+			const transaction = editorView.state.tr.setNodeMarkup(
+				start,
+				null,
+				{
+					...oldNodeAttrs,
+					...newAttrs,
+				},
+				editorView.state.selection.node.marks,
+			);
 			if (editorView.state.selection.node.type.isInline) {
 				/* Inline nodeviews lose focus on content change */
 				/* this fixes that issue. */

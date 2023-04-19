@@ -44,7 +44,7 @@ const orientNodes = (
 	const { tr } = state;
 
 	nodes.forEach(({ pos, node }) =>
-		tr.setNodeMarkup(pos, undefined, { ...node.attrs, [rtlAttr]: attr }),
+		tr.setNodeMarkup(pos, undefined, { ...node.attrs, [rtlAttr]: attr }, node.marks),
 	);
 	dispatch(tr);
 };

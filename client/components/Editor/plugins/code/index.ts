@@ -73,10 +73,15 @@ const createSelect = (
 		const lang = e.target.value === 'none' ? null : e.target.value;
 		if (typeof getPos === 'function') {
 			view.dispatch(
-				view.state.tr.setNodeMarkup(getPos(), undefined, {
-					...node.attrs,
-					lang,
-				}),
+				view.state.tr.setNodeMarkup(
+					getPos(),
+					undefined,
+					{
+						...node.attrs,
+						lang,
+					},
+					node.marks,
+				),
 			);
 		}
 	};

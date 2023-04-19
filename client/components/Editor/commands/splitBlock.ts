@@ -12,10 +12,15 @@ export const splitBlockPreservingAttrs = (attrs: string[]) => {
 				const targetNodePosition = tr.selection.$from.before();
 				const targetNode = tr.doc.nodeAt(targetNodePosition);
 				const sourceNode = previousSelectionFrom.node();
-				tr.setNodeMarkup(targetNodePosition, undefined, {
-					...targetNode?.attrs,
-					...pick(sourceNode.attrs, attrs),
-				});
+				tr.setNodeMarkup(
+					targetNodePosition,
+					undefined,
+					{
+						...targetNode?.attrs,
+						...pick(sourceNode.attrs, attrs),
+					},
+					targetNode?.marks,
+				);
 				dispatch(tr);
 			}
 		});

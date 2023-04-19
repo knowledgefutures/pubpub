@@ -38,31 +38,5 @@ export default {
 			const transaction = view.state.tr.replaceSelectionWith(discussionNode);
 			view.dispatch(transaction);
 		},
-		defaultOptions: {
-			getThreads: () => {
-				return [];
-			},
-			getPubData: () => {
-				return undefined;
-			},
-			getLocationData: () => {
-				return undefined;
-			},
-			getLoginData: () => {
-				return undefined;
-			},
-			getOnPostDiscussion: () => {
-				return undefined;
-			},
-			getOnPutDiscussion: () => {
-				return undefined;
-			},
-			getGetHighlightContent: () => {
-				return undefined;
-			},
-			getHandleQuotePermalink: () => {
-				return undefined;
-			},
-		},
 	},
 };

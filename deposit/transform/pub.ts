@@ -228,22 +228,26 @@ export async function transformPubToResource(
 		});
 	}
 
-	const release = expect(pub.releases[pub.releases.length - 1]);
-	const releaseDoc = await Doc.findByPk(release.docId);
-	const releaseDocNode = Node.fromJSON(schema, releaseDoc.content);
-	pubResource.summaries.push({
-		kind: 'WordCount',
-		value: getWordAndCharacterCountsFromDoc(releaseDocNode)[0],
-		lang: 'eng',
-	});
-	const depositJson = pub.crossrefDepositRecord?.depositJson;
-	pubResource.meta['created-date'] = expect(pub.releases[0]).createdAt.toString();
-	if (depositJson) {
-		const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
-		const dateOfLatestRelease = new Date(release.createdAt);
-		if (dateOfLastDeposit.getTime() !== dateOfLatestRelease.getTime()) {
-			pubResource.meta['updated-date'] = dateOfLatestRelease.toString();
+	const release = pub.releases[pub.releases.length - 1];
+
+	if (release) {
+		const releaseDoc = await Doc.findByPk(release.docId);
+		const releaseDocNode = Node.fromJSON(schema, releaseDoc.content);
+		pubResource.summaries.push({
+			kind: 'WordCount',
+			value: getWordAndCharacterCountsFromDoc(releaseDocNode)[0],
+			lang: 'eng',
+		});
+		const depositJson = pub.crossrefDepositRecord?.depositJson;
+		pubResource.meta['created-date'] = expect(pub.releases[0]).createdAt.toString();
+		if (depositJson) {
+			const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
+			const dateOfLatestRelease = new Date(release.createdAt);
+			if (dateOfLastDeposit.getTime() !== dateOfLatestRelease.getTime()) {
+				pubResource.meta['updated-date'] = dateOfLatestRelease.toString();
+			}
 		}
 	}
+
 	return pubResource;
 }

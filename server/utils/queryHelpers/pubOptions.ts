@@ -166,6 +166,7 @@ export default ({
 					'accentColorDark',
 					'headerLogo',
 					'headerColorType',
+					'publishAs',
 				],
 			},
 		];

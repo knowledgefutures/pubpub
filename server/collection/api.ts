@@ -100,10 +100,14 @@ app.post(
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
-		const dois = await generateDoi(
-			{ communityId: collection.communityId, collectionId, pubId: undefined },
-			'collection',
-		);
+		const collectionDoi =
+			collection.doi ??
+			(
+				await generateDoi(
+					{ communityId: collection.communityId, collectionId, pubId: undefined },
+					'collection',
+				)
+			).collection;
 		const resource = await transformCollectionToResource(
 			// @ts-expect-error
 			collection.get({ plain: true }),
@@ -113,7 +117,7 @@ app.post(
 			const { resourceAst } = await submitResource(
 				collection,
 				resource,
-				expect(dois.collection),
+				expect(collectionDoi),
 				{ collectionId },
 			);
 			return res.status(200).json(resourceAst);
@@ -136,10 +140,14 @@ app.post(
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
-		const dois = await generateDoi(
-			{ communityId: collection.communityId, collectionId, pubId: undefined },
-			'collection',
-		);
+		const collectionDoi =
+			collection.doi ??
+			(
+				await generateDoi(
+					{ communityId: collection.communityId, collectionId, pubId: undefined },
+					'collection',
+				)
+			).collection;
 		const resource = await transformCollectionToResource(
 			// @ts-expect-error
 			collection.get({ plain: true }),
@@ -149,7 +157,7 @@ app.post(
 			const { resourceAst } = await prepareResource(
 				collection,
 				resource,
-				expect(dois.collection),
+				expect(collectionDoi),
 			);
 			return res.status(200).json(resourceAst);
 		} catch (error) {

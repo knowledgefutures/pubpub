@@ -141,8 +141,8 @@ app.get(
 	wrap(async (req, res) => {
 		const { pubId } = req.params;
 		const pub = await findPub(pubId);
-		if (!pub || pub.releases.length === 0) {
-			return new NotFoundError();
+		if (!pub) {
+			throw new NotFoundError();
 		}
 		const resource = await transformPubToResource(
 			// @ts-expect-error
@@ -167,10 +167,14 @@ app.post(
 		if (!pub) {
 			return new NotFoundError();
 		}
-		const dois = await generateDoi(
-			{ communityId: pub.communityId, pubId, collectionId: undefined },
-			'pub',
-		);
+		const pubDoi =
+			pub.doi ??
+			(
+				await generateDoi(
+					{ communityId: pub.communityId, pubId, collectionId: undefined },
+					'pub',
+				)
+			).pub;
 		const resource = await transformPubToResource(
 			// @ts-expect-error
 			pub.get({ plain: true }),
@@ -182,7 +186,7 @@ app.post(
 			return res.status(400).json({ error: (error as Error).message });
 		}
 		try {
-			const { resourceAst } = await submitResource(pub, resource, expect(dois.pub), {
+			const { resourceAst } = await submitResource(pub, resource, expect(pubDoi), {
 				pubId,
 			});
 			return res.status(200).json(resourceAst);
@@ -203,10 +207,14 @@ app.post(
 			throw new ForbiddenError();
 		}
 		const pub = await findPub(pubId);
-		const dois = await generateDoi(
-			{ communityId: pub.communityId, pubId, collectionId: undefined },
-			'pub',
-		);
+		const pubDoi =
+			pub.doi ??
+			(
+				await generateDoi(
+					{ communityId: pub.communityId, pubId, collectionId: undefined },
+					'pub',
+				)
+			).pub;
 		const resource = await transformPubToResource(
 			// @ts-expect-error
 			pub.get({ plain: true }),
@@ -218,7 +226,7 @@ app.post(
 			return res.status(400).json({ error: (error as Error).message });
 		}
 		try {
-			const { resourceAst } = await prepareResource(pub, resource, expect(dois.pub));
+			const { resourceAst } = await prepareResource(pub, resource, expect(pubDoi));
 			return res.status(200).json(resourceAst);
 		} catch (error) {
 			return res.status(400).json({ error: (error as Error).message });

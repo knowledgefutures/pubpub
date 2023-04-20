@@ -2,7 +2,6 @@ figure {
 	display: block;
 	text-align: center;
 	margin: 0;
-	width: 100%;
 
 	& > * {
 		pointer-events: none;
@@ -37,16 +36,12 @@ figure {
 
 	@for $i from 1 through 100 {
 		&[data-size='#{$i}'] {
-			& > :first-child {
-				width: percentage($i * 0.01);
-			}
+			width: percentage($i * 0.01);
 		}
 	}
 
 	&[data-align='full'] {
-		& > :first-child {
-			width: 100%;
-		}
+		width: 100%;
 	}
 
 	figcaption {

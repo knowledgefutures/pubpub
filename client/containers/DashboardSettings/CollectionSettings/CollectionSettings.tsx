@@ -16,7 +16,7 @@ import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {
-		depositTarget: DepositTarget;
+		depositTarget?: DepositTarget | null;
 	};
 };
 
@@ -81,7 +81,7 @@ const CollectionSettings = (props: Props) => {
 						collection={collection}
 						communityData={communityData}
 						onUpdateCollection={updateCollection}
-						allowUpdateDoi={depositTarget.service !== 'datacite'}
+						allowUpdateDoi={depositTarget?.service !== 'datacite'}
 					/>
 				</SettingsSection>,
 			],
@@ -110,7 +110,7 @@ const CollectionSettings = (props: Props) => {
 			sections: [<CommunityOrCollectionLevelPubSettings />],
 		},
 		collection.kind !== 'tag' &&
-			depositTarget.service === 'datacite' && {
+			depositTarget?.service === 'datacite' && {
 				id: 'doi',
 				title: 'DOI',
 				icon: 'barcode',

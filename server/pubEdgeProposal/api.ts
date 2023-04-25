@@ -22,20 +22,13 @@ app.get(
 			if (pub) {
 				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ targetPub: any; }' is not assignable to ty... Remove this comment to see the full error message
 				edge = { targetPub: pub };
+			} else if (isDoi(object) || isDoi(extractDoiFromOrgUrl(url))) {
+				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: { avatar: null; contr... Remove this comment to see the full error message
+				edge = await createPubEdgeProposalFromCrossrefDoi(object);
 			} else {
-				const doi = await extractDoiFromOrgUrl(url);
-
-				if (doi) {
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: { avatar: null; contr... Remove this comment to see the full error message
-					edge = await createPubEdgeProposalFromCrossrefDoi(doi);
-				} else {
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: any; } | null' is not... Remove this comment to see the full error message
-					edge = await createPubEdgeProposalFromArbitraryUrl(url);
-				}
+				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: any; } | null' is not... Remove this comment to see the full error message
+				edge = await createPubEdgeProposalFromArbitraryUrl(url);
 			}
-		} else if (isDoi(object)) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: { avatar: null; contr... Remove this comment to see the full error message
-			edge = await createPubEdgeProposalFromCrossrefDoi(object);
 		}
 
 		return res.status(200).json(edge);

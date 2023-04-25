@@ -4,6 +4,7 @@ import { usePendingChanges } from 'utils/hooks';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { apiFetch } from 'client/utils/apiFetch';
 import { Pub as BarePub, InboundEdge, OutboundEdge, PubEdge } from 'types';
+import { usePubContext } from '../Pub/pubHooks';
 
 type Pub = BarePub & {
 	outboundEdges: OutboundEdge[];
@@ -11,9 +12,15 @@ type Pub = BarePub & {
 };
 
 export const useDashboardEdges = (pubData: Pub) => {
-	const [outboundEdges, setOutboundEdges] = useState(sortByRank(pubData.outboundEdges));
+	const [outboundEdges, _setOutboundEdges] = useState(sortByRank(pubData.outboundEdges));
 	const [inboundEdges, setInboundEdges] = useState(sortByRank(pubData.inboundEdges));
 	const { pendingPromise } = usePendingChanges();
+	const { updatePubData } = usePubContext();
+
+	const setOutboundEdges = (nextOutboundEdges: OutboundEdge[]) => {
+		_setOutboundEdges(nextOutboundEdges);
+		updatePubData({ outboundEdges: nextOutboundEdges });
+	};
 
 	const addCreatedOutboundEdge = (createdOutboundEdge) => {
 		setOutboundEdges(sortByRank([...outboundEdges, createdOutboundEdge]));

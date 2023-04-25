@@ -1,5 +1,5 @@
 import app, { wrap } from 'server/server';
-import { ForbiddenError } from 'server/utils/errors';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 
 import {
 	canCreatePubEdge,
@@ -7,7 +7,21 @@ import {
 	canApprovePubEdge,
 	canApprovePubEdgeWithTargetPubId,
 } from './permissions';
-import { createPubEdge, updatePubEdge, destroyPubEdge } from './queries';
+import { createPubEdge, updatePubEdge, destroyPubEdge, getPubEdgeById } from './queries';
+
+app.get(
+	'/api/pubEdges/:id',
+	wrap(async (req, res) => {
+		const edgeId = req.params.id;
+		const edge = await getPubEdgeById(edgeId);
+
+		if (edge) {
+			res.status(200).json(edge);
+		} else {
+			throw new NotFoundError();
+		}
+	}),
+);
 
 app.post(
 	'/api/pubEdges',

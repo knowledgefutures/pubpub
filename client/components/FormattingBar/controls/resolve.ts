@@ -41,7 +41,12 @@ export const resolveControlsConfiguration = (
 		const controlsShown = openedButton.controls.show(editorChangeObject);
 		if (controlsIndicated && controlsShown) {
 			const { title, ariaTitle } = openedButton;
-			const { component, captureFocusOnMount, showCloseButton } = openedButton.controls;
+			const {
+				component,
+				captureFocusOnMount,
+				showCloseButton,
+				hasPadding = true,
+			} = openedButton.controls;
 			if (component) {
 				return {
 					...config,
@@ -50,6 +55,7 @@ export const resolveControlsConfiguration = (
 					showCloseButton: !!showCloseButton,
 					captureFocusOnMount: !!captureFocusOnMount,
 					title: ariaTitle || title,
+					hasPadding,
 				};
 			}
 		}

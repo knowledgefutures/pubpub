@@ -141,6 +141,7 @@ export const link: FormattingBarButtonData = {
 		},
 		show: (changeObject) => !!changeObject.activeLink,
 		floatingPosition: positionNearLink,
+		hasPadding: false,
 	},
 };
 

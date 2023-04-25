@@ -45,6 +45,7 @@ export type ResolvedControlsConfiguration = ControlsConfiguration & {
 	captureFocusOnMount: boolean;
 	showCloseButton: boolean;
 	title: string;
+	hasPadding: boolean;
 };
 
 export type ControlsFloatingPositionFn = (
@@ -61,6 +62,7 @@ export type FormattingBarButtonDataControls = {
 	enterKeyTriggers?: boolean;
 	captureFocusOnMount?: boolean;
 	showCloseButton?: boolean;
+	hasPadding?: boolean;
 };
 
 export type FormattingBarButtonData = {

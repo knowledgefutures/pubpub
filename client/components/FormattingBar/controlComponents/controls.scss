@@ -229,6 +229,9 @@ $bp: vendor.$bp-namespace;
 .controls-reference-component {
 	@include text-fields();
 	display: flex;
+}
+
+.controls-reference-component {
 	& > * {
 		margin-right: 5px;
 	}

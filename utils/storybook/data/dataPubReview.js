@@ -14,7 +14,7 @@ export default {
 	doi: '10.21428/eea8ec7d.4c3a0515',
 	canManage: true,
 	review: null,
-	isReview: true,
+	isReviewingPub: true,
 	communityId: '7808da6b-94d1-436d-ad79-2e036a8e4428',
 	createdAt: '2019-04-02T18:12:05.538Z',
 	updatedAt: '2019-04-30T15:23:17.211Z',

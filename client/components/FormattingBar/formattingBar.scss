@@ -159,11 +159,9 @@ $bp: vendor.$bp-namespace;
 		top: 100%;
 		width: 100%;
 		min-height: 200px;
-		padding: 18px;
 		box-shadow: 0px 10px 5px -7px rgba(0, 0, 0, 0.3);
 	}
 	&.floating {
-		padding: 10px;
 		border-radius: 4px;
 		z-index: 2;
 		width: max-content;
@@ -185,5 +183,13 @@ $bp: vendor.$bp-namespace;
 	*:focus:not(:disabled):not(.#{$bp}-tab) {
 		outline: none;
 		box-shadow: inset 0px 0px 0px 2px white !important;
+	}
+	.has-padding {
+		&:not(.floating) {
+			padding: 18px;
+		}
+		&.floating {
+			padding: 10px;
+		}
 	}
 }

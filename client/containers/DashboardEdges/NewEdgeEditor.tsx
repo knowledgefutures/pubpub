@@ -25,7 +25,7 @@ type Props = {
 	saveButtonLabel?: string;
 };
 
-const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
+export const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
 	return {
 		relationType,
 		pubIsParent: true,
@@ -33,7 +33,7 @@ const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
 	};
 };
 
-const stripMarkupFromString = (string) => {
+export const stripMarkupFromString = (string) => {
 	if (string) {
 		const div = document.createElement('div');
 		div.innerHTML = string;

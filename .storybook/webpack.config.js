@@ -50,6 +50,7 @@ module.exports = ({ config }) => {
 	config.resolve.alias['utils'] = resolve(__dirname, '../utils');
 	config.resolve.alias['types'] = resolve(__dirname, '../types');
 	config.resolve.alias['facets'] = resolve(__dirname, '../facets');
+	config.resolve.alias['deposit'] = resolve(__dirname, '../deposit');
 	config.node = {
 		...config.node,
 		fs: 'empty',

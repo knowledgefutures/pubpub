@@ -28,6 +28,7 @@ const FormattingBarControlsContainer = (props: Props) => {
 		showCloseButton,
 		title,
 		captureFocusOnMount,
+		hasPadding,
 	} = controlsConfiguration;
 	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
 
@@ -65,6 +66,7 @@ const FormattingBarControlsContainer = (props: Props) => {
 				'formatting-bar-controls-container-component',
 				kind === 'floating' && `floating ${Classes.ELEVATION_2}`,
 				isFullScreenWidth && 'full-screen-width',
+				hasPadding && 'has-padding',
 			)}
 			style={{ background: accentColor, ...style }}
 			ref={focusTrap.ref}

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { NonIdealState } from '@blueprintjs/core';
 
@@ -125,10 +125,19 @@ const PubEdgeListing = (props: Props) => {
 		pubData,
 	);
 
-	const [initiallyRenderEmpty] = useState(
+	const [initiallyRenderEmpty, setInitiallyRenderEmpty] = useState(
 		hideIfNoInitialMatches && filteredPubEdgesInContext.length === 0,
 	);
 	const { [index]: activeEdgeInContext, length } = filteredPubEdgesInContext;
+
+	useEffect(() => {
+		const { filteredPubEdgesInContext: initialFilteredPubEdgesInContext } =
+			collateAndFilterPubEdges(initialFilters, pubData);
+
+		if (initialFilteredPubEdgesInContext.length > 0) {
+			setInitiallyRenderEmpty(false);
+		}
+	}, [pubData, initialFilters]);
 
 	const next = useCallback(() => setIndex((i) => (i + 1) % length), [length]);
 	const back = useCallback(() => setIndex((i) => (i - 1 + length) % length), [length]);

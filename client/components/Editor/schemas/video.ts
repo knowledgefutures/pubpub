@@ -19,6 +19,7 @@ export default {
 			align: { default: 'center' },
 			caption: { default: '' },
 			hideLabel: { default: false },
+			loop: { default: false },
 		},
 		reactiveAttrs: {
 			count: counter({ useNodeLabels: true }),
@@ -37,6 +38,7 @@ export default {
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
 						caption: node.firstChild.getAttribute('alt') || '',
+						loop: !!node.firstChild.getAttribute('loop'),
 					};
 				},
 			},
@@ -59,6 +61,7 @@ export default {
 						src: node.attrs.url,
 						alt: node.attrs.caption,
 						'aria-describedby': figcaptionId,
+						loop: node.attrs.loop ? '' : undefined,
 					},
 				],
 				[

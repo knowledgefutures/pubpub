@@ -39,12 +39,13 @@ const ControlsMedia = (props: Props) => {
 		updateAttrs,
 		attrs: { altText },
 	} = pendingAttrs;
-	const { size, align, href, height, caption, url, fullResolution, hideLabel } =
+	const { size, align, href, height, caption, url, fullResolution, hideLabel, loop } =
 		selectedNode.attrs;
 	const nodeSupportsAltText = !!selectedNode.type.spec.attrs?.altText;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);
 	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
+	const nodeSupportsLoop = itemName === 'video';
 
 	const canHideLabel =
 		nodeLabels &&
@@ -59,6 +60,11 @@ const ControlsMedia = (props: Props) => {
 	const toggleResize = useCallback(
 		(e: React.MouseEvent) =>
 			updateNode({ fullResolution: (e.target as HTMLInputElement).checked }),
+		[updateNode],
+	);
+
+	const toggleLoop = useCallback(
+		(e: React.MouseEvent) => updateNode({ loop: (e.target as HTMLInputElement).checked }),
 		[updateNode],
 	);
 
@@ -146,6 +152,16 @@ const ControlsMedia = (props: Props) => {
 				/>
 				<UrlControl onChange={(nextHref) => updateNode({ href: nextHref })} value={href} />
 				<SourceControls selectedNode={selectedNode} updateNode={updateNode} />
+				{nodeSupportsLoop && (
+					<div className="controls-row">
+						<Checkbox
+							onClick={toggleLoop}
+							alignIndicator="right"
+							label="Loop video"
+							checked={loop}
+						/>
+					</div>
+				)}
 				<div className="controls-row">
 					{canSelectResizeOptions && (
 						<Checkbox

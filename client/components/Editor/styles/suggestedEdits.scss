@@ -43,7 +43,11 @@ span[data-suggestion-mark='true'][data-suggestion-kind='addition'] {
 }
 
 span[data-suggestion-mark='true'][data-suggestion-kind='removal'] {
-	text-decoration: 2px $removal line-through;
+	text-decoration-thickness: 2px;
+	text-decoration-color: $removal;
+	-webkit-text-decoration-color: $removal;
+	text-decoration-line: line-through;
+	-webkit-text-decoration-line: line-through;
 }
 
 span[data-suggestion-mark='true'][data-suggestion-kind='modification'] {

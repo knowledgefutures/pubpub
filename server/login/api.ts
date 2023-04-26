@@ -113,6 +113,7 @@ app.post('/api/login', (req, res, next) => {
 				if (err) {
 					throw new Error(err);
 				}
+				res.cookie('pp-cache', 'pp-no-cache');
 				return res.status(201).json('success');
 			});
 		})

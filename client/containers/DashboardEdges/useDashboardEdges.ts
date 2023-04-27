@@ -11,9 +11,9 @@ type Pub = BarePub & {
 	inboundEdges: InboundEdge[];
 };
 
-export const useDashboardEdges = (pubData: Pub) => {
-	const [outboundEdges, _setOutboundEdges] = useState(sortByRank(pubData.outboundEdges));
-	const [inboundEdges, setInboundEdges] = useState(sortByRank(pubData.inboundEdges));
+export const useDashboardEdges = (pubData?: Pub) => {
+	const [outboundEdges, _setOutboundEdges] = useState(sortByRank(pubData?.outboundEdges ?? []));
+	const [inboundEdges, setInboundEdges] = useState(sortByRank(pubData?.inboundEdges ?? []));
 	const { pendingPromise } = usePendingChanges();
 	const { updatePubData } = usePubContext();
 

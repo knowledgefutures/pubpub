@@ -281,20 +281,22 @@ const ControlsLink = (props: Props) => {
 					checked={checkedOpenInNewTab}
 					onChange={toggleOpenInNewTab}
 				/>
-				<Checkbox
-					label={errorCreatingEdge || 'Create a Pub Connection for this URL'}
-					onChange={togglePubEdge}
-					checked={isStatus(
-						status,
-						Status.FetchingEdgeProposal,
-						Status.EditingEdge,
-						Status.UpdatingEdge,
-					)}
-					disabled={
-						isStatus(status, Status.FetchingEdgeProposal, Status.UpdatingEdge) ||
-						!isUrl(href)
-					}
-				/>
+				{inPub && (
+					<Checkbox
+						label={errorCreatingEdge || 'Create a Pub Connection for this URL'}
+						onChange={togglePubEdge}
+						checked={isStatus(
+							status,
+							Status.FetchingEdgeProposal,
+							Status.EditingEdge,
+							Status.UpdatingEdge,
+						)}
+						disabled={
+							isStatus(status, Status.FetchingEdgeProposal, Status.UpdatingEdge) ||
+							!isUrl(href)
+						}
+					/>
+				)}
 				{isStatus(status, Status.FetchingEdgeProposal) && <Spinner />}
 				{isStatus(status, Status.EditingEdge, Status.UpdatingEdge) && (
 					<>

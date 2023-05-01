@@ -42,9 +42,13 @@ const Login = () => {
 			}),
 		})
 			.then(() => {
+				const cacheBreaker = Math.round(new Date().getTime() / 1000);
 				window.location.href = locationData.query.redirect
-					? `/${locationData.query.redirect.replace(/^\/+/, '')}`
-					: '/';
+					? `/${locationData.query.redirect.replace(
+							/^\/+/,
+							'',
+					  )}?breakCache=${cacheBreaker}`
+					: `/?breakCache=${cacheBreaker}`;
 				// window.location.href =
 				// 	`/${trimStart(`${locationData.query.redirect}`, '/')}` || '/';
 			})

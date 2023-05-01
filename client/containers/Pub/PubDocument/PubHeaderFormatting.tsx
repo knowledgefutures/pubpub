@@ -19,7 +19,7 @@ type Props = {
 
 const PubHeaderFormatting = (props: Props) => {
 	const { disabled, editorWrapperRef } = props;
-	const { scopeData } = usePageContext();
+	const { scopeData, featureFlags } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const {
 		pubBodyState: { isReadOnly },
@@ -51,6 +51,17 @@ const PubHeaderFormatting = (props: Props) => {
 				}}
 			/>
 			<div className="right-content">
+				{featureFlags.suggestedEdits && (
+					<FormattingBar
+						buttons={buttons.suggestedEditsButtonSet}
+						editorChangeObject={editorChangeObject || ({} as any)}
+						showBlockTypes={false}
+						controlsConfiguration={{
+							container: editorWrapperRef.current!,
+							isAbsolutelyPositioned: true,
+						}}
+					/>
+				)}
 				{state && <PubWordCountButton doc={state.doc} />}
 				<PubHeaderCollaborators collabData={collabData} />
 				<PubConnectionStatusIndicator />

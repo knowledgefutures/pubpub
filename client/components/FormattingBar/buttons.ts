@@ -331,6 +331,9 @@ export const suggestedEditsAccept: FormattingBarButtonData = {
 	command: acceptSuggestedEditSpec,
 };
 
+export const suggestedEditsButtonSet = [
+	[suggestedEditsToggle, suggestedEditsReject, suggestedEditsAccept],
+];
 export const minimalButtonSet = [[strong, em, link, rightToLeft, math]];
 export const abstractButtonSet = [[strong, em, link, rightToLeft, math]];
 export const reviewButtonSet = [
@@ -370,7 +373,6 @@ export const workflowButtonSet = [
 export const fullButtonSet = [
 	[alignLeft, alignCenter, alignRight],
 	[rightToLeft],
-	[suggestedEditsToggle, suggestedEditsReject, suggestedEditsAccept],
 	[
 		strong,
 		em,

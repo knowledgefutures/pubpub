@@ -4,6 +4,8 @@ import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { getAllPubContributors } from 'utils/contributors';
 
+import { RelationType } from './relations';
+
 export const getHostnameForUrl = (url: string) => {
 	try {
 		const parsedUrl = new URL(url);
@@ -90,4 +92,21 @@ export const getValuesFromPubEdge = (
 		};
 	}
 	return {};
+};
+
+export const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
+	return {
+		relationType,
+		pubIsParent: true,
+		...resource,
+	};
+};
+
+export const stripMarkupFromString = (string) => {
+	if (string) {
+		const div = document.createElement('div');
+		div.innerHTML = string;
+		return div.innerText;
+	}
+	return string;
 };

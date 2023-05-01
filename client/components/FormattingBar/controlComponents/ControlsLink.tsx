@@ -21,12 +21,8 @@ import { usePageContext } from 'utils/hooks';
 import { InboundEdge, OutboundEdge, Pub, PubEdge } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 import { useDashboardEdges } from 'client/containers/DashboardEdges/useDashboardEdges';
-import {
-	createCandidateEdge,
-	stripMarkupFromString,
-} from 'containers/DashboardEdges/NewEdgeEditor';
 import { assert } from 'utils/assert';
-import { relationTypeDefinitions } from 'utils/pubEdge';
+import { relationTypeDefinitions, createCandidateEdge, stripMarkupFromString } from 'utils/pubEdge';
 import { MenuButton } from 'client/components/Menu';
 import { PubEdgeListingCard } from 'components';
 

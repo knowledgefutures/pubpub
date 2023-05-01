@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Callout } from '@blueprintjs/core';
 import classNames from 'classnames';
 
-import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
+import { relationTypeDefinitions, createCandidateEdge, stripMarkupFromString } from 'utils/pubEdge';
 import { assert } from 'utils/assert';
 
 import { PubEdge } from 'types';
@@ -23,23 +23,6 @@ type Props = {
 	loading?: boolean;
 	error?: string;
 	saveButtonLabel?: string;
-};
-
-export const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
-	return {
-		relationType,
-		pubIsParent: true,
-		...resource,
-	};
-};
-
-export const stripMarkupFromString = (string) => {
-	if (string) {
-		const div = document.createElement('div');
-		div.innerHTML = string;
-		return div.innerText;
-	}
-	return string;
 };
 
 const NewEdgeEditor = (props: Props) => {

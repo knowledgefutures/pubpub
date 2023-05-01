@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import cheerio from 'cheerio';
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 
 import { parseUrl } from 'utils/urls';
 import { assignNotNull } from 'utils/objects';
@@ -94,7 +94,13 @@ export const createExternalPublicationFromMicrodata = ($) => {
 };
 
 export const createPubEdgeProposalFromArbitraryUrl = async (url) => {
-	const response = await fetch(url);
+	let response: Response;
+
+	try {
+		response = await fetch(url);
+	} catch {
+		return null;
+	}
 
 	if (!response.ok) {
 		return null;

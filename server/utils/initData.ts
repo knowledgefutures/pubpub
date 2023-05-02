@@ -127,10 +127,14 @@ export const getInitialData = async (
 	}
 
 	if (
-		communityData.domain &&
-		whereQuery.subdomain &&
-		process.env.NODE_ENV === 'production' &&
-		isProd()
+		(communityData.domain &&
+			whereQuery.subdomain &&
+			process.env.NODE_ENV === 'production' &&
+			isProd()) ||
+		(communityData.domain &&
+			communityData.domain === 'duqduqdomaintest.underlay.org' &&
+			whereQuery.subdomain &&
+			isDuqDuq())
 	) {
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}

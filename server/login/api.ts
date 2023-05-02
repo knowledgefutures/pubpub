@@ -114,8 +114,8 @@ app.post('/api/login', (req, res, next) => {
 					throw new Error(err);
 				}
 				res.cookie('pp-cache', 'pp-no-cache', {
-					...(req.get('host')?.includes('pubpub.org') && { domain: '.pubpub.org' }),
-					...(req.get('host')?.includes('duqduq.org') && { domain: '.duqduq.org' }),
+					...(req.get('hostname')?.includes('pubpub.org') && { domain: '.pubpub.org' }),
+					...(req.get('hostname')?.includes('duqduq.org') && { domain: '.duqduq.org' }),
 				});
 				return res.status(201).json('success');
 			});

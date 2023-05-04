@@ -1,0 +1,277 @@
+@mixin list-reset {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.two-column-footer-component {
+	.email-cta {
+		border-top: 1px solid #e0e0e0;
+		padding-top: 3rem;
+		padding-bottom: 4.5rem;
+		text-align: center;
+	}
+
+	.email-cta__container {
+		box-sizing: content-box;
+		padding: 0 6%;
+		margin: 0 auto;
+		max-width: 27.5rem;
+	}
+
+	.email-cta__header_text {
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+		font-weight: bold;
+		font-size: 1.625rem;
+		line-height: 1.15385;
+		font-size: 1.25rem;
+		line-height: 1.2;
+		padding-bottom: 1.5rem;
+		color: #212121;
+	}
+
+	.button {
+		border: none;
+		border-radius: 4px;
+		color: #fff;
+		display: inline-block;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+		font-size: 0.875rem;
+		line-height: 1;
+		font-weight: 500;
+		padding: 1.0625rem 2.5rem 1rem;
+		text-align: center;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+	.button--default {
+		background-color: #087acc;
+		border: 1px solid #087acc;
+		color: #fff;
+		padding: 0.9375rem 2.25rem 0.875rem;
+	}
+
+	.button--default:hover {
+		background-color: #0769b0;
+		border: 1px solid #0769b0;
+		color: #fff;
+	}
+
+	.email-cta__privacy {
+		display: block;
+		font-size: 12px;
+		font-size: 0.75rem;
+		line-height: 2;
+		margin-bottom: 4px;
+		margin-bottom: 0.25rem;
+		margin-top: 12px;
+		margin-top: 0.75rem;
+	}
+
+	.email-cta__privacy_link {
+		color: #757575;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+	}
+
+	a {
+		text-decoration: none;
+		&:hover {
+			color: #087acc;
+		}
+	}
+
+	.columns {
+		display: flex;
+		margin: auto;
+		max-width: 69.625rem;
+		font-size: 11px;
+		padding: 0rem 0.9375rem;
+	}
+
+	small {
+		font-family: 'Noto Serif', serif;
+		font-style: normal;
+		font-size: 0.6875rem;
+		line-height: 2.18182;
+	}
+
+	p {
+		margin-bottom: 0;
+		padding-bottom: 1.5rem;
+	}
+
+	address {
+		font-family: 'Noto Serif', serif;
+		font-style: normal;
+		font-size: 0.6875rem;
+		line-height: 2.18182;
+	}
+
+	.investor-logos {
+		@include list-reset;
+		flex-basis: 100%;
+		border-top: 1px solid #e0e0e0;
+		border-bottom: 1px solid #e0e0e0;
+		margin-bottom: 3rem;
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+	}
+
+	.investor-logos__item {
+		border: 0;
+		display: table-cell;
+		vertical-align: top;
+		padding: 1.5rem;
+		font-family: 'Noto Serif', serif;
+		font-size: 1rem;
+		line-height: 1.5;
+		font-weight: normal;
+	}
+
+	.investor-logos__item + .investor-logos__item {
+		border-left: 1px solid #e0e0e0;
+	}
+
+	.investor-logos__container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 4.5rem;
+		margin: auto;
+		max-width: 11.5625rem;
+		text-align: center;
+	}
+
+	.investor-logos__img {
+		display: block;
+		margin: auto;
+		max-height: 4.5rem;
+		max-width: 100%;
+	}
+
+	.column {
+		flex: 1 50%;
+		width: 50%;
+
+		& .left {
+			float: left;
+		}
+
+		& .right {
+			float: right;
+		}
+	}
+
+	.certification-wrapper {
+		text-align: left;
+	}
+
+	.certification-link {
+		margin: 0rem 0rem 2.9375rem;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+		font-weight: normal;
+		font-size: 0.6875rem;
+		line-height: 2.18182;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		color: #212121;
+		align-items: center;
+		display: inline-flex;
+		flex-flow: row wrap;
+		justify-content: center;
+		max-width: 247px;
+	}
+
+	.certification-link > img {
+		max-height: 100%;
+		max-width: 100%;
+	}
+
+	.footer-navigation__list {
+		@include list-reset;
+		column-count: 2;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+		line-height: 30px;
+		padding-bottom: 4.5rem;
+
+		a {
+			text-decoration: none;
+			text-transform: uppercase;
+		}
+	}
+
+	.social-links {
+		padding: 0rem 0rem 1.1875rem 0rem;
+	}
+
+	.social-links__list {
+		@include list-reset;
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	.github-link-wrapper {
+		.github-link {
+			display: inline-flex;
+			margin: 0rem 0rem 4.5rem;
+			font-size: 0.6875rem;
+			line-height: 2.18182;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			flex-flow: row wrap;
+			min-height: 24px;
+			width: auto;
+			color: #212121;
+			align-items: center;
+			justify-content: start;
+			text-decoration: none;
+
+			.github-link--text {
+				margin: 0.125rem 0rem 0rem 0.4375rem;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 45.625rem) {
+	.two-column-footer-component {
+		text-align: center;
+
+		.columns {
+			flex-direction: column;
+		}
+
+		.column {
+			flex: 1 100%;
+			width: 100%;
+		}
+
+		.footer-navigation__list {
+			column-count: 1;
+		}
+
+		.social-links__list {
+			justify-content: center;
+		}
+
+		.certification-wrapper {
+			text-align: center;
+		}
+	}
+}
+
+@media only screen and (max-width: 32.5rem) {
+	.two-column-footer-component {
+		.investor-logos {
+			display: block;
+
+			.investor-logos__item + .investor-logos__item {
+				display: block;
+				border-left: none;
+				border-top: 1px solid #e0e0e0;
+			}
+		}
+	}
+}

@@ -1,0 +1,112 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+$minimal-seafoam: #f9fcf0;
+$minimal-charcoal: #484b50;
+
+.minimal-header-component {
+	position: sticky;
+	top: 0px;
+	background-color: $minimal-seafoam;
+	border-bottom: 1px solid $minimal-charcoal;
+	font-family: 'SuisseIntl', sans-serif;
+	font-weight: 400;
+	font-size: 12px;
+	color: $minimal-charcoal;
+	z-index: 31415;
+
+	.#{$bp}-icon {
+		color: $minimal-charcoal;
+	}
+
+	.container {
+		display: flex;
+		column-gap: 15px;
+		height: 90px;
+		align-items: center;
+
+		.logo {
+			flex: 1;
+			img {
+				color: $minimal-charcoal;
+			}
+		}
+
+		nav {
+			flex: 1;
+			display: flex;
+			justify-content: flex-end;
+
+			&.global {
+				flex: 1;
+			}
+
+			&.links {
+				flex: 0;
+			}
+
+			> ul {
+				margin: 0;
+				padding: 0;
+				list-style-type: none;
+				display: flex;
+				gap: 15px;
+				line-height: 40px;
+
+				> li {
+					> a {
+						text-decoration: none;
+
+						&:hover {
+							text-decoration: underline;
+						}
+
+						&[role='button']:hover {
+							background-color: transparent;
+						}
+					}
+
+					> button {
+						padding-left: 0;
+						padding-right: 0;
+
+						&:hover {
+							background-color: transparent;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 539px) {
+	.minimal-header-component {
+		.container {
+			align-items: flex-end;
+			flex-wrap: wrap;
+			height: 70px;
+
+			.logo img {
+				width: 125px;
+				height: 22px;
+			}
+
+			nav {
+				&.global {
+					flex: 1;
+				}
+
+				&.links {
+					flex-basis: 100%;
+					justify-content: flex-start;
+				}
+
+				> ul {
+					line-height: 35px;
+				}
+			}
+		}
+	}
+}

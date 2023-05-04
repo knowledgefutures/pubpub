@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
 
 import {
 	Header,
-	Footer,
 	LegalBanner,
 	AccentStyle,
 	NavBar,
 	SkipLink,
+	Footer,
 	MobileAware,
 	FacetsStateProvider,
 } from 'components';
 import { PageContext } from 'utils/hooks';
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
+import {
+	MinimalHeader,
+	minimalHeaderData,
+	TwoColumnFooter,
+	twoColumnFooterData,
+	MinimalFooter,
+	minimalFooterData,
+} from 'client/layouts';
 
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
@@ -35,7 +43,7 @@ type Props = {
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
 	const pageContextProps = usePageState(initialData, viewData);
-	const { communityData, locationData, scopeData } = pageContextProps;
+	const { communityData, locationData, scopeData, loginData, featureFlags } = pageContextProps;
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, hideHeader, isDashboard } = pathObject;
@@ -46,9 +54,37 @@ const App = (props: Props) => {
 		window.__pubpub_pageContextProps__ = pageContextProps;
 	}
 
-	const showNav = !hideNav && !communityData.hideNav && !isDashboard;
+	const usingMinimalHeader = featureFlags['minimal-header'];
+	const usingMinimalFooter = featureFlags['minimal-footer'];
+	const usingTwoColumnFooter = featureFlags['two-column-footer'];
+
+	const showNav = !hideNav && !communityData.hideNav && !isDashboard && !usingMinimalHeader;
 	const showFooter = !hideFooter && !isDashboard;
 	const showHeader = !hideHeader;
+
+	let header: ReactNode;
+	let footer: ReactNode;
+
+	if (usingMinimalHeader && !isDashboard) {
+		header = (
+			<MinimalHeader
+				{...minimalHeaderData}
+				locationData={locationData}
+				loginData={loginData}
+			/>
+		);
+	} else {
+		header = <Header />;
+	}
+
+	if (usingMinimalFooter && !isDashboard) {
+		footer = <MinimalFooter {...minimalFooterData} communityData={communityData} />;
+	} else if (usingTwoColumnFooter && !isDashboard) {
+		footer = <TwoColumnFooter {...twoColumnFooterData} />;
+	} else {
+		footer = <Footer />;
+	}
+
 	return (
 		<PageContext.Provider value={pageContextProps}>
 			<FacetsStateProvider
@@ -63,7 +99,7 @@ const App = (props: Props) => {
 						)}
 						<SkipLink targetId="main-content">Skip to main content</SkipLink>
 						<LegalBanner />
-						{showHeader && <Header />}
+						{showHeader && header}
 						{showNav && <NavBar />}
 						{isDashboard && (
 							<MobileAware
@@ -78,11 +114,10 @@ const App = (props: Props) => {
 								)}
 							/>
 						)}
-						{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message */}
-						<div id="main-content" tabIndex="-1">
+						<div id="main-content" tabIndex={-1}>
 							<ActiveComponent {...viewData} />
 						</div>
-						{showFooter && <Footer />}
+						{showFooter && footer}
 					</div>
 				</RKProvider>
 			</FacetsStateProvider>

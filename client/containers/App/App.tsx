@@ -21,6 +21,8 @@ import {
 	twoColumnFooterData,
 	MinimalFooter,
 	minimalFooterData,
+	CollapsibleHeader,
+	collapsibleHeaderData,
 } from 'client/layouts';
 
 import SideMenu from './SideMenu';
@@ -57,8 +59,14 @@ const App = (props: Props) => {
 	const usingMinimalHeader = featureFlags['minimal-header'];
 	const usingMinimalFooter = featureFlags['minimal-footer'];
 	const usingTwoColumnFooter = featureFlags['two-column-footer'];
+	const usingCollapsibleHeader = featureFlags['collapsible-header'];
 
-	const showNav = !hideNav && !communityData.hideNav && !isDashboard && !usingMinimalHeader;
+	const showNav =
+		!hideNav &&
+		!communityData.hideNav &&
+		!isDashboard &&
+		!usingMinimalHeader &&
+		!usingCollapsibleHeader;
 	const showFooter = !hideFooter && !isDashboard;
 	const showHeader = !hideHeader;
 
@@ -73,6 +81,8 @@ const App = (props: Props) => {
 				loginData={loginData}
 			/>
 		);
+	} else if (usingCollapsibleHeader && !isDashboard) {
+		header = <CollapsibleHeader {...collapsibleHeaderData} />;
 	} else {
 		header = <Header />;
 	}
@@ -80,7 +90,9 @@ const App = (props: Props) => {
 	if (usingMinimalFooter && !isDashboard) {
 		footer = <MinimalFooter {...minimalFooterData} communityData={communityData} />;
 	} else if (usingTwoColumnFooter && !isDashboard) {
-		footer = <TwoColumnFooter {...twoColumnFooterData} />;
+		footer = (
+			<TwoColumnFooter {...twoColumnFooterData} showEmailCallToAction showInvestorLogos />
+		);
 	} else {
 		footer = <Footer />;
 	}

@@ -1,0 +1,344 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.collapsible-header-component {
+	color: #212121;
+
+	// Link/button hover color
+	a,
+	.bp3-button {
+		color: #212121;
+		&:hover {
+			background-color: transparent;
+			color: #087acc;
+			> .bp3-icon {
+				color: inherit;
+			}
+		}
+	}
+
+	.menu {
+		overflow: auto;
+		display: none;
+
+		> header {
+			padding-top: 1.875rem;
+			padding-bottom: 1.875rem;
+
+			.title {
+				display: inline-block;
+				position: relative;
+				z-index: 21;
+
+				> a {
+					display: block;
+					> picture {
+						> img {
+							display: block;
+							height: 35px;
+							width: 88px;
+						}
+					}
+				}
+			}
+
+			.close {
+				font-size: 0.875rem;
+				line-height: 1.71429;
+				font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+				font-weight: bold;
+				float: right;
+				width: 68px;
+			}
+		}
+		> nav {
+			> h3 {
+				border: 0;
+				clip: rect(0 0 0 0);
+				height: 1px;
+				margin: -1px;
+				overflow: hidden;
+				padding: 0;
+				position: absolute;
+				width: 1px;
+			}
+			> ul {
+				list-style-type: none;
+				margin: 0 0 1.5rem 0;
+				padding: 0;
+
+				> li {
+					font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+					padding-bottom: 1.5rem;
+					font-size: 1rem;
+					display: block;
+					line-height: 0;
+					text-align: left;
+
+					> a {
+						font-size: 0.875rem;
+						line-height: 1.71429;
+						font-weight: bold;
+						text-decoration: none;
+					}
+
+					&:last-child {
+						padding-bottom: 3rem;
+					}
+
+					&.end-of-group:not(:last-of-type) {
+						margin-bottom: 1.5rem;
+						border-bottom: 1px solid #e0e0e0;
+					}
+				}
+			}
+		}
+	}
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 30px 0px;
+		margin: 1.875rem 0rem;
+		max-height: 96px;
+		position: relative;
+		z-index: 20;
+
+		.logo {
+			> a {
+				height: 35px;
+				display: block;
+
+				> picture {
+					height: 100%;
+
+					> img {
+						height: 100%;
+					}
+				}
+			}
+		}
+
+		.navigation {
+			display: flex;
+			justify-content: right;
+			height: 35px;
+			flex: 1;
+			margin-left: 1.25rem;
+			position: relative;
+
+			> nav {
+				margin-top: 0.5rem;
+				height: 24px;
+
+				> ul {
+					list-style-type: none;
+					display: flex;
+					align-items: center;
+					margin: 0;
+					padding: 0;
+
+					> li {
+						margin-left: 1.5rem;
+
+						> a,
+						button {
+							font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+							font-size: 0.875rem;
+							line-height: 1.71429;
+							font-weight: bold;
+							text-decoration: none;
+						}
+					}
+				}
+
+				&.primary {
+					flex: 1;
+					margin-top: 0.5rem;
+					height: 24px;
+
+					> ul {
+						// Move the menu button to the right.
+						justify-content: flex-end;
+						// Hide every nav item except for the menu button.
+						> li:not(:first-of-type) {
+							display: none;
+						}
+					}
+				}
+
+				// Hide the entire right navigation.
+				&.secondary {
+					display: none;
+				}
+			}
+
+			.bp3-button {
+				min-height: 24px;
+				padding: 0;
+			}
+
+			.bp3-button:not(.bp3-minimal) {
+				border: none;
+				border-radius: 3px;
+				color: #fff;
+				display: inline-block;
+				font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+				font-size: 0.6875rem;
+				line-height: 2.1818181818;
+				font-weight: 500;
+				padding: 0rem 0.375rem;
+				text-align: center;
+				height: 1.5rem;
+				text-decoration: none;
+				text-transform: uppercase;
+				background-image: none;
+				background-color: #087acc;
+			}
+		}
+	}
+
+	.tab-to-show-component:not(:focus):not(:active) {
+		position: fixed;
+		top: auto;
+		overflow: hidden;
+		opacity: 0;
+		transform: translateX(-4000px);
+		z-index: -999;
+	}
+
+	.skip-link-component {
+		display: block;
+		position: fixed;
+		top: 10px;
+		left: 10px;
+		padding: 10px;
+		background: #fff;
+		z-index: 100000;
+		&:focus {
+			outline: rgba(19, 124, 189, 0.6) auto 2px;
+			outline-offset: 2px;
+		}
+	}
+
+	.menu {
+		background-color: #fff;
+		box-sizing: border-box;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100vh;
+		z-index: 40;
+	}
+
+	.menu-overlay {
+		background-color: rgba(0, 0, 0, 0.8);
+		display: none;
+		position: fixed;
+		min-height: 100vh;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		z-index: 30;
+	}
+
+	&.is-menu-open {
+		.menu {
+			display: block;
+		}
+		.menu-overlay {
+			display: block;
+		}
+	}
+}
+
+@media only screen and (min-width: 30em) {
+	.collapsible-header-component {
+		.menu {
+			padding-left: 48px;
+			padding-right: 48px;
+		}
+	}
+}
+
+@media only all and (min-width: 45.625em) {
+	.collapsible-header-component {
+		.menu {
+			> header {
+				.title {
+					position: relative;
+					width: 88px;
+				}
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 56.25em) {
+	.collapsible-header-component {
+		.header {
+			max-height: 119px;
+			margin: 2.625rem 0rem;
+
+			.navigation {
+				border-left: 1px solid #e0e0e0;
+
+				// Hide all icon button text.
+				.bp3-button.bp3-minimal .bp3-button-text {
+					display: none;
+				}
+
+				nav.primary > ul {
+					// Move the list items to the left.
+					justify-content: initial;
+					// Hide every nav item except for the menu button.
+					> li:not(:first-of-type) {
+						display: block;
+					}
+				}
+
+				nav.secondary {
+					display: flex;
+				}
+			}
+		}
+
+		.menu {
+			width: 320px;
+
+			> header {
+				padding-top: 2.625rem;
+			}
+
+			.hidden-wide {
+				display: none;
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 75em) {
+	.collapsible-header-component {
+		.menu {
+			> header {
+				padding-top: 3.25rem;
+			}
+		}
+		.header {
+			max-height: 143px;
+			margin: 3.375rem 0rem 2.625rem 0rem;
+
+			.navigation {
+				// Show secondary navigation icon button text.
+				nav.secondary {
+					.bp3-button.bp3-minimal .bp3-button-text {
+						display: block;
+					}
+				}
+			}
+		}
+	}
+}

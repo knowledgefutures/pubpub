@@ -5,6 +5,7 @@ import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keydownHandler } from 'prosemirror-keymap';
 
+import { isDevelopment } from 'utils/environment';
 import nodeViews from '../views';
 import { getPlugins } from '../plugins';
 import { collabDocPluginKey } from '../plugins/collaborative';
@@ -91,6 +92,11 @@ const createEditorView = (options: EditorViewOptions) => {
 			handleScrollToSelection: onScrollToSelection,
 		},
 	);
+	if (isDevelopment()) {
+		import('prosemirror-dev-tools').then(({ applyDevTools }) => {
+			applyDevTools(view);
+		});
+	}
 
 	// Sometimes the view will call its dispatchTransaction from the constructor, but the
 	// function itself references the `view` variable bound above. So we need to set this

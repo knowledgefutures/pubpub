@@ -1,5 +1,5 @@
 import { Fragment, MarkType, NodeType } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, Transaction } from 'prosemirror-state';
 import {
 	inputRules,
 	wrappingInputRule,
@@ -104,31 +104,50 @@ const inlineMathRule = (
 // textblock starting with two dollar signs into a math block.
 const blockMathRule = (nodeType) => makeBlockMathInputRule(REGEX_BLOCK_MATH_DOLLARS, nodeType);
 
-const HTTP_MAILTO_REGEX = new RegExp(
-	// eslint-disable-next-line no-useless-escape
-	/(?:(?:(https|http|ftp)+):\/\/)?(?:\S+(?::\S*)?(@))?(?:(?:([a-z0-9][a-z0-9\-]*)?[a-z0-9]+)(?:\.(?:[a-z0-9\-])*[a-z0-9]+)*(?:\.(?:[a-z]{2,})(:\d{1,5})?))(?:\/[^\s]*)?\s$/,
-);
+const emailOrUriRegexBase =
+	'(?<emailOrUri>(?:(?:(https|http|ftp)+)://)?(?:\\S+(?::\\S*)?(?<atSign>@))?(?:(?:([a-z0-9][a-z0-9-]*)?[a-z0-9]+)(?:\\.(?:[a-z0-9-])*[a-z0-9]+)*(?:\\.(?:[a-z]{2,})(:\\d{1,5})?))(?:/[^\\s]*)?)';
 
+// Export a version of the regex and handler so that we can reuse this logic in a custom command
+// mapped to the `enter` key, because input rules don't work across nodes
+export const EMAIL_OR_URI_REGEX = new RegExp(`${emailOrUriRegexBase}$`);
+
+const EMAIL_OR_URI_REGEX_WITH_SPACE = new RegExp(`${emailOrUriRegexBase}(?<whitespace>\\s)$`);
+
+// Determine if the matched content is a url or an email and add a link mark to it
+export const linkRuleHandler = (
+	markType: MarkType,
+	appendWhitespace = false,
+	transaction?: Transaction,
+) => {
+	return (state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
+		const resolvedStart = state.doc.resolve(start);
+		const tr = transaction ?? state.tr;
+		if (!resolvedStart.parent.type.allowsMarkType(markType)) {
+			return tr;
+		}
+		const emailOrUri = match.groups!.emailOrUri;
+
+		const href = `${match.groups!.atSign ? 'mailto:' : ''}${emailOrUri}`;
+
+		const link = state.schema.text(emailOrUri, [state.schema.mark(markType, { href })]);
+
+		const content = [link];
+
+		if (appendWhitespace) {
+			const whitespace = state.schema.text(match.groups!.whitespace);
+			content.push(whitespace);
+		}
+
+		return tr.replaceWith(start, end, content);
+	};
+};
+
+// // : (NodeType) → InputRule
+// Given a link mark type, returns an input rule that wraps emails and URLs in link marks.
+// Typing www.example.com in the editor will produce <a href="www.example.com">www.example.com</a>
+// and typing email@example.com will produce <a href="mailto:email@example.com">email@example.com</a>
 function linkRule(markType: MarkType) {
-	return new InputRule(
-		HTTP_MAILTO_REGEX,
-		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
-			const resolvedStart = state.doc.resolve(start);
-			if (!resolvedStart.parent.type.allowsMarkType(markType)) return state.tr;
-			const attrs = { type: match[2] === '@' ? 'email' : 'uri' };
-			const link = match[0].substring(0, match[0].length - 1);
-
-			const linkAttrs =
-				attrs.type === 'email'
-					? { href: 'mailto:' + link }
-					: { href: link, target: '_blank' };
-			const fragment = Fragment.fromArray([
-				state.schema.text(link, [state.schema.mark(markType, linkAttrs)]),
-				state.schema.text(' '),
-			]);
-			return state.tr.replaceWith(start, end, fragment);
-		},
-	);
+	return new InputRule(EMAIL_OR_URI_REGEX_WITH_SPACE, linkRuleHandler(markType, true));
 }
 
 // : (Schema) → Plugin

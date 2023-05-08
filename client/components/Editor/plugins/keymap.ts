@@ -22,8 +22,10 @@ import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
 
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { codeBlockArrowHandlers } from './code';
-import { splitBlockPreservingAttrs } from '../commands';
+import { Dispatch, splitBlockPreservingAttrs } from '../commands';
+import { EMAIL_OR_URI_REGEX, linkRuleHandler } from './inputRules';
 
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
 
@@ -150,14 +152,55 @@ export default (schema) => {
 		);
 	}
 
-	// All but the custom block splitting command in this chain are taken from the default
-	// chain in baseKeymap. We provide our own block splitter that preserves text align
-	// attributes between paragraphs.
+	const customBlockSplitter = splitBlockPreservingAttrs(['textAlign', 'rtl']);
+
+	// This command runs the link input rule (converting emails and urls into links) whenever the
+	// user presses enter. Adding this to our enter handler is a hack to make sure the input rule
+	// behavior still works even though input rules don't work across nodes (see
+	// https://discuss.prosemirror.net/t/trigger-inputrule-on-enter/1118/4 and
+	// https://github.com/ProseMirror/prosemirror-inputrules/pull/6#issuecomment-894107661 for
+	// context)
+	const addLinkCommand = (state: EditorState, dispatch?: Dispatch) => {
+		if (!(state.selection instanceof TextSelection)) {
+			return false;
+		}
+		const $cursor = state.selection.$cursor;
+		if (!$cursor) {
+			return false;
+		}
+		const { nodeBefore } = state.selection.$from;
+		if (!nodeBefore || !nodeBefore.isText) {
+			return false;
+		}
+
+		const match = nodeBefore.text!.match(EMAIL_OR_URI_REGEX);
+		if (!match) {
+			return false;
+		}
+
+		if (dispatch) {
+			// Call our custom split block command, then add the link marks as part of the same
+			// transaction. This should be safe to do without mapping the start and end positions
+			// because the changes caused by splitBlock will all be after the cursor
+			customBlockSplitter(state, (tr) => {
+				const addLinkMark = linkRuleHandler(schema.marks.link, false, tr);
+				const start = $cursor.pos - match[0].length;
+				const end = $cursor.pos;
+				dispatch(addLinkMark(state, match, start, end));
+			});
+		}
+		return true;
+	};
+
+	// All but the custom block splitting command and the add link command in this chain are taken
+	// from the default chain in baseKeymap. We provide our own block splitter that preserves text
+	// align attributes between paragraphs.
 	const customEnterCommand = chainCommands(
+		addLinkCommand,
 		newlineInCode,
 		createParagraphNear,
 		liftEmptyBlock,
-		splitBlockPreservingAttrs(['textAlign', 'rtl']),
+		customBlockSplitter,
 	);
 
 	return [keymap(keys), keymap({ ...baseKeymap, Enter: customEnterCommand })];

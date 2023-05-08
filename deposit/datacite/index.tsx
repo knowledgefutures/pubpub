@@ -310,6 +310,27 @@ function encodeDataciteCredentials(depositTarget: DepositTarget) {
 	return Buffer.from(`${username}:${rawPassword}`).toString('base64');
 }
 
+export async function getDataciteDoiMetadata(resourceDoi: string, depositTarget: DepositTarget) {
+	const encodedCredentials = encodeDataciteCredentials(depositTarget);
+	const response = await fetch(expect(process.env.DATACITE_DEPOSIT_URL) + `/${resourceDoi}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/vnd.api+json',
+			Authorization: 'Basic ' + encodedCredentials,
+		},
+	});
+	return response.ok ? response.json() : null;
+}
+
+export async function hasDataciteDoiMetadata(resourceDoi: string, depositTarget: DepositTarget) {
+	try {
+		const metadata = await getDataciteDoiMetadata(resourceDoi, depositTarget);
+		return Boolean(metadata?.data);
+	} catch {
+		return false;
+	}
+}
+
 export async function createDataciteDoiWithMetadata(
 	resourceXml: string,
 	resourceUrl: string,

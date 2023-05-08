@@ -4,7 +4,12 @@ import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { persistCrossrefDepositRecord, persistDoiData } from 'server/doi/queries';
 import { Collection, DefinitelyHas, Pub } from 'types';
 import { expect } from 'utils/assert';
-import { createDataciteDoiWithMetadata, createDeposit, updateDataciteDoiMetadata } from './index';
+import {
+	createDataciteDoiWithMetadata,
+	createDeposit,
+	hasDataciteDoiMetadata,
+	updateDataciteDoiMetadata,
+} from './index';
 
 type Scope = DefinitelyHas<Collection | Pub, 'community'>;
 
@@ -53,7 +58,8 @@ export async function submitResource(
 	const { identifierValue: resourceUrl } = expect(
 		scopeResource.identifiers.find((identifier) => identifier.identifierKind === 'URL'),
 	);
-	const depositResult = await (scope.crossrefDepositRecordId
+	const hasExistingMetadata = await hasDataciteDoiMetadata(scopeDoi, depositTarget);
+	const depositResult = await (hasExistingMetadata
 		? updateDataciteDoiMetadata
 		: createDataciteDoiWithMetadata)(resourceXml, resourceUrl, scopeDoi, depositTarget);
 	if (depositResult.errors?.length > 0) {

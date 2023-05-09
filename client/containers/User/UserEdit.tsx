@@ -52,7 +52,8 @@ const UserEdit = (props: Props) => {
 	};
 
 	const onBioChange = (e) => {
-		setBio(e.target.substring(0, 280).replace(/\n/g, ' '));
+		const { value } = e.target;
+		setBio(value.substring(0, 280).replace(/\n/g, ' '));
 	};
 
 	const onAvatarChange = (val) => {
@@ -240,7 +241,7 @@ const UserEdit = (props: Props) => {
 								label={item.label}
 								value={item.value}
 								onChange={withHasChanged(item.onChange)}
-								onBlur={withHasChanged(item.onBlur)}
+								onBlur={item.onBlur && withHasChanged(item.onBlur)}
 								helperText={item.helperText}
 								error={
 									(item.label === 'Orcid' && isOrcidInvalid && 'Invalid Orcid') ||

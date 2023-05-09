@@ -11,8 +11,9 @@ type Props = {
 };
 
 const handleLogout = () => {
+	const cacheBreaker = Math.round(new Date().getTime() / 1000);
 	apiFetch('/api/logout').then(() => {
-		window.location.href = '/';
+		window.location.href = `/?breakCache=${cacheBreaker}`;
 	});
 };
 

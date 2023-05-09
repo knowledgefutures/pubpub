@@ -6,6 +6,7 @@ import { assert } from 'utils/assert';
 import * as types from 'types';
 import app from 'server/server';
 import { User } from 'server/models';
+import { isDuqDuq, isProd } from 'utils/environment';
 
 type SetPasswordData = { hash: string; salt: string };
 type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields];
@@ -114,8 +115,10 @@ app.post('/api/login', (req, res, next) => {
 					throw new Error(err);
 				}
 				res.cookie('pp-cache', 'pp-no-cache', {
-					...(req.get('hostname')?.includes('pubpub.org') && { domain: '.pubpub.org' }),
-					...(req.get('hostname')?.includes('duqduq.org') && { domain: '.duqduq.org' }),
+					...(isProd() &&
+						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
+					...(isDuqDuq() &&
+						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 				});
 				return res.status(201).json('success');
 			});

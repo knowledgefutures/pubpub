@@ -11,6 +11,11 @@ export default (sequelize, dataTypes) => {
 			isNarrowWidth: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.TEXT },
 			layout: { type: dataTypes.JSONB, allowNull: false },
+			layoutAllowsDuplicatePubs: {
+				type: dataTypes.BOOLEAN,
+				defaultValue: false,
+				allowNull: false,
+			},
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

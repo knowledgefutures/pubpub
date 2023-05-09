@@ -23,6 +23,7 @@ app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 				initialData={initialData}
 				viewData={{
 					layoutPubsByBlock: await getLayoutPubsByBlock({
+						allowDuplicatePubs: collection.layoutAllowsDuplicatePubs,
 						blocks: collection.layout && collection.layout.blocks,
 						initialData,
 						collectionId: collection.id,

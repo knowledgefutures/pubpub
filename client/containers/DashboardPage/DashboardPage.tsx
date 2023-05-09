@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { AnchorButton, Button, Classes } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes, Switch } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
 import { communityUrl } from 'utils/canonicalUrls';
@@ -207,6 +207,16 @@ const DashboardPage = (props: Props) => {
 						</div>
 					</InputField>
 				)}
+				<InputField label="Allow duplicate Pubs">
+					<Switch
+						checked={pageData.layoutAllowsDuplicatePubs}
+						onClick={() =>
+							updatePageData({
+								layoutAllowsDuplicatePubs: !pageData.layoutAllowsDuplicatePubs,
+							})
+						}
+					/>
+				</InputField>
 			</SettingsSection>
 		);
 	};
@@ -215,6 +225,7 @@ const DashboardPage = (props: Props) => {
 		return (
 			<SettingsSection title="Layout">
 				<LayoutEditor
+					allowDuplicatePubs={pageData.layoutAllowsDuplicatePubs}
 					onChange={handleLayoutChange}
 					initialLayout={layout}
 					initialLayoutPubsByBlock={layoutPubsByBlock}

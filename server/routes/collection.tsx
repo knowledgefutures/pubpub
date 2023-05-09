@@ -102,6 +102,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 			const layout = await getLayoutWithSubmissionWorkflowBlock(collection);
 			if (layout) {
 				const layoutPubsByBlock = await getLayoutPubsByBlock({
+					allowDuplicatePubs: collection.layoutAllowsDuplicatePubs,
 					blocks: layout.blocks,
 					initialData,
 					collectionId,

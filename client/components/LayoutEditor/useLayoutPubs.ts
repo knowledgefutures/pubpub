@@ -50,15 +50,23 @@ const fetchLayoutPubsByBlock = (
 	blocks: LayoutBlockPubs[],
 	alreadyFetchedPubIds: string[],
 	collectionId?: string,
+	allowDuplicatePubs?: boolean,
 ): Promise<LayoutPubsByBlock<Pub>> =>
-	apiFetch.post('/api/layout', { blocks, alreadyFetchedPubIds, collectionId });
+	apiFetch.post('/api/layout', {
+		blocks,
+		alreadyFetchedPubIds,
+		collectionId,
+		allowDuplicatePubs,
+	});
 
 export const useLayoutPubs = (
 	initialPubsByBlock: LayoutPubsByBlock<Pub>,
 	layout: LayoutBlock[],
 	collectionId?: string,
+	allowDuplicatePubs?: boolean,
 ) => {
 	const previousLayout = usePrevious(layout);
+	const previousAllowDuplicatePubs = usePrevious(allowDuplicatePubs);
 	const [pubsById, setPubsById] = useState<Record<string, Pub>>(initialPubsByBlock.pubsById);
 	const [requestCount, setRequestCount] = useState(0);
 	const requestResolvedFromTime = useRef(0);
@@ -72,29 +80,43 @@ export const useLayoutPubs = (
 	);
 
 	useEffect(() => {
-		if (previousLayout && layout && previousLayout !== layout) {
+		const allowDuplicatePubsChanged = previousAllowDuplicatePubs !== allowDuplicatePubs;
+		if (previousLayout && layout && (previousLayout !== layout || allowDuplicatePubsChanged)) {
 			const previousPubBlocks = getPubBlocks(previousLayout);
 			const nextPubBlocks = getPubBlocks(layout);
-			if (shouldRefetchLayoutPubs(previousPubBlocks, nextPubBlocks)) {
+			if (
+				allowDuplicatePubsChanged ||
+				shouldRefetchLayoutPubs(previousPubBlocks, nextPubBlocks)
+			) {
 				const alreadyFetchedPubIds = Object.keys(pubsById);
 				const requestInFlightAt = Date.now();
 				setRequestCount((c) => c + 1);
-				fetchLayoutPubsByBlock(nextPubBlocks, alreadyFetchedPubIds, collectionId).then(
-					(nextLayoutPubsByBlock) => {
-						if (requestInFlightAt > requestResolvedFromTime.current) {
-							requestResolvedFromTime.current = requestInFlightAt;
-							setPubsById((currentPubsById) => ({
-								...currentPubsById,
-								...nextLayoutPubsByBlock.pubsById,
-							}));
-							setPubIdsByBlockId(nextLayoutPubsByBlock.pubIdsByBlockId);
-							setRequestCount((c) => c - 1);
-						}
-					},
-				);
+				fetchLayoutPubsByBlock(
+					nextPubBlocks,
+					alreadyFetchedPubIds,
+					collectionId,
+					allowDuplicatePubs,
+				).then((nextLayoutPubsByBlock) => {
+					if (requestInFlightAt > requestResolvedFromTime.current) {
+						requestResolvedFromTime.current = requestInFlightAt;
+						setPubsById((currentPubsById) => ({
+							...currentPubsById,
+							...nextLayoutPubsByBlock.pubsById,
+						}));
+						setPubIdsByBlockId(nextLayoutPubsByBlock.pubIdsByBlockId);
+						setRequestCount((c) => c - 1);
+					}
+				});
 			}
 		}
-	}, [previousLayout, layout, pubsById, collectionId]);
+	}, [
+		previousLayout,
+		layout,
+		pubsById,
+		collectionId,
+		previousAllowDuplicatePubs,
+		allowDuplicatePubs,
+	]);
 
 	return {
 		pubsByBlockId,

@@ -11,6 +11,7 @@ export default async ({ query, initialData }) => {
 	});
 
 	const layoutPubsByBlock = await getLayoutPubsByBlock({
+		allowDuplicatePubs: pageData.layoutAllowsDuplicatePubs,
 		blocks: pageData.layout || [],
 		initialData,
 	});

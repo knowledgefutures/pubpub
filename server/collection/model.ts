@@ -28,6 +28,11 @@ export default (sequelize, dataTypes) => {
 				defaultValue: 'choose-best',
 			},
 			layout: { type: dataTypes.JSONB, allowNull: false, defaultValue: {} },
+			layoutAllowsDuplicatePubs: {
+				type: dataTypes.BOOLEAN,
+				defaultValue: false,
+				allowNull: false,
+			},
 			/* Set by Associations */
 			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
 			communityId: { type: dataTypes.UUID },

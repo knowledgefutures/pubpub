@@ -45,11 +45,13 @@ const getNewPubIdsByBlock = async (
 	blocks: LayoutBlock[],
 	initialData: InitialData,
 	collectionId?: string,
+	allowDuplicatePubs?: boolean,
 ) => {
 	const layoutPubsByBlock = await new_getLayoutPubsByBlock({
 		collectionId,
 		initialData,
 		blocks,
+		allowDuplicatePubs: Boolean(allowDuplicatePubs),
 	});
 	const pubsByBlockId = await resolveLayoutPubsByBlock(layoutPubsByBlock, blocks);
 	return blocks.map((block) => pubsByBlockId[block.id]?.map((pub) => pub.id)).filter((x) => x);
@@ -87,9 +89,15 @@ const checkLayout = async (
 	initialData: InitialData,
 	label: string,
 	collectionId?: string,
+	allowDuplicatePubs?: boolean,
 ) => {
 	const oldPubIds = await getOldPubIdsByBlock(blocks, initialData, collectionId);
-	const newPubIds = await getNewPubIdsByBlock(blocks, initialData, collectionId);
+	const newPubIds = await getNewPubIdsByBlock(
+		blocks,
+		initialData,
+		collectionId,
+		allowDuplicatePubs,
+	);
 	const versionsEqual = idsEqual(oldPubIds, newPubIds);
 	if (!versionsEqual) {
 		const summary = summarizeDifferences(oldPubIds, newPubIds);
@@ -123,7 +131,13 @@ const checkCommunity = async (community: Community) => {
 	const collections = await Collection.findAll({ where: { communityId: community.id } });
 	await forEach(pages, async (page) => {
 		if (page.layout) {
-			await checkLayout(page.layout, initialData, `Page ${page.slug}`);
+			await checkLayout(
+				page.layout,
+				initialData,
+				`Page ${page.slug}`,
+				undefined,
+				page.layoutAllowsDuplicatePubs,
+			);
 		}
 	});
 	await forEach(collections, async (collection) => {
@@ -133,6 +147,7 @@ const checkCommunity = async (community: Community) => {
 				initialData,
 				`Collection ${collection.slug}`,
 				collection.id,
+				collection.layoutAllowsDuplicatePubs,
 			);
 		}
 	});

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useBeforeUnload, useUpdateEffect } from 'react-use';
-import { Button, ButtonGroup, RadioGroup, Radio } from '@blueprintjs/core';
+import { Button, ButtonGroup, RadioGroup, Radio, Switch } from '@blueprintjs/core';
 
 import {
 	DashboardFrame,
@@ -138,10 +138,21 @@ const DashboardCollectionLayout = (props: Props) => {
 						</ButtonGroup>
 					</InputField>
 				)}
+				<InputField label="Allow duplicate Pubs">
+					<Switch
+						checked={collection.layoutAllowsDuplicatePubs}
+						onClick={() =>
+							updateCollection({
+								layoutAllowsDuplicatePubs: !collection.layoutAllowsDuplicatePubs,
+							})
+						}
+					/>
+				</InputField>
 			</SettingsSection>
 			{isUsingBlocks && (
 				<SettingsSection title="Blocks">
 					<LayoutEditor
+						allowDuplicatePubs={collection.layoutAllowsDuplicatePubs}
 						initialLayout={layout.blocks}
 						initialLayoutPubsByBlock={props.layoutPubsByBlock}
 						collection={collection}

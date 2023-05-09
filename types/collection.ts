@@ -25,6 +25,7 @@ export type Collection = {
 	crossrefDepositRecord?: DepositRecord;
 	attributions?: CollectionAttribution[];
 	layout: CollectionLayout;
+	layoutAllowsDuplicatePubs: boolean;
 	createdAt: string;
 	updatedAt: string;
 	scopeSummaryId: null | string;

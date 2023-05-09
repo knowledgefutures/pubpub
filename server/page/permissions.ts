@@ -21,6 +21,7 @@ export const getPermissions = async ({ userId, communityId, pageId }) => {
 		'description',
 		'isPublic',
 		'layout',
+		'layoutAllowsDuplicatePubs',
 		'avatar',
 		'isNarrowWidth',
 	];

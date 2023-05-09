@@ -19,6 +19,7 @@ import LayoutEditorCollectionHeader from './LayoutEditorCollectionHeader';
 require('./layoutEditor.scss');
 
 type Props = {
+	allowDuplicatePubs: boolean;
 	onChange: (layout: LayoutBlock[]) => unknown;
 	initialLayout: LayoutBlock[];
 	initialLayoutPubsByBlock: LayoutPubsByBlock<Pub>;
@@ -49,7 +50,14 @@ const getTitleKindForBlock = (blockType: string) => {
 };
 
 const LayoutEditor = React.memo((props: Props) => {
-	const { initialLayout, initialLayoutPubsByBlock, collection, communityData, onChange } = props;
+	const {
+		allowDuplicatePubs,
+		initialLayout,
+		initialLayoutPubsByBlock,
+		collection,
+		communityData,
+		onChange,
+	} = props;
 	const {
 		layout,
 		changeLayout,
@@ -63,6 +71,7 @@ const LayoutEditor = React.memo((props: Props) => {
 		initialLayoutPubsByBlock,
 		layout,
 		collection && collection.id,
+		allowDuplicatePubs,
 	);
 
 	useEffect(() => {

@@ -67,12 +67,14 @@ type GetPubsForLayoutOptions = {
 	initialData: InitialData;
 	collectionId?: string;
 	alreadyFetchedPubIds?: string[];
+	allowDuplicatePubs: boolean;
 };
 
 export const getPubIdsForLayout = async ({
 	blocks,
 	initialData,
 	collectionId,
+	allowDuplicatePubs,
 }: GetPubsForLayoutOptions): Promise<Record<string, string[]>> => {
 	const { id: communityId } = initialData.communityData;
 	const pubBlocks = blocks.filter((block): block is LayoutBlockPubs => block.type === 'pubs');
@@ -87,7 +89,9 @@ export const getPubIdsForLayout = async ({
 			Array.from(seenPubIds),
 			collectionId,
 		);
-		pubIdsForBlock.forEach((id) => seenPubIds.add(id));
+		if (!allowDuplicatePubs) {
+			pubIdsForBlock.forEach((id) => seenPubIds.add(id));
+		}
 		pubIdsByBlockId[block.id] = pubIdsForBlock;
 	}
 

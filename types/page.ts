@@ -11,4 +11,5 @@ export type Page = {
 	isNarrowWidth?: boolean;
 	viewHash?: string;
 	layout: LayoutBlock[];
+	layoutAllowsDuplicatePubs: boolean;
 };

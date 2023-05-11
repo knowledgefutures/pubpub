@@ -10,6 +10,7 @@ import {
 	Icon,
 	InputGroup,
 } from '@blueprintjs/core';
+import { EditorState, Transaction } from 'prosemirror-state';
 
 import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate, timeAgoBaseProps } from 'utils/dates';
@@ -18,6 +19,9 @@ import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
 import { Release, Pub } from 'types';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
+import { acceptSuggestions, rejectSuggestions } from '../Editor/plugins/suggestedEdits/resolve';
+import { getSuggestionAttrsForNode } from '../Editor/plugins/suggestedEdits/operations';
 
 require('./pubReleaseDialog.scss');
 
@@ -43,7 +47,8 @@ const createRelease = ({ historyKey, pubId, communityId, noteContent, noteText }
 
 const PubReleaseDialog = (props: Props) => {
 	const { isOpen, onClose, historyKey, pub, onCreateRelease } = props;
-	const { communityData } = usePageContext();
+	const { communityData, featureFlags } = usePageContext();
+	const { collabData } = usePubContext();
 	const [noteData, setNoteData] = useState<{ content?: {}; text?: string }>({});
 	const [isCreatingRelease, setIsCreatingRelease] = useState(false);
 	const [createdRelease, setCreatedRelease] = useState(false);
@@ -51,6 +56,7 @@ const PubReleaseDialog = (props: Props) => {
 	const { releases } = pub;
 	const releaseCount = releases ? releases.length : 0;
 	const latestRelease = releases[releaseCount - 1]!;
+	const { editorChangeObject } = collabData;
 
 	const handleCreateRelease = async () => {
 		setIsCreatingRelease(true);
@@ -178,6 +184,64 @@ const PubReleaseDialog = (props: Props) => {
 		return null;
 	};
 
+	const hasSuggestions = (): boolean => {
+		if (!editorChangeObject || !editorChangeObject.view) return false;
+		const doc = editorChangeObject.view.state.doc;
+		let hasSugg = false;
+		doc.nodesBetween(0, doc.nodeSize - 2, (node) => {
+			if (hasSugg) return;
+			const present = getSuggestionAttrsForNode(node);
+			if (present) hasSugg = true;
+		});
+		return hasSugg;
+	};
+
+	const suggestedEditsAction = (action: {
+		(state: EditorState, from: number, to: number): Transaction;
+	}) => {
+		if (!hasSuggestions()) return;
+		if (!editorChangeObject) return;
+		const editorState = editorChangeObject.view.state;
+		const size = editorChangeObject.view.state.doc.nodeSize;
+		const tr = action(editorState, 0, size - 2);
+		editorChangeObject.view.dispatch(tr);
+	};
+
+	const handleSuggestedEditsAccept = () => {
+		suggestedEditsAction(acceptSuggestions);
+	};
+
+	const handleSuggestedEditsReject = () => {
+		suggestedEditsAction(rejectSuggestions);
+	};
+
+	const renderSuggestedEditsActionButtons = () => {
+		return (
+			<React.Fragment>
+				<Callout className="text-info" intent="warning">
+					You still have pending edits. Would you like to accept the suggested changes or
+					reject them (
+					<strong>this will remove any suggested changes from your doc</strong>)?
+				</Callout>
+				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
+					<Button disabled={isCreatingRelease} onClick={onClose}>
+						Return to draft
+					</Button>
+					<Button
+						text="Reject All"
+						intent="danger"
+						onClick={handleSuggestedEditsReject}
+					/>
+					<Button
+						text="Accept All"
+						intent="success"
+						onClick={handleSuggestedEditsAccept}
+					/>
+				</div>
+			</React.Fragment>
+		);
+	};
+
 	const renderPreReleaseButtons = () => {
 		return (
 			<React.Fragment>
@@ -236,10 +300,14 @@ const PubReleaseDialog = (props: Props) => {
 				{renderReleaseResult()}
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
-				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
-					{createdRelease && renderPostReleaseButtons()}
-					{!createdRelease && renderPreReleaseButtons()}
-				</div>
+				{hasSuggestions() && featureFlags.suggestedEdits ? (
+					<div>{renderSuggestedEditsActionButtons()}</div>
+				) : (
+					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
+						{createdRelease && renderPostReleaseButtons()}
+						{!createdRelease && renderPreReleaseButtons()}
+					</div>
+				)}
 			</div>
 		</Dialog>
 	);

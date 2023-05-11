@@ -40,7 +40,7 @@ const removeSuggestionAttrs = (attrs: Attrs) => {
 	return newAttrs as Attrs;
 };
 
-const acceptSuggestions = (state: EditorState, from: number, to: number) => {
+export const acceptSuggestions = (state: EditorState, from: number, to: number) => {
 	const { tr, doc } = state;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });
 	const suggestionMarkType = getSuggestionMarkTypeFromSchema(doc.type.schema);
@@ -72,7 +72,7 @@ const acceptSuggestions = (state: EditorState, from: number, to: number) => {
 	return tr;
 };
 
-const rejectSuggestions = (state: EditorState, from: number, to: number) => {
+export const rejectSuggestions = (state: EditorState, from: number, to: number) => {
 	const { tr, doc } = state;
 	const { schema } = doc.type;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });

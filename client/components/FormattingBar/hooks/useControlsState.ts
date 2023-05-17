@@ -86,7 +86,7 @@ const getButtonState = (button: FormattingBarButtonData, state: IntermediateStat
 				view.focus();
 			} else {
 				commandState?.run();
-				view.focus();
+				view?.focus();
 			}
 		},
 	};

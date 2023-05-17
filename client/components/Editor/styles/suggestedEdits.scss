@@ -54,6 +54,14 @@ span[data-suggestion-mark='true'][data-suggestion-kind='modification'] {
 	background-color: rgba($modification, 0.2);
 }
 
+li[data-suggestion-kind='addition']::before {
+	@include block-border('addition', rgba($addition, 0.5));
+}
+
+li[data-suggestion-kind='removal']::before {
+	@include block-border('removal', rgba($removal, 0.5));
+}
+
 > *[data-suggestion-kind='addition'] {
 	@include block-border('addition', rgba($addition, 0.5));
 }
@@ -63,7 +71,7 @@ span[data-suggestion-mark='true'][data-suggestion-kind='modification'] {
 }
 
 > *[data-suggestion-kind='modification'] {
-	@include block-border('modifciation', rgba($modification, 0.5));
+	@include block-border('modification', rgba($modification, 0.5));
 }
 
 p > *[data-suggestion-kind='modification'] {

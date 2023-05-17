@@ -44,6 +44,7 @@ export const acceptSuggestions = (state: EditorState, from: number, to: number) 
 	const { tr, doc } = state;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });
 	const suggestionMarkType = getSuggestionMarkTypeFromSchema(doc.type.schema);
+	// eslint-disable-next-line consistent-return
 	doc.nodesBetween(from, to, (node, oldPos) => {
 		const { attrs, marks, nodeSize } = node;
 		const pos = tr.mapping.map(oldPos);
@@ -65,6 +66,7 @@ export const acceptSuggestions = (state: EditorState, from: number, to: number) 
 					tr.join(pos);
 				} catch (_) {
 					tr.delete(pos, pos + nodeSize);
+					return false;
 				}
 			}
 		}
@@ -77,6 +79,7 @@ export const rejectSuggestions = (state: EditorState, from: number, to: number) 
 	const { schema } = doc.type;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });
 	const suggestionMarkType = getSuggestionMarkTypeFromSchema(schema);
+	// eslint-disable-next-line consistent-return
 	doc.nodesBetween(from, to, (node, oldPos) => {
 		const { attrs, marks, nodeSize } = node;
 		const pos = tr.mapping.map(oldPos);
@@ -117,6 +120,7 @@ export const rejectSuggestions = (state: EditorState, from: number, to: number) 
 					tr.join(pos);
 				} catch (_) {
 					tr.delete(pos, pos + nodeSize);
+					return false;
 				}
 			}
 		}

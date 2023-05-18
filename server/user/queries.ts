@@ -58,6 +58,13 @@ export const createUser = (inputValues) => {
 		});
 };
 
+export const getUserAvatarInfo = async (req) => {
+	const { suggestionUserId } = req;
+	const user = await User.findOne({ where: { id: suggestionUserId } });
+	const { fullName, initials, avatar } = user;
+	return { fullName, initials, avatar };
+};
+
 export const updateUser = (inputValues, updatePermissions, req) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues: Record<string, any> = {};

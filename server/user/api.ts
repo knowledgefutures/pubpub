@@ -1,9 +1,10 @@
 import passport from 'passport';
 
-import app from 'server/server';
+import app, { wrap } from 'server/server';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 
 import { getPermissions } from './permissions';
-import { createUser, updateUser } from './queries';
+import { createUser, updateUser, getUserAvatarInfo } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -34,6 +35,23 @@ app.post('/api/users', (req, res) => {
 			return res.status(500).json(err.message);
 		});
 });
+
+app.get(
+	'/api/users',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.read) {
+			throw new ForbiddenError();
+		}
+		const userInfo = await getUserAvatarInfo(req.body);
+		if (userInfo) {
+			return res.status(201).json(userInfo);
+		}
+
+		throw new NotFoundError();
+	}),
+);
 
 app.put('/api/users', (req, res) => {
 	getPermissions(getRequestIds(req))

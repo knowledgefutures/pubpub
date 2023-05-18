@@ -37,5 +37,6 @@ export const getPermissions = async ({ userId, submittedUserId, email, hash }) =
 	return {
 		create: signUpData,
 		update: isAuthenticated && editProps,
+		read: isAuthenticated,
 	};
 };

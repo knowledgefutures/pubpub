@@ -16,16 +16,12 @@ const getResolvableRangeForSelection = (
 	const suggestedEditsState = getSuggestedEditsState(state);
 	if (suggestedEditsState) {
 		const { suggestionRanges } = suggestedEditsState;
-		if (selection.from === selection.to) {
-			const suggestionRange = suggestionRanges.find(
-				(range) => range.from <= selection.from && selection.from <= range.to,
-			);
-			if (suggestionRange) {
-				return suggestionRange;
-			}
-			return null;
+		const suggestionRange = suggestionRanges.find((range) => {
+			return range.from <= selection.to && selection.from <= range.to;
+		});
+		if (suggestionRange) {
+			return selection.empty ? suggestionRange : selection;
 		}
-		return selection;
 	}
 	return null;
 };
@@ -131,8 +127,8 @@ export const rejectSuggestions = (state: EditorState, from: number, to: number) 
 export const acceptSuggestedEdits = (state: EditorState, dispatch?: Dispatch): boolean => {
 	const range = getResolvableRangeForSelection(state);
 	if (range) {
-		const tr = acceptSuggestions(state, range.from, range.to);
 		if (dispatch) {
+			const tr = acceptSuggestions(state, range.from, range.to);
 			dispatch(tr);
 		}
 		return true;
@@ -143,8 +139,8 @@ export const acceptSuggestedEdits = (state: EditorState, dispatch?: Dispatch): b
 export const rejectSuggestedEdits = (state: EditorState, dispatch?: Dispatch): boolean => {
 	const range = getResolvableRangeForSelection(state);
 	if (range) {
-		const tr = rejectSuggestions(state, range.from, range.to);
 		if (dispatch) {
+			const tr = rejectSuggestions(state, range.from, range.to);
 			dispatch(tr);
 		}
 		return true;

@@ -1,5 +1,5 @@
+import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { getScope } from 'server/utils/queryHelpers';
-import { communityCanUseCustomScripts } from 'utils/customScripts';
 
 export const canSetCustomScript = async ({
 	userId,
@@ -10,7 +10,12 @@ export const canSetCustomScript = async ({
 	communityId: string;
 	type: string;
 }) => {
-	if (type === 'js' && !communityCanUseCustomScripts(communityId)) {
+	const customScriptsEnabled = await getFeatureFlagForUserAndCommunity(
+		null,
+		communityId,
+		'customScripts',
+	);
+	if (type === 'js' && !customScriptsEnabled) {
 		return false;
 	}
 	const {

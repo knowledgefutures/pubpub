@@ -1,7 +1,6 @@
+import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { CustomScript } from 'server/models';
 import { CustomScriptType, CustomScripts } from 'types';
-
-import { communityCanUseCustomScripts } from 'utils/customScripts';
 
 export const setCustomScriptForCommunity = async (
 	communityId: string,
@@ -25,12 +24,17 @@ export const getCustomScriptsForCommunity = async (
 	if (typeof communityId !== 'string') {
 		return { js: null, css: null };
 	}
-	const scripts = await CustomScript.findAll({ where: { communityId } });
-	const css = scripts.find((s) => s.type === 'css');
-	if (!communityCanUseCustomScripts(communityId)) {
+	const customScriptsEnabled = await getFeatureFlagForUserAndCommunity(
+		null,
+		communityId,
+		'customScripts',
+	);
+	const customScripts = await CustomScript.findAll({ where: { communityId } });
+	const css = customScripts.find((s) => s.type === 'css');
+	if (!customScriptsEnabled) {
 		return { js: null, css: css?.content || null };
 	}
-	const js = scripts.find((s) => s.type === 'js');
+	const js = customScripts.find((s) => s.type === 'js');
 	return {
 		js: js?.content || null,
 		css: css?.content || null,

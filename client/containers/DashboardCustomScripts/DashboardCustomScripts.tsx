@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Callout, Spinner, Tabs, Tab } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { communityCanUseCustomScripts } from 'utils/customScripts';
 import { DashboardFrame } from 'components';
 import { CustomScripts } from 'types';
 
@@ -18,9 +17,7 @@ type Props = {
 const DashboardCustomScripts = (props: Props) => {
 	const { customScripts } = props;
 	const { js, css } = customScripts;
-	const {
-		communityData: { id: communityId },
-	} = usePageContext();
+	const { featureFlags } = usePageContext();
 	const [Editor, setEditor] = useState<null | EditorComponentType>(null);
 	useEffect(() => {
 		import('@monaco-editor/react').then(({ default: EditorComponent }) =>
@@ -52,7 +49,7 @@ const DashboardCustomScripts = (props: Props) => {
 						/>
 					}
 				/>
-				{communityCanUseCustomScripts(communityId) && (
+				{featureFlags.customScripts && (
 					<Tab
 						id="js"
 						title="JavaScript"

@@ -59,25 +59,22 @@
 	}
 
 	.email-cta__privacy {
+		color: #757575;
 		display: block;
-		font-size: 12px;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
 		font-size: 0.75rem;
 		line-height: 2;
-		margin-bottom: 4px;
 		margin-bottom: 0.25rem;
-		margin-top: 12px;
 		margin-top: 0.75rem;
-	}
-
-	.email-cta__privacy_link {
-		color: #757575;
-		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
-	}
-
-	a {
 		text-decoration: none;
-		&:hover {
-			color: #087acc;
+
+		a {
+			color: #757575;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 

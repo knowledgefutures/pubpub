@@ -63,9 +63,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 					Sign up for email alerts
 				</a>
 				<div className="email-cta__privacy">
-					<a className="email-cta__privacy_link" href="/privacy">
-						Privacy notice
-					</a>
+					<a href="/privacy">Privacy notice</a>
 				</div>
 			</div>
 		</section>
@@ -129,9 +127,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 						<ul className="footer-navigation__list">
 							{links.map((link) => (
 								<li key={link.text} className="footer-navigation__list_item">
-									<a href={link.url} className="footer-navigation__list_link">
-										{link.text}
-									</a>
+									<a href={link.url}>{link.text}</a>
 								</li>
 							))}
 						</ul>
@@ -140,11 +136,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 						<ul className="social-links__list">
 							{iconLinks.map((link) => (
 								<li key={link.ariaLabel} className="social-links__list_item">
-									<a
-										href={link.url}
-										className="social-links__list_link"
-										aria-label={link.ariaLabel}
-									>
+									<a href={link.url} aria-label={link.ariaLabel}>
 										<svg width="28" height="28">
 											<path {...link.pathProps} />
 										</svg>

@@ -58,7 +58,7 @@ const CollapsibleHeader = (props: CollapsibleHeaderProps) => {
 						</picture>
 					</a>
 				</div>
-				<div className="navigation" role="navigation" aria-label="Main navigation">
+				<div className="navigation" aria-label="Main navigation">
 					<nav className="primary">
 						<ul className="list">
 							<li className="item">

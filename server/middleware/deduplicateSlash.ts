@@ -3,7 +3,7 @@
 import { parse, format } from 'url';
 import { expect } from 'utils/assert';
 
-const DUPLICATE_SLASH_PATTERN = /(\/+)\1/g;
+const DUPLICATE_SLASH_PATTERN = /\/\/+/g;
 
 export function deduplicateSlash() {
 	return function deduplicateSlashMiddleware(req: Request, res, next) {

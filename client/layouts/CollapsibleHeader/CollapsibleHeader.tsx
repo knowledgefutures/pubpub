@@ -43,14 +43,9 @@ const CollapsibleHeader = (props: CollapsibleHeaderProps) => {
 		>
 			<header className="header">
 				<div className="logo">
-					<div>
-						<a
-							href="#maincontent"
-							className="tab-to-show-component skip-link-component"
-						>
-							Skip to Content
-						</a>
-					</div>
+					<a href="#maincontent" className="tab-to-show-component skip-link-component">
+						Skip to Content
+					</a>
 					<a href={props.logo.url}>
 						<picture>
 							<source {...props.logo.sourceProps} />

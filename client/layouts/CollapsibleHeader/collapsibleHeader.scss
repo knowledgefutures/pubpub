@@ -107,6 +107,7 @@ $bp: vendor.$bp-namespace;
 		z-index: 20;
 
 		.logo {
+			position: relative;
 			> a {
 				height: 35px;
 				display: block;
@@ -211,15 +212,23 @@ $bp: vendor.$bp-namespace;
 
 	.skip-link-component {
 		display: block;
-		position: fixed;
-		top: 10px;
-		left: 10px;
 		padding: 10px;
-		background: #fff;
+		background: #087acc;
+		border-radius: 4px;
+		color: #fff;
+		font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+		text-transform: uppercase;
+		text-decoration: none;
 		z-index: 100000;
+
+		&:hover {
+			background: #0769b0;
+			color: #fff;
+		}
 		&:focus {
-			outline: rgba(19, 124, 189, 0.6) auto 2px;
-			outline-offset: 2px;
+			background: #0769b0;
+			outline: none;
+			outline-offset: 0;
 		}
 	}
 

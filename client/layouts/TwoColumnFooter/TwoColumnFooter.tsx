@@ -121,7 +121,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 		<div className="two-column-footer-component">
 			{emailCallToAction}
 			{investorLogos}
-			<div className="columns">
+			<footer className="columns">
 				<div className="column left">
 					<nav className="footer-navigation">
 						<ul className="footer-navigation__list">
@@ -204,7 +204,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 						</small>
 					</div>
 				</div>
-			</div>
+			</footer>
 		</div>
 	);
 };

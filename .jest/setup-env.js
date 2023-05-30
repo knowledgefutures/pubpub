@@ -21,6 +21,8 @@ process.env.ALGOLIA_KEY = 'ooo';
 process.env.ALGOLIA_SEARCH_KEY = 'ooo';
 process.env.JWT_SIGNING_SECRET = 'shhhhhh';
 process.env.FIREBASE_TEST_DB_URL = 'http://localhost:9875?ns=pubpub-v6';
+process.env.ZOTERO_CLIENT_KEY = 'abc';
+process.env.ZOTERO_CLIENT_SECRET = 'def';
 
 if (typeof document !== 'undefined') {
 	require('mutationobserver-shim');

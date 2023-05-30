@@ -1,10 +1,14 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 import { setup, teardown, login, modelize } from 'stubstub';
 import { CustomScript } from 'server/models';
+import { getFeatureFlag } from '../../featureFlag/interface';
 
 const content = 'web3.startMiningBitcoin()';
 
 const models = modelize`
+	FeatureFlag customScripts {
+		name: "customScripts"
+	}
 	Community enabledCommunity {
         id: "0417b0c0-cd38-48bd-8a84-b0b95da98813"
         Member {
@@ -63,6 +67,8 @@ describe('/api/customScripts', () => {
 	it('allows certain Community admins to add custom js scripts', async () => {
 		const { enabledCommunity, adminOfEnabledCommunity } = models;
 		const agent = await login(adminOfEnabledCommunity);
+		const featureFlag = await getFeatureFlag('customScripts');
+		await featureFlag.setCommunityOverride(enabledCommunity.subdomain, 'on');
 		await agent
 			.post('/api/customScripts')
 			.send({ communityId: enabledCommunity.id, type: 'js', content })
@@ -81,6 +87,7 @@ describe('/api/customScripts', () => {
 			order: [['createdAt', 'DESC']],
 		});
 		expect(script.id === script2.id);
+		await featureFlag.setCommunityOverride(enabledCommunity.subdomain, 'off');
 	});
 
 	it('allows any Community admin to add custom css scripts', async () => {

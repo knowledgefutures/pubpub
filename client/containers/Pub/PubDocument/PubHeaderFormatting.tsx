@@ -1,3 +1,4 @@
+import { Divider } from '@blueprintjs/core';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -52,15 +53,18 @@ const PubHeaderFormatting = (props: Props) => {
 			/>
 			<div className="right-content">
 				{featureFlags.suggestedEdits && (
-					<FormattingBar
-						buttons={buttons.suggestedEditsButtonSet}
-						editorChangeObject={editorChangeObject || ({} as any)}
-						showBlockTypes={false}
-						controlsConfiguration={{
-							container: editorWrapperRef.current!,
-							isAbsolutelyPositioned: true,
-						}}
-					/>
+					<>
+						<FormattingBar
+							buttons={buttons.suggestedEditsButtonSet}
+							editorChangeObject={editorChangeObject || ({} as any)}
+							showBlockTypes={false}
+							controlsConfiguration={{
+								container: editorWrapperRef.current!,
+								isAbsolutelyPositioned: true,
+							}}
+						/>
+						<Divider />
+					</>
 				)}
 				{state && <PubWordCountButton doc={state.doc} />}
 				<PubHeaderCollaborators collabData={collabData} />

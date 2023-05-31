@@ -72,6 +72,10 @@ $bp: vendor.$bp-namespace;
 		user-select: none;
 		pointer-events: none;
 	}
+
+	.#{$bp}-divider {
+		height: 26px;
+	}
 }
 
 @media only screen and (max-width: 750px) {

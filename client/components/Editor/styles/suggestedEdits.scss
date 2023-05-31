@@ -78,6 +78,23 @@ p > *[data-suggestion-kind='modification'] {
 	background-color: rgba($modification, 0.2);
 }
 
+> *[data-suggestion-kind] > hr:before {
+	content: '';
+	display: block;
+	height: 32px;
+	width: 1.5px;
+	transform: translateY(-50%) translateX(-9px);
+	opacity: 0.5;
+}
+
+> *[data-suggestion-kind='addition'] > hr:before {
+	background-color: $addition;
+}
+
+> *[data-suggestion-kind='removal'] > hr:before {
+	background-color: $removal;
+}
+
 .tableWrapper:not([data-suggestion-kind='addition']) {
 	tr > *[data-suggestion-kind='addition'] {
 		@include corner-triangle(6px, $addition);

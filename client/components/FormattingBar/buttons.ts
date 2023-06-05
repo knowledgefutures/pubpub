@@ -41,6 +41,7 @@ import {
 	FormattingBarButtonDataControls,
 	FormattingBarButtonPopoverCondition,
 } from './types';
+import { SuggestedEditsTogglePopover } from './controlComponents/SuggestedEditsTogglePopover';
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;
@@ -315,6 +316,10 @@ export const suggestedEditsToggle: FormattingBarButtonData = {
 	icon: 'highlight',
 	isToggle: true,
 	command: toggleSuggestedEditsSpec,
+	popover: {
+		condition: FormattingBarButtonPopoverCondition.Always,
+		component: SuggestedEditsTogglePopover,
+	},
 };
 
 export const suggestedEditsReject: FormattingBarButtonData = {

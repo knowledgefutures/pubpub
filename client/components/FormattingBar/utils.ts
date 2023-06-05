@@ -3,7 +3,7 @@ import { FormattingBarButtonData, FormattingBarButtonPopoverCondition } from './
 export const getButtonPopoverComponent = (button: FormattingBarButtonData, isDisabled: boolean) =>
 	button.popover &&
 	Boolean(
-		FormattingBarButtonPopoverCondition.Always ||
+		button.popover.condition === FormattingBarButtonPopoverCondition.Always ||
 			(button.popover.condition === FormattingBarButtonPopoverCondition.Disabled &&
 				isDisabled),
 	)

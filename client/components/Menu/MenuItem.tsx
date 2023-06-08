@@ -50,7 +50,7 @@ const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
 		if (onDismiss) {
 			onDismiss();
 		}
-		if (href) {
+		if (href && !evt.ctrlKey && !evt.metaKey && !evt.shiftKey) {
 			window.open(href, target);
 		}
 	};

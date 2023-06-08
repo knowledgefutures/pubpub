@@ -26,10 +26,11 @@ const checkForAsset = (url): Promise<void> => {
 
 const getFileNameForUpload = (file: File) => {
 	const folderName = isProd() ? generateHash(8) : '_testing';
-	const extension = file.name !== undefined ? file.name.split('.').pop() : 'jpg';
+	const [fileName = 'unknown', fileExtension = 'jpg'] =
+		file.name?.split(/(.*)\.(.*)/).filter(Boolean) ?? [];
 	const random = Math.floor(Math.random() * 8);
 	const now = new Date().getTime();
-	return `${folderName}/${random}${now}.${extension}`;
+	return `${folderName}/${fileName}-${random}${now}.${fileExtension}`;
 };
 
 const getBaseUrlForBucket = (bucket) => `https://s3-external-1.amazonaws.com/${bucket}`;

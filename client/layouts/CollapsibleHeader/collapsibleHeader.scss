@@ -12,7 +12,7 @@ $bp: vendor.$bp-namespace;
 		&:hover {
 			background-color: transparent;
 			color: #087acc;
-			> .bp3-icon {
+			.bp3-icon {
 				color: inherit;
 			}
 		}
@@ -22,7 +22,7 @@ $bp: vendor.$bp-namespace;
 		overflow: auto;
 		display: none;
 
-		> header {
+		header {
 			padding-top: 1.875rem;
 			padding-bottom: 1.875rem;
 
@@ -31,10 +31,10 @@ $bp: vendor.$bp-namespace;
 				position: relative;
 				z-index: 21;
 
-				> a {
+				a {
 					display: block;
-					> picture {
-						> img {
+					picture {
+						img {
 							display: block;
 							height: 35px;
 							width: 88px;
@@ -52,8 +52,8 @@ $bp: vendor.$bp-namespace;
 				width: 68px;
 			}
 		}
-		> nav {
-			> h3 {
+		nav {
+			h3 {
 				border: 0;
 				clip: rect(0 0 0 0);
 				height: 1px;
@@ -63,12 +63,12 @@ $bp: vendor.$bp-namespace;
 				position: absolute;
 				width: 1px;
 			}
-			> ul {
+			ul {
 				list-style-type: none;
 				margin: 0 0 1.5rem 0;
 				padding: 0;
 
-				> li {
+				li {
 					font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
 					padding-bottom: 1.5rem;
 					font-size: 1rem;
@@ -76,7 +76,7 @@ $bp: vendor.$bp-namespace;
 					line-height: 0;
 					text-align: left;
 
-					> a {
+					a {
 						font-size: 0.875rem;
 						line-height: 1.71429;
 						font-weight: bold;
@@ -108,14 +108,15 @@ $bp: vendor.$bp-namespace;
 
 		.logo {
 			position: relative;
-			> a {
+			a {
+				width: 88px;
 				height: 35px;
 				display: block;
 
-				> picture {
+				picture {
 					height: 100%;
 
-					> img {
+					img {
 						height: 100%;
 					}
 				}
@@ -130,21 +131,21 @@ $bp: vendor.$bp-namespace;
 			margin-left: 1.25rem;
 			position: relative;
 
-			> nav {
+			nav {
 				margin-top: 0.5rem;
 				height: 24px;
 
-				> ul {
+				ul {
 					list-style-type: none;
 					display: flex;
 					align-items: center;
 					margin: 0;
 					padding: 0;
 
-					> li {
+					li {
 						margin-left: 1.5rem;
 
-						> a,
+						a,
 						button {
 							font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
 							font-size: 0.875rem;
@@ -160,11 +161,11 @@ $bp: vendor.$bp-namespace;
 					margin-top: 0.5rem;
 					height: 24px;
 
-					> ul {
+					ul {
 						// Move the menu button to the right.
 						justify-content: flex-end;
 						// Hide every nav item except for the menu button.
-						> li:not(:first-of-type) {
+						li:not(:first-of-type) {
 							display: none;
 						}
 					}
@@ -276,7 +277,7 @@ $bp: vendor.$bp-namespace;
 @media only all and (min-width: 45.625em) {
 	.collapsible-header-component {
 		.menu {
-			> header {
+			header {
 				.title {
 					position: relative;
 					width: 88px;
@@ -304,7 +305,7 @@ $bp: vendor.$bp-namespace;
 					// Move the list items to the left.
 					justify-content: initial;
 					// Hide every nav item except for the menu button.
-					> li:not(:first-of-type) {
+					li:not(:first-of-type) {
 						display: block;
 					}
 				}
@@ -318,7 +319,7 @@ $bp: vendor.$bp-namespace;
 		.menu {
 			width: 320px;
 
-			> header {
+			header {
 				padding-top: 2.625rem;
 			}
 
@@ -332,7 +333,7 @@ $bp: vendor.$bp-namespace;
 @media only screen and (min-width: 75em) {
 	.collapsible-header-component {
 		.menu {
-			> header {
+			header {
 				padding-top: 3.25rem;
 			}
 		}

@@ -21,6 +21,10 @@ $border-style: 1px solid #ddd;
 		}
 	}
 
+	&.resizable {
+		resize: vertical;
+	}
+
 	&.constrain-height {
 		height: 100%;
 		overflow-y: hidden;

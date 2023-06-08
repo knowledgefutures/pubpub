@@ -17,6 +17,7 @@ type Props = {
 	initialContent?: any;
 	isReadOnly?: boolean;
 	isTranslucent?: boolean;
+	resizable?: boolean;
 	onEdit?: OnEditFn;
 	onContent?: ({ text: string, content: any }) => unknown;
 	placeholder?: string;
@@ -44,6 +45,7 @@ const MinimalEditor = (props: Props) => {
 		isReadOnly = false,
 		isTranslucent = false,
 		getButtons = defaultGetButtons,
+		resizable = false,
 	} = props;
 	const [changeObject, setChangeObject] = useState<EditorChangeObject | null>(null);
 	const [FormattingBar, setFormattingBar] = useState<any>(null as any);
@@ -98,6 +100,7 @@ const MinimalEditor = (props: Props) => {
 				isTranslucent && 'translucent',
 				useFormattingBar && 'has-formatting-bar',
 				noMinHeight && 'no-min-height',
+				resizable && 'resizable',
 			)}
 		>
 			{useFormattingBar && FormattingBar && (

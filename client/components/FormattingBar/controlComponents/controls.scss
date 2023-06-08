@@ -215,6 +215,7 @@ $bp: vendor.$bp-namespace;
 	@include controls-component();
 	@include controls-grid(minmax(300px, 1fr) 2fr);
 	max-width: 1200px;
+	height: auto !important;
 
 	.source-control {
 		.controls {

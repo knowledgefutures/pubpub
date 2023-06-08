@@ -48,9 +48,10 @@ const SimpleEditor = (props: Props) => {
 			onEdit={handleEdit}
 			placeholder={placeholder}
 			initialContent={initialDoc.current}
-			useFormattingBar={true}
-			isTranslucent={true}
-			constrainHeight={true}
+			useFormattingBar
+			isTranslucent
+			constrainHeight
+			resizable
 		/>
 	);
 };

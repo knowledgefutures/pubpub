@@ -4,9 +4,10 @@ import { knex } from 'knex';
 
 import { createSequelizeModelsFromFacetDefinitions } from './facets/create';
 
-const database_url = process.env.DATABASE_CONNECTION_POOL_URL || process.env.DATABASE_URL;
+const database_url = process.env.DATABASE_URL;
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 const useSSL = database_url.indexOf('localhost') === -1;
+
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 export const sequelize = new Sequelize(database_url, {
 	logging: false,

@@ -119,6 +119,7 @@ app.post('/api/login', (req, res, next) => {
 						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 					...(isDuqDuq() &&
 						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
+					maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
 				});
 				return res.status(201).json('success');
 			});

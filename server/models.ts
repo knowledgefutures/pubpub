@@ -15,8 +15,9 @@ export const sequelize = new Sequelize(database_url, {
 		max: process.env.SEQUELIZE_MAX_CONNECTIONS
 			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
 			: 5, // Some migrations require this number to be 150
-		// idle: 20000,
-		// acquire: 20000,
+		min: 0,
+		idle: 10000,
+		acquire: 60000,
 	},
 });
 

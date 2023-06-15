@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
@@ -106,17 +108,36 @@ const getSingleStructuredCitation = async (
 	}
 };
 
+function* iterStructuredValues(structuredValues: StructuredValue[], limit: number) {
+	let offset = 0;
+	while (true) {
+		const slice = structuredValues.slice(offset, offset + limit);
+		yield slice;
+		if (slice.length < limit) break;
+		offset += limit;
+	}
+}
+
 export const getStructuredCitations = async (
 	structuredValues: StructuredValue[],
 	citationStyle: CitationStyleKind = 'apa-7',
 	inlineStyle: CitationInlineStyleKind = 'count',
 ) => {
 	const structuredCitationsMap: Record<StructuredValue, RenderedStructuredValue> = {};
-	const renderedStructuredValues = await Promise.all(
-		structuredValues.map((structuredValue) =>
-			getSingleStructuredCitation(structuredValue, citationStyle, inlineStyle),
-		),
-	);
+	const renderedStructuredValues: RenderedStructuredValue[] = [];
+	// Some Pubs have many (100+) citations, so we batch the `Cite.async` calls
+	// to avoid timeouts.
+	for (const structuredValueSlice of iterStructuredValues(structuredValues, 10)) {
+		// eslint-disable-next-line no-await-in-loop
+		const renderedStructuredValuesSlice = await Promise.all(
+			structuredValueSlice.map((structuredValue) =>
+				getSingleStructuredCitation(structuredValue, citationStyle, inlineStyle),
+			),
+		);
+		for (const renderedStructuredValue of renderedStructuredValuesSlice) {
+			renderedStructuredValues.push(renderedStructuredValue);
+		}
+	}
 	structuredValues.forEach((structuredValue, index) => {
 		structuredCitationsMap[structuredValue] = renderedStructuredValues[index];
 	});

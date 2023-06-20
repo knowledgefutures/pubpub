@@ -9,7 +9,7 @@ import { getSuggestedEditsState } from './state';
 import { SuggestionMarkAttrs, SuggestionNodeAttrs } from './types';
 import { suggestionNodeAttributes } from './schema';
 
-const getResolvableRangeForSelection = (
+export const getResolvableRangeForSelection = (
 	state: EditorState,
 ): null | { from: number; to: number } => {
 	const { selection } = state;

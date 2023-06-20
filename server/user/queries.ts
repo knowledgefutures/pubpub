@@ -58,8 +58,7 @@ export const createUser = (inputValues) => {
 		});
 };
 
-export const getUserAvatarInfo = async (req) => {
-	const { suggestionUserId } = req;
+export const getSuggestedEditsUserInfo = async (suggestionUserId) => {
 	const user = await User.findOne({ where: { id: suggestionUserId } });
 	const { fullName, initials, avatar } = user;
 	return { fullName, initials, avatar };

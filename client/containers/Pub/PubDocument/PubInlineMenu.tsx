@@ -7,6 +7,7 @@ import { usePageContext } from 'utils/hooks';
 import { Icon, ClickToCopyButton } from 'components';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 import { setLocalHighlight, moveToEndOfSelection, isDescendantOf } from 'components/Editor';
+import { acceptSuggestedEdits } from 'components/Editor/plugins/suggestedEdits/resolve';
 
 import { usePubContext } from '../pubHooks';
 
@@ -24,7 +25,13 @@ const PubInlineMenu = () => {
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject!.selection;
 	const shouldHide = useMemo(() => {
+		if (!collabData.editorChangeObject || !collabData.editorChangeObject.view || !selection)
+			return true;
+		const state = collabData.editorChangeObject.view.state;
+		const inRange = acceptSuggestedEdits(state);
+
 		return (
+			inRange ||
 			!selection ||
 			selection.empty ||
 			(selection as any).$anchorCell ||

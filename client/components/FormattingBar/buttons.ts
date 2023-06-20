@@ -364,10 +364,7 @@ export const reviewButtonSet = [
 
 export const discussionButtonSet = [[strong, em, link], [rightToLeft], [simpleMedia]];
 
-export const inlineMenuButtonSet = [
-	[heading1, heading2, strong, em, link],
-	[suggestedEditsReject, suggestedEditsAccept],
-];
+export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
 
 export const workflowButtonSet = [
 	[heading1, heading2, strong, em, link],

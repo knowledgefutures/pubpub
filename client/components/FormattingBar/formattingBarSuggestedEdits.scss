@@ -1,0 +1,24 @@
+.formatting-bar-suggested-edits {
+	display: flex;
+	padding: 0.25em;
+
+	.reject-button {
+		margin-right: 21px;
+	}
+
+	.accept-button {
+		margin-left: 21px;
+	}
+
+	.accept-button,
+	.reject-button {
+		max-height: 27px;
+		background-color: #444;
+		color: white;
+	}
+
+	.accept-button:hover,
+	.reject-button:hover {
+		filter: brightness(85%);
+	}
+}

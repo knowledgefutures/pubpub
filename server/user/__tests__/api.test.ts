@@ -46,8 +46,8 @@ describe('/api/users', () => {
 		const { user, suggestionUser } = models;
 		const agent = await login(user);
 		const res = await agent
-			.get('/api/users')
-			.send({ userId: user.id, suggestionUserId: suggestionUser.id });
+			.get(`/api/users?suggestionUserId=${suggestionUser.id}`)
+			.send({ userId: user.id });
 		const suggestedUserInfo = res.body;
 		expect(suggestedUserInfo).toEqual({
 			fullName: suggestionUser.fullName,

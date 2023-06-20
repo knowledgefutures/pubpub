@@ -20,7 +20,10 @@ import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
 import { Release, Pub } from 'types';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
-import { acceptSuggestions, rejectSuggestions } from '../Editor/plugins/suggestedEdits/resolve';
+import {
+	acceptSuggestions,
+	rejectSuggestions,
+} from 'components/Editor/plugins/suggestedEdits/resolve';
 import { getSuggestionAttrsForNode } from '../Editor/plugins/suggestedEdits/operations';
 
 require('./pubReleaseDialog.scss');

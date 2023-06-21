@@ -25,5 +25,12 @@ export const generateMetabaseToken = (scopeType, scopeId, dashboardType) => {
 		},
 		exp: Math.round(Date.now() / 1000) + 10 * 60, // 10 minute expiration
 	};
-	return jwt.sign(payload, process.env.METABASE_SECRET_KEY);
+
+	const metabaseSecretKey = process.env.METABASE_SECRET_KEY;
+
+	if (!metabaseSecretKey) {
+		throw new Error('METABASE_SECRET_KEY environment variable not set');
+	}
+
+	return jwt.sign(payload, metabaseSecretKey);
 };

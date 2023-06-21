@@ -231,7 +231,7 @@ const Pub = sequelize.define(
 		communityId: { type: Sequelize.UUID, allowNull: false },
 	},
 	{
-		indexes: [{ fields: ['communityId'], method: 'BTREE' }],
+		indexes: [{ fields: ['communityId'], using: 'BTREE' }],
 	},
 );
 
@@ -260,9 +260,9 @@ const Discussion = sequelize.define(
 	},
 	{
 		indexes: [
-			{ fields: ['userId'], method: 'BTREE' },
-			{ fields: ['pubId'], method: 'BTREE' },
-			{ fields: ['communityId'], method: 'BTREE' },
+			{ fields: ['userId'], using: 'BTREE' },
+			{ fields: ['pubId'], using: 'BTREE' },
+			{ fields: ['communityId'], using: 'BTREE' },
 		],
 	},
 );

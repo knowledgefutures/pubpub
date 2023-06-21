@@ -9,6 +9,7 @@ import express from 'express';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
+import CreateSequelizeStore from 'connect-session-sequelize';
 
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
 
@@ -21,7 +22,8 @@ import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 
-import { sequelize, User } from './models';
+import { User } from './models';
+import { sequelize } from './sequelize';
 import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
 import './hooks';
 
@@ -79,8 +81,9 @@ app.use(cookieParser());
 /* --------------------- */
 /* Configure app session */
 /* --------------------- */
-const session = require('express-session');
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
+import session from 'express-session';
+
+const SequelizeStore = CreateSequelizeStore(session.Store);
 
 app.use(
 	session({
@@ -107,7 +110,6 @@ app.use((req, res, next) => {
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
 	if (hostname.indexOf('.pubpub.org') > -1) {
-		// @ts-expect-error
 		req.session.cookie.domain = '.pubpub.org';
 	}
 	next();

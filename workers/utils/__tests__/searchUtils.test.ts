@@ -1,6 +1,5 @@
 import { stub, modelize, setup, teardown, determinize } from 'stubstub';
 import { plainDoc, fullDoc, imageDoc } from 'utils/storybook/data';
-
 import { getPageSearchData, getPubSearchData } from '../searchUtils';
 
 const models = modelize`
@@ -74,19 +73,27 @@ const models = modelize`
     }
 `;
 
-let firebaseStub;
+let firebaseStub:
+	| {
+			stubs: {
+				[k: string]: any;
+			};
+			restore: () => void;
+	  }
+	| undefined;
 
 setup(beforeAll, async () => {
 	await models.resolve();
+
 	firebaseStub = stub('server/utils/firebaseAdmin', {
-		getPubDraftDoc: () => {
-			return Promise.resolve({ doc: imageDoc });
+		getPubDraftDoc: async () => {
+			return { doc: imageDoc };
 		},
 	});
 });
 
 teardown(afterAll, () => {
-	firebaseStub.restore();
+	firebaseStub?.restore();
 });
 
 const determinizePubData = determinize([

@@ -6,9 +6,6 @@ import { getFeatureFlag } from '../../featureFlag/interface';
 const content = 'web3.startMiningBitcoin()';
 
 const models = modelize`
-	FeatureFlag customScripts {
-		name: "customScripts"
-	}
 	Community enabledCommunity {
         id: "0417b0c0-cd38-48bd-8a84-b0b95da98813"
         Member {

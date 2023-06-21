@@ -15,5 +15,5 @@ export const getValidCollectionIdsFromCreatePubToken = (token, { userId, communi
 		communityId,
 		type: 'createPub',
 	});
-	return result && result.payload.collectionIds;
+	return result && typeof result === 'object' && result.payload.collectionIds;
 };

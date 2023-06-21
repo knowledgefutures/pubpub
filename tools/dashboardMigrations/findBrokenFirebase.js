@@ -2,6 +2,8 @@
 import { Branch } from '../../server/models';
 
 const firebaseAdmin = require('firebase-admin');
+// FIXME: Weird eslint issue where either with or without the extension is an error
+// eslint-disable-next-line import/extensions
 require('../../config');
 
 const serviceAccount = JSON.parse(

@@ -12,7 +12,10 @@ require('./banner.scss');
 const Banner = (props: Props) => {
 	const { bannerText, accentColor, right } = props;
 
-	const lighterAccentColor = useMemo(() => Color(accentColor).alpha(0.1), [accentColor]);
+	const lighterAccentColor = useMemo(
+		() => Color(accentColor).alpha(0.1).toString(),
+		[accentColor],
+	);
 
 	return (
 		<div style={{ background: lighterAccentColor }} className="banner">

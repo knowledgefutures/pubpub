@@ -60,7 +60,7 @@ describe('async utils', () => {
 			expect(results).toEqual([2, 3, 4]);
 		});
 		it('uses its concurrency option to process multiple values in parallel', async () => {
-			const tick = () => new Promise(setImmediate);
+			const tick = () => new Promise(global.setImmediateNode);
 			const config = { concurrency: 2 };
 			const values = [0, 1, 2, 3, 4];
 			const pending: Function[] = [];

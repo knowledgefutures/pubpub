@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 
 import { ActivityItem } from 'server/models';
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, teardown } from 'stubstub';
 import { fetchFacetsForScope } from '..';
 
 const models = modelize`
@@ -25,6 +25,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('/api/facets', () => {
 	it('forbids users without "manage" member permission from updating facets', async () => {

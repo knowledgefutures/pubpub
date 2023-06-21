@@ -1,4 +1,4 @@
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, teardown } from 'stubstub';
 
 import { User } from 'server/models';
 
@@ -14,6 +14,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('/api/users', () => {
 	it('does not allow a user to register as a superadmin', async () => {

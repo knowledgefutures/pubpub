@@ -1,4 +1,4 @@
-import { modelize, setup } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { UserSubscription } from 'server/models';
 
@@ -30,7 +30,10 @@ const models = modelize`
     }
 `;
 
-setup(beforeAll, models.resolve);
+setup(beforeAll, async () => {
+	await models.resolve();
+});
+teardown(afterAll);
 
 describe('createThreadComment()', () => {
 	it('subscribes a user to a thread when they comment in it, according to their notification preferences', async () => {

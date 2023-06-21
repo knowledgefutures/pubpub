@@ -33,7 +33,7 @@ const SpubHeaderToolbar = (props: Props) => {
 	const { pendingCount } = usePendingChanges();
 
 	const lighterAccentColor = useMemo(
-		() => Color(communityData.accentColorDark).alpha(0.1),
+		() => Color(communityData.accentColorDark).alpha(0.1).toString(),
 		[communityData.accentColorDark],
 	);
 

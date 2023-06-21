@@ -33,8 +33,8 @@ if (typeof document !== 'undefined') {
 			focusNode: null,
 			anchorNode: null,
 			rangeCount: 0,
-			addRange: () => {},
-			removeAllRanges: () => {},
+			addRange: () => { },
+			removeAllRanges: () => { },
 		};
 	};
 
@@ -44,8 +44,8 @@ if (typeof document !== 'undefined') {
 			commonAncestorContainer: {
 				ownerDocument: document,
 			},
-			setStart: () => {},
-			setEnd: () => {},
+			setStart: () => { },
+			setEnd: () => { },
 			getClientRects: () => [],
 			getBoundingClientRect: () => ({
 				left: 0,
@@ -61,7 +61,15 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
-	window.requestIdleCallback = () => {};
+	window.requestIdleCallback = () => { };
 }
 
 global.fetch = () => new Promise((resolve) => setTimeout(resolve), 1e4);
+
+if (typeof window === 'undefined') {
+	/**
+	 * This is here because Jest overrides setImmediate in a strange way.
+	 * This fixes @see{../utils/async/__tests__/async.test.ts}
+	 */
+	global.setImmediateNode = setImmediate
+}

@@ -45,7 +45,9 @@ const resolvePartialMemberItem = async (member: types.Member) => {
 	}
 	if (member.collectionId) {
 		const collection: types.Collection = await Collection.findOne({
-			where: { id: member.collectionId },
+			where: {
+				id: member.collectionId,
+			},
 		});
 		return {
 			tag: 'collection',

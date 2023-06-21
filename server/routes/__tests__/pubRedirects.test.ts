@@ -26,6 +26,8 @@ setup(beforeAll, async () => {
 	await models.resolve();
 });
 
+teardown(afterAll);
+
 const getHost = (community) => `${community.subdomain}.pubpub.org`;
 
 describe('/pub', () => {
@@ -79,5 +81,3 @@ describe('/pub', () => {
 		);
 	});
 });
-
-teardown(afterAll);

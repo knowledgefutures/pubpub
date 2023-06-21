@@ -15,7 +15,7 @@ type ExpectCreatedActivityItemResult<Result> = {
 const splitQueryFromAssertion = (result: Record<string, any>) => {
 	const { communityId, collectionId, pubId, kind, ...assertion } = result;
 	const query = { communityId, collectionId, pubId, kind };
-	Object.keys(query).forEach((key) => {
+	(Object.keys(query) as ('communityId' | 'collectionId' | 'pubId' | 'kind')[]).forEach((key) => {
 		if (!query[key]) {
 			delete query[key];
 		}

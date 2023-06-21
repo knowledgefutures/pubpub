@@ -1,4 +1,4 @@
-import { modelize, setup } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { UserSubscription } from 'server/models';
 
@@ -21,6 +21,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('createPubAttribution()', () => {
 	it("subscribes a user to a Pub's threads when they are added as a contributor, according to their notification preferences", async () => {

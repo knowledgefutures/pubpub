@@ -1,7 +1,11 @@
+import type { Global } from '@jest/types';
 import { clearUserToAgentMap } from './userToAgentMap';
-import { sequelize } from '../server/models';
+import { sequelize } from '../server/sequelize';
 
-export const setup = (beforeFn, actionsFn) => {
+export const setup = (
+	beforeFn: Global.HookBase,
+	actionsFn?: (() => any) | (() => Promise<any>),
+) => {
 	if (beforeFn.toString().startsWith('after')) {
 		console.warn(
 			'You are passing a function that looks like afterAll or afterEach into setup.' +
@@ -16,7 +20,10 @@ export const setup = (beforeFn, actionsFn) => {
 	}, 30000);
 };
 
-export const teardown = (afterFn, actionsFn) => {
+export const teardown = (
+	afterFn: Global.HookBase,
+	actionsFn?: (() => any) | (() => Promise<any>),
+) => {
 	if (afterFn.toString().startsWith('before')) {
 		console.warn(
 			'You are passing a function that looks like beforeAll or beforeEach into teardown.' +
@@ -28,5 +35,7 @@ export const teardown = (afterFn, actionsFn) => {
 			await actionsFn();
 		}
 		clearUserToAgentMap();
+		await sequelize.close();
+		// global.gc?.();
 	});
 };

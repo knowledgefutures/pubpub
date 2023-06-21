@@ -1,6 +1,14 @@
 {
 	"extends": ["airbnb", "prettier"],
-	"plugins": ["react", "import", "prettier", "react-hooks", "pubpub-rules", "@typescript-eslint", "@blueprintjs"],
+	"plugins": [
+		"react",
+		"import",
+		"prettier",
+		"react-hooks",
+		"pubpub-rules",
+		"@typescript-eslint",
+		"@blueprintjs"
+	],
 	"parser": "@typescript-eslint/parser",
 	"env": {
 		"browser": true,

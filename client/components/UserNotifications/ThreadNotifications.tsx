@@ -21,7 +21,7 @@ type Props = {
 
 const getAccentColors = (communityAccentColor: string, isRead: boolean) => {
 	const opaque = isRead ? '#aaa' : communityAccentColor;
-	const transparent = Color(opaque).alpha(0.04);
+	const transparent = Color(opaque).alpha(0.04).toString();
 	return {
 		opaque,
 		transparent,

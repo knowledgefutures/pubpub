@@ -18,8 +18,8 @@ import {
 	PubAttribution,
 	PubEdge,
 	Release,
-	sequelize,
 } from 'server/models';
+import { sequelize } from 'server/sequelize';
 
 const pubsIdsQuery = `
 	WITH query_values (required_slugs, forbidden_slugs, published_before, published_after) AS (
@@ -138,7 +138,8 @@ export const getQueriedPubIds = async ({ communityId, limit, query }) => {
 			limit,
 		},
 	});
-	return rows.map((row) => row.pubId);
+	// TODO: remov any
+	return rows.map((row: any) => row.pubId);
 };
 
 export const getPubData = async (pubIds) => {
@@ -225,7 +226,7 @@ export const getFeedItemForPub = (pubData, communityData) => {
 		description,
 		url: pubUrl(communityData, pubData),
 		guid: id,
-		date: getPubPublishedDate(pubData),
+		date: getPubPublishedDate(pubData) || new Date(),
 		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		categories: sortByPrimaryStatus(collectionPubs).map(({ collection }) => collection.title),
 		custom_elements: [
@@ -259,7 +260,7 @@ export const getCommunityRss = async (communityData, query) => {
 		webMaster: 'hello@pubpub.org',
 		language: 'en',
 		pubDate: new Date(),
-		ttl: '60',
+		ttl: 60,
 	});
 
 	pubs.forEach((pubData) => feed.item(getFeedItemForPub(pubData, communityData)));

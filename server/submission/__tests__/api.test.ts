@@ -54,13 +54,14 @@ setup(beforeAll, async () => {
 });
 
 let sendEmailMock: jest.Mock = null as any;
-beforeAll(() => {
+beforeAll(async () => {
 	sendEmailMock = jest.fn();
 	stub('server/submission/emails', {
 		sendSubmissionEmail: sendEmailMock,
 	});
+
 	stub('server/submission/abstract', {
-		appendAbstractToPubDraft: () => {},
+		appendAbstractToPubDraft: async () => {},
 	});
 });
 

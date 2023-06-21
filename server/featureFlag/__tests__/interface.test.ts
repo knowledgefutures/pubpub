@@ -1,4 +1,4 @@
-import { modelize, setup } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
 
@@ -13,6 +13,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('feature flags devshell interface', () => {
 	it('creates a FeatureFlag', async () => {

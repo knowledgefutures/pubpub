@@ -190,7 +190,6 @@ const getDirectivesFromFiles = async (directory, files, directiveCounter) => {
 			const directive = YAML.parse(contents.toString());
 			return extractDirectives(directory, directivePath, directive, directiveCounter);
 		}),
-		// @ts-expect-error ts-migrate(2488) FIXME: Type 'unknown' must have a '[Symbol.iterator]()' m... Remove this comment to see the full error message
 	).then((res) => res.reduce((a, b) => [...a, ...b], []));
 	return { directiveFiles, directives };
 };
@@ -221,7 +220,6 @@ export const buildImportPlan = (rootDirectory) => {
 			files,
 			directiveCounter,
 		);
-		// @ts-expect-error ts-migrate(2488) FIXME: Type 'unknown' must have a '[Symbol.iterator]()' m... Remove this comment to see the full error message
 		const nextDirectives = [...parentDirectives, ...directives];
 		const matchedDirectives = await matchDirectivesToPath(directoryPath, nextDirectives);
 		maybeThrowNestedCollectionError(matchedDirectives);

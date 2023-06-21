@@ -12,12 +12,17 @@ export const createUserScopeVisit = async (userScopeVisitIds: UserScopeVisitIds)
 	if (!userId) {
 		return;
 	}
-	await UserScopeVisit.upsert({
-		userId,
-		pubId,
-		collectionId,
-		communityId,
-	});
+	await UserScopeVisit.upsert(
+		{
+			userId,
+			pubId,
+			collectionId,
+			communityId,
+		},
+		{
+			conflictFields: ['userId', collectionId ? 'collectionId' : 'pubId'],
+		},
+	);
 };
 
 export const getUserScopeVisits = ({ userId, communityId }) => {

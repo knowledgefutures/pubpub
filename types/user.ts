@@ -34,4 +34,7 @@ export type UserWithPrivateFields = User & {
 	resetHashExpiration: number;
 };
 
+export type UserWithPrivateFieldsAndHashedPassword = UserWithPrivateFields & {
+	sha3hashedPassword: string;
+};
 export type SuggestedEditsUser = Pick<MinimalUser, 'avatar' | 'initials' | 'fullName'>;

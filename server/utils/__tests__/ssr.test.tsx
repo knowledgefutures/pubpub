@@ -56,7 +56,7 @@ describe('generateMetaComponents', () => {
 		};
 
 		expect(generateMetaComponents(props as any)).toMatchInlineSnapshot(`
-		Array [
+		[
 		  <link
 		    href="https://localhost/rss.xml"
 		    rel="alternate"
@@ -108,7 +108,7 @@ describe('generateMetaComponents', () => {
 		    sizes="256x256"
 		    type="image/png"
 		  />,
-		  Array [
+		  [
 		    <meta
 		      content="Ian Reynolds"
 		      name="citation_author"
@@ -142,7 +142,7 @@ describe('generateMetaComponents', () => {
 		      name="citation_author"
 		    />,
 		  ],
-		  Array [
+		  [
 		    <meta
 		      content="Ian Reynolds"
 		      name="dc.creator"
@@ -176,7 +176,7 @@ describe('generateMetaComponents', () => {
 		      name="dc.creator"
 		    />,
 		  ],
-		  Array [],
+		  [],
 		  <meta
 		    content="924988584221879"
 		    property="fb:app_id"

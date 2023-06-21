@@ -34,12 +34,28 @@ export const createCollection = async (
 		kind,
 		pageId = null,
 		doi = null,
+		/**
+		 * @default false
+		 */
 		isPublic = false,
+		/**
+		 * @default true
+		 */
 		isRestricted = true,
 		id = null,
 		slug = null,
+	}: {
+		communityId: string;
+		title: string;
+		kind: string;
+		pageId?: string | null;
+		doi?: string | null;
+		isPublic?: boolean;
+		isRestricted?: boolean;
+		id?: string | null;
+		slug?: string | null;
 	},
-	actorId?,
+	actorId?: string,
 ) => {
 	if (title) {
 		const desiredSlug = slug || slugifyString(title);
@@ -67,7 +83,6 @@ export const createCollection = async (
 			doi,
 			kind,
 			layout: generateDefaultCollectionLayout(),
-			// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 			...(id && { id }),
 		};
 		const metadata = normalizeMetadataToKind({}, kind, {

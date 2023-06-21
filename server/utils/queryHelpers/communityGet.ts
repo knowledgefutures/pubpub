@@ -1,10 +1,10 @@
 import { Collection, Community, Page, Member, ScopeSummary, SpamTag } from 'server/models';
 import { Community as CommunityType, DefinitelyHas } from 'types';
 
-export default (
+export default async (
 	locationData,
 	whereQuery,
-): DefinitelyHas<CommunityType, 'pages' | 'collections'> => {
+): Promise<DefinitelyHas<CommunityType, 'pages' | 'collections'>> => {
 	return Community.findOne({
 		where: whereQuery,
 		include: [

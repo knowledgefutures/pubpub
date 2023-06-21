@@ -1,4 +1,4 @@
-import { setup, login, modelize, expectCreatedActivityItem } from 'stubstub';
+import { setup, login, modelize, expectCreatedActivityItem, teardown } from 'stubstub';
 
 import { createPubEdge } from 'server/pubEdge/queries';
 import { ExternalPublication, PubEdge } from 'server/models';
@@ -39,6 +39,7 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+teardown(afterAll);
 
 it('does not create a PubEdge for a user with edit permissions', async () => {
 	const { sourcePubEditor, sourcePub, targetPub } = models;

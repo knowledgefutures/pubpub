@@ -8,7 +8,6 @@ app.get('/api/logout', (req, res) => {
 		...(isProd() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 		...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 	});
-	// @ts-expect-error
 	req.logout();
 	return res.status(200).json('success');
 });

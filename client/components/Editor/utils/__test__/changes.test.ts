@@ -26,14 +26,14 @@ describe('getStepsInChangeRange', () => {
 		]);
 		expect(zeroToTwo).toEqual(negativeOneToTwo);
 		expect(zeroToTwo).toMatchInlineSnapshot(`
-		Array [
-		  Array [
-		    Object {
+		[
+		  [
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -45,8 +45,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Hello fellow human",
 		                "type": "text",
 		              },
@@ -58,12 +58,12 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 0,
 		    },
-		    Object {
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -75,8 +75,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Here are some steps",
 		                "type": "text",
 		              },
@@ -89,12 +89,12 @@ describe('getStepsInChangeRange', () => {
 		      "to": 0,
 		    },
 		  ],
-		  Array [
-		    Object {
+		  [
+		    {
 		      "from": 10,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "This is another step",
 		            "type": "text",
 		          },
@@ -103,11 +103,11 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 10,
 		    },
-		    Object {
+		    {
 		      "from": 5,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "Very cool",
 		            "type": "text",
 		          },
@@ -117,13 +117,13 @@ describe('getStepsInChangeRange', () => {
 		      "to": 5,
 		    },
 		  ],
-		  Array [
-		    Object {
+		  [
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -135,8 +135,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Okay just one more",
 		                "type": "text",
 		              },
@@ -154,14 +154,14 @@ describe('getStepsInChangeRange', () => {
 	`);
 		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 0))
 			.toMatchInlineSnapshot(`
-		Array [
-		  Array [
-		    Object {
+		[
+		  [
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -173,8 +173,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Hello fellow human",
 		                "type": "text",
 		              },
@@ -186,12 +186,12 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 0,
 		    },
-		    Object {
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -203,8 +203,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Here are some steps",
 		                "type": "text",
 		              },
@@ -221,14 +221,14 @@ describe('getStepsInChangeRange', () => {
 	`);
 		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 1))
 			.toMatchInlineSnapshot(`
-		Array [
-		  Array [
-		    Object {
+		[
+		  [
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -240,8 +240,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Hello fellow human",
 		                "type": "text",
 		              },
@@ -253,12 +253,12 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 0,
 		    },
-		    Object {
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -270,8 +270,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Here are some steps",
 		                "type": "text",
 		              },
@@ -284,12 +284,12 @@ describe('getStepsInChangeRange', () => {
 		      "to": 0,
 		    },
 		  ],
-		  Array [
-		    Object {
+		  [
+		    {
 		      "from": 10,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "This is another step",
 		            "type": "text",
 		          },
@@ -298,11 +298,11 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 10,
 		    },
-		    Object {
+		    {
 		      "from": 5,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "Very cool",
 		            "type": "text",
 		          },
@@ -316,13 +316,13 @@ describe('getStepsInChangeRange', () => {
 	`);
 		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 1, 2))
 			.toMatchInlineSnapshot(`
-		Array [
-		  Array [
-		    Object {
+		[
+		  [
+		    {
 		      "from": 10,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "This is another step",
 		            "type": "text",
 		          },
@@ -331,11 +331,11 @@ describe('getStepsInChangeRange', () => {
 		      "stepType": "replace",
 		      "to": 10,
 		    },
-		    Object {
+		    {
 		      "from": 5,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
+		      "slice": {
+		        "content": [
+		          {
 		            "text": "Very cool",
 		            "type": "text",
 		          },
@@ -345,13 +345,13 @@ describe('getStepsInChangeRange', () => {
 		      "to": 5,
 		    },
 		  ],
-		  Array [
-		    Object {
+		  [
+		    {
 		      "from": 0,
-		      "slice": Object {
-		        "content": Array [
-		          Object {
-		            "attrs": Object {
+		      "slice": {
+		        "content": [
+		          {
+		            "attrs": {
 		              "class": null,
 		              "id": null,
 		              "rtl": null,
@@ -363,8 +363,8 @@ describe('getStepsInChangeRange', () => {
 		              "suggestionUserId": null,
 		              "textAlign": null,
 		            },
-		            "content": Array [
-		              Object {
+		            "content": [
+		              {
 		                "text": "Okay just one more",
 		                "type": "text",
 		              },

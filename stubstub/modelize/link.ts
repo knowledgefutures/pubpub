@@ -2,9 +2,10 @@
 import uuid from 'uuid/v4';
 import * as graphlib from 'graphlib';
 
+import { Model, ModelCtor } from 'sequelize';
 import { sequelizeModels } from './models';
 
-const modelByName = (modelName) => {
+const modelByName = (modelName: string) => {
 	const model = sequelizeModels[modelName];
 	if (!model) {
 		throw new Error(`Modelize cannot find a model named ${modelName}`);
@@ -12,12 +13,69 @@ const modelByName = (modelName) => {
 	return model;
 };
 
-const walkAst = (ast, parameters) => {
-	const definitionsByBoundName = {};
-	const definitions = [];
-	const resolveIdentifiersCallbacks = [];
+export type ModelDefinition = {
+	id: string;
+	modelName: string;
+	boundName: string;
+	properties: Record<string, any>;
+	referencedDefinitions: ReferencedDefinition[];
+};
 
-	const lookupModelDefinitionByBoundId = (identifier) => {
+export type ReferencedDefinition = {
+	key?: string;
+	shallow?: boolean;
+	modelDefinition: ModelDefinition;
+	implicit?: boolean;
+};
+
+export type ModelBlock = {
+	type: 'modelBlock';
+	modelName: string;
+	boundName: string;
+	propertyEntries: PropertyEntry[];
+	identifiers: Identifier[];
+	modelBlocks: ModelBlock[];
+};
+
+export type Parameter = {
+	type: 'parameter';
+	value: string;
+};
+
+export type Parameters = {
+	[key: string]: any;
+};
+
+export type Identifier = {
+	type: 'identifier';
+	value: string;
+};
+
+export type Spread = {
+	type: 'spread';
+	value: Parameter;
+};
+
+export type KeyValuePair = {
+	type: 'keyValuePair';
+	key: string;
+	value: Parameter | ModelBlock | Identifier | Literal;
+};
+
+export type PropertyEntry = Spread | KeyValuePair;
+
+export type Literal = string | number | boolean | null | undefined;
+
+export type AST = ModelBlock[];
+
+const walkAst = (ast: ModelBlock[], parameters: Parameters) => {
+	const definitionsByBoundName: {
+		[boundName: string]: ModelDefinition;
+	} = {};
+	const definitions: ModelDefinition[] = [];
+	const resolveIdentifiersCallbacks: (() => void)[] = [];
+
+	const lookupModelDefinitionByBoundId = (identifier: string) => {
 		const modelDefinition = definitionsByBoundName[identifier];
 		if (!modelDefinition) {
 			throw new Error(`Could not resolve a reference to model ${identifier}.`);
@@ -25,18 +83,24 @@ const walkAst = (ast, parameters) => {
 		return modelDefinition;
 	};
 
-	const resolveParameterOrLiteral = (paramOrLiteral) => {
-		if (paramOrLiteral.type === 'parameter') {
+	const resolveParameterOrLiteral = (paramOrLiteral: Parameter | Literal) => {
+		if (
+			paramOrLiteral &&
+			typeof paramOrLiteral === 'object' &&
+			paramOrLiteral.type === 'parameter'
+		) {
 			return parameters[paramOrLiteral.value];
 		}
-		return paramOrLiteral;
+		return paramOrLiteral as Literal;
 	};
 
-	const walkModelBlock = (modelBlock) => {
+	const walkModelBlock = (modelBlock: ModelBlock) => {
 		const { modelName, boundName, modelBlocks, identifiers, propertyEntries } = modelBlock;
 
-		let properties = {};
-		const referencedDefinitions = [];
+		let properties: {
+			[key: string]: any;
+		} = {};
+		const referencedDefinitions: ReferencedDefinition[] = [];
 
 		for (const innerModelBlock of modelBlocks) {
 			const modelDefinition = walkModelBlock(innerModelBlock);
@@ -45,13 +109,26 @@ const walkAst = (ast, parameters) => {
 
 		for (const entry of propertyEntries) {
 			if (entry.type === 'spread') {
-				properties = { ...properties, ...resolveParameterOrLiteral(entry.value) };
+				const resolvedSpread = resolveParameterOrLiteral(entry.value);
+				properties = {
+					...properties,
+					// Not sure what to do here, never seems to be called and
+					// `resolveParameterOrLiteral` doesn't seem to return an object
+					// but a string or a literal
+					...(typeof resolvedSpread === 'object' &&
+					!Array.isArray(resolvedSpread) &&
+					resolvedSpread !== null
+						? resolvedSpread
+						: {
+								[entry.value.value]: resolvedSpread,
+						  }),
+				};
 			} else if (entry.type === 'keyValuePair') {
 				const { key, value } = entry;
-				if (value.type === 'modelBlock') {
+				if (value && typeof value === 'object' && value.type === 'modelBlock') {
 					const modelDefinition = walkModelBlock(value);
 					referencedDefinitions.push({ key, modelDefinition });
-				} else if (value.type === 'identifier') {
+				} else if (value && typeof value === 'object' && value.type === 'identifier') {
 					// value.value is the name of the identifier...sorry.
 					const referencedId = value.value;
 					resolveIdentifiersCallbacks.push(() => {
@@ -79,7 +156,7 @@ const walkAst = (ast, parameters) => {
 			}),
 		);
 
-		const thisModelDefinition = {
+		const thisModelDefinition: ModelDefinition = {
 			id: uuid(),
 			modelName,
 			boundName,
@@ -100,8 +177,33 @@ const walkAst = (ast, parameters) => {
 	return { definitions, rootDefinitions };
 };
 
-const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
-	const resolveAssociation = (source, target, association) => {
+// This is an interface version of the Assocation abstract class from sequelize
+// easier to work with
+interface Association<S extends Model = Model, T extends Model = Model> {
+	associationType: string;
+	source: ModelCtor<S>;
+	target: ModelCtor<T>;
+	isSelfAssociation: boolean;
+	isSingleAssociation: boolean;
+	isMultiAssociation: boolean;
+	as: string;
+	isAliased: boolean;
+	foreignKey: string;
+	identifier: string;
+	inspect(): string;
+}
+
+const getEdgeBetweenDefinitions = (
+	a: ModelDefinition,
+	b: ModelDefinition,
+	associationName?: string | null,
+	isMandatory?: boolean,
+) => {
+	const resolveAssociation = <T extends Association>(
+		source: ModelDefinition,
+		target: ModelDefinition,
+		association: T,
+	) => {
 		const { associationType } = association;
 		if (associationType === 'BelongsTo' || associationType === 'BelongsToMany') {
 			return { from: source, to: target, association };
@@ -112,7 +214,7 @@ const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
 		throw new Error(`Unsupported associationType ${associationType}`);
 	};
 
-	const findImplicitAssociation = (source, target) => {
+	const findImplicitAssociation = (source: ModelDefinition, target: ModelDefinition) => {
 		const sourceModel = modelByName(source.modelName);
 		const targetModel = modelByName(target.modelName);
 
@@ -159,7 +261,7 @@ const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
 
 	const belongsToEdge = [firstImplicitEdge, secondImplicitEdge]
 		.filter((x) => x)
-		.find((edge) => edge.association.associationType === 'BelongsTo');
+		.find((edge) => edge?.association?.associationType === 'BelongsTo');
 
 	if (belongsToEdge) {
 		return belongsToEdge;
@@ -168,10 +270,14 @@ const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
 	return firstImplicitEdge || secondImplicitEdge;
 };
 
-const buildGraphFromDefinitions = (modelDefinitions) => {
+const buildGraphFromDefinitions = (modelDefinitions: ModelDefinition[]) => {
 	const graph = new graphlib.Graph();
 
-	const addEdge = (from, to, association) => {
+	const addEdge = <T extends Association>(
+		from: ModelDefinition,
+		to: ModelDefinition,
+		association: T,
+	) => {
 		if (from.id === to.id) {
 			throw new Error(
 				`Cannot add a self-edge on ${from.modelName} via ${association.foreignKey}`,
@@ -181,8 +287,8 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 	};
 
 	const visitDefinition = (
-		modelDefinition,
-		parentDefinitions,
+		modelDefinition: ModelDefinition,
+		parentDefinitions: ModelDefinition[],
 		alreadyFoundImmediateParentEdge = false,
 	) => {
 		const { id, referencedDefinitions } = modelDefinition;
@@ -199,7 +305,7 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 				);
 				if (edge) {
 					const { from, to, association } = edge;
-					if (!graph.edge(from, to)) {
+					if (!graph.edge(from.id, to.id)) {
 						addEdge(from, to, association);
 					}
 				}
@@ -222,11 +328,11 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 	return graph;
 };
 
-const buildPartialOrderingSubsets = (sourceGraph) => {
+const buildPartialOrderingSubsets = (sourceGraph: graphlib.Graph) => {
 	if (!graphlib.alg.isAcyclic(sourceGraph)) {
 		throw new Error(`Cannot resolve a dependency graph that contains a cycle`);
 	}
-	const subsets = [];
+	const subsets: string[][] = [];
 
 	// Clone the graph (🙄)
 	const graph = graphlib.json.read(graphlib.json.write(sourceGraph));
@@ -240,7 +346,7 @@ const buildPartialOrderingSubsets = (sourceGraph) => {
 	return subsets;
 };
 
-export const link = (ast, parameters) => {
+export const link = (ast: ModelBlock[], parameters: Parameters) => {
 	const { definitions, rootDefinitions } = walkAst(ast, parameters);
 	const graph = buildGraphFromDefinitions(rootDefinitions);
 	const subsets = buildPartialOrderingSubsets(graph);

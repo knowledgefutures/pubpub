@@ -30,7 +30,7 @@ it('creates a valid JWT that can be decoded later', () => {
 		communityId: 'us',
 		type: 'test_token',
 	});
-	expect(decoded.payload.number).toEqual(35);
+	expect(decoded?.payload?.number).toEqual(35);
 });
 
 it('refuses to create a JWT without required values', () => {
@@ -117,7 +117,7 @@ it('correctly expires tokens', () => {
 		communityId: 'us',
 		type: 'test_token',
 	});
-	expect(decodedNow.payload.number).toEqual(35);
+	expect(decodedNow?.payload?.number).toEqual(35);
 	advanceTime(1000 * expiresInSeconds + 1);
 	const decodedLater = verifyAndDecodeToken(token, {
 		userId: 'me',

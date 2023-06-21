@@ -1,4 +1,4 @@
-import { setup } from 'stubstub';
+import { setup, teardown } from 'stubstub';
 
 import { getQueriedPubIds } from '../queries';
 import { models } from './data';
@@ -6,6 +6,7 @@ import { models } from './data';
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+teardown(afterAll);
 
 const expectQuery = (query) => {
 	const { community } = models;

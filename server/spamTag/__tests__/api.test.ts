@@ -1,4 +1,4 @@
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, teardown } from 'stubstub';
 
 import { SpamTag } from 'server/models';
 import { addSpamTagToCommunity } from '../queries';
@@ -22,6 +22,8 @@ setup(beforeAll, async () => {
 	spamTag = await addSpamTagToCommunity(models.community.id);
 	await spamTag.update({ status: 'confirmed-spam' });
 });
+
+teardown(afterAll);
 
 it('forbids non-superadmins from updating the SpamTag.status for a Community', async () => {
 	const { admin, community } = models;

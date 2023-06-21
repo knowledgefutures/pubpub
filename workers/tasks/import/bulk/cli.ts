@@ -65,7 +65,7 @@ export const getActor = async (userSlug) => {
 };
 
 const readPlanFromFile = async (path) => {
-	const contents = await fs.readFile(path);
+	const contents = await fs.readFile(path, 'utf-8');
 	try {
 		return JSON.parse(contents);
 	} catch (err) {
@@ -103,7 +103,7 @@ const main = async () => {
 				'Please supply either --receipt=path/to/receipt to store a record of this import (or use --dry-run)',
 			);
 		}
-		const exists = await fs.exists(receipt);
+		const exists = await fs.pathExists(receipt);
 		if (exists) {
 			await promptOkay(
 				`There is already a file at the receipt path ${receipt} which will be overwritten during import. Proceed?`,

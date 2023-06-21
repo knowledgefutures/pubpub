@@ -2,7 +2,8 @@ import { QueryTypes, Op } from 'sequelize';
 import { Knex } from 'knex';
 
 import * as types from 'types';
-import { knexInstance, sequelize, Pub } from 'server/models';
+import { Pub } from 'server/models';
+import { sequelize, knexInstance } from 'server/sequelize';
 import { buildPubOptions, sanitizePub } from 'server/utils/queryHelpers';
 import { InitialData, PubsQuery, PubGetOptions, SanitizedPubData } from 'types';
 
@@ -198,11 +199,13 @@ export const queryPubIds = async (query: PubsQuery): Promise<string[]> => {
 		return [];
 	}
 	const { sql, bindings } = getPubIdsQuery(query);
+
 	const results = await sequelize.query(sql, {
 		type: QueryTypes.SELECT,
-		bind: bindings,
+		bind: bindings as unknown[],
 	});
-	return results.map((r) => r.pubId);
+	// TODO: remove any
+	return results.map((r: any) => r.pubId);
 };
 
 export const getPubsById = <T extends types.Pub = types.Pub>(

@@ -33,6 +33,11 @@ export const submitDoiData = async (
 	communityId: string,
 ) => {
 	const { DOI_SUBMISSION_URL } = process.env;
+
+	if (!DOI_SUBMISSION_URL) {
+		throw new Error('DOI_SUBMISSION_URL environment variable not set');
+	}
+
 	const { login, password } = await getDoiLogin(communityId);
 	const xmlObject = xmlbuilder.create(json, { headless: true }).end({ pretty: true });
 	const readStream = new Readable();

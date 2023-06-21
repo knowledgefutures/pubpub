@@ -1,137 +1,67 @@
 /* eslint-disable global-require */
-import Sequelize from 'sequelize';
-import { knex } from 'knex';
 
 import { createSequelizeModelsFromFacetDefinitions } from './facets/create';
-
-const database_url = process.env.DATABASE_URL;
-// @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
-const useSSL = database_url.indexOf('localhost') === -1;
-
-const poolOptions = process.env.WORKER
-	? {
-			max: 2,
-			min: 0,
-			idle: 0,
-			acquire: 10000,
-	  }
-	: {
-			max: process.env.SEQUELIZE_MAX_CONNECTIONS
-				? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-				: 5, // Some migrations require this number to be 150
-			min: 0,
-			idle: 10000,
-			acquire: 60000,
-	  };
-
-// @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
-export const sequelize = new Sequelize(database_url, {
-	logging: false,
-	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
-	pool: poolOptions,
-	retry: {
-		max: 3,
-		match: [/Deadlock/i, Sequelize.ConnectionError],
-	},
-});
-
-export const knexInstance = knex({ client: 'pg' });
-
-/* Change to true to update the model in the database. */
-/* NOTE: This being set to true will erase your data. */
-if (process.env.NODE_ENV !== 'test') {
-	sequelize.sync({ force: false });
-}
-
-/* Create standard id type for our database */
-sequelize.idType = {
-	primaryKey: true,
-	type: Sequelize.UUID,
-	defaultValue: Sequelize.UUIDV4,
-};
+import { sequelize } from './sequelize';
 
 /* Import and create all models. */
 /* Also export them to make them available to other modules */
-export const Collection = sequelize.import('./collection/model');
-export const CollectionAttribution = sequelize.import('./collectionAttribution/model');
-export const CollectionPub = sequelize.import('./collectionPub/model');
-export const Commenter = sequelize.import('./commenter/model');
-export const Community = sequelize.import('./community/model');
-export const CommunityAdmin = sequelize.import('./communityAdmin/model');
-export const CrossrefDepositRecord = sequelize.import('./crossrefDepositRecord/model');
-export const CustomScript = sequelize.import('./customScript/model');
-export const DepositTarget = sequelize.import('./depositTarget/model');
-export const Discussion = sequelize.import('./discussion/model');
-export const DiscussionAnchor = sequelize.import('./discussionAnchor/model');
-export const Doc = sequelize.import('./doc/model');
-export const Draft = sequelize.import('./draft/model');
-export const Export = sequelize.import('./export/model');
-export const ExternalPublication = sequelize.import('./externalPublication/model');
-export const FeatureFlag = sequelize.import('./featureFlag/model');
-export const FeatureFlagUser = sequelize.import('./featureFlagUser/model');
-export const FeatureFlagCommunity = sequelize.import('./featureFlagCommunity/model');
-export const ZoteroIntegration = sequelize.import('./zoteroIntegration/model');
-export const IntegrationDataOAuth1 = sequelize.import('./integrationDataOAuth1/model');
-export const LandingPageFeature = sequelize.import('./landingPageFeature/model');
-export const Member = sequelize.import('./member/model');
-export const Merge = sequelize.import('./merge/model');
-export const Organization = sequelize.import('./organization/model');
-export const Page = sequelize.import('./page/model');
-export const Pub = sequelize.import('./pub/model');
-export const PubAttribution = sequelize.import('./pubAttribution/model');
-export const PubEdge = sequelize.import('./pubEdge/model');
-export const PubManager = sequelize.import('./pubManager/model');
-export const PubVersion = sequelize.import('./pubVersion/model');
-export const PublicPermissions = sequelize.import('./publicPermissions/model');
-export const Release = sequelize.import('./release/model');
-export const ReviewEvent = sequelize.import('./reviewEvent/model');
-export const ScopeSummary = sequelize.import('./scopeSummary/model');
-export const Submission = sequelize.import('./submission/model');
-export const Signup = sequelize.import('./signup/model');
-export const SpamTag = sequelize.import('./spamTag/model');
-export const SubmissionWorkflow = sequelize.import('./submissionWorkflow/model');
-export const ReviewNew = sequelize.import('./review/model');
-export const Reviewer = sequelize.import('./reviewer/model');
-export const Thread = sequelize.import('./thread/model');
-export const ThreadComment = sequelize.import('./threadComment/model');
-export const ThreadEvent = sequelize.import('./threadEvent/model');
-export const User = sequelize.import('./user/model');
-export const UserDismissable = sequelize.import('./userDismissable/model');
-export const UserNotification = sequelize.import('./userNotification/model');
-export const UserNotificationPreferences = sequelize.import('./userNotificationPreferences/model');
-export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
-export const UserSubscription = sequelize.import('./userSubscription/model');
-export const ActivityItem = sequelize.import('./activityItem/model');
-export const Visibility = sequelize.import('./visibility/model');
-export const VisibilityUser = sequelize.import('./visibilityUser/model');
-export const WorkerTask = sequelize.import('./workerTask/model');
+
+export { Collection } from './collection/model';
+export { CollectionAttribution } from './collectionAttribution/model';
+export { CollectionPub } from './collectionPub/model';
+export { Commenter } from './commenter/model';
+export { Community } from './community/model';
+export { CommunityAdmin } from './communityAdmin/model';
+export { CrossrefDepositRecord } from './crossrefDepositRecord/model';
+export { CustomScript } from './customScript/model';
+export { DepositTarget } from './depositTarget/model';
+export { Discussion } from './discussion/model';
+export { DiscussionAnchor } from './discussionAnchor/model';
+export { Doc } from './doc/model';
+export { Draft } from './draft/model';
+export { Export } from './export/model';
+export { ExternalPublication } from './externalPublication/model';
+export { FeatureFlag } from './featureFlag/model';
+export { FeatureFlagUser } from './featureFlagUser/model';
+export { FeatureFlagCommunity } from './featureFlagCommunity/model';
+export { ZoteroIntegration } from './zoteroIntegration/model';
+export { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
+export { LandingPageFeature } from './landingPageFeature/model';
+export { Member } from './member/model';
+export { Merge } from './merge/model';
+export { Organization } from './organization/model';
+export { Page } from './page/model';
+export { Pub } from './pub/model';
+export { PubAttribution } from './pubAttribution/model';
+export { PubEdge } from './pubEdge/model';
+export { PubManager } from './pubManager/model';
+export { PubVersion } from './pubVersion/model';
+export { PublicPermissions } from './publicPermissions/model';
+export { Release } from './release/model';
+export { ReviewEvent } from './reviewEvent/model';
+export { ScopeSummary } from './scopeSummary/model';
+export { Submission } from './submission/model';
+export { Signup } from './signup/model';
+export { SpamTag } from './spamTag/model';
+export { SubmissionWorkflow } from './submissionWorkflow/model';
+export { ReviewNew } from './review/model';
+export { Reviewer } from './reviewer/model';
+export { Thread } from './thread/model';
+export { ThreadComment } from './threadComment/model';
+export { ThreadEvent } from './threadEvent/model';
+export { User } from './user/model';
+export { attributesPublicUser, includeUserModel } from './user/model';
+export { UserDismissable } from './userDismissable/model';
+export { UserNotification } from './userNotification/model';
+export { UserNotificationPreferences } from './userNotificationPreferences/model';
+export { UserScopeVisit } from './userScopeVisit/model';
+export { UserSubscription } from './userSubscription/model';
+export { ActivityItem } from './activityItem/model';
+export { Visibility } from './visibility/model';
+export { VisibilityUser } from './visibilityUser/model';
+export { WorkerTask } from './workerTask/model';
 
 export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
-
-export const attributesPublicUser = [
-	'id',
-	'firstName',
-	'lastName',
-	'fullName',
-	'avatar',
-	'slug',
-	'initials',
-	'title',
-	'orcid',
-];
-
-export const includeUserModel = (() => {
-	return (options) => {
-		const { attributes: providedAttributes = [], ...restOptions } = options;
-		const attributes = [...new Set([...attributesPublicUser, ...providedAttributes])];
-		// eslint-disable-next-line pubpub-rules/no-user-model
-		return {
-			model: User,
-			attributes,
-			...restOptions,
-		};
-	};
-})();
 
 /* Create associations for models that have associate function */
 Object.values(sequelize.models).forEach((model) => {
@@ -141,3 +71,16 @@ Object.values(sequelize.models).forEach((model) => {
 		classMethods.associate(sequelize.models);
 	}
 });
+
+/** This export is here to guarantee that when you import the `sequelize` object
+    all the models will be defined on it.
+
+    In previous versions of Sequelize, the models were defined by importing it
+    in the object using `Sequlize.import`. This is no longer the case, instead
+    we first create the sequelize object and then import it in the relevant 
+    `model.ts` file.
+
+    TD:DR if you get "Model is not defined" errors, make sure you import the
+    `sequelize` object from this file, not form `server/sequelize.ts`.
+*/
+export { sequelize };

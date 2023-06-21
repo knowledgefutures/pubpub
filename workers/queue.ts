@@ -108,15 +108,19 @@ const processTask = (channel) => async (message) => {
 	}, maxWorkerTimeSeconds * 1000);
 };
 
+const cloudAmqpUrl = process.env.CLOUDAMQP_URL;
+if (!cloudAmqpUrl) {
+	throw new Error('CLOUDAMQP_URL environment variable not set');
+}
 // Initialize the connection to the queue and set the processTask function to run on new messages
 amqplib
-	.connect(process.env.CLOUDAMQP_URL)
+	.connect(cloudAmqpUrl)
 	.then((conn) => {
 		process.once('SIGINT', () => {
 			conn.close();
 		});
 		return conn.createConfirmChannel().then((ch) => {
-			let ok = ch.assertQueue(taskQueueName, {
+			let ok: any = ch.assertQueue(taskQueueName, {
 				durable: true,
 				maxPriority: TaskPriority.Highest,
 			});

@@ -1,4 +1,4 @@
-import { modelize, setup } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { buildSchema } from 'components/Editor';
 import { Fragment, Node, Slice } from 'prosemirror-model';
@@ -25,6 +25,8 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+
+teardown(afterAll);
 
 const schema = buildSchema();
 

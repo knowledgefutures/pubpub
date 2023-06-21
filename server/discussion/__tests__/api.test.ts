@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { setup, login, modelize, expectCreatedActivityItem } from 'stubstub';
+import { setup, login, modelize, expectCreatedActivityItem, teardown } from 'stubstub';
 
 import { Discussion, Thread, ThreadComment } from 'server/models';
 
@@ -71,6 +71,8 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+
+teardown(afterAll);
 
 const makeDiscussion = ({
 	pub,

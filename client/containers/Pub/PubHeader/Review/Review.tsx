@@ -29,7 +29,7 @@ const Review = (props: Props) => {
 	const bgColor = isEmptyDoc(review as DocJson)
 		? 'lightgray'
 		: !hover
-		? lighterAccentColor
+		? lighterAccentColor?.toString()
 		: communityData.accentColorDark;
 
 	return (

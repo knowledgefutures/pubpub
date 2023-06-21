@@ -109,7 +109,6 @@ app.post('/api/login', (req, res, next) => {
 			return updatedUserData[1][0];
 		})
 		.then((user) => {
-			// @ts-expect-error
 			req.logIn(user, (err: string) => {
 				if (err) {
 					throw new Error(err);

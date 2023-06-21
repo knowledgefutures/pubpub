@@ -27,6 +27,7 @@ import {
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
+import { RequestHandler } from 'express';
 
 const getInitialDataForPub = (req) => getInitialData(req, { includeFacets: true });
 
@@ -126,12 +127,19 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 	};
 };
 
-const speedLimiter = slowDown({
-	windowMs: 60000, // 1 minute for requests to be kept in memory. value of 60000ms is default but expressed here for clarity
-	delayAfter: 60, // allow 60 requests per minute, then...
-	delayMs: 100, // 60th request has a 100ms delay, 7th has a 200ms delay, 8th gets 300ms, etc.
-	maxDelay: 20000, // max time of request delay will be 20secs
-});
+/**
+ * `express-slow-down` causes a memory leak in Jest while testing.
+ * While testing, this is not very useful anyway.
+ */
+const speedLimiter: RequestHandler =
+	process.env.NODE_ENV === 'test'
+		? (req, res, next) => next()
+		: slowDown({
+				windowMs: 60000, // 1 minute for requests to be kept in memory. value of 60000ms is default but expressed here for clarity
+				delayAfter: 60, // allow 60 requests per minute, then...
+				delayMs: 100, // 60th request has a 100ms delay, 7th has a 200ms delay, 8th gets 300ms, etc.
+				maxDelayMs: 20000, // max time of request delay will be 20secs
+		  });
 
 const checkHistoryKey = (key) => {
 	const hasHistoryKey = key !== undefined;

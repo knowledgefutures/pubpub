@@ -1,4 +1,4 @@
-import { setup, modelize } from 'stubstub';
+import { setup, modelize, teardown } from 'stubstub';
 import { Pub, PubsQuery, PubsQueryOrdering } from 'types';
 
 import { queryPubIds } from '../queryMany';
@@ -114,6 +114,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 const titleOrdering: PubsQueryOrdering = {
 	field: 'title',

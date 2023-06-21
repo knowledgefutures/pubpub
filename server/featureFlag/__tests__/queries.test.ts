@@ -1,4 +1,4 @@
-import { modelize, setup } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { getFeatureFlagForUserAndCommunity, getFeatureFlagsForUserAndCommunity } from '../queries';
 
@@ -61,6 +61,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('getFeatureFlagsForUserAndCommunity', () => {
 	it('allow FeatureFlagCommunity to enable flags for communities that would otherwise be disabled', async () => {

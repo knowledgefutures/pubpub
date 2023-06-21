@@ -1,25 +1,44 @@
 /* eslint-disable no-restricted-syntax */
+import { Graph } from 'graphlib';
+import { Model } from 'sequelize';
 import { parse } from './parse';
-import { link } from './link';
+import { link, ModelDefinition } from './link';
 import { builders } from './builders';
 import { buildProxyObject } from './proxy';
 import { sequelizeModels } from './models';
 
-const buildForModelName = async (modelName, args) => {
-	const builderFn = builders[modelName];
-	if (builderFn) {
-		return builderFn(args);
-	}
-	const Model = sequelizeModels[modelName];
-	return Model.create(args);
+type BuildNames = keyof typeof builders;
+
+const isBuildName = (name: string): name is BuildNames => {
+	// eslint-disable-next-line no-prototype-builtins
+	return builders.hasOwnProperty(name);
 };
 
-const buildModelFromDefinition = async (modelDefinition, graph, resolvedModelsById) => {
+const buildForModelName = (modelName: string, args: any): Promise<Model> => {
+	if (isBuildName(modelName)) {
+		const builderFn = builders[modelName];
+		return builderFn(args);
+	}
+	const model = sequelizeModels[modelName];
+	return model.create(args);
+};
+
+const buildModelFromDefinition = async (
+	modelDefinition: ModelDefinition,
+	graph: InstanceType<typeof Graph>,
+	resolvedModelsById: {
+		[key: string]: Model;
+	},
+) => {
 	const { id, properties, modelName, boundName } = modelDefinition;
-	const foreignKeys = {};
-	for (const { v, w } of graph.outEdges(id)) {
+	const foreignKeys: {
+		[key: string]: string;
+	} = {};
+	for (const { v, w } of graph.outEdges(id) ?? []) {
 		const association = graph.edge(v, w);
-		const targetModel = resolvedModelsById[w];
+		// TODO: Remove this type assertion once we have inference from sequelize models
+		// Models should indeed have an Id
+		const targetModel = resolvedModelsById[w] as Model & { id: string };
 		const { foreignKey } = association;
 		foreignKeys[foreignKey] = targetModel.id;
 	}
@@ -27,7 +46,7 @@ const buildModelFromDefinition = async (modelDefinition, graph, resolvedModelsBy
 	try {
 		const x = await buildForModelName(modelName, args);
 		return x;
-	} catch (err) {
+	} catch (err: any) {
 		console.error(err);
 		const boundNameString = boundName ? ` ${boundName}` : '';
 		const argsString = Object.entries(args)
@@ -39,17 +58,21 @@ const buildModelFromDefinition = async (modelDefinition, graph, resolvedModelsBy
 	}
 };
 
-const indexDefinitionsById = (definitions) => {
-	const index = [];
+const indexDefinitionsById = (definitions: ModelDefinition[]) => {
+	const index: {
+		[key: string]: ModelDefinition;
+	} = {};
 	for (const def of definitions) {
 		index[def.id] = def;
 	}
 	return index;
 };
 
-const templatize = (strings, ...slots) => {
-	const parameters = {};
-	const slotReplacements = [];
+const templatize = (strings: TemplateStringsArray, ...slots: any[]) => {
+	const parameters: {
+		[key: string]: any;
+	} = {};
+	const slotReplacements: string[] = [];
 	for (const slotValue of slots) {
 		const paramName = 'P' + Object.keys(parameters).length.toString();
 		parameters[paramName] = slotValue;
@@ -67,12 +90,16 @@ const templatize = (strings, ...slots) => {
 	return { query, parameters };
 };
 
-export const modelize = (...args) => {
-	const { query, parameters } = templatize(...args);
+export const modelize = (strings: TemplateStringsArray, ...slots: any[]) => {
+	const { query, parameters } = templatize(strings, ...slots);
 	const ast = parse(query);
 	const { definitions, graph, subsets } = link(ast, parameters);
-	const resolvedModelsById = {};
-	const resolvedModelsByBoundName = {};
+	const resolvedModelsById: {
+		[key: string]: any;
+	} = {};
+	const resolvedModelsByBoundName: {
+		[key: string]: any;
+	} = {};
 	const definitionsById = indexDefinitionsById(definitions);
 
 	const resolve = async () => {

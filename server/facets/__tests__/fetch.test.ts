@@ -1,4 +1,4 @@
-import { setup, modelize } from 'stubstub';
+import { setup, modelize, teardown } from 'stubstub';
 
 import { fetchFacetsForScope, fetchFacetsForScopeIds } from '..';
 
@@ -26,6 +26,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+teardown(afterAll);
 
 describe('fetchFacetsForScope', () => {
 	it('fetches a casaded value for all facets', async () => {

@@ -15,7 +15,7 @@ const passportLocalSequelize = require('passport-local-sequelize');
 // };
 
 const sequelize = new Sequelize(process.env.V5_PROD_DATABASE_URL, {
-	logging: () => {},
+	logging: () => { },
 	dialectOptions: { ssl: true },
 });
 
@@ -210,7 +210,7 @@ const Pub = sequelize.define(
 		communityId: { type: Sequelize.UUID, allowNull: false },
 	},
 	{
-		indexes: [{ fields: ['communityId'], method: 'BTREE' }],
+		indexes: [{ fields: ['communityId'], using: 'BTREE' }],
 	},
 );
 
@@ -238,9 +238,9 @@ const Discussion = sequelize.define(
 	},
 	{
 		indexes: [
-			{ fields: ['userId'], method: 'BTREE' },
-			{ fields: ['pubId'], method: 'BTREE' },
-			{ fields: ['communityId'], method: 'BTREE' },
+			{ fields: ['userId'], using: 'BTREE' },
+			{ fields: ['pubId'], using: 'BTREE' },
+			{ fields: ['communityId'], using: 'BTREE' },
 		],
 	},
 );

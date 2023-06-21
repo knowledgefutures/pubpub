@@ -13,8 +13,8 @@ const testDbConfig = {
 	name: 'pubpub-testdb',
 };
 
-const exec = (command) =>
-	new Promise((resolve, reject) =>
+const exec = (command: string) =>
+	new Promise((resolve, reject) => {
 		execWithCallback(
 			command,
 			{
@@ -29,10 +29,18 @@ const exec = (command) =>
 				}
 				return resolve(res);
 			},
-		),
-	);
+		);
+	});
 
-const createDbUrl = ({ name, username, password }) => {
+const createDbUrl = ({
+	name,
+	username,
+	password,
+}: {
+	name: string;
+	username: string;
+	password: string;
+}) => {
 	return `postgres://${username}:${password}@localhost:5432/${name}`;
 };
 
@@ -45,8 +53,8 @@ const throwBinariesWarning = () => {
 	throw new Error('Missing some binaries to handle test database');
 };
 
-const blockForFile = (filename, timeout = 100) =>
-	new Promise((resolve) => {
+const blockForFile = (filename: string, timeout = 100) =>
+	new Promise<void>((resolve) => {
 		const check = () => {
 			if (fs.existsSync(filename)) {
 				resolve();

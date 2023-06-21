@@ -110,6 +110,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, models.resolve);
+
 teardown(afterAll);
 
 beforeEach(() => ActivityItem.destroy({ where: {}, truncate: { cascade: true } }));
@@ -505,12 +506,11 @@ describe('fetchActivityItems', () => {
 			...review,
 			status: 'closed',
 		});
-		const {
-			activityItems: [updatedItem, commentAddedItem, createdItem],
-			associations,
-		} = await fetchActivityItems({
+		const { activityItems, associations } = await fetchActivityItems({
 			scope: { communityId: community.id, pubId: pub.id },
 		});
+
+		const [updatedItem, commentAddedItem, createdItem] = activityItems;
 		expect(createdItem).toMatchObject({
 			actorId: actor.id,
 			communityId: community.id,

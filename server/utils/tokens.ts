@@ -1,8 +1,13 @@
 import jwt from 'jsonwebtoken';
 
 export const issueToken = ({ userId, communityId, type, payload, expiresIn }) => {
+	const signingSecret = process.env.JWT_SIGNING_SECRET;
+	if (!signingSecret) {
+		throw new Error('JWT_SIGNING_SECRET environment variable not set');
+	}
+
 	if (userId && communityId && type && expiresIn) {
-		return jwt.sign({ userId, communityId, type, payload }, process.env.JWT_SIGNING_SECRET, {
+		return jwt.sign({ userId, communityId, type, payload }, signingSecret, {
 			expiresIn,
 		});
 	}
@@ -10,17 +15,22 @@ export const issueToken = ({ userId, communityId, type, payload, expiresIn }) =>
 };
 
 export const verifyAndDecodeToken = (token, { userId, communityId, type }) => {
+	const signingSecret = process.env.JWT_SIGNING_SECRET;
+	if (!signingSecret) {
+		return null;
+	}
+
 	try {
-		jwt.verify(token, process.env.JWT_SIGNING_SECRET);
+		jwt.verify(token, signingSecret);
 	} catch (_) {
 		return null;
 	}
-	const decodedValue = jwt.decode(token);
+	const decodedValue = jwt.decode(token, { json: true });
 	const {
 		userId: claimedUserId,
 		communityId: claimedCommunityId,
 		type: claimedType,
-	} = decodedValue;
+	} = decodedValue ?? {};
 	if (claimedUserId === userId && claimedCommunityId === communityId && claimedType === type) {
 		return decodedValue;
 	}

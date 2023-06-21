@@ -1,4 +1,4 @@
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, teardown } from 'stubstub';
 
 import { LandingPageFeature } from 'server/models';
 
@@ -28,6 +28,8 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+
+teardown(afterAll);
 
 it('forbids non-superadmins from creating/modifying/deleting LandingPageFeatures', async () => {
 	const { rando, l1, p2 } = models;

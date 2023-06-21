@@ -6,7 +6,13 @@ import { createWorkerTask } from 'server/workerTask/queries';
 let openChannelPromise;
 
 const createChannel = async () => {
-	const connection = await amqplib.connect(process.env.CLOUDAMQP_URL);
+	const amqpUrl = process.env.CLOUDAMQP_URL;
+
+	if (!amqpUrl) {
+		throw new Error('CLOUDAMQP_URL environment variable not set');
+	}
+
+	const connection = await amqplib.connect(amqpUrl);
 	const channel = await connection.createConfirmChannel();
 	await channel.assertQueue(taskQueueName, { durable: true, maxPriority: TaskPriority.Highest });
 	channel.on('close', (err) => {

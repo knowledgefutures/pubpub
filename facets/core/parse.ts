@@ -14,7 +14,10 @@ function parsePartialOrEntireFacetInstance<
 	InstanceKey extends keyof Def['props'],
 	AllowPartialInstance extends boolean,
 	ThrowErrorOnInvalidProps extends boolean,
-	ParsedType = Pick<FacetInstance<Def>, InstanceKey>,
+	ParsedType extends Pick<FacetInstance<Def>, InstanceKey> = Pick<
+		FacetInstance<Def>,
+		InstanceKey
+	>,
 >(
 	definition: Def,
 	instance: Record<InstanceKey, any>,

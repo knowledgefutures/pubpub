@@ -16,7 +16,7 @@ type FacetPropTypeOptions<
 
 export type FacetPropType<
 	Schema extends ZodSchema = ZodSchema,
-	Extension = AnyExtension,
+	Extension extends AnyExtension = AnyExtension,
 > = FacetPropTypeOptions<Schema, Extension> & {
 	__facetPropType: true;
 	extension: Extension;

@@ -90,7 +90,9 @@ const models = modelize`
     }
 `;
 
-setup(beforeAll, models.resolve);
+setup(beforeAll, async () => {
+	await models.resolve();
+});
 teardown(afterAll);
 
 describe('/api/threads/subscriptions', () => {

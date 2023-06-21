@@ -72,6 +72,8 @@ setup(beforeAll, async () => {
 	await models.resolve();
 });
 
+teardown(afterAll);
+
 describe('/api/pubs', () => {
 	it('does not allow logged-out visitors to create a Pub', async () => {
 		const { community } = models;
@@ -270,5 +272,3 @@ describe('/api/pubs', () => {
 		await agent.delete('/api/pubs').send({ pubId: alsoDestroyThisPub.id }).expect(200);
 	});
 });
-
-teardown(afterAll);

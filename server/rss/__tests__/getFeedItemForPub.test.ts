@@ -1,4 +1,4 @@
-import { setup, modelize } from 'stubstub';
+import { setup, modelize, teardown } from 'stubstub';
 
 import { getPubData, getFeedItemForPub } from '../queries';
 
@@ -80,6 +80,7 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+teardown(afterAll);
 
 it('provides all expected attributes', async () => {
 	const {

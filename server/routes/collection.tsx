@@ -8,13 +8,8 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { enrichCollectionWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
-import {
-	sequelize,
-	Collection,
-	Page,
-	CollectionAttribution,
-	includeUserModel,
-} from 'server/models';
+import { Collection, Page, CollectionAttribution, includeUserModel } from 'server/models';
+import { sequelize } from 'server/sequelize';
 import { handleErrors } from 'server/utils/errors';
 import { withValue } from 'utils/fp';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';

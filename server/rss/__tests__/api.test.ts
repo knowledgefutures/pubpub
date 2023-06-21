@@ -1,10 +1,11 @@
-import { setup, login } from 'stubstub';
+import { setup, login, teardown } from 'stubstub';
 
 import { models } from './data';
 
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+teardown(afterAll);
 
 const getHost = (community) => `${community.subdomain}.pubpub.org`;
 

@@ -4,8 +4,15 @@ import app, { wrap } from 'server/server';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { communityUrl } from 'utils/canonicalUrls';
+import { isProd } from 'utils/environment';
 
 const buildRobotsFile = (community) => {
+	if (!isProd()) {
+		return stripIndent(`
+			User-agent: *
+			Disallow: /
+		`).trim();
+	}
 	if (community) {
 		return stripIndent(`
 			User-agent: *

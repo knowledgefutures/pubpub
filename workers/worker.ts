@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 const { parentPort, isMainThread, workerData } = require('worker_threads');
 
-const { sequelize } = require('../server/models');
 const {
 	deletePageSearchData,
 	setPageSearchData,
@@ -12,25 +11,6 @@ const {
 } = require('./tasks/search');
 const { exportTask } = require('./tasks/export');
 const { importTask } = require('./tasks/import');
-
-const cleanup = () => sequelize.close();
-
-process.on('exit', cleanup);
-
-[
-	'SIGHUP',
-	'SIGINT',
-	'SIGQUIT',
-	'SIGKILL',
-	'SIGTRAP',
-	'SIGABRT',
-	'SIGBUS',
-	'SIGFPE',
-	'SIGUSR1',
-	'SIGSEGV',
-	'SIGUSR2',
-	'SIGTERM',
-].forEach((sig) => process.on(sig, cleanup));
 
 if (isMainThread) {
 	// Don't run outside of a thread spawned by worker_threads in queue.js
@@ -71,7 +51,6 @@ const main = async (taskData) => {
 	let taskResult;
 	try {
 		taskResult = await taskPromise;
-		await cleanup();
 		parentPort.postMessage({ result: taskResult });
 		process.exit(0);
 	} catch (error) {

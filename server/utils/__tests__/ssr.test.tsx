@@ -14,6 +14,10 @@ const defaultProps = {
 
 const MetaComponents = (props) => <React.Fragment>{generateMetaComponents(props)}</React.Fragment>;
 
+beforeEach(() => {
+	jest.resetModules();
+});
+
 describe('generateMetaComponents', () => {
 	it('generates citation_author metadata for every author WITHOUT a contributor role as their primary role', () => {
 		const attributions = pubData.attributions.map((att) => ({ ...att }));
@@ -49,13 +53,24 @@ describe('generateMetaComponents', () => {
 		).toBeFalsy();
 	});
 
-	it('generates the expected meta elements', () => {
+	it('generates the expected meta elements', async () => {
 		const props = {
 			...defaultProps,
 			attributions: [...attributionsData, ...pubData.attributions],
 		};
 
-		expect(generateMetaComponents(props as any)).toMatchInlineSnapshot(`
+		jest.doMock('utils/environment', () => {
+			const originalModule = jest.requireActual('utils/environment');
+			return {
+				__esModule: true,
+				...originalModule,
+				isProd: jest.fn(() => true),
+			};
+		});
+
+		const ssrModule = await import('../ssr');
+
+		expect(ssrModule.generateMetaComponents(props as any)).toMatchInlineSnapshot(`
 		[
 		  <link
 		    href="https://localhost/rss.xml"
@@ -191,5 +206,25 @@ describe('generateMetaComponents', () => {
 		  />,
 		]
 	`);
+	});
+	it('includes nofollow robot meta tags if the environment is not prod', async () => {
+		const props = {
+			...defaultProps,
+			attributions: [...attributionsData, ...pubData.attributions],
+		};
+
+		jest.doMock('utils/environment', () => {
+			const originalModule = jest.requireActual('utils/environment');
+			return {
+				__esModule: true,
+				...originalModule,
+				isProd: jest.fn(() => false),
+			};
+		});
+
+		const ssrModule = await import('../ssr');
+		expect(ssrModule.generateMetaComponents(props as any)).toContainEqual(
+			<meta key="un1" name="robots" content="noindex,nofollow" />,
+		);
 	});
 });

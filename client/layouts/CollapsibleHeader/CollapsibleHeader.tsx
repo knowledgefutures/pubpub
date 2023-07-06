@@ -79,7 +79,7 @@ const CollapsibleHeader = (props: CollapsibleHeaderProps) => {
 									<AnchorButton
 										minimal={!link.isButton}
 										href={link.url}
-										icon={link.icon}
+										rightIcon={link.icon}
 									>
 										{link.title}
 									</AnchorButton>

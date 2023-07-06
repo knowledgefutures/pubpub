@@ -107,7 +107,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 				<div className="investor-logos__container">
 					<picture className="investor-logos__picture">
 						<img
-							src="https://elifesciences.org/assets/images/investors/kaw.c1bb2e4b.svg"
+							src="https://elifesciences.org/assets/images/investors/kaw.db745e57.svg"
 							alt="Knut and Alice Wallenberg Foundation"
 							className="investor-logos__img"
 						/>

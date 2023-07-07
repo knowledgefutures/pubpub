@@ -24,7 +24,7 @@ import {
 	acceptSuggestions,
 	rejectSuggestions,
 } from 'components/Editor/plugins/suggestedEdits/resolve';
-import { hasSuggestions } from 'client/utils/suggestedEdits';
+import { getSuggestionAttrsForNode } from '../Editor/plugins/suggestedEdits/operations';
 
 require('./pubReleaseDialog.scss');
 
@@ -187,10 +187,22 @@ const PubReleaseDialog = (props: Props) => {
 		return null;
 	};
 
+	const hasSuggestions = (): boolean => {
+		if (!editorChangeObject || !editorChangeObject.view) return false;
+		const doc = editorChangeObject.view.state.doc;
+		let hasSugg = false;
+		doc.nodesBetween(0, doc.nodeSize - 2, (node) => {
+			if (hasSugg) return;
+			const present = getSuggestionAttrsForNode(node);
+			if (present) hasSugg = true;
+		});
+		return hasSugg;
+	};
+
 	const suggestedEditsAction = (action: {
 		(state: EditorState, from: number, to: number): Transaction;
 	}) => {
-		if (!hasSuggestions(editorChangeObject)) return;
+		if (!hasSuggestions()) return;
 		if (!editorChangeObject) return;
 		const editorState = editorChangeObject.view.state;
 		const size = editorChangeObject.view.state.doc.nodeSize;
@@ -291,7 +303,7 @@ const PubReleaseDialog = (props: Props) => {
 				{renderReleaseResult()}
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
-				{hasSuggestions(editorChangeObject) && featureFlags.suggestedEdits ? (
+				{hasSuggestions() && featureFlags.suggestedEdits ? (
 					<div>{renderSuggestedEditsActionButtons()}</div>
 				) : (
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>

@@ -74,7 +74,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 				<div className="investor-logos__container">
 					<picture className="investor-logos__picture">
 						<img
-							src="https://elifesciences.org/assets/images/investors/hhmi.9d0951a2.svg"
+							src="https://assets.pubpub.org/dgeq38mv/hhmi-61688985707381.svg"
 							alt="Howard Hughes Medical Institute"
 							className="investor-logos__img"
 						/>
@@ -85,7 +85,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 				<div className="investor-logos__container">
 					<picture className="investor-logos__picture">
 						<img
-							src="https://elifesciences.org/assets/images/investors/wellcome.813f8634.svg"
+							src="https://assets.pubpub.org/5rtntrl3/wellcome-41688985918441.svg"
 							alt="Wellcome Trust"
 							className="investor-logos__img"
 						/>
@@ -96,7 +96,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 				<div className="investor-logos__container">
 					<picture className="investor-logos__picture">
 						<img
-							src="https://elifesciences.org/assets/images/investors/max.89cebd37.svg"
+							src="https://assets.pubpub.org/qa9475a1/max-21688985885552.svg"
 							alt="Max-Planck-Gesellschaft"
 							className="investor-logos__img"
 						/>
@@ -107,7 +107,7 @@ const TwoColumnFooter = (props: TwoColumnFooterProps) => {
 				<div className="investor-logos__container">
 					<picture className="investor-logos__picture">
 						<img
-							src="https://elifesciences.org/assets/images/investors/kaw.db745e57.svg"
+							src="https://assets.pubpub.org/r5f43ng1/kaw-01688985845035.svg"
 							alt="Knut and Alice Wallenberg Foundation"
 							className="investor-logos__img"
 						/>

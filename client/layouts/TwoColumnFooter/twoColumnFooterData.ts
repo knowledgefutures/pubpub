@@ -5,8 +5,7 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 	certification: {
 		url: 'https://positiveplanet.uk/company-dashboards/elife-sciences/',
 		alt: 'Positive Planet - Certified Carbon Neutral',
-		imageUrl:
-			'https://elifesciences.org/assets/patterns/img/patterns/molecules/carbon-neutral.706efe6d.svg',
+		imageUrl: 'https://assets.pubpub.org/f2hftv2x/carbon-neutral-21688988941692.svg',
 	},
 	copyright: {
 		date: '2023',

@@ -1,28 +1,48 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { User, IntegrationDataOAuth1 } from '../models';
 
-export const ZoteroIntegration = sequelize.define(
-	'zoteroIntegration',
-	{
-		id: sequelize.idType,
-		zoteroUsername: dataTypes.TEXT,
-		zoteroUserId: dataTypes.TEXT,
-	},
-	{
-		tableName: 'ZoteroIntegrations',
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { User, zoteroIntegration, integrationDataOAuth1 } = models;
-				zoteroIntegration.belongsTo(User, {
-					as: 'user',
-					foreignKey: { allowNull: false },
-				});
-				zoteroIntegration.belongsTo(integrationDataOAuth1, {
-					foreignKey: { allowNull: false },
-					onDelete: 'CASCADE',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class ZoteroIntegration extends Model<
+	InferAttributes<ZoteroIntegration>,
+	InferCreationAttributes<ZoteroIntegration>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	zoteroUsername?: string | null;
+
+	@Column(DataType.TEXT)
+	zoteroUserId?: string | null;
+
+	@Column(DataType.UUID)
+	userId?: string | null;
+
+	@Column(DataType.UUID)
+	integrationDataOAuth1Id?: string | null;
+
+	@BelongsTo(() => User, { as: 'user', foreignKey: { allowNull: false, name: 'userId' } })
+	// 	user?: User;
+	user?: any;
+
+	@BelongsTo(() => IntegrationDataOAuth1, {
+		foreignKey: { allowNull: false, name: 'integrationDataOAuth1Id' },
+		as: 'integrationDataOAuth1',
+		onDelete: 'CASCADE',
+	})
+	// 	integrationDataOAuth1?: IntegrationDataOAuth1;
+	integrationDataOAuth1?: any;
+}
+
+export const ZoteroIntegrationAnyModel = ZoteroIntegration as any;

@@ -73,7 +73,7 @@ describe('/api/customScripts', () => {
 		const script = await CustomScript.findOne({
 			where: { communityId: enabledCommunity.id, type: 'js' },
 		});
-		expect(script.content).toEqual(content);
+		expect(script?.content).toEqual(content);
 		// Make sure subsequent saves overwrite the existing model
 		await agent
 			.post('/api/customScripts')
@@ -83,7 +83,7 @@ describe('/api/customScripts', () => {
 			where: { communityId: enabledCommunity.id, type: 'js' },
 			order: [['createdAt', 'DESC']],
 		});
-		expect(script.id === script2.id);
+		expect(script?.id === script2?.id);
 		await featureFlag.setCommunityOverride(enabledCommunity.subdomain, 'off');
 	});
 
@@ -97,7 +97,7 @@ describe('/api/customScripts', () => {
 		const script = await CustomScript.findOne({
 			where: { communityId: community.id, type: 'css' },
 		});
-		expect(script.content).toEqual(content);
+		expect(script?.content).toEqual(content);
 		// Make sure subsequent saves overwrite the existing model
 		await agent
 			.post('/api/customScripts')
@@ -107,7 +107,7 @@ describe('/api/customScripts', () => {
 			where: { communityId: community.id, type: 'css' },
 			order: [['createdAt', 'DESC']],
 		});
-		expect(script.id === script2.id);
+		expect(script?.id === script2?.id);
 	});
 });
 

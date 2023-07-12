@@ -93,7 +93,7 @@ export const createCollection = async (
 	});
 };
 
-export const updateCollection = async (inputValues, updatePermissions, actorId?) => {
+export const updateCollection = async (inputValues, updatePermissions, actorId?: string) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -122,7 +122,7 @@ export const updateCollection = async (inputValues, updatePermissions, actorId?)
 	return filteredValues;
 };
 
-export const destroyCollection = (inputValues, actorId?) => {
+export const destroyCollection = (inputValues, actorId?: string) => {
 	return Collection.destroy({
 		where: { id: inputValues.collectionId },
 		individualHooks: true,

@@ -13,7 +13,7 @@ const noopImageHandler = (s: any) => {
 };
 
 type OwnProps = {
-	children: null | ((...args: any[]) => unknown);
+	children?: null | ((...args: any[]) => unknown);
 	canClear?: boolean;
 	defaultImage?: string;
 	height?: number;

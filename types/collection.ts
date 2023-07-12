@@ -5,6 +5,9 @@ import { Community } from './community';
 import { DepositRecord, Pub } from './pub';
 import { ScopeSummary } from './scope';
 
+export type CollectionKind = 'tag' | 'issue' | 'book' | 'conference';
+export type ReadNextPreviewSize = 'none' | 'minimal' | 'medium' | 'choose-best';
+
 export type Collection = {
 	id: string;
 	title: string;
@@ -15,9 +18,9 @@ export type Collection = {
 	viewHash?: string;
 	editHash?: string;
 	metadata?: { [k: string]: any };
-	kind: 'tag' | 'issue' | 'book' | 'conference';
+	kind: CollectionKind;
 	doi?: string;
-	readNextPreviewSize: 'none' | 'minimal' | 'medium' | 'choose-best';
+	readNextPreviewSize: ReadNextPreviewSize;
 	pageId?: null | string;
 	community?: Community;
 	communityId: string;

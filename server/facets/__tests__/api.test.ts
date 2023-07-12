@@ -103,7 +103,12 @@ describe('/api/facets', () => {
 		expect(createdActivityItems.length).toBe(2);
 		const [pubHeaderThemeItem, citationStyleItem] = ['PubHeaderTheme', 'CitationStyle'].map(
 			(facetName) =>
-				createdActivityItems.find((item) => item.payload.facetName === facetName),
+				createdActivityItems.find(
+					(item) =>
+						item?.payload &&
+						'facetName' in item.payload &&
+						item.payload.facetName === facetName,
+				),
 		);
 		expect(pubHeaderThemeItem).toMatchObject({
 			actorId: userWhoCanManage.id,

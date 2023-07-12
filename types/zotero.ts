@@ -1,8 +1,8 @@
 export type ZoteroIntegration = {
 	id: string;
 	userId: string;
-	externalUsername: string;
-	externalUserId: string;
+	zoteroUsername: string;
+	zoteroUserId: string;
 	integrationDataOAuth1Id: string;
 };
 

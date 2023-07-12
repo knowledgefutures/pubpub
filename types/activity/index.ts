@@ -34,6 +34,7 @@ export type ActivityItem = InsertableActivityItem & {
 };
 
 export type ActivityItemKind = ActivityItem['kind'];
+export type ActivityItemPayload = ActivityItem['payload'];
 export type ActivityItemOfKind<Kind extends ActivityItemKind> = ActivityItem & { kind: Kind };
 
 export {

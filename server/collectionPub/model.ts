@@ -1,39 +1,59 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	Index,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Collection, Pub } from '../models';
 
-export const CollectionPub = sequelize.define(
-	'CollectionPub',
-	{
-		id: sequelize.idType,
-		pubId: { type: dataTypes.UUID, allowNull: false },
-		collectionId: { type: dataTypes.UUID, allowNull: false },
-		contextHint: { type: dataTypes.TEXT },
-		rank: { type: dataTypes.TEXT, allowNull: false },
-		pubRank: { type: dataTypes.TEXT, allowNull: false },
-	},
-	{
-		indexes: [
-			// Index to enforce that there is one CollectionPub per (collection, pub) pair
-			{
-				fields: ['collectionId', 'pubId'],
-				unique: true,
-			},
-		],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { CollectionPub: CollectionPubModel, Collection, Pub } = models;
-				CollectionPubModel.belongsTo(Collection, {
-					onDelete: 'CASCADE',
-					as: 'collection',
-					foreignKey: 'collectionId',
-				});
-				CollectionPubModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class CollectionPub extends Model<
+	InferAttributes<CollectionPub>,
+	InferCreationAttributes<CollectionPub>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Index({ unique: true, name: 'collection_pubs_collection_id_pub_id' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	pubId!: string;
+
+	@Index({ unique: true, name: 'collection_pubs_collection_id_pub_id' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	collectionId!: string;
+
+	@Column(DataType.TEXT)
+	contextHint?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	rank!: string;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	pubRank!: string;
+
+	@BelongsTo(() => Collection, {
+		onDelete: 'CASCADE',
+		as: 'collection',
+		foreignKey: 'collectionId',
+	})
+	// 	collection?: Collection;
+	collection?: any;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+}
+
+export const CollectionPubAnyModel = CollectionPub as any;

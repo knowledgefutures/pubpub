@@ -1,28 +1,24 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { Model, Table, Column, DataType, PrimaryKey, Default, HasMany } from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { ThreadComment, ThreadEvent } from '../models';
 
-export const Thread = sequelize.define(
-	'Thread',
-	{
-		id: sequelize.idType,
-		isLocked: { type: dataTypes.BOOLEAN },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Thread: ThreadModel, ThreadComment, ThreadEvent } = models;
-				ThreadModel.hasMany(ThreadComment, {
-					onDelete: 'CASCADE',
-					as: 'comments',
-					foreignKey: 'threadId',
-				});
-				ThreadModel.hasMany(ThreadEvent, {
-					onDelete: 'CASCADE',
-					as: 'events',
-					foreignKey: 'threadId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Thread extends Model<InferAttributes<Thread>, InferCreationAttributes<Thread>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.BOOLEAN)
+	isLocked?: boolean | null;
+
+	@HasMany(() => ThreadComment, { onDelete: 'CASCADE', as: 'comments', foreignKey: 'threadId' })
+	// 	comments?: ThreadComment[];
+	comments?: any;
+
+	@HasMany(() => ThreadEvent, { onDelete: 'CASCADE', as: 'events', foreignKey: 'threadId' })
+	// 	events?: ThreadEvent[];
+	events?: any;
+}
+
+export const ThreadAnyModel = Thread as any;

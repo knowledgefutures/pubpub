@@ -1,10 +1,31 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export const CommunityAdmin = sequelize.define('CommunityAdmin', {
-	id: sequelize.idType,
+@Table
+class CommunityAdmin extends Model<
+	InferAttributes<CommunityAdmin>,
+	InferCreationAttributes<CommunityAdmin>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-	/* Set by Associations */
-	userId: { type: dataTypes.UUID, allowNull: false },
-	communityId: { type: dataTypes.UUID, allowNull: false },
-}) as any;
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	communityId!: string;
+}
+
+export const CommunityAdminAnyModel = CommunityAdmin as any;

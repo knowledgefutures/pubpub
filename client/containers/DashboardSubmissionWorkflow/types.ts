@@ -12,7 +12,7 @@ export const submissionWorkflowConfigStepLabels: Record<SubmissionWorkflowConfig
 	'layout-banner': 'Layout banner',
 };
 
-export type SubmissionWorkflowConfigStep = typeof submissionWorkflowConfigSteps[number];
+export type SubmissionWorkflowConfigStep = (typeof submissionWorkflowConfigSteps)[number];
 
 export type EditableSubmissionWorkflow = Omit<
 	SubmissionWorkflow,

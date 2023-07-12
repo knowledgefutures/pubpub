@@ -7,4 +7,4 @@ export const getSuperAdminTabUrl = (tabKind: SuperAdminTabKind) => {
 export const isSuperAdminTabKind = (tabKind: string): tabKind is SuperAdminTabKind =>
 	superAdminTabKinds.includes(tabKind as any);
 
-export type SuperAdminTabKind = typeof superAdminTabKinds[number];
+export type SuperAdminTabKind = (typeof superAdminTabKinds)[number];

@@ -42,7 +42,7 @@ export type Export = {
 	id: string;
 	format: string;
 	url?: string;
-	historyKey: string;
+	historyKey: number;
 	workerTaskId?: string;
 };
 

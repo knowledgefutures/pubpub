@@ -122,7 +122,17 @@
 		"react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
 		"react/require-default-props": 0,
 		"space-before-function-paren": 0,
-		"@blueprintjs/classes-constants": 2
+		"@blueprintjs/classes-constants": 2,
+		// TODO: Added after migrating to typescript 5.1, needs approval. They are from airbnb
+		"react/function-component-definition": 0,
+		"no-restricted-exports": 0,
+		"react/no-unstable-nested-components": 1,
+		"react/jsx-no-useless-fragment": 1,
+		"react/jsx-no-constructed-context-values": 1,
+		"no-promise-executor-return": 1,
+		"import/no-import-module-exports": 1,
+		"react/no-unknown-property": 1,
+		"default-param-last": 1
 	},
 	"overrides": [
 		{

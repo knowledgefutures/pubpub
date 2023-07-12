@@ -1,11 +1,48 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export const ScopeSummary = sequelize.define('ScopeSummary', {
-	id: sequelize.idType,
-	collections: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-	pubs: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-	discussions: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-	reviews: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-	submissions: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-}) as any;
+@Table
+class ScopeSummary extends Model<
+	InferAttributes<ScopeSummary>,
+	InferCreationAttributes<ScopeSummary>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Default(0)
+	@Column(DataType.INTEGER)
+	collections!: CreationOptional<number>;
+
+	@AllowNull(false)
+	@Default(0)
+	@Column(DataType.INTEGER)
+	pubs!: CreationOptional<number>;
+
+	@AllowNull(false)
+	@Default(0)
+	@Column(DataType.INTEGER)
+	discussions!: CreationOptional<number>;
+
+	@AllowNull(false)
+	@Default(0)
+	@Column(DataType.INTEGER)
+	reviews!: CreationOptional<number>;
+
+	@AllowNull(false)
+	@Default(0)
+	@Column(DataType.INTEGER)
+	submissions!: CreationOptional<number>;
+}
+
+export const ScopeSummaryAnyModel = ScopeSummary as any;

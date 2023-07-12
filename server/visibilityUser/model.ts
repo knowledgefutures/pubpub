@@ -1,10 +1,35 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	ForeignKey,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { User, Visibility } from '../models';
 
-export const VisibilityUser = sequelize.define('VisibilityUser', {
-	id: sequelize.idType,
+@Table
+class VisibilityUser extends Model<
+	InferAttributes<VisibilityUser>,
+	InferCreationAttributes<VisibilityUser>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-	/* Set by Associations */
-	userId: { type: dataTypes.UUID, allowNull: false },
-	visibilityId: { type: dataTypes.UUID, allowNull: false },
-}) as any;
+	@AllowNull(false)
+	@ForeignKey(() => User)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@AllowNull(false)
+	@ForeignKey(() => Visibility)
+	@Column(DataType.UUID)
+	visibilityId!: string;
+}
+
+export const VisibilityUserAnyModel = VisibilityUser as any;

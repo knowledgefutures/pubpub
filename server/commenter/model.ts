@@ -1,7 +1,15 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { Model, Table, Column, DataType, PrimaryKey, Default } from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export const Commenter = sequelize.define('Commenter', {
-	id: sequelize.idType,
-	name: { type: dataTypes.TEXT },
-}) as any;
+@Table
+class Commenter extends Model<InferAttributes<Commenter>, InferCreationAttributes<Commenter>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	name?: string | null;
+}
+
+export const CommenterAnyModel = Commenter as any;

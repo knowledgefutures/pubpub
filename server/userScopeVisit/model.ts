@@ -1,25 +1,31 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { Model, Table, Column, DataType, PrimaryKey, Default, Index } from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export const UserScopeVisit = sequelize.define(
-	'UserScopeVisit',
-	{
-		id: sequelize.idType,
-		userId: { type: dataTypes.UUID, allowNull: true },
-		pubId: { type: dataTypes.UUID, allowNull: true },
-		collectionId: { type: dataTypes.UUID, allowNull: true },
-		communityId: { type: dataTypes.UUID, allowNull: true },
-	},
-	{
-		indexes: [
-			{
-				unique: true,
-				fields: ['userId', 'collectionId'],
-			},
-			{
-				unique: true,
-				fields: ['userId', 'pubId'],
-			},
-		],
-	},
-) as any;
+@Table
+class UserScopeVisit extends Model<
+	InferAttributes<UserScopeVisit>,
+	InferCreationAttributes<UserScopeVisit>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Index({ unique: true, name: 'user_scope_visits_user_id_collection_id' })
+	@Index({ unique: true, name: 'user_scope_visits_user_id_pub_id' })
+	@Column(DataType.UUID)
+	userId?: string | null;
+
+	@Index({ unique: true, name: 'user_scope_visits_user_id_pub_id' })
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Index({ unique: true, name: 'user_scope_visits_user_id_collection_id' })
+	@Column(DataType.UUID)
+	collectionId?: string | null;
+
+	@Column(DataType.UUID)
+	communityId?: string | null;
+}
+
+export const UserScopeVisitAnyModel = UserScopeVisit as any;

@@ -17,10 +17,15 @@ const description = (
 export default createFacetKindEditor(NodeLabels, {
 	description,
 	propEditors: {
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		image: NodeLabelEditor,
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		audio: NodeLabelEditor,
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		video: NodeLabelEditor,
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		table: NodeLabelEditor,
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		math: NodeLabelEditor,
 	},
 });

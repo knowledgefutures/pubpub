@@ -219,8 +219,12 @@ const getEdgeBetweenDefinitions = (
 		const targetModel = modelByName(target.modelName);
 
 		const associations = Object.values(sourceModel.associations).filter(
-			(assoc) => assoc.target === targetModel,
-		);
+			(assoc) =>
+				typeof assoc === 'object' &&
+				assoc != null &&
+				'target' in assoc &&
+				assoc.target === targetModel,
+		) as Association[];
 
 		if (associations.length > 0) {
 			if (associations.length > 1) {

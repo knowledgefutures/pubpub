@@ -1,43 +1,69 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	Index,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { ActivityItem, UserSubscription, User } from '../models';
 
-export const UserNotification = sequelize.define(
-	'UserNotification',
-	{
-		id: sequelize.idType,
-		userId: { type: dataTypes.UUID, allowNull: false },
-		userSubscriptionId: { type: dataTypes.UUID, allowNull: false },
-		activityItemId: { type: dataTypes.UUID, allowNull: false },
-		isRead: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-		manuallySetIsRead: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-	},
-	{
-		indexes: [{ fields: ['userId'], using: 'BTREE' }],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					ActivityItem,
-					User,
-					UserNotification: UserNotificationModel,
-					UserSubscription,
-				} = models;
-				UserNotificationModel.belongsTo(ActivityItem, {
-					onDelete: 'CASCADE',
-					as: 'activityItem',
-					foreignKey: 'activityItemId',
-				});
-				UserNotificationModel.belongsTo(UserSubscription, {
-					onDelete: 'CASCADE',
-					as: 'userSubscription',
-					foreignKey: 'userSubscriptionId',
-				});
-				UserNotificationModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'user',
-					foreignKey: 'userId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class UserNotification extends Model<
+	InferAttributes<UserNotification>,
+	InferCreationAttributes<UserNotification>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Index({ using: 'BTREE' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userSubscriptionId!: string;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	activityItemId!: string;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	isRead!: CreationOptional<boolean>;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	manuallySetIsRead!: CreationOptional<boolean>;
+
+	@BelongsTo(() => ActivityItem, {
+		onDelete: 'CASCADE',
+		as: 'activityItem',
+		foreignKey: 'activityItemId',
+	})
+	// 	activityItem?: ActivityItem;
+	activityItem?: any;
+
+	@BelongsTo(() => UserSubscription, {
+		onDelete: 'CASCADE',
+		as: 'userSubscription',
+		foreignKey: 'userSubscriptionId',
+	})
+	// 	userSubscription?: UserSubscription;
+	userSubscription?: any;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	// 	user?: User;
+	user?: any;
+}
+
+export const UserNotificationAnyModel = UserNotification as any;

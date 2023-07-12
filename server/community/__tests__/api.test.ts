@@ -53,7 +53,7 @@ describe('/api/communities', () => {
 		}));
 		expect(url).toEqual(`https://${subdomain}.pubpub.org`);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
-		expect(newCommunity.title).toEqual('Burn Book');
+		expect(newCommunity?.title).toEqual('Burn Book');
 	});
 
 	it('does not create a community if you are logged out', async () => {
@@ -81,7 +81,7 @@ describe('/api/communities', () => {
 			})
 			.expect(403);
 		const communityNow = await Community.findOne({ where: { id: communityId } });
-		expect(communityNow.title).toEqual(oldTitle);
+		expect(communityNow?.title).toEqual(oldTitle);
 	});
 
 	it('allows community admins to update reasonable fields on the community', async () => {
@@ -104,8 +104,8 @@ describe('/api/communities', () => {
 			actorId: admin.id,
 		});
 		const communityNow = await Community.findOne({ where: { id: existingCommunity.id } });
-		expect(communityNow.title).toEqual('Journal of Trying To Lose Three Pounds');
-		expect(communityNow.isFeatured).not.toBeTruthy();
+		expect(communityNow?.title).toEqual('Journal of Trying To Lose Three Pounds');
+		expect(communityNow?.isFeatured).not.toBeTruthy();
 	});
 });
 

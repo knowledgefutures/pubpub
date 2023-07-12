@@ -75,7 +75,7 @@ it('Creates a new worker task or returns an existing one, appropriately', async 
 		body: { taskId },
 	} = await agent.post('/api/export').send(makeExportQuery(0)).expect(201);
 	const workerTask = await WorkerTask.findOne({ where: { id: taskId } });
-	expect(workerTask.type).toEqual('export');
+	expect(workerTask?.type).toEqual('export');
 	// Now query again and check that we refer to the same worker task
 	const { body: bodyAgain } = await agent
 		.post('/api/export')

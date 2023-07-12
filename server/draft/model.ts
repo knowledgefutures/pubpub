@@ -1,23 +1,34 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	//	HasOne,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+// import { Pub } from '../models';
 
-export const Draft = sequelize.define(
-	'Draft',
-	{
-		id: sequelize.idType,
-		latestKeyAt: { type: dataTypes.DATE },
-		firebasePath: { type: dataTypes.STRING, allowNull: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Pub, Draft: DraftModel } = models;
-				Pub.belongsTo(DraftModel, {
-					as: 'draft',
-					foreignKey: 'draftId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes<Draft>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.DATE)
+	// 	latestKeyAt?: Date | null;
+	latestKeyAt?: any;
+
+	@AllowNull(false)
+	@Column(DataType.STRING)
+	firebasePath!: string;
+
+	// @HasOne(() => Pub, { as: 'pub', foreignKey: 'draftId' })
+	// 	// pub?: Pub;
+	// pub?: any;
+}
+
+export const DraftAnyModel = Draft as any;

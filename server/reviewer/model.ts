@@ -1,24 +1,33 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { ReviewNew } from '../models';
 
-export const Reviewer = sequelize.define(
-	'Reviewer',
-	{
-		id: sequelize.idType,
-		name: { type: dataTypes.TEXT },
-		reviewId: { type: dataTypes.UUID, allowNull: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Reviewer: ReviewerModel, ReviewNew } = models;
-				ReviewerModel.belongsTo(ReviewNew, {
-					onDelete: 'CASCADE',
-					as: 'review',
-					foreignKey: 'reviewId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Reviewer extends Model<InferAttributes<Reviewer>, InferCreationAttributes<Reviewer>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	name?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	reviewId!: string;
+
+	@BelongsTo(() => ReviewNew, { onDelete: 'CASCADE', as: 'review', foreignKey: 'reviewId' })
+	// 	review?: ReviewNew;
+	review?: any;
+}
+
+export const ReviewerAnyModel = Reviewer as any;

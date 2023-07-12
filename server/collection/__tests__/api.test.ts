@@ -236,7 +236,7 @@ it('does not allow normal users to delete a collection', async () => {
 		.send({ id: collection.id, communityId: community.id })
 		.expect(403);
 	const collectionNow = await Collection.findOne({ where: { id: collection.id } });
-	expect(collectionNow.id).toEqual(collection.id);
+	expect(collectionNow?.id).toEqual(collection.id);
 });
 
 teardown(afterAll);

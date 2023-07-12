@@ -566,7 +566,7 @@ describe('/api/members', () => {
 			)
 			.expect(403);
 		const memberNow = await Member.findOne({ where: { id: pubAdminMember.id } });
-		expect(memberNow.id).toEqual(pubAdminMember.id);
+		expect(memberNow?.id).toEqual(pubAdminMember.id);
 	});
 
 	it('allows a member who is a manager to remove themselves', async () => {

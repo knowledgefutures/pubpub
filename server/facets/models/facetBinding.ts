@@ -1,40 +1,53 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	Index,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Community, Collection, Pub } from '../../models';
 
-export const FacetBinding = sequelize.define(
-	'FacetBinding',
-	{
-		id: sequelize.idType,
-		pubId: { type: dataTypes.UUID, allowNull: true },
-		collectionId: { type: dataTypes.UUID, allowNull: true },
-		communityId: { type: dataTypes.UUID, allowNull: true },
-	},
-	{
-		indexes: [
-			{ fields: ['communityId'], using: 'BTREE' },
-			{ fields: ['collectionId'], using: 'BTREE' },
-			{ fields: ['pubId'], using: 'BTREE' },
-		],
-		// @ts-expect-error ts(2345): Argument of type '{ indexes: { fields: string[]; using: string; }[]; classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { FacetBinding: FacetBindingModel, Community, Collection, Pub } = models;
-				FacetBindingModel.belongsTo(Community, {
-					onDelete: 'CASCADE',
-					as: 'community',
-					foreignKey: 'communityId',
-				});
-				FacetBindingModel.belongsTo(Collection, {
-					onDelete: 'CASCADE',
-					as: 'collection',
-					foreignKey: 'collectionId',
-				});
-				FacetBindingModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class FacetBinding extends Model<
+	InferAttributes<FacetBinding>,
+	InferCreationAttributes<FacetBinding>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	collectionId?: string | null;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	communityId?: string | null;
+
+	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
+	// 	community?: Community;
+	community?: any;
+
+	@BelongsTo(() => Collection, {
+		onDelete: 'CASCADE',
+		as: 'collection',
+		foreignKey: 'collectionId',
+	})
+	// 	collection?: Collection;
+	collection?: any;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+}
+
+export const FacetBindingAnyModel = FacetBinding as any;

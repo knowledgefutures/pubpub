@@ -168,7 +168,7 @@ describe('/api/threads/subscriptions', () => {
 		const mutedThread = await UserSubscription.findOne({
 			where: { id: existingSubscription.id },
 		});
-		expect(mutedThread.status).toEqual('muted');
+		expect(mutedThread?.status).toEqual('muted');
 	});
 });
 

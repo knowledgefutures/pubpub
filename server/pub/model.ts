@@ -1,138 +1,233 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-dupe-class-members */
+/* eslint-disable lines-between-class-members */
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	IsLowercase,
+	Length,
+	Is,
+	Unique,
+	Index,
+	HasMany,
+	BelongsTo,
+	HasOne,
+} from 'sequelize-typescript';
+import type {
+	InferAttributes,
+	InferCreationAttributes,
+	CreationOptional,
+	BuildOptions,
+	Logging,
+	Silent,
+	Transactionable,
+	Hookable,
+	TruncateOptions,
+	Paranoid,
+} from 'sequelize';
+import {
+	PubAttribution,
+	CollectionPub,
+	Community,
+	Draft,
+	Discussion,
+	Export,
+	ReviewNew,
+	Member,
+	Release,
+	PubVersion,
+	PubEdge,
+	Submission,
+	CrossrefDepositRecord,
+	ScopeSummary,
+} from '../models';
 
-export const Pub = sequelize.define(
-	'Pub',
-	{
-		id: sequelize.idType,
-		slug: {
-			type: dataTypes.TEXT,
-			unique: true,
-			allowNull: false,
-			validate: {
-				isLowercase: true,
-				len: [1, 280],
-				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
-			},
-		},
-		title: { type: dataTypes.TEXT, allowNull: false },
-		htmlTitle: { type: dataTypes.TEXT, allowNull: true },
-		description: {
-			type: dataTypes.TEXT,
-			validate: {
-				len: [0, 280],
-			},
-		},
-		htmlDescription: {
-			type: dataTypes.TEXT,
-			validate: {
-				len: [0, 280],
-			},
-		},
-		avatar: { type: dataTypes.TEXT },
-		customPublishedAt: { type: dataTypes.DATE },
-		doi: { type: dataTypes.TEXT },
-		labels: { type: dataTypes.JSONB },
-		downloads: { type: dataTypes.JSONB },
-		metadata: { type: dataTypes.JSONB },
-		viewHash: { type: dataTypes.STRING },
-		editHash: { type: dataTypes.STRING },
-		reviewHash: { type: dataTypes.STRING },
-		commentHash: { type: dataTypes.STRING },
+// declare module 'sequelize' {
+// 	export interface CreateOptions<TAttributes = any>
+// 		extends BuildOptions,
+// 			Logging,
+// 			Silent,
+// 			Transactionable,
+// 			Hookable {
+// 		actorId?: string | null;
+// 	}
 
-		/* Set by Associations */
-		draftId: { type: dataTypes.UUID, allowNull: false },
-		communityId: { type: dataTypes.UUID, allowNull: false },
-	},
-	{
-		indexes: [{ fields: ['communityId'], using: 'BTREE' }],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					CollectionPub,
-					Community,
-					CrossrefDepositRecord,
-					Discussion,
-					Export,
-					Member,
-					Pub: PubModel,
-					PubAttribution,
-					PubEdge,
-					PubVersion,
-					Release,
-					ReviewNew,
-					ScopeSummary,
-					Submission,
-				} = models;
-				PubModel.hasMany(PubAttribution, {
-					onDelete: 'CASCADE',
-					as: 'attributions',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(CollectionPub, {
-					onDelete: 'CASCADE',
-					hooks: true,
-					as: 'collectionPubs',
-					foreignKey: 'pubId',
-				});
-				PubModel.belongsTo(Community, {
-					onDelete: 'CASCADE',
-					as: 'community',
-					foreignKey: 'communityId',
-				});
-				PubModel.hasMany(Discussion, {
-					onDelete: 'CASCADE',
-					as: 'discussions',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(Export, {
-					as: 'exports',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(ReviewNew, {
-					onDelete: 'CASCADE',
-					as: 'reviews',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(Member, {
-					onDelete: 'CASCADE',
-					as: 'members',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(Release, {
-					onDelete: 'CASCADE',
-					as: 'releases',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(PubVersion, {
-					onDelete: 'CASCADE',
-					as: 'pubVersions',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(PubEdge, {
-					onDelete: 'CASCADE',
-					as: 'outboundEdges',
-					foreignKey: 'pubId',
-				});
-				PubModel.hasMany(PubEdge, {
-					onDelete: 'CASCADE',
-					as: 'inboundEdges',
-					foreignKey: 'targetPubId',
-				});
-				PubModel.hasOne(Submission, {
-					as: 'submission',
-					foreignKey: 'pubId',
-				});
-				PubModel.belongsTo(CrossrefDepositRecord, {
-					as: 'crossrefDepositRecord',
-					foreignKey: 'crossrefDepositRecordId',
-				});
-				PubModel.belongsTo(ScopeSummary, {
-					as: 'scopeSummary',
-					foreignKey: 'scopeSummaryId',
-				});
-			},
-		},
-	},
-) as any;
+// 	export interface DestroyOptions<TAttributes = any> extends TruncateOptions<TAttributes> {
+// 		actorId?: string | null;
+// 	}
+
+// 	export interface UpdateOptions<TAttributes = any>
+// 		extends Logging,
+// 			Transactionable,
+// 			Paranoid,
+// 			Hookable {
+// 		actorId?: string | null;
+// 	}
+// }
+
+@Table
+class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@IsLowercase
+	@Length({ min: 1, max: 280 })
+	@Is(/^[a-zA-Z0-9-]+$/)
+	@Unique
+	@Column(DataType.TEXT)
+	slug!: string;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	title!: string;
+
+	@Column(DataType.TEXT)
+	htmlTitle!: string | null;
+
+	@Length({ min: 0, max: 280 })
+	@Column(DataType.TEXT)
+	description!: string | null;
+
+	@Length({ min: 0, max: 280 })
+	@Column(DataType.TEXT)
+	htmlDescription?: string | null;
+
+	@Column(DataType.TEXT)
+	avatar?: string | null;
+
+	@Column(DataType.DATE)
+	// 	customPublishedAt?: Date | null;
+	customPublishedAt?: any;
+
+	@Column(DataType.TEXT)
+	doi?: string | null;
+
+	// TODO: add validation for labels
+	@Column(DataType.JSONB)
+	labels?: string[] | null;
+
+	/**  TODO: add validation for downloads
+	// Should be something like
+ *   {
+    "url": "https://assets.pubpub.org/44k2vnvm/61595701771772.pdf",
+    "type": "formatted",
+    "branchId": null,
+    "createdAt": "2020-07-25T18:29:32.319Z"
+  }
+ */
+	@Column(DataType.JSONB)
+	downloads?: any[] | null;
+
+	@Column(DataType.JSONB)
+	metadata?: object | null;
+
+	@Column(DataType.STRING)
+	viewHash?: string | null;
+
+	@Column(DataType.STRING)
+	editHash?: string | null;
+
+	@Column(DataType.STRING)
+	reviewHash?: string | null;
+
+	@Column(DataType.STRING)
+	commentHash?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	draftId!: string;
+
+	@Index({ using: 'BTREE' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	communityId!: string;
+
+	@Column(DataType.UUID)
+	crossrefDepositRecordId?: string | null;
+
+	@Column(DataType.UUID)
+	scopeSummaryId?: string | null;
+
+	@HasMany(() => PubAttribution, { onDelete: 'CASCADE', as: 'attributions', foreignKey: 'pubId' })
+	// 	attributions?: PubAttribution[];
+	attributions?: any;
+
+	@HasMany(() => CollectionPub, {
+		onDelete: 'CASCADE',
+		hooks: true,
+		as: 'collectionPubs',
+		foreignKey: 'pubId',
+	})
+	// 	collectionPubs?: CollectionPub[];
+	collectionPubs?: any;
+
+	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
+	// 	community?: Community;
+	community?: any;
+
+	@BelongsTo(() => Draft, { as: 'draft', foreignKey: 'draftId' })
+	// 	draft?: Draft;
+	draft?: any;
+
+	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'pubId' })
+	// 	discussions?: Discussion[];
+	discussions?: any;
+
+	@HasMany(() => Export, { as: 'exports', foreignKey: 'pubId' })
+	// 	exports?: Export[];
+	exports?: any;
+
+	@HasMany(() => ReviewNew, { onDelete: 'CASCADE', as: 'reviews', foreignKey: 'pubId' })
+	// 	reviews?: ReviewNew[];
+	reviews?: any;
+
+	@HasMany(() => Member, { onDelete: 'CASCADE', as: 'members', foreignKey: 'pubId' })
+	// 	members?: Member[];
+	members?: any;
+
+	@HasMany(() => Release, { onDelete: 'CASCADE', as: 'releases', foreignKey: 'pubId' })
+	// 	releases?: Release[];
+	releases?: any;
+
+	@HasMany(() => PubVersion, { onDelete: 'CASCADE', as: 'pubVersions', foreignKey: 'pubId' })
+	// 	pubVersions?: PubVersion[];
+	pubVersions?: any;
+
+	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'outboundEdges', foreignKey: 'pubId' })
+	// 	outboundEdges?: Omit<PubEdge, 'pub'>[];
+	outboundEdges?: any;
+
+	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'inboundEdges', foreignKey: 'targetPubId' })
+	// 	inboundEdges?: Omit<PubEdge, 'targetPub'>[];
+	inboundEdges?: any;
+
+	@HasOne(() => Submission, { as: 'submission', foreignKey: 'pubId' })
+	// 	submission?: Submission;
+	submission?: any;
+
+	@BelongsTo(() => CrossrefDepositRecord, {
+		as: 'crossrefDepositRecord',
+		foreignKey: 'crossrefDepositRecordId',
+		onDelete: 'SET NULL',
+	})
+	// 	crossrefDepositRecord?: CrossrefDepositRecord;
+	crossrefDepositRecord?: any;
+
+	@BelongsTo(() => ScopeSummary, {
+		as: 'scopeSummary',
+		foreignKey: 'scopeSummaryId',
+		onDelete: 'SET NULL',
+	})
+	// 	scopeSummary?: ScopeSummary;
+	scopeSummary?: any;
+}
+
+export const PubAnyModel = Pub as any;

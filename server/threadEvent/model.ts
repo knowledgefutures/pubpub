@@ -1,27 +1,45 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { User } from '../models';
 
-export const ThreadEvent = sequelize.define(
-	'ThreadEvent',
-	{
-		id: sequelize.idType,
-		type: { type: dataTypes.STRING },
-		data: { type: dataTypes.JSONB },
-		/* Set by Associations */
-		userId: { type: dataTypes.UUID, allowNull: false },
-		threadId: { type: dataTypes.UUID, allowNull: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { User, ThreadEvent: ThreadEventModel } = models;
-				ThreadEventModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'user',
-					foreignKey: 'userId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class ThreadEvent extends Model<
+	InferAttributes<ThreadEvent>,
+	InferCreationAttributes<ThreadEvent>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.STRING)
+	type?: string | null;
+
+	// TODO: Add validation for this
+	@Column(DataType.JSONB)
+	// 	data?: Record<string, any> | null;
+	data?: any;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	threadId!: string;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	// 	user?: User;
+	user?: any;
+}
+
+export const ThreadEventAnyModel = ThreadEvent as any;

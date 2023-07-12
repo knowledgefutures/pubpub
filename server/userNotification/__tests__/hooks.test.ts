@@ -108,7 +108,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 			where: { pubId: pub.id, kind: 'pub-discussion-comment-added' },
 			order: [['createdAt', 'DESC']],
 		});
-		expect(activityItem.toJSON()).toMatchObject({
+		expect(activityItem?.toJSON()).toMatchObject({
 			payload: { threadId: membersThread.id, threadComment: { id: threadComment.id } },
 		});
 		expect(
@@ -126,7 +126,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					chattyUser,
 				].map((user) =>
 					UserNotification.count({
-						where: { userId: user.id, activityItemId: activityItem.id },
+						where: { userId: user.id, activityItemId: activityItem?.id },
 					}),
 				),
 			),
@@ -147,7 +147,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 			where: { pubId: pub.id, kind: 'pub-discussion-comment-added' },
 			order: [['createdAt', 'DESC']],
 		});
-		expect(activityItem.toJSON()).toMatchObject({
+		expect(activityItem?.toJSON()).toMatchObject({
 			payload: { threadId: publicThread.id, threadComment: { id: threadComment.id } },
 		});
 		expect(
@@ -163,7 +163,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					inactiveSubscriptionUser,
 				].map((user) =>
 					UserNotification.count({
-						where: { userId: user.id, activityItemId: activityItem.id },
+						where: { userId: user.id, activityItemId: activityItem?.id },
 					}),
 				),
 			),
@@ -183,7 +183,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 			where: { pubId: pub.id, kind: 'pub-review-comment-added' },
 			order: [['createdAt', 'DESC']],
 		});
-		expect(activityItem.toJSON()).toMatchObject({
+		expect(activityItem?.toJSON()).toMatchObject({
 			payload: { threadId: reviewThread.id, threadComment: { id: threadComment.id } },
 		});
 		expect(
@@ -195,7 +195,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					pubSubscriber,
 				].map((user) =>
 					UserNotification.count({
-						where: { userId: user.id, activityItemId: activityItem.id },
+						where: { userId: user.id, activityItemId: activityItem?.id },
 					}),
 				),
 			),

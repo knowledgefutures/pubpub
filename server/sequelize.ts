@@ -1,4 +1,5 @@
-import { Sequelize, DataTypes, ConnectionError } from 'sequelize';
+import { DataTypes, ConnectionError } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { knex } from 'knex';
 
 const database_url = process.env.DATABASE_URL;

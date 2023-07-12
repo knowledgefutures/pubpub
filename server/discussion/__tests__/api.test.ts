@@ -183,11 +183,11 @@ it('creates a database entry (and an ActivityItem)', async () => {
 
 	const discussion = await Discussion.findOne({ where: { id: discussionId } });
 	const relatedThread = await Thread.findOne({
-		where: { id: discussion.threadId },
+		where: { id: discussion?.threadId },
 		include: [{ model: ThreadComment, as: 'comments' }],
 	});
 
-	expect(relatedThread.comments[0].text).toEqual('Hello world!');
+	expect(relatedThread?.comments?.[0]?.text).toEqual('Hello world!');
 });
 
 it('creates a DiscussionAnchor when initAnchorData is provided', async () => {
@@ -440,7 +440,7 @@ it('forbids users from removing managed labels from their discussions', async ()
 	const agent = await login(discussionCreator);
 
 	const discussionCurrently = await Discussion.findOne({ where: { id: existingDiscussion.id } });
-	expect(discussionCurrently.labels.includes(alreadyAppliedManagedLabel.id));
+	expect(discussionCurrently?.labels?.includes(alreadyAppliedManagedLabel.id));
 
 	await agent
 		.put('/api/discussions')
@@ -460,7 +460,7 @@ it('lets admins remove managed labels from discussions', async () => {
 	const targetLabels = [];
 
 	const discussionCurrently = await Discussion.findOne({ where: { id: existingDiscussion.id } });
-	expect(discussionCurrently.labels.includes(alreadyAppliedManagedLabel.id));
+	expect(discussionCurrently?.labels?.includes(alreadyAppliedManagedLabel.id));
 
 	const { body: discussion } = await agent
 		.put('/api/discussions')

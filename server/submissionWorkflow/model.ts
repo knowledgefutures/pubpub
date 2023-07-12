@@ -1,40 +1,86 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	HasMany,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { DocJson } from 'types';
+import { Submission, Collection } from '../models';
 
-export const SubmissionWorkflow = sequelize.define(
-	'SubmissionWorkflow',
-	{
-		id: sequelize.idType,
-		title: { type: dataTypes.TEXT, allowNull: false },
-		collectionId: { type: dataTypes.UUID },
-		enabled: { type: dataTypes.BOOLEAN, allowNull: false },
-		instructionsText: { type: dataTypes.JSONB, allowNull: false },
-		acceptedText: { type: dataTypes.JSONB, allowNull: false },
-		declinedText: { type: dataTypes.JSONB, allowNull: false },
-		receivedEmailText: { type: dataTypes.JSONB, allowNull: false },
-		introText: { type: dataTypes.JSONB, allowNull: false },
-		targetEmailAddresses: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
-		requireAbstract: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-		requireDescription: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					Collection,
-					SubmissionWorkflow: SubmissionWorkflowModel,
-					Submission,
-				} = models;
-				SubmissionWorkflowModel.hasMany(Submission, {
-					as: 'submissions',
-					foreignKey: 'submissionWorkflowId',
-				});
-				SubmissionWorkflowModel.belongsTo(Collection, {
-					as: 'collection',
-					foreignKey: 'collectionId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class SubmissionWorkflow extends Model<
+	InferAttributes<SubmissionWorkflow>,
+	InferCreationAttributes<SubmissionWorkflow>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	title!: string;
+
+	@Column(DataType.UUID)
+	collectionId?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.BOOLEAN)
+	enabled!: boolean;
+
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	instructionsText!: object;
+
+	// TODO: Add validation for this
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	acceptedText!: DocJson;
+
+	// TODO: Add validation for this
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	declinedText!: DocJson;
+
+	// TODO: Add validation for this
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	receivedEmailText!: DocJson;
+
+	// TODO: Add validation for this
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	introText!: DocJson;
+
+	// TODO: Add validation for this
+	@AllowNull(false)
+	@Default([])
+	@Column(DataType.JSONB)
+	targetEmailAddresses!: CreationOptional<string[]>;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	requireAbstract!: CreationOptional<boolean>;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	requireDescription!: CreationOptional<boolean>;
+
+	@HasMany(() => Submission, { as: 'submissions', foreignKey: 'submissionWorkflowId' })
+	// 	submissions?: Submission[];
+	submissions?: any;
+
+	@BelongsTo(() => Collection, { as: 'collection', foreignKey: 'collectionId' })
+	// 	collection?: Collection;
+	collection?: any;
+}
+
+export const SubmissionWorkflowAnyModel = SubmissionWorkflow as any;

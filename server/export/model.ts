@@ -1,27 +1,48 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { WorkerTask } from '../models';
 
-export const Export = sequelize.define(
-	'Export',
-	{
-		id: sequelize.idType,
-		format: { type: dataTypes.STRING, allowNull: false },
-		url: { type: dataTypes.STRING, allowNull: true },
-		historyKey: { type: dataTypes.INTEGER, allowNull: false },
-		pubId: { type: dataTypes.UUID, allowNull: false },
-		workerTaskId: { type: dataTypes.UUID, allowNull: true },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Export: ExportModel, WorkerTask } = models;
-				ExportModel.belongsTo(WorkerTask, {
-					onDelete: 'SET NULL',
-					as: 'workerTask',
-					foreignKey: 'workerTaskId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Export extends Model<InferAttributes<Export>, InferCreationAttributes<Export>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.STRING)
+	format!: string;
+
+	@Column(DataType.STRING)
+	url?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.INTEGER)
+	historyKey!: number;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	pubId!: string;
+
+	@Column(DataType.UUID)
+	workerTaskId?: string | null;
+
+	@BelongsTo(() => WorkerTask, {
+		onDelete: 'SET NULL',
+		as: 'workerTask',
+		foreignKey: 'workerTaskId',
+	})
+	// 	workerTask?: WorkerTask;
+	workerTask?: any;
+}
+
+export const ExportAnyModel = Export as any;

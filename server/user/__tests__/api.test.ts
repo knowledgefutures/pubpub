@@ -32,7 +32,7 @@ describe('/api/users', () => {
 			})
 			.expect(201);
 		const createdUser = await User.findOne({ where: { email } });
-		expect(createdUser.isSuperAdmin).toEqual(false);
+		expect(createdUser?.isSuperAdmin).toEqual(false);
 	});
 
 	it('does not allow existing users to make themselves a superadmin', async () => {
@@ -40,7 +40,7 @@ describe('/api/users', () => {
 		const agent = await login(user);
 		await agent.put('/api/users').send({ userId: user.id, isSuperAdmin: true }).expect(201);
 		const userNow = await User.findOne({ where: { id: user.id } });
-		expect(userNow.isSuperAdmin).toEqual(false);
+		expect(userNow?.isSuperAdmin).toEqual(false);
 	});
 
 	it('allows an exisiting user to read another users profile info', async () => {

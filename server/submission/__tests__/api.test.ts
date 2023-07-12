@@ -1,5 +1,4 @@
 import { setup, teardown, login, modelize, expectCreatedActivityItem, stub } from 'stubstub';
-import * as types from 'types';
 import { Submission, SubmissionWorkflow } from 'server/models';
 import { finishDeferredTasks } from 'server/utils/deferred';
 
@@ -114,7 +113,7 @@ describe('/api/submissions', () => {
 		const agent = await login(guest);
 		await agent.delete('/api/submissions').send({ id: submission.id }).expect(403);
 		const submissionNow = await Submission.findOne({ where: { id: submission.id } });
-		expect(submissionNow.id).toEqual(submission.id);
+		expect(submissionNow?.id).toEqual(submission.id);
 	});
 
 	it('forbids a visitor to submit to a disabled workflow', async () => {
@@ -133,9 +132,11 @@ describe('/api/submissions', () => {
 			.put('/api/submissions')
 			.send({ id: submission.id, status: 'received' })
 			.expect(201);
-		const { status, submittedAt } = await Submission.findOne({ where: { id: submission.id } });
-		expect(status).toEqual('received');
-		expect(Number.isNaN(new Date(submittedAt).getTime())).toEqual(false);
+		const sub = await Submission.findOne({ where: { id: submission.id } });
+		expect(sub?.status).toEqual('received');
+		expect(
+			Number.isNaN((sub?.submittedAt ? new Date(sub?.submittedAt) : new Date()).getTime()),
+		).toEqual(false);
 		await finishDeferredTasks();
 		expect(sendEmailMock).toHaveBeenCalled();
 	});
@@ -155,7 +156,7 @@ describe('/api/submissions', () => {
 	it('allows collection managers to update pub status to accepted', async () => {
 		const { collectionManager, submission } = models;
 		const agent = await login(collectionManager);
-		const prevSubmission: types.Submission = await Submission.findOne({
+		const prevSubmission = await Submission.findOne({
 			where: { id: submission.id },
 		});
 		await expectCreatedActivityItem(
@@ -173,13 +174,13 @@ describe('/api/submissions', () => {
 			payload: {
 				submissionId: submission.id,
 				status: {
-					from: prevSubmission.status,
+					from: prevSubmission?.status,
 					to: response.body.status,
 				},
 			},
 		}));
-		const { status } = await Submission.findOne({ where: { id: submission.id } });
-		expect(status).toEqual('accepted');
+		const sub = await Submission.findOne({ where: { id: submission.id } });
+		expect(sub?.status).toEqual('accepted');
 		await finishDeferredTasks();
 		expect(sendEmailMock).toHaveBeenCalled();
 	});
@@ -187,7 +188,7 @@ describe('/api/submissions', () => {
 	it('allows collection managers to update pub status to declined', async () => {
 		const { collectionManager, submission } = models;
 		const agent = await login(collectionManager);
-		const prevSubmission: types.Submission = await Submission.findOne({
+		const prevSubmission = await Submission.findOne({
 			where: { id: submission.id },
 		});
 		await expectCreatedActivityItem(
@@ -206,13 +207,13 @@ describe('/api/submissions', () => {
 			payload: {
 				submissionId: submission.id,
 				status: {
-					from: prevSubmission.status,
+					from: prevSubmission?.status,
 					to: response.body.status,
 				},
 			},
 		}));
-		const { status } = await Submission.findOne({ where: { id: submission.id } });
-		expect(status).toEqual('declined');
+		const sub = await Submission.findOne({ where: { id: submission.id } });
+		expect(sub?.status).toEqual('declined');
 		await finishDeferredTasks();
 		expect(sendEmailMock).toHaveBeenCalledTimes(0);
 	});

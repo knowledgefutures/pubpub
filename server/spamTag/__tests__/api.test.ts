@@ -32,7 +32,9 @@ it('forbids non-superadmins from updating the SpamTag.status for a Community', a
 		.put('/api/spamTags')
 		.send({ communityId: community.id, status: 'confirmed-not-spam' })
 		.expect(403);
-	expect((await SpamTag.findOne({ where: { id: spamTag.id } })).status).toEqual('confirmed-spam');
+	expect((await SpamTag.findOne({ where: { id: spamTag.id } }))?.status).toEqual(
+		'confirmed-spam',
+	);
 });
 
 it('allows superadmins to update the SpamTag.status for a Community', async () => {
@@ -42,7 +44,7 @@ it('allows superadmins to update the SpamTag.status for a Community', async () =
 		.put('/api/spamTags')
 		.send({ communityId: community.id, status: 'confirmed-not-spam' })
 		.expect(200);
-	expect((await SpamTag.findOne({ where: { id: spamTag.id } })).status).toEqual(
+	expect((await SpamTag.findOne({ where: { id: spamTag.id } }))?.status).toEqual(
 		'confirmed-not-spam',
 	);
 });

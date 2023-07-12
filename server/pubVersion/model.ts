@@ -1,24 +1,31 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Pub } from '../models';
 
-export const PubVersion = sequelize.define(
-	'PubVersion',
-	{
-		id: sequelize.idType,
-		historyKey: { type: dataTypes.INTEGER },
-		pubId: { type: dataTypes.UUID },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { PubVersion: PubVersionModel, Pub } = models;
-				PubVersionModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class PubVersion extends Model<InferAttributes<PubVersion>, InferCreationAttributes<PubVersion>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.INTEGER)
+	historyKey?: number | null;
+
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+}
+
+export const PubVersionAnyModel = PubVersion as any;

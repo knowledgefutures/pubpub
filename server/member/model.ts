@@ -1,55 +1,72 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+// import { MemberPermission } from 'types';
+import { User, Community, Pub, Collection } from '../models';
 
-export const Member = sequelize.define(
-	'Member',
-	{
-		id: sequelize.idType,
-		permissions: {
-			type: dataTypes.ENUM,
-			values: ['view', 'edit', 'manage', 'admin'],
-			defaultValue: 'view',
-		},
-		isOwner: { type: dataTypes.BOOLEAN },
-		subscribedToActivityDigest: {
-			type: dataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: false,
-		},
+@Table
+class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Member>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-		/* Set by Associations */
-		userId: { type: dataTypes.UUID, allowNull: false },
-		pubId: { type: dataTypes.UUID },
-		collectionId: { type: dataTypes.UUID },
-		communityId: { type: dataTypes.UUID },
-		organizationId: { type: dataTypes.UUID },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Member: MemberModel, User, Collection, Community, Pub } = models;
-				MemberModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'user',
-					foreignKey: 'userId',
-				});
-				MemberModel.belongsTo(Community, {
-					onDelete: 'CASCADE',
-					as: 'community',
-					foreignKey: 'communityId',
-				});
-				MemberModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-				MemberModel.belongsTo(Collection, {
-					onDelete: 'CASCADE',
-					as: 'collection',
-					foreignKey: 'collectionId',
-				});
-			},
-		},
-	},
-) as any;
+	@Default('view')
+	@Column(DataType.ENUM('view', 'edit', 'manage', 'admin'))
+	// 	permissions?: CreationOptional<MemberPermission | null>;
+	permissions?: any;
+
+	@Column(DataType.BOOLEAN)
+	isOwner?: boolean | null;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	subscribedToActivityDigest!: CreationOptional<boolean>;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Column(DataType.UUID)
+	collectionId?: string | null;
+
+	@Column(DataType.UUID)
+	communityId?: string | null;
+
+	@Column(DataType.UUID)
+	organizationId?: string | null;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	// 	user?: User;
+	user?: any;
+
+	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
+	// 	community?: Community;
+	community?: any;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+
+	@BelongsTo(() => Collection, {
+		onDelete: 'CASCADE',
+		as: 'collection',
+		foreignKey: 'collectionId',
+	})
+	// 	collection?: Collection;
+	collection?: any;
+}
+
+export const MemberAnyModel = Member as any;

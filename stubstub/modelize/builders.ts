@@ -97,7 +97,7 @@ export const builders = {
 			initials = firstName.slice(0, 1).toUpperCase() + lastName.slice(0, 1).toUpperCase(),
 			password = 'password123',
 			id,
-			isSuperAdmin,
+			isSuperAdmin = false,
 		} = input;
 
 		const sha3hashedPassword = SHA3(password).toString(encHex);

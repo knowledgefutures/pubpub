@@ -1,27 +1,35 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	BelongsToMany,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+// import { VisibilityAccess } from 'types';
+import { VisibilityUser, User } from '../models';
 
-export const Visibility = sequelize.define(
-	'Visibility',
-	{
-		id: sequelize.idType,
-		access: {
-			type: dataTypes.ENUM,
-			values: ['private', 'members', 'public'],
-			defaultValue: 'private',
-		},
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Visibility: VisibilityModel, User } = models;
-				VisibilityModel.belongsToMany(User, {
-					as: 'users',
-					through: 'VisibilityUser',
-					foreignKey: 'visibilityId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Visibility extends Model<InferAttributes<Visibility>, InferCreationAttributes<Visibility>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Default('private')
+	@Column(DataType.ENUM('private', 'members', 'public'))
+	// 	access?: CreationOptional<VisibilityAccess | null>;
+	access?: any;
+
+	@BelongsToMany(() => User, {
+		as: 'users',
+		through: () => VisibilityUser,
+		foreignKey: 'visibilityId',
+	})
+	// 	users?: VisibilityUser[];
+	users?: any;
+}
+
+export const VisibilityAnyModel = Visibility as any;

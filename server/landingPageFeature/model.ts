@@ -1,41 +1,51 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	Index,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Pub, Community } from '../models';
 
-export const LandingPageFeature = sequelize.define(
-	'LandingPageFeature',
-	{
-		id: sequelize.idType,
-		communityId: { type: dataTypes.UUID, allowNull: true },
-		pubId: { type: dataTypes.UUID, allowNull: true },
-		rank: { type: dataTypes.TEXT, allowNull: false },
-		payload: { type: dataTypes.JSONB, allowNull: true },
-	},
-	{
-		indexes: [
-			{
-				fields: ['communityId'],
-				unique: true,
-			},
-			{
-				fields: ['pubId'],
-				unique: true,
-			},
-		],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Pub, Community, LandingPageFeature: LandingPageFeatureModel } = models;
-				LandingPageFeatureModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-				LandingPageFeatureModel.belongsTo(Community, {
-					onDelete: 'CASCADE',
-					as: 'community',
-					foreignKey: 'communityId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class LandingPageFeature extends Model<
+	InferAttributes<LandingPageFeature>,
+	InferCreationAttributes<LandingPageFeature>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Index({ unique: true })
+	@Column(DataType.UUID)
+	communityId?: string | null;
+
+	@Index({ unique: true })
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	rank!: string;
+
+	// TODO: add validation for payload
+	@Column(DataType.JSONB)
+	// 	payload?: Record<string, any> | null;
+	payload?: any;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+
+	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
+	// 	community?: Community;
+	community?: any;
+}
+
+export const LandingPageFeatureAnyModel = LandingPageFeature as any;

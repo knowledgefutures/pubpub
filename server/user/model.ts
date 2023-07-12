@@ -1,125 +1,212 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import passportLocalSequelize from 'passport-local-sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	IsLowercase,
+	Length,
+	Is,
+	Unique,
+	IsEmail,
+	HasMany,
+	HasOne,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import {
+	PubAttribution,
+	Discussion,
+	UserNotificationPreferences,
+	ZoteroIntegration,
+} from '../models';
 
-const UserWithoutPassPort = sequelize.define(
-	'User',
-	{
-		id: sequelize.idType,
-		slug: {
-			type: dataTypes.TEXT,
-			unique: true,
-			allowNull: false,
-			validate: {
-				isLowercase: true,
-				len: [1, 280],
-				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
-			},
-		},
-		firstName: { type: dataTypes.TEXT, allowNull: false },
-		lastName: { type: dataTypes.TEXT, allowNull: false },
-		fullName: { type: dataTypes.TEXT, allowNull: false },
-		initials: { type: dataTypes.STRING, allowNull: false },
-		avatar: { type: dataTypes.TEXT },
-		bio: { type: dataTypes.TEXT },
-		title: { type: dataTypes.TEXT },
-		email: {
-			type: dataTypes.TEXT,
-			allowNull: false,
-			unique: true,
-			validate: {
-				isEmail: true,
-				isLowercase: true,
-			},
-		},
-		publicEmail: {
-			type: dataTypes.TEXT,
-			validate: {
-				isEmail: true,
-				isLowercase: true,
-			},
-		},
-		authRedirectHost: { type: dataTypes.TEXT },
-		location: { type: dataTypes.TEXT },
-		website: { type: dataTypes.TEXT },
-		facebook: { type: dataTypes.TEXT },
-		twitter: { type: dataTypes.TEXT },
-		github: { type: dataTypes.TEXT },
-		orcid: { type: dataTypes.TEXT },
-		googleScholar: { type: dataTypes.TEXT },
-		resetHashExpiration: { type: dataTypes.DATE },
-		resetHash: { type: dataTypes.TEXT },
-		inactive: { type: dataTypes.BOOLEAN },
-		pubpubV3Id: { type: dataTypes.INTEGER },
-		passwordDigest: { type: dataTypes.TEXT },
-		hash: { type: dataTypes.TEXT, allowNull: false },
-		salt: { type: dataTypes.TEXT, allowNull: false },
-		gdprConsent: { type: dataTypes.BOOLEAN, defaultValue: null },
-		isSuperAdmin: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					PubAttribution,
-					Discussion,
-					UserNotificationPreferences,
-					zoteroIntegration,
-				} = models;
-				UserWithoutPassPort.hasMany(PubAttribution, {
-					onDelete: 'CASCADE',
-					as: 'attributions',
-					foreignKey: 'userId',
-				});
-				UserWithoutPassPort.hasMany(Discussion, {
-					onDelete: 'CASCADE',
-					as: 'discussions',
-					foreignKey: 'userId',
-				});
-				UserWithoutPassPort.hasOne(UserNotificationPreferences, {
-					onDelete: 'CASCADE',
-					as: 'userNotificationPreferences',
-					foreignKey: 'userId',
-				});
-				UserWithoutPassPort.hasOne(zoteroIntegration, {
-					foreignKey: { name: 'userId', allowNull: false },
-				});
-			},
-		},
-	},
-) as any;
-passportLocalSequelize.attachToUser(UserWithoutPassPort, {
-	usernameField: 'email',
-	hashField: 'hash',
-	saltField: 'salt',
-	digest: 'sha512',
-	iterations: 25000,
-});
+@Table
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-export const User = UserWithoutPassPort;
+	@AllowNull(false)
+	@IsLowercase
+	@Length({ min: 1, max: 280 })
+	@Is(/^[a-zA-Z0-9-]+$/)
+	@Unique
+	@Column(DataType.TEXT)
+	slug!: string;
 
-export const attributesPublicUser = [
-	'id',
-	'firstName',
-	'lastName',
-	'fullName',
-	'avatar',
-	'slug',
-	'initials',
-	'title',
-	'orcid',
-];
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	firstName!: string;
 
-export const includeUserModel = (() => {
-	return (options) => {
-		const { attributes: providedAttributes = [], ...restOptions } = options;
-		const attributes = [...new Set([...attributesPublicUser, ...providedAttributes])];
-		// eslint-disable-next-line pubpub-rules/no-user-model
-		return {
-			model: User,
-			attributes,
-			...restOptions,
-		};
-	};
-})();
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	lastName!: string;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	fullName!: string;
+
+	@AllowNull(false)
+	@Column(DataType.STRING)
+	initials!: string;
+
+	@Column(DataType.TEXT)
+	avatar?: string | null;
+
+	@Column(DataType.TEXT)
+	bio?: string | null;
+
+	@Column(DataType.TEXT)
+	title?: string | null;
+
+	@AllowNull(false)
+	@IsLowercase
+	@IsEmail
+	@Unique
+	@Column(DataType.TEXT)
+	email!: string;
+
+	@IsLowercase
+	@IsEmail
+	@Column(DataType.TEXT)
+	publicEmail?: string | null;
+
+	@Column(DataType.TEXT)
+	authRedirectHost?: string | null;
+
+	@Column(DataType.TEXT)
+	location?: string | null;
+
+	@Column(DataType.TEXT)
+	website?: string | null;
+
+	@Column(DataType.TEXT)
+	facebook?: string | null;
+
+	@Column(DataType.TEXT)
+	twitter?: string | null;
+
+	@Column(DataType.TEXT)
+	github?: string | null;
+
+	@Column(DataType.TEXT)
+	orcid?: string | null;
+
+	@Column(DataType.TEXT)
+	googleScholar?: string | null;
+
+	@Column(DataType.DATE)
+	// 	resetHashExpiration?: Date | null;
+	resetHashExpiration?: any;
+
+	@Column(DataType.TEXT)
+	resetHash?: string | null;
+
+	@Column(DataType.BOOLEAN)
+	inactive?: boolean | null;
+
+	@Column(DataType.INTEGER)
+	pubpubV3Id?: number | null;
+
+	@Column(DataType.TEXT)
+	passwordDigest?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	hash!: string;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	salt!: string;
+
+	@Default(null)
+	@Column(DataType.BOOLEAN)
+	// 	gdprConsent?: CreationOptional<boolean | null>;
+	gdprConsent?: any;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	isSuperAdmin!: CreationOptional<boolean>;
+
+	declare isShadowUser?: boolean;
+
+	declare feedback?: string;
+
+	declare sha3hashedPassword: CreationOptional<string>;
+
+	@HasMany(() => PubAttribution, {
+		onDelete: 'CASCADE',
+		as: 'attributions',
+		foreignKey: 'userId',
+	})
+	// 	attributions?: PubAttribution[];
+	attributions?: any;
+
+	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' })
+	// 	discussions?: Discussion[];
+	discussions?: any;
+
+	@HasOne(() => UserNotificationPreferences, {
+		onDelete: 'CASCADE',
+		as: 'userNotificationPreferences',
+		foreignKey: 'userId',
+	})
+	// 	userNotificationPreferences?: UserNotificationPreferences;
+	userNotificationPreferences?: any;
+
+	@HasOne(() => ZoteroIntegration, {
+		as: 'zoteroIntegration',
+		foreignKey: { name: 'userId', allowNull: false },
+	})
+	// 	zoteroIntegration?: ZoteroIntegration;
+	zoteroIntegration?: any;
+
+	declare setPassword: (password: string, cb: (err: any, user?: any) => void) => void;
+
+	declare setActivationKey: (cb: (err: any, user?: any) => void) => void;
+
+	declare authenticate: (
+		password: string,
+		cb: (err: any, user?: any, info?: any) => void,
+	) => void;
+
+	// @ts-expect-error
+	// eslint-disable-next-line no-dupe-class-members
+	declare authenticate: () => (
+		username: string,
+		password: string,
+		cb: (err: any, user?: any, info?: any) => void,
+	) => void;
+
+	declare serializeUser: () => (user: User, cb: (err: any, id?: any) => void) => User[];
+
+	declare deserializeUser: () => (username: string, cb: (err: any, user?: any) => void) => User;
+
+	declare register: (user: User, password: string, cb: (err: any, user?: any) => void) => User;
+
+	declare activate: (
+		username: string,
+		password: string,
+		activationKey: string,
+		cb: (err: any, user?: any) => void,
+	) => void;
+
+	declare findByUsername: (username: string, cb: (err: any, user?: any) => void) => void;
+
+	declare setResetPasswordKey: (username: string, cb: (err: any, user?: any) => void) => void;
+
+	declare resetPassword: (
+		username: string,
+		password: string,
+		resetPasswordKey: string,
+		cb: (err: any, user?: any) => void,
+	) => void;
+
+	declare createStrategy: () => any;
+}
+
+export const UserAnyModel = User as any;

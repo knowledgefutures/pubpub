@@ -117,7 +117,7 @@ it('lets a manager create a PubEdge to an external publication', async () => {
 		where: { id: resultingEdge.externalPublicationId },
 	});
 	Object.entries(externalPublication).forEach(([key, value]) =>
-		expect(resultingExternalPublication[key]).toEqual(value),
+		expect(resultingExternalPublication?.[key]).toEqual(value),
 	);
 	expect(resultingEdge.approvedByTarget).toEqual(false);
 });

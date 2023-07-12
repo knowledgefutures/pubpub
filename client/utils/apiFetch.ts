@@ -19,7 +19,7 @@ const httpMethods = [
 	'trace',
 ] as const;
 
-type HttpMethod = typeof httpMethods[number];
+type HttpMethod = (typeof httpMethods)[number];
 
 type ApiFetch = ApiFetchFn & { [K in HttpMethod]: HttpMethodApiFetchWrapper };
 

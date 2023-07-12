@@ -1,14 +1,33 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	Index,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export const UserDismissable = sequelize.define(
-	'UserDismissable',
-	{
-		id: sequelize.idType,
-		key: { type: dataTypes.STRING, allowNull: false },
-		userId: { type: dataTypes.UUID, allowNull: false },
-	},
-	{
-		indexes: [{ fields: ['userId'], using: 'BTREE' }],
-	},
-) as any;
+@Table
+class UserDismissable extends Model<
+	InferAttributes<UserDismissable>,
+	InferCreationAttributes<UserDismissable>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.STRING)
+	key!: string;
+
+	@Index({ using: 'BTREE' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+}
+
+export const UserDismissableAnyModel = UserDismissable as any;

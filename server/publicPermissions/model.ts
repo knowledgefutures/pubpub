@@ -1,32 +1,52 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Pub } from '../models';
 
-export const PublicPermissions = sequelize.define(
-	'PublicPermissions',
-	{
-		id: sequelize.idType,
-		canCreateReviews: { type: dataTypes.BOOLEAN },
-		canCreateDiscussions: { type: dataTypes.BOOLEAN },
-		canViewDraft: { type: dataTypes.BOOLEAN },
-		canEditDraft: { type: dataTypes.BOOLEAN },
+@Table
+class PublicPermissions extends Model<
+	InferAttributes<PublicPermissions>,
+	InferCreationAttributes<PublicPermissions>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-		/* Set by Associations */
-		pubId: { type: dataTypes.UUID },
-		collectionId: { type: dataTypes.UUID },
-		communityId: { type: dataTypes.UUID },
-		organizationId: { type: dataTypes.UUID },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { PublicPermissions: PublicPermissionsModel, Pub } = models;
-				PublicPermissionsModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-			},
-		},
-	},
-) as any;
+	@Column(DataType.BOOLEAN)
+	canCreateReviews?: boolean | null;
+
+	@Column(DataType.BOOLEAN)
+	canCreateDiscussions?: boolean | null;
+
+	@Column(DataType.BOOLEAN)
+	canViewDraft?: boolean | null;
+
+	@Column(DataType.BOOLEAN)
+	canEditDraft?: boolean | null;
+
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Column(DataType.UUID)
+	collectionId?: string | null;
+
+	@Column(DataType.UUID)
+	communityId?: string | null;
+
+	@Column(DataType.UUID)
+	organizationId?: string | null;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+}
+
+export const PublicPermissionsAnyModel = PublicPermissions as any;

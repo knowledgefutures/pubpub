@@ -1,70 +1,91 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	Index,
+	BelongsTo,
+	HasMany,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Thread, Visibility, User, Commenter, Pub, DiscussionAnchor } from '../models';
 
-export const Discussion = sequelize.define(
-	'Discussion',
-	{
-		id: sequelize.idType,
-		title: { type: dataTypes.TEXT },
-		number: { type: dataTypes.INTEGER, allowNull: false },
-		isClosed: { type: dataTypes.BOOLEAN },
-		labels: { type: dataTypes.JSONB },
-		/* Set by Associations */
-		threadId: { type: dataTypes.UUID, allowNull: false },
-		visibilityId: { type: dataTypes.UUID, allowNull: false },
-		userId: { type: dataTypes.UUID, allowNull: true },
-		anchorId: { type: dataTypes.UUID },
-		pubId: { type: dataTypes.UUID },
-		commenterId: { type: dataTypes.UUID, allowNull: true },
-	},
-	{
-		indexes: [
-			{ fields: ['userId'], using: 'BTREE' },
-			{ fields: ['pubId'], using: 'BTREE' },
-		],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					Discussion: DiscussionModel,
-					DiscussionAnchor,
-					Visibility,
-					Pub,
-					User,
-					Thread,
-					Commenter,
-				} = models;
-				DiscussionModel.belongsTo(Thread, {
-					onDelete: 'CASCADE',
-					as: 'thread',
-					foreignKey: 'threadId',
-				});
-				DiscussionModel.belongsTo(Visibility, {
-					onDelete: 'CASCADE',
-					as: 'visibility',
-					foreignKey: 'visibilityId',
-				});
-				DiscussionModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'author',
-					foreignKey: 'userId',
-				});
-				DiscussionModel.belongsTo(Commenter, {
-					onDelete: 'CASCADE',
-					as: 'commenter',
-					foreignKey: 'commenterId',
-				});
-				DiscussionModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-				DiscussionModel.hasMany(DiscussionAnchor, {
-					onDelete: 'CASCADE',
-					as: 'anchors',
-					foreignKey: 'discussionId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Discussion extends Model<InferAttributes<Discussion>, InferCreationAttributes<Discussion>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	title?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.INTEGER)
+	number!: number;
+
+	@Column(DataType.BOOLEAN)
+	isClosed?: boolean | null;
+
+	@Column(DataType.JSONB)
+	labels?: string[] | null;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	threadId!: string;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	visibilityId!: string;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	userId?: string | null;
+
+	@Column(DataType.UUID)
+	anchorId?: string | null;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Column(DataType.UUID)
+	commenterId?: string | null;
+
+	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
+	// 	thread?: Thread;
+	thread?: any;
+
+	@BelongsTo(() => Visibility, {
+		onDelete: 'CASCADE',
+		as: 'visibility',
+		foreignKey: 'visibilityId',
+	})
+	// 	visibility?: Visibility;
+	visibility?: any;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
+	// 	author?: User;
+	author?: any;
+
+	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
+	// 	commenter?: Commenter;
+	commenter?: any;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+
+	@HasMany(() => DiscussionAnchor, {
+		onDelete: 'CASCADE',
+		as: 'anchors',
+		foreignKey: 'discussionId',
+	})
+	// 	anchors?: DiscussionAnchor[];
+	anchors?: any;
+}
+
+export const DiscussionAnyModel = Discussion as any;

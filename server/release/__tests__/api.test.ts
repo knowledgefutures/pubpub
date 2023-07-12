@@ -126,7 +126,7 @@ describe('/api/releases', () => {
 			)
 			.expect(201);
 		const doc = await Doc.findOne({ where: { id: release.docId } });
-		expect(doc.content).toEqual(pubEditor.getDoc().toJSON());
+		expect(doc?.content).toEqual(pubEditor.getDoc().toJSON());
 	});
 
 	it('will create a Release (and associated exports) for admins of a Pub', async () => {
@@ -156,7 +156,7 @@ describe('/api/releases', () => {
 		expect(release.historyKey).toEqual(0);
 		// Check for a doc with Release contents
 		const doc = await Doc.findOne({ where: { id: release.docId } });
-		expect(doc.content).toEqual(pubEditor.getDoc().toJSON());
+		expect(doc?.content).toEqual(pubEditor.getDoc().toJSON());
 		// Check for exports in the expected formats
 		const createdExports = await Export.findAll({ where: { pubId: pub.id } });
 		expect(getExportFormats().every((fmt) => createdExports.some((exp) => exp.format === fmt)));
@@ -182,7 +182,7 @@ describe('/api/releases', () => {
 		expect(release.historyKey).toEqual(1);
 		// Check for a doc with Release contents
 		const doc = await Doc.findOne({ where: { id: release.docId } });
-		expect(doc.content).toEqual(pubEditor.getDoc().toJSON());
+		expect(doc?.content).toEqual(pubEditor.getDoc().toJSON());
 		const { body: error } = await agent
 			.post('/api/releases')
 			.send(
@@ -273,7 +273,7 @@ describe('/api/releases', () => {
 			await Promise.all(
 				[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
 					DiscussionAnchor.findAll({
-						where: { discussionId: discussion.id },
+						where: { discussionId: discussion?.id },
 					}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
 				),
 			);

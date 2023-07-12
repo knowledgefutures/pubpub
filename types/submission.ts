@@ -8,7 +8,7 @@ export const submissionStatuses = [
 	...new Set([...initialStatuses, ...managerStatuses, ...submitterStatuses]),
 ] as const;
 
-export type SubmissionStatus = typeof submissionStatuses[number];
+export type SubmissionStatus = (typeof submissionStatuses)[number];
 
 export type Submission = {
 	id: string;

@@ -1,0 +1,155 @@
+--- sequelize_old.sql	2023-07-05 21:40:06.926984271 +0200
++++ sequelize_typescript.sql	2023-07-12 14:14:06.741295725 +0200
+@@ -198,9 +198,9 @@
+     "pageId" uuid,
+     "communityId" uuid,
+     "scopeSummaryId" uuid,
++    "crossrefDepositRecordId" uuid,
+     "createdAt" timestamp with time zone NOT NULL,
+-    "updatedAt" timestamp with time zone NOT NULL,
+-    "crossrefDepositRecordId" uuid
++    "updatedAt" timestamp with time zone NOT NULL
+ );
+ 
+ 
+@@ -273,9 +273,9 @@
+     "defaultPubCollections" jsonb,
+     "spamTagId" uuid,
+     "organizationId" uuid,
++    "scopeSummaryId" uuid,
+     "createdAt" timestamp with time zone NOT NULL,
+-    "updatedAt" timestamp with time zone NOT NULL,
+-    "scopeSummaryId" uuid
++    "updatedAt" timestamp with time zone NOT NULL
+ );
+ 
+ 
+@@ -815,10 +815,10 @@
+     "commentHash" character varying(255),
+     "draftId" uuid NOT NULL,
+     "communityId" uuid NOT NULL,
+-    "createdAt" timestamp with time zone NOT NULL,
+-    "updatedAt" timestamp with time zone NOT NULL,
+     "crossrefDepositRecordId" uuid,
+-    "scopeSummaryId" uuid
++    "scopeSummaryId" uuid,
++    "createdAt" timestamp with time zone NOT NULL,
++    "updatedAt" timestamp with time zone NOT NULL
+ );
+ 
+ 
+@@ -1198,8 +1198,7 @@
+     "userId" uuid NOT NULL,
+     "visibilityId" uuid NOT NULL,
+     "createdAt" timestamp with time zone NOT NULL,
+-    "updatedAt" timestamp with time zone NOT NULL,
+-    "UserId" uuid
++    "updatedAt" timestamp with time zone NOT NULL
+ );
+ 
+ 
+@@ -1233,10 +1232,10 @@
+     id uuid NOT NULL,
+     "zoteroUsername" text,
+     "zoteroUserId" text,
+-    "createdAt" timestamp with time zone NOT NULL,
+-    "updatedAt" timestamp with time zone NOT NULL,
+     "userId" uuid NOT NULL,
+-    "integrationDataOAuth1Id" uuid NOT NULL
++    "integrationDataOAuth1Id" uuid NOT NULL,
++    "createdAt" timestamp with time zone NOT NULL,
++    "updatedAt" timestamp with time zone NOT NULL
+ );
+ 
+ 
+@@ -1278,7 +1277,7 @@
+ -- Data for Name: Collections; Type: TABLE DATA; Schema: public; Owner: testuser
+ --
+ 
+-COPY public."Collections" (id, title, slug, avatar, "isRestricted", "isPublic", "viewHash", "editHash", metadata, kind, doi, "readNextPreviewSize", layout, "layoutAllowsDuplicatePubs", "pageId", "communityId", "scopeSummaryId", "createdAt", "updatedAt", "crossrefDepositRecordId") FROM stdin;
++COPY public."Collections" (id, title, slug, avatar, "isRestricted", "isPublic", "viewHash", "editHash", metadata, kind, doi, "readNextPreviewSize", layout, "layoutAllowsDuplicatePubs", "pageId", "communityId", "scopeSummaryId", "crossrefDepositRecordId", "createdAt", "updatedAt") FROM stdin;
+ \.
+ 
+ 
+@@ -1294,7 +1293,7 @@
+ -- Data for Name: Communities; Type: TABLE DATA; Schema: public; Owner: testuser
+ --
+ 
+-COPY public."Communities" (id, subdomain, domain, title, "citeAs", "publishAs", description, avatar, favicon, "accentColorLight", "accentColorDark", "hideCreatePubButton", "headerLogo", "headerLinks", "headerColorType", "useHeaderTextAccent", "hideHero", "hideHeaderLogo", "heroLogo", "heroBackgroundImage", "heroBackgroundColor", "heroTextColor", "useHeaderGradient", "heroImage", "heroTitle", "heroText", "heroPrimaryButton", "heroSecondaryButton", "heroAlign", navigation, "hideNav", "navLinks", "footerLinks", "footerLogoLink", "footerTitle", "footerImage", website, facebook, twitter, email, issn, "isFeatured", "viewHash", "editHash", "premiumLicenseFlag", "defaultPubCollections", "spamTagId", "organizationId", "createdAt", "updatedAt", "scopeSummaryId") FROM stdin;
++COPY public."Communities" (id, subdomain, domain, title, "citeAs", "publishAs", description, avatar, favicon, "accentColorLight", "accentColorDark", "hideCreatePubButton", "headerLogo", "headerLinks", "headerColorType", "useHeaderTextAccent", "hideHero", "hideHeaderLogo", "heroLogo", "heroBackgroundImage", "heroBackgroundColor", "heroTextColor", "useHeaderGradient", "heroImage", "heroTitle", "heroText", "heroPrimaryButton", "heroSecondaryButton", "heroAlign", navigation, "hideNav", "navLinks", "footerLinks", "footerLogoLink", "footerTitle", "footerImage", website, facebook, twitter, email, issn, "isFeatured", "viewHash", "editHash", "premiumLicenseFlag", "defaultPubCollections", "spamTagId", "organizationId", "scopeSummaryId", "createdAt", "updatedAt") FROM stdin;
+ \.
+ 
+ 
+@@ -1407,7 +1406,7 @@
+ --
+ 
+ COPY public."FeatureFlags" (id, name, "enabledUsersFraction", "enabledCommunitiesFraction", "createdAt", "updatedAt") FROM stdin;
+-959c82da-39c3-460b-8a69-7ac3a80d1db1	customScripts	0	0	2023-07-05 21:39:50.861+02	2023-07-05 21:39:50.861+02
++37369279-e122-47ac-b077-c1cf33befdca	customScripts	0	0	2023-07-12 14:13:37.527+02	2023-07-12 14:13:37.527+02
+ \.
+ 
+ 
+@@ -1535,7 +1534,7 @@
+ -- Data for Name: Pubs; Type: TABLE DATA; Schema: public; Owner: testuser
+ --
+ 
+-COPY public."Pubs" (id, slug, title, "htmlTitle", description, "htmlDescription", avatar, "customPublishedAt", doi, labels, downloads, metadata, "viewHash", "editHash", "reviewHash", "commentHash", "draftId", "communityId", "createdAt", "updatedAt", "crossrefDepositRecordId", "scopeSummaryId") FROM stdin;
++COPY public."Pubs" (id, slug, title, "htmlTitle", description, "htmlDescription", avatar, "customPublishedAt", doi, labels, downloads, metadata, "viewHash", "editHash", "reviewHash", "commentHash", "draftId", "communityId", "crossrefDepositRecordId", "scopeSummaryId", "createdAt", "updatedAt") FROM stdin;
+ \.
+ 
+ 
+@@ -1695,7 +1694,7 @@
+ -- Data for Name: VisibilityUsers; Type: TABLE DATA; Schema: public; Owner: testuser
+ --
+ 
+-COPY public."VisibilityUsers" (id, "userId", "visibilityId", "createdAt", "updatedAt", "UserId") FROM stdin;
++COPY public."VisibilityUsers" (id, "userId", "visibilityId", "createdAt", "updatedAt") FROM stdin;
+ \.
+ 
+ 
+@@ -1711,7 +1710,7 @@
+ -- Data for Name: ZoteroIntegrations; Type: TABLE DATA; Schema: public; Owner: testuser
+ --
+ 
+-COPY public."ZoteroIntegrations" (id, "zoteroUsername", "zoteroUserId", "createdAt", "updatedAt", "userId", "integrationDataOAuth1Id") FROM stdin;
++COPY public."ZoteroIntegrations" (id, "zoteroUsername", "zoteroUserId", "userId", "integrationDataOAuth1Id", "createdAt", "updatedAt") FROM stdin;
+ \.
+ 
+ 
+@@ -2236,11 +2235,11 @@
+ 
+ 
+ --
+--- Name: VisibilityUsers VisibilityUsers_visibilityId_UserId_key; Type: CONSTRAINT; Schema: public; Owner: testuser
++-- Name: VisibilityUsers VisibilityUsers_userId_visibilityId_key; Type: CONSTRAINT; Schema: public; Owner: testuser
+ --
+ 
+ ALTER TABLE ONLY public."VisibilityUsers"
+-    ADD CONSTRAINT "VisibilityUsers_visibilityId_UserId_key" UNIQUE ("visibilityId", "UserId");
++    ADD CONSTRAINT "VisibilityUsers_userId_visibilityId_key" UNIQUE ("userId", "visibilityId");
+ 
+ 
+ --
+@@ -2291,7 +2290,7 @@
+ -- Name: collection_pubs_collection_id_pub_id; Type: INDEX; Schema: public; Owner: testuser
+ --
+ 
+-CREATE UNIQUE INDEX collection_pubs_collection_id_pub_id ON public."CollectionPubs" USING btree ("collectionId", "pubId");
++CREATE UNIQUE INDEX collection_pubs_collection_id_pub_id ON public."CollectionPubs" USING btree ("pubId", "collectionId");
+ 
+ 
+ --
+@@ -3035,11 +3034,11 @@
+ 
+ 
+ --
+--- Name: VisibilityUsers VisibilityUsers_UserId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: testuser
++-- Name: VisibilityUsers VisibilityUsers_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: testuser
+ --
+ 
+ ALTER TABLE ONLY public."VisibilityUsers"
+-    ADD CONSTRAINT "VisibilityUsers_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
++    ADD CONSTRAINT "VisibilityUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ 
+ 
+ --

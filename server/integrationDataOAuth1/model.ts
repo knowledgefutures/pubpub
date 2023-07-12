@@ -1,23 +1,29 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { Model, Table, Column, DataType, PrimaryKey, Default, HasOne } from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { ZoteroIntegration } from '../models';
 
-export const IntegrationDataOAuth1 = sequelize.define(
-	'integrationDataOAuth1',
-	{
-		id: sequelize.idType,
-		accessToken: dataTypes.TEXT,
-	},
-	{
-		tableName: 'IntegrationDataOAuth1',
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { integrationDataOAuth1, zoteroIntegration } = models;
-				integrationDataOAuth1.hasOne(zoteroIntegration, {
-					foreignKey: { allowNull: false },
-					onDelete: 'CASCADE',
-				});
-			},
-		},
-	},
-) as any;
+@Table({
+	tableName: 'IntegrationDataOAuth1',
+})
+class IntegrationDataOAuth1 extends Model<
+	InferAttributes<IntegrationDataOAuth1>,
+	InferCreationAttributes<IntegrationDataOAuth1>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	accessToken?: string | null;
+
+	@HasOne(() => ZoteroIntegration, {
+		foreignKey: { allowNull: false, name: 'integrationDataOAuth1Id' },
+		as: 'zoteroIntegration',
+		onDelete: 'CASCADE',
+	})
+	// 	zoteroIntegration?: ZoteroIntegration;
+	zoteroIntegration?: any;
+}
+
+export const IntegrationDataOAuth1AnyModel = IntegrationDataOAuth1 as any;

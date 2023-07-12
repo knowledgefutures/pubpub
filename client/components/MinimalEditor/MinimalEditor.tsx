@@ -19,7 +19,7 @@ type Props = {
 	isTranslucent?: boolean;
 	resizable?: boolean;
 	onEdit?: OnEditFn;
-	onContent?: ({ text: string, content: any }) => unknown;
+	onContent?: ({ text, content }: { text: string; content: any }) => unknown;
 	placeholder?: string;
 	useFormattingBar?: boolean;
 	getButtons?: (

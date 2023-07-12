@@ -1,42 +1,60 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	Index,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { UserSubscriptionStatus } from 'types';
+import { Pub, Thread, User } from '../models';
 
-export const UserSubscription = sequelize.define(
-	'UserSubscription',
-	{
-		id: sequelize.idType,
-		setAutomatically: { type: dataTypes.BOOLEAN, allowNull: false },
-		status: { type: dataTypes.STRING, allowNull: false },
-		userId: { type: dataTypes.UUID, allowNull: false },
-		pubId: { type: dataTypes.UUID },
-		threadId: { type: dataTypes.UUID },
-	},
-	{
-		indexes: [
-			{ fields: ['userId'], using: 'BTREE' },
-			{ fields: ['pubId'], using: 'BTREE' },
-			{ fields: ['threadId'], using: 'BTREE' },
-		],
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const { Pub, Thread, User, UserSubscription: UserSubscriptionModel } = models;
-				UserSubscriptionModel.belongsTo(Pub, {
-					onDelete: 'CASCADE',
-					as: 'pub',
-					foreignKey: 'pubId',
-				});
-				UserSubscriptionModel.belongsTo(Thread, {
-					onDelete: 'CASCADE',
-					as: 'thread',
-					foreignKey: 'threadId',
-				});
-				UserSubscriptionModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'user',
-					foreignKey: 'userId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class UserSubscription extends Model<
+	InferAttributes<UserSubscription>,
+	InferCreationAttributes<UserSubscription>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.BOOLEAN)
+	setAutomatically!: boolean;
+
+	@AllowNull(false)
+	@Column(DataType.STRING)
+	status!: UserSubscriptionStatus;
+
+	@Index({ using: 'BTREE' })
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	userId!: string;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	pubId?: string | null;
+
+	@Index({ using: 'BTREE' })
+	@Column(DataType.UUID)
+	threadId?: string | null;
+
+	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
+	// 	pub?: Pub;
+	pub?: any;
+
+	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
+	// 	thread?: Thread;
+	thread?: any;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	// 	user?: User;
+	user?: any;
+}
+
+export const UserSubscriptionAnyModel = UserSubscription as any;

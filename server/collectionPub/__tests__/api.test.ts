@@ -139,8 +139,8 @@ it('creates a collectionPub and sets its rank', async () => {
 	const queriedCollectionPub = await CollectionPub.findOne({
 		where: { id: collectionPub.id },
 	});
-	expect(queriedCollectionPub.collectionId).toEqual(issue.id);
-	expect(queriedCollectionPub.rank).toEqual('h');
+	expect(queriedCollectionPub?.collectionId).toEqual(issue.id);
+	expect(queriedCollectionPub?.rank).toEqual('h');
 });
 
 it('does not let administrators of other communities create a collectionPub', async () => {
@@ -216,8 +216,8 @@ it('updates reasonable values on a collectionPub', async () => {
 	const resultingCollectionPub = await CollectionPub.findOne({
 		where: { id: collectionPub.id },
 	});
-	expect(resultingCollectionPub.rank).toEqual('zzz');
-	expect(resultingCollectionPub.contextHint).toEqual('boo');
+	expect(resultingCollectionPub?.rank).toEqual('zzz');
+	expect(resultingCollectionPub?.contextHint).toEqual('boo');
 });
 
 it('lets Pub managers update pubRanks', async () => {
@@ -234,8 +234,8 @@ it('lets Pub managers update pubRanks', async () => {
 	const resultingCollectionPub = await CollectionPub.findOne({
 		where: { id: someCollectionPub.id },
 	});
-	expect(resultingCollectionPub.rank).toEqual(someCollectionPub.rank);
-	expect(resultingCollectionPub.pubRank).toEqual('boo');
+	expect(resultingCollectionPub?.rank).toEqual(someCollectionPub.rank);
+	expect(resultingCollectionPub?.pubRank).toEqual('boo');
 });
 
 it('lets a user with appropriate permissions destroy a collectionPub', async () => {

@@ -57,21 +57,17 @@ const PubDiscussions = (props: Props) => {
 
 	const renderSideDiscussions = () => {
 		return groupsByLine.map((group) => {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 			const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 			if (!mountElement) {
 				return null;
 			}
 			return ReactDOM.createPortal(
 				<DiscussionGroup
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 					key={group.mountClassName}
 					pubData={pubData}
 					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ key: any; pubData: never; historyData: {};... Remove this comment to see the full error message
 					historyData={historyData}
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
 					discussions={group.discussions}
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 					mountClassName={group.mountClassName}
 					updateLocalData={updateLocalData}
 					sideContentRef={sideContentRef}

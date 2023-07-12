@@ -36,7 +36,7 @@ export const activityAssociationTypes = [
 type AssociationRecord<T> = T extends Record<ActivityAssociationType, any> ? T : never;
 type IdIndexes<T extends { [k: string]: any }> = { [k in keyof T]: IdIndex<T[k]> };
 
-export type ActivityAssociationType = typeof activityAssociationTypes[number];
+export type ActivityAssociationType = (typeof activityAssociationTypes)[number];
 export type ActivityAssociationIds = Record<ActivityAssociationType, Set<string>>;
 
 export type ActivityAssociationModels = {

@@ -1,91 +1,148 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	IsLowercase,
+	Length,
+	Is,
+	HasMany,
+	HasOne,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+// import { CollectionKind, ReadNextPreviewSize } from 'types';
+import { CollectionLayout } from 'utils/layout';
+import {
+	CollectionAttribution,
+	SubmissionWorkflow,
+	CollectionPub,
+	Member,
+	Page,
+	CrossrefDepositRecord,
+	ScopeSummary,
+	Community,
+} from '../models';
 
-export const Collection = sequelize.define(
-	'Collection',
-	{
-		id: sequelize.idType,
-		title: { type: dataTypes.TEXT },
-		slug: {
-			type: dataTypes.TEXT,
-			allowNull: false,
-			validate: {
-				isLowercase: true,
-				len: [1, 280],
-				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
-			},
-		},
-		avatar: { type: dataTypes.TEXT },
-		isRestricted: {
-			type: dataTypes.BOOLEAN,
-		} /* Restricted collections can only be set by Community Admins */,
-		isPublic: { type: dataTypes.BOOLEAN } /* Only visible to community admins */,
-		viewHash: { type: dataTypes.STRING },
-		editHash: { type: dataTypes.STRING },
-		metadata: { type: dataTypes.JSONB },
-		kind: { type: dataTypes.TEXT },
-		doi: { type: dataTypes.TEXT },
-		readNextPreviewSize: {
-			type: dataTypes.ENUM('none', 'minimal', 'medium', 'choose-best'),
-			defaultValue: 'choose-best',
-		},
-		layout: { type: dataTypes.JSONB, allowNull: false, defaultValue: {} },
-		layoutAllowsDuplicatePubs: {
-			type: dataTypes.BOOLEAN,
-			defaultValue: false,
-			allowNull: false,
-		},
-		/** Set by Associations */
-		pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
-		communityId: { type: dataTypes.UUID },
-		scopeSummaryId: { type: dataTypes.UUID, allowNull: true },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					Collection: CollectionModel,
-					CollectionAttribution,
-					CollectionPub,
-					Community,
-					CrossrefDepositRecord,
-					SubmissionWorkflow,
-					Member,
-					Page,
-					ScopeSummary,
-				} = models;
-				CollectionModel.hasMany(CollectionAttribution, {
-					onDelete: 'CASCADE',
-					as: 'attributions',
-					foreignKey: 'collectionId',
-				});
-				CollectionModel.hasOne(SubmissionWorkflow, {
-					as: 'submissionWorkflow',
-					foreignKey: 'collectionId',
-				});
-				CollectionModel.hasMany(CollectionPub, {
-					as: 'collectionPubs',
-					foreignKey: 'collectionId',
-				});
-				CollectionModel.hasMany(Member, {
-					as: 'members',
-					foreignKey: 'collectionId',
-				});
-				CollectionModel.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
-				CollectionModel.belongsTo(CrossrefDepositRecord, {
-					as: 'crossrefDepositRecord',
-					foreignKey: 'crossrefDepositRecordId',
-				});
-				CollectionModel.belongsTo(ScopeSummary, {
-					as: 'scopeSummary',
-					foreignKey: 'scopeSummaryId',
-				});
-				CollectionModel.belongsTo(Community, {
-					as: 'community',
-					foreignKey: 'communityId',
-				});
-			},
-		},
-	},
-) as any;
+@Table
+class Collection extends Model<InferAttributes<Collection>, InferCreationAttributes<Collection>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	@Column(DataType.TEXT)
+	title?: string | null;
+
+	@AllowNull(false)
+	@IsLowercase
+	@Length({ min: 1, max: 280 })
+	@Is(/^[a-zA-Z0-9-]+$/)
+	@Column(DataType.TEXT)
+	slug!: string;
+
+	@Column(DataType.TEXT)
+	avatar?: string | null;
+
+	@Column(DataType.BOOLEAN)
+	isRestricted?: boolean | null;
+
+	@Column(DataType.BOOLEAN)
+	isPublic?: boolean | null;
+
+	@Column(DataType.STRING)
+	viewHash?: string | null;
+
+	@Column(DataType.STRING)
+	editHash?: string | null;
+
+	// TODO: Add validation for this field
+	@Column(DataType.JSONB)
+	// 	metadata?: Record<string, any> | null;
+	metadata?: any;
+
+	// TODO: Add validation for this field
+	@Column(DataType.TEXT)
+	// 	kind?: CollectionKind | null;
+	kind?: any;
+
+	@Column(DataType.TEXT)
+	doi?: string | null;
+
+	@Default('choose-best')
+	@Column(DataType.ENUM('none', 'minimal', 'medium', 'choose-best'))
+	// 	readNextPreviewSize?: CreationOptional<ReadNextPreviewSize | null>;
+	readNextPreviewSize?: any;
+
+	// TODO: Add validation for this field
+	@AllowNull(false)
+	@Default({})
+	@Column(DataType.JSONB)
+	layout!: CreationOptional<CollectionLayout>;
+
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	layoutAllowsDuplicatePubs!: CreationOptional<boolean>;
+
+	@Column(DataType.UUID)
+	pageId?: string | null;
+
+	@Column(DataType.UUID)
+	communityId?: string | null;
+
+	@Column(DataType.UUID)
+	scopeSummaryId?: string | null;
+
+	@Column(DataType.UUID)
+	crossrefDepositRecordId?: string | null;
+
+	@HasMany(() => CollectionAttribution, {
+		onDelete: 'CASCADE',
+		as: 'attributions',
+		foreignKey: 'collectionId',
+	})
+	// 	attributions?: CollectionAttribution[];
+	attributions?: any;
+
+	@HasOne(() => SubmissionWorkflow, { as: 'submissionWorkflow', foreignKey: 'collectionId' })
+	// 	submissionWorkflow?: SubmissionWorkflow;
+	submissionWorkflow?: any;
+
+	@HasMany(() => CollectionPub, { as: 'collectionPubs', foreignKey: 'collectionId' })
+	// 	collectionPubs?: CollectionPub[];
+	collectionPubs?: any;
+
+	@HasMany(() => Member, { as: 'members', foreignKey: 'collectionId' })
+	// 	members?: Member[];
+	members?: any;
+
+	@BelongsTo(() => Page, { as: 'page', foreignKey: 'pageId' })
+	// 	page?: Page;
+	page?: any;
+
+	@BelongsTo(() => CrossrefDepositRecord, {
+		as: 'crossrefDepositRecord',
+		foreignKey: 'crossrefDepositRecordId',
+		onDelete: 'SET NULL',
+	})
+	// 	crossrefDepositRecord?: CrossrefDepositRecord;
+	crossrefDepositRecord?: any;
+
+	@BelongsTo(() => ScopeSummary, {
+		as: 'scopeSummary',
+		foreignKey: 'scopeSummaryId',
+		onDelete: 'SET NULL',
+	})
+	// 	scopeSummary?: ScopeSummary;
+	scopeSummary?: any;
+
+	@BelongsTo(() => Community, { as: 'community', foreignKey: 'communityId' })
+	// 	community?: Community;
+	community?: any;
+}
+
+export const CollectionAnyModel = Collection as any;

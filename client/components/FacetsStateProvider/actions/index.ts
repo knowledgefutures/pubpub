@@ -10,7 +10,7 @@ type Action = (...args: ActionsArgs) => void | Promise<void>;
 type ExtractRestArgs<ActionFn extends Action> = Parameters<ActionFn> extends [
 	infer _, // get
 	infer __, // set
-	...infer RestArgs
+	...infer RestArgs,
 ]
 	? RestArgs
 	: never;

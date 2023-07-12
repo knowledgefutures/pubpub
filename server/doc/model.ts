@@ -1,7 +1,26 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { DocJson } from 'types';
 
-export const Doc = sequelize.define('Doc', {
-	id: sequelize.idType,
-	content: { type: dataTypes.JSONB, allowNull: false },
-}) as any;
+@Table
+class Doc extends Model<InferAttributes<Doc>, InferCreationAttributes<Doc>> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
+
+	// TODO: add validation for content
+	@AllowNull(false)
+	@Column(DataType.JSONB)
+	content!: DocJson;
+}
+
+export const DocAnyModel = Doc as any;

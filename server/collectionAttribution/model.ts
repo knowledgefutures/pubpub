@@ -1,45 +1,70 @@
-import { DataTypes as dataTypes } from 'sequelize';
-import { sequelize } from '../sequelize';
+import {
+	Model,
+	Table,
+	Column,
+	DataType,
+	PrimaryKey,
+	Default,
+	AllowNull,
+	BelongsTo,
+} from 'sequelize-typescript';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+// import { MinimalUser } from 'types';
+import { User, Collection } from '../models';
 
-// export type CollectionAttributionAttributes = InferTypeFromAttributes<typeof attributes>;
+@Table
+class CollectionAttribution extends Model<
+	InferAttributes<CollectionAttribution>,
+	InferCreationAttributes<CollectionAttribution>
+> {
+	@Default(DataType.UUIDV4)
+	@PrimaryKey
+	@Column(DataType.UUID)
+	id!: CreationOptional<string>;
 
-export const CollectionAttribution = sequelize.define(
-	// <Model<CollectionAttributionAttributes>>
-	'CollectionAttribution',
-	{
-		id: sequelize.idType,
-		name: { type: dataTypes.TEXT } /* Used for non-account attribution */,
-		avatar: { type: dataTypes.TEXT } /* Used for non-account attribution */,
-		title: { type: dataTypes.TEXT } /* Used for non-account attribution */,
-		order: { type: dataTypes.DOUBLE },
-		isAuthor: { type: dataTypes.BOOLEAN },
-		roles: { type: dataTypes.JSONB },
-		affiliation: { type: dataTypes.TEXT },
-		orcid: { type: dataTypes.STRING },
-		/* Set by Associations */
-		userId: { type: dataTypes.UUID },
-		collectionId: { type: dataTypes.UUID, allowNull: false },
-	},
-	{
-		// @ts-expect-error ts(2345): Argument of type '{ classMethods: { associate: (models: any) => void; }; }' is not assignable to parameter of type 'ModelOptions<Model<any, any>>'. Object literal may only specify known properties, and 'classMethods' does not exist in type 'ModelOptions<Model<any, any>>'.
-		classMethods: {
-			associate: (models) => {
-				const {
-					Collection,
-					CollectionAttribution: CollectionAttributionModel,
-					User,
-				} = models;
-				CollectionAttributionModel.belongsTo(User, {
-					onDelete: 'CASCADE',
-					as: 'user',
-					foreignKey: 'userId',
-				});
-				CollectionAttributionModel.belongsTo(Collection, {
-					onDelete: 'CASCADE',
-					as: 'collection',
-					foreignKey: 'collectionId',
-				});
-			},
-		},
-	},
-) as any;
+	@Column(DataType.TEXT)
+	name?: string | null;
+
+	@Column(DataType.TEXT)
+	avatar?: string | null;
+
+	@Column(DataType.TEXT)
+	title?: string | null;
+
+	@Column(DataType.DOUBLE)
+	order?: number | null;
+
+	@Column(DataType.BOOLEAN)
+	isAuthor?: boolean | null;
+
+	// TODO: Add validation for roles
+	@Column(DataType.JSONB)
+	roles?: string[] | null;
+
+	@Column(DataType.TEXT)
+	affiliation?: string | null;
+
+	@Column(DataType.STRING)
+	orcid?: string | null;
+
+	@Column(DataType.UUID)
+	userId?: string | null;
+
+	@AllowNull(false)
+	@Column(DataType.UUID)
+	collectionId!: string;
+
+	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	// 	user?: MinimalUser;
+	user?: any;
+
+	@BelongsTo(() => Collection, {
+		onDelete: 'CASCADE',
+		as: 'collection',
+		foreignKey: 'collectionId',
+	})
+	// 	collection?: Collection;
+	collection?: any;
+}
+
+export const CollectionAttributionAnyModel = CollectionAttribution as any;

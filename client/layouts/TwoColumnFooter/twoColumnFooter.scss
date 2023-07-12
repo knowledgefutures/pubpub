@@ -118,16 +118,13 @@
 
 	.investor-logos__item {
 		border: 0;
+		display: table-cell;
 		vertical-align: top;
 		padding: 1.5rem;
 		font-family: 'Noto Serif', serif;
 		font-size: 1rem;
 		line-height: 1.5;
 		font-weight: normal;
-
-		@media only screen and (min-width: 30rem) {
-			display: table-cell;
-		}
 	}
 
 	.investor-logos__item + .investor-logos__item {
@@ -267,10 +264,14 @@
 		.investor-logos {
 			display: block;
 
-			.investor-logos__item + .investor-logos__item {
+			.investor-logos__item {
 				display: block;
 				border-left: none;
 				border-top: 1px solid #e0e0e0;
+
+				&:first-child {
+					border-top: none;
+				}
 			}
 		}
 	}

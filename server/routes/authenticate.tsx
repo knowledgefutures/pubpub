@@ -5,11 +5,14 @@ import { isDevelopment } from 'utils/environment';
 
 app.get(
 	'/auth/zotero',
-	wrap(async (req) => {
+	wrap(async (req, res, next) => {
 		if (req.user) {
 			const authRedirectHost = req.get('host');
 			await User.update({ authRedirectHost }, { where: { id: req.user.id } });
+		} else {
+			res.redirect('/');
 		}
+		next();
 	}),
 	passport.authenticate('zotero', { state: 'test' }),
 );

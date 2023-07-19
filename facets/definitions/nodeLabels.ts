@@ -33,6 +33,11 @@ const math = prop(nodeLabel, {
 	rootValue: { enabled: false, text: 'Equation' },
 });
 
+const iframe = prop(nodeLabel, {
+	label: 'Iframe',
+	rootValue: { enabled: false, text: 'Iframe' },
+});
+
 export const NodeLabels = facet({
 	name: 'NodeLabels',
 	label: 'Item labels',
@@ -42,5 +47,6 @@ export const NodeLabels = facet({
 		audio,
 		table,
 		math,
+		iframe,
 	},
 });

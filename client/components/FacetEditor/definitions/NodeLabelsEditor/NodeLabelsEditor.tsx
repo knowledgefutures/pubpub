@@ -27,5 +27,7 @@ export default createFacetKindEditor(NodeLabels, {
 		table: NodeLabelEditor,
 		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
 		math: NodeLabelEditor,
+		// @ts-expect-error FIXME: NodeLabelEditor has `FacetPropEditorProps<..., Nullable=false>`, while propEditors[string] expects nullable `true`
+		iframe: NodeLabelEditor,
 	},
 });

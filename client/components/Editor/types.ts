@@ -15,6 +15,7 @@ export enum ReferenceableNodeType {
 	Audio = 'audio',
 	Table = 'table',
 	Math = 'math',
+	Iframe = 'iframe',
 }
 
 export const referenceableNodeTypes = Object.values(ReferenceableNodeType);

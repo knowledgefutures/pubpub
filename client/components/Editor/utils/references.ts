@@ -28,6 +28,7 @@ export const nodeDefaults = {
 	[ReferenceableNodeType.Audio]: { icon: 'media', text: 'Audio' },
 	[ReferenceableNodeType.Table]: { icon: 'th', text: 'Table' },
 	[ReferenceableNodeType.Math]: { icon: 'function', text: 'Equation' },
+	[ReferenceableNodeType.Iframe]: { icon: 'media', text: 'Iframe' },
 } as const;
 
 export const buildLabel = (node: Node, customBlockName?: string) => {

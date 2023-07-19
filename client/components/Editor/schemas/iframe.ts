@@ -1,9 +1,16 @@
 import { DOMOutputSpec } from 'prosemirror-model';
+import { pruneFalsyValues } from 'utils/arrays';
+import { withValue } from 'utils/fp';
+
+import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
+import { counter } from './reactive/counter';
+import { label } from './reactive/label';
 
 export default {
 	iframe: {
 		atom: true,
+		reactive: true,
 		attrs: {
 			id: { default: null },
 			url: { default: '' },
@@ -11,6 +18,10 @@ export default {
 			height: { default: 419 },
 			align: { default: 'center' },
 			caption: { default: '' },
+		},
+		reactiveAttrs: {
+			count: counter({ useNodeLabels: true }),
+			label: label(),
 		},
 		parseDOM: [
 			{
@@ -53,7 +64,16 @@ export default {
 				[
 					'figcaption',
 					{ id: figcaptionId },
-					renderHtmlChildren(isStaticallyRendered, node.attrs.caption, 'div'),
+					pruneFalsyValues([
+						'div',
+						{},
+						withValue(buildLabel(node), (builtLabel) => [
+							'strong',
+							{ spellcheck: 'false' },
+							builtLabel,
+						]),
+						renderHtmlChildren(isStaticallyRendered, node.attrs.caption, 'div'),
+					]),
 				],
 			] as DOMOutputSpec;
 		},

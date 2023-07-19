@@ -19,7 +19,11 @@ export const counter = (options: CounterOptions = {}) => {
 		if (useNodeLabels) {
 			const nodeLabelConfiguration = getEnabledNodeLabelConfiguration(node, nodeLabels);
 			if (nodeLabelConfiguration) {
-				resolvedCounterType = nodeLabelConfiguration.referenceableNodeType;
+				resolvedCounterType =
+					// Use the node label text, enabling cross-node type label counting
+					nodeLabelConfiguration.nodeLabel.text ||
+					// Fall back to the default node type
+					nodeLabelConfiguration.referenceableNodeType;
 			} else {
 				return null;
 			}

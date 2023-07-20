@@ -38,7 +38,7 @@
 		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./dist/server/client:./dist/server WORKER=true node dist/server/workers/init"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.350.0",
+		"@aws-sdk/client-s3": "^3.370.0",
 		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17",
 		"@blueprintjs/core": "^3.24.0",
 		"@blueprintjs/icons": "^3.14.0",

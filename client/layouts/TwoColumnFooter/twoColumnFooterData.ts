@@ -116,7 +116,7 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		},
 		{
 			text: 'Who we work with',
-			url: 'who-we-work-with',
+			url: '/who-we-work-with',
 		},
 		{
 			text: 'Alerts',

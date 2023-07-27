@@ -72,14 +72,17 @@ const createNotificationsForThreadComment = async (
 			.filter((userId) => !userIdsWhoDoNotWantNotifications.includes(userId)),
 	});
 
+	const deduplicatedUserIdsToNotify = [...new Set(userIdsToNotify)];
+
 	await UserNotification.bulkCreate(
-		userIdsToNotify.map((userId) => {
+		deduplicatedUserIdsToNotify.map((userId) => {
 			return {
 				userId,
 				userSubscriptionId: subscriptionsByUserId[userId].id,
 				activityItemId: item.id,
 			};
 		}),
+		{ individualHooks: true },
 	);
 };
 

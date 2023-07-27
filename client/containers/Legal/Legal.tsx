@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, MenuItem } from '@blueprintjs/core';
 
-import { GridWrapper } from 'components';
+import { Integration, UserNotificationPreferences } from 'types';
 import { usePageContext } from 'utils/hooks';
-import { Integration } from 'types';
+import { GridWrapper } from 'components';
+import { apiFetch } from 'client/utils/apiFetch';
 
 import PrivacySettings from './PrivacySettings';
 import Terms from './Terms';
@@ -14,6 +15,7 @@ require('./legal.scss');
 
 type Props = {
 	integrations: Integration[];
+	userNotificationPreferences?: UserNotificationPreferences;
 };
 
 const Legal = (props: Props) => {
@@ -23,6 +25,20 @@ const Legal = (props: Props) => {
 		communityData: { accentColorDark },
 	} = usePageContext();
 	const { tab } = locationData.params;
+	const [userNotificationPreferences, setUserNotificationPreferences] = useState(
+		props.userNotificationPreferences,
+	);
+	const updateUserNotificationPreferences = async (
+		preferences: Partial<UserNotificationPreferences>,
+	) => {
+		setUserNotificationPreferences((state) => {
+			return {
+				...state,
+				...preferences,
+			} as UserNotificationPreferences;
+		});
+		await apiFetch.put('/api/userNotificationPreferences', { preferences });
+	};
 	return (
 		<>
 			<style>{`#legal-container .main-content p > a { color: ${accentColorDark}; }`}</style>
@@ -60,10 +76,14 @@ const Legal = (props: Props) => {
 						{tab === 'terms' && <Terms hostname={locationData.hostname} />}
 						{tab === 'privacy' && <PrivacyPolicy />}
 						{tab === 'aup' && <AUP />}
-						{tab === 'settings' && (
+						{tab === 'settings' && props.userNotificationPreferences && (
 							<PrivacySettings
 								isLoggedIn={!!loginData.id}
 								integrations={props.integrations}
+								userNotificationPreferences={userNotificationPreferences}
+								onUpdateUserNotificationPreferences={
+									updateUserNotificationPreferences
+								}
 							/>
 						)}
 					</div>

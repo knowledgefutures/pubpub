@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Classes, FormGroup, Switch, Button } from '@blueprintjs/core';
 
 import * as types from 'types';
@@ -9,8 +10,9 @@ require('./userNotificationPreferences.scss');
 
 type Props = {
 	preferences: types.UserNotificationPreferences;
+	minimal?: boolean;
 	onUpdatePreferences: (patch: Partial<types.UserNotificationPreferences>) => unknown;
-	onClose: () => unknown;
+	onClose?: () => unknown;
 };
 
 const notificationCadenceItems = [
@@ -31,6 +33,7 @@ const UserNotificationPreferences = (props: Props) => {
 	const { preferences, onUpdatePreferences, onClose } = props;
 	const {
 		receiveNotifications,
+		receiveDiscussionThreadEmails,
 		subscribeToThreadsAsCommenter,
 		subscribeToPubsAsMember,
 		subscribeToPubsAsContributor,
@@ -43,13 +46,23 @@ const UserNotificationPreferences = (props: Props) => {
 	};
 
 	return (
-		<div className="user-notification-preferences-component">
-			<h4 className={Classes.HEADING}>Notification preferences</h4>
+		<div
+			className={classNames(
+				'user-notification-preferences-component',
+				props.minimal && 'minimal',
+			)}
+		>
+			{!props.minimal && <h4 className={Classes.HEADING}>Notification preferences</h4>}
 			<p>
 				<Switch
 					label="Receive notifications from PubPub"
 					checked={receiveNotifications}
 					onChange={() => toggle('receiveNotifications')}
+				/>
+				<Switch
+					label="Receive discussion thread emails from PubPub"
+					checked={receiveDiscussionThreadEmails}
+					onChange={() => toggle('receiveDiscussionThreadEmails')}
 				/>
 			</p>
 			<FormGroup label="Automatically subscribe me to..." disabled={!receiveNotifications}>
@@ -92,9 +105,11 @@ const UserNotificationPreferences = (props: Props) => {
 					onSelectValue={(trigger) => onUpdatePreferences({ markReadTrigger: trigger })}
 				/>
 			</FormGroup>
-			<Button icon="tick" intent="primary" onClick={onClose}>
-				Done
-			</Button>
+			{!props.minimal && (
+				<Button icon="tick" intent="primary" onClick={onClose}>
+					Done
+				</Button>
+			)}
 		</div>
 	);
 };

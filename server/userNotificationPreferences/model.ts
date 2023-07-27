@@ -31,6 +31,11 @@ class UserNotificationPreferences extends Model<
 	@Column(DataType.BOOLEAN)
 	receiveNotifications!: CreationOptional<boolean>;
 
+	@AllowNull(false)
+	@Default(false)
+	@Column(DataType.BOOLEAN)
+	receiveDiscussionThreadEmails!: CreationOptional<boolean>;
+
 	@Column(DataType.DATE)
 	// 	lastReceivedNotificationsAt?: Date | null;
 	lastReceivedNotificationsAt?: any;

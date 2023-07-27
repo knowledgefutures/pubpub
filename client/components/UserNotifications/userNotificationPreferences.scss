@@ -1,3 +1,6 @@
 .user-notification-preferences-component {
 	padding: 24px;
+	&.minimal {
+		padding: 0;
+	}
 }

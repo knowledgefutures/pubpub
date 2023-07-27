@@ -30,6 +30,7 @@ export type UserNotificationPreferences = {
 	lastReceivedNotificationsAt: null | string;
 	userId: string;
 	receiveNotifications: boolean;
+	receiveDiscussionThreadEmails: boolean;
 	subscribeToThreadsAsCommenter: boolean;
 	subscribeToPubsAsMember: boolean;
 	subscribeToPubsAsContributor: boolean;

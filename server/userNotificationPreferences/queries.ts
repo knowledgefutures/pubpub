@@ -4,6 +4,7 @@ import { pickKeys } from 'utils/objects';
 
 const updatableFields = [
 	'receiveNotifications',
+	'receiveDiscussionThreadEmails',
 	'subscribeToThreadsAsCommenter',
 	'subscribeToPubsAsMember',
 	'subscribeToPubsAsContributor',

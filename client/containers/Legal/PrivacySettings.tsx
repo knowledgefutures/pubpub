@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { AnchorButton, Button, Card, Switch } from '@blueprintjs/core';
 
-import { apiFetch } from 'client/utils/apiFetch';
+import * as types from 'types';
 import { usePageContext } from 'utils/hooks';
-import { Integration } from 'types';
+import { apiFetch } from 'client/utils/apiFetch';
 import { getGdprConsentElection, updateGdprConsent } from 'client/utils/legal/gdprConsent';
+import UserNotificationPreferences from 'components/UserNotifications/UserNotificationPreferences';
 
 type PrivacySettingsProps = {
-	integrations: Integration[];
+	integrations: types.Integration[];
 	isLoggedIn: boolean;
+	userNotificationPreferences?: types.UserNotificationPreferences;
+	onUpdateUserNotificationPreferences: (
+		preferences: Partial<types.UserNotificationPreferences>,
+	) => void;
 };
 
 const exportEmailBody = `
@@ -28,6 +33,7 @@ I understand that this action may be irreversible.
 
 const possibleIntegrations = [
 	{
+		title: 'Zotero',
 		name: 'zotero',
 		authUrl: '/auth/zotero',
 	},
@@ -83,14 +89,19 @@ const ThirdPartyAnalyticsCard = () => {
 };
 
 const PrivacySettings = (props: PrivacySettingsProps) => {
-	const { isLoggedIn, integrations } = props;
+	const {
+		isLoggedIn,
+		integrations,
+		userNotificationPreferences,
+		onUpdateUserNotificationPreferences,
+	} = props;
 	const initialActiveIntegration = integrations.map(({ name }) => name);
 	const [unusedIntegrations, setUnusedIntegrations] = useState<string[]>(
 		possibleIntegrations
 			.map(({ name }) => name)
 			.filter((name) => !initialActiveIntegration.includes(name)),
 	);
-	const onDeleteIntegration = (integration: Integration) => () => {
+	const onDeleteIntegration = (integration: types.Integration) => () => {
 		apiFetch
 			.delete('/api/integrationDataOAuth1', { id: integration.integrationDataOAuth1Id })
 			.then(() => {
@@ -120,7 +131,7 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 						const integration = integrations.find(({ name }) => name === i.name);
 						return (
 							<Card key={i.name}>
-								<h5>{i.name} integration</h5>
+								<h5>{i.title} integration</h5>
 								<p>
 									Deleting the integration will purge your {i.name} credentials
 									from our database.
@@ -137,6 +148,16 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 							</Card>
 						);
 					})}
+					{userNotificationPreferences && (
+						<Card>
+							<h5 id="notification-preferences">Notification preferences</h5>
+							<UserNotificationPreferences
+								minimal
+								preferences={userNotificationPreferences}
+								onUpdatePreferences={onUpdateUserNotificationPreferences}
+							/>
+						</Card>
+					)}
 					<Card>
 						<h5>Account deletion</h5>
 						<p>

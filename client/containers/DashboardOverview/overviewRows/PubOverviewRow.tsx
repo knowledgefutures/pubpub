@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { AnchorButton } from '@blueprintjs/core';
 
 import { PubByline, PubTitle } from 'components';
-import { Collection, DefinitelyHas, Pub as BasePub } from 'types';
+import { Collection, Pub as BasePub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
@@ -11,14 +11,12 @@ import { usePageContext } from 'utils/hooks';
 import OverviewRowSkeleton from './OverviewRowSkeleton';
 import { IconLabelPair, renderLabelPairs, getTypicalPubLabels } from './labels';
 
-type Pub = DefinitelyHas<BasePub, 'attributions'>;
-
 type Props = {
 	leftIconElement?: React.ReactNode;
 	rightElement?: React.ReactNode;
 	labels?: IconLabelPair[];
 	className?: string;
-	pub: Pub;
+	pub: BasePub;
 	inCollection?: Collection;
 };
 

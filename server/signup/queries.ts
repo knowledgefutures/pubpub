@@ -2,6 +2,7 @@ import { generateHash } from 'utils/hashes';
 import { Signup, User } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { sendSignupEmail } from 'server/utils/email';
+import { expect } from 'utils/assert';
 
 export const createSignup = (inputValues, hostname) => {
 	const email = inputValues.email.toLowerCase().trim();
@@ -40,8 +41,8 @@ export const createSignup = (inputValues, hostname) => {
 		})
 		.then((signUpData) => {
 			return sendSignupEmail({
-				toEmail: signUpData.email,
-				signupUrl: `https://${hostname}/user/create/${signUpData.hash}`,
+				toEmail: expect(signUpData).email,
+				signupUrl: `https://${hostname}/user/create/${expect(signUpData).hash}`,
 			});
 		});
 };

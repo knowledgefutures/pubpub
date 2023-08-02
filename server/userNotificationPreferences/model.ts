@@ -9,13 +9,16 @@ import {
 	AllowNull,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 import { UserNotificationMarkReadTrigger } from 'types';
 
 @Table
-class UserNotificationPreferences extends Model<
+export class UserNotificationPreferences extends Model<
 	InferAttributes<UserNotificationPreferences>,
 	InferCreationAttributes<UserNotificationPreferences>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -37,8 +40,7 @@ class UserNotificationPreferences extends Model<
 	receiveDiscussionThreadEmails!: CreationOptional<boolean>;
 
 	@Column(DataType.DATE)
-	// 	lastReceivedNotificationsAt?: Date | null;
-	lastReceivedNotificationsAt?: any;
+	lastReceivedNotificationsAt!: Date | null;
 
 	@AllowNull(false)
 	@Default(true)
@@ -66,5 +68,3 @@ class UserNotificationPreferences extends Model<
 	@Column(DataType.STRING)
 	markReadTrigger!: CreationOptional<UserNotificationMarkReadTrigger>;
 }
-
-export const UserNotificationPreferencesAnyModel = UserNotificationPreferences as any;

@@ -8,12 +8,15 @@ import {
 	AllowNull,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 
 @Table
-class ScopeSummary extends Model<
+export class ScopeSummary extends Model<
 	InferAttributes<ScopeSummary>,
 	InferCreationAttributes<ScopeSummary>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -44,5 +47,3 @@ class ScopeSummary extends Model<
 	@Column(DataType.INTEGER)
 	submissions!: CreationOptional<number>;
 }
-
-export const ScopeSummaryAnyModel = ScopeSummary as any;

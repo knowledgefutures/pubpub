@@ -303,9 +303,9 @@ export function createDeposit(resource: Resource) {
 function encodeDataciteCredentials(depositTarget: DepositTarget) {
 	const { username, password, passwordInitVec } = depositTarget;
 	const rawPassword = aes256Decrypt(
-		password,
+		expect(password),
 		expect(process.env.AES_ENCRYPTION_KEY),
-		passwordInitVec,
+		expect(passwordInitVec),
 	);
 	return Buffer.from(`${username}:${rawPassword}`).toString('base64');
 }

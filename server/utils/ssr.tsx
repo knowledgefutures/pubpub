@@ -14,11 +14,11 @@ export const renderToNodeStream = (res, reactElement) => {
 type MetaProps = {
 	initialData: InitialData;
 	title: string;
-	contextTitle?: string;
-	description?: string;
-	image?: string;
+	contextTitle?: string | null;
+	description?: string | null;
+	image?: string | null;
 	attributions?: Attribution[];
-	doi?: string;
+	doi?: string | null;
 	publishedAt?: null | Date;
 	unlisted?: boolean;
 	collection?: Collection;
@@ -98,19 +98,19 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 			<meta
 				key="t2"
 				property="og:title"
-				content={useCollectionTitle ? collection.title : title}
+				content={useCollectionTitle ? collection.title ?? undefined : title}
 			/>,
 			<meta key="t3" name="twitter:title" content={titleWithContext} />,
 			<meta key="t4" name="twitter:image:alt" content={titleWithContext} />,
 			<meta
 				key="t5"
 				name="citation_title"
-				content={useCollectionTitle ? collection.title : title}
+				content={useCollectionTitle ? collection.title ?? undefined : title}
 			/>,
 			<meta
 				key="t6"
 				name="dc.title"
-				content={useCollectionTitle ? collection.title : title}
+				content={useCollectionTitle ? collection.title ?? undefined : title}
 			/>,
 		];
 	}
@@ -149,7 +149,11 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		if (collection.kind === 'issue') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c1" name="citation_journal_title" content={communityCiteAs} />,
+				<meta
+					key="c1"
+					name="citation_journal_title"
+					content={communityCiteAs ?? undefined}
+				/>,
 				<meta key="c2" name="citation_volume" content={collection.metadata?.volume} />,
 				<meta key="c3" name="citation_issue" content={collection.metadata?.issue} />,
 				<meta
@@ -168,7 +172,11 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		if (collection.kind === 'book') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c7" name="citation_book_title" content={collection.title} />,
+				<meta
+					key="c7"
+					name="citation_book_title"
+					content={collection.title ?? undefined}
+				/>,
 				<meta key="c8" name="citation_isbn" content={collection.metadata?.isbn} />,
 				<meta
 					key="c9"
@@ -180,9 +188,21 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		if (collection.kind === 'conference') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c10" name="citation_conference_title" content={collection.title} />,
-				<meta key="c11" name="citation_conferenceName" content={collection.title} />,
-				<meta key="c12" name="citation_date" content={collection.metadata?.date} />,
+				<meta
+					key="c10"
+					name="citation_conference_title"
+					content={collection.title ?? undefined}
+				/>,
+				<meta
+					key="c11"
+					name="citation_conferenceName"
+					content={collection.title ?? undefined}
+				/>,
+				<meta
+					key="c12"
+					name="citation_date"
+					content={collection.metadata?.date ?? undefined}
+				/>,
 			];
 		}
 	}
@@ -266,7 +286,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 				<meta
 					key={`author-cite-${author.id}`}
 					name="citation_author"
-					content={author.name}
+					content={author.name ?? undefined}
 				/>
 			);
 		});
@@ -280,7 +300,13 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 					/>
 				);
 			}
-			return <meta key={`author-dc-${author.id}`} name="dc.creator" content={author.name} />;
+			return (
+				<meta
+					key={`author-dc-${author.id}`}
+					name="dc.creator"
+					content={author.name ?? undefined}
+				/>
+			);
 		});
 		const contributorRoleTags = contributors.map((contributor) => {
 			if (contributor.user) {
@@ -296,7 +322,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 				<meta
 					key={`editor-cite-${contributor.id}`}
 					name="citation_editor"
-					content={contributor.name}
+					content={contributor.name ?? undefined}
 				/>
 			);
 		});

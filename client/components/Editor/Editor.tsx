@@ -32,7 +32,7 @@ type Props = {
 	customNodes?: Record<string, NodeSpec>;
 	customPlugins?: Record<string, null | PluginLoader>;
 	enableSuggestions?: boolean;
-	initialContent?: DocJson;
+	initialContent?: DocJson | null;
 	isReadOnly?: boolean;
 	nodeLabels?: NodeLabelMap;
 	onEdit?: OnEditFn;

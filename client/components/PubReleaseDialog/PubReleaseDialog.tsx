@@ -58,7 +58,7 @@ const PubReleaseDialog = (props: Props) => {
 	const [releaseError, setReleleaseError] = useState(null);
 	const { releases } = pub;
 	const releaseCount = releases ? releases.length : 0;
-	const latestRelease = releases[releaseCount - 1]!;
+	const latestRelease = releases?.[releaseCount - 1]!;
 	const { editorChangeObject } = collabData;
 
 	const handleCreateRelease = async () => {

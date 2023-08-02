@@ -149,7 +149,7 @@ it('Lets a Pub manager update the rank (ordering) of its edges', async () => {
 	const { body: resultingEdge } = await agent
 		.put('/api/pubEdges')
 		.send({
-			pubEdgeId: existingEdge.id,
+			pubEdgeId: existingEdge?.id,
 			rank: 'q',
 			approvedByTarget: true, // This should be ignored
 		})
@@ -160,11 +160,11 @@ it('Lets a Pub manager update the rank (ordering) of its edges', async () => {
 	await agent
 		.put('/api/pubEdges/approvedByTarget')
 		.send({
-			pubEdgeId: existingEdge.id,
+			pubEdgeId: existingEdge?.id,
 			approvedByTarget: true,
 		})
 		.expect(403);
-	await existingEdge.destroy();
+	await existingEdge?.destroy();
 });
 
 it('lets the manager of a targetPub update approvedByTarget on an edge (but nothing else)', async () => {
@@ -179,7 +179,7 @@ it('lets the manager of a targetPub update approvedByTarget on an edge (but noth
 	await agent
 		.put('/api/pubEdges')
 		.send({
-			pubEdgeId: existingEdge.id,
+			pubEdgeId: existingEdge?.id,
 			approvedByTarget: true,
 			rank: 'zzz',
 		})
@@ -187,7 +187,7 @@ it('lets the manager of a targetPub update approvedByTarget on an edge (but noth
 	const { body: resultingEdge } = await agent
 		.put('/api/pubEdges/approvedByTarget')
 		.send({
-			pubEdgeId: existingEdge.id,
+			pubEdgeId: existingEdge?.id,
 			approvedByTarget: true,
 		})
 		.expect(200);
@@ -203,16 +203,16 @@ it('lets a Pub manager destroy a PubEdge', async () => {
 		pubIsParent: true,
 	});
 	const anotherPubAgent = await login(anotherPubManager);
-	await anotherPubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(403);
+	await anotherPubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge?.id }).expect(403);
 	const sourcePubAgent = await login(sourcePubManager);
 	await expectCreatedActivityItem(
-		sourcePubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(200),
+		sourcePubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge?.id }).expect(200),
 	).toMatchObject({
 		kind: 'pub-edge-removed',
 		actorId: sourcePubManager.id,
 		pubId: sourcePub.id,
-		payload: { pubEdgeId: existingEdge.id, target: { pub: { id: anotherPub.id } } },
+		payload: { pubEdgeId: existingEdge?.id, target: { pub: { id: anotherPub.id } } },
 	});
-	const edgeNow = await PubEdge.findOne({ where: { id: existingEdge.id } });
+	const edgeNow = await PubEdge.findOne({ where: { id: existingEdge?.id } });
 	expect(edgeNow).toBeNull();
 });

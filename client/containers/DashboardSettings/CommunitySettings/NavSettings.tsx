@@ -3,6 +3,7 @@ import { Switch } from '@blueprintjs/core';
 
 import { SettingsSection, NavBuilder, NavBar } from 'components';
 import { Callback, Community, PageContext } from 'types';
+import { CommunityNavigationEntry } from 'client/utils/navigation';
 
 type Props = {
 	communityData: Community;
@@ -29,8 +30,12 @@ const NavSettings = (props: Props) => {
 				{!hideNav && (
 					<>
 						<NavBuilder
-							initialNav={communityData.navigation}
-							prefix={[communityData.navigation[0]]}
+							initialNav={communityData.navigation ?? []}
+							prefix={[
+								...(communityData.navigation?.[0]
+									? [communityData.navigation[0]]
+									: ([] as CommunityNavigationEntry[])),
+							]}
 							pages={pages}
 							collections={collections}
 							onChange={(val) => {

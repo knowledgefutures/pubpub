@@ -3,11 +3,11 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import { Community, SpamTag } from 'server/models';
 
-const orderableFields: Record<types.SpamCommunityQueryOrderingField, any[]> = {
+const orderableFields = {
 	'community-created-at': ['createdAt'],
 	'spam-status-updated-at': [{ model: SpamTag, as: 'spamTag' }, 'statusUpdatedAt'],
 	'spam-score': [{ model: SpamTag, as: 'spamTag' }, 'spamScore'],
-};
+} as const;
 
 const getWhereQueryPartForUrl = (searchTerm: string) => {
 	let url: URL;
@@ -55,14 +55,13 @@ const getSpamTagStatusWhereQuery = (status: undefined | types.SpamStatus[]) => {
 	return {};
 };
 
+type OrderFields = (typeof orderableFields)[keyof typeof orderableFields];
 const getQueryOrdering = (ordering: types.SpamCommunityQueryOrdering) => {
 	const { field, direction } = ordering;
-	return [[...orderableFields[field], direction]];
+	return [[...orderableFields[field], direction]] as [OrderFields[number], 'ASC' | 'DESC'][];
 };
 
-export const queryCommunitiesForSpamManagement = (
-	query: types.SpamCommunityQuery,
-): Promise<types.DefinitelyHas<types.Community, 'spamTag'>> => {
+export const queryCommunitiesForSpamManagement = (query: types.SpamCommunityQuery) => {
 	const { limit, offset, ordering, status, searchTerm } = query;
 	return Community.findAll({
 		...getCommunityWhereQuery(searchTerm),
@@ -78,5 +77,5 @@ export const queryCommunitiesForSpamManagement = (
 				...getSpamTagStatusWhereQuery(status),
 			},
 		],
-	});
+	}) as Promise<types.DefinitelyHas<Community, 'spamTag'>[]>;
 };

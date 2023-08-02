@@ -5,8 +5,9 @@ import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { PubPubError } from 'server/utils/errors';
 import * as types from 'types';
+import { CollectionLayout } from 'utils/layout';
 
-export const generateDefaultCollectionLayout = () => {
+export const generateDefaultCollectionLayout = (): CollectionLayout => {
 	return {
 		isNarrow: false,
 		blocks: [
@@ -47,11 +48,11 @@ export const createCollection = async (
 	}: {
 		communityId: string;
 		title: string;
-		kind: string;
+		kind: types.CollectionKind;
 		pageId?: string | null;
 		doi?: string | null;
-		isPublic?: boolean;
-		isRestricted?: boolean;
+		isPublic?: boolean | null;
+		isRestricted?: boolean | null;
 		id?: string | null;
 		slug?: string | null;
 	},
@@ -141,7 +142,7 @@ const findCollectionOptions = {
 	],
 };
 
-export const findCollection = (
-	collectionId: string,
-): Promise<types.DefinitelyHas<types.Collection, 'community' | 'attributions'>> =>
-	Collection.findOne({ where: { id: collectionId }, ...findCollectionOptions });
+export const findCollection = (collectionId: string) =>
+	Collection.findOne({ where: { id: collectionId }, ...findCollectionOptions }) as Promise<
+		types.DefinitelyHas<Collection, 'community' | 'attributions'>
+	>;

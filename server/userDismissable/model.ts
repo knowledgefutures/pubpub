@@ -9,12 +9,15 @@ import {
 	Index,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 
 @Table
-class UserDismissable extends Model<
+export class UserDismissable extends Model<
 	InferAttributes<UserDismissable>,
 	InferCreationAttributes<UserDismissable>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -29,5 +32,3 @@ class UserDismissable extends Model<
 	@Column(DataType.UUID)
 	userId!: string;
 }
-
-export const UserDismissableAnyModel = UserDismissable as any;

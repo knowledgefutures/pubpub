@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export const getUploadPolicy = ({ contentType }) => {
+export const getUploadPolicy = ({ contentType }: { contentType: string }) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
 	const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;

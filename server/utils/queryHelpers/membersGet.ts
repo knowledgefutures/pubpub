@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 
 import { Member, includeUserModel } from 'server/models';
 
+import { ScopeData } from 'types';
 import { buildOrQuery } from './scopeGet';
 
 const membersQueryShared = {
@@ -13,19 +14,18 @@ const membersQueryShared = {
 	],
 };
 
-export const getMemberDataById = (memberId, includeShared = true) => {
+export const getMemberDataById = (memberId: string, includeShared = true) => {
 	return Member.findOne({ where: { id: memberId }, ...(includeShared && membersQueryShared) });
 };
 
-export default (initialData) => {
+export default async (initialData: { scopeData: ScopeData }) => {
 	const orQuery = buildOrQuery(initialData.scopeData.elements);
 
-	return Member.findAll({
+	const members = await Member.findAll({
 		where: {
 			[Op.or]: orQuery,
 		},
 		...membersQueryShared,
-	}).then((members) => {
-		return { members: members.map((mb) => mb.toJSON()), invitations: [] };
 	});
+	return { members: members.map((mb) => mb.toJSON()), invitations: [] };
 };

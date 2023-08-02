@@ -1,6 +1,6 @@
-import * as types from 'types';
 import { FeatureFlag, FeatureFlagUser, FeatureFlagCommunity } from 'server/models';
 
+import { expect } from 'utils/assert';
 import { isFeatureFlagEnabledForUserInCommunity } from './helpers';
 
 const throwExists = (name: string) => {
@@ -11,10 +11,7 @@ const throwDoesNotExist = (name: string) => {
 	throw new Error(`Feature flag does not exist: ${name}`);
 };
 
-export const getFeatureFlagById = (
-	id: string,
-): Promise<null | types.SequelizeModel<types.FeatureFlag>> =>
-	FeatureFlag.findOne({ where: { id } });
+export const getFeatureFlagById = (id: string) => FeatureFlag.findOne({ where: { id } });
 
 export const getFeatureFlagByName = async (name: string, expectExists: null | boolean = null) => {
 	const flag = await FeatureFlag.findOne({ where: { name } });
@@ -67,7 +64,7 @@ export const getFeatureFlagsForUserAndCommunity = async (
 	]);
 	const flags: Record<string, boolean> = {};
 	featureFlags.forEach((featureFlag) => {
-		flags[featureFlag.name] = isFeatureFlagEnabledForUserInCommunity({
+		flags[expect(featureFlag.name)] = isFeatureFlagEnabledForUserInCommunity({
 			userId,
 			communityId,
 			featureFlag,
@@ -83,7 +80,7 @@ export const getFeatureFlagForUserAndCommunity = async (
 	communityId: null | string,
 	flagName: string,
 ) => {
-	const featureFlag = await getFeatureFlagByName(flagName, true);
+	const featureFlag = expect(await getFeatureFlagByName(flagName, true));
 	const [featureFlagUsers, featureFlagCommunities] = await Promise.all([
 		userId ? FeatureFlagUser.findAll({ where: { userId } }) : [],
 		communityId ? FeatureFlagCommunity.findAll({ where: { communityId } }) : [],

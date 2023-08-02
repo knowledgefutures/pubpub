@@ -4,6 +4,7 @@ import { PubAttributionEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { Callback, Pub } from 'types';
 
+import { expect } from 'utils/assert';
 import SpubHeaderField from './SpubHeaderField';
 import SpubHeaderTab from './SpubHeaderTab';
 
@@ -18,7 +19,7 @@ const ContributorsTab = (props: Props) => {
 	const { onUpdatePub, pubData } = props;
 	const { communityData } = usePageContext();
 
-	const contributorCount = pubData.attributions.length;
+	const contributorCount = expect(pubData.attributions).length;
 	const title = <>Contributors {contributorCount ? `(${contributorCount})` : null}</>;
 
 	return (

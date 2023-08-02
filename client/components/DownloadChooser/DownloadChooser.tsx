@@ -11,7 +11,7 @@ require('./downloadChooser.scss');
 type Props = {
 	pubData: {
 		id?: string;
-		downloads?: any[];
+		downloads: any[] | null;
 	};
 	communityId: string;
 	onSetDownloads: (...args: any[]) => any;

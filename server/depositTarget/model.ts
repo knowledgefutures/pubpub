@@ -1,35 +1,37 @@
 import { Model, Table, Column, DataType, PrimaryKey, Default } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 
 @Table
-class DepositTarget extends Model<
+export class DepositTarget extends Model<
 	InferAttributes<DepositTarget>,
 	InferCreationAttributes<DepositTarget>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
 	@Column(DataType.UUID)
-	communityId?: string | null;
+	communityId!: string | null;
 
 	@Column(DataType.STRING)
-	doiPrefix?: string | null;
+	doiPrefix!: string | null;
 
 	@Default('crossref')
 	@Column(DataType.ENUM('crossref', 'datacite'))
-	// 	service?: CreationOptional<'crossref' | 'datacite' | null>;
-	service?: any;
+	service!: CreationOptional<'crossref' | 'datacite' | null>;
 
 	@Column(DataType.STRING)
-	username?: string | null;
+	username!: string | null;
 
 	@Column(DataType.STRING)
-	password?: string | null;
+	password!: string | null;
 
 	@Column(DataType.TEXT)
-	passwordInitVec?: string | null;
-}
+	passwordInitVec!: string | null;
 
-export const DepositTargetAnyModel = DepositTarget as any;
+	declare isPubPubManaged?: boolean;
+}

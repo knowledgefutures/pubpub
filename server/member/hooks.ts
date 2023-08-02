@@ -1,4 +1,3 @@
-import * as types from 'types';
 import { Member } from 'server/models';
 import { createActivityHooks } from 'server/utils/activityHooks';
 import {
@@ -9,7 +8,7 @@ import {
 import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 
-Member.afterCreate(async (member: types.Member) => {
+Member.afterCreate(async (member) => {
 	const { userId, pubId } = member;
 	if (pubId) {
 		const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);

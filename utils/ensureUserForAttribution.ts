@@ -1,4 +1,5 @@
-import { Attribution, AttributionWithUser, isAttributionWithUser } from 'types';
+import * as types from 'types';
+import { CollectionAttribution, PubAttribution } from 'server/models';
 
 import { getPartsOfFullName } from './names';
 
@@ -7,8 +8,10 @@ import { getPartsOfFullName } from './names';
  * attributed author isn't present on PubPub.
  * TODO(ian): I think we should move towards doing this normalization in the database.
  */
-export default (attribution: Attribution): AttributionWithUser => {
-	if (isAttributionWithUser(attribution) && attribution.user.id !== attribution.id) {
+export default (
+	attribution: types.Attribution | PubAttribution | CollectionAttribution,
+): types.AttributionWithUser => {
+	if (types.isAttributionWithUser(attribution) && attribution.user.id !== attribution.id) {
 		return attribution;
 	}
 	const { id, name, avatar, title, orcid } = attribution;

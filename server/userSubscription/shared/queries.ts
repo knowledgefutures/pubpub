@@ -7,15 +7,11 @@ type SetStatusOptions = types.UniqueUserSubscriptionQuery & {
 	status: 'unchanged' | types.UserSubscriptionStatus;
 };
 
-export const findUserSubscription = async (
-	where: types.UniqueUserSubscriptionQuery,
-): Promise<null | types.SequelizeModel<types.UserSubscription>> => {
+export const findUserSubscription = async (where: types.UniqueUserSubscriptionQuery) => {
 	return UserSubscription.findOne({ where });
 };
 
-export const setUserSubscriptionStatus = async (
-	options: SetStatusOptions,
-): Promise<types.SequelizeModel<types.UserSubscription>> => {
+export const setUserSubscriptionStatus = async (options: SetStatusOptions) => {
 	const { setAutomatically, status, ...where } = options;
 	const subscription = await findUserSubscription(where);
 	if (subscription) {

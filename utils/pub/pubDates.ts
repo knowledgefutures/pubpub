@@ -1,9 +1,10 @@
 import { formatDate, getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
 
-import { Maybe, Pub } from 'types';
+import * as types from 'types';
+import { Pub } from 'server/models';
 
-export const getPubLatestReleasedDate = (pub: Pub) => {
-	if (pub.releases.length === 0) {
+export const getPubLatestReleasedDate = (pub: types.Pub | Pub) => {
+	if (!pub.releases || pub.releases?.length === 0) {
 		return null;
 	}
 	return pub.releases
@@ -13,32 +14,35 @@ export const getPubLatestReleasedDate = (pub: Pub) => {
 		});
 };
 
-export const getPubCreatedDate = (pub: Pub) => {
+export const getPubCreatedDate = (pub: types.Pub | Pub) => {
 	return pub.createdAt;
 };
 
-export const getPubPublishedDate = (pub: Pub, includeCustomPublishedAt = true) => {
+export const getPubPublishedDate = (pub: types.Pub | Pub, includeCustomPublishedAt = true) => {
 	if (pub.customPublishedAt && includeCustomPublishedAt) {
 		return getLocalDateMatchingUtcCalendarDate(pub.customPublishedAt);
 	}
 	const { releases } = pub;
-	if (releases.length > 0) {
+	if (releases && releases.length > 0) {
 		const [firstRelease] = releases;
 		return new Date(firstRelease.createdAt);
 	}
 	return null;
 };
 
-export const getPubPublishedDateString = (pub: Pub): string | null => {
+export const getPubPublishedDateString = (pub: types.Pub): string | null => {
 	const publishedDate = getPubPublishedDate(pub, true);
 	let publishedDateString = '';
 	if (publishedDate) publishedDateString = formatDate(publishedDate);
-	if (publishedDate && pub.releases.length === 0) publishedDateString += ' (Not yet released)';
+	if (publishedDate && pub.releases?.length === 0) publishedDateString += ' (Not yet released)';
 	return publishedDateString || null;
 };
 
-export const getPubLatestReleaseDate = (pub: Pub, { excludeFirstRelease = false } = {}) => {
+export const getPubLatestReleaseDate = (pub: types.Pub, { excludeFirstRelease = false } = {}) => {
 	const { releases } = pub;
+	if (!releases) {
+		return null;
+	}
 	if (releases.length === 1 && excludeFirstRelease) {
 		return null;
 	}
@@ -53,8 +57,8 @@ export const getPubUpdatedDate = ({
 	pub,
 	historyData = null,
 }: {
-	pub: Pub;
-	historyData?: Maybe<{ timestamps?: number[]; latestKey?: number }>;
+	pub: types.Pub | Pub;
+	historyData?: types.Maybe<{ timestamps?: number[]; latestKey?: number }>;
 }) => {
 	if (historyData) {
 		const { timestamps, latestKey } = historyData;

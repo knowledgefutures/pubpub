@@ -14,7 +14,15 @@ import {
 	HasMany,
 	HasOne,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { SerializedModel } from 'types';
+import type {
+	InferAttributes,
+	InferCreationAttributes,
+	CreationOptional,
+	CreationAttributes,
+	ModelStatic,
+} from 'sequelize';
+import type { Strategy } from 'passport';
 import {
 	PubAttribution,
 	Discussion,
@@ -22,8 +30,91 @@ import {
 	ZoteroIntegration,
 } from '../models';
 
+/**
+ * Basically typings for passport-local-sequelize
+ */
+class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C> {
+	declare setPassword: <M extends Model>(
+		this: M,
+		password: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare setActivationKey: <M extends Model>(this: M, cb: (err: any, user?: M) => void) => void;
+
+	declare authenticate: <M extends Model>(
+		this: M,
+		password: string,
+		cb: ((err: any, user?: boolean, info?: any) => void) &
+			((err: any, user?: M, info?: any) => void),
+	) => void;
+
+	declare static authenticate: <M extends Model>(
+		this: ModelStatic<M>,
+	) => (
+		username: string,
+		password: string,
+		cb: ((err: any, user?: boolean, info?: any) => void) &
+			((err: any, user?: M, info?: any) => void),
+	) => void;
+
+	declare static serializeUser: <M extends Model>(
+		this: ModelStatic<M>,
+	) => (user: M, cb: (err: any, id?: string) => void) => void;
+
+	declare static deserializeUser: <M extends Model>(
+		this: ModelStatic<M>,
+	) => (username: string, cb: (err: any, user?: M) => void) => void;
+
+	declare static register: <M extends Model>(
+		this: ModelStatic<M>,
+		user: M | string | CreationAttributes<ModelWithPassport>,
+		password: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare static activate: <M extends Model>(
+		this: ModelStatic<M>,
+		username: string,
+		password: string,
+		activationKey: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare static findByUsername: <M extends Model>(
+		this: ModelStatic<M>,
+
+		username: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare static setResetPasswordKey: <M extends Model>(
+		this: ModelStatic<M>,
+		username: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare static resetPassword: <M extends Model>(
+		this: ModelStatic<M>,
+		username: string,
+		password: string,
+		resetPasswordKey: string,
+		cb: (err: any, user?: M) => void,
+	) => void;
+
+	declare static createStrategy: () => Strategy;
+
+	declare isShadowUser?: boolean;
+
+	declare feedback?: string;
+
+	declare sha3hashedPassword: CreationOptional<string>;
+}
+
 @Table
-class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export class User extends ModelWithPassport<InferAttributes<User>, InferCreationAttributes<User>> {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -54,13 +145,13 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	initials!: string;
 
 	@Column(DataType.TEXT)
-	avatar?: string | null;
+	avatar!: string | null;
 
 	@Column(DataType.TEXT)
-	bio?: string | null;
+	bio!: string | null;
 
 	@Column(DataType.TEXT)
-	title?: string | null;
+	title!: string | null;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -72,141 +163,84 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	@IsLowercase
 	@IsEmail
 	@Column(DataType.TEXT)
-	publicEmail?: string | null;
+	publicEmail!: string | null;
 
 	@Column(DataType.TEXT)
-	authRedirectHost?: string | null;
+	authRedirectHost!: string | null;
 
 	@Column(DataType.TEXT)
-	location?: string | null;
+	location!: string | null;
 
 	@Column(DataType.TEXT)
-	website?: string | null;
+	website!: string | null;
 
 	@Column(DataType.TEXT)
-	facebook?: string | null;
+	facebook!: string | null;
 
 	@Column(DataType.TEXT)
-	twitter?: string | null;
+	twitter!: string | null;
 
 	@Column(DataType.TEXT)
-	github?: string | null;
+	github!: string | null;
 
 	@Column(DataType.TEXT)
-	orcid?: string | null;
+	orcid!: string | null;
 
 	@Column(DataType.TEXT)
-	googleScholar?: string | null;
+	googleScholar!: string | null;
 
 	@Column(DataType.DATE)
-	// 	resetHashExpiration?: Date | null;
-	resetHashExpiration?: any;
+	resetHashExpiration!: Date | null;
 
 	@Column(DataType.TEXT)
-	resetHash?: string | null;
+	resetHash!: string | null;
 
 	@Column(DataType.BOOLEAN)
-	inactive?: boolean | null;
+	inactive!: boolean | null;
 
 	@Column(DataType.INTEGER)
-	pubpubV3Id?: number | null;
+	pubpubV3Id!: number | null;
 
 	@Column(DataType.TEXT)
-	passwordDigest?: string | null;
-
-	@AllowNull(false)
-	@Column(DataType.TEXT)
-	hash!: string;
+	passwordDigest!: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	salt!: string;
+	hash!: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	salt!: CreationOptional<string>;
 
 	@Default(null)
 	@Column(DataType.BOOLEAN)
-	// 	gdprConsent?: CreationOptional<boolean | null>;
-	gdprConsent?: any;
+	gdprConsent!: CreationOptional<boolean | null>;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
 	isSuperAdmin!: CreationOptional<boolean>;
 
-	declare isShadowUser?: boolean;
-
-	declare feedback?: string;
-
-	declare sha3hashedPassword: CreationOptional<string>;
-
 	@HasMany(() => PubAttribution, {
 		onDelete: 'CASCADE',
 		as: 'attributions',
 		foreignKey: 'userId',
 	})
-	// 	attributions?: PubAttribution[];
-	attributions?: any;
+	attributions?: PubAttribution[];
 
 	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' })
-	// 	discussions?: Discussion[];
-	discussions?: any;
+	discussions?: Discussion[];
 
 	@HasOne(() => UserNotificationPreferences, {
 		onDelete: 'CASCADE',
 		as: 'userNotificationPreferences',
 		foreignKey: 'userId',
 	})
-	// 	userNotificationPreferences?: UserNotificationPreferences;
-	userNotificationPreferences?: any;
+	userNotificationPreferences?: UserNotificationPreferences;
 
 	@HasOne(() => ZoteroIntegration, {
 		as: 'zoteroIntegration',
 		foreignKey: { name: 'userId', allowNull: false },
 	})
-	// 	zoteroIntegration?: ZoteroIntegration;
-	zoteroIntegration?: any;
-
-	declare setPassword: (password: string, cb: (err: any, user?: any) => void) => void;
-
-	declare setActivationKey: (cb: (err: any, user?: any) => void) => void;
-
-	declare authenticate: (
-		password: string,
-		cb: (err: any, user?: any, info?: any) => void,
-	) => void;
-
-	// @ts-expect-error
-	// eslint-disable-next-line no-dupe-class-members
-	declare authenticate: () => (
-		username: string,
-		password: string,
-		cb: (err: any, user?: any, info?: any) => void,
-	) => void;
-
-	declare serializeUser: () => (user: User, cb: (err: any, id?: any) => void) => User[];
-
-	declare deserializeUser: () => (username: string, cb: (err: any, user?: any) => void) => User;
-
-	declare register: (user: User, password: string, cb: (err: any, user?: any) => void) => User;
-
-	declare activate: (
-		username: string,
-		password: string,
-		activationKey: string,
-		cb: (err: any, user?: any) => void,
-	) => void;
-
-	declare findByUsername: (username: string, cb: (err: any, user?: any) => void) => void;
-
-	declare setResetPasswordKey: (username: string, cb: (err: any, user?: any) => void) => void;
-
-	declare resetPassword: (
-		username: string,
-		password: string,
-		resetPasswordKey: string,
-		cb: (err: any, user?: any) => void,
-	) => void;
-
-	declare createStrategy: () => any;
+	zoteroIntegration?: ZoteroIntegration;
 }
-
-export const UserAnyModel = User as any;

@@ -22,15 +22,13 @@ import { getEmptyDoc } from 'client/components/Editor';
 import {
 	ActivityItem as ActivityItemType,
 	Collection as CollectionType,
-	Community as CommunityType,
-	Member as MemberType,
 	UserWithPrivateFields as UserType,
-	Release as ReleaseType,
 	Pub as PubType,
 	FacetBinding as FacetBindingType,
-	SubmissionWorkflow as SubmissionWorkflowType,
-	UserSubscription as UserSubscriptionType,
+	DefinitelyHas,
+	DocJson,
 } from 'types';
+import { CreationAttributes } from 'sequelize';
 
 type WithOptionalBase<
 	T extends Record<string, any>,
@@ -76,7 +74,7 @@ export const builders = {
 		args?: WithOptional<UserType, 'firstName' | 'lastName' | 'email' | 'slug' | 'initials'> & {
 			password?: string;
 		},
-	): Promise<typeof User> => {
+	): Promise<User> => {
 		const uniqueness = uuid.v4();
 		const defaults = {
 			firstName: 'Test',
@@ -115,8 +113,8 @@ export const builders = {
 					passwordDigest: 'sha512',
 				},
 				sha3hashedPassword,
-				(err: any, user: typeof User) => {
-					if (err) {
+				(err, user) => {
+					if (err || !user) {
 						return reject(err);
 					}
 					// eslint-disable-next-line no-param-reassign
@@ -129,7 +127,7 @@ export const builders = {
 
 	Community: async (
 		args: { createFullCommunity: boolean } & WithOptional<
-			CommunityType,
+			CreationAttributes<Community>,
 			'title' | 'subdomain' | 'navigation'
 		>,
 	) => {
@@ -142,7 +140,8 @@ export const builders = {
 		};
 		if (createFullCommunity) {
 			const admin = await builders.User();
-			return createCommunity({ ...sharedArgs }, admin, false);
+			// @ts-expect-error FIXME: createCommunity only returns `subdomain`, but this leads to errors in modelize. Maybe let it return the whole community?
+			return createCommunity({ ...sharedArgs }, admin, false) as Community;
 		}
 		return Community.create({
 			navigation: [],
@@ -152,20 +151,29 @@ export const builders = {
 
 	Pub: async (args: { createPubCreator?: boolean } & WithOptional<PubType>) => {
 		const { createPubCreator = true, ...pub } = args;
-		const pubCreator = createPubCreator && (await builders.User());
-		return createPub(pub, pubCreator && pubCreator.id);
+		const pubCreator = createPubCreator ? await builders.User() : undefined;
+		return createPub(pub, pubCreator?.id);
 	},
 
 	Collection: ({
-		title = 'Collection ' + uuid.v4(),
-		kind = 'issue',
+		title,
+		kind,
 		...restArgs
-	}: WithOptional<CollectionType, 'title' | 'kind'>) =>
+	}: DefinitelyHas<WithOptional<CollectionType, 'title' | 'kind'>, 'communityId'>) =>
 		//	Omit<CollectionType, 'title' | 'kind'> & { title?: string; kind?: string }
-		createCollection({ title, kind, ...restArgs }),
+		createCollection({
+			title: title ?? 'Collection ' + uuid.v4(),
+			kind: kind ?? 'issue',
+			...restArgs,
+		}),
 	Page: createPage,
 
-	Member: async ({ pubId, collectionId, communityId, ...restArgs }: WithOptional<MemberType>) =>
+	Member: async ({
+		pubId,
+		collectionId,
+		communityId,
+		...restArgs
+	}: WithOptional<CreationAttributes<Member>>) =>
 		// {
 		// 	pubId?: string;
 		// 	collectionId?: string;
@@ -209,14 +217,16 @@ export const builders = {
 		return FacetBinding.create({ ...getTargetArgs(), ...restArgs });
 	},
 
-	Release: async (args: WithOptional<ReleaseType, 'userId' | 'historyKey' | 'docId'>) => {
+	Release: async (
+		args: WithOptional<CreationAttributes<Release>, 'userId' | 'historyKey' | 'docId'>,
+	) => {
 		// The Release model requires these, but it doesn't currently associate them, so it's safe
 		// to create random UUIDs for testing purposes.
 		const { userId = uuid.v4(), historyKey = 0, docId = null, ...restArgs } = args;
 
 		let resolvedDocId = docId;
 		if (!resolvedDocId) {
-			const fakeDoc = await createDoc({});
+			const fakeDoc = await createDoc({} as DocJson);
 			resolvedDocId = fakeDoc.id;
 		}
 
@@ -232,7 +242,7 @@ export const builders = {
 
 	SubmissionWorkflow: (
 		args: WithOptional<
-			SubmissionWorkflowType,
+			CreationAttributes<SubmissionWorkflow>,
 			| 'enabled'
 			| 'instructionsText'
 			| 'introText'
@@ -264,7 +274,10 @@ export const builders = {
 	},
 
 	UserSubscription: (
-		args: WithOptional<UserSubscriptionType, 'pubId' | 'status' | 'setAutomatically'>,
+		args: WithOptional<
+			CreationAttributes<UserSubscription>,
+			'pubId' | 'status' | 'setAutomatically'
+		>,
 	) => {
 		const modifiedArgs = { ...args };
 		// Modelize will try to associate this with a Pub if it's nested inside...

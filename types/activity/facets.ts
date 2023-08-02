@@ -5,7 +5,7 @@ export type FacetInstanceUpdatedActivityItem = InsertableActivityItemBase & {
 	kind: 'facet-instance-updated';
 	payload: {
 		facetName: string;
-		facetProps: Record<string, Diff<any>>;
+		facetProps: Partial<Record<string, Diff<any>>>;
 	};
 };
 

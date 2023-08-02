@@ -1,17 +1,12 @@
+import { SpamTag as SpamTagModel } from 'server/models';
+import { SerializedModel } from './serializedModel';
+
 export type SpamStatus = 'unreviewed' | 'confirmed-spam' | 'confirmed-not-spam';
 
-export type SpamTag = {
-	id: string;
-	spamScore: number;
-	spamScoreVersion: number;
-	spamScoreComputedAt: string;
-	status: SpamStatus;
-	statusUpdatedAt: null | string;
-	fields: Record<string, string[]>;
-};
+export type SpamTag = SerializedModel<SpamTagModel>;
 
-export type SpamVerdict = Pick<
-	SpamTag,
+export type SpamVerdict<T extends SpamTag | SpamTagModel = SpamTag> = Pick<
+	T,
 	'spamScore' | 'spamScoreVersion' | 'spamScoreComputedAt' | 'fields'
 >;
 

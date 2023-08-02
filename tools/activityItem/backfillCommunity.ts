@@ -12,6 +12,7 @@ import {
 	Release,
 	PubEdge,
 	PubAttribution,
+	Community,
 } from 'server/models';
 import {
 	createCollectionActivityItem,
@@ -32,7 +33,7 @@ import { forEach } from '../migrations/util';
 type MembershipScope = { communityId: string } | { collectionId: string } | { pubId: string };
 
 type Context = {
-	community: types.Community;
+	community: Community;
 	defaultActorId: null | string;
 };
 
@@ -123,6 +124,7 @@ const backfillDiscussion = async (discussion: types.Discussion) => {
 const backfillPub = async (ctx: Context, pub: types.Pub) => {
 	const [releases, reviews, discussions, pubEdges] = await Promise.all(
 		[Release, ReviewNew, Discussion, PubEdge, PubAttribution].map((Model) =>
+			// @ts-expect-error FIXME: `this` error, if you have a union of models type inferece doesn't work properly. Nbd
 			Model.findAll({ where: { pubId: pub.id } }),
 		),
 	);
@@ -154,7 +156,7 @@ const backfillPubs = async (ctx: Context) => {
 };
 
 export const backfillItemsForCommunity = async (
-	community: types.Community,
+	community: Community,
 	deleteExistingItems: boolean = false,
 ) => {
 	const ctx: Context = {

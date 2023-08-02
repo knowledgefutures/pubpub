@@ -15,6 +15,7 @@ import {
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 
+import { expect } from 'utils/assert';
 import { submitDoiData } from './submit';
 
 const collectionIncludes = [
@@ -25,7 +26,7 @@ const collectionIncludes = [
 	},
 ];
 
-const findPrimaryCollectionPubForPub = async (pubId) => {
+const findPrimaryCollectionPubForPub = async (pubId: string) => {
 	const collectionPubs = await CollectionPub.findAll({
 		where: { pubId },
 		include: [
@@ -63,17 +64,19 @@ const findCommunity = (communityId) =>
 
 export const persistCrossrefDepositRecord = async (ids, depositJson) => {
 	const { collectionId, pubId } = ids;
-	const targetModel = pubId
-		? await Pub.findOne({
-				where: {
-					id: pubId,
-				},
-		  })
-		: await Collection.findOne({
-				where: {
-					id: collectionId,
-				},
-		  });
+	const targetModel = expect(
+		pubId
+			? await Pub.findOne({
+					where: {
+						id: pubId,
+					},
+			  })
+			: await Collection.findOne({
+					where: {
+						id: collectionId,
+					},
+			  }),
+	);
 	const { crossrefDepositRecordId } = targetModel;
 
 	if (crossrefDepositRecordId) {
@@ -85,7 +88,8 @@ export const persistCrossrefDepositRecord = async (ids, depositJson) => {
 
 	const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson });
 
-	await targetModel.update({
+	// this is just to make typescript happy, update cannot be called on the union
+	await (targetModel as Pub).update({
 		crossrefDepositRecordId: crossrefDepositRecord.id,
 	});
 
@@ -125,7 +129,7 @@ export const getDoiData = (
 			{
 				collectionPub,
 				collection: resolvedCollection?.toJSON(),
-				community: community.toJSON(),
+				community: community?.toJSON(),
 				pub: pub?.toJSON(),
 				contentVersion,
 				reviewType,

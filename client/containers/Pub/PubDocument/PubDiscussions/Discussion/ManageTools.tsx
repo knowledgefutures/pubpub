@@ -17,12 +17,12 @@ export type SortType = keyof typeof sortLabels;
 
 type Props = {
 	pubData: {
-		labels?: any[];
+		labels?: any[] | null;
 	};
 	discussionData: {
-		isClosed?: boolean;
-		labels?: any[];
-		userId?: string;
+		isClosed?: boolean | null;
+		labels?: any[] | null;
+		userId?: string | null;
 	};
 	setSortType: (s: SortType) => any;
 	sortType: SortType;

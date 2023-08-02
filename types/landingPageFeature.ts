@@ -1,16 +1,8 @@
-import { Community, DefinitelyHas, DocJson, Pub } from 'types';
+import { LandingPageFeature as LandingPageFeatureModel } from 'server/models';
+import { DefinitelyHas, DocJson } from 'types';
+import { SerializedModel } from './serializedModel';
 
-export type LandingPageFeature = {
-	id: string;
-	communityId: null | string;
-	pubId: null | string;
-	rank: string;
-	createdAt: string;
-	updatedAt: string;
-	pub?: null | DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'community' | 'releases'>;
-	community?: null | Community;
-	payload: null | Record<string, any>;
-};
+export type LandingPageFeature = SerializedModel<LandingPageFeatureModel>;
 
 export type LandingPageFeatureKind = 'pub' | 'community';
 

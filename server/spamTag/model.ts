@@ -8,10 +8,13 @@ import {
 	AllowNull,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 import { SpamStatus } from 'types';
 
 @Table
-class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttributes<SpamTag>> {
+export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttributes<SpamTag>> {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -24,8 +27,7 @@ class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttributes<Sp
 	status!: CreationOptional<SpamStatus>;
 
 	@Column(DataType.DATE)
-	// 	statusUpdatedAt?: Date | null;
-	statusUpdatedAt?: any;
+	statusUpdatedAt!: Date | null;
 
 	/**
 	 * TODO: add validation and better type for fields
@@ -52,7 +54,7 @@ class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttributes<Sp
 	 */
 	@AllowNull(false)
 	@Column(DataType.JSONB)
-	fields!: Record<string, any>;
+	fields!: Record<string, string[]>;
 
 	@AllowNull(false)
 	@Column(DataType.DOUBLE)
@@ -64,8 +66,5 @@ class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttributes<Sp
 
 	@Default(1)
 	@Column(DataType.INTEGER)
-	// 	spamScoreVersion?: CreationOptional<number | null>;
-	spamScoreVersion?: any;
+	spamScoreVersion!: CreationOptional<number | null>;
 }
-
-export const SpamTagAnyModel = SpamTag as any;

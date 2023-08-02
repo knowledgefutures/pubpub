@@ -1,3 +1,4 @@
+import { ActivityItem } from 'server/models';
 import { defer } from 'server/utils/deferred';
 
 type MinimalInstanceProperties = {
@@ -8,9 +9,19 @@ type SequelizeModelInstance<T extends MinimalInstanceProperties> = T & {
 	_previousDataValues: T;
 };
 
-type CreateHookFn<T extends MinimalInstanceProperties> = (
-	callback: (model: SequelizeModelInstance<T>, options: { actorId: string }) => unknown,
-) => void;
+export type CreateHookFn<T extends MinimalInstanceProperties> = ((
+	name: string,
+	fn: (
+		model: SequelizeModelInstance<T>,
+		options: { actorId?: string | null },
+	) => void | Promise<void>,
+) => void) &
+	((
+		fn: (
+			model: SequelizeModelInstance<T>,
+			options: { actorId?: string | null },
+		) => void | Promise<void>,
+	) => void);
 
 type SequelizeModelSingleton<Instance extends MinimalInstanceProperties> = {
 	afterCreate: CreateHookFn<Instance>;
@@ -24,13 +35,13 @@ type CreateActivityHooksOptions<
 > = {
 	// It would be better to use ModelType from sequelize here, but this produces error ts(2684)
 	Model: ModelSingleton;
-	onModelCreated?: (actorId: null | string, modelId: string) => Promise<void>;
+	onModelCreated?: (actorId: null | string, modelId: string) => Promise<void | ActivityItem>;
 	onModelUpdated?: (
 		actorId: null | string,
 		modelId: string,
 		previousModel: InstanceProperties,
-	) => Promise<void>;
-	onModelDestroyed?: (actorId: null | string, modelId: string) => Promise<void>;
+	) => Promise<void | ActivityItem>;
+	onModelDestroyed?: (actorId: null | string, modelId: string) => Promise<void | ActivityItem>;
 };
 
 export const createActivityHooks = <InstanceProperties extends MinimalInstanceProperties>(
@@ -39,7 +50,9 @@ export const createActivityHooks = <InstanceProperties extends MinimalInstancePr
 	const { Model, onModelCreated, onModelUpdated, onModelDestroyed } = options;
 	if (onModelCreated) {
 		Model.afterCreate((model, { actorId }) =>
-			defer(() => onModelCreated(actorId || null, model.id)),
+			defer(async () => {
+				await onModelCreated(actorId || null, model.id);
+			}),
 		);
 	}
 	if (onModelUpdated) {

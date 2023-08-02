@@ -3,8 +3,17 @@ import { Op } from 'sequelize';
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
 import { getPubDraftDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
-import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData, SanitizedPubData } from 'types';
+import {
+	Pub as PubType,
+	DefinitelyHas,
+	PubDocInfo,
+	InitialData,
+	SanitizedPubData,
+	DocJson,
+	PubEdge as PubEdgeType,
+} from 'types';
 
+import { expect } from 'utils/assert';
 import { sanitizePubEdge } from './sanitizePubEdge';
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 
@@ -40,7 +49,7 @@ export const getPubRelease = async (
 		throw new Error('Release not found');
 	}
 	const { historyKey, docId } = release;
-	const doc = await Doc.findOne({ where: { id: docId } });
+	const doc = expect(await Doc.findOne({ where: { id: docId } }));
 	return {
 		initialDoc: doc.content,
 		initialDocKey: historyKey,
@@ -65,12 +74,16 @@ export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData
 	};
 };
 
-export const getPubCitations = async (pubData, initialData, initialDoc) => {
+export const getPubCitations = async (
+	pubData: SanitizedPubData,
+	initialData: InitialData,
+	initialDoc: DocJson,
+) => {
 	const {
 		communityData,
 		scopeData: { facets },
 	} = initialData;
-	const citationStyleFacet = facets!.CitationStyle.value!;
+	const citationStyleFacet = expect(facets!.CitationStyle).value!;
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
 		getStructuredCitationsForPub(citationStyleFacet, initialDoc),
 		generateCitationHtml(pubData, communityData, citationStyleFacet.citationStyle),
@@ -82,19 +95,20 @@ export const getPubCitations = async (pubData, initialData, initialDoc) => {
 	};
 };
 
-export const getPubEdges = async (pubData, initialData) => {
-	const { inboundEdges, outboundEdges } = pubData;
-	const sanitizeEdgeHere = (edge) => sanitizePubEdge(initialData, edge);
+export const getPubEdges = async (pubData: SanitizedPubData, initialData: InitialData) => {
+	const inboundEdges = expect(pubData.inboundEdges);
+	const outboundEdges = expect(pubData.outboundEdges);
+	const sanitizeEdgeHere = (edge: PubEdgeType) => sanitizePubEdge(initialData, edge);
 
 	const sanitizedInboundEdges = inboundEdges.map(sanitizeEdgeHere).filter((x) => x);
 	const sanitizedOutboundEdges = outboundEdges.map(sanitizeEdgeHere).filter((x) => x);
 
 	const parentPubIds = [
 		...sanitizedOutboundEdges
-			.filter((edge) => !edge.pubIsParent)
-			.map((edge) => edge.targetPubId),
-		...sanitizedInboundEdges.filter((edge) => edge.pubIsParent).map((edge) => edge.pubId),
-	];
+			.filter((edge) => !edge?.pubIsParent)
+			.map((edge) => edge?.targetPubId),
+		...sanitizedInboundEdges.filter((edge) => edge?.pubIsParent).map((edge) => edge?.pubId),
+	].filter(Boolean) as string[];
 
 	const edgeIds = [...inboundEdges, ...outboundEdges].map((edge) => edge.id);
 

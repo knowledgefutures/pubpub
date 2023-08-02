@@ -1,6 +1,7 @@
 import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
+import { expect } from 'utils/assert';
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
 const managerUpdatableFields = [
@@ -38,7 +39,7 @@ export const canCreatePub = async ({ userId, communityId, collectionId, createPu
 		const {
 			activePermissions: { canManage },
 		} = scopeData;
-		const { hideCreatePubButton } = communityData;
+		const { hideCreatePubButton } = expect(communityData);
 
 		return {
 			create: canManage || !hideCreatePubButton,

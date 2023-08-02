@@ -1,7 +1,6 @@
 import { QueryTypes, Op } from 'sequelize';
 import { Knex } from 'knex';
 
-import * as types from 'types';
 import { Pub } from 'server/models';
 import { sequelize, knexInstance } from 'server/sequelize';
 import { buildPubOptions, sanitizePub } from 'server/utils/queryHelpers';
@@ -185,7 +184,7 @@ const getPubIdsQuery = (query: PubsQuery) => {
 		.toNative();
 };
 
-const sortPubsByListOfIds = (pubs: any[], pubIds: string[]) => {
+const sortPubsByListOfIds = (pubs: Pub[], pubIds: string[]) => {
 	return pubs.concat().sort((a, b) => pubIds.indexOf(a.id) - pubIds.indexOf(b.id));
 };
 
@@ -208,11 +207,8 @@ export const queryPubIds = async (query: PubsQuery): Promise<string[]> => {
 	return results.map((r: any) => r.pubId);
 };
 
-export const getPubsById = <T extends types.Pub = types.Pub>(
-	pubIds: string[],
-	options: PubGetOptions = {},
-) => {
-	const pubsPromise: Promise<types.SequelizeModel<T>[]> = Pub.findAll({
+export const getPubsById = (pubIds: string[], options: PubGetOptions = {}) => {
+	const pubsPromise = Pub.findAll({
 		where: { id: { [Op.in]: pubIds } },
 		...buildPubOptions({ ...options, getMembers: true, getDraft: true }),
 	}).then((unsortedPubs) => sortPubsByListOfIds(unsortedPubs, pubIds));

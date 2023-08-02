@@ -1,9 +1,10 @@
 import { FacetValue, License } from 'facets';
-import { DefinitelyHas, Pub, Community, CollectionPub } from 'types';
+import * as types from 'types';
 import { LicenseDetails, LicenseKind, RenderedLicense } from 'types/license';
 import { getPublisherString } from 'utils/community';
 import { getPubCopyrightYear } from 'utils/pub/copyright';
 import { assert } from 'utils/assert';
+import { CollectionPub, Community, Pub } from 'server/models';
 
 export const licenseDetailsByKind: { [L in LicenseKind]: LicenseDetails<L> } = {
 	'cc-by': {
@@ -75,9 +76,11 @@ export const licenseDetailsByKind: { [L in LicenseKind]: LicenseDetails<L> } = {
 
 type RenderLicenseForPubOptions = {
 	license: FacetValue<typeof License>;
-	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
-	pub: Pub;
-	community: Community;
+	collectionPubs:
+		| types.DefinitelyHas<CollectionPub, 'collection'>[]
+		| types.DefinitelyHas<types.CollectionPub, 'collection'>[];
+	pub: types.Pub | Pub;
+	community: types.Community | Community;
 };
 
 export const renderLicenseForPub = (options: RenderLicenseForPubOptions): RenderedLicense => {

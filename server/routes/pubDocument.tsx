@@ -187,7 +187,7 @@ app.get('/pub/:pubSlug/release-id/:releaseId', speedLimiter, async (req, res, ne
 		const initialData = await getInitialDataForPub(req);
 		const { pubSlug, releaseId } = req.params;
 		const pub = await getPub({ slug: pubSlug, communityId: initialData.communityData.id });
-		const releaseIndex = pub.releases.findIndex((release) => release.id === releaseId);
+		const releaseIndex = (pub.releases || []).findIndex((release) => release.id === releaseId);
 		if (releaseIndex !== -1) {
 			const releaseNumber = 1 + releaseIndex;
 			return res.redirect(`/pub/${pubSlug}/release/${releaseNumber}`);
@@ -209,9 +209,9 @@ app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
 			{ slug: pubSlug, communityId: initialData.communityData.id },
 			{ getDiscussions: true },
 		);
-		const discussion = pub.discussions.find((disc) => disc.id === discussionId);
+		const discussion = pub.discussions?.find((disc) => disc.id === discussionId);
 		if (discussion) {
-			const isDiscussionOnDraft = discussion.visibility.access !== 'public';
+			const isDiscussionOnDraft = discussion.visibility?.access !== 'public';
 			const hash = `#discussion-${discussionId}`;
 			if (isDiscussionOnDraft) {
 				return res.redirect(`/pub/${pubSlug}/draft${hash}`);

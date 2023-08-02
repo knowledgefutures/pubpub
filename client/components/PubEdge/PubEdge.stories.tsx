@@ -17,7 +17,10 @@ const pubEdge = {
 		contributors: ['Richard Jenkins', 'Bradley Whitford', 'Sigourney Weaver'],
 		publicationDate: new Date().toISOString(),
 		avatar: 'https://assets.pubpub.org/9fk06ei5/41589421981678.jpg',
-	},
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+		doi: null,
+	} satisfies ExternalPublication,
 	relationType: RelationType.Review,
 	pubIsParent: true,
 };

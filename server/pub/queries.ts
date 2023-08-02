@@ -18,6 +18,7 @@ import { generateHash } from 'utils/hashes';
 import { getReadableDateInYear } from 'utils/dates';
 import { asyncForEach } from 'utils/async';
 import { buildPubOptions } from 'server/utils/queryHelpers';
+import { expect } from 'utils/assert';
 import * as types from 'types';
 
 export const createPub = async (
@@ -32,7 +33,9 @@ export const createPub = async (
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const dateString = getReadableDateInYear(new Date());
-	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
+	const { defaultPubCollections } = expect(
+		await Community.findOne({ where: { id: communityId } }),
+	);
 	const draft = await createDraft();
 
 	const newPub = await Pub.create(
@@ -133,7 +136,7 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 };
 
 export const destroyPub = async (pubId: string, actorId: null | string = null) => {
-	const pub = await Pub.findByPk(pubId);
+	const pub = expect(await Pub.findByPk(pubId));
 	return pub.destroy({ actorId }).then(() => {
 		deletePubSearchData(pubId);
 		return true;
@@ -162,10 +165,14 @@ const findPubOptions = buildPubOptions({
 	getCollections: true,
 });
 
-export const findCollection = (
-	collectionId: string,
-): Promise<types.DefinitelyHas<types.Collection, 'attributions'>> =>
-	Collection.findOne({ where: { id: collectionId }, ...findCollectionOptions });
+export const findCollection = async (collectionId: string) =>
+	Collection.findOne({
+		where: { id: collectionId },
+		...findCollectionOptions,
+	}) as Promise<types.DefinitelyHas<Collection, 'attributions'> | null>;
 
-export const findPub = (pubId: string): Promise<types.DefinitelyHas<types.Pub, 'community'>> =>
-	Pub.findOne({ where: { id: pubId }, ...findPubOptions });
+export const findPub = (pubId: string) =>
+	Pub.findOne({ where: { id: pubId }, ...findPubOptions }) as Promise<types.DefinitelyHas<
+		Pub,
+		'community'
+	> | null>;

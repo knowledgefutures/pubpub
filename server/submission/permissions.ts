@@ -1,6 +1,7 @@
 import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 import * as types from 'types';
+import { expect } from 'utils/assert';
 
 const pubManagerCanChangeStatus = (
 	oldStatus: types.SubmissionStatus,
@@ -28,7 +29,7 @@ type CanCreateOptions = {
 };
 
 export const canCreateSubmission = async ({ userId, submissionWorkflowId }: CanCreateOptions) => {
-	const workflow: types.SubmissionWorkflow = await SubmissionWorkflow.findOne({
+	const workflow = await SubmissionWorkflow.findOne({
 		where: { id: submissionWorkflowId },
 	});
 	return userId && workflow && workflow.enabled;
@@ -43,16 +44,18 @@ export const canDeleteSubmission = async ({ userId, id }: CanDeleteOptions) => {
 	const {
 		pubId,
 		submissionWorkflow: { collection },
-	} = await Submission.findOne({
-		where: { id },
-		include: [
-			{
-				model: SubmissionWorkflow,
-				as: 'submissionWorkflow',
-				include: [{ model: Collection, as: 'collection' }],
-			},
-		],
-	});
+	} = expect(
+		await Submission.findOne({
+			where: { id },
+			include: [
+				{
+					model: SubmissionWorkflow,
+					as: 'submissionWorkflow',
+					include: [{ model: Collection, as: 'collection' }],
+				},
+			],
+		}),
+	) as Submission & { submissionWorkflow: types.DefinitelyHas<SubmissionWorkflow, 'collection'> };
 	const [
 		{
 			activePermissions: { canManage: canManagePub },
@@ -78,16 +81,18 @@ export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptio
 		status: oldStatus,
 		pubId,
 		submissionWorkflow: { collection },
-	} = await Submission.findOne({
-		where: { id },
-		include: [
-			{
-				model: SubmissionWorkflow,
-				as: 'submissionWorkflow',
-				include: [{ model: Collection, as: 'collection' }],
-			},
-		],
-	});
+	} = expect(
+		await Submission.findOne({
+			where: { id },
+			include: [
+				{
+					model: SubmissionWorkflow,
+					as: 'submissionWorkflow',
+					include: [{ model: Collection, as: 'collection' }],
+				},
+			],
+		}),
+	) as Submission & { submissionWorkflow: types.DefinitelyHas<SubmissionWorkflow, 'collection'> };
 
 	const [
 		{

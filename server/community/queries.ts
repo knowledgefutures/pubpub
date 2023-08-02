@@ -2,7 +2,6 @@
 
 import uuidv4 from 'uuid/v4';
 
-import * as types from 'types';
 import {
 	Community,
 	Page,
@@ -217,7 +216,7 @@ export const isUserAffiliatedWithCommunity = async (userId: string, communityId:
 	return isHere;
 };
 
-export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {
+export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<Community[]> {
 	let offset = 0;
 	while (true) {
 		const communities = await Community.findAll({

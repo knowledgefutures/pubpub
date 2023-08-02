@@ -10,13 +10,16 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { InsertableActivityItem, SerializedModel } from 'types';
 import { ActivityItem, UserSubscription, User } from '../models';
 
 @Table
-class UserNotification extends Model<
+export class UserNotification extends Model<
 	InferAttributes<UserNotification>,
 	InferCreationAttributes<UserNotification>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -45,25 +48,20 @@ class UserNotification extends Model<
 	@Column(DataType.BOOLEAN)
 	manuallySetIsRead!: CreationOptional<boolean>;
 
-	@BelongsTo(() => ActivityItem, {
+	@BelongsTo(() => ActivityItem<InsertableActivityItem>, {
 		onDelete: 'CASCADE',
 		as: 'activityItem',
 		foreignKey: 'activityItemId',
 	})
-	// 	activityItem?: ActivityItem;
-	activityItem?: any;
+	activityItem?: ActivityItem;
 
 	@BelongsTo(() => UserSubscription, {
 		onDelete: 'CASCADE',
 		as: 'userSubscription',
 		foreignKey: 'userSubscriptionId',
 	})
-	// 	userSubscription?: UserSubscription;
-	userSubscription?: any;
+	userSubscription?: UserSubscription;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	// 	user?: User;
-	user?: any;
+	user?: User;
 }
-
-export const UserNotificationAnyModel = UserNotification as any;

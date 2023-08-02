@@ -2,7 +2,7 @@ import { Pub, ReviewNew, Reviewer } from 'server/models';
 
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
-export default async (pubSlug, reviewNumber, communityId) => {
+export default async (pubSlug: string, reviewNumber: number, communityId: string) => {
 	const sanitizedSlug = pubSlug.toLowerCase();
 	const pubData = await Pub.findOne({
 		where: { slug: sanitizedSlug, communityId },

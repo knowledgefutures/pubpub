@@ -29,5 +29,6 @@ module.exports = {
 	testPathIgnorePatterns: ['__tests__/data'],
 	logHeapUsage: true,
 	forceExit: true,
-	silent: true,
+	silent: false,
+	runInBand: true,
 };

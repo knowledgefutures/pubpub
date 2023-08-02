@@ -1,13 +1,24 @@
 import { Pub } from 'server/models';
-import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId, pubId, reviewAccessHash }) => {
+export const updatePermissions = ['title', 'status', 'labels', 'releaseRequested'] as const;
+
+export const getPermissions = async ({
+	userId,
+	communityId,
+	pubId,
+	reviewAccessHash,
+}: {
+	userId: string;
+	communityId: string;
+	pubId: string;
+	reviewAccessHash: string;
+}) => {
 	if (!communityId || !pubId) {
 		return {};
 	}
 
-	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
+	const pub = await Pub.findOne({ where: { id: pubId } });
 	const hasAccessHash = pub?.reviewHash === reviewAccessHash;
 
 	const scopeData = await getScope({
@@ -21,16 +32,17 @@ export const getPermissions = async ({ userId, communityId, pubId, reviewAccessH
 	}
 	const { canAdmin, canCreateReviews, canManage } = scopeData.activePermissions;
 
-	let editProps = [];
-	if (canManage) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-		editProps = ['title', 'status', 'labels', 'releaseRequested'];
-	}
-
 	return {
 		create: canCreateReviews || hasAccessHash,
 		createRelease: canAdmin,
-		update: editProps,
+		update: canManage && updatePermissions,
 		destroy: canManage,
 	};
+};
+
+export type ReviewPermissions = {
+	create?: boolean;
+	createRelease?: boolean;
+	update?: false | typeof updatePermissions;
+	destroy?: boolean;
 };

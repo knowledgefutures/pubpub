@@ -17,10 +17,10 @@ export type PubMetadata = {
 	citationStyle: CitationStyleKind;
 	citationInlineStyle: CitationInlineStyleKind;
 	nodeLabels: NodeLabelMap;
-	publisher?: string;
-	primaryCollectionKind?: Collection['kind'];
-	primaryCollectionTitle?: string;
-	primaryCollectionMetadata?: Record<string, any>;
+	publisher?: string | null;
+	primaryCollectionKind?: Collection['kind'] | null;
+	primaryCollectionTitle?: string | null;
+	primaryCollectionMetadata?: Record<string, any> | null;
 	license: RenderedLicense;
 };
 

@@ -2,8 +2,9 @@ import { PubEdge } from 'server/models';
 import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { createExternalPublication } from 'server/externalPublication/queries';
 import { findRankInRankedList } from 'utils/rank';
+import { expect } from 'utils/assert';
 
-const findRankForNewPubEdge = async (pubId, moveToTop) => {
+const findRankForNewPubEdge = async (pubId: string, moveToTop: boolean) => {
 	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId } });
 	return findRankInRankedList(otherEdgesFromPub, moveToTop ? 0 : otherEdgesFromPub.length);
 };
@@ -55,10 +56,12 @@ export const getPubEdgeById = (pubEdgeId: string) => {
 };
 
 export const updatePubEdge = async ({ pubEdgeId, ...update }) => {
-	const edge = await PubEdge.findOne({
-		where: { id: pubEdgeId },
-		include: getPubEdgeIncludes({ includeTargetPub: true }),
-	});
+	const edge = expect(
+		await PubEdge.findOne({
+			where: { id: pubEdgeId },
+			include: getPubEdgeIncludes({ includeTargetPub: true }),
+		}),
+	);
 	if (edge.externalPublication && update.externalPublication) {
 		await edge.externalPublication.update(update.externalPublication);
 	}
@@ -66,6 +69,6 @@ export const updatePubEdge = async ({ pubEdgeId, ...update }) => {
 	return edge;
 };
 
-export const destroyPubEdge = async (pubEdgeId, actorId = null) => {
+export const destroyPubEdge = async (pubEdgeId: string, actorId: string | null = null) => {
 	return PubEdge.destroy({ where: { id: pubEdgeId }, actorId, individualHooks: true });
 };

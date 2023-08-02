@@ -8,13 +8,13 @@ type StyleProps = {
 	alignment?: string;
 	fontSize?: number;
 	width?: number;
-	backgroundColor?: string;
+	backgroundColor?: string | null;
 	logo?: string;
 };
 
 type Props = StyleProps & {
 	children: React.ReactNode;
-	color?: string;
+	color?: string | null;
 	innerPadding?: string;
 };
 
@@ -47,7 +47,7 @@ export const Section = ({
 		width={width}
 	>
 		<tr>
-			<td valign="top" style={{ padding: innerPadding, color }}>
+			<td valign="top" style={{ padding: innerPadding, color: color ?? undefined }}>
 				{children}
 			</td>
 		</tr>

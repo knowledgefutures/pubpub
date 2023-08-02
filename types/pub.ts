@@ -1,42 +1,25 @@
+import type {
+	Pub as PubModel,
+	Draft as DraftModel,
+	Doc as DocModel,
+	Release as ReleaseModel,
+	PubVersion as PubVersionModel,
+	CrossrefDepositRecord,
+} from 'server/models';
+import { SerializedModel } from './serializedModel';
 import { PubAttribution } from './attribution';
 import { Collection, CollectionPub } from './collection';
-import { Community } from './community';
 import { Discussion } from './discussion';
 import { DocJson } from './doc';
 import { Member } from './member';
-import { Review } from './review';
-import { InboundEdge, OutboundEdge } from './pubEdge';
-import { ScopeSummary } from './scope';
 import { Submission } from './submission';
 import { ThreadComment, Thread } from './thread';
 import { DefinitelyHas, Maybe } from './util';
 import { UserSubscription } from './userSubscription';
 
-export type Draft = {
-	id: string;
-	latestKeyAt?: string;
-	firebasePath: string;
-};
-
-export type Doc = {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	content: DocJson;
-};
-
-export type Release = {
-	id: string;
-	noteContent?: {};
-	noteText?: string;
-	pubId: string;
-	userId: string;
-	createdAt: string;
-	updatedAt: string;
-	historyKey: number;
-	docId: string;
-	doc?: Doc;
-};
+export type Draft = SerializedModel<DraftModel>;
+export type Doc = SerializedModel<DocModel>;
+export type Release = SerializedModel<ReleaseModel>;
 
 export type Export = {
 	id: string;
@@ -46,56 +29,9 @@ export type Export = {
 	workerTaskId?: string;
 };
 
-export type PubVersion = {
-	id: string;
-	historyKey?: number;
-	pubId?: string;
-};
-
-export type DepositRecord = {
-	id: string;
-	depositJson?: any;
-};
-
-export type Pub = {
-	createdAt: string;
-	updatedAt: string;
-	id: string;
-	slug: string;
-	title: string;
-	htmlTitle: null | string;
-	description?: string;
-	htmlDescription?: string;
-	avatar?: string;
-	customPublishedAt?: string;
-	doi: null | string;
-	labels?: string[];
-	downloads?: any[];
-	metadata?: {};
-	viewHash?: string;
-	editHash?: string;
-	reviewHash?: string;
-	commentHash?: string;
-	communityId: string;
-	community?: Community;
-	discussions?: Discussion[];
-	attributions: PubAttribution[];
-	collectionPubs?: CollectionPub[];
-	exports?: Export[];
-	members?: Member[];
-	reviews?: Review[];
-	releases: Release[];
-	pubVersions?: PubVersion[];
-	crossrefDepositRecordId?: string;
-	crossrefDepositRecord?: DepositRecord;
-	inboundEdges?: InboundEdge[];
-	outboundEdges?: OutboundEdge[];
-	draftId?: string;
-	draft?: Draft;
-	scopeSummaryId: null | string;
-	scopeSummary: ScopeSummary;
-	submission?: Submission;
-};
+export type PubVersion = SerializedModel<PubVersionModel>;
+export type DepositRecord = SerializedModel<CrossrefDepositRecord>;
+export type Pub = SerializedModel<PubModel>;
 
 export type PubWithConnections = DefinitelyHas<Pub, 'inboundEdges' | 'outboundEdges'>;
 

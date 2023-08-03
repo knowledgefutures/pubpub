@@ -1,7 +1,7 @@
 import { PubDiscussionCommentAddedActivityItem } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getPubFromContext } from './util';
 
 export const discussionTitle: TitleRenderer<PubDiscussionCommentAddedActivityItem> = (

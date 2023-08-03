@@ -6,7 +6,7 @@ import {
 } from 'types';
 import { getDashUrl } from 'utils/dashboard';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getCollectionFromContext } from './util';
 
 type AcceptedItem =

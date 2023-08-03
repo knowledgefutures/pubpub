@@ -3,7 +3,7 @@ import { pubShortUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
 import { relationTypeDefinitions } from 'utils/pubEdge';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getPubEdgeFromContext, getPubFromContext } from './util';
 
 type AcceptedItem = PubEdgeCreatedActivityItem | PubEdgeRemovedActivityItem;

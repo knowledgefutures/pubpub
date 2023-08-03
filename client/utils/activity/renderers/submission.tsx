@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { SubmissionUpdatedActivityItem } from 'types';
+import { pubTitle, collectionTitle } from 'utils/activity/titles';
 
-import { pubTitle, collectionTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type Titles = 'pub' | 'collection';

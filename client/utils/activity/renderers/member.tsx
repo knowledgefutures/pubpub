@@ -5,8 +5,8 @@ import {
 	MemberUpdatedActivityItem,
 	MemberRemovedActivityItem,
 } from 'types';
+import { memberTitle, scopeTitle } from 'utils/activity/titles';
 
-import { memberTitle, scopeTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type Titles = 'member' | 'scope';

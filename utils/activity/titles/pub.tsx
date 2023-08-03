@@ -10,8 +10,8 @@ import {
 } from 'types';
 import { PubTitle } from 'components';
 import { getDashUrl } from 'utils/dashboard';
+import { TitleRenderer } from 'client/utils/activity/types';
 
-import { TitleRenderer } from '../types';
 import { getPubFromContext } from './util';
 
 type AcceptedItem =

@@ -1,6 +1,6 @@
 import { ActivityAssociations, ActivityAssociationType } from 'types';
 
-import { ActivityRenderContext } from '../types';
+import { ActivityRenderContext } from '../../../client/utils/activity/types';
 
 const createContextAssociationRetriever =
 	<T extends ActivityAssociationType, I extends string = string>(association: T) =>

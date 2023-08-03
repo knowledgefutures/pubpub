@@ -12,7 +12,6 @@ import {
 	PubReviewCommentAddedActivityItem,
 	PubReviewUpdatedActivityItem,
 } from 'types';
-
 import {
 	pubTitle,
 	pubEdgeTitle,
@@ -20,7 +19,8 @@ import {
 	releaseTitle,
 	reviewTitle,
 	discussionTitle,
-} from '../titles';
+} from 'utils/activity/titles';
+
 import { itemRenderer } from './itemRenderer';
 
 type BaseTitles = 'pub';

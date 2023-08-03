@@ -2,8 +2,8 @@ import React from 'react';
 
 import { FacetsActivityItem } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
+import { facetTitle, scopeTitle } from 'utils/activity/titles';
 
-import { facetTitle, scopeTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type Titles = 'scope' | 'facet';

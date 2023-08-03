@@ -1,7 +1,7 @@
 import { PageActivityItem } from 'types';
 import { getDashUrl } from 'utils/dashboard';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 
 const prefix = 'the Page';
 

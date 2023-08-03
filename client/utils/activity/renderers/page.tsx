@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { PageCreatedActivityItem, PageUpdatedActivityItem, PageRemovedActivityItem } from 'types';
+import { pageTitle } from 'utils/activity/titles';
 
-import { pageTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type BaseTitles = 'page';

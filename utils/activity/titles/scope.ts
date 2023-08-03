@@ -1,6 +1,6 @@
 import { FacetsActivityItem, MemberActivityItem } from 'types';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 import { collectionTitle } from './collection';
 import { communityTitle } from './community';
 import { pubTitle } from './pub';

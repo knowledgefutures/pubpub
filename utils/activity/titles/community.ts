@@ -6,7 +6,7 @@ import {
 } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 
-import { TitleRenderer } from '../types';
+import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getCommunityFromContext } from './util';
 
 type AcceptedItem =

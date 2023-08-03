@@ -3,8 +3,8 @@ import React from 'react';
 import { ActivityItem, InsertableActivityItem } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isExternalUrl } from 'utils/urls';
+import { actorTitle } from 'utils/activity/titles';
 
-import { actorTitle } from '../titles';
 import {
 	ActivityItemRenderOptions,
 	ActivityItemRenderer,

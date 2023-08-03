@@ -7,8 +7,8 @@ import {
 	CollectionPubCreatedActivityItem,
 	CollectionPubRemovedActivityItem,
 } from 'types';
+import { collectionTitle, pubTitle } from 'utils/activity/titles';
 
-import { collectionTitle, pubTitle } from '../titles';
 import { itemRenderer } from './itemRenderer';
 
 type BaseTitles = 'collection';

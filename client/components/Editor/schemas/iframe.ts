@@ -18,6 +18,7 @@ export default {
 			height: { default: 419 },
 			align: { default: 'center' },
 			caption: { default: '' },
+			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
 			count: counter({ useNodeLabels: true }),

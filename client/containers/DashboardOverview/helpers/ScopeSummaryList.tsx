@@ -2,15 +2,14 @@ import React from 'react';
 import dateFormat from 'dateformat';
 
 import { Icon, IconName } from 'components';
-import { Community, Collection } from 'types';
+import { Community, Collection, DefinitelyHas } from 'types';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { enIndefiniteArticle, capitalize } from 'utils/strings';
-import { MinimalScopeSummary } from 'utils/scopeSummaries';
 
 require('./scopeSummaryList.scss');
 
 type Props = {
-	scope: Omit<Community | Collection, 'scopeSummary'> & { scopeSummary: MinimalScopeSummary };
+	scope: DefinitelyHas<Community | Collection, 'scopeSummary'>;
 	scopeKind: 'collection' | 'community';
 };
 

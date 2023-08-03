@@ -1,10 +1,9 @@
-import * as types from 'types';
+import { Community, Pub, PubEdge } from 'types';
 import { formatDate } from 'utils/dates';
 import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { getAllPubContributors } from 'utils/contributors';
 
-import { Community, Pub } from 'server/models';
 import { RelationType } from './relations';
 
 export const getHostnameForUrl = (url: string) => {
@@ -16,21 +15,18 @@ export const getHostnameForUrl = (url: string) => {
 	}
 };
 
-export const getUrlForPub = (
-	pubData: types.Pub | Pub,
-	communityData: types.Community | Community,
-) => {
+export const getUrlForPub = (pubData: Pub, communityData: Community) => {
 	if (communityData.id === pubData.communityId) {
 		return pubUrl(communityData, pubData);
 	}
-	if (pubData.community) {
+	if ((pubData as any).community) {
 		return pubUrl(pubData.communityId, pubData);
 	}
 	return pubShortUrl(pubData);
 };
 
 export const isViewingEdgeFromTarget = (
-	pubEdge: types.PubEdge,
+	pubEdge: PubEdge,
 	viewingFromSibling: boolean,
 	isInboundEdge: boolean,
 ) => {
@@ -47,7 +43,7 @@ export const isViewingEdgeFromTarget = (
 };
 
 export const getDisplayedPubForPubEdge = (
-	pubEdge: types.PubEdge,
+	pubEdge: PubEdge,
 	context:
 		| { viewingFromTarget: boolean }
 		| { isInboundEdge: boolean; viewingFromSibling: boolean },
@@ -61,8 +57,8 @@ export const getDisplayedPubForPubEdge = (
 };
 
 export const getValuesFromPubEdge = (
-	pubEdge: types.PubEdge,
-	communityData: types.Community,
+	pubEdge: PubEdge,
+	communityData: Community,
 	viewingFromTarget: boolean,
 ) => {
 	const { externalPublication } = pubEdge;

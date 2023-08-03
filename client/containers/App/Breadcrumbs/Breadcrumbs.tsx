@@ -103,7 +103,7 @@ const Breadcrumbs = (props: Props) => {
 				<Avatar
 					avatar={avatar}
 					initials={title[0]}
-					// @ts-expect-error FIXME: CommunityData does not exist on Avatar?
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ avatar: any; initials: any; communityData:... Remove this comment to see the full error message
 					communityData={communityData}
 					width={40}
 					isBlock={true}

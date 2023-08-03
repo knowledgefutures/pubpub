@@ -72,6 +72,8 @@ export const destroySubmissionWorkFlow = ({ id }: { id: string }) => {
 	});
 };
 
-export const getEnabledSubmissionWorkflowForCollection = (collectionId: string) => {
+export const getEnabledSubmissionWorkflowForCollection = (
+	collectionId: string,
+): Promise<null | types.SubmissionWorkflow> => {
 	return SubmissionWorkflow.findOne({ where: { collectionId, enabled: true } });
 };

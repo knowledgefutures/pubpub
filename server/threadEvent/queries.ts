@@ -1,53 +1,42 @@
 import { ThreadEvent, attributesPublicUser } from 'server/models';
-import * as types from 'types';
-import { ThreadEventPermissions } from './permissions';
 
-export const createThreadEvent = async (
-	inputValues: {
-		threadId: string;
-		type: string;
-		data: Record<string, any>;
-	},
-	userData: types.User,
-) => {
-	const newThreadEvent = await ThreadEvent.create({
+export const createThreadEvent = (inputValues, userData) => {
+	return ThreadEvent.create({
 		type: inputValues.type,
 		data: inputValues.data,
 		userId: userData.id,
 		threadId: inputValues.threadId,
+	}).then((newThreadEvent) => {
+		/* Populate user data so it can be inserted into */
+		/* existing pubData client-side */
+		const cleanedUserData = {};
+		attributesPublicUser.forEach((key) => {
+			cleanedUserData[key] = userData[key];
+		});
+		return {
+			...newThreadEvent.toJSON(),
+			user: cleanedUserData,
+		};
 	});
-	/* Populate user data so it can be inserted into */
-	/* existing pubData client-side */
-	const cleanedUserData = {};
-	attributesPublicUser.forEach((key) => {
-		cleanedUserData[key] = userData[key];
-	});
-	return {
-		...newThreadEvent.toJSON(),
-		user: cleanedUserData,
-	};
 };
 
-export const updateThreadEvent = async (
-	inputValues: types.ThreadEvent & { threadEventId: string },
-	updatePermissions: ThreadEventPermissions['update'],
-) => {
+export const updateThreadEvent = (inputValues, updatePermissions) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
-		// @ts-expect-error FIXME: updatePermissions can only be `false`, this shouldn't be here
-		if (updatePermissions && updatePermissions?.includes(key)) {
+		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
 
-	await ThreadEvent.update(filteredValues, {
+	return ThreadEvent.update(filteredValues, {
 		where: { id: inputValues.threadEventId },
+	}).then(() => {
+		return filteredValues;
 	});
-	return filteredValues;
 };
 
-export const destroyThreadEvent = (inputValues: { threadEventId: string }) => {
+export const destroyThreadEvent = (inputValues) => {
 	return ThreadEvent.destroy({
 		where: { id: inputValues.threadEventId },
 	});
@@ -55,7 +44,7 @@ export const destroyThreadEvent = (inputValues: { threadEventId: string }) => {
 
 /* Event helpers */
 /* ------------- */
-export const createCreatedThreadEvent = (userData: types.User, threadId: string) => {
+export const createCreatedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
 			threadId,
@@ -66,7 +55,7 @@ export const createCreatedThreadEvent = (userData: types.User, threadId: string)
 	);
 };
 
-export const createClosedThreadEvent = (userData: types.User, threadId: string) => {
+export const createClosedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
 			threadId,
@@ -77,7 +66,7 @@ export const createClosedThreadEvent = (userData: types.User, threadId: string) 
 	);
 };
 
-export const createCompletedThreadEvent = (userData: types.User, threadId: string) => {
+export const createCompletedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
 			threadId,
@@ -88,7 +77,7 @@ export const createCompletedThreadEvent = (userData: types.User, threadId: strin
 	);
 };
 
-export const createMergedEvent = (userData: types.User, threadId: string) => {
+export const createMergedEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
 			threadId,
@@ -99,12 +88,7 @@ export const createMergedEvent = (userData: types.User, threadId: string) => {
 	);
 };
 
-export const createReleasedEvent = (
-	userData: types.User,
-	threadId: string,
-	pubSlug: string,
-	releaseId: string,
-) => {
+export const createReleasedEvent = (userData, threadId, pubSlug, releaseId) => {
 	return createThreadEvent(
 		{
 			threadId,

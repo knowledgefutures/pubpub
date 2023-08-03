@@ -1,29 +1,23 @@
 import { sortByRank } from 'utils/rank';
-import * as types from 'types';
-import { CollectionPub } from 'server/models';
+import { Collection, CollectionPub } from 'types';
 
-const isPrimaryCollectionCandidate = (collectionPub: types.CollectionPub | CollectionPub) => {
+const isPrimaryCollectionCandidate = (collectionPub: CollectionPub) => {
 	const { collection } = collectionPub;
 	return collection && collection.kind !== 'tag';
 };
 
-export const getPrimaryCollection = (collectionPubs: types.CollectionPub[] | CollectionPub[]) => {
-	const candidate = sortByRank(
-		collectionPubs as (typeof collectionPubs)[number][],
-		'pubRank',
-	).find(isPrimaryCollectionCandidate);
+export const getPrimaryCollection = (collectionPubs: CollectionPub[]) => {
+	const candidate = sortByRank(collectionPubs, 'pubRank').find(isPrimaryCollectionCandidate);
 	if (candidate) {
-		return candidate.collection as types.Collection;
+		return candidate.collection as Collection;
 	}
 	return null;
 };
 
-export const getPrimaryCollectionPub = (collectionPubs: types.CollectionPub[] | CollectionPub[]) =>
-	sortByRank(collectionPubs as (typeof collectionPubs)[number][], 'pubRank').find(
-		isPrimaryCollectionCandidate,
-	);
+export const getPrimaryCollectionPub = (collectionPubs: CollectionPub[]) =>
+	sortByRank(collectionPubs, 'pubRank').find(isPrimaryCollectionCandidate);
 
-export const sortByPrimaryStatus = (collectionPubs: types.CollectionPub[]) => {
+export const sortByPrimaryStatus = (collectionPubs: CollectionPub[]) => {
 	const sortedByRank = sortByRank(collectionPubs, 'pubRank');
 	const primaryIndex = sortedByRank.findIndex(isPrimaryCollectionCandidate);
 	if (primaryIndex !== -1) {

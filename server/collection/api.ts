@@ -76,7 +76,8 @@ app.get(
 			return new NotFoundError();
 		}
 		const resource = await transformCollectionToResource(
-			collection.toJSON(),
+			// @ts-expect-error
+			collection.get({ plain: true }),
 			collection.community,
 		);
 		return res.status(200).json(resource);
@@ -108,7 +109,8 @@ app.post(
 				)
 			).collection;
 		const resource = await transformCollectionToResource(
-			collection.toJSON(),
+			// @ts-expect-error
+			collection.get({ plain: true }),
 			collection.community,
 		);
 		try {
@@ -147,7 +149,8 @@ app.post(
 				)
 			).collection;
 		const resource = await transformCollectionToResource(
-			collection.toJSON(),
+			// @ts-expect-error
+			collection.get({ plain: true }),
 			collection.community,
 		);
 		try {

@@ -1,27 +1,6 @@
 import { getScope } from 'server/utils/queryHelpers';
 
-export const collectionUpdatePremission = [
-	'title',
-	'slug',
-	'isRestricted',
-	'isPublic',
-	'pageId',
-	'metadata',
-	'readNextPreviewSize',
-	'layout',
-	'layoutAllowsDuplicatePubs',
-	'avatar',
-] as const;
-
-export const getPermissions = async ({
-	userId = null,
-	communityId = null,
-	collectionId = null,
-}: {
-	userId: string | null;
-	communityId: string | null;
-	collectionId: string | null;
-}): Promise<Permissions> => {
+export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
 		return {};
 	}
@@ -34,16 +13,21 @@ export const getPermissions = async ({
 	if (!scopeData.elements.activeCollection) {
 		return { create: isAuthenticated };
 	}
-
+	const editProps = [
+		'title',
+		'slug',
+		'isRestricted',
+		'isPublic',
+		'pageId',
+		'metadata',
+		'readNextPreviewSize',
+		'layout',
+		'layoutAllowsDuplicatePubs',
+		'avatar',
+	];
 	return {
 		create: isAuthenticated,
-		update: isAuthenticated ? collectionUpdatePremission : (false as const),
+		update: isAuthenticated ? editProps : (false as const),
 		destroy: isAuthenticated,
 	};
-};
-
-export type Permissions = {
-	create?: boolean;
-	update?: false | typeof collectionUpdatePremission;
-	destroy?: boolean;
 };

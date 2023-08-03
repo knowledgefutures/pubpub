@@ -7,15 +7,17 @@ import { getPubDraftRef } from 'server/utils/firebaseAdmin';
 import { indexByProperty } from 'utils/arrays';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 
+type DiscussionWithAnchors = types.SequelizeModel<types.DefinitelyHas<types.Discussion, 'anchors'>>;
+
 type ExtendedDiscussionInfo = DiscussionInfo & {
 	discussionId: string;
 } & Pick<types.DiscussionAnchor, 'originalText' | 'originalTextPrefix' | 'originalTextSuffix'>;
 
 const getDiscussions = async (discussionIds: string[], pubId: string) => {
-	const discussions = (await Discussion.findAll({
+	const discussions: DiscussionWithAnchors[] = await Discussion.findAll({
 		where: { id: discussionIds, pubId },
 		include: [{ model: DiscussionAnchor, as: 'anchors' }],
-	})) as types.DefinitelyHas<Discussion, 'anchors'>[];
+	});
 	const discussionInfoValues: ExtendedDiscussionInfo[] = [];
 	discussions.forEach(({ anchors, id: discussionId }) => {
 		const firstAnchor = anchors.reduce(
@@ -52,11 +54,11 @@ const getDiscussions = async (discussionIds: string[], pubId: string) => {
 };
 
 const getLatestReleaseInfo = async (pubId: string) => {
-	const release = (await Release.findOne({
+	const release: types.DefinitelyHas<types.Release, 'doc'> = await Release.findOne({
 		where: { pubId },
 		include: [{ model: Doc, as: 'doc' }],
 		order: [['historyKey', 'DESC']],
-	})) as types.DefinitelyHas<Release, 'doc'>;
+	});
 	if (!release) {
 		throw new Error('Pub does not have a Release');
 	}

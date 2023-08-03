@@ -5,7 +5,7 @@ export const getAttributionAttributes = async (attributionDirective) => {
 		return { name: attributionDirective, isAuthor: true };
 	}
 	const { slug, userId: rawUserId, ...restAttrs } = attributionDirective;
-	let userId: string | null = null;
+	let userId = null;
 	if (rawUserId) {
 		userId = rawUserId;
 	} else if (slug) {

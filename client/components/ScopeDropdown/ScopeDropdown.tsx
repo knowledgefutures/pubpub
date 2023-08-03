@@ -9,7 +9,6 @@ import { sortByRank } from 'utils/rank';
 import { Collection, Pub } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
 import { Tooltip } from '@blueprintjs/core';
-import { expect } from 'utils/assert';
 
 require('./scopeDropdown.scss');
 
@@ -18,7 +17,7 @@ type Scope = {
 	icon: IconName;
 	iconSize?: number;
 	title: string;
-	avatar: undefined | string | null;
+	avatar: undefined | string;
 	slugs?: {
 		collectionSlug?: string;
 		pubSlug?: string;
@@ -115,7 +114,7 @@ const ScopeDropdown = (props: Props) => {
 		scopes.push({
 			type: 'Collection',
 			icon: pubPubIcons.collection,
-			title: expect(nonActiveDashboardCollectionPub.title),
+			title: nonActiveDashboardCollectionPub.title,
 			avatar: nonActiveDashboardCollectionPub.avatar,
 			slugs: { collectionSlug: nonActiveDashboardCollectionPub.slug },
 			href: getDashUrl({

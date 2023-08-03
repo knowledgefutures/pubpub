@@ -1,16 +1,15 @@
 import { Collection, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
 import { getUserScopeVisits } from 'server/userScopeVisit/queries';
-import { InitialData, SanitizedPubData } from 'types';
+import { Collection as CollectionType, InitialData, SanitizedPubData } from 'types';
 
-import { expect } from 'utils/assert';
 import sanitizeCollection from './collectionSanitize';
 
 type Options = {
 	loadPubs?: number;
 };
 
-const getCollections = async (initialData: InitialData) => {
+const getCollections = async (initialData: InitialData): Promise<CollectionType> => {
 	const { communityData } = initialData;
 	const collections = await Collection.findAll({
 		where: { communityId: communityData.id },
@@ -19,7 +18,7 @@ const getCollections = async (initialData: InitialData) => {
 	});
 	return collections
 		.map((collection) => sanitizeCollection(collection, initialData))
-		.filter(Boolean) as Collection[];
+		.filter((x) => x);
 };
 
 const getPubs = async (initialData: InitialData, limit: number): Promise<SanitizedPubData[]> => {
@@ -39,10 +38,10 @@ const getRecentItems = async (initialData: InitialData) => {
 		loginData: { id: userId },
 		communityData: { id: communityId },
 	} = initialData;
-	const userScopeVisits = await getUserScopeVisits({ userId: expect(userId), communityId });
+	const userScopeVisits = await getUserScopeVisits({ userId, communityId });
 	const result = await getManyPubs({
 		query: {
-			withinPubIds: userScopeVisits.map(({ pubId }) => pubId).filter(Boolean) as string[],
+			withinPubIds: userScopeVisits.map(({ pubId }) => pubId).filter((x) => x),
 			communityId,
 		},
 	});

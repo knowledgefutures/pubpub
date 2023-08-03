@@ -1,3 +1,4 @@
+import * as types from 'types';
 import { UserSubscription } from 'server/models';
 import { canUserSeeThread } from 'server/thread/queries';
 import { asyncMap } from 'utils/async';
@@ -9,7 +10,7 @@ export const updateUserThreadSubscriptions = async (threadId: string) => {
 		await UserSubscription.findAll({
 			where: { threadId },
 		}),
-		async (subscription) => {
+		async (subscription: types.UserSubscription) => {
 			if (typeof subscription.threadId === 'string') {
 				const canSubscribe = await canUserSeeThread({
 					threadId: subscription.threadId,

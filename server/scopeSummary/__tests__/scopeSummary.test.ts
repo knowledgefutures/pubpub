@@ -8,7 +8,6 @@ import { createReview } from 'server/review/queries';
 import { DocJson } from 'types';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { expect as assertExpect } from 'utils/assert';
 import { summarizePub, summarizeCollection, summarizeCommunity } from '../queries';
 
 const models = modelize`
@@ -136,30 +135,24 @@ const expectSummaryFor = async (scopeIds, expectedValues) => {
 	const fetchModel = async () => {
 		const { pubId, collectionId, communityId } = scopeIds;
 		if (pubId) {
-			const { scopeSummary } = assertExpect(
-				await Pub.findOne({
-					where: { id: pubId },
-					include: [{ model: ScopeSummary, as: 'scopeSummary' }],
-				}),
-			);
+			const { scopeSummary } = await Pub.findOne({
+				where: { id: pubId },
+				include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+			});
 			return scopeSummary;
 		}
 		if (collectionId) {
-			const { scopeSummary } = assertExpect(
-				await Collection.findOne({
-					where: { id: collectionId },
-					include: [{ model: ScopeSummary, as: 'scopeSummary' }],
-				}),
-			);
+			const { scopeSummary } = await Collection.findOne({
+				where: { id: collectionId },
+				include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+			});
 			return scopeSummary;
 		}
 		if (communityId) {
-			const { scopeSummary } = assertExpect(
-				await Community.findOne({
-					where: { id: communityId },
-					include: [{ model: ScopeSummary, as: 'scopeSummary' }],
-				}),
-			);
+			const { scopeSummary } = await Community.findOne({
+				where: { id: communityId },
+				include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+			});
 			return scopeSummary;
 		}
 		throw new Error('Invalid IDs provided to expectSummaryFor');

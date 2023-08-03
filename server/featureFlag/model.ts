@@ -9,16 +9,13 @@ import {
 	HasMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import { FeatureFlagUser, FeatureFlagCommunity } from '../models';
 
 @Table
-export class FeatureFlag extends Model<
+class FeatureFlag extends Model<
 	InferAttributes<FeatureFlag>,
 	InferCreationAttributes<FeatureFlag>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -26,27 +23,33 @@ export class FeatureFlag extends Model<
 
 	@Index({ unique: true })
 	@Column(DataType.STRING)
-	name!: string | null;
+	name?: string | null;
 
 	@Default(0)
 	@Column(DataType.DOUBLE)
-	enabledUsersFraction!: CreationOptional<number | null>;
+	// 	enabledUsersFraction?: CreationOptional<number | null>;
+	enabledUsersFraction?: any;
 
 	@Default(0)
 	@Column(DataType.DOUBLE)
-	enabledCommunitiesFraction!: CreationOptional<number | null>;
+	// 	enabledCommunitiesFraction?: CreationOptional<number | null>;
+	enabledCommunitiesFraction?: any;
 
 	@HasMany(() => FeatureFlagUser, {
 		onDelete: 'CASCADE',
 		as: 'users',
 		foreignKey: 'featureFlagId',
 	})
-	users?: FeatureFlagUser[];
+	// 	users?: FeatureFlagUser[];
+	users?: any;
 
 	@HasMany(() => FeatureFlagCommunity, {
 		onDelete: 'CASCADE',
 		as: 'communities',
 		foreignKey: 'featureFlagId',
 	})
-	communities?: FeatureFlagCommunity[];
+	// 	communities?: FeatureFlagCommunity[];
+	communities?: any;
 }
+
+export const FeatureFlagAnyModel = FeatureFlag as any;

@@ -3,7 +3,6 @@ import { Button } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
 import { SubmissionWorkflow } from 'types';
-import { expect } from 'utils/assert';
 
 import { updateSubmissionWorkflow } from '../DashboardSubmissionWorkflow/api';
 
@@ -20,7 +19,7 @@ const AcceptSubmissionsToggle = (props: Props) => {
 	const handleSetEnabled = async (nextEnabled: boolean) => {
 		const patch = { enabled: nextEnabled };
 		setIsLoading(true);
-		await updateSubmissionWorkflow(patch, expect(collectionId));
+		await updateSubmissionWorkflow(patch, collectionId);
 		setIsLoading(false);
 		onUpdateWorkflow(patch);
 	};

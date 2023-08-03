@@ -10,7 +10,6 @@ import {
 	CollectionAttribution,
 } from 'server/models';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
-import { expect } from 'utils/assert';
 
 export const getPubsInCollection = async ({ communityId, collectionId, userId }) => {
 	const collectionPubsQuery = CollectionPub.findAll({
@@ -58,11 +57,10 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 		.map((cp) => cp.pub)
 		.filter(
 			(pub) =>
-				pub &&
-				(isCommunityMember ||
-					isCollectionMember ||
-					members.some((m) => m.pubId === pub.id) ||
-					expect(pub.releases).length > 0),
+				isCommunityMember ||
+				isCollectionMember ||
+				members.some((m) => m.pubId === pub.id) ||
+				pub.releases.length > 0,
 		);
 };
 
@@ -74,7 +72,7 @@ const getRankInPeers = (requestedRank: string | null, ranks: string[], moveToTop
 	return findRank(ranks, targetIndex);
 };
 
-export const createCollectionPub = async ({
+export const createCollectionPub = ({
 	collectionId,
 	pubId,
 	rank = null,
@@ -82,42 +80,35 @@ export const createCollectionPub = async ({
 	moveToTop = false,
 	isPrimary = false,
 	actorId = null,
-}: {
-	collectionId: string;
-	pubId: string;
-	rank?: string | null;
-	pubRank?: string | null;
-	moveToTop?: boolean;
-	isPrimary?: boolean;
-	actorId?: string | null;
 }) => {
-	const [pubLevelPeers, collectionLevelPeers] = await Promise.all([
+	return Promise.all([
 		CollectionPub.findAll({
 			where: { pubId },
 			include: [{ model: Collection, as: 'collection' }],
 		}),
 		getCollectionPubsInCollection(collectionId),
-	]);
-	return CollectionPub.create(
-		{
-			collectionId,
-			pubId,
-			rank: getRankInPeers(
-				rank,
-				collectionLevelPeers.map((cp) => cp.rank),
-				moveToTop,
-			),
-			pubRank: getRankInPeers(
-				pubRank,
-				pubLevelPeers.map((cp_1) => cp_1.pubRank),
-				isPrimary,
-			),
-		},
-		{ actorId },
-	);
+	]).then(([pubLevelPeers, collectionLevelPeers]) => {
+		return CollectionPub.create(
+			{
+				collectionId,
+				pubId,
+				rank: getRankInPeers(
+					rank,
+					collectionLevelPeers.map((cp) => cp.rank),
+					moveToTop,
+				),
+				pubRank: getRankInPeers(
+					pubRank,
+					pubLevelPeers.map((cp) => cp.pubRank),
+					isPrimary,
+				),
+			},
+			{ actorId },
+		);
+	});
 };
 
-export const updateCollectionPub = (collectionPubId: string, inputValues, updatableFields) => {
+export const updateCollectionPub = (collectionPubId, inputValues, updatableFields) => {
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
 		if (updatableFields.includes(key)) {
@@ -133,7 +124,7 @@ export const updateCollectionPub = (collectionPubId: string, inputValues, updata
 	});
 };
 
-export const destroyCollectionPub = (collectionPubId: string, actorId: string | null = null) => {
+export const destroyCollectionPub = (collectionPubId, actorId = null) => {
 	return CollectionPub.destroy({
 		where: { id: collectionPubId },
 		actorId,

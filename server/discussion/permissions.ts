@@ -1,7 +1,7 @@
 import { Discussion, Pub } from 'server/models';
+import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
 import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
-import { expect } from 'utils/assert';
 
 export const getCreatePermission = async ({
 	userId,
@@ -15,7 +15,7 @@ export const getCreatePermission = async ({
 		return false;
 	}
 
-	const pub = await Pub.findOne({ where: { id: pubId } });
+	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
 	const hasAccessHash = pub?.commentHash === commentAccessHash;
 	const scopeData = await getScope({
 		communityId,
@@ -42,11 +42,9 @@ export const getUpdatePermissions = async ({ discussionId, userId, pubId, commun
 		loginId: userId,
 	});
 
-	const discussionData = expect(
-		await Discussion.findOne({
-			where: { id: discussionId, pubId },
-		}),
-	);
+	const discussionData = await Discussion.findOne({
+		where: { id: discussionId, pubId },
+	});
 
 	const isAuthor = discussionData.userId === userId;
 	const hasBasicPermissions = isAuthor || canAdmin;

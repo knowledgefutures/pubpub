@@ -29,7 +29,7 @@ const ArbitrationMenu = (props: Props) => {
 					target="_blank"
 				/>
 			</Tooltip>
-			{props.pub.submission.status === 'accepted' && !props.pub.releases?.length && (
+			{props.pub.submission.status === 'accepted' && !props.pub.releases.length && (
 				<DialogLauncher
 					renderLauncherElement={({ openDialog }) => (
 						<Tooltip content="Release Pub">

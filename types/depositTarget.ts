@@ -1,4 +1,10 @@
-import { DepositTarget as DepositTargetModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
-
-export type DepositTarget = SerializedModel<DepositTargetModel>;
+export type DepositTarget = {
+	id: string;
+	communityId: string;
+	doiPrefix: string;
+	service: 'crossref' | 'datacite';
+	username: string;
+	password: string;
+	passwordInitVec: string;
+	isPubPubManaged?: boolean;
+};

@@ -45,7 +45,7 @@ const getEdgesByRelationType = (edges: PubEdge[]): Record<string, PubEdge[]> => 
 const renderEdgeLink = (edge: PubEdge, renderTitle = false) => {
 	const { pubIsParent, targetPub, pub, externalPublication } = edge;
 	if (externalPublication) {
-		const { contributors, title, url } = externalPublication;
+		const { contributors = [], title, url } = externalPublication;
 		return (
 			<a href={url} key={edge.id} className="edge-link">
 				{renderTitle ? (
@@ -53,7 +53,7 @@ const renderEdgeLink = (edge: PubEdge, renderTitle = false) => {
 				) : (
 					<Byline
 						{...sharedBylineProps}
-						contributors={contributors ?? []}
+						contributors={contributors}
 						renderEmptyState={() => title}
 					/>
 				)}

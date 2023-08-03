@@ -31,8 +31,9 @@ type Props = {
 };
 
 export const Digest = (props: Props) => {
-	const accentColorDark = props.community.accentColorDark ?? 'black';
-
+	const {
+		community: { accentColorDark = 'black' },
+	} = props;
 	const hasCommunityActivity = Object.entries(props.communityItems).length > 0;
 	const hasPubActivity = Object.entries(props.pubItems).length > 0;
 	const today = new Date();

@@ -5,7 +5,6 @@ import app from 'server/server';
 import { Community, Pub, Release } from 'server/models';
 import { handleErrors } from 'server/utils/errors';
 import { hostIsValid } from 'server/utils/routes';
-import { DefinitelyHas } from 'types';
 
 const getParams = (req) => {
 	const hostname = isDuqDuq()
@@ -25,12 +24,12 @@ app.get('/pub/:slug', async (req, res, next) => {
 		return next();
 	}
 	try {
-		const pubData = (await Pub.findOne({
+		const pubData = await Pub.findOne({
 			/* The replace statement is to capture v3 pub slug conventions */
 			where: { slug: req.params.slug.replace(/_/gi, '-').toLowerCase() },
 			attributes: ['id'],
 			include: [{ model: Community, as: 'community', attributes: ['subdomain', 'domain'] }],
-		})) as DefinitelyHas<Pub, 'community'>;
+		});
 		if (pubData) {
 			const newDomain = pubData.community.domain
 				? pubData.community.domain

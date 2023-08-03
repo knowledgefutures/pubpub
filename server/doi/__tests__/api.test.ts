@@ -109,7 +109,6 @@ it('lets community admins create a DOI for pubs in their community', async () =>
 	});
 
 	expect(dois.pub).toEqual(expectedPubDoi);
-	// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
 	expect(depositRecord?.depositJson?.deposit).toEqual(doiStub.getCall(1).args[0]);
 });
 
@@ -150,7 +149,6 @@ it('lets community admins create a DOI for collections in their community', asyn
 	});
 
 	expect(dois.collection).toEqual(expectedCollectionDoi);
-	// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
 	expect(depositRecord?.depositJson?.deposit).toEqual(doiStub.getCall(1).args[0]);
 });
 

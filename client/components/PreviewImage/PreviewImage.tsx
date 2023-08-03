@@ -8,7 +8,7 @@ import { generatePubBackground } from 'utils/pubs';
 type Props = {
 	className?: string;
 	fitIn?: number;
-	src?: string | null;
+	src?: string;
 	id?: null | string;
 };
 

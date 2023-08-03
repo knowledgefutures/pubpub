@@ -9,7 +9,7 @@ require('./editableAvatar.scss');
 
 type Props = {
 	attribution: {
-		avatar?: string | null;
+		avatar?: string;
 		user?: {
 			initials?: string;
 		};

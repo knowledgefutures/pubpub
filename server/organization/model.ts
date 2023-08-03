@@ -13,16 +13,13 @@ import {
 	HasMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import { Community } from '../models';
 
 @Table
-export class Organization extends Model<
+class Organization extends Model<
 	InferAttributes<Organization>,
 	InferCreationAttributes<Organization>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -38,7 +35,7 @@ export class Organization extends Model<
 
 	@Unique
 	@Column(DataType.TEXT)
-	domain!: string | null;
+	domain?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
@@ -46,18 +43,21 @@ export class Organization extends Model<
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	description!: string | null;
+	description?: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	avatar?: string | null;
 
 	@Column(DataType.TEXT)
-	favicon!: string | null;
+	favicon?: string | null;
 
 	@HasMany(() => Community, {
 		onDelete: 'CASCADE',
 		as: 'communities',
 		foreignKey: 'organizationId',
 	})
-	communities?: Community[];
+	// 	communities?: Community[];
+	communities?: any;
 }
+
+export const OrganizationAnyModel = Organization as any;

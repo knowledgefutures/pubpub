@@ -1,17 +1,16 @@
 import React from 'react';
 
-import * as types from 'types';
-import type { Community } from 'server/models';
+import { Community, SubmissionEmailKind } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 
 type Props = {
-	community: types.Community | Community;
+	community: Community;
 	customText: React.ReactNode;
 	submissionTitle: string;
 	collectionTitle: string;
 	submissionUrl?: string;
 	submitterName: React.ReactNode;
-	kind: types.SubmissionEmailKind;
+	kind: SubmissionEmailKind;
 };
 
 const SubmissionEmail = (props: Props) => {

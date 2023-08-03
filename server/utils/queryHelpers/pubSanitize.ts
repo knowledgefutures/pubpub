@@ -19,7 +19,7 @@ const sanitizeHashes = (pubData, activePermissions) => {
 const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease: boolean) => {
 	const shownVisibilityAccess = isRelease ? 'public' : 'members';
 	return discussions.filter(
-		(discussion) => discussion.visibility?.access === shownVisibilityAccess,
+		(discussion) => discussion.visibility.access === shownVisibilityAccess,
 	);
 };
 

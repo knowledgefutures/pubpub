@@ -13,7 +13,6 @@ import { Pub, Draft } from 'server/models';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import { storeCheckpoint, createFirebaseChange } from 'components/Editor/utils';
 import { DocJson, PubDraftInfo } from 'types';
-import { expect } from 'utils/assert';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -47,13 +46,11 @@ export const getDatabaseRef = (key: string): firebase.database.Reference => {
 };
 
 export const getPubDraftRef = async (pubId: string) => {
-	const pub = expect(
-		await Pub.findOne({
-			where: { id: pubId },
-			include: [{ model: Draft, as: 'draft' }],
-		}),
-	);
-	return getDatabaseRef(expect(pub.draft).firebasePath);
+	const pub = await Pub.findOne({
+		where: { id: pubId },
+		include: [{ model: Draft, as: 'draft' }],
+	});
+	return getDatabaseRef(pub.draft.firebasePath);
 };
 
 const maybeAddKeyTimestampPair = (key, timestamp) => {

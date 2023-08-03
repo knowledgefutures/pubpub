@@ -36,7 +36,7 @@ export const SectionBullets = ({ children }: { children: React.ReactNode }) => {
 };
 
 type PubBottomSectionProps = {
-	accentColor?: string | null;
+	accentColor?: string;
 	centerItems?: ((...args: any[]) => any) | React.ReactNode;
 	children?: ((...args: any[]) => any) | React.ReactNode;
 	className?: string;
@@ -51,6 +51,7 @@ type PubBottomSectionProps = {
 
 const PubBottomSection = (props: PubBottomSectionProps) => {
 	const {
+		accentColor = 'back',
 		centerItems = [],
 		children = null,
 		className = '',
@@ -62,7 +63,6 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 		searchPlaceholder = 'Enter keywords to search for...',
 		title,
 	} = props;
-	const accentColor = props.accentColor ?? 'back';
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 	const [searchTerm, setSearchTerm] = useState<string | null>(null);

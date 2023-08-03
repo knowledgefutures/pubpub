@@ -1,7 +1,10 @@
-import { ZoteroIntegration as ZoteroIntegrationModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
-
-export type ZoteroIntegration = SerializedModel<ZoteroIntegrationModel>;
+export type ZoteroIntegration = {
+	id: string;
+	userId: string;
+	zoteroUsername: string;
+	zoteroUserId: string;
+	integrationDataOAuth1Id: string;
+};
 
 export type ZoteroCSLJSON = {
 	meta: {

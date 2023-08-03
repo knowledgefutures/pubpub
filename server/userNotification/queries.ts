@@ -1,12 +1,7 @@
 import { Op } from 'sequelize';
 
 import * as types from 'types';
-import {
-	ActivityItem,
-	UserNotification,
-	UserNotificationPreferences,
-	UserSubscription,
-} from 'server/models';
+import { ActivityItem, UserNotification, UserSubscription } from 'server/models';
 import { fetchAssociationsForActivityItems } from 'server/activityItem/fetch';
 import {
 	getOrCreateUserNotificationPreferences,
@@ -39,7 +34,7 @@ type DeleteOptions = {
 };
 
 const getLatestNotificationDateToShow = async (
-	preferences: types.UserNotificationPreferences | UserNotificationPreferences,
+	preferences: types.UserNotificationPreferences,
 	now: Date,
 ) => {
 	const { userId, notificationCadence, lastReceivedNotificationsAt } = preferences;
@@ -47,7 +42,7 @@ const getLatestNotificationDateToShow = async (
 	const updateLastReceived = async () => {
 		await updateUserNotificationPreferences({
 			userId,
-			preferences: { lastReceivedNotificationsAt: now },
+			preferences: { lastReceivedNotificationsAt: now.toISOString() },
 		});
 	};
 
@@ -95,18 +90,12 @@ export const fetchUserNotifications = async (
 		}),
 	]);
 
-	const allNotifications = [
-		...(maybeUnreadNotifications || []),
-		...readNotifications,
-	] as types.UserNotificationWithActivityItemModel[];
+	const allNotifications: types.DefinitelyHas<
+		types.SequelizeModel<types.UserNotificationWithActivityItem>,
+		'activityItem'
+	>[] = [...(maybeUnreadNotifications || []), ...readNotifications];
 
-	const allPubIds = allNotifications
-		.map((n) => n.activityItem.pubId)
-		.filter((n): n is string => !!n);
-
-	const notificationActivityItems = allNotifications.map(
-		(notification) => notification.activityItem,
-	);
+	const allPubIds = allNotifications.map((n) => n.activityItem.pubId);
 
 	const [subscriptions, associations, facets] = await Promise.all([
 		UserSubscription.findAll({
@@ -115,14 +104,14 @@ export const fetchUserNotifications = async (
 				id: { [Op.in]: [...new Set(allNotifications.map((n) => n.userSubscriptionId))] },
 			},
 		}),
-		fetchAssociationsForActivityItems(notificationActivityItems as types.ActivityItem[]),
+		fetchAssociationsForActivityItems(
+			allNotifications.map((notification) => notification.activityItem),
+		),
 		fetchFacetsForScopeIds({ pub: allPubIds }, ['PubHeaderTheme']),
 	]);
 
 	return {
-		notifications: allNotifications.map((n) =>
-			n.toJSON(),
-		) as types.UserNotificationWithActivityItem[],
+		notifications: allNotifications.map((n) => n.toJSON()),
 		associations,
 		subscriptions,
 		facets,
@@ -130,7 +119,9 @@ export const fetchUserNotifications = async (
 	};
 };
 
-export const createUserNotification = async (options: CreateOptions) => {
+export const createUserNotification = async (
+	options: CreateOptions,
+): Promise<types.SequelizeModel<types.UserNotification>> => {
 	const { activityItemId, userId, userSubscriptionId } = options;
 	return UserNotification.create({ activityItemId, userId, userSubscriptionId });
 };

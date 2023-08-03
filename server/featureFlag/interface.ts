@@ -10,7 +10,6 @@ import {
 	setFeatureFlagEnabledCommunitiesFraction,
 } from 'server/featureFlag/queries';
 import { User, Community, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
-import { expect } from 'utils/assert';
 
 type OverrideValues =
 	| Record<string, FeatureFlagOverrideState>
@@ -101,11 +100,7 @@ class FeatureFlagInterface {
 		});
 		await Promise.all(
 			communityOverrides.map(async (override) => {
-				const community = expect(
-					await Community.findOne({
-						where: { id: expect(override.communityId) },
-					}),
-				);
+				const community = await Community.findOne({ where: { id: override.communityId } });
 				states[community.subdomain] = override.enabled ? 'on' : 'off';
 			}),
 		);
@@ -119,7 +114,7 @@ class FeatureFlagInterface {
 		});
 		await Promise.all(
 			userOverrides.map(async (override) => {
-				const user = expect(await User.findOne({ where: { id: expect(override.userId) } }));
+				const user = await User.findOne({ where: { id: override.userId } });
 				states[user.slug] = override.enabled ? 'on' : 'off';
 			}),
 		);
@@ -129,15 +124,15 @@ class FeatureFlagInterface {
 
 export const createFeatureFlag = async (name: string) => {
 	const featureFlag = await createRawFeatureFlag(name);
-	return new FeatureFlagInterface(featureFlag.id, expect(featureFlag.name));
+	return new FeatureFlagInterface(featureFlag.id, featureFlag.name);
 };
 
 export const getFeatureFlag = async (name: string) => {
-	const featureFlag = expect(await getFeatureFlagByName(name, true));
-	return new FeatureFlagInterface(featureFlag.id, expect(featureFlag.name));
+	const featureFlag = await getFeatureFlagByName(name, true);
+	return new FeatureFlagInterface(featureFlag.id, featureFlag.name);
 };
 
 export const destroyFeatureFlag = async (name: string) => {
 	const featureFlag = await getFeatureFlagByName(name, true);
-	await destroyRawFeatureFlag(expect(featureFlag).id);
+	await destroyRawFeatureFlag(featureFlag.id);
 };

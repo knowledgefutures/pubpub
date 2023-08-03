@@ -1,5 +1,4 @@
 import * as types from 'types';
-import { Community, SpamTag } from 'server/models';
 
 import { communitySpamPhrases } from './phrases';
 
@@ -11,7 +10,7 @@ type SpamField<T> = {
 
 const CURRENT_SPAM_SCORE_VERSION = 1;
 
-const communitySpamFields: Record<string, SpamField<Community>> = {
+const communitySpamFields: Record<string, SpamField<types.Community>> = {
 	title: {
 		extract: (c) => c.title,
 		isProse: true,
@@ -77,7 +76,7 @@ const getMatchingSpamPhrases = (text: string, isProse: boolean): string[] => {
 	return [];
 };
 
-const getCommunitySpamScoreReport = (community: Community) => {
+const getCommunitySpamScoreReport = (community: types.Community) => {
 	return Object.keys(communitySpamFields).reduce(
 		(report, key) => {
 			const { extract, weight, isProse } = communitySpamFields[key];
@@ -97,15 +96,13 @@ const getCommunitySpamScoreReport = (community: Community) => {
 	);
 };
 
-export const getSuspectedCommunitySpamVerdict = (
-	community: Community,
-): types.SpamVerdict<SpamTag> => {
+export const getSuspectedCommunitySpamVerdict = (community: types.Community): types.SpamVerdict => {
 	const { score, fields } = getCommunitySpamScoreReport(community);
 	return {
 		fields,
 		spamScore: score,
 		spamScoreVersion: CURRENT_SPAM_SCORE_VERSION,
-		spamScoreComputedAt: new Date(),
+		spamScoreComputedAt: new Date().toISOString(),
 	};
 };
 

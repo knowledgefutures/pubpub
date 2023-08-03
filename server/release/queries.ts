@@ -86,11 +86,11 @@ export const createRelease = async ({
 	historyKey?: null | number;
 	createExports?: boolean;
 }) => {
-	const mostRecentRelease = (await Release.findOne({
+	const mostRecentRelease = await Release.findOne({
 		where: { pubId },
 		order: [['historyKey', 'DESC']],
 		include: [{ model: Doc, as: 'doc' }],
-	})) as DefinitelyHas<Release, 'doc'> | null;
+	});
 
 	const {
 		doc: nextDoc,
@@ -125,13 +125,11 @@ export const createRelease = async ({
 	if (createExports) {
 		await createLatestPubExports(pubId);
 	}
-	defer(async () => {
-		await createPubReleasedActivityItem(userId, release.id);
-	});
+	defer(() => createPubReleasedActivityItem(userId, release.id));
 
 	return release.toJSON();
 };
 
-export const getReleasesForPub = (pubId: string) => {
+export const getReleasesForPub = (pubId: string): Promise<ReleaseType[]> => {
 	return Release.findAll({ where: { pubId } });
 };

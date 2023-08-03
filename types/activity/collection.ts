@@ -18,10 +18,10 @@ export type CollectionCreatedActivityItem = CollectionActivityItemBase & {
 export type CollectionUpdatedActivityItem = CollectionActivityItemBase & {
 	kind: 'collection-updated';
 	payload: {
-		isPublic?: Diff<boolean | null>;
-		isRestricted?: Diff<boolean | null>;
-		title?: Diff<string | null>;
-		slug?: Diff<string | null>;
+		isPublic?: Diff<boolean>;
+		isRestricted?: Diff<boolean>;
+		title?: Diff<string>;
+		slug?: Diff<string>;
 		doi?: Diff<null | string>;
 		layout?: true;
 		metadata?: true;

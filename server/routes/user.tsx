@@ -8,7 +8,6 @@ import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { isUserAffiliatedWithCommunity } from 'server/community/queries';
-import { expect } from 'utils/assert';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {
@@ -16,8 +15,8 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 		const customScripts = !initialData.locationData.isBasePubPub
 			? await getCustomScriptsForCommunity(initialData.communityData.id)
 			: undefined;
-		const userData = expect(await getUser(req.params.slug, initialData));
-		const isNewishUser = Date.now() - Number(userData.createdAt.valueOf()) < 1000 * 86400 * 30;
+		const userData = await getUser(req.params.slug, initialData);
+		const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
 
 		if (!initialData.locationData.isBasePubPub) {
 			const isThisUserAPartOfThisCommunity = await isUserAffiliatedWithCommunity(

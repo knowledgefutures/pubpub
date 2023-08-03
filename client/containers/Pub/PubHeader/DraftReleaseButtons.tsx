@@ -7,7 +7,6 @@ import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
-import { expect } from 'utils/assert';
 
 import { usePubContext } from '../pubHooks';
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
@@ -53,9 +52,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const shouldShowReleaseReviewButton = canCreateReviews && !isReviewingPub && !submissionState;
 	const renderForRelease = () => {
 		const { releases, releaseNumber } = pubData;
-		const latestReleaseTimestamp = new Date(
-			expect(releases)[expect(releases).length - 1].createdAt,
-		).valueOf();
+		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<React.Fragment>
 				{(canView || canViewDraft) && !isAVisitingCommenter && (
@@ -85,7 +82,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 							/>
 						}
 					>
-						{expect(releases)
+						{releases
 							.map((release, index) => (
 								<MenuItem
 									key={release.id}
@@ -117,7 +114,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const renderForDraft = () => {
 		const { releases } = pubData;
 		const { latestKey, timestamps } = historyData;
-		const latestRelease = expect(releases)[expect(releases).length - 1];
+		const latestRelease = releases[releases.length - 1];
 		const latestTimestamp = timestamps[latestKey];
 		const canRelease = getCanCreateRelease(latestRelease, latestKey);
 		return (
@@ -164,7 +161,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 								onCreateRelease={(release) =>
 									updatePubData((currentPubData) => {
 										return {
-											releases: [...expect(currentPubData.releases), release],
+											releases: [...currentPubData.releases, release],
 										};
 									})
 								}

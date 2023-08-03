@@ -7,17 +7,17 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
-import * as types from 'types';
+import { ActivityAssociations, ActivityItem, Community, ScopeId, User } from 'types';
 import { Digest } from 'components/Email';
 import { globals, reset } from 'components/Email/styles';
 import { fetchActivityItems } from 'server/activityItem/fetch';
 import { collectionUrl, pubUrl } from 'utils/canonicalUrls';
 
-type KeyedActivityItem = types.ActivityItem & {
+type KeyedActivityItem = ActivityItem & {
 	displayKey: string;
 };
 
-const getAffectedObject = (item: types.ActivityItem, associations: types.ActivityAssociations) => {
+const getAffectedObject = (item: ActivityItem, associations: ActivityAssociations) => {
 	// Check the payload rather than the associations for items that might have since been deleted
 	if ('pub' in item.payload) {
 		const { title } = item.payload.pub;
@@ -45,10 +45,7 @@ const getAffectedObject = (item: types.ActivityItem, associations: types.Activit
 	};
 };
 
-const getAffectedObjectUrl = (
-	item: types.ActivityItem,
-	associations: types.ActivityAssociations,
-) => {
+const getAffectedObjectUrl = (item: ActivityItem, associations: ActivityAssociations) => {
 	const { pubId, collectionId } = item;
 	const community = Object.values(associations.community)[0];
 	const pub = pubId && associations.pub[pubId];
@@ -62,7 +59,7 @@ const getAffectedObjectUrl = (
 	return null;
 };
 
-const getAffectedObjectIcon = (item: types.ActivityItem) =>
+const getAffectedObjectIcon = (item: ActivityItem) =>
 	item.pubId
 		? 'pubDoc'
 		: item.collectionId
@@ -72,8 +69,8 @@ const getAffectedObjectIcon = (item: types.ActivityItem) =>
 		: 'office';
 
 const groupByObjectId =
-	(associations: types.ActivityAssociations) =>
-	(items: types.ActivityItem[]): Record<string, KeyedActivityItem[]> =>
+	(associations: ActivityAssociations) =>
+	(items: ActivityItem[]): Record<string, KeyedActivityItem[]> =>
 		items.reduce((result, item) => {
 			const objectId = getAffectedObject(item, associations).id;
 			const payloadKeys = Object.keys(item.payload).sort().join('_');
@@ -85,7 +82,7 @@ const groupByObjectId =
 		}, {});
 
 const dedupActivityItems =
-	(associations: types.ActivityAssociations) =>
+	(associations: ActivityAssociations) =>
 	(itemsGroupedByObjectId: Record<string, KeyedActivityItem[]>) =>
 		Object.entries(itemsGroupedByObjectId).reduce(
 			(memo, [objectId, items]) => ({
@@ -109,8 +106,8 @@ const dedupActivityItems =
 		);
 
 type GetDigestOptions = {
-	user: types.User;
-	scope: types.ScopeId;
+	user: User;
+	scope: ScopeId;
 };
 
 export const getDigestData = async (options: GetDigestOptions) => {
@@ -164,7 +161,7 @@ const render = (emailMarkup: React.ReactNode, extraStyles = '') => {
 	)}</html>`;
 };
 
-export const renderDigestEmail = async (community: types.Community, options: GetDigestOptions) => {
+export const renderDigestEmail = async (community: Community, options: GetDigestOptions) => {
 	const digestData = await getDigestData(options);
 	if (
 		Object.keys(digestData.communityItems).length === 0 &&

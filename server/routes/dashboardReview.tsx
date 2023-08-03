@@ -16,11 +16,7 @@ app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => 
 		const initialData = await getInitialData(req, { isDashboard: true });
 		const { scopeData, loginData } = initialData;
 		const { pubSlug, reviewNumber } = req.params;
-		const reviewData = await getReview(
-			pubSlug,
-			parseInt(reviewNumber, 10),
-			initialData.communityData.id,
-		);
+		const reviewData = await getReview(pubSlug, reviewNumber, initialData.communityData.id);
 		const sanitizedReviewData = await sanitizeReviews(
 			[reviewData],
 			scopeData.activePermissions,

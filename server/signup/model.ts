@@ -11,12 +11,9 @@ import {
 	Unique,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 
 @Table
-export class Signup extends Model<InferAttributes<Signup>, InferCreationAttributes<Signup>> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Signup extends Model<InferAttributes<Signup>, InferCreationAttributes<Signup>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -30,14 +27,16 @@ export class Signup extends Model<InferAttributes<Signup>, InferCreationAttribut
 	email!: string;
 
 	@Column(DataType.TEXT)
-	hash!: string | null;
+	hash?: string | null;
 
 	@Column(DataType.INTEGER)
-	count!: number | null;
+	count?: number | null;
 
 	@Column(DataType.BOOLEAN)
-	completed!: boolean | null;
+	completed?: boolean | null;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	communityId?: string | null;
 }
+
+export const SignupAnyModel = Signup as any;

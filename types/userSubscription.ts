@@ -1,6 +1,3 @@
-import { UserSubscription as UserSubscriptionModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
-
 export type UserSubscriptionTarget = { pubId: string } | { threadId: string };
 
 export type UserSubscriptionStatus =
@@ -14,7 +11,16 @@ export type UserSubscriptionStatus =
 	// Active: this subscription will actively generate notifications for this item
 	| 'active';
 
-export type UserSubscription = SerializedModel<UserSubscriptionModel>;
+export type UserSubscription = {
+	id: string;
+	updatedAt: string;
+	createdAt: string;
+	userId: string;
+	status: UserSubscriptionStatus;
+	setAutomatically: boolean;
+	pubId: null | string;
+	threadId: null | string;
+};
 
 export type UniqueUserSubscriptionQuery =
 	| Pick<UserSubscription, 'id'>

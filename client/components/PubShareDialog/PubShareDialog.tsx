@@ -61,7 +61,7 @@ const AccessHashOptions = (props: SharedProps) => {
 	};
 	const isDraft = !isRelease;
 
-	const createAccessUrl = (accessHash: string | undefined | null, options?: UrlOptions) =>
+	const createAccessUrl = (accessHash: string | undefined, options?: UrlOptions) =>
 		pubUrl(communityData, pubData, { accessHash, ...options });
 
 	return (
@@ -80,7 +80,6 @@ const AccessHashOptions = (props: SharedProps) => {
 					}),
 				)}
 			{featureFlags.comments &&
-				pubData.releases &&
 				pubData.releases.length > 0 &&
 				renderCopyLabelComponent('Release Comment', createAccessUrl(commentHash))}
 			{editHash && renderCopyLabelComponent('Edit', createAccessUrl(editHash, { isDraft }))}
@@ -90,7 +89,6 @@ const AccessHashOptions = (props: SharedProps) => {
 					createAccessUrl(reviewHash, { isDraft }),
 				)}
 			{featureFlags.reviews &&
-				pubData.releases &&
 				pubData.releases.length > 0 &&
 				renderCopyLabelComponent('Release Feedback', createAccessUrl(reviewHash))}
 		</div>

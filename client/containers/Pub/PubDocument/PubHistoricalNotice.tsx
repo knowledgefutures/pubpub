@@ -9,7 +9,6 @@ import { usePageContext } from 'utils/hooks';
 import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
 import { PubPageData } from 'types';
 import { ClickToCopyButton } from 'components';
-import { expect } from 'utils/assert';
 
 require('./pubHistoricalNotice.scss');
 
@@ -29,7 +28,7 @@ const PubHistoricalNotice = (props: Props) => {
 	const { releases, releaseNumber, isRelease } = pubData;
 	const { currentKey, latestKey, timestamps, loadedIntoHistory } = historyData;
 
-	const isHistoricalRelease = isRelease && releaseNumber !== releases?.length;
+	const isHistoricalRelease = isRelease && releaseNumber !== releases.length;
 	const isHistoricalDraft = loadedIntoHistory;
 	const viewingNoun = isRelease ? `Release (#${releaseNumber})` : 'draft';
 
@@ -44,7 +43,7 @@ const PubHistoricalNotice = (props: Props) => {
 	const renderChangelog = () => {
 		if (isRelease) {
 			const items = releases
-				?.map((release, index) => {
+				.map((release, index) => {
 					const thisReleaseNumber = index + 1;
 					const isLatestRelease = thisReleaseNumber === releases.length;
 					const isViewedRelease = thisReleaseNumber === releaseNumber;
@@ -125,7 +124,7 @@ const PubHistoricalNotice = (props: Props) => {
 
 	const renderWarning = () => {
 		if (isRelease && typeof releaseNumber === 'number') {
-			const currentReleaseDate = new Date(expect(releases)[releaseNumber - 1].createdAt);
+			const currentReleaseDate = new Date(releases[releaseNumber - 1].createdAt);
 			const latestReleaseDate = getPubLatestReleasedDate(pubData)!;
 			const includeTime = datesAreSameCalendarDate(currentReleaseDate, latestReleaseDate);
 
@@ -142,7 +141,7 @@ const PubHistoricalNotice = (props: Props) => {
 						</span>
 					</li>
 					<li>
-						The latest Release <b>(#{expect(pubData.releases).length})</b> was created{' '}
+						The latest Release <b>(#{pubData.releases.length})</b> was created{' '}
 						{formatDate(latestReleaseDate, {
 							includeTime,
 							includePreposition: true,

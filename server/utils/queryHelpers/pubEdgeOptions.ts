@@ -1,4 +1,3 @@
-import { Includeable } from 'sequelize';
 import {
 	Community,
 	CollectionPub,
@@ -11,9 +10,9 @@ import {
 
 import { PubEdgeIncludesOptions } from 'types';
 
-export const getOptionsForIncludedPub = ({ includeCommunity }: { includeCommunity?: boolean }) => {
+export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	return [
-		...(includeCommunity ? [{ model: Community, as: 'community' }] : []),
+		includeCommunity && { model: Community, as: 'community' },
 		{
 			model: CollectionPub,
 			as: 'collectionPubs',
@@ -29,7 +28,7 @@ export const getOptionsForIncludedPub = ({ includeCommunity }: { includeCommunit
 			order: [['order', 'ASC']],
 			include: [includeUserModel({ as: 'user' })],
 		},
-	] as Includeable[];
+	].filter((x) => x);
 };
 
 export const getPubEdgeIncludes = ({
@@ -38,31 +37,19 @@ export const getPubEdgeIncludes = ({
 	includePub = false,
 }: PubEdgeIncludesOptions = {}) => {
 	return [
-		...(includeTargetPub
-			? [
-					{
-						model: Pub,
-						as: 'targetPub' as const,
-						include: getOptionsForIncludedPub({
-							includeCommunity: includeCommunityForPubs,
-						}),
-					},
-			  ]
-			: []),
-		...(includePub
-			? [
-					{
-						model: Pub,
-						as: 'pub' as const,
-						include: getOptionsForIncludedPub({
-							includeCommunity: includeCommunityForPubs,
-						}),
-					},
-			  ]
-			: []),
+		includeTargetPub && {
+			model: Pub,
+			as: 'targetPub',
+			include: getOptionsForIncludedPub({ includeCommunity: includeCommunityForPubs }),
+		},
+		includePub && {
+			model: Pub,
+			as: 'pub',
+			include: getOptionsForIncludedPub({ includeCommunity: includeCommunityForPubs }),
+		},
 		{
 			model: ExternalPublication,
 			as: 'externalPublication',
 		},
-	] as Includeable[];
+	].filter((x) => x);
 };

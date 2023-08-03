@@ -6,7 +6,6 @@ import { getSchemaForKind } from 'utils/collections/schemas';
 import { formatDate } from 'utils/dates';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { TimeAgo, Icon, IconName } from 'components';
-import { expect } from 'utils/assert';
 
 export type IconLabelPair = {
 	icon: IconName;
@@ -73,7 +72,7 @@ const getDateLabelPart = (date: Date) => {
 
 export const getPubReleasedStateLabel = (pub: Pub) => {
 	const publishedDate = getPubPublishedDate(pub, false);
-	if (publishedDate && pub.releases && pub.releases.length > 0) {
+	if (publishedDate && pub.releases.length > 0) {
 		return {
 			label: <>Published&nbsp;{getDateLabelPart(publishedDate)}</>,
 			icon: 'globe' as const,
@@ -128,5 +127,5 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 };
 
 export const getTypicalPubLabels = (pub: Pub) => {
-	return [...getScopeSummaryLabels(expect(pub.scopeSummary)), getPubReleasedStateLabel(pub)];
+	return [...getScopeSummaryLabels(pub.scopeSummary), getPubReleasedStateLabel(pub)];
 };

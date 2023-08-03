@@ -27,12 +27,13 @@ const getPrimaryCollectionIdsByPubId = async (
 	const collectionPubsByPubId = bucketBy(collectionPubs, (cp) => cp.pubId);
 	const primaryCollectionIds: Record<string, string> = {};
 	Object.entries(collectionPubsByPubId).forEach(([pubId, collectionPubsForPubId]) => {
-		const augmentedCollectionPubs = collectionPubsForPubId.map((collectionPub) => {
-			return {
-				...collectionPub,
-				collection: collectionsById[collectionPub.collectionId],
-			};
-		}) as types.DefinitelyHas<types.CollectionPub, 'collection'>[];
+		const augmentedCollectionPubs: types.DefinitelyHas<types.CollectionPub, 'collection'>[] =
+			collectionPubsForPubId.map((collectionPub) => {
+				return {
+					...collectionPub,
+					collection: collectionsById[collectionPub.collectionId],
+				};
+			});
 		const primaryCollection = getPrimaryCollection(augmentedCollectionPubs);
 		if (primaryCollection) {
 			primaryCollectionIds[pubId] = primaryCollection.id;
@@ -107,7 +108,10 @@ export const resolveScopeIds = async (
 	const allCollectionIds = [
 		...new Set([...collectionIds, ...collectionPubs.map((cp) => cp.collectionId)]),
 	];
-	const [pubSequelizeModels, collectionSequelizeModels] = await Promise.all([
+	const [pubSequelizeModels, collectionSequelizeModels]: [
+		types.SequelizeModel<types.Pub>[],
+		types.SequelizeModel<types.Collection>[],
+	] = await Promise.all([
 		Pub.findAll({ attributes: ['id', 'communityId'], where: { id: pubIds } }),
 		Collection.findAll({
 			attributes: ['id', 'communityId', 'isPublic', 'kind'],
@@ -118,7 +122,6 @@ export const resolveScopeIds = async (
 	]);
 	const pubs = pubSequelizeModels.map((pub) => pub.toJSON());
 	const collections = collectionSequelizeModels.map((collection) => collection.toJSON());
-
 	const allCommunityIds = [
 		...new Set([
 			...communityIds,

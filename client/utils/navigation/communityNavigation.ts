@@ -1,6 +1,5 @@
 import { IconName } from 'components';
 import * as types from 'types';
-import { expect } from 'utils/assert';
 
 type NavBuilderCommunity = Pick<types.Community, 'website' | 'twitter' | 'facebook' | 'email'>;
 type NavBuilderPage = Pick<types.Page, 'title' | 'id' | 'isPublic' | 'slug'>;
@@ -84,7 +83,7 @@ const getNavbarChildForPageOrCollection = (
 	item: NavBuilderPage | NavBuilderCollection,
 ): NavbarChild => {
 	return {
-		title: expect(item.title),
+		title: item.title,
 		href: `/${item.slug}`,
 		id: item.id,
 		...(!item.isPublic && { isPrivate: true }),

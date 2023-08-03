@@ -11,24 +11,17 @@ import {
 	HasMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { DocJson } from 'types';
 import { Thread, Visibility, User, Pub, Reviewer } from '../models';
 
 @Table
-export class ReviewNew extends Model<
-	InferAttributes<ReviewNew>,
-	InferCreationAttributes<ReviewNew>
-> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class ReviewNew extends Model<InferAttributes<ReviewNew>, InferCreationAttributes<ReviewNew>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	title!: string | null;
+	title?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
@@ -36,13 +29,14 @@ export class ReviewNew extends Model<
 
 	@Default('open')
 	@Column(DataType.ENUM('open', 'closed', 'completed'))
-	status!: CreationOptional<'open' | 'closed' | 'completed'>;
+	// 	status?: CreationOptional<'open' | 'closed' | 'completed' | null>;
+	status?: any;
 
 	@Column(DataType.BOOLEAN)
-	releaseRequested!: boolean | null;
+	releaseRequested?: boolean | null;
 
 	@Column(DataType.JSONB)
-	labels!: object | null;
+	labels?: object | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
@@ -54,25 +48,26 @@ export class ReviewNew extends Model<
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	userId!: string | null;
+	userId?: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	pubId?: string | null;
 
-	// TODO: Add validation
 	@Column(DataType.JSONB)
-	reviewContent!: DocJson | null;
+	reviewContent?: object | null;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	thread?: Thread;
+	// 	thread?: Thread;
+	thread?: any;
 
 	@BelongsTo(() => Visibility, {
 		onDelete: 'CASCADE',
 		as: 'visibility',
 		foreignKey: 'visibilityId',
 	})
-	visibility?: Visibility;
+	// 	visibility?: Visibility;
+	visibility?: any;
 
 	@BelongsTo(() => User, {
 		onDelete: 'CASCADE',
@@ -80,11 +75,16 @@ export class ReviewNew extends Model<
 		foreignKey: 'userId',
 		constraints: false,
 	})
-	author?: User;
+	// 	author?: User;
+	author?: any;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	// 	pub?: Pub;
+	pub?: any;
 
 	@HasMany(() => Reviewer, { onDelete: 'CASCADE', as: 'reviewers', foreignKey: 'reviewId' })
-	reviewers?: Reviewer[];
+	// 	reviewers?: Reviewer[];
+	reviewers?: any;
 }
+
+export const ReviewNewAnyModel = ReviewNew as any;

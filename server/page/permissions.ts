@@ -1,26 +1,7 @@
 import { Page } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
-export const updatePermissions = [
-	'title',
-	'slug',
-	'description',
-	'isPublic',
-	'layout',
-	'layoutAllowsDuplicatePubs',
-	'avatar',
-	'isNarrowWidth',
-] as const;
-
-export const getPermissions = async ({
-	userId,
-	communityId,
-	pageId,
-}: {
-	userId: string | null;
-	communityId: string;
-	pageId: string;
-}) => {
+export const getPermissions = async ({ userId, communityId, pageId }) => {
 	if (!userId) {
 		return {};
 	}
@@ -34,16 +15,20 @@ export const getPermissions = async ({
 	if (!pageData) {
 		return { create: isAuthenticated };
 	}
+	const editProps = [
+		'title',
+		'slug',
+		'description',
+		'isPublic',
+		'layout',
+		'layoutAllowsDuplicatePubs',
+		'avatar',
+		'isNarrowWidth',
+	];
 
 	return {
 		create: isAuthenticated,
-		update: isAuthenticated && updatePermissions,
+		update: isAuthenticated && editProps,
 		destroy: isAuthenticated,
 	};
-};
-
-export type PagePermissions = {
-	create?: boolean;
-	update?: false | typeof updatePermissions;
-	destroy?: boolean;
 };

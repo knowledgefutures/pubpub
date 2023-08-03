@@ -85,7 +85,7 @@ export default function DataciteDeposit(props: Props) {
 	const pub = 'pub' in props ? props.pub : undefined;
 
 	useEffect(() => {
-		if (pub && (pub.releases?.length ?? 0) > 0) {
+		if (pub && pub.releases.length > 0) {
 			fetchDepositPreview();
 		}
 	}, [pub, fetchDepositPreview]);

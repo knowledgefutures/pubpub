@@ -14,9 +14,7 @@ import {
 	HasMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { CommunityHeaderLink, CommunityHeroButton } from 'types';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+// import { CommunityHeaderLink, CommunityHeroButton } from 'types';
 import {
 	Organization,
 	Collection,
@@ -28,12 +26,7 @@ import {
 } from '../models';
 
 @Table
-export class Community extends Model<
-	InferAttributes<Community>,
-	InferCreationAttributes<Community>
-> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Community extends Model<InferAttributes<Community>, InferCreationAttributes<Community>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -49,195 +42,210 @@ export class Community extends Model<
 
 	@Unique
 	@Column(DataType.TEXT)
-	domain!: string | null;
+	domain?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
 	title!: string;
 
 	@Column(DataType.TEXT)
-	citeAs!: string | null;
+	citeAs?: string | null;
 
 	@Column(DataType.TEXT)
-	publishAs!: string | null;
+	publishAs?: string | null;
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	description!: string | null;
+	description?: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	avatar?: string | null;
 
 	@Column(DataType.TEXT)
-	favicon!: string | null;
+	favicon?: string | null;
 
-	// TODO: Make this `AllowNull(false)`. Communities always have a color.
 	@Column(DataType.STRING)
-	accentColorLight!: string;
+	accentColorLight?: string | null;
 
-	// TODO: Make this `AllowNull(false)`. Communities always have a color.
 	@Column(DataType.STRING)
-	accentColorDark!: string;
+	accentColorDark?: string | null;
 
 	@Column(DataType.BOOLEAN)
-	hideCreatePubButton!: boolean | null;
+	hideCreatePubButton?: boolean | null;
 
 	@Column(DataType.TEXT)
-	headerLogo!: string | null;
+	headerLogo?: string | null;
 
 	// TODO: Add validation for headerLinks
 	@Column(DataType.JSONB)
-	headerLinks!: CommunityHeaderLink[] | null;
+	// 	headerLinks?: CommunityHeaderLink[] | null;
+	headerLinks?: any;
 
 	@Default('dark')
 	@Column(DataType.ENUM('light', 'dark', 'custom'))
-	headerColorType!: CreationOptional<'light' | 'dark' | 'custom' | null>;
+	// 	headerColorType?: CreationOptional<'light' | 'dark' | 'custom' | null>;
+	headerColorType?: any;
 
 	@Column(DataType.BOOLEAN)
-	useHeaderTextAccent!: boolean | null;
+	useHeaderTextAccent?: boolean | null;
 
 	@Column(DataType.BOOLEAN)
-	hideHero!: boolean | null;
+	hideHero?: boolean | null;
 
 	@Column(DataType.BOOLEAN)
-	hideHeaderLogo!: boolean | null;
+	hideHeaderLogo?: boolean | null;
 
 	@Column(DataType.TEXT)
-	heroLogo!: string | null;
+	heroLogo?: string | null;
 
 	@Column(DataType.TEXT)
-	heroBackgroundImage!: string | null;
+	heroBackgroundImage?: string | null;
 
 	@Column(DataType.TEXT)
-	heroBackgroundColor!: string | null;
+	heroBackgroundColor?: string | null;
 
 	@Column(DataType.TEXT)
-	heroTextColor!: string | null;
+	heroTextColor?: string | null;
 
 	@Column(DataType.BOOLEAN)
-	useHeaderGradient!: boolean | null;
+	useHeaderGradient?: boolean | null;
 
 	@Column(DataType.TEXT)
-	heroImage!: string | null;
+	heroImage?: string | null;
 
 	@Column(DataType.TEXT)
-	heroTitle!: string | null;
+	heroTitle?: string | null;
 
 	@Column(DataType.TEXT)
-	heroText!: string | null;
+	heroText?: string | null;
 
 	// TODO: Add validation for heroPrimaryButton
 	@Column(DataType.JSONB)
-	heroPrimaryButton!: CommunityHeroButton | null;
+	// 	heroPrimaryButton?: CommunityHeroButton | null;
+	heroPrimaryButton?: any;
 
 	// TODO: Add validation for heroSecondaryButton
 	@Column(DataType.JSONB)
-	heroSecondaryButton!: CommunityHeroButton | null;
+	// 	heroSecondaryButton?: CommunityHeroButton | null;
+	heroSecondaryButton?: any;
 
 	@Column(DataType.TEXT)
-	heroAlign!: string | null;
+	heroAlign?: string | null;
 
 	// TODO: Add validation for navigation
 	@Column(DataType.JSONB)
-	navigation!: CommunityNavigationEntry[] | null;
+	// 	navigation?: CommunityNavigationEntry[] | null;
+	navigation?: any;
 
 	@Column(DataType.BOOLEAN)
-	hideNav!: boolean | null;
+	hideNav?: boolean | null;
 
 	// TODO: Add validation for navLinks
 	@Column(DataType.JSONB)
-	navLinks!: CommunityNavigationEntry[] | null;
+	// 	navLinks?: CommunityNavigationEntry[] | null;
+	navLinks?: any;
 
 	// TODO: Add validation for footerLinks
 	@Column(DataType.JSONB)
-	footerLinks!: CommunityNavigationEntry[] | null;
+	// 	footerLinks?: CommunityNavigationEntry[] | null;
+	footerLinks?: any;
 
 	@Column(DataType.TEXT)
-	footerLogoLink!: string | null;
+	footerLogoLink?: string | null;
 
 	@Column(DataType.TEXT)
-	footerTitle!: string | null;
+	footerTitle?: string | null;
 
 	@Column(DataType.TEXT)
-	footerImage!: string | null;
+	footerImage?: string | null;
 
 	@Column(DataType.TEXT)
-	website!: string | null;
+	website?: string | null;
 
 	@Column(DataType.TEXT)
-	facebook!: string | null;
+	facebook?: string | null;
 
 	@Column(DataType.TEXT)
-	twitter!: string | null;
+	twitter?: string | null;
 
 	@Column(DataType.TEXT)
-	email!: string | null;
+	email?: string | null;
 
 	@Column(DataType.TEXT)
-	issn!: string | null;
+	issn?: string | null;
 
 	@Column(DataType.BOOLEAN)
-	isFeatured!: boolean | null;
+	isFeatured?: boolean | null;
 
 	@Column(DataType.STRING)
-	viewHash!: string | null;
+	viewHash?: string | null;
 
 	@Column(DataType.STRING)
-	editHash!: string | null;
+	editHash?: string | null;
 
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	premiumLicenseFlag!: CreationOptional<boolean | null>;
+	// 	premiumLicenseFlag?: CreationOptional<boolean | null>;
+	premiumLicenseFlag?: any;
 
 	// TODO: Add validation for defaultPubCollections
 	@Column(DataType.JSONB)
-	defaultPubCollections!: string[] | null;
+	defaultPubCollections?: string[] | null;
 
 	@Column(DataType.UUID)
-	spamTagId!: string | null;
+	spamTagId?: string | null;
 
 	@Column(DataType.UUID)
-	organizationId!: string | null;
+	organizationId?: string | null;
 
 	@Column(DataType.UUID)
-	scopeSummaryId!: string | null;
+	scopeSummaryId?: string | null;
 
 	@BelongsTo(() => Organization, {
 		onDelete: 'CASCADE',
 		as: 'organization',
 		foreignKey: 'organizationId',
 	})
-	organization?: Organization;
+	// 	organization?: Organization;
+	organization?: any;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collections',
 		foreignKey: 'communityId',
 	})
-	collections?: Collection[];
+	// 	collections?: Collection[];
+	collections?: any;
 
 	@HasMany(() => Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'communityId' })
-	pubs?: Pub[];
+	// 	pubs?: Pub[];
+	pubs?: any;
 
 	@HasMany(() => Page, { onDelete: 'CASCADE', as: 'pages', foreignKey: 'communityId' })
-	pages?: Page[];
+	// 	pages?: Page[];
+	pages?: any;
 
 	@HasMany(() => DepositTarget, {
 		onDelete: 'CASCADE',
 		as: 'depositTargets',
 		foreignKey: 'communityId',
 	})
-	depositTargets?: DepositTarget[];
+	// 	depositTargets?: DepositTarget[];
+	depositTargets?: any;
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',
 		foreignKey: 'scopeSummaryId',
 		onDelete: 'SET NULL',
 	})
-	scopeSummary?: ScopeSummary;
+	// 	scopeSummary?: ScopeSummary;
+	scopeSummary?: any;
 
 	@BelongsTo(() => SpamTag, { as: 'spamTag', foreignKey: 'spamTagId' })
-	spamTag?: SpamTag;
+	// 	spamTag?: SpamTag;
+	spamTag?: any;
 
 	declare accentTextColor: CreationOptional<string>;
 }
+
+export const CommunityAnyModel = Community as any;

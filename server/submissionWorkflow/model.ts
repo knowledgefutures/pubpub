@@ -10,17 +10,14 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import { DocJson } from 'types';
 import { Submission, Collection } from '../models';
 
 @Table
-export class SubmissionWorkflow extends Model<
+class SubmissionWorkflow extends Model<
 	InferAttributes<SubmissionWorkflow>,
 	InferCreationAttributes<SubmissionWorkflow>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -31,16 +28,15 @@ export class SubmissionWorkflow extends Model<
 	title!: string;
 
 	@Column(DataType.UUID)
-	collectionId!: string | null;
+	collectionId?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.BOOLEAN)
 	enabled!: boolean;
 
-	// TODO: Add validation for this
 	@AllowNull(false)
 	@Column(DataType.JSONB)
-	instructionsText!: DocJson;
+	instructionsText!: object;
 
 	// TODO: Add validation for this
 	@AllowNull(false)
@@ -79,8 +75,12 @@ export class SubmissionWorkflow extends Model<
 	requireDescription!: CreationOptional<boolean>;
 
 	@HasMany(() => Submission, { as: 'submissions', foreignKey: 'submissionWorkflowId' })
-	submissions?: Submission[];
+	// 	submissions?: Submission[];
+	submissions?: any;
 
 	@BelongsTo(() => Collection, { as: 'collection', foreignKey: 'collectionId' })
-	collection?: Collection;
+	// 	collection?: Collection;
+	collection?: any;
 }
+
+export const SubmissionWorkflowAnyModel = SubmissionWorkflow as any;

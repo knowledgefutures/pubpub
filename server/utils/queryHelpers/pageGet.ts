@@ -1,18 +1,14 @@
 import { Page } from 'server/models';
 
 import { enrichLayoutBlocksWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
-import { InitialData } from 'types';
-import { expect } from 'utils/assert';
 
-export default async ({ query, initialData }: { query: any; initialData: InitialData }) => {
-	const pageData = expect(
-		await Page.findOne({
-			where: {
-				...query,
-				communityId: initialData.communityData.id,
-			},
-		}),
-	);
+export default async ({ query, initialData }) => {
+	const pageData = await Page.findOne({
+		where: {
+			...query,
+			communityId: initialData.communityData.id,
+		},
+	});
 
 	const layoutPubsByBlock = await getLayoutPubsByBlock({
 		allowDuplicatePubs: pageData.layoutAllowsDuplicatePubs,

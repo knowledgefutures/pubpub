@@ -8,15 +8,12 @@ import {
 	AllowNull,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 
 @Table
-export class ExternalPublication extends Model<
+class ExternalPublication extends Model<
 	InferAttributes<ExternalPublication>,
 	InferCreationAttributes<ExternalPublication>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -32,17 +29,20 @@ export class ExternalPublication extends Model<
 
 	// TODO: add validation for contributors
 	@Column(DataType.JSONB)
-	contributors!: string[] | null;
+	contributors?: string[] | null;
 
 	@Column(DataType.TEXT)
-	doi!: string | null;
+	doi?: string | null;
 
 	@Column(DataType.TEXT)
-	description!: string | null;
+	description?: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	avatar?: string | null;
 
 	@Column(DataType.DATE)
-	publicationDate!: string | null;
+	// 	publicationDate?: Date | null;
+	publicationDate?: any;
 }
+
+export const ExternalPublicationAnyModel = ExternalPublication as any;

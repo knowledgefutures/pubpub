@@ -9,13 +9,10 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import { Doc } from '../models';
 
 @Table
-export class Release extends Model<InferAttributes<Release>, InferCreationAttributes<Release>> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Release extends Model<InferAttributes<Release>, InferCreationAttributes<Release>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -23,10 +20,11 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 
 	// TODO: add validation for noteContent
 	@Column(DataType.JSONB)
-	noteContent!: Record<string, any> | null;
+	// 	noteContent?: Record<string, any> | null;
+	noteContent?: any;
 
 	@Column(DataType.TEXT)
-	noteText!: string | null;
+	noteText?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
@@ -50,5 +48,8 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 	historyKeyMissing!: CreationOptional<boolean>;
 
 	@BelongsTo(() => Doc, { as: 'doc', foreignKey: 'docId' })
-	doc?: Doc;
+	// 	doc?: Doc;
+	doc?: any;
 }
+
+export const ReleaseAnyModel = Release as any;

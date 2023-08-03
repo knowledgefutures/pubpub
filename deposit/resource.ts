@@ -51,12 +51,12 @@ export type ResourceRelationship = {
 
 export type ResourceContributorKind = 'Person' | 'Organization';
 export type ResourceContributorRole = 'Creator' | 'Editor' | 'Translator' | 'Other';
-export type ResourceContributor = { name: string; orcid?: string | null };
+export type ResourceContributor = { name: string; orcid?: string };
 
 export type ResourceContribution = {
 	isAttribution: boolean;
 	contributor: ResourceContributor;
-	contributorAffiliation: string | undefined | null;
+	contributorAffiliation: string | undefined;
 	contributorRole: ResourceContributorRole;
 };
 

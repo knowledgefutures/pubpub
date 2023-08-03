@@ -1,7 +1,10 @@
 import { Collection, Community, Page, Member, ScopeSummary, SpamTag } from 'server/models';
 import { Community as CommunityType, DefinitelyHas } from 'types';
 
-export default async (locationData, whereQuery) => {
+export default async (
+	locationData,
+	whereQuery,
+): Promise<DefinitelyHas<CommunityType, 'pages' | 'collections'>> => {
 	return Community.findOne({
 		where: whereQuery,
 		include: [
@@ -37,6 +40,6 @@ export default async (locationData, whereQuery) => {
 		if (!communityResult) {
 			throw new Error('Community Not Found');
 		}
-		return communityResult.toJSON() as DefinitelyHas<CommunityType, 'pages' | 'collections'>;
+		return communityResult.toJSON();
 	});
 };

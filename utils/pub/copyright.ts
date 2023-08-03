@@ -1,16 +1,13 @@
 import { FacetValue, License } from 'facets';
-import * as types from 'types';
+import { CollectionPub, DefinitelyHas, Pub } from 'types';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
-import { CollectionPub, Pub } from 'server/models';
 import { getPubPublishedDate } from './pubDates';
 
 type GetPubCopyrightOptions = {
 	license: FacetValue<typeof License>;
-	collectionPubs:
-		| types.DefinitelyHas<types.CollectionPub, 'collection'>[]
-		| types.DefinitelyHas<CollectionPub, 'collection'>[];
-	pub: types.Pub | Pub;
+	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
+	pub: Pub;
 };
 
 type PubCopyrightSource =

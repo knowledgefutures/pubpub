@@ -68,7 +68,7 @@ const HeaderSettings = (props: Props) => {
 						text={
 							headerColorType === 'light' ? 'Dark Accent Color' : 'Light Accent Color'
 						}
-						active={!!useHeaderTextAccent}
+						active={useHeaderTextAccent}
 						onClick={() => {
 							updateCommunityData({ useHeaderTextAccent: true });
 						}}

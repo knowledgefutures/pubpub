@@ -1,17 +1,14 @@
 import { ThreadComment, includeUserModel, Commenter } from 'server/models';
 import * as types from 'types';
-import { expect } from 'utils/assert';
 import { createCommenter } from '../commenter/queries';
 
-const findThreadCommentWithUser = async (id: string) => {
-	const threadComment = expect(
-		await ThreadComment.findOne({
-			where: { id },
-			include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
-		}),
-	);
-	return threadComment as types.DefinitelyHas<ThreadComment, 'author' | 'commenter'>;
-};
+const findThreadCommentWithUser = (
+	id: string,
+): Promise<types.DefinitelyHas<types.ThreadComment, 'author' | 'commenter'>> =>
+	ThreadComment.findOne({
+		where: { id },
+		include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
+	});
 
 export type CreateThreadWithCommentOptions = {
 	text: string;

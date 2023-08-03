@@ -25,15 +25,9 @@ export const createUserScopeVisit = async (userScopeVisitIds: UserScopeVisitIds)
 	);
 };
 
-export const getUserScopeVisits = async ({
-	userId,
-	communityId,
-}: {
-	userId: string;
-	communityId: string;
-}) => {
+export const getUserScopeVisits = ({ userId, communityId }) => {
 	if (!userId) {
-		return [] as UserScopeVisit[];
+		return [];
 	}
 	return UserScopeVisit.findAll({
 		where: { userId, communityId },

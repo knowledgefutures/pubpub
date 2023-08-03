@@ -12,7 +12,6 @@ import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
-	Community,
 	Export,
 	includeUserModel,
 	Pub,
@@ -21,7 +20,6 @@ import {
 	Release,
 } from 'server/models';
 import { sequelize } from 'server/sequelize';
-import * as types from 'types';
 
 const pubsIdsQuery = `
 	WITH query_values (required_slugs, forbidden_slugs, published_before, published_after) AS (
@@ -144,7 +142,7 @@ export const getQueriedPubIds = async ({ communityId, limit, query }) => {
 	return rows.map((row: any) => row.pubId);
 };
 
-export const getPubData = async (pubIds: string[]) => {
+export const getPubData = async (pubIds) => {
 	const pubs = await Pub.findAll({
 		where: {
 			id: {
@@ -206,7 +204,7 @@ export const getPubData = async (pubIds: string[]) => {
 	return pubs.sort((a, b) => pubIds.indexOf(a.id) - pubIds.indexOf(b.id));
 };
 
-const createEnclosure = (url: string) => {
+const createEnclosure = (url) => {
 	return {
 		enclosure: {
 			_attr: {
@@ -216,7 +214,7 @@ const createEnclosure = (url: string) => {
 	};
 };
 
-export const getFeedItemForPub = (pubData: Pub, communityData: Community) => {
+export const getFeedItemForPub = (pubData, communityData) => {
 	const { title, description, collectionPubs, id } = pubData;
 	const formattedDownloadUrl = getFormattedDownloadUrl(pubData);
 	const pdfExportUrl = getPublicExportUrl(pubData, 'pdf');
@@ -244,7 +242,7 @@ export const getFeedItemForPub = (pubData: Pub, communityData: Community) => {
 	};
 };
 
-export const getCommunityRss = async (communityData: types.Community, query) => {
+export const getCommunityRss = async (communityData, query) => {
 	const communityUrl = getCommunityUrl(communityData);
 	const pubIds = await getQueriedPubIds({
 		communityId: communityData.id,
@@ -255,17 +253,16 @@ export const getCommunityRss = async (communityData: types.Community, query) => 
 
 	const feed = new RSS({
 		title: communityData.title,
-		description: communityData.description ?? undefined,
+		description: communityData.description,
 		feed_url: `${communityUrl}/rss.xml`,
 		site_url: communityUrl,
-		image_url: communityData.favicon ?? undefined,
+		image_url: communityData.favicon,
 		webMaster: 'hello@pubpub.org',
 		language: 'en',
 		pubDate: new Date(),
 		ttl: 60,
 	});
 
-	// @ts-expect-error FIXME: pubData.description is string | null, feed.item expects string. This is a bug in RSS types, null works fine.
 	pubs.forEach((pubData) => feed.item(getFeedItemForPub(pubData, communityData)));
 	return feed.xml();
 };

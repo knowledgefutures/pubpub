@@ -10,17 +10,14 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import { UserSubscriptionStatus } from 'types';
 import { Pub, Thread, User } from '../models';
 
 @Table
-export class UserSubscription extends Model<
+class UserSubscription extends Model<
 	InferAttributes<UserSubscription>,
 	InferCreationAttributes<UserSubscription>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -41,18 +38,23 @@ export class UserSubscription extends Model<
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	pubId?: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	threadId!: string | null;
+	threadId?: string | null;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	// 	pub?: Pub;
+	pub?: any;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	thread?: Thread;
+	// 	thread?: Thread;
+	thread?: any;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	// 	user?: User;
+	user?: any;
 }
+
+export const UserSubscriptionAnyModel = UserSubscription as any;

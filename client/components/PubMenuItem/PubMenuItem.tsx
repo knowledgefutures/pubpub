@@ -11,8 +11,8 @@ type BylineProps = React.ComponentProps<typeof Byline>;
 interface Props {
 	active?: boolean;
 	disabled?: boolean;
-	contributors?: any[] | null;
-	image?: string | null;
+	contributors?: any[];
+	image?: string;
 	isSkeleton?: boolean;
 	onClick: null | (() => any);
 	showImage?: boolean;

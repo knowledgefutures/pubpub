@@ -1,22 +1,19 @@
-import { SubmissionWorkflow as SubmissionWorkflowModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
-// import { Collection, DocJson } from 'types';
+import { Collection, DocJson } from 'types';
 
-export type SubmissionWorkflow = SerializedModel<SubmissionWorkflowModel>;
-// {
-// 	id: string;
-// 	createdAt: string;
-// 	updatedAt: string;
-// 	enabled: boolean;
-// 	title: string;
-// 	introText: DocJson;
-// 	instructionsText: DocJson;
-// 	acceptedText: DocJson;
-// 	declinedText: DocJson;
-// 	receivedEmailText: DocJson;
-// 	targetEmailAddresses: string[];
-// 	requireAbstract: boolean;
-// 	requireDescription: boolean;
-// 	collectionId: string;
-// 	collection?: Collection;
-// };
+export type SubmissionWorkflow = {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	enabled: boolean;
+	title: string;
+	introText: DocJson;
+	instructionsText: DocJson;
+	acceptedText: DocJson;
+	declinedText: DocJson;
+	receivedEmailText: DocJson;
+	targetEmailAddresses: string[];
+	requireAbstract: boolean;
+	requireDescription: boolean;
+	collectionId: string;
+	collection?: Collection;
+};

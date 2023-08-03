@@ -8,17 +8,11 @@ import {
 	BelongsToMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { VisibilityAccess } from 'types';
+// import { VisibilityAccess } from 'types';
 import { VisibilityUser, User } from '../models';
 
 @Table
-export class Visibility extends Model<
-	InferAttributes<Visibility>,
-	InferCreationAttributes<Visibility>
-> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Visibility extends Model<InferAttributes<Visibility>, InferCreationAttributes<Visibility>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -26,12 +20,16 @@ export class Visibility extends Model<
 
 	@Default('private')
 	@Column(DataType.ENUM('private', 'members', 'public'))
-	access!: CreationOptional<VisibilityAccess | null>;
+	// 	access?: CreationOptional<VisibilityAccess | null>;
+	access?: any;
 
 	@BelongsToMany(() => User, {
 		as: 'users',
 		through: () => VisibilityUser,
 		foreignKey: 'visibilityId',
 	})
-	users?: VisibilityUser[];
+	// 	users?: VisibilityUser[];
+	users?: any;
 }
+
+export const VisibilityAnyModel = Visibility as any;

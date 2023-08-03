@@ -9,42 +9,44 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { DocJson } from 'types';
 import { User, Commenter } from '../models';
+// import { DocJson } from 'types';
 
 @Table
-export class ThreadComment extends Model<
+class ThreadComment extends Model<
 	InferAttributes<ThreadComment>,
 	InferCreationAttributes<ThreadComment>
 > {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	text!: string | null;
+	text?: string | null;
 
 	// TODO: Add validation for this
 	@Column(DataType.JSONB)
-	content!: DocJson | null;
+	// 	content?: DocJson | null;
+	content?: any;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	userId?: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
 	threadId!: string;
 
 	@Column(DataType.UUID)
-	commenterId!: string | null;
+	commenterId?: string | null;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
-	author?: User;
+	// 	author?: User;
+	author?: any;
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
-	commenter?: Commenter;
+	// 	commenter?: Commenter;
+	commenter?: any;
 }
+
+export const ThreadCommentAnyModel = ThreadComment as any;

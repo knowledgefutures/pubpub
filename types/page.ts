@@ -1,4 +1,15 @@
-import { Page as PageModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import { LayoutBlock } from 'utils/layout/types';
 
-export type Page = SerializedModel<PageModel>;
+export type Page = {
+	id: string;
+	title: string;
+	slug: string;
+	communityId: string;
+	description: null | string;
+	avatar?: string;
+	isPublic: boolean;
+	isNarrowWidth?: boolean;
+	viewHash?: string;
+	layout: LayoutBlock[];
+	layoutAllowsDuplicatePubs: boolean;
+};

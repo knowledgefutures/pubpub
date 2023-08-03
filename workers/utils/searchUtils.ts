@@ -13,9 +13,8 @@ import { jsonToNode } from 'components/Editor';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getScope, getMembers } from 'server/utils/queryHelpers';
 import { getAuthorString } from 'utils/contributors';
-import { DefinitelyHas, DocJson } from 'types';
+import { DefinitelyHas, Release as ReleaseType, Pub as PubType, DocJson } from 'types';
 
-import { LayoutBlockText } from 'utils/layout';
 import { stopwords } from './stopwords';
 
 type AlgoliaPubEntry = {
@@ -25,7 +24,7 @@ type AlgoliaPubEntry = {
 	avatar: string;
 	description: string;
 	byline: string;
-	customPublishedAt: string | null;
+	customPublishedAt: string;
 	communityId: string;
 	communityDomain: string;
 	communityTitle: string;
@@ -34,13 +33,13 @@ type AlgoliaPubEntry = {
 	communityHeaderLogo: string;
 	communityHeaderColorType: string;
 	communityUseHeaderTextAccent: boolean;
-	userIdsWithAccess: string[];
+	userIdsWithAccess: string;
 	isPublic: boolean;
 	content: string | string[]; // Currently just `string` but historically either
 } & ({ isPublic: false; userIdsWithAccess: string[] } | { isPublic: true });
 
-type SearchPub = DefinitelyHas<Pub, 'attributions' | 'community'> & {
-	releases: DefinitelyHas<Release, 'doc'>[];
+type SearchPub = DefinitelyHas<PubType, 'attributions' | 'community'> & {
+	releases: DefinitelyHas<ReleaseType, 'doc'>[];
 };
 
 const docJsonToTextChunks = (docJson: DocJson): string[] => {
@@ -72,7 +71,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 		avatar: pub.avatar!,
 		description: pub.description!,
 		byline: authorByline ? `by ${authorByline}` : '',
-		customPublishedAt: pub.customPublishedAt ? pub.customPublishedAt.toISOString() : null,
+		customPublishedAt: pub.customPublishedAt!,
 		communityId: community.id,
 		communityDomain: community.domain || `${community.subdomain}.pubpub.org`,
 		communityTitle: community.title,
@@ -82,7 +81,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 		communityHeaderColorType: community.headerColorType!,
 		communityUseHeaderTextAccent: community.useHeaderTextAccent!,
 		userIdsWithAccess,
-	} satisfies Omit<AlgoliaPubEntry, 'isPublic' | 'content'>;
+	};
 	if (release) {
 		const releaseContentChunks = docJsonToTextChunks(release.doc.content);
 		releaseContentChunks.forEach((chunk) =>
@@ -107,7 +106,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 };
 
 export const getPubSearchData = async (pubIds) => {
-	const pubs = (await Pub.findAll({
+	const pubs: SearchPub[] = await Pub.findAll({
 		where: { id: pubIds },
 		include: [
 			{
@@ -130,13 +129,13 @@ export const getPubSearchData = async (pubIds) => {
 				limit: 1,
 			},
 		],
-	})) as SearchPub[];
+	});
 	const resultsByPub = await Promise.all(pubs.map(createSearchDataForPub));
 	return resultsByPub.reduce((a, b) => [...a, ...b], []);
 };
 
 export const getPageSearchData = async (pageIds) => {
-	const pages = (await Page.findAll({
+	const pages = await Page.findAll({
 		where: {
 			id: pageIds,
 		},
@@ -146,7 +145,7 @@ export const getPageSearchData = async (pageIds) => {
 				as: 'community',
 			},
 		],
-	})) as DefinitelyHas<Page, 'community'>[];
+	});
 	const dataToSync: any[] = [];
 	for (let index = 0; index < pages.length; index++) {
 		const page = pages[index];
@@ -179,8 +178,8 @@ export const getPageSearchData = async (pageIds) => {
 		const layout = page.layout || [];
 		let hasContent = false;
 		layout
-			.filter((block): block is LayoutBlockText & { content: { text: DocJson } } => {
-				return block.type === 'text' && !!block.content.text;
+			.filter((block) => {
+				return block.type === 'text' && block.content.text;
 			})
 			.forEach((block) => {
 				docJsonToTextChunks(block.content.text).forEach((textChunk) => {

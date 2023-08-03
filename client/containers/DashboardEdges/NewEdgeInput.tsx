@@ -94,7 +94,7 @@ const NewEdgeInput = (props: Props) => {
 					id={targetPub.id}
 					key={targetPub.id}
 					title={<PubTitle pubData={targetPub} />}
-					contributors={targetPub.attributions?.filter((attr) => attr.isAuthor)}
+					contributors={targetPub.attributions.filter((attr) => attr.isAuthor)}
 					image={targetPub.avatar}
 					active={modifiers.active}
 					onClick={handleClick}

@@ -4,7 +4,6 @@ import { SettingsSection } from 'components';
 import { pubUrl, communityUrl } from 'utils/canonicalUrls';
 import { LandingPageFeatures as LandingPageFeaturesType } from 'types';
 
-import { expect } from 'utils/assert';
 import LandingPageFeatureManager, { RenderFeatureProps } from './LandingPageFeatureManager';
 import FeaturedCommunityItem from './FeaturedCommunityItem';
 
@@ -26,7 +25,7 @@ const LandingPageFeatures = (props: Props) => {
 					<a href={pubUrl(community, pub)}>{pub.title}</a>
 				</div>
 				<div className="community">
-					in <a href={communityUrl(community)}>{expect(community).title}</a>
+					in <a href={communityUrl(community)}>{community.title}</a>
 				</div>
 			</div>
 		);

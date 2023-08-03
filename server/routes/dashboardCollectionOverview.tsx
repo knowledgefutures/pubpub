@@ -10,8 +10,9 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCollectionOverview } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { SubmissionWorkflow } from 'server/models';
+import { SubmissionWorkflow as SubmissionWorkflowType } from 'types';
 
-const getSubmissionWorkflow = (collectionId: string) => {
+const getSubmissionWorkflow = (collectionId: string): Promise<SubmissionWorkflowType> => {
 	return SubmissionWorkflow.findOne({
 		where: { collectionId },
 	});

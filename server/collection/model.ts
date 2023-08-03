@@ -14,8 +14,7 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { CollectionKind, ReadNextPreviewSize } from 'types';
+// import { CollectionKind, ReadNextPreviewSize } from 'types';
 import { CollectionLayout } from 'utils/layout';
 import {
 	CollectionAttribution,
@@ -29,21 +28,14 @@ import {
 } from '../models';
 
 @Table
-export class Collection extends Model<
-	InferAttributes<Collection>,
-	InferCreationAttributes<Collection>
-> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Collection extends Model<InferAttributes<Collection>, InferCreationAttributes<Collection>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
-	// TODO: Make this `AllowNull(false)`. Never is a collection without a title, but
-	// technically this is nullable in the database.
 	@Column(DataType.TEXT)
-	title!: string;
+	title?: string | null;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -53,34 +45,37 @@ export class Collection extends Model<
 	slug!: string;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	avatar?: string | null;
 
 	@Column(DataType.BOOLEAN)
-	isRestricted!: boolean | null;
+	isRestricted?: boolean | null;
 
 	@Column(DataType.BOOLEAN)
-	isPublic!: boolean | null;
+	isPublic?: boolean | null;
 
 	@Column(DataType.STRING)
-	viewHash!: string | null;
+	viewHash?: string | null;
 
 	@Column(DataType.STRING)
-	editHash!: string | null;
+	editHash?: string | null;
 
 	// TODO: Add validation for this field
 	@Column(DataType.JSONB)
-	metadata!: Record<string, any> | null;
+	// 	metadata?: Record<string, any> | null;
+	metadata?: any;
 
 	// TODO: Add validation for this field
 	@Column(DataType.TEXT)
-	kind!: CollectionKind | null;
+	// 	kind?: CollectionKind | null;
+	kind?: any;
 
 	@Column(DataType.TEXT)
-	doi!: string | null;
+	doi?: string | null;
 
 	@Default('choose-best')
 	@Column(DataType.ENUM('none', 'minimal', 'medium', 'choose-best'))
-	readNextPreviewSize!: CreationOptional<ReadNextPreviewSize>;
+	// 	readNextPreviewSize?: CreationOptional<ReadNextPreviewSize | null>;
+	readNextPreviewSize?: any;
 
 	// TODO: Add validation for this field
 	@AllowNull(false)
@@ -94,52 +89,60 @@ export class Collection extends Model<
 	layoutAllowsDuplicatePubs!: CreationOptional<boolean>;
 
 	@Column(DataType.UUID)
-	pageId!: string | null;
-
-	// TODO: Make this `AllowNull(false)`. Never is a collection without a communityId, but
-	// technically this is nullable in the database.
-	@Column(DataType.UUID)
-	communityId!: string;
+	pageId?: string | null;
 
 	@Column(DataType.UUID)
-	scopeSummaryId!: string | null;
+	communityId?: string | null;
 
 	@Column(DataType.UUID)
-	crossrefDepositRecordId!: string | null;
+	scopeSummaryId?: string | null;
+
+	@Column(DataType.UUID)
+	crossrefDepositRecordId?: string | null;
 
 	@HasMany(() => CollectionAttribution, {
 		onDelete: 'CASCADE',
 		as: 'attributions',
 		foreignKey: 'collectionId',
 	})
-	attributions?: CollectionAttribution[];
+	// 	attributions?: CollectionAttribution[];
+	attributions?: any;
 
 	@HasOne(() => SubmissionWorkflow, { as: 'submissionWorkflow', foreignKey: 'collectionId' })
-	submissionWorkflow?: SubmissionWorkflow;
+	// 	submissionWorkflow?: SubmissionWorkflow;
+	submissionWorkflow?: any;
 
 	@HasMany(() => CollectionPub, { as: 'collectionPubs', foreignKey: 'collectionId' })
-	collectionPubs?: CollectionPub[];
+	// 	collectionPubs?: CollectionPub[];
+	collectionPubs?: any;
 
 	@HasMany(() => Member, { as: 'members', foreignKey: 'collectionId' })
-	members?: Member[];
+	// 	members?: Member[];
+	members?: any;
 
 	@BelongsTo(() => Page, { as: 'page', foreignKey: 'pageId' })
-	page?: Page;
+	// 	page?: Page;
+	page?: any;
 
 	@BelongsTo(() => CrossrefDepositRecord, {
 		as: 'crossrefDepositRecord',
 		foreignKey: 'crossrefDepositRecordId',
 		onDelete: 'SET NULL',
 	})
-	crossrefDepositRecord?: CrossrefDepositRecord;
+	// 	crossrefDepositRecord?: CrossrefDepositRecord;
+	crossrefDepositRecord?: any;
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',
 		foreignKey: 'scopeSummaryId',
 		onDelete: 'SET NULL',
 	})
-	scopeSummary?: ScopeSummary;
+	// 	scopeSummary?: ScopeSummary;
+	scopeSummary?: any;
 
 	@BelongsTo(() => Community, { as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	// 	community?: Community;
+	community?: any;
 }
+
+export const CollectionAnyModel = Collection as any;

@@ -5,7 +5,6 @@ import { CitationStyleKind } from 'utils/citations';
 
 import { ZoteroStyleKind } from 'types';
 
-import { expect } from 'utils/assert';
 import { ZoteroIntegration, IntegrationDataOAuth1 } from '../models';
 
 // mapping our citation style keys to zotero's keys
@@ -44,7 +43,7 @@ app.get('/api/citations/zotero', (req, res) => {
 			if (!integrationDataOAuth1) {
 				throw new Error('Zotero not authenticated');
 			}
-			const zoteroId = parseInt(expect(zoteroIntegration.zoteroUserId), 10);
+			const zoteroId = parseInt(zoteroIntegration.zoteroUserId, 10);
 			const zoteroAPI = zoteroClient(integrationDataOAuth1.accessToken).library(
 				'user',
 				zoteroId,

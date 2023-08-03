@@ -9,16 +9,13 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { SerializedModel } from 'types';
 import { Community, Collection, Pub } from '../../models';
 
 @Table
-export class FacetBinding extends Model<
+class FacetBinding extends Model<
 	InferAttributes<FacetBinding>,
 	InferCreationAttributes<FacetBinding>
 > {
-	declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -26,26 +23,31 @@ export class FacetBinding extends Model<
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	pubId?: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	collectionId!: string | null;
+	collectionId?: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	communityId?: string | null;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	// 	community?: Community;
+	community?: any;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	collection?: Collection;
+	// 	collection?: Collection;
+	collection?: any;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	// 	pub?: Pub;
+	pub?: any;
 }
+
+export const FacetBindingAnyModel = FacetBinding as any;

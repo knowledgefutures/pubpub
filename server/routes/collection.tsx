@@ -27,7 +27,7 @@ const findCollectionByPartialId = (maybePartialId: string) => {
 	});
 };
 
-const enrichCollectionWithAttributions = async (collection: Collection) => {
+const enrichCollectionWithAttributions = async (collection: types.Collection) => {
 	collection.attributions = await CollectionAttribution.findAll({
 		where: { collectionId: collection.id },
 		include: [includeUserModel({ as: 'user' })],

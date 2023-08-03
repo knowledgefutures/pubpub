@@ -77,7 +77,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 			bylineElement={
 				<TagInput
 					placeholder="Add contributors to this publication"
-					values={contributors ?? undefined}
+					values={contributors}
 					onChange={(value) =>
 						void onUpdateExternalPublication({ contributors: value as string[] })
 					}
@@ -101,7 +101,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 						className="editable-details"
 						placeholder="Add a description for this publication"
 						multiline
-						value={description ?? undefined}
+						value={description}
 						onChange={(value) => onUpdateExternalPublication({ description: value })}
 					/>
 				)

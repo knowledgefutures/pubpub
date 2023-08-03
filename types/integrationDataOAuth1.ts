@@ -1,4 +1,8 @@
-import { IntegrationDataOAuth1 as IntegrationDataOAuth1Model } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import { ZoteroIntegration } from './zotero';
 
-export type IntegrationDataOAuth1 = SerializedModel<IntegrationDataOAuth1Model>;
+export type IntegrationDataOAuth1 = {
+	id: string;
+	integrationId: string;
+	accessToken: string;
+	integration?: ZoteroIntegration;
+};

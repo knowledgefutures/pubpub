@@ -30,24 +30,24 @@ export const zoteroAuthStrategy = () =>
 				include: {
 					model: ZoteroIntegration,
 					required: false,
-					include: [{ model: IntegrationDataOAuth1, required: false }],
+					include: { model: IntegrationDataOAuth1, required: false },
 				},
 			})
 				.then((user) => {
-					if (!expect(user).zoteroIntegration) {
+					if (!user.zoteroIntegration) {
 						return IntegrationDataOAuth1.create({ accessToken }).then(
 							(integrationData) =>
 								ZoteroIntegration.create({
-									userId: expect(user).id,
+									userId: user.id,
 									zoteroUsername,
 									zoteroUserId,
 									integrationDataOAuth1Id: integrationData.id,
 								}),
 						);
 					}
-					const integration = expect(user).zoteroIntegration;
+					const integration = user.zoteroIntegration;
 					return IntegrationDataOAuth1.findOne({
-						where: { id: expect(integration).integrationDataOAuth1Id ?? undefined },
+						where: { id: integration.integrationDataOAuth1Id },
 					})
 						.then((oldData) => expect(oldData).update({ accessToken }))
 						.then(() => integration);

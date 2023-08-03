@@ -4,7 +4,6 @@ import * as types from 'types';
 import { CollectionPub, Member } from 'server/models';
 import { getMemberDataById } from 'server/utils/queryHelpers';
 import { MemberPermission } from 'types';
-import { expect } from 'utils/assert';
 
 const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }: any) => {
 	if ([pubId, communityId, collectionId].filter((x) => x).length !== 1) {
@@ -50,7 +49,7 @@ type UpdateMemberOptions = {
 	memberId: string;
 	actorId: string | null;
 	value: Partial<{
-		permissions: ['view', 'edit', 'manage', 'admin'][number];
+		permissions: ['view', 'edit', 'manage', 'admin'];
 		subscribedToActivityDigest: boolean;
 	}>;
 };
@@ -61,7 +60,7 @@ export const updateMember = async (options: UpdateMemberOptions) => {
 		actorId,
 		value: { permissions, subscribedToActivityDigest },
 	} = options;
-	const existingMember = expect(await Member.findOne({ where: { id: memberId } }));
+	const existingMember = await Member.findOne({ where: { id: memberId } });
 	await existingMember.update({ permissions, subscribedToActivityDigest }, { actorId });
 	return existingMember;
 };
@@ -70,7 +69,9 @@ export const destroyMember = ({ memberId, actorId = null }) => {
 	return Member.destroy({ where: { id: memberId }, actorId, individualHooks: true });
 };
 
-export const getMembersForScope = async (scope: types.ScopeId) => {
+export const getMembersForScope = async (
+	scope: types.ScopeId,
+): Promise<types.SequelizeModel<types.Member>[]> => {
 	if ('pubId' in scope && scope.pubId) {
 		const collectionPubs = await CollectionPub.findAll({
 			where: { pubId: scope.pubId },

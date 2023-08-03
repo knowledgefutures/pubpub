@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import { FacetBinding } from './models/facetBinding';
+import { FacetBindingAnyModel as FacetBinding } from './models/facetBinding';
 
 import { ALL_FACET_DEFINITIONS, FacetName, FacetProp, FacetProps } from '../../facets';
 

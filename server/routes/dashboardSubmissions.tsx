@@ -31,8 +31,11 @@ const getInitialPubs = async (
 	return { initialPubs, initiallyLoadedAllPubs };
 };
 
-const getSubmissionWorkflow = async (collectionId: string) => {
-	const workflow = await SubmissionWorkflow.findOne({ where: { collectionId } });
+const getSubmissionWorkflow = async (
+	collectionId: string,
+): Promise<null | types.SubmissionWorkflow> => {
+	const workflow: null | types.SequelizeModel<types.SubmissionWorkflow> =
+		await SubmissionWorkflow.findOne({ where: { collectionId } });
 	if (workflow) {
 		return workflow.toJSON();
 	}

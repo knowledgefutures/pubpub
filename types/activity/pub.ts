@@ -81,7 +81,7 @@ type PubReviewActivityItemBase = PubActivityItemBase & {
 	payload: {
 		review: {
 			id: string;
-			title: string | null;
+			title: string;
 		};
 	};
 };

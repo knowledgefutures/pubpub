@@ -6,12 +6,7 @@ import { usePendingChanges, usePageContext } from 'utils/hooks';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { usePersistableState } from 'client/utils/usePersistableState';
 import * as api from 'client/utils/collections/api';
-import {
-	MinimalScopeSummary,
-	addScopeSummaries,
-	subtractScopeSummaries,
-} from 'utils/scopeSummaries';
-import { expect } from 'utils/assert';
+import { addScopeSummaries, subtractScopeSummaries } from 'utils/scopeSummaries';
 
 const linkCollection = <C extends Collection>(collection: C, community: Community) => {
 	const page = community.pages?.find((pg) => pg.id === collection.pageId);
@@ -33,7 +28,7 @@ export const useCollectionPubs = (options: UseCollectionPubsOptions) => {
 	} = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 	const [collectionPubs, setCollectionPubs] = useState(() => sortByRank(initialCollectionPubs));
-	const [scopeSummary, setScopeSummary] = useState<MinimalScopeSummary>(collection.scopeSummary);
+	const [scopeSummary, setScopeSummary] = useState(collection.scopeSummary);
 
 	const reorderCollectionPubs = (sourceIndex: number, destinationIndex: number) => {
 		const nextCollectionPubs = [...collectionPubs];
@@ -69,7 +64,7 @@ export const useCollectionPubs = (options: UseCollectionPubsOptions) => {
 		const removedPub = pubs.find((p) => p.id === collectionPub.pubId);
 		if (removedPub) {
 			setScopeSummary((current) => ({
-				...subtractScopeSummaries(current, expect(removedPub.scopeSummary)),
+				...subtractScopeSummaries(current, removedPub.scopeSummary),
 				pubs: current.pubs - 1,
 			}));
 		}
@@ -122,7 +117,7 @@ export const useCollectionPubs = (options: UseCollectionPubsOptions) => {
 				})
 				.then((collectionPub) => {
 					setScopeSummary((current) => ({
-						...addScopeSummaries(current, expect(pub.scopeSummary)),
+						...addScopeSummaries(current, pub.scopeSummary),
 						pubs: current.pubs + 1,
 					}));
 					setCollectionPubs((newestCollectionPubs) =>

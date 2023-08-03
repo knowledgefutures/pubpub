@@ -14,7 +14,7 @@ require('./titleEditor.scss');
 
 type Props = {
 	isReadOnly?: boolean;
-	initialValue?: string | null;
+	initialValue?: string;
 	onChange?: (html: string, text: string) => void;
 	onInput?: (html: string, text: string) => void;
 	className?: string;
@@ -32,7 +32,7 @@ const commonProps = {
 
 export default function TitleEditor(props: Props) {
 	const {
-		initialValue,
+		initialValue = '',
 		onChange,
 		onInput,
 		isReadOnly = false,
@@ -137,7 +137,7 @@ export default function TitleEditor(props: Props) {
 	useEffect(() => {
 		if (init.current) return;
 		if (node.current) {
-			node.current.innerHTML = initialValue ?? '';
+			node.current.innerHTML = initialValue;
 			init.current = true;
 		}
 	}, [initialValue, onChange]);
@@ -154,7 +154,7 @@ export default function TitleEditor(props: Props) {
 			// the hydrated editor will be unedtiable.
 			contentEditable={!isReadOnly}
 			// eslint-disable-next-line react/no-danger
-			dangerouslySetInnerHTML={{ __html: initialValue ?? '' }}
+			dangerouslySetInnerHTML={{ __html: initialValue }}
 		/>
 	);
 

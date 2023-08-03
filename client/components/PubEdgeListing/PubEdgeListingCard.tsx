@@ -46,7 +46,7 @@ const PubEdgeListingCard = (props: Props) => {
 	const handleMouseEnter = useCallback(() => setHover(true), []);
 	const handleMouseLeave = useCallback(() => setHover(false), []);
 	const hoverAccentColor = hover ? accentColor || communityData.accentColorDark : '#ddd';
-	const style = { borderColor: hoverAccentColor ?? undefined };
+	const style = { borderColor: hoverAccentColor };
 
 	const renderRelation = () => {
 		const { relationType, pubIsParent } = pubEdge;
@@ -118,7 +118,7 @@ const PubEdgeListingCard = (props: Props) => {
 			</div>
 			{pubEdgeElement || (
 				<PubEdge
-					accentColor={hoverAccentColor ?? undefined}
+					accentColor={hoverAccentColor}
 					actsLikeLink={inPubBody}
 					pubEdge={pubEdge}
 					viewingFromTarget={viewingFromTarget}

@@ -1,7 +1,6 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { expect } from 'utils/assert';
 import { getPermissions } from './permissions';
 import {
 	createPubAttribution,
@@ -32,9 +31,9 @@ app.post(
 		}
 
 		const existingAttributions = await getPubAttributions(requestIds.pubId);
-		const orderingBase = expect(
-			existingAttributions.length ? existingAttributions.concat().pop()?.order : 1,
-		);
+		const orderingBase = existingAttributions.length
+			? existingAttributions.concat().pop().order
+			: 1;
 
 		const newAttributions = await Promise.all(
 			attributions

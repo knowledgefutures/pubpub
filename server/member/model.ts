@@ -9,14 +9,11 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { MemberPermission } from 'types';
+// import { MemberPermission } from 'types';
 import { User, Community, Pub, Collection } from '../models';
 
 @Table
-export class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Member>> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Member>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -24,10 +21,11 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 
 	@Default('view')
 	@Column(DataType.ENUM('view', 'edit', 'manage', 'admin'))
-	permissions!: CreationOptional<MemberPermission>;
+	// 	permissions?: CreationOptional<MemberPermission | null>;
+	permissions?: any;
 
 	@Column(DataType.BOOLEAN)
-	isOwner!: boolean | null;
+	isOwner?: boolean | null;
 
 	@AllowNull(false)
 	@Default(false)
@@ -39,30 +37,36 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 	userId!: string;
 
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	pubId?: string | null;
 
 	@Column(DataType.UUID)
-	collectionId!: string | null;
+	collectionId?: string | null;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	communityId?: string | null;
 
 	@Column(DataType.UUID)
-	organizationId!: string | null;
+	organizationId?: string | null;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	// 	user?: User;
+	user?: any;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	// 	community?: Community;
+	community?: any;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	// 	pub?: Pub;
+	pub?: any;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	collection?: Collection;
+	// 	collection?: Collection;
+	collection?: any;
 }
+
+export const MemberAnyModel = Member as any;

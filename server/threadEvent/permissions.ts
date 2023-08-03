@@ -1,18 +1,8 @@
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({
-	userId,
-	communityId,
-	pubId,
-	threadId,
-}: {
-	userId?: string;
-	communityId?: string;
-	pubId?: string;
-	threadId?: string;
-}): Promise<ThreadEventPermissions> => {
+export const getPermissions = async ({ userId, communityId, pubId, threadId }) => {
 	if (!userId || !communityId || !pubId || !threadId) {
-		return {} as ThreadEventPermissions;
+		return {};
 	}
 	const scopeData = await getScope({
 		communityId,
@@ -22,14 +12,14 @@ export const getPermissions = async ({
 
 	const { activePub } = scopeData.elements;
 	if (!activePub || activePub.id !== pubId) {
-		return {} as ThreadEventPermissions;
+		return {};
 	}
 
-	const threadParent = [activePub.discussions, activePub.reviews].flat().find((item) => {
-		return item?.threadId === threadId;
+	const threadParent = [activePub.discussions, activePub.reviews].find((item) => {
+		return item.threadId === threadId;
 	});
 	if (!threadParent) {
-		return {} as ThreadEventPermissions;
+		return {};
 	}
 
 	const { canManage } = scopeData.activePermissions;
@@ -39,10 +29,4 @@ export const getPermissions = async ({
 		update: false,
 		destroy: false,
 	};
-};
-
-export type ThreadEventPermissions = {
-	create?: boolean;
-	update?: false;
-	destroy?: false;
 };

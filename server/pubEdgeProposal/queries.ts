@@ -7,10 +7,10 @@ import { assignNotNull } from 'utils/objects';
 import { Community, Pub } from 'server/models';
 import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
-import { expect } from 'utils/assert';
 
-const ensureFullUrlForExternalPublication = (externalPublication, responseUrl: string) => {
-	const { origin } = expect(parseUrl(responseUrl));
+const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) => {
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'origin' does not exist on type 'URL | nu... Remove this comment to see the full error message
+	const { origin } = parseUrl(responseUrl);
 
 	if (externalPublication.url && /^\//.test(externalPublication.url)) {
 		const url = new URL(externalPublication.url, origin);
@@ -39,11 +39,12 @@ export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 	} = message;
 	const contributors = author ? author.map(({ given, family }) => `${given} ${family}`) : [];
 
-	let publicationDate: Date | null = null;
+	let publicationDate = null;
 
 	const date = publishedOnline || publishedPrint;
 
 	if (date) {
+		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Date' is not assignable to type 'null'.
 		publicationDate = new Date(date['date-parts']);
 	}
 
@@ -58,7 +59,7 @@ export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 	};
 };
 
-export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
+export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
 	const externalPublication = await createExternalPublicationFromCrossrefDoi(doi);
 
 	return externalPublication
@@ -68,12 +69,12 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
 		: null;
 };
 
-export const createExternalPublicationFromMicrodata = ($: cheerio.Root) => {
+export const createExternalPublicationFromMicrodata = ($) => {
 	const script = $('script[type="application/ld+json"]').get(0);
 
 	if (script) {
 		try {
-			const parsed = JSON.parse(expect($(script).html()));
+			const parsed = JSON.parse($(script).html());
 
 			return {
 				title: parsed.headline || parsed.alternativeHeadline || null,
@@ -92,7 +93,7 @@ export const createExternalPublicationFromMicrodata = ($: cheerio.Root) => {
 	return {};
 };
 
-export const createPubEdgeProposalFromArbitraryUrl = async (url: string) => {
+export const createPubEdgeProposalFromArbitraryUrl = async (url) => {
 	let response: Response;
 
 	try {
@@ -134,7 +135,7 @@ export const createPubEdgeProposalFromArbitraryUrl = async (url: string) => {
 	};
 };
 
-export const getPubDataFromUrl = async (url: URL) => {
+export const getPubDataFromUrl = async (url) => {
 	const { hostname, pathname } = url;
 	const matches = pathname.match(/^\/pub\/(\w+)/);
 

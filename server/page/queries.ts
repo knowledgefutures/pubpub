@@ -6,21 +6,9 @@ import { PubPubError } from 'server/utils/errors';
 import { generateHash } from 'utils/hashes';
 import { generateDefaultPageLayout } from 'utils/pages';
 
-import { expect } from 'utils/assert';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
 import { sanitizePageHtml } from './sanitizePageHtml';
-import { PagePermissions } from './permissions';
 
-export const createPage = async (
-	inputValues: {
-		communityId: string;
-		title: string;
-		slug: string;
-		description?: string;
-		avatar?: string;
-	},
-	actorId: string | null = null,
-) => {
+export const createPage = async (inputValues, actorId = null) => {
 	if (inputValues.slug) {
 		const desiredSlug = slugifyString(inputValues.slug);
 		const slugStatus = await slugIsAvailable({
@@ -33,7 +21,7 @@ export const createPage = async (
 			throw new PubPubError.ForbiddenSlugError(desiredSlug, slugStatus);
 		}
 	}
-	const newPage = await Page.create(
+	return Page.create(
 		{
 			communityId: inputValues.communityId,
 			title: inputValues.title,
@@ -45,51 +33,40 @@ export const createPage = async (
 			viewHash: generateHash(8),
 		},
 		{ actorId },
-	);
-	setPageSearchData(newPage.id);
-	const findCommunity = Community.findOne({
-		where: { id: inputValues.communityId },
-		attributes: ['id', 'navigation'],
-	});
-	const [newPage_1, communityData] = await Promise.all([newPage, findCommunity]);
-	const oldNavigation = expect(communityData?.toJSON().navigation);
-	const newNavigationOutput: CommunityNavigationEntry[] = [
-		oldNavigation[0],
-		{ type: 'page' as const, id: newPage_1.id },
-		...oldNavigation.slice(1, oldNavigation.length),
-	].filter((x) => x);
-	const updateCommunity = Community.update(
-		{ navigation: newNavigationOutput },
-		{
-			where: { id: inputValues.communityId },
-		},
-	);
-	const [newPage_2] = await Promise.all([newPage_1, updateCommunity]);
-	return newPage_2;
+	)
+		.then((newPage) => {
+			setPageSearchData(newPage.id);
+			const findCommunity = Community.findOne({
+				where: { id: inputValues.communityId },
+				attributes: ['id', 'navigation'],
+			});
+			return Promise.all([newPage, findCommunity]);
+		})
+		.then(([newPage, communityData]) => {
+			const oldNavigation = communityData.toJSON().navigation;
+			const newNavigationOutput = [
+				oldNavigation[0],
+				{ type: 'page', id: newPage.id },
+				...oldNavigation.slice(1, oldNavigation.length),
+			].filter((x) => x);
+			const updateCommunity = Community.update(
+				{ navigation: newNavigationOutput },
+				{
+					where: { id: inputValues.communityId },
+				},
+			);
+			return Promise.all([newPage, updateCommunity]);
+		})
+		.then(([newPage]) => {
+			return newPage;
+		});
 };
 
-export const updatePage = async (
-	inputValues: {
-		communityId: string;
-		pageId: string;
-		title?: string;
-		slug?: string;
-		description?: string;
-		avatar?: string;
-		layout?: any;
-	},
-	updatePermissions: PagePermissions['update'],
-	actorId: string | null = null,
-) => {
+export const updatePage = async (inputValues, updatePermissions, actorId = null) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {} as {
-		[K in Exclude<
-			PagePermissions['update'],
-			false | undefined
-		>[number]]?: K extends keyof typeof inputValues ? (typeof inputValues)[K] : never;
-	};
+	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions && updatePermissions.some((x) => x === key)) {
+		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
@@ -101,7 +78,7 @@ export const updatePage = async (
 			activeElementId: inputValues.pageId,
 		});
 		if (slugStatus !== 'available') {
-			throw new PubPubError.ForbiddenSlugError(filteredValues.slug!, slugStatus);
+			throw new PubPubError.ForbiddenSlugError(filteredValues.slug, slugStatus);
 		}
 	}
 	if (filteredValues.layout) {
@@ -128,42 +105,46 @@ export const updatePage = async (
 		});
 };
 
-export const destroyPage = async (inputValues, actorId = null) => {
-	await Page.destroy({
+export const destroyPage = (inputValues, actorId = null) => {
+	return Page.destroy({
 		where: {
 			id: inputValues.pageId,
 			communityId: inputValues.communityId,
 		},
 		actorId,
 		individualHooks: true,
-	});
-	const communityData = expect(
-		await Community.findOne({
-			where: { id: inputValues.communityId },
-			attributes: ['id', 'navigation'],
-		}),
-	);
-	const oldNavigation = expect(communityData.toJSON().navigation);
-	const newNavigationOutput = oldNavigation
-		.filter((item) => {
-			return item !== inputValues.pageId;
+	})
+		.then(() => {
+			return Community.findOne({
+				where: { id: inputValues.communityId },
+				attributes: ['id', 'navigation'],
+			});
 		})
-		.map((item_1) => {
-			if (!('children' in item_1)) {
-				return item_1;
-			}
-			return {
-				...item_1,
-				children: item_1.children.filter((subitem) => {
-					return subitem !== inputValues.pageId;
-				}),
-			};
+		.then((communityData) => {
+			const oldNavigation = communityData.toJSON().navigation;
+			const newNavigationOutput = oldNavigation
+				.filter((item) => {
+					return item !== inputValues.pageId;
+				})
+				.map((item) => {
+					if (!item.children) {
+						return item;
+					}
+					return {
+						...item,
+						children: item.children.filter((subitem) => {
+							return subitem !== inputValues.pageId;
+						}),
+					};
+				});
+			return Community.update(
+				{ navigation: newNavigationOutput },
+				{
+					where: { id: inputValues.communityId },
+				},
+			);
+		})
+		.then(() => {
+			return deletePageSearchData(inputValues.pageId);
 		});
-	await Community.update(
-		{ navigation: newNavigationOutput },
-		{
-			where: { id: inputValues.communityId },
-		},
-	);
-	return deletePageSearchData(inputValues.pageId);
 };

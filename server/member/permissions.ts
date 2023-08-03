@@ -1,12 +1,11 @@
 import { getScope, getMemberDataById } from 'server/utils/queryHelpers';
-import { expect } from 'utils/assert';
 
-const getMemberPermission = async (scopeData, memberId: string) => {
+const getMemberPermission = async (scopeData, memberId) => {
 	if (memberId) {
 		const {
 			elements: { activeIds, activeTargetType },
 		} = scopeData;
-		const member = expect(await getMemberDataById(memberId, false));
+		const member = await getMemberDataById(memberId, false);
 		if (activeTargetType === 'community' && member.communityId === activeIds.communityId) {
 			return member.permissions;
 		}

@@ -7,7 +7,7 @@ import { DepositTarget } from 'server/models';
  * primary deposit target when a Community has more than one.
  */
 export const getCommunityDepositTarget = async (
-	communityId: string | null,
+	communityId: string,
 	includeCredentials = false,
 ): Promise<types.DepositTarget | undefined> => {
 	const depositTarget = await DepositTarget.findOne({
@@ -21,7 +21,7 @@ export const getCommunityDepositTarget = async (
 	}
 
 	const depositTargetJson = {
-		...depositTarget.toJSON(),
+		...depositTarget.get({ plain: true }),
 		isPubPubManaged: Boolean(depositTarget.username),
 	};
 
@@ -32,5 +32,5 @@ export const getCommunityDepositTarget = async (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { username, password, passwordInitVec, ...sanitizedDepositTargetJson } =
 		depositTargetJson;
-	return sanitizedDepositTargetJson as types.DepositTarget;
+	return sanitizedDepositTargetJson;
 };

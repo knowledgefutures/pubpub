@@ -1,3 +1,4 @@
+import * as types from 'types';
 import { ThreadComment } from 'server/models';
 import { defer } from 'server/utils/deferred';
 import { getParentModelForThread } from 'server/thread/queries';
@@ -8,7 +9,7 @@ import {
 import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 
-const createActivityItem = async (threadComment: ThreadComment) => {
+const createActivityItem = async (threadComment: types.ThreadComment) => {
 	const parent = await getParentModelForThread(threadComment.threadId);
 	if (parent) {
 		if (parent.type === 'discussion') {
@@ -31,7 +32,7 @@ const createActivityItem = async (threadComment: ThreadComment) => {
 	return null;
 };
 
-ThreadComment.afterCreate(async (threadComment) => {
+ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
 	const { userId, threadId } = threadComment;
 	if (userId) {
 		const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);
@@ -45,7 +46,5 @@ ThreadComment.afterCreate(async (threadComment) => {
 		}
 	}
 
-	defer(async () => {
-		await createActivityItem(threadComment);
-	});
+	defer(() => createActivityItem(threadComment));
 });

@@ -1,15 +1,9 @@
 import { Op } from 'sequelize';
 
 import * as types from 'types';
-import {
-	UserNotification,
-	UserSubscription,
-	UserNotificationPreferences,
-	ActivityItem,
-} from 'server/models';
+import { UserNotification, UserSubscription, UserNotificationPreferences } from 'server/models';
 import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
-import { expect } from 'utils/assert';
 
 type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
 	item: types.ActivityItemOfKind<Kind>,
@@ -19,23 +13,25 @@ const createNotificationsForThreadComment = async (
 	item: types.ActivityItemOfKind<'pub-discussion-comment-added' | 'pub-review-comment-added'>,
 	includePubLevelSubscribers: boolean,
 ) => {
-	const { actorId, pubId } = item;
-
-	const threadId = expect(item.payload?.threadId);
+	const {
+		actorId,
+		pubId,
+		payload: { threadId },
+	} = item;
 
 	const subscriptionWhereQueries = includePubLevelSubscribers
 		? [{ pubId }, { threadId }]
 		: [{ threadId }];
 
-	const subscriptions = await UserSubscription.findAll({
+	const subscriptions: types.UserSubscription[] = await UserSubscription.findAll({
 		where: {
 			[Op.or]: subscriptionWhereQueries,
-			userId: { [Op.not]: expect(actorId) },
+			userId: { [Op.not]: actorId },
 			status: { [Op.not]: 'inactive' },
 		},
 	});
 
-	const notificationPreferencesOptingOutOfNotifications =
+	const notificationPreferencesOptingOutOfNotifications: types.UserNotificationPreferences[] =
 		await UserNotificationPreferences.findAll({
 			where: {
 				userId: { [Op.in]: [...new Set(subscriptions.map((s) => s.userId))] },
@@ -90,18 +86,16 @@ const createNotificationsForThreadComment = async (
 	);
 };
 
-const notificationCreatorsByKind = {
+const notificationCreatorsByKind: Partial<{
+	[Kind in types.ActivityItemKind]: ActivityItemResponder<Kind>;
+}> = {
 	'pub-discussion-comment-added': (item) => createNotificationsForThreadComment(item, true),
 	'pub-review-comment-added': (item) => createNotificationsForThreadComment(item, false),
-} satisfies Partial<{
-	[Kind in types.ActivityItemKind]: ActivityItemResponder<Kind>;
-}>;
+};
 
-export const createNotificationsForActivityItem = async <A extends ActivityItem>(item: A) => {
-	if (item.kind in notificationCreatorsByKind) {
-		const creator = notificationCreatorsByKind[item.kind];
-		if (creator) {
-			await creator(item);
-		}
+export const createNotificationsForActivityItem = async (item: types.ActivityItem) => {
+	const creator = notificationCreatorsByKind[item.kind] as ActivityItemResponder<any>;
+	if (creator) {
+		await creator(item);
 	}
 };

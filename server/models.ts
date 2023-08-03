@@ -7,60 +7,60 @@ import { sequelize } from './sequelize';
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 
-import { Collection } from './collection/model';
-import { CollectionAttribution } from './collectionAttribution/model';
-import { CollectionPub } from './collectionPub/model';
-import { Commenter } from './commenter/model';
-import { Community } from './community/model';
-import { CommunityAdmin } from './communityAdmin/model';
-import { CrossrefDepositRecord } from './crossrefDepositRecord/model';
-import { CustomScript } from './customScript/model';
-import { DepositTarget } from './depositTarget/model';
-import { Discussion } from './discussion/model';
-import { DiscussionAnchor } from './discussionAnchor/model';
-import { Doc } from './doc/model';
-import { Draft } from './draft/model';
-import { Export } from './export/model';
-import { ExternalPublication } from './externalPublication/model';
-import { FeatureFlag } from './featureFlag/model';
-import { FeatureFlagUser } from './featureFlagUser/model';
-import { FeatureFlagCommunity } from './featureFlagCommunity/model';
-import { ZoteroIntegration } from './zoteroIntegration/model';
-import { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
-import { LandingPageFeature } from './landingPageFeature/model';
-import { Member } from './member/model';
-import { Merge } from './merge/model';
-import { Organization } from './organization/model';
-import { Page } from './page/model';
-import { Pub } from './pub/model';
-import { PubAttribution } from './pubAttribution/model';
-import { PubEdge } from './pubEdge/model';
-import { PubManager } from './pubManager/model';
-import { PubVersion } from './pubVersion/model';
-import { PublicPermissions } from './publicPermissions/model';
-import { Release } from './release/model';
-import { ReviewEvent } from './reviewEvent/model';
-import { ScopeSummary } from './scopeSummary/model';
-import { Submission } from './submission/model';
-import { Signup } from './signup/model';
-import { SpamTag } from './spamTag/model';
-import { SubmissionWorkflow } from './submissionWorkflow/model';
-import { ReviewNew } from './review/model';
-import { Reviewer } from './reviewer/model';
-import { Thread } from './thread/model';
-import { ThreadComment } from './threadComment/model';
-import { ThreadEvent } from './threadEvent/model';
-import { User } from './user/model';
-import { UserDismissable } from './userDismissable/model';
-import { UserNotification } from './userNotification/model';
-import { UserNotificationPreferences } from './userNotificationPreferences/model';
-import { UserScopeVisit } from './userScopeVisit/model';
-import { UserSubscription } from './userSubscription/model';
-import { ActivityItem } from './activityItem/model';
-import { Visibility } from './visibility/model';
-import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding';
-import { VisibilityUser } from './visibilityUser/model';
-import { WorkerTask } from './workerTask/model';
+import { CollectionAnyModel as Collection } from './collection/model';
+import { CollectionAttributionAnyModel as CollectionAttribution } from './collectionAttribution/model';
+import { CollectionPubAnyModel as CollectionPub } from './collectionPub/model';
+import { CommenterAnyModel as Commenter } from './commenter/model';
+import { CommunityAnyModel as Community } from './community/model';
+import { CommunityAdminAnyModel as CommunityAdmin } from './communityAdmin/model';
+import { CrossrefDepositRecordAnyModel as CrossrefDepositRecord } from './crossrefDepositRecord/model';
+import { CustomScriptAnyModel as CustomScript } from './customScript/model';
+import { DepositTargetAnyModel as DepositTarget } from './depositTarget/model';
+import { DiscussionAnyModel as Discussion } from './discussion/model';
+import { DiscussionAnchorAnyModel as DiscussionAnchor } from './discussionAnchor/model';
+import { DocAnyModel as Doc } from './doc/model';
+import { DraftAnyModel as Draft } from './draft/model';
+import { ExportAnyModel as Export } from './export/model';
+import { ExternalPublicationAnyModel as ExternalPublication } from './externalPublication/model';
+import { FeatureFlagAnyModel as FeatureFlag } from './featureFlag/model';
+import { FeatureFlagUserAnyModel as FeatureFlagUser } from './featureFlagUser/model';
+import { FeatureFlagCommunityAnyModel as FeatureFlagCommunity } from './featureFlagCommunity/model';
+import { ZoteroIntegrationAnyModel as ZoteroIntegration } from './zoteroIntegration/model';
+import { IntegrationDataOAuth1AnyModel as IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
+import { LandingPageFeatureAnyModel as LandingPageFeature } from './landingPageFeature/model';
+import { MemberAnyModel as Member } from './member/model';
+import { MergeAnyModel as Merge } from './merge/model';
+import { OrganizationAnyModel as Organization } from './organization/model';
+import { PageAnyModel as Page } from './page/model';
+import { PubAnyModel as Pub } from './pub/model';
+import { PubAttributionAnyModel as PubAttribution } from './pubAttribution/model';
+import { PubEdgeAnyModel as PubEdge } from './pubEdge/model';
+import { PubManagerAnyModel as PubManager } from './pubManager/model';
+import { PubVersionAnyModel as PubVersion } from './pubVersion/model';
+import { PublicPermissionsAnyModel as PublicPermissions } from './publicPermissions/model';
+import { ReleaseAnyModel as Release } from './release/model';
+import { ReviewEventAnyModel as ReviewEvent } from './reviewEvent/model';
+import { ScopeSummaryAnyModel as ScopeSummary } from './scopeSummary/model';
+import { SubmissionAnyModel as Submission } from './submission/model';
+import { SignupAnyModel as Signup } from './signup/model';
+import { SpamTagAnyModel as SpamTag } from './spamTag/model';
+import { SubmissionWorkflowAnyModel as SubmissionWorkflow } from './submissionWorkflow/model';
+import { ReviewNewAnyModel as ReviewNew } from './review/model';
+import { ReviewerAnyModel as Reviewer } from './reviewer/model';
+import { ThreadAnyModel as Thread } from './thread/model';
+import { ThreadCommentAnyModel as ThreadComment } from './threadComment/model';
+import { ThreadEventAnyModel as ThreadEvent } from './threadEvent/model';
+import { UserAnyModel as User } from './user/model';
+import { UserDismissableAnyModel as UserDismissable } from './userDismissable/model';
+import { UserNotificationAnyModel as UserNotification } from './userNotification/model';
+import { UserNotificationPreferencesAnyModel as UserNotificationPreferences } from './userNotificationPreferences/model';
+import { UserScopeVisitAnyModel as UserScopeVisit } from './userScopeVisit/model';
+import { UserSubscriptionAnyModel as UserSubscription } from './userSubscription/model';
+import { ActivityItemAnyModel as ActivityItem } from './activityItem/model';
+import { VisibilityAnyModel as Visibility } from './visibility/model';
+import { FacetBindingAnyModel as FacetBindingModel } from './facets/models/facetBinding';
+import { VisibilityUserAnyModel as VisibilityUser } from './visibilityUser/model';
+import { WorkerTaskAnyModel as WorkerTask } from './workerTask/model';
 
 sequelize.addModels([
 	Collection,
@@ -139,7 +139,7 @@ export const attributesPublicUser = [
 	'initials',
 	'title',
 	'orcid',
-] as const;
+];
 
 export const includeUserModel = (() => {
 	return (options) => {

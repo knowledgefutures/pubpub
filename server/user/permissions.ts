@@ -1,34 +1,7 @@
 import { Signup } from 'server/models';
 import { isUserSuperAdmin } from './queries';
 
-export const updatePermissions = [
-	'slug',
-	'firstName',
-	'lastName',
-	'avatar',
-	'title',
-	'bio',
-	'location',
-	'website',
-	'orcid',
-	'github',
-	'twitter',
-	'facebook',
-	'googleScholar',
-	'gdprConsent',
-] as const;
-
-export const getPermissions = async ({
-	userId,
-	submittedUserId,
-	email,
-	hash,
-}: {
-	userId: string | undefined | null;
-	submittedUserId: string | undefined | null;
-	email: string;
-	hash: string | null;
-}): Promise<UserPermissions> => {
+export const getPermissions = async ({ userId, submittedUserId, email, hash }) => {
 	const isSuperAdmin = await isUserSuperAdmin({ userId });
 	const signUpData = await Signup.findOne({
 		where: { hash, email },
@@ -38,21 +11,32 @@ export const getPermissions = async ({
 	if (hash && !signUpData) {
 		throw new Error('Hash not valid');
 	}
-	if (hash && signUpData?.completed) {
+	if (hash && signUpData.completed) {
 		throw new Error('Account already created');
 	}
+
+	const editProps = [
+		'slug',
+		'firstName',
+		'lastName',
+		'avatar',
+		'title',
+		'bio',
+		'location',
+		'website',
+		'orcid',
+		'github',
+		'twitter',
+		'facebook',
+		'googleScholar',
+		'gdprConsent',
+	];
 
 	const isAuthenticated = submittedUserId === userId || isSuperAdmin;
 
 	return {
 		create: signUpData,
-		update: isAuthenticated && updatePermissions,
+		update: isAuthenticated && editProps,
 		read: isAuthenticated,
 	};
-};
-
-export type UserPermissions = {
-	create: Signup | null;
-	update: false | typeof updatePermissions;
-	read: boolean;
 };

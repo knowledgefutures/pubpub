@@ -1,14 +1,14 @@
 import { Pub, Thread, ThreadComment, Discussion, ReviewNew, Visibility } from 'server/models';
+import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
-import { expect } from 'utils/assert';
 
-const getMatchingDiscussion = (id: string, threadId: string, pubId: string) =>
+const getMatchingDiscussion = (id, threadId, pubId) =>
 	Discussion.findOne({
 		where: { id, threadId, pubId },
 		include: [{ model: Visibility, as: 'visibility' }],
 	});
 
-const getMatchingReview = (id: string, threadId: string, pubId: string) =>
+const getMatchingReview = (id, threadId, pubId) =>
 	ReviewNew.findOne({
 		where: { id, threadId, pubId },
 		include: [{ model: Visibility, as: 'visibility' }],
@@ -25,7 +25,7 @@ const canUserInteractWithParent = (parent, canView) => {
 	return false;
 };
 
-export const userEditableFields = ['text', 'content'] as const;
+export const userEditableFields = ['text', 'content'];
 
 export const getPermissions = async ({
 	userId,
@@ -36,12 +36,11 @@ export const getPermissions = async ({
 	communityId,
 	accessHash,
 	commentAccessHash,
-}): Promise<Permissions> => {
+}) => {
 	if (!userId && !commentAccessHash) {
 		return {};
 	}
-	const pub = expect(await Pub.findOne({ where: { id: pubId } }));
-
+	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
 	const hasAccessHash = pub?.commentHash === commentAccessHash;
 	const [scopeData, discussionData, reviewData, threadData, threadCommentData] =
 		await Promise.all([
@@ -73,9 +72,4 @@ export const getPermissions = async ({
 		create: !threadData.isLocked && (canView || canInteractWithParent || hasAccessHash),
 		update: (canAdmin || !!userCreatedComment) && userEditableFields,
 	};
-};
-
-export type Permissions = {
-	create?: boolean;
-	update?: false | typeof userEditableFields;
 };

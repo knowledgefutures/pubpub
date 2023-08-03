@@ -17,7 +17,7 @@ export const getLandingPageFeatures = async <Validated extends boolean = true>(
 	options: GetLandingPageFeaturesOptions<Validated> = {},
 ): Promise<types.LandingPageFeatures<Validated>> => {
 	const { onlyValidItems = true } = options;
-	const features = await LandingPageFeature.findAll({
+	const features: types.LandingPageFeature[] = await LandingPageFeature.findAll({
 		include: landingPageFeatureIncludes,
 		order: [['rank', 'ASC']],
 	});
@@ -28,15 +28,11 @@ export const getLandingPageFeatures = async <Validated extends boolean = true>(
 	const validatedCommunityFeatures = onlyValidItems
 		? communityFeatures.filter((feature) => validateCommunityLandingPageFeature(feature as any))
 		: communityFeatures;
-
-	const serializedValidatedCommunityFeatures = validatedCommunityFeatures.map((feature) =>
-		feature.toJSON(),
-	);
 	return {
 		pub: sanitizedPubFeatures as types.LandingPagePubFeature[],
-		community: serializedValidatedCommunityFeatures as (Validated extends true
+		community: validatedCommunityFeatures as (Validated extends true
 			? types.ValidLandingPageCommunityFeature
-			: types.DefinitelyHas<types.LandingPageFeature, 'community'>)[],
+			: types.LandingPageCommunityFeature)[],
 	};
 };
 
@@ -46,7 +42,9 @@ type CreateLandingPageFeatureOptions = {
 	rank: string;
 };
 
-export const createLandingPageFeature = async (options: CreateLandingPageFeatureOptions) => {
+export const createLandingPageFeature = async (
+	options: CreateLandingPageFeatureOptions,
+): Promise<types.LandingPageFeature> => {
 	const { pubId, communityId, rank } = options;
 	const newFeature = await LandingPageFeature.create({ pubId, communityId, rank });
 	return LandingPageFeature.findOne({

@@ -1,20 +1,42 @@
-import {
-	PubAttribution as PubAttributionModel,
-	CollectionAttribution as CollectionAttributionModel,
-} from 'server/models';
-import { SerializedModel } from './serializedModel';
+import { MinimalUser, User } from './user';
 
-import { DefinitelyHas } from './util';
+export type PubAttribution = {
+	id: string;
+	name: string;
+	avatar?: string;
+	title?: string;
+	order: number;
+	isAuthor?: boolean;
+	roles?: string[];
+	affiliation?: string;
+	orcid?: string;
+	userId?: string;
+	user?: MinimalUser;
+	createdAt: string;
+	pubId: string;
+};
 
-export type PubAttribution = SerializedModel<PubAttributionModel>;
-
-export type CollectionAttribution = SerializedModel<CollectionAttributionModel>;
+export type CollectionAttribution = {
+	id: string;
+	name: string;
+	avatar?: string;
+	title?: string;
+	order: number;
+	isAuthor?: boolean;
+	roles?: string[];
+	affiliation?: string;
+	orcid?: string;
+	userId?: string;
+	user?: MinimalUser;
+	createdAt: string;
+	collectionId: string;
+};
 
 export type Attribution = CollectionAttribution | PubAttribution;
-export type AttributionWithUser = DefinitelyHas<Attribution, 'user'>;
+export type AttributionWithUser = Attribution & { user: MinimalUser | User };
 
 export const isAttributionWithUser = (
-	attribution: Attribution | PubAttributionModel | CollectionAttributionModel,
+	attribution: Attribution,
 ): attribution is AttributionWithUser => 'user' in attribution && !!attribution.user;
 
 export const isCollectionAttribution = (

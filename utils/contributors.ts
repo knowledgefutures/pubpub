@@ -1,19 +1,11 @@
-import * as types from 'types';
+import { Attribution, AttributionWithUser, Collection, Pub } from 'types';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford } from 'utils/strings';
 import { unique } from 'utils/arrays';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { Collection, CollectionAttribution, Pub, PubAttribution } from 'server/models';
 
-const orderedContributors = (
-	maybeContributors:
-		| types.Attribution[]
-		| PubAttribution[]
-		| CollectionAttribution[]
-		| undefined
-		| null,
-) =>
-	[...(maybeContributors ?? [])].sort((a, b) => {
+const orderedContributors = (maybeContributors: Attribution[] | undefined | null) =>
+	(maybeContributors || []).concat().sort((a, b) => {
 		if (a.order !== b.order) {
 			return a.order - b.order;
 		}
@@ -28,11 +20,11 @@ const illustratorRoles = ['Illustrator', 'Visualization'];
 const otherKnownRoles = ['Translator', 'Series Editor', 'Chair'];
 const rolesNotAssignedToOtherEntries = editorRoles.concat(illustratorRoles, otherKnownRoles);
 
-const getPrimaryRole = (contributor: types.AttributionWithUser) =>
+const getPrimaryRole = (contributor: AttributionWithUser) =>
 	contributor.roles ? contributor.roles[0] : '';
 
 const resolveContributors = (
-	contributors: types.AttributionWithUser[],
+	contributors: AttributionWithUser[],
 	hideAuthors: boolean,
 	hideNonAuthors: boolean,
 ) => {
@@ -62,7 +54,7 @@ const resolveContributors = (
 };
 
 export const getAllPubContributors = (
-	pubData: types.Pub | Pub,
+	pubData: Pub,
 	role: string,
 	hideAuthors = false,
 	hideNonAuthors = false,
@@ -109,7 +101,7 @@ export const getAllPubContributors = (
 };
 
 export const getAllCollectionContributors = (
-	collectionData: types.Collection | Collection,
+	collectionData: Collection,
 	hideAuthors = false,
 	hideNonAuthors = false,
 ) => {
@@ -120,9 +112,7 @@ export const getAllCollectionContributors = (
 	);
 };
 
-export const getContributorName = (
-	attribution: types.Attribution | PubAttribution | CollectionAttribution,
-) => {
+export const getContributorName = (attribution: Attribution) => {
 	if (attribution.user) {
 		return attribution.user.fullName;
 	}

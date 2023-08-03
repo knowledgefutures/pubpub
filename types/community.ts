@@ -1,5 +1,11 @@
-import { Community as CommunityModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import { CommunityNavigationEntry } from 'client/utils/navigation';
+
+import { Collection } from './collection';
+import { DepositTarget } from './depositTarget';
+import { Page } from './page';
+import { Pub } from './pub';
+import { ScopeSummary } from './scope';
+import { SpamTag } from './spam';
 
 export type CommunityHeroButton = {
 	title: string;
@@ -8,4 +14,61 @@ export type CommunityHeroButton = {
 
 export type CommunityHeaderLink = { title: string; url: string; external?: boolean };
 
-export type Community = SerializedModel<CommunityModel>;
+export type Community = {
+	id: string;
+	subdomain: string;
+	domain?: string;
+	description?: string;
+	createdAt: string;
+	title: string;
+	citeAs?: string;
+	publishAs?: string;
+	avatar?: string;
+	favicon?: string;
+	accentColorLight: string;
+	accentColorDark: string;
+	accentTextColor: string;
+	hideCreatePubButton?: boolean;
+	headerLogo?: string;
+	headerLinks?: CommunityHeaderLink[];
+	headerColorType?: 'light' | 'dark' | 'custom';
+	useHeaderTextAccent?: boolean;
+	hideHero?: boolean;
+	hideHeaderLogo?: boolean;
+	heroLogo?: string;
+	heroBackgroundImage?: string;
+	heroBackgroundColor?: string;
+	heroTextColor?: string;
+	useHeaderGradient?: boolean;
+	heroImage?: string;
+	heroTitle?: string;
+	heroText?: string;
+	heroPrimaryButton?: CommunityHeroButton;
+	heroSecondaryButton?: CommunityHeroButton;
+	heroAlign?: string;
+	navigation: CommunityNavigationEntry[];
+	hideNav?: boolean;
+	footerLinks?: CommunityNavigationEntry[];
+	footerTitle?: string;
+	footerImage?: string;
+	website?: string;
+	facebook?: string;
+	twitter?: string;
+	email?: string;
+	issn?: string;
+	isFeatured?: boolean;
+	viewHash?: string;
+	editHash?: string;
+	premiumLicenseFlag?: boolean;
+	defaultPubCollections: string[];
+	organizationId?: string;
+	collections?: Collection[];
+	pages?: Page[];
+	pubs?: Pub[];
+	scopeSummaryId: null | string;
+	scopeSummary?: ScopeSummary;
+	footerLogoLink?: string;
+	depositTargets?: DepositTarget[];
+	spamTagId: null | string;
+	spamTag?: null | SpamTag;
+};

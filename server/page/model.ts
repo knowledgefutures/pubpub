@@ -9,14 +9,11 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 import type { LayoutBlock } from 'utils/layout';
 import { Community } from '../models';
 
 @Table
-export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<Page>> {
-	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
-
+class Page extends Model<InferAttributes<Page>, InferCreationAttributes<Page>> {
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -31,10 +28,10 @@ export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<P
 	slug!: string;
 
 	@Column(DataType.TEXT)
-	description!: string | null;
+	description?: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	avatar?: string | null;
 
 	@AllowNull(false)
 	@Default(false)
@@ -42,10 +39,10 @@ export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<P
 	isPublic!: CreationOptional<boolean>;
 
 	@Column(DataType.BOOLEAN)
-	isNarrowWidth!: boolean | null;
+	isNarrowWidth?: boolean | null;
 
 	@Column(DataType.TEXT)
-	viewHash!: string | null;
+	viewHash?: string | null;
 
 	// TODO: Add @IsArray validation
 	@AllowNull(false)
@@ -62,5 +59,8 @@ export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<P
 	communityId!: string;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	// 	community?: Community;
+	community?: any;
 }
+
+export const PageAnyModel = Page as any;

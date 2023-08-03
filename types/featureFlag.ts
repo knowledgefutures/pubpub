@@ -1,14 +1,29 @@
-import {
-	FeatureFlag as FeatureFlagModel,
-	FeatureFlagCommunity as FeatureFlagCommunityModel,
-	FeatureFlagUser as FeatureFlagUserModel,
-} from 'server/models';
-import { SerializedModel } from './serializedModel';
+import { User } from './user';
+import { Community } from './community';
 
 export type FeatureFlagOverrideState = 'inert' | 'off' | 'on';
 
-export type FeatureFlagUser = SerializedModel<FeatureFlagUserModel>;
+export type FeatureFlagUser = {
+	id: string;
+	featureFlagId: string;
+	userId: string;
+	enabled: boolean;
+	user?: User;
+};
 
-export type FeatureFlagCommunity = SerializedModel<FeatureFlagCommunityModel>;
+export type FeatureFlagCommunity = {
+	id: string;
+	featureFlagId: string;
+	communityId: string;
+	enabled: boolean;
+	community?: Community;
+};
 
-export type FeatureFlag = SerializedModel<FeatureFlagModel>;
+export type FeatureFlag = {
+	id: string;
+	name: string;
+	enabledCommunitiesFraction: number;
+	enabledUsersFraction: number;
+	users?: FeatureFlagUser[];
+	communities?: FeatureFlagCommunity[];
+};

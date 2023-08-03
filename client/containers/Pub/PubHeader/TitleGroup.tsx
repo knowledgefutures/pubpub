@@ -104,7 +104,7 @@ const TitleGroup = (props: Props) => {
 					/>
 				) : (
 					<EditableHeaderText
-						text={description ?? undefined}
+						text={description}
 						updateText={(text) => updatePubData({ description: text })}
 						canEdit={canModify}
 						tagName="p"

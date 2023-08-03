@@ -1,34 +1,28 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { CollectionAttribution, includeUserModel } from 'server/models';
-import { expect } from 'utils/assert';
 
-export const createCollectionAttribution = async (inputValues: {
-	userId?: string | null;
-	collectionId: string;
-	name: string;
-	order: number;
-	communityId?: string | null;
-}) => {
-	const newAttribution = await CollectionAttribution.create({
+export const createCollectionAttribution = (inputValues) => {
+	return CollectionAttribution.create({
 		userId: inputValues.userId,
 		collectionId: inputValues.collectionId,
 		name: inputValues.name,
 		order: inputValues.order,
-	});
-	const populatedCollectionAttribution = expect(
-		await CollectionAttribution.findOne({
-			where: { id: newAttribution.id },
-			attributes: { exclude: ['updatedAt'] },
-			include: [includeUserModel({ required: false, as: 'user' })],
-		}),
-	);
+	})
+		.then((newAttribution) => {
+			return CollectionAttribution.findOne({
+				where: { id: newAttribution.id },
+				attributes: { exclude: ['updatedAt'] },
+				include: [includeUserModel({ required: false, as: 'user' })],
+			});
+		})
+		.then((populatedCollectionAttribution) => {
+			const populatedCollectionAttributionJson = populatedCollectionAttribution.toJSON();
+			if (populatedCollectionAttribution.user) {
+				return populatedCollectionAttributionJson;
+			}
 
-	const populatedCollectionAttributionJson = populatedCollectionAttribution.toJSON();
-
-	if (populatedCollectionAttribution.user) {
-		return populatedCollectionAttributionJson;
-	}
-	return ensureUserForAttribution(populatedCollectionAttributionJson);
+			return ensureUserForAttribution(populatedCollectionAttributionJson);
+		});
 };
 
 export const updateCollectionAttribution = (inputValues, updatePermissions) => {

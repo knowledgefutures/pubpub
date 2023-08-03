@@ -4,7 +4,6 @@ import { UserSubscription } from 'server/models';
 import { updateVisibility } from 'server/visibility/queries';
 import { createThreadComment } from 'server/threadComment/queries';
 import { DocJson } from 'types';
-import { finishDeferredTasks } from 'server/utils/deferred';
 
 const models = modelize`
     Community {
@@ -94,9 +93,7 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
-teardown(afterAll, async () => {
-	await finishDeferredTasks();
-});
+teardown(afterAll);
 
 describe('/api/threads/subscriptions', () => {
 	it('Does not let a non-Member subscribe to a Discussion thread with visibility=members', async () => {

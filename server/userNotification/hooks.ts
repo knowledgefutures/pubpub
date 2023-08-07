@@ -12,7 +12,7 @@ import {
 } from 'server/models';
 import { defer } from 'server/utils/deferred';
 import * as urls from 'utils/canonicalUrls';
-import { discussionTitle } from 'utils/activity/titles';
+import { discussionTitle } from 'utils/activity/titles/discussion';
 import { ActivityRenderContext } from 'client/utils/activity/types';
 
 const mg = mailgun.client({

@@ -8,6 +8,7 @@ import * as Sentry from '@sentry/node';
 import { isProd, getAppCommit } from 'utils/environment';
 import { TaskPriority, taskQueueName } from 'utils/workers';
 import { WorkerTask } from 'server/models';
+import { expect } from 'utils/assert';
 
 const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;
@@ -25,8 +26,8 @@ if (process.env.NODE_ENV === 'production') {
 // to account for cases where a task is interrupted, never acked, and then resent from the queue.
 // This could happen if a task causes the worker dyno to crash, for instance.
 const incrementAttemptCount = async (taskId, maxAttemptCount = 2) => {
-	const workerTaskData = await WorkerTask.findOne({ where: { id: taskId } });
-	if (workerTaskData.attemptCount >= maxAttemptCount) {
+	const workerTaskData = expect(await WorkerTask.findOne({ where: { id: taskId } }));
+	if (workerTaskData.attemptCount && workerTaskData.attemptCount >= maxAttemptCount) {
 		throw new Error('Too many attempts');
 	}
 	const newAttemptCount = workerTaskData.attemptCount ? workerTaskData.attemptCount + 1 : 1;

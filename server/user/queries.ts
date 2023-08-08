@@ -1,14 +1,18 @@
-import { Op } from 'sequelize';
+import { CreationAttributes, Op } from 'sequelize';
 import { promisify } from 'util';
 
-import * as types from 'types';
 import { User, Signup } from 'server/models';
 import { slugifyString } from 'utils/strings';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { updateUserData } from 'server/utils/search';
 import { ORCID_PATTERN } from 'utils/orcid';
+import { expect } from 'utils/assert';
 
-export const createUser = (inputValues) => {
+type InputValues = CreationAttributes<User> & {
+	subscribed?: boolean;
+	password: string;
+};
+export const createUser = (inputValues: InputValues) => {
 	const email = inputValues.email.toLowerCase().trim();
 	const firstName = inputValues.firstName.trim();
 	const lastName = inputValues.lastName.trim();
@@ -58,13 +62,17 @@ export const createUser = (inputValues) => {
 		});
 };
 
-export const getSuggestedEditsUserInfo = async (suggestionUserId) => {
-	const user = await User.findOne({ where: { id: suggestionUserId } });
+export const getSuggestedEditsUserInfo = async (suggestionUserId: string) => {
+	const user = expect(await User.findOne({ where: { id: suggestionUserId } }));
 	const { fullName, initials, avatar } = user;
 	return { fullName, initials, avatar };
 };
 
-export const updateUser = (inputValues, updatePermissions, req) => {
+export const updateUser = (
+	inputValues: InputValues & { userId: string },
+	updatePermissions,
+	req,
+) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -106,7 +114,7 @@ export const updateUser = (inputValues, updatePermissions, req) => {
 
 export const isUserSuperAdmin = async ({ userId }: { userId: undefined | null | string }) => {
 	if (userId) {
-		const user: types.UserWithPrivateFields = await User.findOne({ where: { id: userId } });
+		const user = expect(await User.findOne({ where: { id: userId } }));
 		return user.isSuperAdmin;
 	}
 	return false;

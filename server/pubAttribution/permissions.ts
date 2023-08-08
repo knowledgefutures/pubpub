@@ -9,11 +9,19 @@ const editableFields = [
 	'order',
 	'roles',
 	'title',
-];
+] as const;
 
-export const getPermissions = async ({ userId, communityId, pubId }) => {
+export const getPermissions = async ({
+	userId,
+	communityId,
+	pubId,
+}: {
+	userId?: string;
+	communityId: string;
+	pubId: string;
+}): Promise<Permissions> => {
 	if (!userId) {
-		return {};
+		return {} as Permissions;
 	}
 
 	const {
@@ -29,4 +37,10 @@ export const getPermissions = async ({ userId, communityId, pubId }) => {
 		update: canManage ? editableFields : false,
 		destroy: canManage,
 	};
+};
+
+export type Permissions = {
+	create?: boolean;
+	update?: typeof editableFields | false;
+	destroy?: boolean;
 };

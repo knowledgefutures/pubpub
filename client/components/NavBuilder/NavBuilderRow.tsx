@@ -103,7 +103,7 @@ const NavBuilderRow = (props: Props) => {
 						items={collections}
 						placeholder="Add Collection"
 						usedItems={collections.filter((collection) =>
-							item.children.some((current: any) => current.id === collection.id),
+							item.children.some((current) => current.id === collection.id),
 						)}
 						onSelect={(collection) => {
 							const newItem = { type: 'collection' as const, id: collection.id };

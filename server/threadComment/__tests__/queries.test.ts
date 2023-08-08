@@ -3,6 +3,7 @@ import { modelize, setup, teardown } from 'stubstub';
 import { UserSubscription } from 'server/models';
 
 import { DocJson } from 'types';
+import { finishDeferredTasks } from 'server/utils/deferred';
 import { createThreadComment } from '../queries';
 
 const models = modelize`
@@ -33,7 +34,9 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
-teardown(afterAll);
+teardown(afterAll, async () => {
+	await finishDeferredTasks();
+});
 
 describe('createThreadComment()', () => {
 	it('subscribes a user to a thread when they comment in it, according to their notification preferences', async () => {

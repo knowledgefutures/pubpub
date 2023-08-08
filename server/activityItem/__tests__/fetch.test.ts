@@ -3,6 +3,7 @@ import { modelize, setup, teardown } from 'stubstub';
 import { ActivityAssociations, ActivityAssociationType } from 'types';
 import { ActivityItem } from 'server/models';
 
+import { finishDeferredTasks } from 'server/utils/deferred';
 import { fetchActivityItems } from '../fetch';
 import {
 	createMemberCreatedActivityItem,
@@ -111,7 +112,9 @@ const models = modelize`
 
 setup(beforeAll, models.resolve);
 
-teardown(afterAll);
+teardown(afterAll, async () => {
+	await finishDeferredTasks();
+});
 
 beforeEach(() => ActivityItem.destroy({ where: {}, truncate: true, cascade: true }));
 

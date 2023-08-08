@@ -11,7 +11,7 @@ type GetProposedFeatureOptions = {
 
 type ProposalResult = null | { pubId: string } | { communityId: string };
 
-const extractCommunityQueryFromHostname = async (hostname: string) => {
+const extractCommunityQueryFromHostname = (hostname: string) => {
 	const communityName = hostname.split('.')[0];
 	return {
 		[Op.or]: [{ domain: hostname }, { subdomain: communityName }],
@@ -57,7 +57,7 @@ export const getProposedFeature = async (
 	if (proposalKind === 'pub') {
 		const pubQuery = await extractPubQuery(proposal);
 		const pub = await Pub.findOne({ where: pubQuery, ...buildPubOptions({}) });
-		if (pub && pub.releases.length > 0) {
+		if (pub && pub.releases && pub.releases.length > 0) {
 			return { pubId: pub.id };
 		}
 	} else if (proposalKind === 'community') {

@@ -1,4 +1,7 @@
-export default (collection, initialData) => {
+import { Collection } from 'server/models';
+import { InitialData } from 'types';
+
+export default (collection: Collection, initialData: InitialData) => {
 	/* Collections are included in all communityData in initialData */
 	/* communitySanitize implements collection filtering, so this */
 	/* function simply needs to check if that collection exists */

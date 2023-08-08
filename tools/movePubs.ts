@@ -8,7 +8,7 @@ import { createCollectionPub } from 'server/collectionPub/queries';
 
 import { promptOkay } from './utils/prompt';
 
-type MovablePub = types.SequelizeModel<types.DefinitelyHas<types.Pub, 'community'>>;
+type MovablePub = types.DefinitelyHas<Pub, 'community'>;
 
 const {
 	argv: {
@@ -30,10 +30,10 @@ const getPubs = async () => {
 	const slugs = getPubSlugs();
 	return Promise.all(
 		slugs.map(async (slug) => {
-			const pub: null | MovablePub = await Pub.findOne({
+			const pub = (await Pub.findOne({
 				where: { slug },
 				include: [{ model: Community, as: 'community' }],
-			});
+			})) as null | MovablePub;
 			if (!pub) {
 				throw new Error(`Pub ${slug} not found`);
 			}
@@ -43,12 +43,12 @@ const getPubs = async () => {
 };
 
 const getCommunityAndCollection = async () => {
-	const community: null | types.Community = await Community.findOne({
+	const community = await Community.findOne({
 		where: { subdomain: communitySubdomain },
 	});
 	if (community) {
 		if (collectionSlug) {
-			const collection: null | types.Collection = await Collection.findOne({
+			const collection = await Collection.findOne({
 				where: { slug: collectionSlug, communityId: community.id },
 			});
 			if (!collection) {
@@ -63,11 +63,7 @@ const getCommunityAndCollection = async () => {
 	throw new Error(`Community ${communitySubdomain} does not exist`);
 };
 
-const renderPubPath = (
-	community: types.Community,
-	collection: null | types.Collection,
-	pub: types.Pub,
-) => {
+const renderPubPath = (community: Community, collection: null | Collection, pub: Pub) => {
 	return [
 		chalk.yellowBright(community.subdomain),
 		collection && chalk.redBright(collection.slug),
@@ -79,8 +75,8 @@ const renderPubPath = (
 
 const checkOkayToProceed = async (
 	pubs: MovablePub[],
-	community: types.Community,
-	collection: null | types.Collection,
+	community: Community,
+	collection: null | Collection,
 ) => {
 	console.log('These Pubs will be moved:');
 	pubs.forEach((pub) => {
@@ -93,11 +89,7 @@ const checkOkayToProceed = async (
 	await promptOkay('Okay to proceed?', { throwIfNo: true, yesIsDefault: false });
 };
 
-const movePub = async (
-	community: types.Community,
-	collection: null | types.Collection,
-	pub: MovablePub,
-) => {
+const movePub = async (community: Community, collection: null | Collection, pub: MovablePub) => {
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	pub.communityId = community.id;
 	await pub.save();

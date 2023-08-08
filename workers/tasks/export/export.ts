@@ -2,6 +2,7 @@ import { getExportFormatDetails } from 'utils/export/formats';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { Maybe } from 'types';
 
+import { expect } from 'utils/assert';
 import { renderStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
 import { getNotesData } from './notes';
@@ -15,8 +16,8 @@ import {
 	assignFileToExportById,
 } from './util';
 
-export const exportTask = async ({ exportId }) => {
-	const { pubId, format, historyKey } = await getExportById(exportId);
+export const exportTask = async ({ exportId }: { exportId: string }) => {
+	const { pubId, format, historyKey } = expect(await getExportById(exportId));
 	const { extension, pandocTarget, pagedTarget } = getExportFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);

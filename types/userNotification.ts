@@ -1,47 +1,41 @@
 import { CascadedFacetsForScopes } from 'facets';
-import { ActivityAssociations, ActivityItem, ActivityItemOfKind } from './activity';
-import { User } from './user';
+import {
+	ActivityItem,
+	UserNotification as UserNotificationModel,
+	UserNotificationPreferences as UserNotificationPreferencesModel,
+	UserSubscription as UserSubscriptionModel,
+} from 'server/models';
+import { SerializedModel } from './serializedModel';
+import {
+	ActivityAssociations,
+	ActivityItemOfKind,
+	PubDiscussionCommentAddedActivityItem,
+	PubReviewCommentAddedActivityItem,
+} from './activity';
 import { UserSubscription } from './userSubscription';
 
-export type UserNotification = {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	userId: string;
-	userSubscriptionId: string;
-	activityItemId: string;
-	isRead: boolean;
-	manuallySetIsRead: boolean;
-	user?: User;
-	activityItem?: ActivityItem;
-	userSubscription?: UserSubscription;
+export type UserNotification = SerializedModel<UserNotificationModel>;
+
+export type UserNotificationWithActivityItemModel = UserNotificationModel & {
+	activityItem:
+		| ActivityItem<PubDiscussionCommentAddedActivityItem>
+		| ActivityItem<PubReviewCommentAddedActivityItem>;
 };
 
-export type UserNotificationWithActivityItem = UserNotification & {
-	activityItem: ActivityItemOfKind<'pub-discussion-comment-added' | 'pub-review-comment-added'>;
+export type UserNotificationWithActivityItem = Omit<UserNotification, 'activityItem'> & {
+	activityItem:
+		| ActivityItemOfKind<'pub-discussion-comment-added'>
+		| ActivityItemOfKind<'pub-review-comment-added'>;
 };
 
 export type UserNotificationMarkReadTrigger = 'seen' | 'clicked-through' | 'manual';
 
-export type UserNotificationPreferences = {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	lastReceivedNotificationsAt: null | string;
-	userId: string;
-	receiveNotifications: boolean;
-	receiveDiscussionThreadEmails: boolean;
-	subscribeToThreadsAsCommenter: boolean;
-	subscribeToPubsAsMember: boolean;
-	subscribeToPubsAsContributor: boolean;
-	notificationCadence: number;
-	markReadTrigger: UserNotificationMarkReadTrigger;
-};
+export type UserNotificationPreferences = SerializedModel<UserNotificationPreferencesModel>;
 
 export type UserNotificationsFetchResult = {
 	notifications: UserNotificationWithActivityItem[];
 	associations: ActivityAssociations;
-	subscriptions: UserSubscription[];
+	subscriptions: UserSubscription[] | UserSubscriptionModel[];
 	facets: CascadedFacetsForScopes<'PubHeaderTheme'>;
-	notificationPreferences: UserNotificationPreferences;
+	notificationPreferences: UserNotificationPreferences | UserNotificationPreferencesModel;
 };

@@ -10,19 +10,16 @@ type FilterUsersOptions = {
 export const getParentModelForThread = async <AssociatedModels = {}>(
 	threadId: string,
 	queryOptions: any = {},
-): Promise<null | types.TaggedThreadParent<AssociatedModels>> => {
-	const [discussion, review]: [
-		null | (types.Discussion & AssociatedModels),
-		null | (types.Review & AssociatedModels),
-	] = await Promise.all([
+) => {
+	const [discussion, review] = await Promise.all([
 		Discussion.findOne({ where: { threadId }, ...queryOptions }),
 		ReviewNew.findOne({ where: { threadId }, ...queryOptions }),
 	]);
 	if (discussion) {
-		return { type: 'discussion', value: discussion };
+		return { type: 'discussion', value: discussion as typeof discussion & AssociatedModels };
 	}
 	if (review) {
-		return { type: 'review', value: review };
+		return { type: 'review', value: review as typeof review & AssociatedModels };
 	}
 	return null;
 };
@@ -64,6 +61,6 @@ export const canUserSeeThread = async (options: CanUserSeeThreadOptions): Promis
 	return maybeUserId === userId;
 };
 
-export const createThread = async (): Promise<types.Thread> => {
+export const createThread = async () => {
 	return Thread.create({});
 };

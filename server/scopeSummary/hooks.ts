@@ -7,6 +7,7 @@ import {
 	Collection,
 	Community,
 } from 'server/models';
+import { expect } from 'utils/assert';
 import { summarizeCollection, summarizeCommunity, summarizePub } from './queries';
 
 let summarizeParentScopesOnPubCreation = true;
@@ -15,13 +16,17 @@ export const setSummarizeParentScopesOnPubCreation = (value: boolean) => {
 	summarizeParentScopesOnPubCreation = value;
 };
 
-[Discussion, ReviewNew].forEach((Model) => {
-	Model.afterCreate(async ({ pubId }) => {
-		await summarizePub(pubId);
-	});
-	Model.afterDestroy(async ({ pubId }) => {
-		await summarizePub(pubId);
-	});
+Discussion.afterCreate(async ({ pubId }) => {
+	await summarizePub(expect(pubId));
+});
+Discussion.afterDestroy(async ({ pubId }) => {
+	await summarizePub(expect(pubId));
+});
+ReviewNew.afterCreate(async ({ pubId }) => {
+	await summarizePub(expect(pubId));
+});
+ReviewNew.afterDestroy(async ({ pubId }) => {
+	await summarizePub(expect(pubId));
 });
 
 Pub.afterCreate(async ({ id }) => {

@@ -1,11 +1,20 @@
 import { CollectionPub } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
+import { expect } from 'utils/assert';
 
-const canManagePub = async ({ userId, communityId, pubId }) => {
+const canManagePub = async ({
+	userId,
+	communityId,
+	pubId,
+}: {
+	userId: string;
+	communityId: string;
+	pubId: string;
+}) => {
 	const scopeData = await getScope({ loginId: userId, communityId, pubId });
 	return (
 		scopeData.activePermissions.canManage &&
-		scopeData.elements.activePub.communityId === communityId
+		scopeData.elements.activePub?.communityId === communityId
 	);
 };
 
@@ -33,8 +42,14 @@ export const getUpdatableFieldsForCollectionPub = async ({
 	userId,
 	communityId,
 	collectionPubId,
+}: {
+	userId: string;
+	communityId: string;
+	collectionPubId: string;
 }) => {
-	const { pubId, collectionId } = await CollectionPub.findOne({ where: { id: collectionPubId } });
+	const { pubId, collectionId } = expect(
+		await CollectionPub.findOne({ where: { id: collectionPubId } }),
+	);
 	const {
 		elements: { activeCollection },
 		activePermissions,
@@ -48,7 +63,7 @@ export const getUpdatableFieldsForCollectionPub = async ({
 	}
 	const canUpdatePubRank = await canManagePub({
 		userId,
-		communityId: activeCollection.communityId,
+		communityId: expect(activeCollection?.communityId),
 		pubId,
 	});
 	if (canUpdatePubRank) {
@@ -57,8 +72,18 @@ export const getUpdatableFieldsForCollectionPub = async ({
 	return null;
 };
 
-export const canDestroyCollectionPub = async ({ userId, communityId, collectionPubId }) => {
-	const { collectionId, pubId } = await CollectionPub.findOne({ where: { id: collectionPubId } });
+export const canDestroyCollectionPub = async ({
+	userId,
+	communityId,
+	collectionPubId,
+}: {
+	userId: string;
+	communityId: string;
+	collectionPubId: string;
+}) => {
+	const { collectionId, pubId } = expect(
+		await CollectionPub.findOne({ where: { id: collectionPubId } }),
+	);
 	const {
 		activePermissions: { canManage },
 		elements: {

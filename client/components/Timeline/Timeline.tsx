@@ -6,7 +6,7 @@ import { TimelineContext } from './util';
 require('./timeline.scss');
 
 type OwnProps = {
-	accentColor?: string;
+	accentColor?: string | null;
 	children: React.ReactNode;
 	className?: string;
 };
@@ -22,7 +22,9 @@ const Timeline = (props: Props) => {
 	const { accentColor, children, className } = props;
 	return (
 		<div className={classNames('timeline-component', className)}>
-			<TimelineContext.Provider value={{ accentColor }}>{children}</TimelineContext.Provider>
+			<TimelineContext.Provider value={{ accentColor: accentColor ?? undefined }}>
+				{children}
+			</TimelineContext.Provider>
 		</div>
 	);
 };

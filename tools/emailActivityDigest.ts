@@ -29,13 +29,13 @@ async function main() {
 			console.log(`community ${community.subdomain}`);
 			// Load all community members who are subscribed to activity digest
 			// emails
-			const members: Promise<types.DefinitelyHas<types.Member, 'user'>[]> = Member.findAll({
+			const members = Member.findAll({
 				where: {
 					communityId: community.id,
 					subscribedToActivityDigest: true,
 				},
 				...memberQueryOptions,
-			});
+			}) as Promise<types.DefinitelyHas<Member, 'user'>[]>;
 			// For each chunk of those users
 			return asyncMap(
 				members,
@@ -46,7 +46,7 @@ async function main() {
 						console.log(`user ${user.id} ${email}`);
 						// Create an activity digest email
 						const scope = { communityId: community.id };
-						const digest = await renderDigestEmail(community, { scope, user });
+						const digest = await renderDigestEmail(community.toJSON(), { scope, user });
 						if (digest === null) return;
 						await mg.messages.create('mg.pubpub.org', {
 							from: 'PubPub Team <hello@mg.pubpub.org>',

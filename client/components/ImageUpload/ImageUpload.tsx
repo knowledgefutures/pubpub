@@ -15,7 +15,7 @@ const noopImageHandler = (s: any) => {
 type OwnProps = {
 	children?: null | ((...args: any[]) => unknown);
 	canClear?: boolean;
-	defaultImage?: string;
+	defaultImage?: string | null;
 	height?: number;
 	helperText?: React.ReactNode;
 	htmlFor?: string;
@@ -48,7 +48,10 @@ type State = any;
 
 type Props = OwnProps & typeof defaultProps;
 
-class ImageUpload extends Component<Props, State> {
+class ImageUpload extends Component<
+	Omit<Props, 'defaultImage'> & { defaultImage?: string | null },
+	State
+> {
 	static defaultProps = defaultProps;
 
 	constructor(props: Props) {

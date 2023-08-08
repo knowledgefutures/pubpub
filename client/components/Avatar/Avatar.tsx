@@ -9,7 +9,7 @@ require('./avatar.scss');
 type Props = {
 	width: number;
 	initials?: string;
-	avatar?: string;
+	avatar?: string | null;
 	instanceNumber?: number;
 	borderColor?: string;
 	borderWidth?: number | string;

@@ -20,9 +20,10 @@ import { renderLicenseForPub } from 'utils/licenses';
 import { getAllPubContributors } from 'utils/contributors';
 import { fetchFacetsForScope } from 'server/facets';
 
+import { expect } from 'utils/assert';
 import { PubMetadata } from './types';
 
-const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
+const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[] | CollectionPub[]) => {
 	const primaryCollection = getPrimaryCollection(collectionPubs);
 	if (primaryCollection) {
 		const { metadata, title, kind } = primaryCollection;
@@ -36,38 +37,42 @@ const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => 
 };
 
 export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
-	const pubData = await Pub.findOne({
-		where: { id: pubId },
-		include: [
-			{
-				model: CollectionPub,
-				as: 'collectionPubs',
-				include: [
-					{
-						model: Collection,
-						as: 'collection',
-						include: [
-							{
-								model: CollectionAttribution,
-								as: 'attributions',
-								include: [includeUserModel({ as: 'user' })],
-							},
-						],
-					},
-				],
-			},
-			{ model: Community, as: 'community' },
-			{
-				model: PubAttribution,
-				as: 'attributions',
-				include: [includeUserModel({ as: 'user' })],
-			},
-			{
-				model: Release,
-				as: 'releases',
-			},
-		],
-	});
+	const pubData = expect(
+		await Pub.findOne({
+			where: { id: pubId },
+			include: [
+				{
+					model: CollectionPub,
+					as: 'collectionPubs',
+					include: [
+						{
+							model: Collection,
+							as: 'collection',
+							include: [
+								{
+									model: CollectionAttribution,
+									as: 'attributions',
+									include: [includeUserModel({ as: 'user' })],
+								},
+							],
+						},
+					],
+				},
+				{ model: Community, as: 'community' },
+				{
+					model: PubAttribution,
+					as: 'attributions',
+					include: [includeUserModel({ as: 'user' })],
+				},
+				{
+					model: Release,
+					as: 'releases',
+				},
+			],
+		}),
+	) as types.DefinitelyHas<Pub, 'community' | 'attributions' | 'releases'> & {
+		collectionPubs: types.DefinitelyHas<CollectionPub, 'collection'>[];
+	};
 	const facets = await fetchFacetsForScope({ pubId });
 	const pubUrl = getUrlForPub(pubData, pubData.community);
 	const publishedDate = getPubPublishedDate(pubData);
@@ -97,7 +102,9 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		),
 		accentColor: pubData.community.accentColorDark,
 		attributions,
+		// @ts-expect-error: FIXME: Citationstyle is not in the model, its in the facets
 		citationStyle: pubData.citationStyle,
+		// @ts-expect-error: FIXME: CitationInlineStyle is not in the model, its in the facets
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: facets.NodeLabels.value,
 		publisher: pubData.community.publishAs,

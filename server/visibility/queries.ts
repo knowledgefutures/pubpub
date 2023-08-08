@@ -1,11 +1,10 @@
 import * as types from 'types';
 import { getMembersForScope } from 'server/member/queries';
 import { Discussion, ReviewNew, Visibility, VisibilityUser } from 'server/models';
+import { expect } from 'utils/assert';
 
-export const getParentModelForVisibility = async (
-	visibilityId: string,
-): Promise<null | types.TaggedVisibilityParent> => {
-	const [discussion, review]: [null | types.Discussion, null | types.Review] = await Promise.all([
+export const getParentModelForVisibility = async (visibilityId: string) => {
+	const [discussion, review] = await Promise.all([
 		Discussion.findOne({ where: { visibilityId } }),
 		ReviewNew.findOne({ where: { visibilityId } }),
 	]);
@@ -25,7 +24,7 @@ type UpdateOptions = {
 
 export const updateVisibility = async (options: UpdateOptions) => {
 	const { visibilityId, access } = options;
-	const visibility = await Visibility.findOne({ where: { id: visibilityId } });
+	const visibility = expect(await Visibility.findOne({ where: { id: visibilityId } }));
 	visibility.access = access;
 	await visibility.save();
 };

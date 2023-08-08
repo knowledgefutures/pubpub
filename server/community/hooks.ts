@@ -13,5 +13,13 @@ createActivityHooks({
 	onModelUpdated: createCommunityUpdatedActivityItem,
 });
 
-Community.afterCreate((community) => defer(() => addSpamTagToCommunity(community.id)));
-Community.afterUpdate((community) => defer(() => addSpamTagToCommunity(community.id)));
+Community.afterCreate((community) =>
+	defer(async () => {
+		await addSpamTagToCommunity(community.id);
+	}),
+);
+Community.afterUpdate((community) =>
+	defer(async () => {
+		await addSpamTagToCommunity(community.id);
+	}),
+);

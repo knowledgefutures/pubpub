@@ -1,15 +1,19 @@
 import { Model, Table, Column, DataType, PrimaryKey, Default } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 
 @Table
-class Commenter extends Model<InferAttributes<Commenter>, InferCreationAttributes<Commenter>> {
+export class Commenter extends Model<
+	InferAttributes<Commenter>,
+	InferCreationAttributes<Commenter>
+> {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	name?: string | null;
+	name!: string | null;
 }
-
-export const CommenterAnyModel = Commenter as any;

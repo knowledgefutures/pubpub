@@ -5,6 +5,7 @@ import { ClickToCopyButton } from 'components';
 import { getLowestAncestorWithId } from 'client/utils/dom';
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
+import { expect } from 'utils/assert';
 
 import { usePubContext } from '../../pubHooks';
 
@@ -41,7 +42,7 @@ const LinkPopover = (props: Props) => {
 
 	// The prosemirror-reactive plugin will generate random, transient IDs starting with 'r'
 	const unstableLink = Boolean(parent && /^r[0-9]*$/.test(parent.id));
-	const isLatestRelease = pubData.releaseNumber === pubData.releases.length;
+	const isLatestRelease = pubData.releaseNumber === expect(pubData.releases).length;
 	const managersEnableLinksPrompt =
 		pubBodyState.isReadOnly && isLatestRelease && unstableLink && canManage
 			? 'You must create a new Release to link to this block.'

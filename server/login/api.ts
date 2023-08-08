@@ -30,7 +30,7 @@ app.post('/api/login', (req, res, next) => {
 			}
 
 			/* If authentication did not succeed, we need to check if a legacy hash is valid */
-			const findUser: Promise<types.UserWithPrivateFields | null> = User.findOne({
+			const findUser = User.findOne({
 				where: { email: req.body.email },
 			});
 

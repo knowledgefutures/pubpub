@@ -15,13 +15,6 @@ type UpdatePasswordResetInputValues = {
 	password: string;
 };
 
-type PasswordResetData = {
-	dataValues: {
-		hash: string;
-		salt: string;
-	};
-};
-
 export const createPasswordReset = (
 	inputValues: CreatePasswordResetInputValues,
 	user: types.User,
@@ -32,14 +25,14 @@ export const createPasswordReset = (
 	return User.findOne({
 		where: email ? { email } : { id: user.id },
 	})
-		.then((userData: types.UserWithPrivateFields) => {
+		.then((userData) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}
 
 			const updateData = {
 				resetHash: generateHash(),
-				resetHashExpiration: Date.now() + 1000 * 60 * 60 * 24, // Expires in 24 hours.
+				resetHashExpiration: new Date(Date.now() + 1000 * 60 * 60 * 24), // Expires in 24 hours.
 			};
 			return User.update(updateData, {
 				where: { id: userData.id },
@@ -47,7 +40,7 @@ export const createPasswordReset = (
 				individualHooks: true,
 			});
 		})
-		.then((updatedUserData: types.UserWithPrivateFields[][]) => {
+		.then((updatedUserData) => {
 			const updatedUser = updatedUserData[1][0];
 			return sendPasswordResetEmail({
 				toEmail: updatedUser.email,
@@ -69,24 +62,29 @@ export const updatePasswordReset = (
 	return User.findOne({
 		where: whereQuery,
 	})
-		.then((userData: types.UserWithPrivateFields | null) => {
+		.then((userData) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}
-			if (!user.id && resetHash && userData.resetHashExpiration < currentTime) {
+			if (
+				!user.id &&
+				resetHash &&
+				userData.resetHashExpiration &&
+				Number(userData.resetHashExpiration) < currentTime
+			) {
 				throw new Error('Hash is expired');
 			}
 
 			/* Promisify the setPassword function, and use .update to match API convention */
-			const setPassword = promisify((userData as any).setPassword.bind(userData));
+			const setPassword = promisify(userData.setPassword.bind(userData));
 			return setPassword(inputValues.password);
 		})
-		.then((passwordResetData: PasswordResetData) => {
+		.then((passwordResetData) => {
 			const updateData = {
-				hash: passwordResetData.dataValues.hash,
-				salt: passwordResetData.dataValues.salt,
+				hash: passwordResetData?.dataValues.hash,
+				salt: passwordResetData?.dataValues.salt,
 				resetHash: '',
-				resetHashExpiration: currentTime,
+				resetHashExpiration: new Date(currentTime),
 				passwordDigest: 'sha512',
 			};
 			return User.update(updateData, {

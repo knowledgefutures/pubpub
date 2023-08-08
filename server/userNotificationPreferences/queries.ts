@@ -1,4 +1,3 @@
-import * as types from 'types';
 import { UserNotificationPreferences } from 'server/models';
 import { pickKeys } from 'utils/objects';
 
@@ -15,12 +14,10 @@ const updatableFields = [
 
 type UpdateOptions = {
 	userId: string;
-	preferences: Partial<types.UserNotificationPreferences>;
+	preferences: Partial<UserNotificationPreferences>;
 };
 
-export const getOrCreateUserNotificationPreferences = async (
-	userId: string,
-): Promise<types.SequelizeModel<types.UserNotificationPreferences>> => {
+export const getOrCreateUserNotificationPreferences = async (userId: string) => {
 	const found = await UserNotificationPreferences.findOne({ where: { userId } });
 	if (found) {
 		return found;

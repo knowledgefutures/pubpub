@@ -60,7 +60,7 @@ const DetailsTab = (props: Props) => {
 						onBlur={(evt: React.ChangeEvent<HTMLInputElement>) =>
 							onUpdatePub({ description: evt.target.value })
 						}
-						defaultValue={pub.description}
+						defaultValue={pub.description ?? undefined}
 						fill
 						maxLength={280}
 					/>

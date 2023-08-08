@@ -10,13 +10,16 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 import { Collection, Pub } from '../models';
 
 @Table
-class CollectionPub extends Model<
+export class CollectionPub extends Model<
 	InferAttributes<CollectionPub>,
 	InferCreationAttributes<CollectionPub>
 > {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -33,7 +36,7 @@ class CollectionPub extends Model<
 	collectionId!: string;
 
 	@Column(DataType.TEXT)
-	contextHint?: string | null;
+	contextHint!: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
@@ -48,12 +51,8 @@ class CollectionPub extends Model<
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	// 	collection?: Collection;
-	collection?: any;
+	collection?: Collection;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	// 	pub?: Pub;
-	pub?: any;
+	pub?: Pub;
 }
-
-export const CollectionPubAnyModel = CollectionPub as any;

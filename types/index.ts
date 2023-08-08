@@ -36,3 +36,4 @@ export * from './util';
 export * from './viewport';
 export * from './visibility';
 export * from './zotero';
+export * from './serializedModel';

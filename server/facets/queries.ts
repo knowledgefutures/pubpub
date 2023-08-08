@@ -1,6 +1,7 @@
 import { FacetBinding } from 'facets';
 import { Pub, Collection } from 'server/models';
 import { ScopeId } from 'types';
+import { expect } from 'utils/assert';
 
 // A facetBinding has exactly one of { commnunityId, collectionId, pubId }. But some parts of our
 // codebase like to have a communityId _plus_ an optional ID for a child scope -- this is useful
@@ -13,16 +14,18 @@ export const getScopeIdForFacetBinding = async (facetBinding: FacetBinding): Pro
 		};
 	}
 	if (facetBinding.pubId) {
-		const pub = await Pub.findOne({ where: { id: facetBinding.pubId } });
+		const pub = expect(await Pub.findOne({ where: { id: facetBinding.pubId } }));
 		return {
 			communityId: pub.communityId,
 			pubId: pub.id,
 		};
 	}
 	if (facetBinding.collectionId) {
-		const collection = await Collection.findOne({
-			where: { id: facetBinding.collectionId },
-		});
+		const collection = expect(
+			await Collection.findOne({
+				where: { id: facetBinding.collectionId },
+			}),
+		);
 		return {
 			communityId: collection.communityId,
 			collectionId: collection.id,

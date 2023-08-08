@@ -6,6 +6,7 @@ import { SubmissionEmail, Editor } from 'components';
 import { Collection, Community, SubmissionWorkflow, User } from 'server/models';
 import { sendEmail } from 'server/utils/email';
 import { pubUrl } from 'utils/canonicalUrls';
+import { expect } from 'utils/assert';
 
 type SendEmailOptions = {
 	previousStatus: types.SubmissionStatus;
@@ -35,7 +36,7 @@ const getSubmittersInfo = async (members: types.Member[]) => {
 	const users: { id: string; fullName: string; email: string }[] = await User.findAll({
 		where: { id: pubMembers.map((m) => m.userId) },
 		attributes: ['id', 'fullName', 'email'],
-		orderBy: [['createdAt', 'ASC']],
+		order: [['createdAt', 'ASC']],
 	});
 	const earliestAddedUser = users.find((u) => u.id === earliestAddedMember.userId);
 	return {
@@ -46,7 +47,7 @@ const getSubmittersInfo = async (members: types.Member[]) => {
 
 const deriveEmailCustomText = (
 	emailKind: types.SubmissionEmailKind,
-	submissionWorkflow: types.SubmissionWorkflow,
+	submissionWorkflow: types.SubmissionWorkflow | SubmissionWorkflow,
 	customText: types.Maybe<types.DocJson>,
 ) => {
 	if (customText) {
@@ -63,23 +64,27 @@ export const sendSubmissionEmail = async (options: SendEmailOptions) => {
 	const emailKind = getEmailKindToSend(previousStatus, submission.status);
 	if (emailKind) {
 		const { submitterName, submitterEmails } = await getSubmittersInfo(submission.pub.members);
-		const [community, submissionWorkflow]: [
-			types.Community,
-			types.DefinitelyHas<types.SubmissionWorkflow, 'collection'>,
-		] = await Promise.all([
+		const modelPromises = await Promise.all([
 			Community.findOne({ where: { id: submission.pub.communityId } }),
 			SubmissionWorkflow.findOne({
 				where: { id: submission.submissionWorkflowId },
 				include: [{ model: Collection, as: 'collection' }],
 			}),
 		]);
+
+		const community = expect(modelPromises[0]);
+		const submissionWorkflow = expect(modelPromises[1]) as types.DefinitelyHas<
+			SubmissionWorkflow,
+			'collection'
+		>;
+
 		const customText = deriveEmailCustomText(emailKind, submissionWorkflow, providedCustomText);
 		const html = ReactDOMServer.renderToString(
 			<SubmissionEmail
 				kind={emailKind}
 				customText={customText && <Editor initialContent={customText} isReadOnly />}
 				submissionTitle={submission.pub.title}
-				collectionTitle={submissionWorkflow.collection.title}
+				collectionTitle={expect(submissionWorkflow.collection.title)}
 				submitterName={submitterName}
 				submissionUrl={pubUrl(community, submission.pub)}
 				community={community}

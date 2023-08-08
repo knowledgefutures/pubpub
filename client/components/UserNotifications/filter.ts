@@ -1,3 +1,4 @@
+import { expect } from 'utils/assert';
 import { FilterTerm, PubNotificationsState, ThreadNotificationsState } from './types';
 
 const match = (needle: string, haystack: string) => {
@@ -27,7 +28,7 @@ export const threadStateMatchesTerm = (threadState: ThreadNotificationsState, te
 		if (matchesAuthor) {
 			return true;
 		}
-		const { text } = threadState.notifications[0].activityItem.payload.threadComment;
+		const { text } = expect(threadState.notifications[0].activityItem).payload.threadComment;
 		if (text && match(term, text)) {
 			return true;
 		}

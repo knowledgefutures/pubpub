@@ -1,8 +1,10 @@
 import * as types from 'types';
 
 import { ActivityItem } from 'server/models';
+import { CreationAttributes } from 'sequelize';
 
-export const createActivityItem = (ai: types.InsertableActivityItem) => ActivityItem.create(ai);
+export const createActivityItem = <M extends ActivityItem>(ai: CreationAttributes<M>) =>
+	ActivityItem.create(ai);
 
 const jsonValuesEqual = (first: any, second: any) =>
 	JSON.stringify(first) === JSON.stringify(second);

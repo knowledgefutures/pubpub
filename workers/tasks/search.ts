@@ -83,6 +83,7 @@ export const updateCommunityData = (communityId) => {
 				communityDomain: communityData.domain || `${communityData.subdomain}.pubpub.org`,
 				communityAvatar: communityData.avatar,
 				communityTitle: communityData.title,
+				// @ts-expect-error FIXME: Property 'accentColor' does not exist on type 'Community'.
 				communityColor: communityData.accentColor,
 				communityTextColor: communityData.accentTextColor,
 			};

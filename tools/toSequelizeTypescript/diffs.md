@@ -6,16 +6,15 @@ id: string
 - kind: "community-created" | "community-updated" | "collection-created" | "collection-updated" | "collection-removed" | "collection-pub-created" | "collection-pub-removed" | "facet-instance-updated" | ... 16 more ... | "submission-status-updated"
 + kind: ActivityItemKind
 - pubId?: string
-+ pubId?: string | null
++ pubId: string | null
 - payload: any
-+ payload?: any | null
++ payload: any | null
 - timestamp: string
 + timestamp: Date
 communityId: string
-- actorId: string | null
-+ actorId?: string | null
+actorId: string | null
 - collectionId?: string
-+ collectionId?: string | null
++ collectionId: string | null
 - createdAt: string
 + createdAt?: any
 - updatedAt: string
@@ -32,36 +31,37 @@ communityId: string
 ```diff
 id: string
 - title: string
-+ title?: string | null
++ title: string | null
 slug: string
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - isRestricted: boolean
-+ isRestricted?: boolean | null
++ isRestricted: boolean | null
 - isPublic: boolean
-+ isPublic?: boolean | null
++ isPublic: boolean | null
 - viewHash?: string
-+ viewHash?: string | null
++ viewHash: string | null
 - editHash?: string
-+ editHash?: string | null
++ editHash: string | null
 - metadata?: { [k: string]: any
-+ metadata?: Record<string, any> | null
++ metadata: Record<string, any> | null
 - kind: CollectionKind
-+ kind?: any | null
++ kind: any | null
 - doi?: string
-+ doi?: string | null
++ doi: string | null
 - readNextPreviewSize: ReadNextPreviewSize
-+ readNextPreviewSize?: any
++ readNextPreviewSize: any
 - layout: CollectionLayout
 + layout: any
 - layoutAllowsDuplicatePubs: boolean
 + layoutAllowsDuplicatePubs: CreationOptional<boolean>
-pageId?: string | null
+- pageId?: string | null
++ pageId: string | null
 - communityId: string
-+ communityId?: string | null
-- scopeSummaryId: string | null
-+ scopeSummaryId?: string | null
-crossrefDepositRecordId?: string | null
++ communityId: string | null
+scopeSummaryId: string | null
+- crossrefDepositRecordId?: string | null
++ crossrefDepositRecordId: string | null
 attributions?: CollectionAttribution[]
 + submissionWorkflow?: SubmissionWorkflow
 + collectionPubs?: CollectionPub[]
@@ -87,23 +87,23 @@ community?: Community
 ```diff
 id: string
 - name: string
-+ name?: string | null
++ name: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - title?: string
-+ title?: string | null
++ title: string | null
 - order: number
-+ order?: number | null
++ order: number | null
 - isAuthor?: boolean
-+ isAuthor?: boolean | null
++ isAuthor: boolean | null
 - roles?: string[]
-+ roles?: string[] | null
++ roles: string[] | null
 - affiliation?: string
-+ affiliation?: string | null
++ affiliation: string | null
 - orcid?: string
-+ orcid?: string | null
++ orcid: string | null
 - userId?: string
-+ userId?: string | null
++ userId: string | null
 collectionId: string
 user?: MinimalUser
 + collection?: Collection
@@ -123,7 +123,8 @@ user?: MinimalUser
 id: string
 pubId: string
 collectionId: string
-contextHint?: string | null
+- contextHint?: string | null
++ contextHint: string | null
 rank: string
 pubRank: string
 collection?: Collection
@@ -142,7 +143,7 @@ pub?: Pub
 ```diff
 id: string
 - name: string
-+ name?: string | null
++ name: string | null
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
@@ -158,97 +159,95 @@ id: string
 id: string
 subdomain: string
 - domain?: string
-+ domain?: string | null
++ domain: string | null
 title: string
 - citeAs?: string
-+ citeAs?: string | null
++ citeAs: string | null
 - publishAs?: string
-+ publishAs?: string | null
++ publishAs: string | null
 - description?: string
-+ description?: string | null
++ description: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - favicon?: string
-+ favicon?: string | null
++ favicon: string | null
 - accentColorLight: string
-+ accentColorLight?: string | null
++ accentColorLight: string | null
 - accentColorDark: string
-+ accentColorDark?: string | null
++ accentColorDark: string | null
 - hideCreatePubButton?: boolean
-+ hideCreatePubButton?: boolean | null
++ hideCreatePubButton: boolean | null
 - headerLogo?: string
-+ headerLogo?: string | null
++ headerLogo: string | null
 - headerLinks?: CommunityHeaderLink[]
-+ headerLinks?: CommunityHeaderLink[] | null
++ headerLinks: CommunityHeaderLink[] | null
 - headerColorType?: "light" | "dark" | "custom"
-+ headerColorType?: CreationOptional<"light" | "dark" | "custom">
++ headerColorType: CreationOptional<"light" | "dark" | "custom">
 - useHeaderTextAccent?: boolean
-+ useHeaderTextAccent?: boolean | null
++ useHeaderTextAccent: boolean | null
 - hideHero?: boolean
-+ hideHero?: boolean | null
++ hideHero: boolean | null
 - hideHeaderLogo?: boolean
-+ hideHeaderLogo?: boolean | null
++ hideHeaderLogo: boolean | null
 - heroLogo?: string
-+ heroLogo?: string | null
++ heroLogo: string | null
 - heroBackgroundImage?: string
-+ heroBackgroundImage?: string | null
++ heroBackgroundImage: string | null
 - heroBackgroundColor?: string
-+ heroBackgroundColor?: string | null
++ heroBackgroundColor: string | null
 - heroTextColor?: string
-+ heroTextColor?: string | null
++ heroTextColor: string | null
 - useHeaderGradient?: boolean
-+ useHeaderGradient?: boolean | null
++ useHeaderGradient: boolean | null
 - heroImage?: string
-+ heroImage?: string | null
++ heroImage: string | null
 - heroTitle?: string
-+ heroTitle?: string | null
++ heroTitle: string | null
 - heroText?: string
-+ heroText?: string | null
++ heroText: string | null
 - heroPrimaryButton?: CommunityHeroButton
-+ heroPrimaryButton?: any | null
++ heroPrimaryButton: any | null
 - heroSecondaryButton?: CommunityHeroButton
-+ heroSecondaryButton?: any | null
++ heroSecondaryButton: any | null
 - heroAlign?: string
-+ heroAlign?: string | null
++ heroAlign: string | null
 - navigation: CommunityNavigationEntry[]
-+ navigation?: CommunityNavigationEntry[] | null
++ navigation: CommunityNavigationEntry[] | null
 - hideNav?: boolean
-+ hideNav?: boolean | null
-+ navLinks?: CommunityNavigationEntry[] | null
++ hideNav: boolean | null
++ navLinks: CommunityNavigationEntry[] | null
 - footerLinks?: CommunityNavigationEntry[]
-+ footerLinks?: CommunityNavigationEntry[] | null
++ footerLinks: CommunityNavigationEntry[] | null
 - footerLogoLink?: string
-+ footerLogoLink?: string | null
++ footerLogoLink: string | null
 - footerTitle?: string
-+ footerTitle?: string | null
++ footerTitle: string | null
 - footerImage?: string
-+ footerImage?: string | null
++ footerImage: string | null
 - website?: string
-+ website?: string | null
++ website: string | null
 - facebook?: string
-+ facebook?: string | null
++ facebook: string | null
 - twitter?: string
-+ twitter?: string | null
++ twitter: string | null
 - email?: string
-+ email?: string | null
++ email: string | null
 - issn?: string
-+ issn?: string | null
++ issn: string | null
 - isFeatured?: boolean
-+ isFeatured?: boolean | null
++ isFeatured: boolean | null
 - viewHash?: string
-+ viewHash?: string | null
++ viewHash: string | null
 - editHash?: string
-+ editHash?: string | null
++ editHash: string | null
 - premiumLicenseFlag?: boolean
-+ premiumLicenseFlag?: CreationOptional<boolean>
++ premiumLicenseFlag: CreationOptional<boolean>
 - defaultPubCollections: string[]
-+ defaultPubCollections?: string[] | null
-- spamTagId: string | null
-+ spamTagId?: string | null
++ defaultPubCollections: string[] | null
+spamTagId: string | null
 - organizationId?: string
-+ organizationId?: string | null
-- scopeSummaryId: string | null
-+ scopeSummaryId?: string | null
++ organizationId: string | null
+scopeSummaryId: string | null
 + organization?: Organization
 collections?: Collection[]
 pubs?: Pub[]
@@ -273,7 +272,7 @@ accentTextColor: string
 ```diff
 id: string
 - depositJson?: any
-+ depositJson?: object | null
++ depositJson: object | null
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
@@ -288,21 +287,22 @@ id: string
 ```diff
 id: string
 - communityId: string
-+ communityId?: string | null
++ communityId: string | null
 - doiPrefix: string
-+ doiPrefix?: string | null
++ doiPrefix: string | null
 - service: "crossref" | "datacite"
-+ service?: CreationOptional<"crossref" | "datacite">
++ service: CreationOptional<"crossref" | "datacite">
 - username: string
-+ username?: string | null
++ username: string | null
 - password: string
-+ password?: string | null
++ password: string | null
 - passwordInitVec: string
-+ passwordInitVec?: string | null
++ passwordInitVec: string | null
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
 + version?: any
+- isPubPubManaged?: boolean
 ```
 
 
@@ -313,20 +313,20 @@ id: string
 ```diff
 id: string
 - title: string
-+ title?: string | null
++ title: string | null
 number: number
 - isClosed: boolean
-+ isClosed?: boolean | null
++ isClosed: boolean | null
 - labels: string[]
-+ labels?: string[] | null
++ labels: string[] | null
 threadId: string
 visibilityId: string
 - userId: string
-+ userId?: string | null
-+ anchorId?: string | null
++ userId: string | null
++ anchorId: string | null
 - pubId: string
-+ pubId?: string | null
-+ commenterId?: string | null
++ pubId: string | null
++ commenterId: string | null
 thread?: Thread
 - visibility: Visibility
 + visibility?: Visibility
@@ -350,8 +350,7 @@ id: string
 isOriginal: boolean
 discussionId: string
 historyKey: number
-- selection: { type: "text"
-+ selection?: { type: "text"
+selection: { type: "text"
 anchor: number
 head: number
 originalText: string
@@ -387,7 +386,7 @@ content: DocJson
 ```diff
 id: string
 - latestKeyAt?: string
-+ latestKeyAt?: Date | null
++ latestKeyAt: Date | null
 firebasePath: string
 + createdAt?: any
 + updatedAt?: any
@@ -404,11 +403,11 @@ firebasePath: string
 id: string
 format: string
 - url?: string
-+ url?: string | null
++ url: string | null
 historyKey: number
 + pubId: string
 - workerTaskId?: string
-+ workerTaskId?: string | null
++ workerTaskId: string | null
 + workerTask?: WorkerTask
 + createdAt?: any
 + updatedAt?: any
@@ -426,15 +425,15 @@ id: string
 title: string
 url: string
 - contributors?: string[]
-+ contributors?: string[] | null
++ contributors: string[] | null
 - doi?: string
-+ doi?: string | null
++ doi: string | null
 - description?: string
-+ description?: string | null
++ description: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - publicationDate?: string
-+ publicationDate?: Date | null
++ publicationDate: Date | null
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
@@ -449,11 +448,9 @@ url: string
 ```diff
 id: string
 - name: string
-+ name?: string | null
-- enabledUsersFraction: number
-+ enabledUsersFraction?: number
-- enabledCommunitiesFraction: number
-+ enabledCommunitiesFraction?: number
++ name: string | null
+enabledUsersFraction: number
+enabledCommunitiesFraction: number
 users?: FeatureFlagUser[]
 communities?: FeatureFlagCommunity[]
 + createdAt?: any
@@ -470,11 +467,11 @@ communities?: FeatureFlagCommunity[]
 ```diff
 id: string
 - featureFlagId: string
-+ featureFlagId?: string | null
++ featureFlagId: string | null
 - userId: string
-+ userId?: string | null
++ userId: string | null
 - enabled: boolean
-+ enabled?: boolean | null
++ enabled: boolean | null
 user?: User
 + featureFlag?: FeatureFlag
 + createdAt?: any
@@ -491,11 +488,11 @@ user?: User
 ```diff
 id: string
 - featureFlagId: string
-+ featureFlagId?: string | null
++ featureFlagId: string | null
 - communityId: string
-+ communityId?: string | null
++ communityId: string | null
 - enabled: boolean
-+ enabled?: boolean | null
++ enabled: boolean | null
 community?: Community
 + featureFlag?: FeatureFlag
 + createdAt?: any
@@ -512,13 +509,13 @@ community?: Community
 ```diff
 id: string
 - zoteroUsername: string
-+ zoteroUsername?: string | null
++ zoteroUsername: string | null
 - zoteroUserId: string
-+ zoteroUserId?: string | null
++ zoteroUserId: string | null
 - userId: string
-+ userId?: string | null
++ userId: string | null
 - integrationDataOAuth1Id: string
-+ integrationDataOAuth1Id?: string | null
++ integrationDataOAuth1Id: string | null
 + user?: User
 + integrationDataOAuth1?: IntegrationDataOAuth1
 + createdAt?: any
@@ -535,7 +532,7 @@ id: string
 ```diff
 id: string
 - accessToken: string
-+ accessToken?: string | null
++ accessToken: string | null
 + zoteroIntegration?: ZoteroIntegration
 + createdAt?: any
 + updatedAt?: any
@@ -552,13 +549,10 @@ id: string
 
 ```diff
 id: string
-- communityId: string | null
-+ communityId?: string | null
-- pubId: string | null
-+ pubId?: string | null
+communityId: string | null
+pubId: string | null
 rank: string
-- payload: Record<string, any> | null
-+ payload?: Record<string, any> | null
+payload: Record<string, any> | null
 - pub?: any | null
 + pub?: Pub
 - community?: any | null
@@ -579,20 +573,20 @@ rank: string
 ```diff
 id: string
 - permissions: MemberPermission
-+ permissions?: any
++ permissions: any
 - isOwner?: boolean
-+ isOwner?: boolean | null
++ isOwner: boolean | null
 - subscribedToActivityDigest: boolean
 + subscribedToActivityDigest: CreationOptional<boolean>
 userId: string
 - pubId?: string
-+ pubId?: string | null
++ pubId: string | null
 - collectionId?: string
-+ collectionId?: string | null
++ collectionId: string | null
 - communityId?: string
-+ communityId?: string | null
++ communityId: string | null
 - organizationId?: string
-+ organizationId?: string | null
++ organizationId: string | null
 user?: User
 + community?: Community
 + pub?: Pub
@@ -614,16 +608,15 @@ user?: User
 id: string
 title: string
 slug: string
-- description: string | null
-+ description?: string | null
+description: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - isPublic: boolean
 + isPublic: CreationOptional<boolean>
 - isNarrowWidth?: boolean
-+ isNarrowWidth?: boolean | null
++ isNarrowWidth: boolean | null
 - viewHash?: string
-+ viewHash?: string | null
++ viewHash: string | null
 layout: LayoutBlock[]
 - layoutAllowsDuplicatePubs: boolean
 + layoutAllowsDuplicatePubs: CreationOptional<boolean>
@@ -644,39 +637,39 @@ communityId: string
 id: string
 slug: string
 title: string
-- htmlTitle: string | null
-+ htmlTitle?: string | null
+htmlTitle: string | null
 - description?: string
-+ description?: string | null
++ description: string | null
 - htmlDescription?: string
-+ htmlDescription?: string | null
++ htmlDescription: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - customPublishedAt?: string
-+ customPublishedAt?: Date | null
-- doi: string | null
-+ doi?: string | null
++ customPublishedAt: Date | null
+doi: string | null
 - labels?: string[]
-+ labels?: string[] | null
++ labels: { id: string
++ color: string
+title: string
++ publicApply: boolean
 - downloads?: any[]
-+ downloads?: any[] | null
++ downloads: any[] | null
 - metadata?: {}
-+ metadata?: object | null
++ metadata: object | null
 - viewHash?: string
-+ viewHash?: string | null
++ viewHash: string | null
 - editHash?: string
-+ editHash?: string | null
++ editHash: string | null
 - reviewHash?: string
-+ reviewHash?: string | null
++ reviewHash: string | null
 - commentHash?: string
-+ commentHash?: string | null
++ commentHash: string | null
 - draftId?: string
 + draftId: string
 communityId: string
 - crossrefDepositRecordId?: string
-+ crossrefDepositRecordId?: string | null
-- scopeSummaryId: string | null
-+ scopeSummaryId?: string | null
++ crossrefDepositRecordId: string | null
+scopeSummaryId: string | null
 - attributions: PubAttribution[]
 + attributions?: PubAttribution[]
 collectionPubs?: CollectionPub[]
@@ -715,23 +708,23 @@ submission?: Submission
 ```diff
 id: string
 - name: string
-+ name?: string | null
++ name: string | null
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - title?: string
-+ title?: string | null
++ title: string | null
 - order: number
-+ order?: number | null
++ order: number | null
 - isAuthor?: boolean
-+ isAuthor?: boolean | null
++ isAuthor: boolean | null
 - roles?: string[]
-+ roles?: string[] | null
++ roles: string[] | null
 - affiliation?: string
-+ affiliation?: string | null
++ affiliation: string | null
 - orcid?: string
-+ orcid?: string | null
++ orcid: string | null
 - userId?: string
-+ userId?: string | null
++ userId: string | null
 pubId: string
 - user?: MinimalUser
 + user?: User
@@ -752,9 +745,9 @@ pubId: string
 id: string
 pubId: string
 - externalPublicationId?: number
-+ externalPublicationId?: string | null
++ externalPublicationId: string | null
 - targetPubId?: string
-+ targetPubId?: string | null
++ targetPubId: string | null
 relationType: string
 rank: string
 pubIsParent: boolean
@@ -776,9 +769,9 @@ externalPublication?: ExternalPublication
 ```diff
 id: string
 - historyKey?: number
-+ historyKey?: number | null
++ historyKey: number | null
 - pubId?: string
-+ pubId?: string | null
++ pubId: string | null
 + pub?: Pub
 + createdAt?: any
 + updatedAt?: any
@@ -794,9 +787,9 @@ id: string
 ```diff
 id: string
 - noteContent?: {}
-+ noteContent?: Record<string, any> | null
++ noteContent: Record<string, any> | null
 - noteText?: string
-+ noteText?: string | null
++ noteText: string | null
 pubId: string
 userId: string
 docId: string
@@ -839,11 +832,11 @@ id: string
 - status: any
 + status: SubmissionStatus
 - submittedAt: string | null
-+ submittedAt?: Date | null
++ submittedAt: Date | null
 submissionWorkflowId: string
 pubId: string
 - abstract: any | null
-+ abstract?: object | null
++ abstract: object | null
 pub?: Pub
 submissionWorkflow?: SubmissionWorkflow
 + createdAt?: any
@@ -862,14 +855,13 @@ id: string
 - status: SpamStatus
 + status: any
 - statusUpdatedAt: string | null
-+ statusUpdatedAt?: Date | null
++ statusUpdatedAt: Date | null
 - fields: Record<string, string[]>
 + fields: Record<string, any>
 spamScore: number
 - spamScoreComputedAt: string
 + spamScoreComputedAt: Date
-- spamScoreVersion: number
-+ spamScoreVersion?: number
+spamScoreVersion: number
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
@@ -885,7 +877,7 @@ spamScore: number
 id: string
 title: string
 - collectionId: string
-+ collectionId?: string | null
++ collectionId: string | null
 enabled: boolean
 - instructionsText: DocJson
 + instructionsText: object
@@ -916,7 +908,7 @@ collection?: Collection
 ```diff
 id: string
 - name: string
-+ name?: string | null
++ name: string | null
 + reviewId: string
 + review?: ReviewNew
 + createdAt?: any
@@ -932,7 +924,7 @@ id: string
 
 ```diff
 id: string
-+ isLocked?: boolean | null
++ isLocked: boolean | null
 - comments: ThreadComment[]
 + comments?: ThreadComment[]
 - events: ThreadEvent[]
@@ -954,14 +946,12 @@ id: string
 ```diff
 id: string
 - text: string
-+ text?: string | null
++ text: string | null
 - content: DocJson
-+ content?: any | null
-- userId: string | null
-+ userId?: string | null
++ content: any | null
+userId: string | null
 threadId: string
-- commenterId: string | null
-+ commenterId?: string | null
+commenterId: string | null
 - author?: User | null
 + author?: User
 - commenter?: Commenter | null
@@ -982,9 +972,9 @@ threadId: string
 ```diff
 id: string
 - type?: string
-+ type?: string | null
++ type: string | null
 - data?: {}
-+ data?: Record<string, any> | null
++ data: Record<string, any> | null
 userId: string
 threadId: string
 + user?: User
@@ -1008,50 +998,50 @@ lastName: string
 fullName: string
 initials: string
 - avatar?: string
-+ avatar?: string | null
++ avatar: string | null
 - bio: string
-+ bio?: string | null
++ bio: string | null
 - title?: string
-+ title?: string | null
++ title: string | null
 email: string
 - publicEmail?: string
-+ publicEmail?: string | null
++ publicEmail: string | null
 - authRedirectHost?: string
-+ authRedirectHost?: string | null
++ authRedirectHost: string | null
 - location: string
-+ location?: string | null
++ location: string | null
 - website: string
-+ website?: string | null
++ website: string | null
 - facebook: string
-+ facebook?: string | null
++ facebook: string | null
 - twitter: string
-+ twitter?: string | null
++ twitter: string | null
 - github: string
-+ github?: string | null
++ github: string | null
 - orcid?: string
-+ orcid?: string | null
++ orcid: string | null
 - googleScholar: string
-+ googleScholar?: string | null
++ googleScholar: string | null
 - resetHashExpiration: number
-+ resetHashExpiration?: Date | null
++ resetHashExpiration: Date | null
 - resetHash: string
-+ resetHash?: string | null
-+ inactive?: boolean | null
-+ pubpubV3Id?: number | null
++ resetHash: string | null
++ inactive: boolean | null
++ pubpubV3Id: number | null
 - passwordDigest: string
-+ passwordDigest?: string | null
++ passwordDigest: string | null
 hash: string
 salt: string
-+ gdprConsent?: CreationOptional<boolean>
++ gdprConsent: CreationOptional<boolean>
 - isSuperAdmin: boolean
 + isSuperAdmin: CreationOptional<boolean>
-isShadowUser?: boolean
-feedback?: string
-sha3hashedPassword: string
 + attributions?: PubAttribution[]
 + discussions?: Discussion[]
 + userNotificationPreferences?: UserNotificationPreferences
 + zoteroIntegration?: ZoteroIntegration
+isShadowUser?: boolean
+feedback?: string
+sha3hashedPassword: string
 + createdAt?: any
 + updatedAt?: any
 + deletedAt?: any
@@ -1072,7 +1062,8 @@ activityItemId: string
 + isRead: CreationOptional<boolean>
 - manuallySetIsRead: boolean
 + manuallySetIsRead: CreationOptional<boolean>
-activityItem?: ActivityItem
+- activityItem?: ActivityItem
++ activityItem?: ActivityItem<ActivityItemKind>
 userSubscription?: UserSubscription
 user?: User
 - createdAt: string
@@ -1094,7 +1085,7 @@ userId: string
 - receiveNotifications: boolean
 + receiveNotifications: CreationOptional<boolean>
 - lastReceivedNotificationsAt: string | null
-+ lastReceivedNotificationsAt?: Date | null
++ lastReceivedNotificationsAt: Date | null
 - subscribeToThreadsAsCommenter: boolean
 + subscribeToThreadsAsCommenter: CreationOptional<boolean>
 - subscribeToPubsAsMember: boolean
@@ -1120,13 +1111,11 @@ notificationCadence: number
 ```diff
 id: string
 - userId: string
-+ userId?: string | null
-- pubId: string | null
-+ pubId?: string | null
-- collectionId: string | null
-+ collectionId?: string | null
++ userId: string | null
+pubId: string | null
+collectionId: string | null
 - communityId: string
-+ communityId?: string | null
++ communityId: string | null
 + createdAt?: any
 - updatedAt: string
 + updatedAt?: any
@@ -1144,10 +1133,8 @@ id: string
 setAutomatically: boolean
 status: UserSubscriptionStatus
 userId: string
-- pubId: string | null
-+ pubId?: string | null
-- threadId: string | null
-+ threadId?: string | null
+pubId: string | null
+threadId: string | null
 + pub?: Pub
 + thread?: Thread
 + user?: User
@@ -1167,7 +1154,7 @@ userId: string
 ```diff
 id: string
 - access: VisibilityAccess
-+ access?: any
++ access: any
 - users: VisibilityUser[]
 + users?: VisibilityUser[]
 + createdAt?: any

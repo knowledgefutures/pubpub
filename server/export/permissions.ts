@@ -10,6 +10,6 @@ export const getPermissions = async ({ userId, pubId, historyKey, accessHash, co
 		loginId: userId,
 		accessHash,
 	});
-	const isReleaseKey = activePub.releases.some((release) => release.historyKey === historyKey);
+	const isReleaseKey = activePub?.releases?.some((release) => release.historyKey === historyKey);
 	return { create: canView || isReleaseKey };
 };

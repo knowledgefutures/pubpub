@@ -1,16 +1,19 @@
 import { Collection, CollectionPub, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
 import { InitialData } from 'types';
+import { expect } from 'utils/assert';
 
 type Options = {
 	loadPubs?: number;
 };
 
 const getCollection = async (collectionId: string) => {
-	const collection = await Collection.findOne({
-		where: { id: collectionId },
-		include: [{ model: ScopeSummary, as: 'scopeSummary' }],
-	});
+	const collection = expect(
+		await Collection.findOne({
+			where: { id: collectionId },
+			include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+		}),
+	);
 	return collection.toJSON();
 };
 

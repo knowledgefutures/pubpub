@@ -2,8 +2,9 @@ import { renderXml } from '@pubpub/deposit-utils/datacite';
 import { Resource } from 'deposit/resource';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { persistCrossrefDepositRecord, persistDoiData } from 'server/doi/queries';
-import { Collection, DefinitelyHas, Pub } from 'types';
+import { DefinitelyHas } from 'types';
 import { expect } from 'utils/assert';
+import { Collection, Pub } from 'server/models';
 import {
 	createDataciteDoiWithMetadata,
 	createDeposit,
@@ -11,7 +12,7 @@ import {
 	updateDataciteDoiMetadata,
 } from './index';
 
-type Scope = DefinitelyHas<Collection | Pub, 'community'>;
+type Scope = DefinitelyHas<Collection, 'community'> | DefinitelyHas<Pub, 'community'>;
 
 export function loadScopeResourceMeta(scope: Scope, scopeResource: Resource, scopeDoi: string) {
 	scopeResource.identifiers.push({

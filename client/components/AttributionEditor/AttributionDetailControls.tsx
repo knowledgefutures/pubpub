@@ -22,7 +22,7 @@ const AttributionDetailControls = (props: Props) => {
 	return (
 		<div className="detail-controls">
 			<Checkbox
-				checked={isAuthor}
+				checked={!!isAuthor}
 				onChange={(evt) =>
 					onAttributionUpdate({
 						id,
@@ -98,7 +98,7 @@ const AttributionDetailControls = (props: Props) => {
 			<div className="right-details">
 				<InputGroup
 					placeholder="Affiliation"
-					defaultValue={affiliation}
+					defaultValue={affiliation ?? undefined}
 					onKeyDown={(evt) => {
 						if (evt.key === 'Enter') {
 							evt.currentTarget.blur();
@@ -116,7 +116,7 @@ const AttributionDetailControls = (props: Props) => {
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '"" | Element | undefined' is not assignable ... Remove this comment to see the full error message
 						rightElement={orcid && <Tag minimal>ORCID</Tag>}
 						placeholder="ORCID"
-						defaultValue={orcid}
+						defaultValue={orcid ?? undefined}
 						onKeyDown={(evt) => {
 							if (evt.key === 'Enter') {
 								evt.currentTarget.blur();

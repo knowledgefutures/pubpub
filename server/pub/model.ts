@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-dupe-class-members */
-/* eslint-disable lines-between-class-members */
 import {
 	Model,
 	Table,
@@ -18,18 +15,8 @@ import {
 	BelongsTo,
 	HasOne,
 } from 'sequelize-typescript';
-import type {
-	InferAttributes,
-	InferCreationAttributes,
-	CreationOptional,
-	BuildOptions,
-	Logging,
-	Silent,
-	Transactionable,
-	Hookable,
-	TruncateOptions,
-	Paranoid,
-} from 'sequelize';
+import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 import {
 	PubAttribution,
 	CollectionPub,
@@ -47,31 +34,10 @@ import {
 	ScopeSummary,
 } from '../models';
 
-// declare module 'sequelize' {
-// 	export interface CreateOptions<TAttributes = any>
-// 		extends BuildOptions,
-// 			Logging,
-// 			Silent,
-// 			Transactionable,
-// 			Hookable {
-// 		actorId?: string | null;
-// 	}
-
-// 	export interface DestroyOptions<TAttributes = any> extends TruncateOptions<TAttributes> {
-// 		actorId?: string | null;
-// 	}
-
-// 	export interface UpdateOptions<TAttributes = any>
-// 		extends Logging,
-// 			Transactionable,
-// 			Paranoid,
-// 			Hookable {
-// 		actorId?: string | null;
-// 	}
-// }
-
 @Table
-class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
+export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
@@ -98,21 +64,27 @@ class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	htmlDescription?: string | null;
+	htmlDescription!: string | null;
 
 	@Column(DataType.TEXT)
-	avatar?: string | null;
+	avatar!: string | null;
 
 	@Column(DataType.DATE)
-	// 	customPublishedAt?: Date | null;
-	customPublishedAt?: any;
+	customPublishedAt!: Date | null;
 
 	@Column(DataType.TEXT)
-	doi?: string | null;
+	doi!: string | null;
 
 	// TODO: add validation for labels
 	@Column(DataType.JSONB)
-	labels?: string[] | null;
+	labels!:
+		| {
+				id: string;
+				color: string;
+				title: string;
+				publicApply: boolean;
+		  }[]
+		| null;
 
 	/**  TODO: add validation for downloads
 	// Should be something like
@@ -124,22 +96,22 @@ class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
   }
  */
 	@Column(DataType.JSONB)
-	downloads?: any[] | null;
+	downloads!: any[] | null;
 
 	@Column(DataType.JSONB)
-	metadata?: object | null;
+	metadata!: object | null;
 
 	@Column(DataType.STRING)
-	viewHash?: string | null;
+	viewHash!: string | null;
 
 	@Column(DataType.STRING)
-	editHash?: string | null;
+	editHash!: string | null;
 
 	@Column(DataType.STRING)
-	reviewHash?: string | null;
+	reviewHash!: string | null;
 
 	@Column(DataType.STRING)
-	commentHash?: string | null;
+	commentHash!: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
@@ -151,14 +123,13 @@ class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
 	communityId!: string;
 
 	@Column(DataType.UUID)
-	crossrefDepositRecordId?: string | null;
+	crossrefDepositRecordId!: string | null;
 
 	@Column(DataType.UUID)
-	scopeSummaryId?: string | null;
+	scopeSummaryId!: string | null;
 
 	@HasMany(() => PubAttribution, { onDelete: 'CASCADE', as: 'attributions', foreignKey: 'pubId' })
-	// 	attributions?: PubAttribution[];
-	attributions?: any;
+	attributions?: PubAttribution[];
 
 	@HasMany(() => CollectionPub, {
 		onDelete: 'CASCADE',
@@ -166,68 +137,52 @@ class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
 		as: 'collectionPubs',
 		foreignKey: 'pubId',
 	})
-	// 	collectionPubs?: CollectionPub[];
-	collectionPubs?: any;
+	collectionPubs?: CollectionPub[];
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	// 	community?: Community;
-	community?: any;
+	community?: Community;
 
 	@BelongsTo(() => Draft, { as: 'draft', foreignKey: 'draftId' })
-	// 	draft?: Draft;
-	draft?: any;
+	draft?: Draft;
 
 	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'pubId' })
-	// 	discussions?: Discussion[];
-	discussions?: any;
+	discussions?: Discussion[];
 
 	@HasMany(() => Export, { as: 'exports', foreignKey: 'pubId' })
-	// 	exports?: Export[];
-	exports?: any;
+	exports?: Export[];
 
 	@HasMany(() => ReviewNew, { onDelete: 'CASCADE', as: 'reviews', foreignKey: 'pubId' })
-	// 	reviews?: ReviewNew[];
-	reviews?: any;
+	reviews?: ReviewNew[];
 
 	@HasMany(() => Member, { onDelete: 'CASCADE', as: 'members', foreignKey: 'pubId' })
-	// 	members?: Member[];
-	members?: any;
+	members?: Member[];
 
 	@HasMany(() => Release, { onDelete: 'CASCADE', as: 'releases', foreignKey: 'pubId' })
-	// 	releases?: Release[];
-	releases?: any;
+	releases?: Release[];
 
 	@HasMany(() => PubVersion, { onDelete: 'CASCADE', as: 'pubVersions', foreignKey: 'pubId' })
-	// 	pubVersions?: PubVersion[];
-	pubVersions?: any;
+	pubVersions?: PubVersion[];
 
 	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'outboundEdges', foreignKey: 'pubId' })
-	// 	outboundEdges?: Omit<PubEdge, 'pub'>[];
-	outboundEdges?: any;
+	outboundEdges?: Omit<PubEdge, 'pub'>[];
 
 	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'inboundEdges', foreignKey: 'targetPubId' })
-	// 	inboundEdges?: Omit<PubEdge, 'targetPub'>[];
-	inboundEdges?: any;
+	inboundEdges?: Omit<PubEdge, 'targetPub'>[];
 
 	@HasOne(() => Submission, { as: 'submission', foreignKey: 'pubId' })
-	// 	submission?: Submission;
-	submission?: any;
+	submission?: Submission;
 
 	@BelongsTo(() => CrossrefDepositRecord, {
 		as: 'crossrefDepositRecord',
 		foreignKey: 'crossrefDepositRecordId',
 		onDelete: 'SET NULL',
 	})
-	// 	crossrefDepositRecord?: CrossrefDepositRecord;
-	crossrefDepositRecord?: any;
+	crossrefDepositRecord?: CrossrefDepositRecord;
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',
 		foreignKey: 'scopeSummaryId',
 		onDelete: 'SET NULL',
 	})
-	// 	scopeSummary?: ScopeSummary;
-	scopeSummary?: any;
+	scopeSummary?: ScopeSummary;
 }
-
-export const PubAnyModel = Pub as any;

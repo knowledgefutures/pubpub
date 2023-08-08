@@ -6,6 +6,10 @@ export const getCollection = async ({
 	communityId,
 	collectionId = null,
 	collectionSlug = null,
+}: {
+	communityId?: string | null;
+	collectionId?: string | null;
+	collectionSlug?: string | null;
 }) => {
 	return Collection.findOne({
 		where: stripFalsyIdsFromQuery({

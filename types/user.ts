@@ -1,40 +1,51 @@
-export type MinimalUser = {
-	id: string;
-	slug?: string;
-	initials: string;
-	fullName: string;
-	firstName: string;
-	lastName: string;
-	avatar?: string;
-	title?: string;
-	orcid?: string;
-	isShadowUser?: boolean;
-	publicEmail?: string;
-	feedback?: string;
-};
+import { User as UserModel } from 'server/models';
+import { SerializedModel } from './serializedModel';
 
-export type User = MinimalUser & {
-	bio: string;
-	location: string;
-	website: string;
-	facebook: string;
-	twitter: string;
-	github: string;
-	googleScholar: string;
-	authRedirectHost?: string;
-};
+type UserType = SerializedModel<UserModel>;
 
-export type UserWithPrivateFields = User & {
-	isSuperAdmin: boolean;
-	passwordDigest: string;
-	hash: string;
-	salt: string;
-	email: string;
-	resetHash: string;
-	resetHashExpiration: number;
-};
+export type MinimalUser = Pick<
+	UserType,
+	| 'id'
+	| 'slug'
+	| 'initials'
+	| 'fullName'
+	| 'firstName'
+	| 'lastName'
+	| 'avatar'
+	| 'title'
+	| 'orcid'
+	| 'isShadowUser'
+	| 'publicEmail'
+	| 'feedback'
+>;
 
-export type UserWithPrivateFieldsAndHashedPassword = UserWithPrivateFields & {
-	sha3hashedPassword: string;
-};
+export type User = Pick<
+	UserType,
+	| 'bio'
+	| 'location'
+	| 'website'
+	| 'facebook'
+	| 'twitter'
+	| 'github'
+	| 'googleScholar'
+	| 'authRedirectHost'
+	| keyof MinimalUser
+>;
+export type UserWithPrivateFields = Pick<
+	UserType,
+	| keyof User
+	| 'isSuperAdmin'
+	| 'passwordDigest'
+	| 'hash'
+	| 'salt'
+	| 'email'
+	| 'resetHash'
+	| 'resetHashExpiration'
+>;
+
+export type UserWithPrivateFieldsAndHashedPassword = Pick<
+	UserType,
+	keyof UserWithPrivateFields | 'sha3hashedPassword'
+>;
+
 export type SuggestedEditsUser = Pick<MinimalUser, 'avatar' | 'initials' | 'fullName'>;

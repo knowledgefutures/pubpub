@@ -11,27 +11,33 @@ import {
 	HasMany,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { SerializedModel } from 'types';
 import { Thread, Visibility, User, Commenter, Pub, DiscussionAnchor } from '../models';
 
 @Table
-class Discussion extends Model<InferAttributes<Discussion>, InferCreationAttributes<Discussion>> {
+export class Discussion extends Model<
+	InferAttributes<Discussion>,
+	InferCreationAttributes<Discussion>
+> {
+	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
+
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
 	id!: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	title?: string | null;
+	title!: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
 	number!: number;
 
 	@Column(DataType.BOOLEAN)
-	isClosed?: boolean | null;
+	isClosed!: boolean | null;
 
 	@Column(DataType.JSONB)
-	labels?: string[] | null;
+	labels!: string[] | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
@@ -43,49 +49,41 @@ class Discussion extends Model<InferAttributes<Discussion>, InferCreationAttribu
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	userId?: string | null;
+	userId!: string | null;
 
 	@Column(DataType.UUID)
-	anchorId?: string | null;
+	anchorId!: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId?: string | null;
+	pubId!: string | null;
 
 	@Column(DataType.UUID)
-	commenterId?: string | null;
+	commenterId!: string | null;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	// 	thread?: Thread;
-	thread?: any;
+	thread?: Thread;
 
 	@BelongsTo(() => Visibility, {
 		onDelete: 'CASCADE',
 		as: 'visibility',
 		foreignKey: 'visibilityId',
 	})
-	// 	visibility?: Visibility;
-	visibility?: any;
+	visibility?: Visibility;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
-	// 	author?: User;
-	author?: any;
+	author?: User;
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
-	// 	commenter?: Commenter;
-	commenter?: any;
+	commenter?: Commenter;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	// 	pub?: Pub;
-	pub?: any;
+	pub?: Pub;
 
 	@HasMany(() => DiscussionAnchor, {
 		onDelete: 'CASCADE',
 		as: 'anchors',
 		foreignKey: 'discussionId',
 	})
-	// 	anchors?: DiscussionAnchor[];
-	anchors?: any;
+	anchors?: DiscussionAnchor[];
 }
-
-export const DiscussionAnyModel = Discussion as any;

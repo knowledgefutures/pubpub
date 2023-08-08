@@ -5,7 +5,7 @@ import sanitizePub from './pubSanitize';
 
 export default async (slug, initialData) => {
 	const sanitizedSlug = slug.toLowerCase();
-	let userData = await User.findOne({
+	const userData = await User.findOne({
 		where: {
 			slug: sanitizedSlug,
 		},
@@ -37,18 +37,21 @@ export default async (slug, initialData) => {
 		throw new Error('User Not Found');
 	}
 
-	userData = userData.toJSON();
-	userData.attributions = (userData.attributions || [])
-		.map((attribution) => {
-			const sanitizedPub = sanitizePub(attribution.pub, initialData);
-			return {
-				...attribution,
-				pub: sanitizedPub,
-			};
-		})
-		.filter((attribution) => {
-			return !!attribution.pub;
-		});
+	const serializedUserData = userData.toJSON();
+	const finalUserData = {
+		...serializedUserData,
+		attributions: (serializedUserData.attributions || [])
+			.map((attribution) => {
+				const sanitizedPub = sanitizePub(attribution.pub, initialData);
+				return {
+					...attribution,
+					pub: sanitizedPub,
+				};
+			})
+			.filter((attribution) => {
+				return !!attribution.pub;
+			}),
+	};
 
-	return userData;
+	return finalUserData;
 };

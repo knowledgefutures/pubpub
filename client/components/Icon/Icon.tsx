@@ -20,7 +20,7 @@ type Props = {
 	ariaHidden?: boolean;
 	ariaLabel?: string;
 	className?: string;
-	color?: string;
+	color?: string | null;
 	iconSize?: number;
 	useColor?: boolean;
 	intent?: BlueprintIntent;
@@ -54,7 +54,7 @@ const Icon = (props: Props) => {
 					width={`${iconSize}px`}
 					height={`${iconSize}px`}
 					viewBox={viewbox}
-					fill={color}
+					fill={color ?? undefined}
 				>
 					{path}
 				</svg>
@@ -65,7 +65,7 @@ const Icon = (props: Props) => {
 	return (
 		<BlueprintIcon
 			icon={icon as BlueprintIconName}
-			color={color}
+			color={color ?? undefined}
 			iconSize={iconSize}
 			className={className}
 			title={ariaHidden ? null : ariaLabel}

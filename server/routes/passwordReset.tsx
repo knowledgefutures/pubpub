@@ -9,7 +9,7 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
 	const findUser = User.findOne({
-		where: { slug: req.params.slug || null },
+		where: { slug: req.params.slug },
 	});
 
 	return Promise.all([getInitialData(req), findUser])
@@ -21,7 +21,11 @@ app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next
 			if (userData && userData.resetHash !== req.params.resetHash) {
 				hashIsValid = false;
 			}
-			if (userData && userData.resetHashExpiration < Date.now()) {
+			if (
+				userData &&
+				userData.resetHashExpiration &&
+				userData.resetHashExpiration < new Date()
+			) {
 				hashIsValid = false;
 			}
 

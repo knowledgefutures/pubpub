@@ -61,7 +61,7 @@ function transformPubAttributionToResourceContribution(
 ): ResourceContribution {
 	return {
 		contributor: {
-			name: attribution.user?.fullName ?? attribution.name,
+			name: attribution.user?.fullName ?? expect(attribution.name),
 			orcid: attribution.user?.orcid ?? attribution.orcid,
 		},
 		contributorAffiliation: attribution.affiliation,
@@ -189,7 +189,7 @@ export async function transformPubToResource(
 			transformEdgeToResourceRelationship(pubEdge, community, true),
 		),
 	]);
-	const contributions: ResourceContribution[] = pub.attributions
+	const contributions: ResourceContribution[] = (pub.attributions ?? [])
 		.sort((a, b) => a.order - b.order)
 		.map((attribution) =>
 			transformPubAttributionToResourceContribution(
@@ -228,10 +228,10 @@ export async function transformPubToResource(
 		});
 	}
 
-	const release = pub.releases[pub.releases.length - 1];
+	const release = pub.releases?.[pub.releases.length - 1];
 
 	if (release) {
-		const releaseDoc = await Doc.findByPk(release.docId);
+		const releaseDoc = expect(await Doc.findByPk(release.docId));
 		const releaseDocNode = Node.fromJSON(schema, releaseDoc.content);
 		pubResource.summaries.push({
 			kind: 'WordCount',
@@ -239,8 +239,9 @@ export async function transformPubToResource(
 			lang: 'eng',
 		});
 		const depositJson = pub.crossrefDepositRecord?.depositJson;
-		pubResource.meta['created-date'] = expect(pub.releases[0]).createdAt.toString();
+		pubResource.meta['created-date'] = expect(pub.releases?.[0]).createdAt.toString();
 		if (depositJson) {
+			// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
 			const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
 			const dateOfLatestRelease = new Date(release.createdAt);
 			if (dateOfLastDeposit.getTime() !== dateOfLatestRelease.getTime()) {

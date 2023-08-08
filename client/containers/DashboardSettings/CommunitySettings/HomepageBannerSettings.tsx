@@ -110,7 +110,7 @@ const HomepageBannerSettings = (props: Props) => {
 							<InputField>
 								<Checkbox
 									label="Fade site header into banner background"
-									checked={useHeaderGradient}
+									checked={!!useHeaderGradient}
 									onChange={(evt: any) => {
 										updateCommunityData({
 											useHeaderGradient: evt.target.checked,
@@ -139,7 +139,7 @@ const HomepageBannerSettings = (props: Props) => {
 						<InputField>
 							<Checkbox
 								label="Hide site header logo on homepage"
-								checked={hideHeaderLogo}
+								checked={!!hideHeaderLogo}
 								onChange={(evt: any) => {
 									updateCommunityData({ hideHeaderLogo: evt.target.checked });
 								}}

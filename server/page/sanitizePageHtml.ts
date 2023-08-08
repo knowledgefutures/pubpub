@@ -1,6 +1,6 @@
 import sanitizeHtml from 'sanitize-html';
 
-export const sanitizePageHtml = (html) => {
+export const sanitizePageHtml = (html: string) => {
 	return sanitizeHtml(html, {
 		allowedTags: [
 			'h1',

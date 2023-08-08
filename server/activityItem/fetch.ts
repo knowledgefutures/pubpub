@@ -29,6 +29,7 @@ import {
 	User,
 } from 'server/models';
 import { indexById } from 'utils/arrays';
+import { expect } from 'utils/assert';
 import { createActivityAssociationSets } from '../../utils/activity';
 
 type PromiseRecord<T extends { [k: string]: any }> = {
@@ -121,9 +122,7 @@ const applyFiltersToWhereQuery = (whereQuery: any, filters: ActivityFilter[]) =>
 	return whereQuery;
 };
 
-const fetchActivityItemModels = async (
-	options: Required<FetchActivityItemsOptions>,
-): Promise<types.ActivityItem[]> => {
+const fetchActivityItemModels = async (options: Required<FetchActivityItemsOptions>) => {
 	const { scope, limit, offset, since } = options;
 	const whereQuery = {
 		...(since && {
@@ -145,7 +144,7 @@ const fetchActivityItemModels = async (
 
 const getActivityItemAssociationIds = (
 	items: types.ActivityItem[],
-	scope?: ScopeId,
+	scope?: ScopeId | null,
 ): ActivityAssociationIds => {
 	const associationIds = createActivityAssociationSets();
 	const {
@@ -185,7 +184,7 @@ const getActivityItemAssociationIds = (
 			pub.add(item.pubId);
 		}
 		if (item.kind === 'collection-pub-created' || item.kind === 'collection-pub-removed') {
-			collection.add(item.collectionId);
+			collection.add(expect(item.collectionId));
 			collectionPub.add(item.payload.collectionPubId);
 		} else if (item.kind === 'pub-discussion-comment-added') {
 			discussion.add(item.payload.discussionId);
@@ -234,10 +233,10 @@ const getActivityItemAssociationIds = (
 	return associationIds;
 };
 
-const fetchModels = async <T extends WithId>(
+const fetchModels = async <T extends WithId, A extends string[] | readonly string[] = string[]>(
 	Model: any,
 	ids: Set<string>,
-	attributes?: string[],
+	attributes?: A,
 ): Promise<IdIndex<T>> => {
 	if (ids.size === 0) {
 		return {};
@@ -301,13 +300,17 @@ const fetchAssociations = (
 		submission: fetchModels<types.Submission>(Submission, submission),
 		threadComment: fetchModels<types.ThreadComment>(ThreadComment, threadComment),
 		thread: fetchModels<types.Thread>(Thread, thread),
-		user: fetchModels<types.User>(User, user, attributesPublicUser),
+		user: fetchModels<types.User, typeof attributesPublicUser>(
+			User,
+			user,
+			attributesPublicUser,
+		),
 	});
 };
 
 export const fetchAssociationsForActivityItems = async (
 	activityItems: types.ActivityItem[],
-	scope?: ScopeId,
+	scope?: ScopeId | null,
 ) => {
 	const associationIds = getActivityItemAssociationIds(activityItems, scope);
 	return fetchAssociations(associationIds);

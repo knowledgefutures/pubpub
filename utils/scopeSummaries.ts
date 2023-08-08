@@ -1,6 +1,8 @@
 import { ScopeSummary } from 'types';
 
-export const addScopeSummaries = (...summaries: ScopeSummary[]): ScopeSummary => {
+export type MinimalScopeSummary = Omit<ScopeSummary, 'id' | 'createdAt' | 'updatedAt'>;
+
+export const addScopeSummaries = (...summaries: MinimalScopeSummary[]): MinimalScopeSummary => {
 	let discussions = 0;
 	let reviews = 0;
 	let pubs = 0;
@@ -16,7 +18,10 @@ export const addScopeSummaries = (...summaries: ScopeSummary[]): ScopeSummary =>
 	return { discussions, reviews, pubs, collections, submissions };
 };
 
-export const subtractScopeSummaries = (total: ScopeSummary, subtract: ScopeSummary) => {
+export const subtractScopeSummaries = (
+	total: MinimalScopeSummary,
+	subtract: MinimalScopeSummary,
+): MinimalScopeSummary => {
 	return {
 		collections: total.collections - subtract.collections,
 		pubs: total.pubs - subtract.pubs,

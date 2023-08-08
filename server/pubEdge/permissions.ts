@@ -1,5 +1,6 @@
 import { getScope } from 'server/utils/queryHelpers';
 import { PubEdge } from 'server/models';
+import { expect } from 'utils/assert';
 
 export const canManagePubEdges = (scope) => scope.activePermissions.canManage;
 
@@ -9,12 +10,18 @@ export const canCreatePubEdge = async ({ pubId, userId }) => {
 };
 
 export const canUpdateOrDestroyPubEdge = async ({ pubEdgeId, userId }) => {
-	const edge = await PubEdge.findOne({ where: { id: pubEdgeId } });
+	const edge = expect(await PubEdge.findOne({ where: { id: pubEdgeId } }));
 	const scope = await getScope({ pubId: edge.pubId, loginId: userId });
 	return canManagePubEdges(scope);
 };
 
-export const canApprovePubEdgeWithTargetPubId = async ({ targetPubId, userId }) => {
+export const canApprovePubEdgeWithTargetPubId = async ({
+	targetPubId,
+	userId,
+}: {
+	targetPubId?: string;
+	userId: string;
+}) => {
 	if (targetPubId) {
 		const scope = await getScope({ pubId: targetPubId, loginId: userId });
 		return canManagePubEdges(scope);
@@ -22,7 +29,13 @@ export const canApprovePubEdgeWithTargetPubId = async ({ targetPubId, userId }) 
 	return false;
 };
 
-export const canApprovePubEdge = async ({ pubEdgeId, userId }) => {
-	const { targetPubId } = await PubEdge.findOne({ where: { id: pubEdgeId } });
-	return canApprovePubEdgeWithTargetPubId({ targetPubId, userId });
+export const canApprovePubEdge = async ({
+	pubEdgeId,
+	userId,
+}: {
+	pubEdgeId: string;
+	userId: string;
+}) => {
+	const { targetPubId } = expect(await PubEdge.findOne({ where: { id: pubEdgeId } }));
+	return canApprovePubEdgeWithTargetPubId({ targetPubId: expect(targetPubId), userId });
 };

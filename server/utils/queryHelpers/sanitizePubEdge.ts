@@ -1,9 +1,11 @@
+import { expect } from 'utils/assert';
+
 const isCommunityMember = (memberData, pub) =>
 	memberData.some((member) => member.communityId === pub.communityId);
 
 const isCollectionMember = (memberData, pub) =>
 	memberData.some((member) =>
-		pub.collectionPubs.some(
+		expect(pub.collectionPubs).some(
 			(collectionPub) => member.collectionId === collectionPub.collectionId,
 		),
 	);
@@ -21,7 +23,7 @@ const canViewPubEdge = (initialData, pubEdge) => {
 	if (!pub && !targetPub) {
 		return true;
 	}
-	const pubToInspect = targetPub || pub;
+	const pubToInspect = expect(targetPub || pub);
 	if (pubToInspect.communityId === activeCommunity.id) {
 		if (
 			isPubMember(memberData, pubToInspect) ||

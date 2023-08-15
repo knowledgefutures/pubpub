@@ -34,7 +34,12 @@ const getRawSuggestionRanges = (doc: Node, from: number = 0, to: number = doc.no
 	return ranges.reduce((current: RawSuggestionRange[], next: RawSuggestionRange) => {
 		const previous = current.pop();
 		if (previous) {
-			if (previous.suggestionKind === next.suggestionKind && previous.to === next.from) {
+			if (
+				previous.suggestionKind === next.suggestionKind &&
+				previous.to === next.from &&
+				previous.suggestionAttrs[0]?.suggestionUserId ===
+					next.suggestionAttrs[0]?.suggestionUserId
+			) {
 				const joined: RawSuggestionRange = {
 					suggestionKind: previous.suggestionKind,
 					from: previous.from,

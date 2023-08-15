@@ -1,6 +1,6 @@
 .pub-inline-suggested-edit-menu-component {
 	display: flex;
 	align-items: center;
-	z-index: 20;
+	z-index: 18; // Has to be <19 or it shows above the media controls box
 	transform: translateX(-50%);
 }

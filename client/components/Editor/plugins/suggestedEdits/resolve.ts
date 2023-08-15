@@ -20,7 +20,13 @@ export const getResolvableRangeForSelection = (
 			return range.from <= selection.to && selection.from <= range.to;
 		});
 		if (suggestionRange) {
-			return selection.empty ? suggestionRange : selection;
+			// Return a range that includes the user selection, expanded on either side to include
+			// any suggestions it intersects (including contiguous suggestions from the same author
+			// that are fully outside the selection)
+			return {
+				from: Math.min(suggestionRange.from, selection.from),
+				to: Math.max(suggestionRange.to, selection.to),
+			};
 		}
 	}
 	return null;

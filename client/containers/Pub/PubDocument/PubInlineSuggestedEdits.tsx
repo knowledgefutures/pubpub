@@ -1,6 +1,4 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { Tooltip } from '@blueprintjs/core';
-
 import { buttons, FormattingBarSuggestedEdits } from 'components/FormattingBar';
 import { SuggestedEditsUser } from 'types';
 import {
@@ -75,7 +73,6 @@ const PubInlineSuggestedEdits = () => {
 
 	const topPosition =
 		window.scrollY +
-		-47 +
 		(shouldOpenBelowSelection()
 			? selectionBoundingBox.bottom + 5
 			: selectionBoundingBox.top - 30);
@@ -86,6 +83,7 @@ const PubInlineSuggestedEdits = () => {
 		}
 		return (
 			<FormattingBarSuggestedEdits
+				suggestionAuthor={suggestedEditsAttrs}
 				buttons={buttons.suggestedEditsButtonSet}
 				editorChangeObject={editorChangeObject || ({} as any)}
 			/>
@@ -97,17 +95,7 @@ const PubInlineSuggestedEdits = () => {
 			className="pub-inline-suggested-edit-menu-component"
 			style={{ position: 'absolute', top: topPosition, left: selectionBoundingBox.left }}
 		>
-			<Tooltip
-				content={
-					suggestedEditsAttrs
-						? `Suggested by ${suggestedEditsAttrs?.fullName}`
-						: 'Suggestion by Pub editor'
-				}
-				position="bottom"
-				usePortal={true}
-			>
-				{renderFormattingBar()}
-			</Tooltip>
+			{renderFormattingBar()}
 		</div>
 	);
 };

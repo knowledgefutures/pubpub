@@ -3,6 +3,11 @@
 $addition: forestgreen;
 $modification: gold;
 $removal: red;
+// These are equivalent to rgba($color, 0.2) but without the alpha so that the icon backgrounds will
+// "merge" seamlessly with the suggestion span backgrounds
+$addition-light: #d8e9d8;
+$modification-light: #fff8d9;
+$removal-light: #ffd7d7;
 
 @mixin block-border($kind, $color, $border-total-width: 8px, $border-visible-fraction: 0.2) {
 	$width-var: var(--suggestion-#{$kind}-width);
@@ -25,7 +30,9 @@ $removal: red;
 }
 
 @mixin corner-triangle($size, $color) {
-	&::before {
+	position: relative;
+	&::before,
+	.selected::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -35,14 +42,15 @@ $removal: red;
 		border-style: solid;
 		border-width: $size $size 0 0;
 		border-color: $color transparent transparent transparent;
+		opacity: 0;
+	}
+	&:hover::before,
+	.selected::before {
+		opacity: 1;
 	}
 }
 
-span[data-suggestion-mark='true'][data-suggestion-kind='addition'] {
-	background-color: rgba($addition, 0.2);
-}
-
-span[data-suggestion-mark='true'][data-suggestion-kind='removal'] {
+@mixin strikethrough() {
 	text-decoration-thickness: 2px;
 	text-decoration-color: $removal;
 	-webkit-text-decoration-color: $removal;
@@ -50,28 +58,93 @@ span[data-suggestion-mark='true'][data-suggestion-kind='removal'] {
 	-webkit-text-decoration-line: line-through;
 }
 
+$iconSize: 0.75rem;
+
+@mixin highlight-range($color) {
+	background-color: rgba($color, 0.2);
+}
+
+@mixin corner-icon($character, $color, $color-light) {
+	position: relative;
+	&::before,
+	.selected::before {
+		content: $character;
+		position: absolute;
+		background-color: $color-light;
+		color: $color;
+		width: 1.1 * $iconSize;
+		height: 1.1 * $iconSize;
+		border-radius: 50%;
+		font-size: 1rem;
+		font-weight: bold;
+		line-height: 0.9 * $iconSize;
+		text-align: center;
+		left: -0.9 * $iconSize;
+		top: -0.5 * $iconSize;
+		box-shadow: 0 0 0 1px $color;
+		opacity: 0;
+	}
+	&:hover::before,
+	.selected::before {
+		opacity: 1;
+	}
+}
+
+span[data-suggestion-mark='true'][data-suggestion-kind='addition'] {
+	margin: 0 1px;
+	@include highlight-range($addition);
+	@include corner-icon('+', $addition, $addition-light);
+}
+
+span[data-suggestion-mark='true'][data-suggestion-kind='removal'] {
+	&::before {
+		font-weight: 900;
+	}
+	@include strikethrough();
+	margin: 0 1px;
+	@include highlight-range($removal);
+	@include corner-icon('–', $removal, $removal-light);
+}
+
 span[data-suggestion-mark='true'][data-suggestion-kind='modification'] {
 	background-color: rgba($modification, 0.2);
+	@include corner-triangle(10px, $modification);
 }
 
 li[data-suggestion-kind='addition']::before {
-	@include block-border('addition', rgba($addition, 0.5));
+	@include highlight-range($addition);
 }
 
 li[data-suggestion-kind='removal']::before {
-	@include block-border('removal', rgba($removal, 0.5));
+	@include highlight-range($removal);
+	@include strikethrough();
 }
 
 > *[data-suggestion-kind='addition'] {
 	@include block-border('addition', rgba($addition, 0.5));
+	@include corner-icon('+', $addition, $addition-light);
 }
 
 > *[data-suggestion-kind='removal'] {
 	@include block-border('removal', rgba($removal, 0.5));
+	@include corner-icon('–', $removal, $removal-light);
 }
 
 > *[data-suggestion-kind='modification'] {
 	@include block-border('modification', rgba($modification, 0.5));
+	@include corner-triangle(10px, $modification);
+}
+
+ol,
+ul {
+	&[data-suggestion-kind='addition'] {
+		@include corner-icon('+', $addition, $addition-light);
+		@include block-border('addition', rgba($addition, 0.5));
+	}
+	&[data-suggestion-kind='removal'] {
+		@include corner-icon('–', $removal, $removal-light);
+		@include block-border('removal', rgba($removal, 0.5));
+	}
 }
 
 p > *[data-suggestion-kind='modification'] {
@@ -97,10 +170,18 @@ p > *[data-suggestion-kind='modification'] {
 
 .tableWrapper:not([data-suggestion-kind='addition']) {
 	tr > *[data-suggestion-kind='addition'] {
-		@include corner-triangle(6px, $addition);
+		@include corner-icon('+', $addition, $addition-light);
+		border-left: 2px solid rgba($addition, 0.5);
+		&::before {
+			left: 0;
+		}
 	}
 
 	tr > *[data-suggestion-kind='removal'] {
-		@include corner-triangle(6px, $removal);
+		@include corner-icon('–', $removal, $removal-light);
+		border-left: 2px solid rgba($removal, 0.5);
+		&::before {
+			left: 0;
+		}
 	}
 }

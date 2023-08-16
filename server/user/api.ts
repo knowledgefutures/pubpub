@@ -45,6 +45,9 @@ app.get(
 			throw new ForbiddenError();
 		}
 		const { suggestionUserId } = req.query;
+		if (!suggestionUserId) {
+			throw new NotFoundError();
+		}
 
 		const userInfo = await getSuggestedEditsUserInfo(suggestionUserId);
 		if (userInfo) {

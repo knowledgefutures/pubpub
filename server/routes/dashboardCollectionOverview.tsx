@@ -3,7 +3,7 @@ import queryString, { ParsedQuery } from 'query-string';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors, ForbiddenError } from 'server/utils/errors';
+import { handleErrors, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -39,6 +39,10 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 				elements,
 			},
 		} = initialData;
+
+		if (!elements.activeCollection) {
+			throw new NotFoundError();
+		}
 
 		if (!canView && !elements.activeCollection!.isPublic) {
 			throw new ForbiddenError();

@@ -24,6 +24,7 @@ const getRequestIds = (req, argsFrom = req.body) => {
 	};
 };
 
+// TODO: Add validation to not allow empty collectionId query param
 app.get(
 	'/api/collectionPubs',
 	wrap(async (req, res) => {

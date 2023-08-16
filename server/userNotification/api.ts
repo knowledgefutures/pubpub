@@ -1,5 +1,5 @@
 import app, { wrap } from 'server/server';
-import { ForbiddenError } from 'server/utils/errors';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 
 import {
 	deleteUserNotifications,
@@ -35,6 +35,9 @@ app.get(
 	'/api/userNotifications',
 	wrap(async (req, res) => {
 		const { userId, offset, limit } = unwrapGetRequest(req);
+		if (!userId) {
+			throw new NotFoundError();
+		}
 		const result = await fetchUserNotifications({ userId, offset, limit });
 		return res.status(200).json(result);
 	}),

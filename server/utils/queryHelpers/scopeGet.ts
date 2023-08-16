@@ -116,7 +116,7 @@ const getActiveCounts = async (isDashboard: boolean, scopeElements) => {
 };
 
 const getFacets = async (includeFacets: boolean, scopeElements: ScopeData['elements']) => {
-	if (includeFacets) {
+	if (includeFacets && scopeElements.activeTarget) {
 		const { activeTarget, activeTargetType } = scopeElements;
 		if (activeTargetType === 'organization') {
 			throw new FacetsError('No such thing as an organization');
@@ -235,6 +235,9 @@ const getScopeElements = async (
 			collectionId,
 			communityId: activeCommunity?.id,
 		});
+		// if (!activeCollection) {
+		// 	throw new Error('Pub Not Found');
+		// }
 		activeTarget = activeCollection;
 	}
 

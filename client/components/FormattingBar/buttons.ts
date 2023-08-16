@@ -337,7 +337,7 @@ export const suggestedEditsAccept: FormattingBarButtonData = {
 };
 
 export const suggestedEditsButtonSet = [
-	[suggestedEditsToggle, suggestedEditsReject, suggestedEditsAccept],
+	[suggestedEditsToggle, suggestedEditsAccept, suggestedEditsReject],
 ];
 export const minimalButtonSet = [[strong, em, link, rightToLeft, math]];
 export const abstractButtonSet = [[strong, em, link, rightToLeft, math]];

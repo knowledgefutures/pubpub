@@ -3,13 +3,13 @@ import React from 'react';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { DialogLauncher, PubShareDialog, PopoverButton, FacetEditor } from 'components';
-
 import { Callback, PubPageData } from 'types';
+
 import CitationsPreview from './CitationsPreview';
-import Download from './Download';
 import PubToc from './PubToc';
 import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
+import DownloadButton from './DownloadButton';
 
 type Props = {
 	onShowHeaderDetails: Callback;
@@ -21,6 +21,7 @@ const UtilityButtons = (props: Props) => {
 	const { scopeData } = usePageContext();
 	const { isRelease, membersData } = pubData;
 	const { canManage } = scopeData.activePermissions;
+
 	return (
 		<div className="utility-buttons-component">
 			<SmallHeaderButton
@@ -80,9 +81,7 @@ const UtilityButtons = (props: Props) => {
 					<SmallHeaderButton label="Social" labelPosition="left" icon="share2" />
 				</Social>
 			)}
-			<Download pubData={pubData}>
-				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
-			</Download>
+			<DownloadButton pubData={pubData} />
 			<PubToc>
 				<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />
 			</PubToc>

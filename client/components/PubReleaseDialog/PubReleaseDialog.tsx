@@ -24,7 +24,7 @@ import {
 	acceptSuggestions,
 	rejectSuggestions,
 } from 'components/Editor/plugins/suggestedEdits/resolve';
-import { getSuggestionAttrsForNode } from '../Editor/plugins/suggestedEdits/operations';
+import { hasSuggestions } from 'components/Editor/plugins/suggestedEdits/operations';
 
 require('./pubReleaseDialog.scss');
 
@@ -59,7 +59,8 @@ const PubReleaseDialog = (props: Props) => {
 	const { releases } = pub;
 	const releaseCount = releases ? releases.length : 0;
 	const latestRelease = releases?.[releaseCount - 1]!;
-	const { editorChangeObject } = collabData;
+	const view = collabData.editorChangeObject?.view;
+	const editorState = view?.state;
 
 	const handleCreateRelease = async () => {
 		setIsCreatingRelease(true);
@@ -187,58 +188,48 @@ const PubReleaseDialog = (props: Props) => {
 		return null;
 	};
 
-	const hasSuggestions = (): boolean => {
-		if (!editorChangeObject || !editorChangeObject.view) return false;
-		const doc = editorChangeObject.view.state.doc;
-		let hasSugg = false;
-		doc.nodesBetween(0, doc.nodeSize - 2, (node) => {
-			if (hasSugg) return;
-			const present = getSuggestionAttrsForNode(node);
-			if (present) hasSugg = true;
-		});
-		return hasSugg;
-	};
-
-	const suggestedEditsAction = (action: {
+	const resolveSuggestedEdits = (action: {
 		(state: EditorState, from: number, to: number): Transaction;
 	}) => {
-		if (!hasSuggestions()) return;
-		if (!editorChangeObject) return;
-		const editorState = editorChangeObject.view.state;
-		const size = editorChangeObject.view.state.doc.nodeSize;
+		if (!editorState) {
+			return;
+		}
+
+		if (!hasSuggestions(editorState)) {
+			return;
+		}
+		const size = editorState.doc.nodeSize;
 		const tr = action(editorState, 0, size - 2);
-		editorChangeObject.view.dispatch(tr);
+		view.dispatch(tr);
 	};
 
 	const handleSuggestedEditsAccept = () => {
-		suggestedEditsAction(acceptSuggestions);
+		resolveSuggestedEdits(acceptSuggestions);
 	};
 
 	const handleSuggestedEditsReject = () => {
-		suggestedEditsAction(rejectSuggestions);
+		resolveSuggestedEdits(rejectSuggestions);
 	};
 
 	const renderSuggestedEditsActionButtons = () => {
 		return (
 			<React.Fragment>
 				<Callout className="text-info" intent="warning">
-					You still have pending edits. Would you like to accept the suggested changes or
-					reject them (
-					<strong>this will remove any suggested changes from your doc</strong>)?
+					You still have pending edits. Resolve your edits before publishing this Pub.
 				</Callout>
 				<div className={Classes.DIALOG_FOOTER_ACTIONS}>
 					<Button disabled={isCreatingRelease} onClick={onClose}>
 						Return to draft
 					</Button>
 					<Button
-						text="Reject All"
-						intent="danger"
-						onClick={handleSuggestedEditsReject}
-					/>
-					<Button
 						text="Accept All"
 						intent="success"
 						onClick={handleSuggestedEditsAccept}
+					/>
+					<Button
+						text="Reject All"
+						intent="danger"
+						onClick={handleSuggestedEditsReject}
 					/>
 				</div>
 			</React.Fragment>
@@ -303,7 +294,7 @@ const PubReleaseDialog = (props: Props) => {
 				{renderReleaseResult()}
 			</div>
 			<div className={Classes.DIALOG_FOOTER}>
-				{hasSuggestions() && featureFlags.suggestedEdits ? (
+				{featureFlags.suggestedEdits && editorState && hasSuggestions(editorState) ? (
 					<div>{renderSuggestedEditsActionButtons()}</div>
 				) : (
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>

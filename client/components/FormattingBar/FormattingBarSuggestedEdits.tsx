@@ -9,8 +9,6 @@ import { FormattingBarButtonData } from './types';
 import { suggestedEditsReject, suggestedEditsAccept } from './buttons';
 import { useCommandStates } from './hooks/useCommandStates';
 
-require('./formattingBarSuggestedEdits.scss');
-
 type Props = {
 	suggestionAuthor?: SuggestedEditsUser;
 	buttons: FormattingBarButtonData[][];
@@ -40,18 +38,7 @@ const FormattingBarSuggestedEdits = (props: Props) => {
 		? `Accept suggestion made by ${suggestionAuthor.fullName}`
 		: suggestedEditsAccept.title;
 	return (
-		<div>
-			<Tooltip content={rejectButtonContent} usePortal={true}>
-				<Button
-					ref={buttonElementRefs.getRef(suggestedEditsReject.key)}
-					aria-label={suggestedEditsReject.title}
-					role="button"
-					onClick={() => handleClick(suggestedEditsReject)}
-					className="reject-button"
-				>
-					<Icon icon={suggestedEditsReject.icon} iconSize={16} />
-				</Button>
-			</Tooltip>
+		<>
 			<Tooltip content={acceptButtonContent} usePortal={true}>
 				<Button
 					ref={buttonElementRefs.getRef(suggestedEditsAccept.key)}
@@ -63,7 +50,18 @@ const FormattingBarSuggestedEdits = (props: Props) => {
 					<Icon icon={suggestedEditsAccept.icon} iconSize={16} />
 				</Button>
 			</Tooltip>
-		</div>
+			<Tooltip content={rejectButtonContent} usePortal={true}>
+				<Button
+					ref={buttonElementRefs.getRef(suggestedEditsReject.key)}
+					aria-label={suggestedEditsReject.title}
+					role="button"
+					onClick={() => handleClick(suggestedEditsReject)}
+					className="reject-button"
+				>
+					<Icon icon={suggestedEditsReject.icon} iconSize={16} />
+				</Button>
+			</Tooltip>
+		</>
 	);
 };
 

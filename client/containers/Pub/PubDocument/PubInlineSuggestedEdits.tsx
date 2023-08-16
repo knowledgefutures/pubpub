@@ -23,8 +23,8 @@ const PubInlineSuggestedEdits = () => {
 	const { collabData, pubBodyState } = usePubContext();
 
 	const { editorChangeObject } = collabData;
-	const selection = collabData.editorChangeObject!.selection;
-	const [suggestedEditsAttrs, setSuggestedEditsAttrs] = useState<SuggestedEditsUser>();
+	const selection = collabData.editorChangeObject?.selection;
+	const [suggestionAuthor, setSuggestionAuthor] = useState<SuggestedEditsUser>();
 
 	const shouldHide = useMemo(() => {
 		if (!collabData.editorChangeObject || !collabData.editorChangeObject.view || !selection)
@@ -34,16 +34,13 @@ const PubInlineSuggestedEdits = () => {
 		return !inRange || !selection;
 	}, [collabData.editorChangeObject, selection]);
 
-	const suggestionAttrsForRange = useMemo(() => {
+	const selectedSuggestion = useMemo(() => {
 		if (editorChangeObject && editorChangeObject.view) {
-			const doc = editorChangeObject!.view.state.doc;
+			const doc = editorChangeObject.view.state.doc;
 			const range = getResolvableRangeForSelection(editorChangeObject.view.state);
 			if (range) {
-				let attrs;
-				doc.nodesBetween(range.from, range.to, (node) => {
-					const present = getSuggestionAttrsForNode(node);
-					attrs = present;
-				});
+				const node = doc.nodeAt(range.from);
+				const attrs = node && getSuggestionAttrsForNode(node);
 				return attrs;
 			}
 		}
@@ -51,15 +48,17 @@ const PubInlineSuggestedEdits = () => {
 	}, [editorChangeObject]);
 
 	const fetchSuggestedEditsUserInfo = useCallback(async () => {
-		if (suggestionAttrsForRange) {
+		if (selectedSuggestion) {
 			const suggestionUser: SuggestedEditsUser = await apiFetch.get(
 				`/api/users?suggestionUserId=${encodeURIComponent(
-					suggestionAttrsForRange.suggestionUserId,
+					selectedSuggestion.suggestionUserId,
 				)}`,
 			);
-			if (suggestionUser) setSuggestedEditsAttrs(suggestionUser);
+			if (suggestionUser) {
+				setSuggestionAuthor(suggestionUser);
+			}
 		}
-	}, [suggestionAttrsForRange]);
+	}, [selectedSuggestion]);
 
 	useEffect(() => {
 		fetchSuggestedEditsUserInfo();
@@ -83,7 +82,7 @@ const PubInlineSuggestedEdits = () => {
 		}
 		return (
 			<FormattingBarSuggestedEdits
-				suggestionAuthor={suggestedEditsAttrs}
+				suggestionAuthor={suggestionAuthor}
 				buttons={buttons.suggestedEditsButtonSet}
 				editorChangeObject={editorChangeObject || ({} as any)}
 			/>

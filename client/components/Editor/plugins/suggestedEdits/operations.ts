@@ -3,6 +3,7 @@ import uuid from 'uuid/v4';
 
 import { withValue } from 'utils/fp';
 
+import { EditorState } from 'prosemirror-state';
 import { suggestionNodeAttributes } from './schema';
 import {
 	SuggestedEditsTransactionContext,
@@ -13,6 +14,7 @@ import {
 	SuggestionNodeAttrs,
 	SuggestionUniqueAttrs,
 } from './types';
+import { getSuggestedEditsState } from './state';
 
 const createSuggestionUniqueAttrs = (): SuggestionUniqueAttrs => {
 	return {
@@ -152,5 +154,13 @@ export const addSuggestionToNode = (
 		null,
 		{ ...currentNode.attrs, ...allSuggestionAttrs },
 		currentNode.marks,
+	);
+};
+
+export const hasSuggestions = (state: EditorState) => {
+	const suggestedEditsState = getSuggestedEditsState(state);
+
+	return (
+		suggestedEditsState?.suggestionRanges && suggestedEditsState.suggestionRanges.length !== 0
 	);
 };

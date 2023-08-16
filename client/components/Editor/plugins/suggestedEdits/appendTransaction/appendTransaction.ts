@@ -1,14 +1,16 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 
+import { findParentNodeClosestToPos } from 'client/components/Editor/utils';
+import { Node } from 'prosemirror-model';
 import { idsPluginKey } from '../../ids';
+import { createSuggestedEditsTransactionContext } from '../context';
 import { getSuggestedEditsState } from '../state';
 import { indicateAttributeChanges } from './attributes';
-import { createSuggestedEditsTransactionContext } from '../context';
 
+import { suggestedEditsPluginKey } from '../key';
 import { indicateMarkChanges } from './marks';
 import { mapSelectionThroughTransaction } from './selection';
 import { indicateTextAndStructureChanges } from './textAndStructure';
-import { suggestedEditsPluginKey } from '../key';
 
 // TODO: we should be using the history and collab plugin PluginKeys here
 const excludedMeta = [
@@ -19,8 +21,22 @@ const excludedMeta = [
 	'appendedTransaction',
 ];
 
+const nodeIsMath = (node: Node) => ['math_inline', 'math_display'].includes(node.type.name);
+
+const isMathTransaction = (tr: Transaction) => {
+	// `any` is used here because the Step type doesn't include `from` or `pos` properties, but all step
+	// types include at least one of those
+	return tr.steps.some((step: any) => {
+		const pos = step.from ?? step.pos;
+		const resolvedPos = tr.doc.resolve(pos);
+		return findParentNodeClosestToPos(resolvedPos, nodeIsMath);
+	});
+};
+
 const shouldExamineTransaction = (tr: Transaction) => {
-	return tr.docChanged && !excludedMeta.some((meta) => !!tr.getMeta(meta));
+	return (
+		tr.docChanged && !excludedMeta.some((meta) => !!tr.getMeta(meta)) && !isMathTransaction(tr)
+	);
 };
 
 export const appendTransaction = (

@@ -21,7 +21,9 @@ const useSSL = database_url.indexOf('localhost') === -1;
 
 const poolOptions = process.env.WORKER
 	? {
-			max: 2,
+			max: process.env.WORKERS_SEQUELIZE_MAX_CONNECTIONS
+				? parseInt(process.env.WORKERS_SEQUELIZE_MAX_CONNECTIONS, 10)
+				: 2,
 			min: 0,
 			idle: 0,
 			acquire: 10000,

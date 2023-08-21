@@ -2,7 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors, ForbiddenError } from 'server/utils/errors';
+import { handleErrors, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -41,6 +41,10 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, { isDashboard: true });
+			if (!initialData.scopeData.elements.activeTarget) {
+				throw new NotFoundError();
+			}
+
 			const settingsData = await getSettingsData(req.params.pubSlug, initialData);
 
 			if (!initialData.scopeData.activePermissions.canView) {

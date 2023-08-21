@@ -2,7 +2,7 @@ import React from 'react';
 
 import app, { wrap } from 'server/server';
 import Html from 'server/Html';
-import { handleErrors, ForbiddenError } from 'server/utils/errors';
+import { handleErrors, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 
@@ -18,6 +18,9 @@ app.get(
 			}
 			const { pubSlug } = req.params;
 			const initialData = await getInitialData(req, { isDashboard: true });
+			if (!initialData.scopeData.elements.activeTarget) {
+				throw new NotFoundError();
+			}
 			const pubData = await getPubForRequest({
 				slug: pubSlug,
 				initialData,

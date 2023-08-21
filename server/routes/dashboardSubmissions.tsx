@@ -2,7 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { ForbiddenError, handleErrors } from 'server/utils/errors';
+import { ForbiddenError, NotFoundError, handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -51,6 +51,10 @@ app.get(
 			}
 
 			const initialData = await getInitialData(req, { isDashboard: true });
+			if (!initialData.scopeData.elements.activeTarget) {
+				throw new NotFoundError();
+			}
+
 			if (!initialData.featureFlags.submissions) {
 				return next();
 			}

@@ -2,7 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import { NotFoundError, handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -15,6 +15,9 @@ app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => 
 		}
 		const initialData = await getInitialData(req, { isDashboard: true });
 		const { scopeData, loginData } = initialData;
+		if (!initialData.scopeData.elements.activeTarget) {
+			throw new NotFoundError();
+		}
 		const { pubSlug, reviewNumber } = req.params;
 		const reviewData = await getReview(
 			pubSlug,
@@ -37,7 +40,7 @@ app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => 
 				viewData={{ reviewData: sanitizedReviewData }}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Review ${req.params.reviewNumber} · ${initialData.scopeData.elements.activeTarget.title}`,
+					title: `Review ${req.params.reviewNumber} · ${initialData.scopeData.elements.activeTarget?.title}`,
 					unlisted: true,
 				})}
 			/>,

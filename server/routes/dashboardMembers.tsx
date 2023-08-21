@@ -16,6 +16,10 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, { isDashboard: true });
+			if (!initialData.scopeData.elements.activeTarget) {
+				throw new NotFoundError();
+			}
+
 			const membersData = await getMembers(initialData);
 
 			if (!initialData.scopeData.activePermissions.canView) {

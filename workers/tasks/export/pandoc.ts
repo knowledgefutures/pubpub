@@ -125,16 +125,16 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 		},
 		affiliation: formattedAffiliations,
 		uri: pubUrl,
-		...(primaryCollectionMetadata && {
-			article: {
+		article: {
+			...(doi && { doi }),
+			'elocation-id': slug,
+			...(primaryCollectionMetadata && {
 				...(primaryCollectionMetadata.issue && { issue: primaryCollectionMetadata.issue }),
 				...(primaryCollectionMetadata.volume && {
 					volume: primaryCollectionMetadata.volume,
 				}),
-				...(doi && { doi }),
-				'elocation-id': slug,
-			},
-		}),
+			}),
+		},
 		'link-citations': true, // See https://github.com/jgm/pandoc/issues/6013#issuecomment-921409135
 		...(cslFile && { csl: cslFile }),
 	});

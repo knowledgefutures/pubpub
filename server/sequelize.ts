@@ -19,28 +19,26 @@ if (!database_url) {
 
 const useSSL = database_url.indexOf('localhost') === -1;
 
-const poolOptions = process.env.WORKER
-	? {
-			max: process.env.WORKERS_SEQUELIZE_MAX_CONNECTIONS
-				? parseInt(process.env.WORKERS_SEQUELIZE_MAX_CONNECTIONS, 10)
-				: 2,
-			min: 0,
-			idle: 0,
-			acquire: 10000,
-	  }
-	: {
-			max: process.env.SEQUELIZE_MAX_CONNECTIONS
-				? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-				: 5, // Some migrations require this number to be 150
-			min: 0,
-			idle: 10000,
-			acquire: 60000,
-	  };
-
 export const sequelize = new SequelizeWithId(database_url, {
 	logging: false,
 	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
-	pool: poolOptions,
+	pool: {
+		max: process.env.SEQUELIZE_MAX_CONNECTIONS
+			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
+			: 5, // Some migrations require this number to be 150
+		// Time after which idle connections are released.
+		idle: process.env.SEQUELIZE_IDLE ? parseInt(process.env.SEQUELIZE_IDLE, 10) : 10_000,
+		// Maximum time to wait when acquiring a connection, after which an error
+		// will be thrown.
+		acquire: process.env.SEQUELIZE_ACQUIRE
+			? parseInt(process.env.SEQUELIZE_ACQUIRE, 10)
+			: 15_000,
+		// Maximum number of uses before a connection is released. Helps evenly
+		// distribute connections across dynos during peak load.
+		maxUses: process.env.SEQUELIZE_MAX_USES
+			? parseInt(process.env.SEQUELIZE_MAX_USES, 10)
+			: 1_000,
+	},
 	retry: {
 		max: 3,
 		match: [/Deadlock/i, ConnectionError],

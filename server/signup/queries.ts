@@ -4,6 +4,8 @@ import { sequelize } from 'server/sequelize';
 import { sendSignupEmail } from 'server/utils/email';
 import { expect } from 'utils/assert';
 
+export class DuplicateEmailError extends Error {}
+
 export const createSignup = (inputValues, hostname) => {
 	const email = inputValues.email.toLowerCase().trim();
 	/* First, try to update the emailSentCount. */
@@ -14,7 +16,7 @@ export const createSignup = (inputValues, hostname) => {
 	})
 		.then((userData) => {
 			if (userData) {
-				throw new Error('Email already used');
+				throw new DuplicateEmailError('Email already used');
 			}
 
 			return Signup.update(

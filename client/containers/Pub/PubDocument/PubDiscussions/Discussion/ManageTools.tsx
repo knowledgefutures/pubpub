@@ -23,6 +23,7 @@ type Props = {
 		isClosed?: boolean | null;
 		labels?: any[] | null;
 		userId?: string | null;
+		number?: number;
 	};
 	setSortType: (s: SortType) => any;
 	sortType: SortType;
@@ -42,7 +43,7 @@ const ManageTools = (props: Props) => {
 	};
 
 	const renderArchiveButton = () => {
-		if (discussionData.isClosed && !canAdmin) {
+		if (!discussionData.number || (discussionData.isClosed && !canAdmin)) {
 			return null;
 		}
 

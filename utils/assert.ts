@@ -1,11 +1,15 @@
+import * as Sentry from '@sentry/node';
+
 class AssertionError extends Error {
 	name = 'AssertionError';
 }
 
 export function assert(condition: boolean, message = ''): asserts condition {
-	if (process.env.NODE_ENV !== 'production') {
-		if (!condition) {
+	if (!condition) {
+		if (process.env.NODE_ENV !== 'production') {
 			throw new AssertionError(message);
+		} else {
+			Sentry.captureException(new AssertionError(message));
 		}
 	}
 }

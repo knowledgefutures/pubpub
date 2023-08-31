@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const crypto = require('crypto');
 
@@ -30,7 +31,7 @@ module.exports = {
 			'prosemirror-state': require.resolve('prosemirror-state'),
 		},
 	},
-	devtool: '#source-map',
+	devtool: 'source-map',
 	output: {
 		filename: '[name].[chunkhash].js',
 		path: resolve(__dirname, '../../dist/client'),
@@ -100,6 +101,21 @@ module.exports = {
 		new ManifestPlugin({
 			publicPath: '/dist/',
 		}),
+		// Allow shared utils to import the sentry/node package by replacing it in the webpack build
+		new webpack.NormalModuleReplacementPlugin(/@sentry\/node/, '@sentry/react'),
+		// Upload sourcemaps to sentry only when we're not in CI
+		...(process.env.CI === 'true'
+			? []
+			: [
+					sentryWebpackPlugin({
+						org: 'kfg',
+						project: 'pubpub-frontend',
+						authToken: process.env.SENTRY_AUTH_TOKEN,
+						errorHandler: (err) => {
+							console.warn(err);
+						},
+					}),
+			  ]),
 	],
 	optimization: {
 		minimizer: [

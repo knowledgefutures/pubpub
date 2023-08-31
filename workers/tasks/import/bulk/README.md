@@ -25,7 +25,7 @@ create: true
 title: My Blog
 
 children:
-    "*.md":
+    '*.md':
         type: pub
 ```
 
@@ -47,15 +47,15 @@ npm run tools bulkimport -- --directory /path/to/target --actor=pubpub-user-slug
 
 where:
 
-- `--directory` is a folder full of documents that can be turned into Pubs.
-- `--actor` is a slug of a PubPub user taking these actions.
-- `--receipt` is a path to write a record of what was imported.
+-   `--directory` is a folder full of documents that can be turned into Pubs.
+-   `--actor` is a slug of a PubPub user taking these actions.
+-   `--receipt` is a path to write a record of what was imported.
 
 these arguments are optional:
 
-- `--community` is the subdomain of a community to target (used in lieu of a directive).
-- `--dry-run` to print a description of what will be imported, without doing it.
-- `--yes` to skip all confirmation prompts.
+-   `--community` is the subdomain of a community to target (used in lieu of a directive).
+-   `--dry-run` to print a description of what will be imported, without doing it.
+-   `--yes` to skip all confirmation prompts.
 
 Any Communities, Collections, and Pubs created will be immediately visible online, though Collections will be private and Pubs will remain unreleased. A record of what was created will be stored in the `receipt` file, which will be referenced later when publishing or discarding changes. If you're happy with the way things look on PubPub, you can take the second step of publishing these changes — creating a Release for newly created Pubs, and making Collections public — as follows:
 
@@ -116,7 +116,7 @@ children:
     posts/2020/march/guest-post.md:
         type: pub
         attributions:
-            - {name: "Joel Gustafson", roles: ["Guest Poster"]}
+            - { name: 'Joel Gustafson', roles: ['Guest Poster'] }
 ```
 
 There are three directives in this file. The outermost one has `type: community` and _matches_ the outermost directory. The two other directives are inside of `children`, and you'll notice that they both have `type: pub`, and both of them _match_ the file `posts/2020/march/guest-post.md`! When this happens, the directives will be merged, and only one Pub will be created for that Markdown file.
@@ -131,6 +131,7 @@ posts/*/*/*.md:
     partial: true
     ...
 ```
+
 Only one Pub would be created from the entire import, from `guest-post.md`.
 
 ## Creating vs. targeting objects
@@ -158,7 +159,7 @@ slug: this-one-already-exists
 type: community
 create: true
 title: My New Community
-description: "Pretty cool, no?" # optional
+description: 'Pretty cool, no?' # optional
 subdomain: my-new-community # optional
 ```
 
@@ -190,16 +191,16 @@ Rather than placing a `.pubpub.yaml` with a `type: pub` directive inside of each
 
 ```yaml
 children:
-    "*":
+    '*':
         type: pub
 ```
 
 The keys of `children` can be paths to files or folders, including a simple wildcard syntax in which:
 
--  `*.ext` will match any `.ext` file
-- `foo.*` will match any file named `foo` (minus the extension)
--  `*` will match any directory
--  `*.*` will match any file (you usually don't want this one)
+-   `*.ext` will match any `.ext` file
+-   `foo.*` will match any file named `foo` (minus the extension)
+-   `*` will match any directory
+-   `*.*` will match any file (you usually don't want this one)
 
 It is of course possible to nest several layers of directives within a single file by nesting `children`. The importer doesn't support nested collection directives, though — every Pub is expected to be the child of at most one.
 
@@ -220,6 +221,7 @@ labels:
     supplements:
         - postscript.tex
 ```
+
 These labels are consumed by the per-Pub importer as follows: the `preambles`, the `document`, and the `supplements` are passed into Pandoc in that order, e.g.:
 
 ```
@@ -235,10 +237,10 @@ When you need to bring extra files into the Pub import that are not inside of it
 ```yaml
 resolve:
     - ../path/to/images:
-        into: images/
+          into: images/
     - ../../path/to/specific/file.tex:
-        as: other-file.tex
-        label: preamble # (or any other label, optional)
+          as: other-file.tex
+          label: preamble # (or any other label, optional)
 ```
 
 The `into` option rewrites file paths for use in the import. For instance, a document expecting to see `images/dog.png` will be redirected to find it in `../path/to/images/dog.png` instead. Likewise, `as` resolves individual files outside of the target directory by a specific name.
@@ -271,7 +273,7 @@ children:
     posts/my-first-post.md:
         resolve:
             - ../images:
-                into: images/
+                  into: images/
 ```
 
 The thing to note here is `../images` is the relative path from `my-first-post.md`, rather than from `config.pubpub.yaml`.
@@ -296,10 +298,7 @@ Pub or Collection directives can specify attribution information that will be tu
 type: pub
 attributions:
     - Author One
-    - {
-        name: "Author Two",
-        affiliation: "Some University of Something"
-    }
+    - { name: 'Author Two', affiliation: 'Some University of Something' }
     - slug: author-three
 ```
 
@@ -313,13 +312,14 @@ As something of a last resort, the importer can run automated find-and-replace o
 
 ```yaml
 macros:
-    "find me": "replace me with this"
+    'find me': 'replace me with this'
 ```
+
 But of course, the keys here are compiled to regular expressions, and the values take regex-interpolated style positional arguments, e.g.
 
 ```yaml
 macros:
-    "do (.*) before (.*)": "do $2 after $1"
+    'do (.*) before (.*)': 'do $2 after $1'
 ```
 
 The real power of macros is the `define` feature. Intead of inserting a new string, specifying an object with `define` will replace the matched text with an empty string, and record a value for later retrieval instead.
@@ -351,7 +351,7 @@ The following Pub directive will extract the `summary` value (`"Blah blah BLAH..
 # config.pubpub.yaml
 type: pub
 description:
-  $metadata: summary
+    $metadata: summary
 ```
 
 The other special value of this kind of `$sourceFile`. It means "give me the URL of the uploaded source file corresponding to this path". In this example, every document to be imported is paired with an `thumb.png`:
@@ -371,10 +371,10 @@ The following Pub directive will cause the corresponding `thumb.png` files to be
 ```yaml
 # config.pubpubb.yaml
 children:
-  "*/doc.html":
-    type: pub
-    avatar:
-      $sourceFile: thumb.png
+    '*/doc.html':
+        type: pub
+        avatar:
+            $sourceFile: thumb.png
 ```
 
 Note that these special values can be composed, to useful effect. We might find a file specified in the document metadata:
@@ -385,14 +385,14 @@ thumbnail: cover-image-for-this-post.jpg
 ---
 ```
 
-We can extract the relative file path with `$metadata` and tell the importer to upload the resolved file as the Pub's `avatar` as follows: 
+We can extract the relative file path with `$metadata` and tell the importer to upload the resolved file as the Pub's `avatar` as follows:
 
 ```yaml
 # config.pubpub.yaml
 type: pub
 avatar:
-  $sourceFile:
-    $metadata: thumbnail
+    $sourceFile:
+        $metadata: thumbnail
 ```
 
 # Directive options
@@ -458,6 +458,10 @@ _The remainder of the options map directly to attributes on the Pub model._
 
 **`customPublishedAt: string`**: a date given in ISO 8601 format.
 
+**`inlineFile: string`**: a path to a file that will be added as a file card to the end of the Pub. Usually used in conjunction with `$sourceFile` to resolve a path to a file in the same directory as the pub.
+
+**`downloads: string`**: a path to a file that will be added as the default download. Usually used in conjunction with `$sourceFile` to resolve a path to a file in the same directory as the pub.
+
 # Recipes
 
 ## One file per Pub
@@ -481,7 +485,7 @@ type: community
 create: true
 
 children:
-    "*.md":
+    '*.md':
         type: pub
 ```
 
@@ -511,6 +515,36 @@ create: true
 children:
     *:
         type: pub
+```
+
+### Add an `inlineFile` and `download`
+
+If the pub directory also contains, for example, a pdf file to be used as the default download and embedded
+in the Pub, you can use the `inlineFile` and/or `downloads` directives, together with `$sourceFile`.
+
+```
+root/
+  config.pubpub.yaml
+  post-one/
+    src.md
+    paper.pdf
+    ...
+  post-two/
+  post-three/
+  ...
+```
+
+```yaml
+type: community
+create: true
+
+children:
+    *:
+        type: pub
+        downloads:
+          $sourceFile: paper.pdf
+        inlineFile:
+          $sourceFile: paper.pdf
 ```
 
 ## One directory per Collection
@@ -553,11 +587,11 @@ This will infer collection titles from directory names, which you will probably 
 
 You may want to specify a Collectin and a Community at the root of the import, which is a little difficult because each `.pubpub.yaml` file contains one directive, and the child directives must match subdirectories. Here, you can:
 
-- Create two sibling directive files, e.g. `community.pubpub.yaml` and `collection.pubpub.yaml`, and they will be resolved in the appropriate order.
+-   Create two sibling directive files, e.g. `community.pubpub.yaml` and `collection.pubpub.yaml`, and they will be resolved in the appropriate order.
 
-- Nest the entire import in a new dummy directory with the Community directive
+-   Nest the entire import in a new dummy directory with the Community directive
 
-- Target an existing Community with the CLI's `--community` argument instead.
+-   Target an existing Community with the CLI's `--community` argument instead.
 
 ## Referencing source files in a shared resource directory
 
@@ -580,35 +614,35 @@ root/
 You might find HTML files with content like:
 
 ```html
-<img src="resources/hyena.png">
+<img src="resources/hyena.png" />
 ```
 
 To tell the importer where to find these images, use the `resolve` directive option:
 
 ```yaml
 children:
-  posts/*.html:
-    type: pub
-    resolve:
-      - ../resources:
-        into: resources
+    posts/*.html:
+        type: pub
+        resolve:
+            - ../resources:
+              into: resources
 ```
 
 The result is as if the `resources/` directory were a sibling of each HTML file. You might even find something like this:
 
 ```html
-<img src="https://best-exam-dumps-2020-here.info/resources/hyena.png">
+<img src="https://best-exam-dumps-2020-here.info/resources/hyena.png" />
 ```
 
 If you have a local copy of the `resources` directory, you can resolve these URLs this way:
 
 ```yaml
 children:
-  posts/*.html:
-    type: pub
-    resolve:
-      - ../resources:
-        into: https://best-exam-dumps-2020-here.info/resources/
+    posts/*.html:
+        type: pub
+        resolve:
+            - ../resources:
+              into: https://best-exam-dumps-2020-here.info/resources/
 ```
 
 (Note the trailing slash here)
@@ -678,12 +712,11 @@ children:
 
 Now `footnote-definitions.tex` is included in the import of each `*.tex`, and since it is given `label: preamble`, Pandoc will process it before the chapter text. The `preamble` option lets us specify arbitrary text that will likewise be processed by Pandoc before the chapter.
 
-Note that we can resolve `../footnote-definitions.tex` as any name we want, because it is not actually referred  by the chapter files.
+Note that we can resolve `../footnote-definitions.tex` as any name we want, because it is not actually referred by the chapter files.
 
-###  Importing a subset of files with `partial`
+### Importing a subset of files with `partial`
 
 We have another problem, though: not all of the `chapters/*.tex` files should actually correspond to chapters:
-
 
 ```
 book/
@@ -701,20 +734,20 @@ We could simply accept the fact that `cruft.tex` will create a Pub, or we could 
 children:
     chapters/chapter-one.tex:
         type: pub
-        title: "Chapter One: The Way Things Are"
+        title: 'Chapter One: The Way Things Are'
         resolve:
             - ../footnote-definitions.tex:
-                as: _.tex
-                label: preamble
+                  as: _.tex
+                  label: preamble
         preamble: |
             \newcommand{\emc2}{$E = mc^2$}
     chapters/chapter-two.tex:
         type: pub
-        title: "Chapter Two: The Way Things Ought to Be"
+        title: 'Chapter Two: The Way Things Ought to Be'
         resolve:
             - ../footnote-definitions.tex:
-                as: _.tex
-                label: preamble
+                  as: _.tex
+                  label: preamble
         preamble: |
             \newcommand{\emc2}{$E = mc^2$}
 ```
@@ -770,20 +803,21 @@ chapters/*.tex:
     partial: true
     ...
     macros:
-      "\\\\sepfootnotecontent{(.*?)}{(.*?)}\n": 
+      "\\\\sepfootnotecontent{(.*?)}{(.*?)}\n":
         define: ["$1", "$2"]
       "\\\\sepfootnote{(.*?)}": "\\footnote{${$1}}"
 ```
+
 As described in [Macros](#macros), each element in the `macros` object contains a string definition of a regex (hence the obscene number of backslashes) mapped to either a replacement string (to be interpolated) or a `define` object.
 
-The first macro will cause the importer to match `\sepfootnotecontent{F-25}{private correspondence}` and `define` that `'F-25' => 'private correspondence'` later on. 
+The first macro will cause the importer to match `\sepfootnotecontent{F-25}{private correspondence}` and `define` that `'F-25' => 'private correspondence'` later on.
 
 The second macro will cause `\sepfootnote{F-25}` to be resolved in the following way:
 
-- The string `"\\footnote{${$1}}"` is the replacement value.
+-   The string `"\\footnote{${$1}}"` is the replacement value.
 
-- `$1` is a positional argument from the `\sepfootnote{}` match and `$1 = F-25`. Now we have `"\\footnote{${F-25}}"`.
+-   `$1` is a positional argument from the `\sepfootnote{}` match and `$1 = F-25`. Now we have `"\\footnote{${F-25}}"`.
 
-- `${F-25}` tells the importer to look up the stored value for `F-25`, which is `'private correspondence'`.
+-   `${F-25}` tells the importer to look up the stored value for `F-25`, which is `'private correspondence'`.
 
-- The string is resolved to `\footnote{private correspondence}`, which is a command that Pandoc understands.
+-   The string is resolved to `\footnote{private correspondence}`, which is a command that Pandoc understands.

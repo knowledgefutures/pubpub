@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 
 import { Collection, CollectionPub } from 'server/models';
 import { getBestDownloadUrl } from 'utils/pub/downloads';
-import { createLatestPubExports } from 'server/export/queries';
+import { createPubExportsForLatestRelease } from 'server/export/queries';
 import { getPubData } from 'server/rss/queries';
 
 import { promptOkay } from './utils/prompt';
@@ -25,13 +25,8 @@ const getPubExports = async (pubId, dest) => {
 	const finalDest = `${dest}/${pubData.slug}`;
 
 	if (!pdfUrl || !jatsUrl) {
-		/* Note: for some very old pubs, this will fail for JATS becauseo of some historykey
-		mismatch issues. The workaround is to, for those pubs, go into the db and match the
-		historykey of the generated export to the one expected by the getPublicExport URL
-		function.
-		*/
 		console.log('Missing:', pubData.slug);
-		await createLatestPubExports(pubId);
+		await createPubExportsForLatestRelease(pubId);
 		await getPubExports(pubId, dest);
 	} else {
 		fs.mkdirSync(finalDest);

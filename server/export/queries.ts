@@ -12,7 +12,7 @@ export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 			pubId,
 			format,
 			historyKey: {
-				[Sequelize.Op.gte]: historyKey,
+				[Sequelize.Op.eq]: historyKey,
 			},
 		},
 		include: [{ model: WorkerTask, as: 'workerTask' }],

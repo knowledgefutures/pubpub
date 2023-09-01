@@ -36,7 +36,7 @@
 		"tools": "NODE_PATH=./client:./ node -r ts-node/register/transpile-only -r esm --max-old-space-size=12000 ./tools",
 		"workers-dev": "NODE_PATH=./dist/server/client:./dist/server WORKER=true nodemon dist/server/workers/init --watch workers -e js",
 		"workers-prod": "NODE_PATH=./dist/server/client:./dist/server WORKER=true node --enable-source-maps dist/server/workers/init",
-		"upload-sentry-sourcemaps": "sentry-cli sourcemaps inject -p pubpub-v6 dist/server && sentry-cli releases files -p pubpub-v6 $SOURCE_VERSION upload-sourcemaps --url-prefix /app/dist --strip-common-prefix --wait dist/server",
+		"upload-sentry-sourcemaps": "sentry-cli sourcemaps inject -p pubpub-v6 dist/server && sentry-cli releases files -p pubpub-v6 $SOURCE_VERSION upload-sourcemaps --url-prefix /app --strip-common-prefix --wait dist/server",
 		"write-commit-version": "echo $SOURCE_VERSION > .app-commit"
 	},
 	"dependencies": {

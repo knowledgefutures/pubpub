@@ -114,6 +114,9 @@ module.exports = {
 						errorHandler: (err) => {
 							console.warn(err);
 						},
+						release: {
+							name: process.env.SOURCE_VERSION,
+						},
 					}),
 			  ]),
 	],

@@ -71,7 +71,7 @@ function transformPubAttributionToResourceContribution(
 }
 
 function derivePubResourceKind(
-	pubPrimaryParentEdge?: types.PubEdge,
+	pubPrimaryParentEdge?: types.PubEdge | null,
 	pubPrimaryCollection?: types.Collection | null,
 ): ResourceKind {
 	switch (pubPrimaryParentEdge?.relationType) {

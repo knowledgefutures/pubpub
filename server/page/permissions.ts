@@ -17,9 +17,9 @@ export const getPermissions = async ({
 	communityId,
 	pageId,
 }: {
-	userId: string | null;
+	userId?: string | null;
 	communityId: string;
-	pageId: string;
+	pageId?: string;
 }) => {
 	if (!userId) {
 		return {};
@@ -28,17 +28,21 @@ export const getPermissions = async ({
 		communityId,
 		loginId: userId,
 	});
-	const isAuthenticated = scopeData.activePermissions.canManage;
+	const isAuthorized = scopeData.activePermissions.canManage;
+	if (!pageId) {
+		return { create: isAuthorized };
+	}
+
 	const pageData = await Page.findOne({ where: { id: pageId, communityId } });
 
 	if (!pageData) {
-		return { create: isAuthenticated };
+		return { create: isAuthorized };
 	}
 
 	return {
-		create: isAuthenticated,
-		update: isAuthenticated && updatePermissions,
-		destroy: isAuthenticated,
+		create: isAuthorized,
+		update: isAuthorized && updatePermissions,
+		destroy: isAuthorized,
 	};
 };
 

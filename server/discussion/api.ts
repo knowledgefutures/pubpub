@@ -17,7 +17,6 @@ const getRequestIds = (req) => {
 		commentAccessHash: req.body.commentAccessHash,
 	};
 };
-
 app.post(
 	'/api/discussions',
 	wrap(async (req, res) => {

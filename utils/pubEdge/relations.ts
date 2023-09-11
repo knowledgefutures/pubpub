@@ -1,5 +1,7 @@
+import { PubEdge } from 'types';
 import { sortByRank } from 'utils/rank';
 import { toTitleCase } from 'utils/strings';
+import { TuplifyUnion } from 'utils/types';
 
 export const relationTypeDefinitions = {
 	comment: {
@@ -67,10 +69,16 @@ export const relationTypeDefinitions = {
 		isIntraWork: true,
 		crossrefRelationshipTypes: ['isVersionOf', 'hasVersion'],
 	},
+} as const;
+
+type RelationTypeDefs = TuplifyUnion<keyof typeof relationTypeDefinitions>;
+
+type TitleCasedRelationTypeDefinitions = {
+	[K in keyof typeof relationTypeDefinitions as `${Capitalize<K>}`]: K;
 };
 
 const createRelationTypeEnum = () => {
-	const res = {};
+	const res = {} as TitleCasedRelationTypeDefinitions;
 	Object.entries(relationTypeDefinitions).forEach(([key]) => {
 		res[toTitleCase(key)] = key;
 	});
@@ -89,10 +97,11 @@ export const getRelationTypeName = (relationType, isPlural) => {
 	return null;
 };
 
-export const relationTypes = Object.keys(relationTypeDefinitions);
+export const relationTypes = Object.keys(relationTypeDefinitions) as RelationTypeDefs;
+export type RelationTypeName = (typeof relationTypes)[number];
 export const RelationType = createRelationTypeEnum();
 
-const findParentEdge = (pubEdges, validRelationTypes, inbound) => {
+const findParentEdge = (pubEdges: PubEdge[], validRelationTypes, inbound = false) => {
 	const sortedPubEdges = sortByRank(pubEdges);
 
 	for (let i = 0; i < sortedPubEdges.length; i++) {

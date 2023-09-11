@@ -18,7 +18,7 @@ import { usePageContext } from 'utils/hooks';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
-import { Release, Pub } from 'types';
+import { Release, Pub, DocJson } from 'types';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 import {
 	acceptSuggestions,
@@ -52,7 +52,7 @@ const PubReleaseDialog = (props: Props) => {
 	const { isOpen, onClose, historyKey, pub, onCreateRelease } = props;
 	const { communityData, featureFlags } = usePageContext();
 	const { collabData } = usePubContext();
-	const [noteData, setNoteData] = useState<{ content?: {}; text?: string }>({});
+	const [noteData, setNoteData] = useState<{ content?: DocJson | null; text?: string }>({});
 	const [isCreatingRelease, setIsCreatingRelease] = useState(false);
 	const [createdRelease, setCreatedRelease] = useState(false);
 	const [releaseError, setReleleaseError] = useState(null);

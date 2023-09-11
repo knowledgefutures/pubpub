@@ -3,6 +3,7 @@ import { Button, Callout } from '@blueprintjs/core';
 import classNames from 'classnames';
 
 import { relationTypeDefinitions, createCandidateEdge, stripMarkupFromString } from 'utils/pubEdge';
+import { RelationTypeName } from 'utils/pubEdge/relations';
 import { assert } from 'utils/assert';
 
 import { PubEdge } from 'types';
@@ -76,7 +77,7 @@ const NewEdgeEditor = (props: Props) => {
 		});
 	};
 
-	const handleEdgeRelationTypeChange = (relationType: string) => {
+	const handleEdgeRelationTypeChange = (relationType: RelationTypeName) => {
 		assert(pubEdge !== null);
 		onChange({
 			...pubEdge,
@@ -111,7 +112,11 @@ const NewEdgeEditor = (props: Props) => {
 								return (
 									<MenuItem
 										text={name}
-										onClick={() => handleEdgeRelationTypeChange(relationType)}
+										onClick={() =>
+											handleEdgeRelationTypeChange(
+												relationType as RelationTypeName,
+											)
+										}
 										key={relationType}
 										icon={selected ? 'tick' : 'blank'}
 									/>

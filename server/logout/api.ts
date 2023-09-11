@@ -1,13 +1,16 @@
-import app from 'server/server';
-
 import { isDuqDuq, isProd } from 'utils/environment';
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
 
-app.get('/api/logout', (req, res) => {
+export const logoutRouteImplementation: AppRouteImplementation<typeof contract.logout> = async ({
+	req,
+	res,
+}) => {
 	res.cookie('gdpr-consent-survives-login', 'no');
 	res.cookie('pp-cache', 'pp-cache', {
 		...(isProd() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 		...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 	});
 	req.logout();
-	return res.status(200).json('success');
-});
+	return { status: 200, body: 'success' } as const;
+};

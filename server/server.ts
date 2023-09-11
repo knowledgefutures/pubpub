@@ -5,7 +5,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import enforce from 'express-sslify';
-import express from 'express';
+import express, { ErrorRequestHandler, RequestHandler } from 'express';
 import fs from 'fs';
 import noSlash from 'no-slash';
 import passport from 'passport';
@@ -36,37 +36,58 @@ import { sequelize } from './sequelize';
 import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
 import './hooks';
 
+type Wrap = <
+	P = any,
+	ResBody = any,
+	ReqBody = any,
+	ReqQuery = any,
+	Locals extends Record<string, any> = Record<string, any>,
+>(
+	handler: RequestHandler<P, ResBody, ReqBody, ReqQuery, Locals>,
+) => RequestHandler<P, ResBody, ReqBody, ReqQuery, Locals>;
+
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
-export const wrap =
+export const wrap: Wrap =
 	(routeHandlerFn) =>
 	async (...args) => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const [req, res, next] = args;
 		try {
 			return await routeHandlerFn(...args);
 		} catch (err) {
-			if (!(err instanceof Error)) {
-				return next(err);
-			}
-			if (err.message.indexOf('UseCustomDomain:') === 0) {
-				const customDomain = err.message.split(':')[1];
-				return res.redirect(`https://${customDomain}${req.originalUrl}`);
-			}
-			// Log the error if we're testing. Normally this is handled in the error middleware, but
-			// that isn't active while handling individual requests in a test environment.
-			if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
-				// eslint-disable-next-line no-console
-				console.log('Got an error in an API route while testing:', err);
-			}
 			return next(err);
 		}
 	};
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+	if (!(err instanceof Error)) {
+		return next(err);
+	}
+
+	if (err.message.indexOf('UseCustomDomain:') === 0) {
+		const customDomain = err.message.split(':')[1];
+		return res.redirect(`https://${customDomain}${req.originalUrl}`);
+	}
+	// Log the error if we're testing. Normally this is handled in the error middleware, but
+	// that isn't active while handling individual requests in a test environment.
+	if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
+		// eslint-disable-next-line no-console
+		console.log('Got an error in an API route while testing:', err);
+	}
+	return next(err);
+};
 
 /* ---------------------- */
 /* Initialize express app */
 /* ---------------------- */
 const app = express();
+
 export default app;
+
+import { RequestValidationError, createExpressEndpoints } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
+import { server } from 'utils/api/server';
 
 if (process.env.NODE_ENV === 'production') {
 	// The Sentry request handler must be the first middleware on the app
@@ -164,6 +185,34 @@ app.use((req, res, next) => {
 	next();
 });
 
+/* ------------------------- */
+/* Create ts-rest api routes */
+/* ------------------------- */
+createExpressEndpoints(contract, server, app, {
+	logInitialization: false,
+	// eslint-disable-next-line consistent-return
+	requestValidationErrorHandler: (err, req, res, next) => {
+		if (err instanceof RequestValidationError) {
+			if (process.env.NODE_ENV !== 'production') {
+				console.error(err);
+			}
+			if (err.pathParams) {
+				return res.status(400).json(err.pathParams);
+			}
+			if (err.headers) {
+				return res.status(400).json(err.headers);
+			}
+			if (err.query) {
+				return res.status(400).json(err.query);
+			}
+			if (err.body) {
+				return res.status(400).json(err.body);
+			}
+		}
+		next(err);
+	},
+});
+
 /* ------------- */
 /* Import Routes */
 /* ------------- */
@@ -177,6 +226,7 @@ if (process.env.NODE_ENV === 'production') {
 	// The Sentry error handler must be before any other error middleware
 	app.use(Sentry.Handlers.errorHandler());
 }
+app.use(errorHandler);
 app.use(errorMiddleware);
 
 /* ------------ */

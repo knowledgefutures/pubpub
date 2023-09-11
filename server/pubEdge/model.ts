@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import type { SerializedModel } from 'types';
+import { RelationTypeName } from 'utils/pubEdge/relations';
 import { Pub, ExternalPublication } from '../models';
 
 @Table
@@ -33,7 +34,7 @@ export class PubEdge extends Model<InferAttributes<PubEdge>, InferCreationAttrib
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	relationType!: string;
+	relationType!: RelationTypeName;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)

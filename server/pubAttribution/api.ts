@@ -1,7 +1,12 @@
-import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
 import { expect } from 'utils/assert';
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { z } from 'zod';
+import * as types from 'types';
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { contract } from 'utils/api/contract';
+import { initServer } from '@ts-rest/express';
 import { getPermissions } from './permissions';
 import {
 	createPubAttribution,
@@ -10,21 +15,70 @@ import {
 	getPubAttributions,
 } from './queries';
 
-const getRequestIds = (req) => {
-	const user = req.user || {};
-	return {
-		userId: user.id,
-		communityId: req.body.communityId,
-		pubId: req.body.pubId,
-		pubAttributionId: req.body.id,
-	};
-};
+const getRequestIds = createGetRequestIds<{
+	communityId?: string;
+	pubId?: string;
+	id?: string;
+}>();
 
-app.post(
-	'/api/pubAttributions/batch',
-	wrap(async (req, res) => {
-		const { attributions } = req.body;
-		const requestIds = getRequestIds(req);
+extendZodWithOpenApi(z);
+
+export const attributionSchema = z.object({
+	id: z.string().uuid(),
+	order: z.number().max(1).min(0),
+	roles: z.array(z.string()).openapi({ example: types.DEFAULT_ROLES }).nullable(),
+	affiliation: z.string().nullable(),
+	isAuthor: z.boolean().nullable(),
+	userId: z.string().uuid().nullable(),
+	name: z.string().nullable(),
+	orcid: z.string().nullable(),
+	avatar: z.string().url().nullable(),
+	title: z.string().nullable().openapi({
+		deprecated: true,
+		description: 'Legacy field, do not use.',
+	}),
+}) satisfies z.ZodType<Omit<types.PubAttribution, 'pubId'>>;
+
+export const pubAttributionSchema = attributionSchema.merge(
+	z.object({
+		pubId: z.string().uuid(),
+	}),
+);
+
+export const attributionCreationSchema = attributionSchema
+	.omit({ id: true, pubId: true, userId: true, name: true, orcid: true })
+	.partial()
+	.merge(
+		z.object({
+			order: attributionSchema.shape.order.default(0.5),
+			roles: attributionSchema.shape.roles.default([]),
+			affiliation: attributionSchema.shape.affiliation.optional(),
+			isAuthor: attributionSchema.shape.isAuthor.optional(),
+		}),
+	)
+	.and(
+		z.union([
+			z.object({
+				userId: attributionSchema.shape.userId.unwrap(),
+				name: z.undefined().optional(),
+				orcid: z.undefined().optional(),
+			}),
+			z.object({
+				userId: z.undefined().optional(),
+				name: attributionSchema.shape.name.unwrap(),
+				orcid: attributionSchema.shape.orcid.unwrap().optional(),
+			}),
+		]),
+	) satisfies z.ZodType<
+	Omit<types.PubAttributionCreationParams, 'order' | 'pubId'> & { order?: number }
+>;
+
+const s = initServer();
+
+export const pubAttributionServer = s.router(contract.pubAttribution, {
+	batchCreate: async ({ req, body }) => {
+		const { attributions } = body;
+		const requestIds = getRequestIds(body, req.user);
 		const permissions = await getPermissions(requestIds);
 
 		if (!permissions.create) {
@@ -47,78 +101,71 @@ app.post(
 				.map((attr, index, { length }) =>
 					createPubAttribution({
 						pubId: requestIds.pubId,
-						order: orderingBase / 2 ** (length - index),
 						...attr,
+						order: orderingBase / 2 ** (length - index),
 					}),
 				),
 		);
 
-		return res
-			.status(201)
-			.json([...existingAttributions, ...newAttributions].sort((a, b) => a.order - b.order));
-	}),
-);
+		return {
+			status: 201,
+			body: [...existingAttributions, ...newAttributions].sort((a, b) => a.order - b.order),
+		};
+	},
 
-app.post('/api/pubAttributions', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
+	create: async ({ req, body }) => {
+		try {
+			const requestIds = getRequestIds(body, req.user);
+			const permissions = await getPermissions(requestIds);
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createPubAttribution({
-				...req.body,
-				pubAttributionId: req.body.id,
+			const newPubAttribution = await createPubAttribution({
+				...body,
 			});
-		})
-		.then((newPubAttribution) => {
-			return res.status(201).json(newPubAttribution);
-		})
-		.catch((err) => {
+			return { status: 201, body: newPubAttribution };
+		} catch (err: any) {
 			console.error('Error in postPubAttribution: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+			return { status: 500, body: err.message };
+		}
+	},
 
-app.put('/api/pubAttributions', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
+	update: async ({ req, body }) => {
+		try {
+			const requestIds = getRequestIds(body, req.user);
+			const permissions = await getPermissions(requestIds);
 			if (!permissions.update) {
 				throw new Error('Not Authorized');
 			}
-			return updatePubAttribution(
+
+			const updatedValues = await updatePubAttribution(
 				{
-					...req.body,
-					pubAttributionId: req.body.id,
+					...body,
+					pubAttributionId: body.id,
 				},
 				permissions.update,
 			);
-		})
-		.then((updatedValues) => {
-			return res.status(201).json(updatedValues);
-		})
-		.catch((err) => {
+			return { status: 201, body: updatedValues };
+		} catch (err: any) {
 			console.error('Error in putPubAttribution: ', err);
-			return res.status(500).json(err.message);
-		});
-});
-
-app.delete('/api/pubAttributions', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
+			return { status: 500, body: err.message };
+		}
+	},
+	remove: async ({ req, body }) => {
+		try {
+			const requestIds = getRequestIds(body, req.user);
+			const permissions = await getPermissions(requestIds);
 			if (!permissions.destroy) {
 				throw new Error('Not Authorized');
 			}
-			return destroyPubAttribution({
-				...req.body,
-				pubAttributionId: req.body.id,
+			await destroyPubAttribution({
+				...body,
+				pubAttributionId: body.id,
 			});
-		})
-		.then(() => {
-			return res.status(201).json(req.body.id);
-		})
-		.catch((err) => {
+			return { status: 201, body: body.id };
+		} catch (err: any) {
 			console.error('Error in deletePubAttribution: ', err);
-			return res.status(500).json(err.message);
-		});
+			return { status: 500, body: err.message };
+		}
+	},
 });

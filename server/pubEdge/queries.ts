@@ -1,8 +1,11 @@
-import { PubEdge } from 'server/models';
+import { ExternalPublication, Pub, PubEdge } from 'server/models';
 import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { createExternalPublication } from 'server/externalPublication/queries';
 import { findRankInRankedList } from 'utils/rank';
 import { expect } from 'utils/assert';
+import * as types from 'types';
+import { RelationTypeName } from 'utils/pubEdge/relations';
+import { CreationAttributes } from 'sequelize';
 
 const findRankForNewPubEdge = async (pubId: string, moveToTop: boolean) => {
 	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId } });
@@ -26,6 +29,15 @@ export const createPubEdge = async ({
 	approvedByTarget = false,
 	moveToTop = true,
 	actorId = null,
+}: {
+	pubId: string;
+	relationType: RelationTypeName;
+	pubIsParent: boolean;
+	externalPublication?: CreationAttributes<ExternalPublication> | null;
+	targetPubId?: string | null;
+	approvedByTarget?: boolean;
+	moveToTop?: boolean;
+	actorId?: string | null;
 }) => {
 	const [externalPublicationId, rank] = await Promise.all([
 		getExternalPublicationId(externalPublication),
@@ -46,7 +58,11 @@ export const createPubEdge = async ({
 	return PubEdge.findOne({
 		where: { id: newEdge.id },
 		include: getPubEdgeIncludes({ includeTargetPub: true }),
-	});
+	}) as Promise<
+		types.DefinitelyHas<PubEdge, 'externalPublication'> & {
+			targetPub: types.DefinitelyHas<Pub, 'collectionPubs' | 'releases' | 'attributions'>;
+		}
+	>;
 };
 
 export const getPubEdgeById = (pubEdgeId: string) => {

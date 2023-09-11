@@ -1,14 +1,15 @@
-import app from 'server/server';
-
+import { initServer } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
 import { getWorkerTask } from './queries';
 
-app.get('/api/workerTasks', (req, res) => {
-	return getWorkerTask(req.query as { workerTaskId: string })
-		.then((workerTaskData) => {
-			return res.status(201).json(workerTaskData);
-		})
-		.catch((err) => {
-			console.error('Error getting WorkerTask', err);
-			return res.status(500).json(err);
-		});
+const s = initServer();
+
+export const workerTaskServer = s.router(contract.workerTask, {
+	get: async ({ query }) => {
+		const workerTaskData = await getWorkerTask(query);
+		if (workerTaskData === null) {
+			return { status: 404, body: { error: 'WorkerTask not found' } };
+		}
+		return { status: 201, body: workerTaskData };
+	},
 });

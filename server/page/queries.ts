@@ -8,6 +8,7 @@ import { generateDefaultPageLayout } from 'utils/pages';
 
 import { expect } from 'utils/assert';
 import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { LayoutBlock } from 'utils/layout';
 import { sanitizePageHtml } from './sanitizePageHtml';
 import { PagePermissions } from './permissions';
 
@@ -16,8 +17,8 @@ export const createPage = async (
 		communityId: string;
 		title: string;
 		slug: string;
-		description?: string;
-		avatar?: string;
+		description?: string | null;
+		avatar?: string | null;
 	},
 	actorId: string | null = null,
 ) => {
@@ -51,6 +52,7 @@ export const createPage = async (
 		where: { id: inputValues.communityId },
 		attributes: ['id', 'navigation'],
 	});
+
 	const [newPage_1, communityData] = await Promise.all([newPage, findCommunity]);
 	const oldNavigation = expect(communityData?.toJSON().navigation);
 	const newNavigationOutput: CommunityNavigationEntry[] = [
@@ -58,6 +60,7 @@ export const createPage = async (
 		{ type: 'page' as const, id: newPage_1.id },
 		...oldNavigation.slice(1, oldNavigation.length),
 	].filter((x) => x);
+
 	const updateCommunity = Community.update(
 		{ navigation: newNavigationOutput },
 		{
@@ -74,9 +77,9 @@ export const updatePage = async (
 		pageId: string;
 		title?: string;
 		slug?: string;
-		description?: string;
-		avatar?: string;
-		layout?: any;
+		description?: string | null;
+		avatar?: string | null;
+		layout?: LayoutBlock[];
 	},
 	updatePermissions: PagePermissions['update'],
 	actorId: string | null = null,
@@ -110,7 +113,9 @@ export const updatePage = async (
 				return block;
 			}
 			const cleanedBlock = { ...block };
-			cleanedBlock.content.html = sanitizePageHtml(block.content.html);
+			cleanedBlock.content.html = block.content.html
+				? sanitizePageHtml(block.content.html)
+				: block.content.html;
 			return cleanedBlock;
 		});
 	}
@@ -128,7 +133,13 @@ export const updatePage = async (
 		});
 };
 
-export const destroyPage = async (inputValues, actorId = null) => {
+export const destroyPage = async (
+	inputValues: {
+		communityId: string;
+		pageId: string;
+	},
+	actorId: string | null = null,
+) => {
 	await Page.destroy({
 		where: {
 			id: inputValues.pageId,
@@ -146,7 +157,7 @@ export const destroyPage = async (inputValues, actorId = null) => {
 	const oldNavigation = expect(communityData.toJSON().navigation);
 	const newNavigationOutput = oldNavigation
 		.filter((item) => {
-			return item !== inputValues.pageId;
+			return item.id !== inputValues.pageId;
 		})
 		.map((item_1) => {
 			if (!('children' in item_1)) {
@@ -155,7 +166,7 @@ export const destroyPage = async (inputValues, actorId = null) => {
 			return {
 				...item_1,
 				children: item_1.children.filter((subitem) => {
-					return subitem !== inputValues.pageId;
+					return subitem.id !== inputValues.pageId;
 				}),
 			};
 		});

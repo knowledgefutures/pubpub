@@ -8,9 +8,9 @@ import { getPartsOfFullName } from './names';
  * attributed author isn't present on PubPub.
  * TODO(ian): I think we should move towards doing this normalization in the database.
  */
-export default (
-	attribution: types.Attribution | PubAttribution | CollectionAttribution,
-): types.AttributionWithUser => {
+export default <A extends types.Attribution | PubAttribution | CollectionAttribution>(
+	attribution: A,
+) => {
 	if (types.isAttributionWithUser(attribution) && attribution.user.id !== attribution.id) {
 		return attribution;
 	}

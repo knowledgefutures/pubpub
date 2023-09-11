@@ -50,7 +50,7 @@ const createReleaseRequest = ({ community, pub, ...rest }) => ({
 	communityId: community.id,
 	pubId: pub.id,
 	noteText: '',
-	noteContent: {},
+	noteContent: null,
 	...rest,
 });
 

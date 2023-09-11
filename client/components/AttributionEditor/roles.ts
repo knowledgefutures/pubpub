@@ -1,27 +1,5 @@
 import fuzzysearch from 'fuzzysearch';
-
-const DEFAULT_ROLES = [
-	'Conceptualization',
-	'Methodology',
-	'Software',
-	'Validation',
-	'Formal Analysis',
-	'Investigation',
-	'Resources',
-	'Data Curation',
-	'Writing – Original Draft Preparation',
-	'Writing – Review & Editing',
-	'Visualization',
-	'Supervision',
-	'Project Administration',
-	'Peer Review',
-	'Funding Acquisition',
-	'Illustrator',
-	'Editor',
-	'Series Editor',
-	'Translator',
-	'Chair',
-];
+import { DEFAULT_ROLES } from 'types';
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFilteredRoles = (query, existingRoles) => {

@@ -113,8 +113,8 @@ it('does not allow admins of another community to create a collection', async ()
 		.expect(403);
 });
 
-it('does not allow normal users to create a collection', async () => {
-	const { community, guest } = models;
+it('does not allow normal users to create or update a collection', async () => {
+	const { community, guest, slugCollection } = models;
 	const agent = await login(guest);
 	await agent
 		.post('/api/collections')
@@ -122,6 +122,15 @@ it('does not allow normal users to create a collection', async () => {
 			communityId: community.id,
 			title: 'My test collection',
 			kind: 'issue',
+		})
+		.expect(403);
+
+	await agent
+		.put('/api/collections')
+		.send({
+			communityId: community.id,
+			id: slugCollection.id,
+			title: 'My test collection',
 		})
 		.expect(403);
 });

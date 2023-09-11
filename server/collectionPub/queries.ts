@@ -9,6 +9,7 @@ import {
 	includeUserModel,
 	CollectionAttribution,
 } from 'server/models';
+import * as types from 'types';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { expect } from 'utils/assert';
 
@@ -19,7 +20,7 @@ export const getPubsInCollection = async ({
 }: {
 	communityId: string;
 	collectionId: string;
-	userId: string | null;
+	userId?: string | null;
 }) => {
 	const collectionPubsQuery = CollectionPub.findAll({
 		where: { collectionId: collectionId ?? null },
@@ -63,10 +64,10 @@ export const getPubsInCollection = async ({
 	const isCollectionMember = members.some((member) => member.collectionId === collectionId);
 
 	return collectionPubs
-		.map((cp) => cp.pub)
+		.map((cp) => cp.pub?.toJSON())
 		.filter(
-			(pub) =>
-				pub &&
+			(pub): pub is types.Pub =>
+				!!pub &&
 				(isCommunityMember ||
 					isCollectionMember ||
 					members.some((m) => m.pubId === pub.id) ||

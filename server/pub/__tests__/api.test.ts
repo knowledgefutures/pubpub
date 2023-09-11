@@ -246,7 +246,7 @@ describe('/api/pubs', () => {
 		const { pub, nefariousUser } = models;
 		const agent = await login(nefariousUser);
 		await agent.delete('/api/pubs').send({ pubId: pub.id }).expect(403);
-	});
+	}, 10000);
 
 	it('forbids a Member without sufficient permissions from deleting a Pub', async () => {
 		const { destroyThisPub, angryPubEditor } = models;

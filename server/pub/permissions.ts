@@ -2,6 +2,7 @@ import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
 import { expect } from 'utils/assert';
+import { CanCreatePub } from 'types';
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
 const managerUpdatableFields = [
@@ -14,11 +15,16 @@ const managerUpdatableFields = [
 	'slug',
 	'title',
 	'htmlTitle',
-];
+] as const;
 
-const adminUpdatableFields = ['doi'];
+const adminUpdatableFields = ['doi'] as const;
 
-export const canCreatePub = async ({ userId, communityId, collectionId, createPubToken }) => {
+export const canCreatePub = async ({
+	userId,
+	communityId,
+	collectionId,
+	createPubToken,
+}: CanCreatePub) => {
 	if (userId) {
 		if (createPubToken) {
 			const collectionIds = getValidCollectionIdsFromCreatePubToken(createPubToken, {
@@ -49,14 +55,23 @@ export const canCreatePub = async ({ userId, communityId, collectionId, createPu
 	return { create: false };
 };
 
-export const getUpdatablePubFields = async ({ userId, pubId }) => {
+export const getUpdatablePubFields = async ({
+	userId,
+	pubId,
+}: {
+	userId?: string | null;
+	pubId: string;
+}) => {
 	const {
 		activePermissions: { canManage, canAdmin },
 	} = await getScope({ pubId, loginId: userId });
 
 	if (canManage) {
 		if (canAdmin) {
-			return [...managerUpdatableFields, ...adminUpdatableFields];
+			return [...managerUpdatableFields, ...adminUpdatableFields] as [
+				...typeof managerUpdatableFields,
+				...typeof adminUpdatableFields,
+			];
 		}
 		return managerUpdatableFields;
 	}
@@ -64,14 +79,22 @@ export const getUpdatablePubFields = async ({ userId, pubId }) => {
 	return null;
 };
 
-export const canDestroyPub = async ({ userId, pubId }) => {
+export type PubUpdateableFields = Awaited<ReturnType<typeof getUpdatablePubFields>>;
+
+export const canDestroyPub = async ({
+	userId,
+	pubId,
+}: {
+	userId?: string | null;
+	pubId: string;
+}) => {
 	const {
 		activePermissions: { canManage },
 	} = await getScope({ pubId, loginId: userId });
 	return canManage;
 };
 
-export const canDepositPub = async ({ userId, pubId }) => {
+export const canDepositPub = async ({ userId, pubId }: { userId: string; pubId: string }) => {
 	const {
 		activePermissions: { canManage },
 	} = await getScope({ pubId, loginId: userId });

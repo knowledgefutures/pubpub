@@ -1,14 +1,15 @@
-import app from 'server/server';
-
+import { contract } from 'utils/api/contract';
+import { AppRouteImplementation } from '@ts-rest/express';
 import { createImport } from './queries';
 
-app.post('/api/import', (req, res) => {
-	return createImport(req.body)
-		.then((taskData) => {
-			return res.status(201).json(taskData.id);
-		})
-		.catch((err) => {
-			console.error('Error in postImport: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+export const importRouteImplementation: AppRouteImplementation<typeof contract.import> = async ({
+	body,
+}) => {
+	try {
+		const taskData = await createImport(body);
+		return { status: 201, body: taskData.id };
+	} catch (err: any) {
+		console.error('Error in postImport: ', err);
+		return { status: 500, body: err.message };
+	}
+};

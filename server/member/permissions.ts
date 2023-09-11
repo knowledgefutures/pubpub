@@ -1,7 +1,8 @@
 import { getScope, getMemberDataById } from 'server/utils/queryHelpers';
+import { MemberPermission } from 'types';
 import { expect } from 'utils/assert';
 
-const getMemberPermission = async (scopeData, memberId: string) => {
+const getMemberPermission = async (scopeData, memberId?: string) => {
 	if (memberId) {
 		const {
 			elements: { activeIds, activeTargetType },
@@ -26,8 +27,16 @@ export const getPermissions = async ({
 	communityId,
 	collectionId,
 	memberId,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	value: { permissions } = {},
+	value: { permissions } = { permissions: undefined },
+}: {
+	actorId?: string | null;
+	pubId?: string | null;
+	communityId?: string;
+	collectionId?: string | null;
+	memberId?: string;
+	value?: {
+		permissions?: MemberPermission;
+	};
 }) => {
 	if (!actorId) {
 		return {};

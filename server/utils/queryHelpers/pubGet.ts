@@ -43,7 +43,7 @@ export const getPub = async (where: GetPubWhere, options: PubGetOptions = {}) =>
 				getEdges: 'approved-only',
 				...options,
 			}),
-		}) as Promise<types.DefinitelyHas<Pub, 'members' | 'collection' | 'exports'> | null>,
+		}) as Promise<types.DefinitelyHas<Pub, 'members' | 'exports' | 'collectionPubs'> | null>,
 		getFacetsForPub(options, where),
 	]);
 

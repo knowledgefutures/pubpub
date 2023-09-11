@@ -4,23 +4,27 @@ import { promisify } from 'util';
 
 import { assert } from 'utils/assert';
 import * as types from 'types';
-import app from 'server/server';
 import { User } from 'server/models';
 import { isDuqDuq, isProd } from 'utils/environment';
+import { contract } from 'utils/api/contract';
+import { AppRouteImplementation } from '@ts-rest/express';
 
 type SetPasswordData = { hash: string; salt: string };
 type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields];
 type Step2Result = [types.UserWithPrivateFields, null] | [null, SetPasswordData];
 type Step3Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields[][]];
 
-app.post('/api/login', (req, res, next) => {
+export const loginRouteImplementation: AppRouteImplementation<typeof contract.login> = async ({
+	req,
+	res,
+}) => {
 	const authenticate = new Promise<types.UserWithPrivateFields | null>((resolve, reject) => {
 		passport.authenticate('local', (authErr: Error, user: types.UserWithPrivateFields) => {
 			if (authErr) {
 				return reject(authErr);
 			}
 			return resolve(user);
-		})(req, res, next);
+		})(req, res);
 	});
 	return authenticate
 		.then((user) => {
@@ -108,26 +112,26 @@ app.post('/api/login', (req, res, next) => {
 			assert(updatedUserData !== null);
 			return updatedUserData[1][0];
 		})
-		.then((user) => {
-			req.logIn(user, (err: string) => {
-				if (err) {
-					throw new Error(err);
-				}
-				res.cookie('pp-cache', 'pp-no-cache', {
-					...(isProd() &&
-						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
-					...(isDuqDuq() &&
-						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
-					maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
-				});
-				return res.status(201).json('success');
+		.then(async (user) => {
+			const logIn = promisify(req.logIn.bind(req));
+			await logIn(user);
+			res.cookie('pp-cache', 'pp-no-cache', {
+				...(isProd() &&
+					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
+				...(isDuqDuq() &&
+					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
+				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
 			});
+			return {
+				status: 201,
+				body: 'success',
+			} as const;
 		})
 		.catch((err) => {
 			const unaunthenticatedValues = ['Invalid password', 'Invalid email'];
 			if (unaunthenticatedValues.includes(err.message)) {
-				return res.status(401).json('Login attempt failed');
+				return { status: 401, body: 'Login attempt failed' } as const;
 			}
-			return res.status(500).json(err.message);
+			return { status: 500, body: err.message } as const;
 		});
-});
+};

@@ -9,7 +9,7 @@ import {
 	BelongsTo,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
+import type { DocJson, SerializedModel } from 'types';
 import { Doc } from '../models';
 
 @Table
@@ -23,7 +23,7 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 
 	// TODO: add validation for noteContent
 	@Column(DataType.JSONB)
-	noteContent!: Record<string, any> | null;
+	noteContent!: DocJson | null;
 
 	@Column(DataType.TEXT)
 	noteText!: string | null;

@@ -1,28 +1,32 @@
 // These are the names that Pandoc uses
-export type PandocTarget =
-	| 'html'
-	| 'pdf'
-	| 'docx'
-	| 'epub'
-	| 'markdown'
-	| 'odt'
-	| 'plain'
-	| 'jats_archiving'
-	| 'latex'
-	| 'json';
+export const pandocTargets = [
+	'html',
+	'pdf',
+	'docx',
+	'epub',
+	'markdown',
+	'odt',
+	'plain',
+	'jats_archiving',
+	'latex',
+	'json',
+] as const;
+export type PandocTarget = (typeof pandocTargets)[number];
 
 // These are our names for the same things
-export type ExportFormat =
-	| 'html'
-	| 'pdf'
-	| 'docx'
-	| 'epub'
-	| 'markdown'
-	| 'odt'
-	| 'plain'
-	| 'jats'
-	| 'tex'
-	| 'json';
+export const exportFormatsArray = [
+	'html',
+	'pdf',
+	'docx',
+	'epub',
+	'markdown',
+	'odt',
+	'plain',
+	'jats',
+	'tex',
+	'json',
+] as const;
+export type ExportFormat = (typeof exportFormatsArray)[number];
 
 type ExportFormatDescription = {
 	extension: string;

@@ -99,7 +99,7 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 	downloads!: any[] | null;
 
 	@Column(DataType.JSONB)
-	metadata!: object | null;
+	metadata!: { mtg_id: string; bibcode: string; mtg_presentation_id: string } | null;
 
 	@Column(DataType.STRING)
 	viewHash!: string | null;

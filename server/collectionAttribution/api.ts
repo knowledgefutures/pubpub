@@ -1,71 +1,76 @@
-import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { getPermissions } from './permissions';
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { z } from 'zod';
+import { attributionSchema } from 'server/pubAttribution/api';
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { initServer } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
 import {
 	createCollectionAttribution,
 	updateCollectionAttribution,
 	destroyCollectionAttribution,
 } from './queries';
+import { getPermissions } from './permissions';
 
-const getRequestIds = (req) => {
-	const user = req.user || {};
-	return {
-		userId: user.id,
-		communityId: req.body.communityId,
-		collectionId: req.body.collectionId,
-		collectionAttributionId: req.body.id,
-	};
-};
+extendZodWithOpenApi(z);
+
+const getRequestIds = createGetRequestIds<{
+	communityId?: string;
+	collectionId?: string;
+	id?: string;
+}>();
+
+export const collectionAttributionSchema = attributionSchema.merge(
+	z.object({
+		collectionId: z.string().uuid(),
+	}),
+);
 
 /* Note: we typically use values like collectionAttributionId on API requests */
 /* here, id is sent up, so there is a little bit of kludge to make */
 /* the other interfaces consistent. I didn't fully understand AttributionEditor */
 /* so I didn't make the downstream change, which would be the right solution. */
-app.post(
-	'/api/collectionAttributions',
-	wrap(async (req, res) => {
-		const permissions = await getPermissions(getRequestIds(req));
+
+const s = initServer();
+
+export const collectionAttributionServer = s.router(contract.collectionAttribution, {
+	create: async ({ req, body }) => {
+		const permissions = await getPermissions(getRequestIds(body, req.user));
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
 		const newAttribution = await createCollectionAttribution({
-			...req.body,
-			collectionAttributionId: req.body.id,
+			...body,
+			//			collectionAttributionId: body.id,
 		});
-		return res.status(201).json(newAttribution);
-	}),
-);
+		return { status: 201, body: newAttribution };
+	},
 
-app.put(
-	'/api/collectionAttributions',
-	wrap(async (req, res) => {
-		const permissions = await getPermissions(getRequestIds(req));
+	update: async ({ req, body }) => {
+		const permissions = await getPermissions(getRequestIds(body, req.user));
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
 		const updatedValues = await updateCollectionAttribution(
 			{
-				...req.body,
-				collectionAttributionId: req.body.id,
+				...body,
+				collectionAttributionId: body.id,
 			},
 			permissions.update,
 		);
-		return res.status(200).json(updatedValues);
-	}),
-);
+		return { status: 200, body: updatedValues };
+	},
 
-app.delete(
-	'/api/collectionAttributions',
-	wrap(async (req, res) => {
-		const permissions = await getPermissions(getRequestIds(req));
+	remove: async ({ req, body }) => {
+		const permissions = await getPermissions(getRequestIds(body, req.user));
 		if (!permissions.destroy) {
 			throw new ForbiddenError();
 		}
 		await destroyCollectionAttribution({
-			...req.body,
-			collectionAttributionId: req.body.id,
+			...body,
+			collectionAttributionId: body.id,
 		});
-		return res.status(200).json(req.body.id);
-	}),
-);
+		return { status: 200, body: body.id };
+	},
+});

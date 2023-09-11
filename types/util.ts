@@ -2,7 +2,9 @@ export type Falsy = false | null | undefined | '' | 0;
 export type Maybe<X> = X extends Falsy ? never : X | Falsy;
 export type Some<X> = X extends Falsy ? never : X;
 
-export type DefinitelyHas<X extends {}, Keys> = X & { [k in keyof X & Keys]: Some<X[k]> };
+export type DefinitelyHas<X extends Record<string, any>, Keys extends keyof X> = X & {
+	[k in keyof X & Keys]: Some<X[k]>;
+};
 
 export type MaybeHas<X extends {}, Keys extends string> = Omit<X, Keys> & {
 	[k in keyof X & Keys]?: X[k];

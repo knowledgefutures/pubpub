@@ -12,10 +12,11 @@ import { Collection, CollectionPub } from './collection';
 import { Discussion } from './discussion';
 import { DocJson } from './doc';
 import { Member } from './member';
-import { Submission } from './submission';
+import { Submission, SubmissionStatus } from './submission';
 import { ThreadComment, Thread } from './thread';
 import { DefinitelyHas, Maybe } from './util';
 import { UserSubscription } from './userSubscription';
+import { PubGetOptions, PubsQuery } from './pubQuery';
 
 export type Draft = SerializedModel<DraftModel>;
 export type Doc = SerializedModel<DocModel>;
@@ -115,3 +116,43 @@ export type SanitizedPubData = Pub & {
 export type PubWithCollections = Pub & {
 	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 };
+
+export type CanCreatePub = {
+	userId?: string | null;
+	communityId: string;
+} & (
+	| {
+			collectionId?: string | null;
+			createPubToken?: undefined;
+	  }
+	| {
+			createPubToken?: string | null;
+			collectionId?: undefined;
+	  }
+);
+
+export type ManyRequestParams = {
+	query: Omit<PubsQuery, 'communityId'>;
+	alreadyFetchedPubIds: string[];
+	pubOptions: PubGetOptions;
+};
+
+export type GetManyQuery = {
+	excludeCollectionIds?: string[];
+	ordering?: {
+		field: 'updatedDate' | 'creationDate' | 'collectionRank' | 'title';
+		direction: 'ASC' | 'DESC';
+	};
+	limit?: number;
+	offset?: number;
+	isReleased?: boolean;
+	scopedCollectionId?: string;
+	withinPubIds?: string[];
+	term?: string;
+	submissionStatuses?: SubmissionStatus[];
+	relatedUserIds?: string[];
+} & (
+	| { collectionIds: string[]; pubIds?: undefined }
+	| { pubIds: string[]; collectionIds?: undefined }
+	| { pubIds?: undefined; collectionIds?: undefined }
+);

@@ -1,14 +1,12 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { CollectionAttribution, includeUserModel } from 'server/models';
 import { expect } from 'utils/assert';
+import { CollectionAttributionCreationParams, UpdateParams } from 'types';
+import { Permissions } from './permissions';
 
-export const createCollectionAttribution = async (inputValues: {
-	userId?: string | null;
-	collectionId: string;
-	name: string;
-	order: number;
-	communityId?: string | null;
-}) => {
+export const createCollectionAttribution = async (
+	inputValues: CollectionAttributionCreationParams,
+) => {
 	const newAttribution = await CollectionAttribution.create({
 		userId: inputValues.userId,
 		collectionId: inputValues.collectionId,
@@ -31,11 +29,14 @@ export const createCollectionAttribution = async (inputValues: {
 	return ensureUserForAttribution(populatedCollectionAttributionJson);
 };
 
-export const updateCollectionAttribution = (inputValues, updatePermissions) => {
+export const updateCollectionAttribution = (
+	inputValues: UpdateParams<CollectionAttribution> & { collectionAttributionId: string },
+	updatePermissions: Permissions['update'],
+) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues = {} as Pick<typeof inputValues, keyof typeof updatePermissions>;
 	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
+		if (updatePermissions && updatePermissions.some((update) => update === key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
@@ -47,7 +48,7 @@ export const updateCollectionAttribution = (inputValues, updatePermissions) => {
 	});
 };
 
-export const destroyCollectionAttribution = (inputValues) => {
+export const destroyCollectionAttribution = (inputValues: { collectionAttributionId: string }) => {
 	return CollectionAttribution.destroy({
 		where: { id: inputValues.collectionAttributionId },
 	});

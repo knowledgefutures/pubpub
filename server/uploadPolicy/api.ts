@@ -1,11 +1,13 @@
-import app, { wrap } from 'server/server';
-
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
 import { getUploadPolicy } from './queries';
 
-app.get(
-	'/api/uploadPolicy',
-	wrap((req, res) => {
-		const uploadPolicy = getUploadPolicy(req.query);
-		return res.status(200).json(uploadPolicy);
-	}),
-);
+export const uploadPolicyRouteImplementation: AppRouteImplementation<
+	typeof contract.uploadPolicy
+> = async ({ query }) => {
+	const uploadPolicy = getUploadPolicy(query);
+	return {
+		status: 200,
+		body: uploadPolicy,
+	};
+};

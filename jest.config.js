@@ -27,6 +27,7 @@ module.exports = {
 	runtime: '@side/jest-runtime',
 	setupFiles: ['<rootDir>/.jest/setup-env.js'],
 	testPathIgnorePatterns: ['__tests__/data'],
+	testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
 	logHeapUsage: true,
 	forceExit: true,
 	silent: false,

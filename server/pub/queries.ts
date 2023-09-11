@@ -20,6 +20,9 @@ import { asyncForEach } from 'utils/async';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
 import * as types from 'types';
+import { Attributes } from 'sequelize';
+import { PubPut } from 'utils/api/schemas/pub';
+import { PubUpdateableFields } from './permissions';
 
 export const createPub = async (
 	{
@@ -28,7 +31,7 @@ export const createPub = async (
 		slug,
 		titleKind = 'Untitled Pub',
 		...restArgs
-	}: { communityId: string; collectionIds?: string[]; slug?: string; [key: string]: any },
+	}: { communityId: string; collectionIds?: string[] | null; slug?: string; [key: string]: any },
 	actorId?: string,
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
@@ -100,39 +103,54 @@ export const createPub = async (
 	return newPub;
 };
 
-export const updatePub = (inputValues, updatePermissions, actorId) => {
-	// Filter to only allow certain fields to be updated
-	const filteredValues: any = {};
-	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
-			filteredValues[key] = inputValues[key];
+export const updatePub = async (
+	inputValues: PubPut,
+	updatePermissions: PubUpdateableFields,
+	actorId?: string | null,
+) => {
+	const actualFilteredValues = Object.entries(inputValues).reduce((acc, [key, value]) => {
+		if (!updatePermissions?.some((k) => key === k)) {
+			return acc;
 		}
-	});
-	if (filteredValues.slug) {
-		filteredValues.slug = slugifyString(filteredValues.slug);
-	}
-	if (filteredValues.title && !filteredValues.htmlTitle) {
-		filteredValues.htmlTitle = filteredValues.title;
-	}
-	if (filteredValues.htmlTitle) {
-		filteredValues.title = unescape(striptags(filteredValues.htmlTitle));
-	}
 
-	if (filteredValues.description && !filteredValues.htmlDescription) {
-		filteredValues.htmlDescription = filteredValues.description;
-	}
-	if (filteredValues.htmlDescription) {
-		filteredValues.description = unescape(striptags(filteredValues.htmlDescription));
-	}
+		acc[key] = value;
 
-	return Pub.update(filteredValues, {
+		if (key === 'slug' && value) {
+			acc.slug = slugifyString(value);
+		}
+
+		if (key === 'title' && value && !inputValues.htmlTitle) {
+			acc.htmlTitle = value;
+		}
+
+		if (key === 'htmlTitle' && value) {
+			acc.title = unescape(striptags(value));
+		}
+
+		if (key === 'description' && value && !inputValues.htmlDescription) {
+			acc.htmlDescription = value;
+		}
+
+		if (key === 'htmlDescription' && value) {
+			acc.description = unescape(striptags(value));
+		}
+
+		if (key === 'customPublishedAt' && value) {
+			acc.customPublishedAt = new Date(value);
+		}
+
+		return acc;
+	}, {} as Attributes<Pub>);
+
+	await Pub.update(actualFilteredValues, {
 		where: { id: inputValues.pubId },
 		individualHooks: true,
 		actorId,
-	}).then(() => {
-		setPubSearchData(inputValues.pubId);
-		return filteredValues;
 	});
+	setPubSearchData(inputValues.pubId);
+	return 'customPublishedAt' in actualFilteredValues
+		? { ...actualFilteredValues, customPublishedAt: inputValues.customPublishedAt }
+		: actualFilteredValues;
 };
 
 export const destroyPub = async (pubId: string, actorId: null | string = null) => {

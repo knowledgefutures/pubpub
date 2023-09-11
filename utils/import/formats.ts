@@ -7,7 +7,10 @@ export const extensionToPandocFormat = {
 	txt: 'markdown_strict',
 	xml: 'jats',
 	tex: 'latex',
-};
+} as const;
+
+export type Extension = keyof typeof extensionToPandocFormat;
+export type PandocFormat = (typeof extensionToPandocFormat)[Extension];
 
 export const bibliographyFormats = [
 	'bib',
@@ -22,4 +25,6 @@ export const bibliographyFormats = [
 	'mods',
 	'nbib',
 	'ris',
-];
+] as const;
+
+export type BibliographyFormat = (typeof bibliographyFormats)[number];

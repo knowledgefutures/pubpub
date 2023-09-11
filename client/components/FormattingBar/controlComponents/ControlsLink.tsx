@@ -25,6 +25,7 @@ import { assert } from 'utils/assert';
 import { relationTypeDefinitions, createCandidateEdge, stripMarkupFromString } from 'utils/pubEdge';
 import { MenuButton } from 'client/components/Menu';
 import { PubEdgeListingCard } from 'components';
+import { RelationTypeName } from 'utils/pubEdge/relations';
 
 require('./controlsLink.scss');
 
@@ -229,7 +230,7 @@ const ControlsLink = (props: Props) => {
 		});
 	};
 
-	const handleEdgeRelationTypeChange = (relationType: string) => {
+	const handleEdgeRelationTypeChange = (relationType: RelationTypeName) => {
 		assert(pubEdge != null);
 		setPubEdge({
 			...pubEdge,
@@ -260,7 +261,9 @@ const ControlsLink = (props: Props) => {
 				return (
 					<MenuItem
 						text={name}
-						onClick={() => handleEdgeRelationTypeChange(relationType)}
+						onClick={() =>
+							handleEdgeRelationTypeChange(relationType as RelationTypeName)
+						}
 						key={relationType}
 						icon={selected ? 'tick' : 'blank'}
 					/>

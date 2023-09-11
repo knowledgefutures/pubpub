@@ -231,6 +231,7 @@ const createMemberRequest = ({
 	member,
 }: CreateMemberRequestOptions) => {
 	const { community } = models;
+
 	return {
 		pubId: pub && pub.id,
 		collectionId: collection && collection.id,
@@ -492,7 +493,7 @@ describe('/api/members', () => {
 			.send(
 				createMemberRequest({
 					permissions: 'view',
-					member: friendOfThePubAdmin,
+					user: friendOfThePubAdmin,
 				}),
 			)
 			.expect(403);
@@ -507,7 +508,7 @@ describe('/api/members', () => {
 				createMemberRequest({
 					permissions: 'view',
 					pub,
-					member: otherCommunityAdmin,
+					user: otherCommunityAdmin,
 				}),
 			)
 			.expect(403);

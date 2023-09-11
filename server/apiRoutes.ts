@@ -48,6 +48,8 @@ require('./userSubscription/api');
 require('./workerTask/api');
 require('./zoteroIntegration/api');
 
+require('./apiDocs/api');
+
 if (!isProd()) {
 	// eslint-disable-next-line global-require
 	require('./dev/api');

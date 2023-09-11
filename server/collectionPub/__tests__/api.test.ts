@@ -198,7 +198,7 @@ it('handles ranks correctly', async () => {
 });
 
 it('updates reasonable values on a collectionPub', async () => {
-	const { admin, pub, issue } = models;
+	const { admin, pub, issue, community } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const collectionPub = await createCollectionPub({
 		pubId: pub.id,
@@ -209,6 +209,7 @@ it('updates reasonable values on a collectionPub', async () => {
 		.put('/api/collectionPubs')
 		.send({
 			id: collectionPub.id,
+			communityId: community.id,
 			rank: 'zzz',
 			contextHint: 'boo',
 		})
@@ -221,7 +222,7 @@ it('updates reasonable values on a collectionPub', async () => {
 });
 
 it('lets Pub managers update pubRanks', async () => {
-	const { someCollectionPub, someMember } = models;
+	const { someCollectionPub, someMember, community } = models;
 	const agent = await login(someMember);
 	await agent
 		.put('/api/collectionPubs')
@@ -229,6 +230,7 @@ it('lets Pub managers update pubRanks', async () => {
 			id: someCollectionPub.id,
 			rank: 'zzz',
 			pubRank: 'boo',
+			communityId: community.id,
 		})
 		.expect(200);
 	const resultingCollectionPub = await CollectionPub.findOne({

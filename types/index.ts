@@ -37,3 +37,4 @@ export * from './viewport';
 export * from './visibility';
 export * from './zotero';
 export * from './serializedModel';
+export * from './sequelize-helpers';

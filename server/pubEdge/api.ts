@@ -1,32 +1,33 @@
-import app, { wrap } from 'server/server';
-import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { initServer } from '@ts-rest/express';
 
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { contract } from 'utils/api/contract';
+import { createPubEdge, updatePubEdge, destroyPubEdge, getPubEdgeById } from './queries';
 import {
 	canCreatePubEdge,
 	canUpdateOrDestroyPubEdge,
 	canApprovePubEdge,
 	canApprovePubEdgeWithTargetPubId,
 } from './permissions';
-import { createPubEdge, updatePubEdge, destroyPubEdge, getPubEdgeById } from './queries';
 
-app.get(
-	'/api/pubEdges/:id',
-	wrap(async (req, res) => {
+const s = initServer();
+
+export const pubEdgeServer = s.router(contract.pubEdge, {
+	get: async ({ req }) => {
 		const edgeId = req.params.id;
 		const edge = await getPubEdgeById(edgeId);
 
 		if (edge) {
-			res.status(200).json(edge);
-		} else {
-			throw new NotFoundError();
+			return { status: 200, body: edge };
 		}
-	}),
-);
 
-app.post(
-	'/api/pubEdges',
-	wrap(async (req, res) => {
-		const { pubId, pubIsParent, relationType, targetPubId, externalPublication } = req.body;
+		throw new NotFoundError();
+	},
+
+	// @ts-expect-error FIXME: edge.targetPub.customPublishedAt is Date | null, but "should" be string | null
+	// this turns into string | null when it goes through the API, so it's not a problem
+	create: async ({ req, body }) => {
+		const { pubId, pubIsParent, relationType, targetPubId, externalPublication } = body;
 		const userId = req.user.id;
 		const [canCreate, approvedByTarget] = await Promise.all([
 			canCreatePubEdge({ userId, pubId }),
@@ -42,15 +43,13 @@ app.post(
 				approvedByTarget,
 				actorId: userId,
 			});
-			return res.status(201).json(edge);
+
+			return { status: 201, body: edge };
 		}
 		throw new ForbiddenError();
-	}),
-);
+	},
 
-app.put(
-	'/api/pubEdges',
-	wrap(async (req, res) => {
+	update: async ({ req, body }) => {
 		const {
 			pubEdgeId,
 			rank,
@@ -59,7 +58,7 @@ app.put(
 			relationType,
 			targetPubId,
 			externalPublication,
-		} = req.body;
+		} = body;
 		const canUpdateEdge = await canUpdateOrDestroyPubEdge({
 			pubEdgeId,
 			userId: req.user.id,
@@ -74,16 +73,13 @@ app.put(
 				targetPubId,
 				externalPublication,
 			});
-			return res.status(200).json(edge);
+			return { status: 200, body: edge };
 		}
 		throw new ForbiddenError();
-	}),
-);
+	},
 
-app.put(
-	'/api/pubEdges/approvedByTarget',
-	wrap(async (req, res) => {
-		const { pubEdgeId, approvedByTarget } = req.body;
+	updateApprovedByTarget: async ({ req, body }) => {
+		const { pubEdgeId, approvedByTarget } = body;
 		const canApproveEdge = await canApprovePubEdge({
 			pubEdgeId,
 			userId: req.user.id,
@@ -93,16 +89,13 @@ app.put(
 				pubEdgeId,
 				approvedByTarget,
 			});
-			return res.status(200).json(edge);
+			return { status: 200, body: edge };
 		}
 		throw new ForbiddenError();
-	}),
-);
+	},
 
-app.delete(
-	'/api/pubEdges',
-	wrap(async (req, res) => {
-		const { pubEdgeId } = req.body;
+	remove: async ({ req, body }) => {
+		const { pubEdgeId } = body;
 		const userId = req.user.id;
 		const canDestroyEdge = await canUpdateOrDestroyPubEdge({
 			pubEdgeId,
@@ -110,8 +103,8 @@ app.delete(
 		});
 		if (canDestroyEdge) {
 			await destroyPubEdge(pubEdgeId, userId);
-			return res.status(200).json({});
+			return { status: 200, body: {} };
 		}
 		throw new ForbiddenError();
-	}),
-);
+	},
+});

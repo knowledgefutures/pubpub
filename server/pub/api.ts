@@ -1,4 +1,3 @@
-import app, { wrap } from 'server/server';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { PubGetOptions, PubsQuery } from 'types';
@@ -6,12 +5,20 @@ import { indexByProperty } from 'utils/arrays';
 import { transformPubToResource } from 'deposit/transform/pub';
 import { generateDoi } from 'server/doi/queries';
 import { assert, expect } from 'utils/assert';
-import { prepareResource, submitResource } from 'deposit/datacite/deposit';
+import { prepareResource } from 'deposit/datacite/deposit';
 import { assertValidResource } from 'deposit/validate';
 
-import { canCreatePub, canDestroyPub, getUpdatablePubFields } from './permissions';
-import { createPub, destroyPub, findPub, updatePub } from './queries';
+import { z } from 'zod';
+import { Request } from 'express';
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { contract } from 'utils/api/contract';
+import { initServer } from '@ts-rest/express';
 import { getPubsById, queryPubIds } from './queryMany';
+import { createPub, destroyPub, findPub, updatePub } from './queries';
+import { canCreatePub, canDestroyPub, getUpdatablePubFields } from './permissions';
+
+extendZodWithOpenApi(z);
 
 type ManyRequestParams = {
 	query: Omit<PubsQuery, 'communityId'>;
@@ -19,7 +26,16 @@ type ManyRequestParams = {
 	pubOptions: PubGetOptions;
 };
 
-const getManyQueryParams = (req): ManyRequestParams => {
+const getManyQueryParams = <
+	ReqB extends ManyRequestParams,
+	A = any,
+	B = any,
+	C = any,
+	D extends Record<string, any> = Record<string, any>,
+	R extends Request<A, B, ReqB, C, D> = Request<A, B, ReqB, C, D>,
+>(
+	req: R,
+): ManyRequestParams => {
 	const { query, alreadyFetchedPubIds, pubOptions = {} } = req.body;
 	const {
 		collectionIds,
@@ -54,11 +70,60 @@ const getManyQueryParams = (req): ManyRequestParams => {
 		},
 	};
 };
+const getRequestIds = createGetRequestIds<{
+	communityId?: string;
+	collectionId?: string | null;
+	pubId?: string;
+	createPubToken?: string | null;
+}>();
 
-app.post(
-	'/api/pubs/many',
-	wrap(async (req, res) => {
-		const initialData = await getInitialData(req);
+const s = initServer();
+
+export const pubServer = s.router(contract.pub, {
+	create: async ({ body, req }) => {
+		const ids = getRequestIds(body, req.user);
+		const { create, collectionIds } = await canCreatePub(ids);
+		if (!create) {
+			throw new ForbiddenError();
+		}
+		const newPub = await createPub({ communityId: ids.communityId, collectionIds }, ids.userId);
+		const jsonedPub = newPub.toJSON();
+		return {
+			status: 201,
+			body: jsonedPub,
+		};
+	},
+	update: async ({ body, req }) => {
+		const { userId, pubId } = getRequestIds(body, req.user);
+		const updatableFields = await getUpdatablePubFields({
+			userId,
+			pubId,
+		});
+		if (!updatableFields) {
+			throw new ForbiddenError();
+		}
+
+		const updateResult = await updatePub(req.body, updatableFields, userId);
+		return {
+			status: 200,
+			body: updateResult,
+		};
+	},
+	remove: async ({ body, req }) => {
+		const { userId, pubId } = getRequestIds(body, req.user);
+		const canDestroy = await canDestroyPub({ userId, pubId });
+		if (!canDestroy) {
+			throw new ForbiddenError();
+		}
+
+		await destroyPub(pubId, userId);
+		return {
+			status: 200,
+			body: {},
+		};
+	},
+	getMany: async ({ req }) => {
+		const initialData = await getInitialData(req, req.user);
 		const { query: queryPartial, alreadyFetchedPubIds, pubOptions } = getManyQueryParams(req);
 		const { limit } = queryPartial;
 		const pubIds = await queryPubIds({
@@ -69,158 +134,87 @@ app.post(
 		const idsToFetch = pubIds.filter((id) => !alreadyFetchedPubIds.includes(id));
 		const pubs = await getPubsById(idsToFetch, pubOptions).sanitize(initialData);
 		const pubsById = indexByProperty(pubs, 'id');
-		return res.status(200).json({
-			pubIds: pubIds.filter((id) => !!pubsById[id] || alreadyFetchedPubIds.includes(id)),
-			pubsById,
-			loadedAllPubs,
-		});
-	}),
-);
-
-const getRequestIds = (req) => {
-	const user = req.user || {};
-	const { communityId, collectionId, pubId, createPubToken } = req.body;
-	return {
-		userId: user.id,
-		communityId,
-		collectionId,
-		createPubToken,
-		pubId,
-	};
-};
-
-app.post(
-	'/api/pubs',
-	wrap(async (req, res) => {
-		const { userId, collectionId, communityId, createPubToken } = getRequestIds(req);
-		const { create, collectionIds } = await canCreatePub({
-			userId,
-			collectionId,
-			communityId,
-			createPubToken,
-		});
-		if (create) {
-			const newPub = await createPub({ communityId, collectionIds }, userId);
-			return res.status(201).json(newPub);
-		}
-		throw new ForbiddenError();
-	}),
-);
-
-app.put(
-	'/api/pubs',
-	wrap(async (req, res) => {
-		const { userId, pubId } = getRequestIds(req);
-		const updatableFields = await getUpdatablePubFields({
-			userId,
-			pubId,
-		});
-		if (updatableFields) {
-			const updateResult = await updatePub(req.body, updatableFields, userId);
-			return res.status(200).json(updateResult);
-		}
-		throw new ForbiddenError();
-	}),
-);
-
-app.delete(
-	'/api/pubs',
-	wrap(async (req, res) => {
-		const { userId, pubId } = getRequestIds(req);
-		const canDestroy = await canDestroyPub({ userId, pubId });
-		if (canDestroy) {
-			await destroyPub(pubId, userId);
-			return res.status(200).json({});
-		}
-		throw new ForbiddenError();
-	}),
-);
-
-app.get(
-	'/api/pub/:pubId/resource',
-	wrap(async (req, res) => {
-		const { pubId } = req.params;
+		return {
+			status: 200,
+			body: {
+				pubIds: pubIds.filter((id) => !!pubsById[id] || alreadyFetchedPubIds.includes(id)),
+				pubsById,
+				loadedAllPubs,
+			},
+		};
+	},
+	doi: {
+		deposit: async ({ params, req }) => {
+			const { pubId } = params;
+			const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
+			try {
+				assert(expect(pubFields).some((f) => f === 'doi'));
+			} catch {
+				throw new ForbiddenError();
+			}
+			const pub = expect(await findPub(pubId));
+			const pubDoi =
+				pub.doi ??
+				(
+					await generateDoi(
+						{ communityId: pub.communityId, pubId, collectionId: undefined },
+						'pub',
+					)
+				).pub;
+			const jsonedPub = pub.toJSON();
+			const resource = await transformPubToResource(jsonedPub, expect(jsonedPub.community));
+			try {
+				assertValidResource(resource);
+			} catch (error) {
+				return { status: 400, body: { error: (error as Error).message } };
+			}
+			try {
+				const { resourceAst } = await prepareResource(pub, resource, expect(pubDoi));
+				return { status: 200, body: resourceAst };
+			} catch (error) {
+				return { status: 400, body: { error: (error as Error).message } };
+			}
+		},
+		preview: async ({ req, params }) => {
+			const { pubId } = params;
+			const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
+			try {
+				assert(expect(pubFields).some((f) => f === 'doi'));
+			} catch {
+				throw new ForbiddenError();
+			}
+			const pub = expect(await findPub(pubId));
+			const pubDoi =
+				pub.doi ??
+				(
+					await generateDoi(
+						{ communityId: pub.communityId, pubId, collectionId: undefined },
+						'pub',
+					)
+				).pub;
+			const jsonedPub = pub.toJSON();
+			const resource = await transformPubToResource(jsonedPub, expect(jsonedPub.community));
+			try {
+				assertValidResource(resource);
+			} catch (error) {
+				return { status: 400, body: { error: (error as Error).message } };
+			}
+			try {
+				const { resourceAst } = await prepareResource(pub, resource, expect(pubDoi));
+				return { status: 200, body: resourceAst };
+			} catch (error) {
+				return { status: 400, body: { error: (error as Error).message } };
+			}
+		},
+	},
+	getResource: async ({ params }) => {
+		const { pubId } = params;
 		const pub = await findPub(pubId);
 		if (!pub) {
 			throw new NotFoundError();
 		}
 		const jsonedPub = pub.toJSON();
 		const resource = await transformPubToResource(jsonedPub, expect(jsonedPub.community));
-		return res.status(200).json(resource);
-	}),
-);
-
-app.post(
-	'/api/pub/:pubId/doi',
-	wrap(async (req, res) => {
-		const { pubId } = req.params;
-		const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
-		try {
-			assert(expect(pubFields).includes('doi'));
-		} catch {
-			throw new ForbiddenError();
-		}
-		const pub = await findPub(pubId);
-		if (!pub) {
-			return new NotFoundError();
-		}
-		const pubDoi =
-			pub.doi ??
-			(
-				await generateDoi(
-					{ communityId: pub.communityId, pubId, collectionId: undefined },
-					'pub',
-				)
-			).pub;
-		const jsonedPub = pub.toJSON();
-		const resource = await transformPubToResource(jsonedPub, expect(jsonedPub.community));
-		try {
-			assertValidResource(resource);
-		} catch (error) {
-			return res.status(400).json({ error: (error as Error).message });
-		}
-		try {
-			const { resourceAst } = await submitResource(pub, resource, expect(pubDoi), {
-				pubId,
-			});
-			return res.status(200).json(resourceAst);
-		} catch (error) {
-			return res.status(400).json({ error: (error as Error).message });
-		}
-	}),
-);
-
-app.post(
-	'/api/pub/:pubId/doi/preview',
-	wrap(async (req, res) => {
-		const { pubId } = req.params;
-		const pubFields = await getUpdatablePubFields({ userId: req.user.id, pubId });
-		try {
-			assert(expect(pubFields).includes('doi'));
-		} catch {
-			throw new ForbiddenError();
-		}
-		const pub = expect(await findPub(pubId));
-		const pubDoi =
-			pub.doi ??
-			(
-				await generateDoi(
-					{ communityId: pub.communityId, pubId, collectionId: undefined },
-					'pub',
-				)
-			).pub;
-		const jsonedPub = pub.toJSON();
-		const resource = await transformPubToResource(jsonedPub, expect(jsonedPub.community));
-		try {
-			assertValidResource(resource);
-		} catch (error) {
-			return res.status(400).json({ error: (error as Error).message });
-		}
-		try {
-			const { resourceAst } = await prepareResource(pub, resource, expect(pubDoi));
-			return res.status(200).json(resourceAst);
-		} catch (error) {
-			return res.status(400).json({ error: (error as Error).message });
-		}
-	}),
-);
+		return { status: 200, body: resource };
+	},
+});

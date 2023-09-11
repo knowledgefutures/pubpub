@@ -18,9 +18,9 @@ export const getPermissions = async ({
 	communityId = null,
 	collectionId = null,
 }: {
-	userId: string | null;
-	communityId: string | null;
-	collectionId: string | null;
+	userId?: string | null;
+	communityId?: string | null;
+	collectionId?: string | null;
 }): Promise<Permissions> => {
 	if (!userId) {
 		return {};

@@ -6,7 +6,15 @@ import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getReleasesForPub } from 'server/release/queries';
 import { getExportFormats } from 'utils/export/formats';
 
-export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
+export const getOrStartExportTask = async ({
+	pubId,
+	format,
+	historyKey,
+}: {
+	pubId: string;
+	format: string;
+	historyKey: number;
+}) => {
 	const existingExport = await Export.findOne({
 		where: {
 			pubId,

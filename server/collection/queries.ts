@@ -6,6 +6,8 @@ import { generateHash } from 'utils/hashes';
 import { PubPubError } from 'server/utils/errors';
 import * as types from 'types';
 import { CollectionLayout } from 'utils/layout';
+import { expect } from 'utils/assert';
+import { collectionUpdatePremission } from './permissions';
 
 export const generateDefaultCollectionLayout = (): CollectionLayout => {
 	return {
@@ -94,11 +96,15 @@ export const createCollection = async (
 	});
 };
 
-export const updateCollection = async (inputValues, updatePermissions, actorId?: string) => {
+export const updateCollection = async (
+	inputValues: types.UpdateParams<Collection> & { collectionId: string },
+	updatePermissions: typeof collectionUpdatePremission,
+	actorId?: string | null,
+) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues: Record<string, any> = {};
+	const filteredValues = {} as Pick<typeof inputValues, (typeof updatePermissions)[number]>;
 	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
+		if (updatePermissions.some((k) => k === key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
@@ -112,7 +118,7 @@ export const updateCollection = async (inputValues, updatePermissions, actorId?:
 		});
 
 		if (slugStatus !== 'available') {
-			throw new PubPubError.ForbiddenSlugError(filteredValues.slug, slugStatus);
+			throw new PubPubError.ForbiddenSlugError(expect(filteredValues.slug), slugStatus);
 		}
 	}
 	await Collection.update(filteredValues, {

@@ -43,10 +43,13 @@ export const getUpdatableFieldsForCollectionPub = async ({
 	communityId,
 	collectionPubId,
 }: {
-	userId: string;
+	userId?: string | null;
 	communityId: string;
 	collectionPubId: string;
 }) => {
+	if (!userId) {
+		return null;
+	}
 	const { pubId, collectionId } = expect(
 		await CollectionPub.findOne({ where: { id: collectionPubId } }),
 	);
@@ -77,10 +80,13 @@ export const canDestroyCollectionPub = async ({
 	communityId,
 	collectionPubId,
 }: {
-	userId: string;
+	userId?: string | null;
 	communityId: string;
 	collectionPubId: string;
 }) => {
+	if (!userId) {
+		return false;
+	}
 	const { collectionId, pubId } = expect(
 		await CollectionPub.findOne({ where: { id: collectionPubId } }),
 	);

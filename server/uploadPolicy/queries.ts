@@ -1,9 +1,10 @@
 import crypto from 'crypto';
+import { expect } from 'utils/assert';
 
 export const getUploadPolicy = ({ contentType }: { contentType: string }) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
-	const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
+	const awsAccessKeyId = expect(process.env.AWS_ACCESS_KEY_ID);
 	const awsAccessKeySecret = process.env.AWS_SECRET_ACCESS_KEY;
 	const expirationDate = new Date(Date.now() + 60000);
 

@@ -1,18 +1,29 @@
 import { DocJson } from 'types';
 
-type BannerButtonType = 'create-pub' | 'signup' | 'link';
-type TextAlign = 'left' | 'center';
+export const bannerButtonTypes = ['create-pub', 'signup', 'link'] as const;
+type BannerButtonType = (typeof bannerButtonTypes)[number];
+export const textAligns = ['left', 'center'] as const;
+type TextAlign = (typeof textAligns)[number];
 
-export type PubPreviewType = 'minimal' | 'small' | 'medium' | 'large';
+export const pubPreviewTypes = ['minimal', 'small', 'medium', 'large'] as const;
+export type PubPreviewType = (typeof pubPreviewTypes)[number];
 
-export type PubSortOrder =
-	| 'creation-date'
-	| 'creation-date-reversed'
-	| 'publish-date'
-	| 'publish-date-reversed'
-	| 'collection-rank';
+export const pubSortOrders = [
+	'creation-date',
+	'creation-date-reversed',
+	'publish-date',
+	'publish-date-reversed',
+	'collection-rank',
+] as const;
+export type PubSortOrder = (typeof pubSortOrders)[number];
 
-export type CollectionsPagesJustifyType = 'center' | 'space-between' | 'space-around' | 'left';
+export const collectionsPagesJustifyTypes = [
+	'center',
+	'space-between',
+	'space-around',
+	'left',
+] as const;
+export type CollectionsPagesJustifyType = (typeof collectionsPagesJustifyTypes)[number];
 
 export type LayoutPubsByBlock<PubType extends { id: string }> = {
 	pubsById: Record<string, PubType>;

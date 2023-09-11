@@ -23,3 +23,51 @@ export const isCollectionAttribution = (
 
 export const isPubAttribution = (attribution: Attribution): attribution is PubAttribution =>
 	'pubId' in attribution;
+
+export const DEFAULT_ROLES = [
+	'Conceptualization',
+	'Methodology',
+	'Software',
+	'Validation',
+	'Formal Analysis',
+	'Investigation',
+	'Resources',
+	'Data Curation',
+	'Writing – Original Draft Preparation',
+	'Writing – Review & Editing',
+	'Visualization',
+	'Supervision',
+	'Project Administration',
+	'Peer Review',
+	'Funding Acquisition',
+	'Illustrator',
+	'Editor',
+	'Series Editor',
+	'Translator',
+	'Chair',
+] as const;
+
+export type AttributionRole = (typeof DEFAULT_ROLES)[number];
+
+export type PubAttributionCreationParams = {
+	pubId: string;
+	order: number;
+	roles?: string[] | null;
+	affiliation?: string | null;
+	isAuthor?: boolean | null;
+} & (
+	| {
+			userId: string;
+			name?: undefined | null;
+			orcid?: undefined | null;
+	  }
+	| {
+			name: string;
+			userId?: undefined | null;
+			orcid?: string | null;
+	  }
+);
+
+export type CollectionAttributionCreationParams = Omit<PubAttributionCreationParams, 'pubId'> & {
+	collectionId: string;
+};

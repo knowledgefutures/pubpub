@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { CreationAttributes } from 'sequelize';
 import { PubAttribution, includeUserModel } from 'server/models';
 import { expect } from 'utils/assert';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { UpdateParams, PubAttributionCreationParams } from 'types';
 import { Permissions } from './permissions';
 
 export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
@@ -13,17 +13,17 @@ export const createPubAttribution = async ({
 	name,
 	order,
 	isAuthor,
-}: {
-	userId: string;
-	pubId: string;
-	name: string | null;
-	order: number;
-	isAuthor: boolean;
-}) => {
+	orcid,
+	roles,
+	affiliation,
+}: PubAttributionCreationParams) => {
 	const newAttribution = await PubAttribution.create({
 		userId,
 		pubId,
+		orcid,
 		name,
+		roles,
+		affiliation,
 		order,
 		isAuthor,
 	});
@@ -46,11 +46,14 @@ export const createPubAttribution = async ({
 };
 
 export const updatePubAttribution = async (
-	inputValues: CreationAttributes<PubAttribution> & { pubAttributionId: string },
+	inputValues: UpdateParams<PubAttribution> & { pubAttributionId: string },
 	updatePermissions: Permissions['update'],
 ) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues = {} as Pick<
+		typeof inputValues,
+		Exclude<typeof updatePermissions, false | undefined>[number]
+	>;
 	Object.keys(inputValues).forEach((key) => {
 		if (updatePermissions && updatePermissions.some((update) => update === key)) {
 			filteredValues[key] = inputValues[key];

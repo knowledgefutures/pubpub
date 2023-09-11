@@ -9,8 +9,8 @@ import {
 } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
 
-type UpdateFacetByName<Name extends FacetName> = Partial<FacetInstance<Facets[Name]>>;
-type UpdateFacetsQuery = Partial<{
+export type UpdateFacetByName<Name extends FacetName> = Partial<FacetInstance<Facets[Name]>>;
+export type UpdateFacetsQuery = Partial<{
 	[Name in FacetName]: UpdateFacetByName<Name>;
 }>;
 

@@ -1,8 +1,10 @@
 import { Collection as CollectionModel, CollectionPub as CollectionPubModel } from 'server/models';
 import { SerializedModel } from './serializedModel';
 
-export type CollectionKind = 'tag' | 'issue' | 'book' | 'conference';
-export type ReadNextPreviewSize = 'none' | 'minimal' | 'medium' | 'choose-best';
+export const collectionKinds = ['tag', 'issue', 'book', 'conference'] as const;
+export type CollectionKind = (typeof collectionKinds)[number];
+export const readNextPreviewSizes = ['none', 'minimal', 'medium', 'choose-best'] as const;
+export type ReadNextPreviewSize = (typeof readNextPreviewSizes)[number];
 
 export type Collection = SerializedModel<CollectionModel>;
 

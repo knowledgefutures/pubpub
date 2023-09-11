@@ -19,7 +19,7 @@ export const canApprovePubEdgeWithTargetPubId = async ({
 	targetPubId,
 	userId,
 }: {
-	targetPubId?: string;
+	targetPubId?: string | null;
 	userId: string;
 }) => {
 	if (targetPubId) {

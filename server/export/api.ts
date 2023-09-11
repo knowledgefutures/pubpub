@@ -1,44 +1,48 @@
-import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { getOrStartExportTask } from './queries';
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { z } from 'zod';
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from 'utils/api/contract';
 import { getPermissions } from './permissions';
+import { getOrStartExportTask } from './queries';
 
-const getRequestData = (req) => {
-	const user = req.user || {};
-	const { accessHash, format, historyKey, pubId, communityId } = req.body;
-	return {
+extendZodWithOpenApi(z);
+
+const getRequestData = createGetRequestIds<{
+	accessHash?: string | null;
+	format?: string;
+	historyKey?: number;
+	pubId?: string;
+	communityId?: string;
+}>();
+
+export const exportRouteImplementation: AppRouteImplementation<typeof contract.export> = async ({
+	req,
+	body,
+}) => {
+	const { accessHash, format, historyKey, pubId, userId, communityId } = getRequestData(
+		body,
+		req.user,
+	);
+	const permissions = await getPermissions({
 		accessHash,
+		userId,
+		pubId,
+		communityId,
+		historyKey,
+	});
+
+	if (!permissions.create) {
+		throw new ForbiddenError();
+	}
+
+	const result = await getOrStartExportTask({
 		format,
 		historyKey,
 		pubId,
-		communityId,
-		userId: user.id,
-	};
+	});
+
+	return { status: 201, body: result };
 };
-
-app.post(
-	'/api/export',
-	wrap(async (req, res) => {
-		const { accessHash, format, historyKey, pubId, userId, communityId } = getRequestData(req);
-		const permissions = await getPermissions({
-			accessHash,
-			userId,
-			pubId,
-			communityId,
-			historyKey,
-		});
-
-		if (!permissions.create) {
-			throw new ForbiddenError();
-		}
-
-		const result = await getOrStartExportTask({
-			format,
-			historyKey,
-			pubId,
-		});
-
-		return res.status(201).json(result);
-	}),
-);

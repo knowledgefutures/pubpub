@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type ResourceLicense = {
 	uri: string;
 	/**
@@ -7,16 +9,19 @@ export type ResourceLicense = {
 	spdxIdentifier: string;
 };
 
-export type ResourceKind =
-	| 'Book'
-	| 'BookChapter'
-	| 'Journal'
-	| 'JournalIssue'
-	| 'JournalArticle'
-	| 'Conference'
-	| 'ConferenceProceeding'
-	| 'ConferencePaper'
-	| 'Other';
+export const resourceKinds = [
+	'Book',
+	'BookChapter',
+	'Journal',
+	'JournalIssue',
+	'JournalArticle',
+	'Conference',
+	'ConferenceProceeding',
+	'ConferencePaper',
+	'Other',
+] as const;
+
+export type ResourceKind = (typeof resourceKinds)[number];
 
 export const resourceKindToProperNoun: Record<ResourceKind, string> = {
 	Book: 'Book',
@@ -30,18 +35,26 @@ export const resourceKindToProperNoun: Record<ResourceKind, string> = {
 	Other: 'Other',
 };
 
-export type InterWorkResourceRelation =
-	| 'Comment'
-	| 'Preprint'
-	| 'Reply'
-	| 'Review'
-	| 'Supplement'
-	| 'Translation'
-	| 'Version';
+export const interWorkResourceRelations = [
+	'Comment',
+	'Preprint',
+	'Reply',
+	'Review',
+	'Supplement',
+	'Translation',
+	'Version',
+] as const;
 
-export type IntraWorkResourceRelation = 'Part' | 'Publication';
+export type InterWorkResourceRelation = (typeof interWorkResourceRelations)[number];
 
-export type ResourceRelation = InterWorkResourceRelation | IntraWorkResourceRelation;
+export const intraWorkResourceRelations = ['Part', 'Publication'] as const;
+export type IntraWorkResourceRelation = (typeof intraWorkResourceRelations)[number];
+
+export const resourceRelations = [
+	...interWorkResourceRelations,
+	...intraWorkResourceRelations,
+] as const;
+export type ResourceRelation = (typeof resourceRelations)[number];
 
 export type ResourceRelationship = {
 	isParent: boolean;
@@ -49,18 +62,28 @@ export type ResourceRelationship = {
 	resource: AnyResource;
 };
 
-export type ResourceContributorKind = 'Person' | 'Organization';
-export type ResourceContributorRole = 'Creator' | 'Editor' | 'Translator' | 'Other';
+export const resourceContributorKinds = ['Person', 'Organization'] as const;
+export type ResourceContributorKind = (typeof resourceContributorKinds)[number];
+export const resourceContributorRoles = ['Creator', 'Editor', 'Translator', 'Other'] as const;
+export type ResourceContributorRole = (typeof resourceContributorRoles)[number];
 export type ResourceContributor = { name: string; orcid?: string | null };
 
 export type ResourceContribution = {
 	isAttribution: boolean;
 	contributor: ResourceContributor;
-	contributorAffiliation: string | undefined | null;
+	contributorAffiliation?: string | undefined | null;
 	contributorRole: ResourceContributorRole;
 };
 
-export type ResourceDescriptor = 'Explanation' | 'Mechanism' | 'Process' | 'Definition' | 'Other';
+export const resourceDescriptors = [
+	'Explanation',
+	'Mechanism',
+	'Process',
+	'Definition',
+	'Other',
+] as const;
+
+export type ResourceDescriptor = (typeof resourceDescriptors)[number];
 
 export type ResourceDescription = {
 	kind: ResourceDescriptor;
@@ -72,7 +95,8 @@ export type ResourceDescription = {
 	text: string;
 };
 
-export type ResourceSummaryKind = 'Synopsis' | 'WordCount' | 'Other';
+export const resourceSummaryKinds = ['Synopsis', 'WordCount', 'Other'] as const;
+export type ResourceSummaryKind = (typeof resourceSummaryKinds)[number];
 
 export type ResourceSummary = {
 	kind: ResourceSummaryKind;
@@ -99,7 +123,8 @@ export type PartialResource = {
 	identifiers: ResourceIdentifier[];
 };
 
-export type ResourceIdentifierKind = 'URL' | 'DOI' | 'ISSN' | 'EISSN' | 'ISBN';
+export const resourceIdentifierKinds = ['URL', 'DOI', 'ISSN', 'EISSN', 'ISBN'] as const;
+export type ResourceIdentifierKind = (typeof resourceIdentifierKinds)[number];
 
 export type ResourceIdentifier = {
 	identifierKind: ResourceIdentifierKind;
@@ -152,3 +177,86 @@ export const getIdentifier = (resource: AnyResource, identifierKind: ResourceIde
 export const getIdentifierValue = (resource: AnyResource, identifierKind: ResourceIdentifierKind) =>
 	resource.identifiers.find((identifier) => identifier.identifierKind === identifierKind)
 		?.identifierValue;
+
+export const partialResourceSchema = z.object({
+	title: z.string().openapi({
+		description: 'The title of the resource',
+	}),
+	kind: z.enum(resourceKinds).openapi({
+		description: 'The type of resource',
+	}),
+	identifiers: z.array(
+		z.object({
+			identifierKind: z.enum(['URL', 'DOI', 'ISSN', 'EISSN', 'ISBN']),
+			identifierValue: z.string(),
+		}),
+	),
+});
+
+export const resourceSchema: z.ZodType<Resource> = partialResourceSchema.extend({
+	timestamp: z.string().datetime().openapi({
+		description: 'The version of the resource expressed as a UTC datetime string',
+		example: '2021-01-01T00:00:00.000Z',
+	}),
+	description: z.string(),
+
+	descriptions: z.array(
+		z.object({
+			kind: z.enum(resourceDescriptors),
+			lang: z.string().openapi({
+				description: 'ISO 639-2 language code',
+				example: 'eng',
+			}),
+			text: z.string(),
+		}),
+	),
+
+	summaries: z.array(
+		z.object({
+			kind: z.enum(resourceSummaryKinds),
+			lang: z.string().openapi({
+				description: 'ISO 639-2 language code',
+				example: 'eng',
+			}),
+			value: z.string(),
+		}),
+	),
+
+	contributions: z.array(
+		z.object({
+			isAttribution: z.boolean(),
+			contributor: z.object({ name: z.string(), orcid: z.string().optional() }),
+			contributorAffiliation: z.string().optional(),
+			contributorRole: z.enum(resourceContributorRoles),
+		}),
+	),
+
+	/**
+	 * Homogeneous list of inter- and intra-work relationships.
+	 */
+	relationships: z
+		.array(
+			z.object({
+				isParent: z.boolean(),
+				relation: z.enum(resourceRelations),
+				resource: z.lazy(() => resourceSchema),
+			}),
+		)
+		.openapi({
+			description: 'Homogeneous list of inter- and intra-work relationships',
+		}),
+
+	license: z.object({
+		uri: z.string(),
+		/**
+		 * SPDX license identifier.
+		 * @see {@link https://spdx.org/licenses}
+		 */
+		spdxIdentifier: z.string().openapi({
+			description: 'SPDX license identifier',
+			example: 'CC-BY-4.0',
+		}),
+	}),
+
+	meta: z.record(z.string()),
+});

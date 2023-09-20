@@ -3,6 +3,7 @@ import passport from 'passport';
 import app, { wrap } from 'server/server';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 
+import { isProd, isDuqDuq } from 'utils/environment';
 import { getPermissions } from './permissions';
 import { createUser, updateUser, getSuggestedEditsUserInfo } from './queries';
 
@@ -27,6 +28,13 @@ app.post('/api/users', (req, res) => {
 		})
 		.then((newUser) => {
 			passport.authenticate('local')(req, res, () => {
+				res.cookie('pp-cache', 'pp-no-cache', {
+					...(isProd() &&
+						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
+					...(isDuqDuq() &&
+						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
+					maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
+				});
 				return res.status(201).json(newUser);
 			});
 		})

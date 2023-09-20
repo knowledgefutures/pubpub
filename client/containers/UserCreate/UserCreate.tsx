@@ -69,7 +69,8 @@ const UserCreate = (props: Props) => {
 			}),
 		})
 			.then(() => {
-				window.location.href = '/';
+				const cacheBreaker = Math.round(new Date().getTime() / 1000);
+				window.location.href = `/?breakCache=${cacheBreaker}`;
 			})
 			.catch((err) => {
 				setPostUserIsLoading(false);

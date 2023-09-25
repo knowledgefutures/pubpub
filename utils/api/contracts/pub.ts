@@ -74,7 +74,7 @@ export const pubContract = c.router({
 			pathParams: z.object({
 				pubId: z.string().uuid(),
 			}),
-			body: z.undefined(),
+			body: z.null().or(z.object({})).optional(),
 			responses: {
 				200: resourceASTSchema,
 				400: z.object({ error: z.string() }),
@@ -88,7 +88,7 @@ export const pubContract = c.router({
 			pathParams: z.object({
 				pubId: z.string().uuid(),
 			}),
-			body: z.undefined(),
+			body: z.null().or(z.object({})).optional(),
 			responses: {
 				200: resourceASTSchema,
 				400: z.object({ error: z.string() }),

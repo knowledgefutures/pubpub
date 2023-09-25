@@ -94,7 +94,15 @@ export type LayoutBlockCollectionsPages = {
 	type: 'collections-pages';
 	id: string;
 	content: {
-		items: { type: 'collection' | 'page'; id: string }[];
+		items: (
+			| { type: 'collection' | 'page'; id: string }
+			| {
+					id: string;
+					createdAt: string;
+					isPublic: boolean;
+					title: string;
+			  }
+		)[];
 		title?: string;
 		justify?: CollectionsPagesJustifyType;
 	};

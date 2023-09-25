@@ -55,7 +55,10 @@ export const pubSchema = z.object({
 			}),
 		)
 		.nullable(),
-	customPublishedAt: z.string().datetime().nullable(),
+	customPublishedAt: z.coerce
+		.date()
+		.transform((d) => d.toString())
+		.nullable() as z.ZodType<string | null>,
 	labels: z
 		.array(
 			z.object({

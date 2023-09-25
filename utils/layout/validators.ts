@@ -45,10 +45,26 @@ export const layoutBlockCollectionPagesSchema = z
 		id: z.string().default(generateHash(8)),
 		content: z.object({
 			items: z.array(
-				z.object({
-					type: z.enum(['collection', 'page']),
-					id: z.string(),
-				}),
+				z
+					.object({
+						type: z.enum(['collection', 'page']),
+						id: z.string().uuid(),
+					})
+					.openapi({
+						title: 'Collection or page',
+					})
+					.or(
+						z
+							.object({
+								id: z.string().uuid(),
+								createdAt: z.string(),
+								isPublic: z.boolean(),
+								title: z.string(),
+							})
+							.openapi({
+								title: '<Interal do not use>',
+							}),
+					),
 			),
 			title: z.string().optional(),
 			justify: z.enum(['left', 'center', 'space-between', 'space-around']).optional(),

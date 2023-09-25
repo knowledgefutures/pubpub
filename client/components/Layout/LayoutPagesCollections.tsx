@@ -29,7 +29,7 @@ const resolveItemsFromContent = (
 ): PageOrCollection[] => {
 	return content.items
 		.map((item) => {
-			const items = item.type === 'collection' ? collections : pages;
+			const items = 'type' in item && item.type === 'collection' ? collections : pages;
 			return items.find((it) => it.id === item.id);
 		})
 		.filter((item): item is PageOrCollection => !!item);

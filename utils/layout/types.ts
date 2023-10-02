@@ -1,6 +1,6 @@
 import { DocJson } from 'types';
 
-export const bannerButtonTypes = ['create-pub', 'signup', 'link'] as const;
+export const bannerButtonTypes = ['create-pub', 'signup', 'link', 'none'] as const;
 type BannerButtonType = (typeof bannerButtonTypes)[number];
 export const textAligns = ['left', 'center'] as const;
 type TextAlign = (typeof textAligns)[number];
@@ -80,7 +80,7 @@ export type LayoutBlockBanner = {
 		align?: TextAlign;
 		backgroundColor?: string;
 		backgroundHeight?: 'tall' | 'narrow';
-		backgroundImage?: string;
+		backgroundImage?: string | null;
 		backgroundSize?: 'full' | 'standard';
 		buttonText?: string;
 		buttonType?: BannerButtonType;

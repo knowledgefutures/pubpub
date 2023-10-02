@@ -92,9 +92,11 @@ export const sendSubmissionEmail = async (options: SendEmailOptions) => {
 		);
 		await sendEmail({
 			from: { address: 'submissions@mg.pubpub.org', name: `PubPub Submissions` },
-			to: [...submitterEmails, ...submissionWorkflow.targetEmailAddresses],
+			to: submitterEmails,
+			cc: submissionWorkflow.targetEmailAddresses,
 			subject: `Your submission to ${community.title}`,
 			html,
+			replyTo: submissionWorkflow.targetEmailAddresses[0],
 		});
 	}
 };

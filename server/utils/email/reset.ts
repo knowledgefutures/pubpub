@@ -11,7 +11,9 @@ type Body = { text: string } | { html: string };
 
 type SendEmailOptions = {
 	from?: From;
+	replyTo?: string;
 	to: string[];
+	cc?: string[];
 	subject: string;
 } & Body;
 
@@ -27,6 +29,8 @@ export const sendEmail = (options: SendEmailOptions) => {
 		from: `${from.name} <${from.address}>`,
 		to,
 		subject,
+		...('replyTo' in options && { 'h:Reply-To': options.replyTo }),
+		...('cc' in options && { cc: options.cc }),
 		...body,
 	});
 };

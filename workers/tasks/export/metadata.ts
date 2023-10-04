@@ -87,7 +87,6 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	const attributions = getAllPubContributors(pubData, 'contributors', false, true);
-
 	return {
 		title: pubData.title,
 		slug: pubData.slug,
@@ -102,10 +101,8 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		),
 		accentColor: pubData.community.accentColorDark,
 		attributions,
-		// @ts-expect-error: FIXME: Citationstyle is not in the model, its in the facets
-		citationStyle: pubData.citationStyle,
-		// @ts-expect-error: FIXME: CitationInlineStyle is not in the model, its in the facets
-		citationInlineStyle: pubData.citationInlineStyle,
+		citationStyle: facets.CitationStyle.value.citationStyle,
+		citationInlineStyle: facets.CitationStyle.value.inlineCitationStyle,
 		nodeLabels: facets.NodeLabels.value,
 		publisher: pubData.community.publishAs,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),

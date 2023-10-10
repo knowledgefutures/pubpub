@@ -24,10 +24,13 @@ export const login = async (
 	const createAgent = async () => {
 		const agent = supertest.agent(server);
 		try {
-			await agent.post('/api/login').send({
-				email: user.email,
-				password: user.sha3hashedPassword,
-			});
+			await agent
+				.post('/api/login')
+				.send({
+					email: user.email,
+					password: user.sha3hashedPassword,
+				})
+				.expect(201);
 			return agent;
 		} catch (err) {
 			throw new Error(`Failed to log in user ${user.email}: ${err}`);

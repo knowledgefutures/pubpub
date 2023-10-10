@@ -91,10 +91,10 @@ const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
 		return node;
 	});
 
-const getCitationLinkage = (unstructuredValue, structuredValue) => {
+const getCitationLinkage = (unstructuredValue, structuredValue, nodeId = null) => {
 	const digest = digestCitation(unstructuredValue, structuredValue);
 	return {
-		inlineElementId: `citation-${digest}-inline`,
+		inlineElementId: `citation-${digest}${nodeId ? '-' + nodeId : ''}-inline`,
 		bottomElementId: `citation-${digest}-bottom`,
 	};
 };
@@ -114,6 +114,7 @@ const addHrefsToNotes = (nodes) => {
 				const { inlineElementId, bottomElementId } = getCitationLinkage(
 					node.attrs.unstructuredValue,
 					node.attrs.value,
+					node.attrs.id,
 				);
 				return {
 					href: `#${bottomElementId}`,
@@ -322,7 +323,11 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 								title="References"
 								notes={renderedNotes.citations}
 								getLinkage={(note) =>
-									getCitationLinkage(note.unstructuredValue, note.structuredValue)
+									getCitationLinkage(
+										note.unstructuredValue,
+										note.structuredValue,
+										note.id,
+									)
 								}
 							/>
 						</div>

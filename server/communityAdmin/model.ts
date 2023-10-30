@@ -20,13 +20,13 @@ export class CommunityAdmin extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	communityId!: string;
+	declare communityId: string;
 }

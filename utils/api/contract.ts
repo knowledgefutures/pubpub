@@ -5,6 +5,8 @@ import { pubContract } from './contracts/pub';
 import { collectionPubContract } from './contracts/collectionPub';
 import { collectionContract } from './contracts/collection';
 import { collectionAttributionContract } from './contracts/collectionAttribution';
+import { communityContract } from './contracts/community';
+import { customScriptContract } from './contracts/customScript';
 import { exportRoute } from './contracts/export';
 import { facetsContract } from './contracts/facets';
 import { loginRoute } from './contracts/login';
@@ -27,6 +29,11 @@ export const contract = c.router(
 		collection: collectionContract,
 		collectionAttribution: collectionAttributionContract,
 		collectionPub: collectionPubContract,
+		community: communityContract,
+		customScript: customScriptContract,
+		/**
+		 * Export a pub
+		 */
 		export: exportRoute,
 		facets: facetsContract,
 		import: importRoute,

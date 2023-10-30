@@ -21,27 +21,27 @@ export class ZoteroIntegration extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	zoteroUsername!: string | null;
+	declare zoteroUsername: string | null;
 
 	@Column(DataType.TEXT)
-	zoteroUserId!: string | null;
+	declare zoteroUserId: string | null;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@Column(DataType.UUID)
-	integrationDataOAuth1Id!: string | null;
+	declare integrationDataOAuth1Id: string | null;
 
 	@BelongsTo(() => User, { as: 'user', foreignKey: { allowNull: false, name: 'userId' } })
-	user?: User;
+	declare user?: User;
 
 	@BelongsTo(() => IntegrationDataOAuth1, {
 		foreignKey: { allowNull: false, name: 'integrationDataOAuth1Id' },
 		as: 'integrationDataOAuth1',
 		onDelete: 'CASCADE',
 	})
-	integrationDataOAuth1?: IntegrationDataOAuth1;
+	declare integrationDataOAuth1?: IntegrationDataOAuth1;
 }

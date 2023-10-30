@@ -1,4 +1,3 @@
 export * from './constants';
-export * from './types';
+export * from '../../types/layout';
 export * from './resolve';
-export * from './validators';

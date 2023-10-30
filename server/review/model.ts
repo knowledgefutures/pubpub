@@ -25,54 +25,54 @@ export class ReviewNew extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	title!: string | null;
+	declare title: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
-	number!: number;
+	declare number: number;
 
 	@Default('open')
 	@Column(DataType.ENUM('open', 'closed', 'completed'))
-	status!: CreationOptional<'open' | 'closed' | 'completed'>;
+	declare status: CreationOptional<'open' | 'closed' | 'completed'>;
 
 	@Column(DataType.BOOLEAN)
-	releaseRequested!: boolean | null;
+	declare releaseRequested: boolean | null;
 
 	@Column(DataType.JSONB)
-	labels!: object | null;
+	declare labels: object | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	threadId!: string;
+	declare threadId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	visibilityId!: string;
+	declare visibilityId: string;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	// TODO: Add validation
 	@Column(DataType.JSONB)
-	reviewContent!: DocJson | null;
+	declare reviewContent: DocJson | null;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	thread?: Thread;
+	declare thread?: Thread;
 
 	@BelongsTo(() => Visibility, {
 		onDelete: 'CASCADE',
 		as: 'visibility',
 		foreignKey: 'visibilityId',
 	})
-	visibility?: Visibility;
+	declare visibility?: Visibility;
 
 	@BelongsTo(() => User, {
 		onDelete: 'CASCADE',
@@ -80,11 +80,11 @@ export class ReviewNew extends Model<
 		foreignKey: 'userId',
 		constraints: false,
 	})
-	author?: User;
+	declare author?: User;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@HasMany(() => Reviewer, { onDelete: 'CASCADE', as: 'reviewers', foreignKey: 'reviewId' })
-	reviewers?: Reviewer[];
+	declare reviewers?: Reviewer[];
 }

@@ -23,28 +23,28 @@ export class ThreadComment extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	text!: string | null;
+	declare text: string | null;
 
 	// TODO: Add validation for this
 	@Column(DataType.JSONB)
-	content!: DocJson | null;
+	declare content: DocJson | null;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	threadId!: string;
+	declare threadId: string;
 
 	@Column(DataType.UUID)
-	commenterId!: string | null;
+	declare commenterId: string | null;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
-	author?: User;
+	declare author?: User;
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
-	commenter?: Commenter;
+	declare commenter?: Commenter;
 }

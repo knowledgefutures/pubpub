@@ -24,66 +24,66 @@ export class Discussion extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	title!: string | null;
+	declare title: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
-	number!: number;
+	declare number: number;
 
 	@Column(DataType.BOOLEAN)
-	isClosed!: boolean | null;
+	declare isClosed: boolean | null;
 
 	@Column(DataType.JSONB)
-	labels!: string[] | null;
+	declare labels: string[] | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	threadId!: string;
+	declare threadId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	visibilityId!: string;
+	declare visibilityId: string;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@Column(DataType.UUID)
-	anchorId!: string | null;
+	declare anchorId: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	@Column(DataType.UUID)
-	commenterId!: string | null;
+	declare commenterId: string | null;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	thread?: Thread;
+	declare thread?: Thread;
 
 	@BelongsTo(() => Visibility, {
 		onDelete: 'CASCADE',
 		as: 'visibility',
 		foreignKey: 'visibilityId',
 	})
-	visibility?: Visibility;
+	declare visibility?: Visibility;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
-	author?: User;
+	declare author?: User;
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
-	commenter?: Commenter;
+	declare commenter?: Commenter;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@HasMany(() => DiscussionAnchor, {
 		onDelete: 'CASCADE',
 		as: 'anchors',
 		foreignKey: 'discussionId',
 	})
-	anchors?: DiscussionAnchor[];
+	declare anchors?: DiscussionAnchor[];
 }

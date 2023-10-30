@@ -2,8 +2,7 @@ import React from 'react';
 import { Switch } from '@blueprintjs/core';
 
 import { SettingsSection, NavBuilder, NavBar } from 'components';
-import { Callback, Community, PageContext } from 'types';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { Callback, Community, CommunityNavigationEntry, PageContext } from 'types';
 
 type Props = {
 	communityData: Community;

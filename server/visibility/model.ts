@@ -22,16 +22,16 @@ export class Visibility extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Default('private')
 	@Column(DataType.ENUM('private', 'members', 'public'))
-	access!: CreationOptional<VisibilityAccess | null>;
+	declare access: CreationOptional<VisibilityAccess | null>;
 
 	@BelongsToMany(() => User, {
 		as: 'users',
 		through: () => VisibilityUser,
 		foreignKey: 'visibilityId',
 	})
-	users?: VisibilityUser[];
+	declare users?: VisibilityUser[];
 }

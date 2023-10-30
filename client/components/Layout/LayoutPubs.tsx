@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PubPreview } from 'components';
 import { Pub } from 'types';
-import { LayoutBlockPubs } from 'utils/layout/types';
+import { LayoutBlockPubs } from 'types/layout';
 import { createReadingParamUrl } from 'client/utils/collections';
 
 type Props = {

@@ -3,7 +3,6 @@ import { Pub } from 'server/models';
 import * as types from 'types';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { submitResource } from 'deposit/datacite/deposit';
 import { pubAttributionSchema } from './pubAttribution';
 import { discussionSchema } from './discussion';
 import { collectionPubSchema } from './collectionPub';
@@ -111,10 +110,15 @@ export const getManyQuerySchema = z.object({
 	query: z
 		.object({
 			excludeCollectionIds: z.array(z.string().uuid()).optional(),
-			ordering: z.object({
-				field: z.enum(['updatedDate', 'creationDate', 'collectionRank', 'title']),
-				direction: z.enum(['ASC', 'DESC']),
-			}),
+			ordering: z
+				.object({
+					field: z.enum(['updatedDate', 'creationDate', 'collectionRank', 'title']),
+					direction: z.enum(['ASC', 'DESC']),
+				})
+				.default({
+					field: 'creationDate',
+					direction: 'DESC',
+				}),
 			limit: z.number().optional().default(50),
 			offset: z.number().optional().default(0),
 		})
@@ -200,4 +204,4 @@ export const resourceASTSchema = z.object({
 	name: z.string(),
 	attributes: z.record(z.string()).optional(),
 	children: z.array(z.any()).optional(),
-}) satisfies Awaited<ReturnType<typeof submitResource>>['resourceAst'];
+});

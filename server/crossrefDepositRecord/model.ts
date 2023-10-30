@@ -12,8 +12,8 @@ export class CrossrefDepositRecord extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.JSONB)
-	depositJson!: object | null;
+	declare depositJson: object | null;
 }

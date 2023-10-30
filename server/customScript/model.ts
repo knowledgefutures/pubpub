@@ -12,14 +12,14 @@ export class CustomScript extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 
 	@Column(DataType.STRING)
-	type!: string | null;
+	declare type: string | null;
 
 	@Column(DataType.TEXT)
-	content!: string | null;
+	declare content: string | null;
 }

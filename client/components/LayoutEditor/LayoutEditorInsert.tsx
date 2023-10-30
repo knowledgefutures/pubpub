@@ -10,7 +10,7 @@ import {
 } from '@blueprintjs/core';
 
 import { Page } from 'types';
-import { LayoutBlock, PubSortOrder } from 'utils/layout/types';
+import { LayoutBlock, PubSortOrder } from 'types/layout';
 import { Icon } from 'components';
 
 require('./layoutEditorInsert.scss');

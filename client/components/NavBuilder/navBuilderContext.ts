@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Collection, Page } from 'types';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { CommunityNavigationEntry } from 'types/navigation';
 
 type NavBuilderContextType = {
 	pages: Page[];

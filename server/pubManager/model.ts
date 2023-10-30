@@ -22,16 +22,16 @@ export class PubManager extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

@@ -19,6 +19,7 @@ const codeMirrorBlockPlugin = (settings: CodeBlockSettings) => {
 		key: codeMirrorBlockKey,
 		props: {
 			nodeViews: {
+				// @ts-expect-error Type FIXME: '(pmNode: Node, view: PMEditorView, getPos: (() => number) | boolean) => NodeView' is not assignable to type 'NodeViewConstructor'.
 				code_block: codeMirrorBlockNodeView(settings),
 			},
 		},
@@ -29,8 +30,8 @@ export {
 	codeMirrorBlockNodeView,
 	codeBlockArrowHandlers,
 	codeMirrorBlockPlugin,
-	CodeBlockSettings,
-	LanguageLoaders,
+	type CodeBlockSettings,
+	type LanguageLoaders,
 	CodeBlockLanguages,
 	defaultSettings,
 	parsers,

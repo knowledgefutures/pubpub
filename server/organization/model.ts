@@ -26,7 +26,7 @@ export class Organization extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -34,30 +34,30 @@ export class Organization extends Model<
 	@Is(/^[a-zA-Z0-9-]+$/)
 	@Unique
 	@Column(DataType.TEXT)
-	subdomain!: string;
+	declare subdomain: string;
 
 	@Unique
 	@Column(DataType.TEXT)
-	domain!: string | null;
+	declare domain: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	title!: string;
+	declare title: string;
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	description!: string | null;
+	declare description: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.TEXT)
-	favicon!: string | null;
+	declare favicon: string | null;
 
 	@HasMany(() => Community, {
 		onDelete: 'CASCADE',
 		as: 'communities',
 		foreignKey: 'organizationId',
 	})
-	communities?: Community[];
+	declare communities?: Community[];
 }

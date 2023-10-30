@@ -22,49 +22,49 @@ export class UserNotificationPreferences extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Default(true)
 	@Column(DataType.BOOLEAN)
-	receiveNotifications!: CreationOptional<boolean>;
+	declare receiveNotifications: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	receiveDiscussionThreadEmails!: CreationOptional<boolean>;
+	declare receiveDiscussionThreadEmails: CreationOptional<boolean>;
 
 	@Column(DataType.DATE)
-	lastReceivedNotificationsAt!: Date | null;
+	declare lastReceivedNotificationsAt: Date | null;
 
 	@AllowNull(false)
 	@Default(true)
 	@Column(DataType.BOOLEAN)
-	subscribeToThreadsAsCommenter!: CreationOptional<boolean>;
+	declare subscribeToThreadsAsCommenter: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Default(true)
 	@Column(DataType.BOOLEAN)
-	subscribeToPubsAsMember!: CreationOptional<boolean>;
+	declare subscribeToPubsAsMember: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Default(true)
 	@Column(DataType.BOOLEAN)
-	subscribeToPubsAsContributor!: CreationOptional<boolean>;
+	declare subscribeToPubsAsContributor: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	notificationCadence!: CreationOptional<number>;
+	declare notificationCadence: CreationOptional<number>;
 
 	// TODO: Add validation for this, or make enum
 	@AllowNull(false)
 	@Default('clicked-through')
 	@Column(DataType.STRING)
-	markReadTrigger!: CreationOptional<UserNotificationMarkReadTrigger>;
+	declare markReadTrigger: CreationOptional<UserNotificationMarkReadTrigger>;
 }

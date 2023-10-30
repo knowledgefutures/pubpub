@@ -5,7 +5,7 @@ import { Community } from 'types';
 import { getResizedUrl } from 'utils/images';
 import { formatDate } from 'utils/dates';
 
-import { Section } from '.';
+import { Section } from './Section';
 import { BaseTableStyle } from './shared';
 
 type Props = {

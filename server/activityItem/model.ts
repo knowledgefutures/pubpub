@@ -9,7 +9,8 @@ import {
 	Index,
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { InsertableActivityItem, SerializedModel } from 'types';
+import type { SerializedModel } from 'types';
+import { type InsertableActivityItem } from 'types/activity';
 
 @Table
 export class ActivityItem<T extends InsertableActivityItem = InsertableActivityItem> extends Model<
@@ -21,35 +22,35 @@ export class ActivityItem<T extends InsertableActivityItem = InsertableActivityI
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	kind!: T['kind'];
+	declare kind: T['kind'];
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	// TODO: Add validation for payload
 	@Column(DataType.JSONB)
-	payload!: T['payload'];
+	declare payload: T['payload'];
 
 	@AllowNull(false)
 	@Default(DataType.NOW)
 	@Column(DataType.DATE)
-	timestamp!: CreationOptional<string>;
+	declare timestamp: CreationOptional<string>;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	communityId!: string;
+	declare communityId: string;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	actorId!: string | null;
+	declare actorId: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	collectionId!: string | null;
+	declare collectionId: string | null;
 }

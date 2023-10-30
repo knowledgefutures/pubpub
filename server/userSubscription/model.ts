@@ -24,35 +24,35 @@ export class UserSubscription extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.BOOLEAN)
-	setAutomatically!: boolean;
+	declare setAutomatically: boolean;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	status!: UserSubscriptionStatus;
+	declare status: UserSubscriptionStatus;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
-	threadId!: string | null;
+	declare threadId: string | null;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@BelongsTo(() => Thread, { onDelete: 'CASCADE', as: 'thread', foreignKey: 'threadId' })
-	thread?: Thread;
+	declare thread?: Thread;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

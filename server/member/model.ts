@@ -20,49 +20,49 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Default('view')
 	@Column(DataType.ENUM('view', 'edit', 'manage', 'admin'))
-	permissions!: CreationOptional<MemberPermission>;
+	declare permissions: CreationOptional<MemberPermission>;
 
 	@Column(DataType.BOOLEAN)
-	isOwner!: boolean | null;
+	declare isOwner: boolean | null;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	subscribedToActivityDigest!: CreationOptional<boolean>;
+	declare subscribedToActivityDigest: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	@Column(DataType.UUID)
-	collectionId!: string | null;
+	declare collectionId: string | null;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 
 	@Column(DataType.UUID)
-	organizationId!: string | null;
+	declare organizationId: string | null;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	declare community?: Community;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	collection?: Collection;
+	declare collection?: Collection;
 }

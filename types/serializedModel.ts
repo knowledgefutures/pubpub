@@ -1,4 +1,4 @@
-import { Attributes, CreationAttributes } from 'sequelize';
+import { Attributes, CreationAttributes, CreationOptional } from 'sequelize';
 import { Model } from 'sequelize-typescript';
 
 type Prettify<T> = {
@@ -20,6 +20,8 @@ export type SerializedModel<
 		? S[P] extends Date
 			? string
 			: string | null
+		: S[P] extends CreationOptional<infer R>
+		? R
 		: S[P];
 }>;
 

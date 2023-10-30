@@ -23,45 +23,45 @@ export class UserNotification extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userSubscriptionId!: string;
+	declare userSubscriptionId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	activityItemId!: string;
+	declare activityItemId: string;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	isRead!: CreationOptional<boolean>;
+	declare isRead: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	manuallySetIsRead!: CreationOptional<boolean>;
+	declare manuallySetIsRead: CreationOptional<boolean>;
 
 	@BelongsTo(() => ActivityItem<InsertableActivityItem>, {
 		onDelete: 'CASCADE',
 		as: 'activityItem',
 		foreignKey: 'activityItemId',
 	})
-	activityItem?: ActivityItem;
+	declare activityItem?: ActivityItem;
 
 	@BelongsTo(() => UserSubscription, {
 		onDelete: 'CASCADE',
 		as: 'userSubscription',
 		foreignKey: 'userSubscriptionId',
 	})
-	userSubscription?: UserSubscription;
+	declare userSubscription?: UserSubscription;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

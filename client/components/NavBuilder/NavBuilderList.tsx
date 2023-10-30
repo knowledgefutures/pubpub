@@ -4,7 +4,7 @@ import { Button } from '@blueprintjs/core';
 
 import Icon from 'components/Icon/Icon';
 
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { CommunityNavigationEntry } from 'types/navigation';
 
 import { NavBuilderContext } from './navBuilderContext';
 import NavBuilderRow from './NavBuilderRow';

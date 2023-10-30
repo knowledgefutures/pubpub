@@ -6,7 +6,10 @@ import { ActivityItem } from 'types/activity';
 import { IconName } from 'components';
 import { formatDate } from 'utils/dates';
 
-import { Spacer, Section, Wrapper, CommunityHeader } from '..';
+import { Spacer } from '../Spacer';
+import { Section } from '../Section';
+import { Wrapper } from '../Wrapper';
+import { CommunityHeader } from '../CommunityHeader';
 import { ActivityBundle, DigestIntro, DigestSectionTitle, DigestFooter } from '.';
 
 type DisplayKey = string;

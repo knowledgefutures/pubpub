@@ -24,27 +24,27 @@ export class ThreadUser extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Default('viewer')
 	@Column(DataType.ENUM('viewer', 'reviewer'))
-	type!: CreationOptional<string | null>;
+	declare type: CreationOptional<string | null>;
 
 	@IsLowercase
 	@IsEmail
 	@Column(DataType.TEXT)
-	email!: string | null;
+	declare email: string | null;
 
 	@Column(DataType.TEXT)
-	hash!: string | null;
+	declare hash: string | null;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	threadId!: string;
+	declare threadId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

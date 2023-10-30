@@ -41,7 +41,7 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -49,35 +49,35 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 	@Is(/^[a-zA-Z0-9-]+$/)
 	@Unique
 	@Column(DataType.TEXT)
-	slug!: string;
+	declare slug: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	title!: string;
+	declare title: string;
 
 	@Column(DataType.TEXT)
-	htmlTitle!: string | null;
-
-	@Length({ min: 0, max: 280 })
-	@Column(DataType.TEXT)
-	description!: string | null;
+	declare htmlTitle: string | null;
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	htmlDescription!: string | null;
+	declare description: string | null;
+
+	@Length({ min: 0, max: 280 })
+	@Column(DataType.TEXT)
+	declare htmlDescription: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.DATE)
-	customPublishedAt!: Date | null;
+	declare customPublishedAt: Date | null;
 
 	@Column(DataType.TEXT)
-	doi!: string | null;
+	declare doi: string | null;
 
 	// TODO: add validation for labels
 	@Column(DataType.JSONB)
-	labels!:
+	declare labels:
 		| {
 				id: string;
 				color: string;
@@ -96,40 +96,40 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
   }
  */
 	@Column(DataType.JSONB)
-	downloads!: any[] | null;
+	declare downloads: any[] | null;
 
 	@Column(DataType.JSONB)
-	metadata!: { mtg_id: string; bibcode: string; mtg_presentation_id: string } | null;
+	declare metadata: { mtg_id: string; bibcode: string; mtg_presentation_id: string } | null;
 
 	@Column(DataType.STRING)
-	viewHash!: string | null;
+	declare viewHash: string | null;
 
 	@Column(DataType.STRING)
-	editHash!: string | null;
+	declare editHash: string | null;
 
 	@Column(DataType.STRING)
-	reviewHash!: string | null;
+	declare reviewHash: string | null;
 
 	@Column(DataType.STRING)
-	commentHash!: string | null;
+	declare commentHash: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	draftId!: string;
+	declare draftId: string;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	communityId!: string;
+	declare communityId: string;
 
 	@Column(DataType.UUID)
-	crossrefDepositRecordId!: string | null;
+	declare crossrefDepositRecordId: string | null;
 
 	@Column(DataType.UUID)
-	scopeSummaryId!: string | null;
+	declare scopeSummaryId: string | null;
 
 	@HasMany(() => PubAttribution, { onDelete: 'CASCADE', as: 'attributions', foreignKey: 'pubId' })
-	attributions?: PubAttribution[];
+	declare attributions?: PubAttribution[];
 
 	@HasMany(() => CollectionPub, {
 		onDelete: 'CASCADE',
@@ -137,52 +137,52 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 		as: 'collectionPubs',
 		foreignKey: 'pubId',
 	})
-	collectionPubs?: CollectionPub[];
+	declare collectionPubs?: CollectionPub[];
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	declare community?: Community;
 
 	@BelongsTo(() => Draft, { as: 'draft', foreignKey: 'draftId' })
-	draft?: Draft;
+	declare draft?: Draft;
 
 	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'pubId' })
-	discussions?: Discussion[];
+	declare discussions?: Discussion[];
 
 	@HasMany(() => Export, { as: 'exports', foreignKey: 'pubId' })
-	exports?: Export[];
+	declare exports?: Export[];
 
 	@HasMany(() => ReviewNew, { onDelete: 'CASCADE', as: 'reviews', foreignKey: 'pubId' })
-	reviews?: ReviewNew[];
+	declare reviews?: ReviewNew[];
 
 	@HasMany(() => Member, { onDelete: 'CASCADE', as: 'members', foreignKey: 'pubId' })
-	members?: Member[];
+	declare members?: Member[];
 
 	@HasMany(() => Release, { onDelete: 'CASCADE', as: 'releases', foreignKey: 'pubId' })
-	releases?: Release[];
+	declare releases?: Release[];
 
 	@HasMany(() => PubVersion, { onDelete: 'CASCADE', as: 'pubVersions', foreignKey: 'pubId' })
-	pubVersions?: PubVersion[];
+	declare pubVersions?: PubVersion[];
 
 	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'outboundEdges', foreignKey: 'pubId' })
-	outboundEdges?: Omit<PubEdge, 'pub'>[];
+	declare outboundEdges?: Omit<PubEdge, 'pub'>[];
 
 	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'inboundEdges', foreignKey: 'targetPubId' })
-	inboundEdges?: Omit<PubEdge, 'targetPub'>[];
+	declare inboundEdges?: Omit<PubEdge, 'targetPub'>[];
 
 	@HasOne(() => Submission, { as: 'submission', foreignKey: 'pubId' })
-	submission?: Submission;
+	declare submission?: Submission;
 
 	@BelongsTo(() => CrossrefDepositRecord, {
 		as: 'crossrefDepositRecord',
 		foreignKey: 'crossrefDepositRecordId',
 		onDelete: 'SET NULL',
 	})
-	crossrefDepositRecord?: CrossrefDepositRecord;
+	declare crossrefDepositRecord?: CrossrefDepositRecord;
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',
 		foreignKey: 'scopeSummaryId',
 		onDelete: 'SET NULL',
 	})
-	scopeSummary?: ScopeSummary;
+	declare scopeSummary?: ScopeSummary;
 }

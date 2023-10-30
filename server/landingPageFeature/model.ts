@@ -24,27 +24,27 @@ export class LandingPageFeature extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Index({ unique: true })
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 
 	@Index({ unique: true })
 	@Column(DataType.UUID)
-	pubId!: string | null;
+	declare pubId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	rank!: string;
+	declare rank: string;
 
 	// TODO: add validation for payload
 	@Column(DataType.JSONB)
-	payload!: Record<string, any> | null;
+	declare payload: Record<string, any> | null;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'community' | 'releases'>;
+	declare pub?: DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'community' | 'releases'>;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	declare community?: Community;
 }

@@ -1,7 +1,7 @@
-import { PubEdge } from 'types';
+import { PubEdge } from 'types/pubEdge';
 import { sortByRank } from 'utils/rank';
 import { toTitleCase } from 'utils/strings';
-import { TuplifyUnion } from 'utils/types';
+import type { TuplifyUnion } from 'utils/types';
 
 export const relationTypeDefinitions = {
 	comment: {

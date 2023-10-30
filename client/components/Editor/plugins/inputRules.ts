@@ -46,7 +46,6 @@ const inlineCodeRule = (markType) =>
 	new InputRule(
 		// \040 is the space character
 		/`([^`]+)`\040/,
-		// @ts-expect-error FIXME: Mismatch between RegExpMatchArray here and string[] in prosemirror-inputrules
 		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
 			const [_, content] = match;
 			const fragment = Fragment.fromArray([
@@ -78,7 +77,6 @@ const inlineMathRule = (
 	new InputRule(
 		// \040 is the space character
 		/\$([^$]+?)\$\040$/,
-		// @ts-expect-error FIXME: Mismatch between RegExpMatchArray here and string[] in prosemirror-inputrules
 		(state: EditorState, matches: RegExpMatchArray, start: number, end: number) => {
 			const [_, match] = matches;
 			const resolvedStart = state.doc.resolve(start + 1); // +1 to capture non-inclusive marks
@@ -149,7 +147,6 @@ export const linkRuleHandler = (
 // Typing www.example.com in the editor will produce <a href="www.example.com">www.example.com</a>
 // and typing email@example.com will produce <a href="mailto:email@example.com">email@example.com</a>
 function linkRule(markType: MarkType) {
-	// @ts-expect-error FIXME: Mismatch between RegExpMatchArray in linkRuleHandler and string[] in prosemirror-inputrules
 	return new InputRule(EMAIL_OR_URI_REGEX_WITH_SPACE, linkRuleHandler(markType, true));
 }
 

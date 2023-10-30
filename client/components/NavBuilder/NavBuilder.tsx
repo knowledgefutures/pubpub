@@ -3,7 +3,8 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import { Button } from '@blueprintjs/core';
 
 import { generateHash } from 'utils/hashes';
-import { CommunityNavigationEntry, isCommunityNavigationMenu } from 'client/utils/navigation';
+import { isCommunityNavigationMenu } from 'client/utils/navigation';
+import { CommunityNavigationEntry } from 'types';
 
 import PageCollectionAutocomplete from './PageCollectionAutocomplete';
 import NavBuilderList from './NavBuilderList';

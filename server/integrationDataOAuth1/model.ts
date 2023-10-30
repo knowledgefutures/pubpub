@@ -15,15 +15,15 @@ export class IntegrationDataOAuth1 extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	accessToken!: string | null;
+	declare accessToken: string | null;
 
 	@HasOne(() => ZoteroIntegration, {
 		foreignKey: { allowNull: false, name: 'integrationDataOAuth1Id' },
 		as: 'zoteroIntegration',
 		onDelete: 'CASCADE',
 	})
-	zoteroIntegration?: ZoteroIntegration;
+	declare zoteroIntegration?: ZoteroIntegration;
 }

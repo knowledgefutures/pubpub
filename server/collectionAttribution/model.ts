@@ -23,48 +23,48 @@ export class CollectionAttribution extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	name!: string | null;
+	declare name: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.TEXT)
-	title!: string | null;
+	declare title: string | null;
 
 	// TODO: Add AllowNull(false) for this. Made non-null as that is how its used, but technically still nullable in the db
 	@Column(DataType.DOUBLE)
-	order!: number;
+	declare order: number;
 
 	@Column(DataType.BOOLEAN)
-	isAuthor!: boolean | null;
+	declare isAuthor: boolean | null;
 
 	// TODO: Add validation for roles
 	@Column(DataType.JSONB)
-	roles!: string[] | null;
+	declare roles: string[] | null;
 
 	@Column(DataType.TEXT)
-	affiliation!: string | null;
+	declare affiliation: string | null;
 
 	@Column(DataType.STRING)
-	orcid!: string | null;
+	declare orcid: string | null;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	collectionId!: string;
+	declare collectionId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: MinimalUser;
+	declare user?: MinimalUser;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	collection?: Collection;
+	declare collection?: Collection;
 }

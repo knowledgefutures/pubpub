@@ -12,26 +12,26 @@ export class DepositTarget extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 
 	@Column(DataType.STRING)
-	doiPrefix!: string | null;
+	declare doiPrefix: string | null;
 
 	@Default('crossref')
 	@Column(DataType.ENUM('crossref', 'datacite'))
-	service!: CreationOptional<'crossref' | 'datacite' | null>;
+	declare service: CreationOptional<'crossref' | 'datacite' | null>;
 
 	@Column(DataType.STRING)
-	username!: string | null;
+	declare username: string | null;
 
 	@Column(DataType.STRING)
-	password!: string | null;
+	declare password: string | null;
 
 	@Column(DataType.TEXT)
-	passwordInitVec!: string | null;
+	declare passwordInitVec: string | null;
 
 	declare isPubPubManaged?: boolean;
 }

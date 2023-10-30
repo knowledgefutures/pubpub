@@ -20,44 +20,44 @@ export class PubEdge extends Model<InferAttributes<PubEdge>, InferCreationAttrib
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@Column(DataType.UUID)
-	externalPublicationId!: string | null;
+	declare externalPublicationId: string | null;
 
 	@Column(DataType.UUID)
-	targetPubId!: string | null;
+	declare targetPubId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	relationType!: RelationTypeName;
+	declare relationType: RelationTypeName;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	rank!: string;
+	declare rank: string;
 
 	@AllowNull(false)
 	@Column(DataType.BOOLEAN)
-	pubIsParent!: boolean;
+	declare pubIsParent: boolean;
 
 	@AllowNull(false)
 	@Column(DataType.BOOLEAN)
-	approvedByTarget!: boolean;
+	declare approvedByTarget: boolean;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'targetPub', foreignKey: 'targetPubId' })
-	targetPub?: Pub;
+	declare targetPub?: Pub;
 
 	@BelongsTo(() => ExternalPublication, {
 		onDelete: 'CASCADE',
 		as: 'externalPublication',
 		foreignKey: 'externalPublicationId',
 	})
-	externalPublication?: ExternalPublication;
+	declare externalPublication?: ExternalPublication;
 }

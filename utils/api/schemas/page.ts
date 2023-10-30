@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import * as types from 'types';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { layoutBlockSchema } from 'utils/layout';
 import { Page } from 'server/models';
+import { layoutBlockSchema } from './layout';
 
 extendZodWithOpenApi(z);
 

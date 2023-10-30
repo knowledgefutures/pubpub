@@ -19,14 +19,14 @@ export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.DATE)
-	latestKeyAt!: Date | null;
+	declare latestKeyAt: Date | null;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	firebasePath!: string;
+	declare firebasePath: string;
 
 	// @HasOne(() => Pub, { as: 'pub', foreignKey: 'draftId' })
 	// pub?: Pub;

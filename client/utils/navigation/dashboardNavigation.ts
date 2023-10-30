@@ -1,29 +1,15 @@
-import { LocationData } from 'types';
-import { IconName } from 'components';
+import {
+	ActiveDashboardMode,
+	DashboardMenuState,
+	LocationData,
+	RenderedDashboardMenuItem,
+} from 'types';
 import { DashboardMode, getDashUrl } from 'utils/dashboard';
 import { checkMemberPermission } from 'utils/permissions';
 import { pubPubIcons } from 'client/utils/icons';
 import { assert } from 'utils/assert';
 
 import { menuItemsByScopeType, MenuItem, ReadablePageContext } from './dashboardMenuItems';
-
-type RenderedDashboardMenuItem = {
-	title: string;
-	icon: IconName;
-	href: string;
-	active: boolean;
-	count: null | number;
-};
-
-type ActiveDashboardMode = {
-	mode: DashboardMode;
-	subMode: string | null;
-};
-
-export type DashboardMenuState = {
-	menuItems: RenderedDashboardMenuItem[];
-	activeMode: null | ActiveDashboardMode;
-};
 
 const inferDashboardModeFromPath = (path: string): DashboardMode => {
 	const [_nothing, _dash, ...rest] = path.split('/');

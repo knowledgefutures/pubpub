@@ -22,15 +22,15 @@ export class VisibilityUser extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@ForeignKey(() => User)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@ForeignKey(() => Visibility)
 	@Column(DataType.UUID)
-	visibilityId!: string;
+	declare visibilityId: string;
 }

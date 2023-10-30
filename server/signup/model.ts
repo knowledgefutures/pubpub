@@ -20,24 +20,24 @@ export class Signup extends Model<InferAttributes<Signup>, InferCreationAttribut
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@IsLowercase
 	@IsEmail
 	@Unique
 	@Column(DataType.TEXT)
-	email!: string;
+	declare email: string;
 
 	@Column(DataType.TEXT)
-	hash!: string | null;
+	declare hash: string | null;
 
 	@Column(DataType.INTEGER)
-	count!: number | null;
+	declare count: number | null;
 
 	@Column(DataType.BOOLEAN)
-	completed!: boolean | null;
+	declare completed: boolean | null;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 }

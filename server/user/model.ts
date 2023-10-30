@@ -118,7 +118,7 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -126,121 +126,121 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	@Is(/^[a-zA-Z0-9-]+$/)
 	@Unique
 	@Column(DataType.TEXT)
-	slug!: string;
+	declare slug: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	firstName!: string;
+	declare firstName: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	lastName!: string;
+	declare lastName: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	fullName!: string;
+	declare fullName: string;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	initials!: string;
+	declare initials: string;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.TEXT)
-	bio!: string | null;
+	declare bio: string | null;
 
 	@Column(DataType.TEXT)
-	title!: string | null;
+	declare title: string | null;
 
 	@AllowNull(false)
 	@IsLowercase
 	@IsEmail
 	@Unique
 	@Column(DataType.TEXT)
-	email!: string;
+	declare email: string;
 
 	@IsLowercase
 	@IsEmail
 	@Column(DataType.TEXT)
-	publicEmail!: string | null;
+	declare publicEmail: string | null;
 
 	@Column(DataType.TEXT)
-	authRedirectHost!: string | null;
+	declare authRedirectHost: string | null;
 
 	@Column(DataType.TEXT)
-	location!: string | null;
+	declare location: string | null;
 
 	@Column(DataType.TEXT)
-	website!: string | null;
+	declare website: string | null;
 
 	@Column(DataType.TEXT)
-	facebook!: string | null;
+	declare facebook: string | null;
 
 	@Column(DataType.TEXT)
-	twitter!: string | null;
+	declare twitter: string | null;
 
 	@Column(DataType.TEXT)
-	github!: string | null;
+	declare github: string | null;
 
 	@Column(DataType.TEXT)
-	orcid!: string | null;
+	declare orcid: string | null;
 
 	@Column(DataType.TEXT)
-	googleScholar!: string | null;
+	declare googleScholar: string | null;
 
 	@Column(DataType.DATE)
-	resetHashExpiration!: Date | null;
+	declare resetHashExpiration: Date | null;
 
 	@Column(DataType.TEXT)
-	resetHash!: string | null;
+	declare resetHash: string | null;
 
 	@Column(DataType.BOOLEAN)
-	inactive!: boolean | null;
+	declare inactive: boolean | null;
 
 	@Column(DataType.INTEGER)
-	pubpubV3Id!: number | null;
+	declare pubpubV3Id: number | null;
 
 	@Column(DataType.TEXT)
-	passwordDigest!: string | null;
-
-	@AllowNull(false)
-	@Column(DataType.TEXT)
-	hash!: CreationOptional<string>;
+	declare passwordDigest: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	salt!: CreationOptional<string>;
+	declare hash: CreationOptional<string>;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	declare salt: CreationOptional<string>;
 
 	@Default(null)
 	@Column(DataType.BOOLEAN)
-	gdprConsent!: CreationOptional<boolean | null>;
+	declare gdprConsent: CreationOptional<boolean | null>;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	isSuperAdmin!: CreationOptional<boolean>;
+	declare isSuperAdmin: CreationOptional<boolean>;
 
 	@HasMany(() => PubAttribution, {
 		onDelete: 'CASCADE',
 		as: 'attributions',
 		foreignKey: 'userId',
 	})
-	attributions?: PubAttribution[];
+	declare attributions?: PubAttribution[];
 
 	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' })
-	discussions?: Discussion[];
+	declare discussions?: Discussion[];
 
 	@HasOne(() => UserNotificationPreferences, {
 		onDelete: 'CASCADE',
 		as: 'userNotificationPreferences',
 		foreignKey: 'userId',
 	})
-	userNotificationPreferences?: UserNotificationPreferences;
+	declare userNotificationPreferences?: UserNotificationPreferences;
 
 	@HasOne(() => ZoteroIntegration, {
 		as: 'zoteroIntegration',
 		foreignKey: { name: 'userId', allowNull: false },
 	})
-	zoteroIntegration?: ZoteroIntegration;
+	declare zoteroIntegration?: ZoteroIntegration;
 }

@@ -1,3 +1,5 @@
+// @ts-check
+
 const { resolve } = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -54,7 +56,7 @@ module.exports = {
 				type: 'javascript/auto',
 			},
 			{
-				test: /\.(js|jsx|ts|tsx)$/,
+				test: /\.((c|m)?js|jsx|ts|tsx)$/,
 				include: [
 					resolve(__dirname, '../'),
 					resolve(__dirname, '../../deposit'),
@@ -62,8 +64,13 @@ module.exports = {
 					resolve(__dirname, '../../types'),
 					resolve(__dirname, '../../facets'),
 				],
-				loader: 'ts-loader',
-				options: { configFile: resolve(__dirname, '../../tsconfig.client.json') },
+				loader: 'esbuild-loader',
+				/**
+				 * @type {import('esbuild-loader').LoaderOptions}
+				 */
+				options: {
+					tsconfig: resolve(__dirname, '../../tsconfig.client.json'),
+				},
 			},
 			{
 				test: /\.scss$/,

@@ -22,23 +22,23 @@ export class ThreadEvent extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.STRING)
-	type!: string | null;
+	declare type: string | null;
 
 	// TODO: Add validation for this
 	@Column(DataType.JSONB)
-	data!: Record<string, any> | null;
+	declare data: Record<string, any> | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	threadId!: string;
+	declare threadId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

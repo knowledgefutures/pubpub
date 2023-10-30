@@ -30,8 +30,8 @@ export { default as Editor } from './Editor';
 export { default as FacetEditor } from './FacetEditor';
 export {
 	default as FacetsStateProvider,
-	FacetsState,
-	FacetState,
+	type FacetsState,
+	type FacetState,
 	FacetsContext,
 } from './FacetsStateProvider';
 export { default as FileUploadButton } from './FileUploadButton/FileUploadButton';
@@ -40,7 +40,7 @@ export { default as FormattingBar } from './FormattingBar/FormattingBar';
 export { default as GlobalControls } from './GlobalControls';
 export { default as GridWrapper } from './GridWrapper/GridWrapper';
 export { default as Header } from './Header/Header';
-export { default as Icon, IconName } from './Icon/Icon';
+export { default as Icon, type IconName } from './Icon/Icon';
 export { default as ImageCropper } from './ImageCropper/ImageCropper';
 export { default as ImageUpload } from './ImageUpload/ImageUpload';
 export { default as InputField } from './InputField/InputField';
@@ -57,11 +57,11 @@ export {
 	MenuConfigProvider,
 	MenuItem,
 	MenuSelect,
-	MenuSelectItem,
-	MenuSelectItems,
+	type MenuSelectItem,
+	type MenuSelectItems,
 } from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
-export { default as MobileAware, MobileAwareRenderProps } from './MobileAware';
+export { default as MobileAware, type MobileAwareRenderProps } from './MobileAware';
 export { default as NavBar } from './NavBar/NavBar';
 export { default as NavBuilder } from './NavBuilder/NavBuilder';
 export { default as NonIdealState } from './NonIdealState/NonIdealState';

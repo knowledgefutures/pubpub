@@ -15,7 +15,6 @@ const pmTableNodes = tableNodes({
 		background: {
 			default: null,
 			getFromDOM: (dom) => {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'style' does not exist on type 'Element'.
 				return dom.style.backgroundColor || null;
 			},
 			setDOMAttr: (value /* , attrs */) => {

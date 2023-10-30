@@ -58,6 +58,7 @@ const GlobalControlsButton = React.forwardRef((props: Props, ref: React.Ref<unkn
 		if (href) {
 			return <AnchorButton href={href} {...sharedProps} />;
 		}
+		// @ts-expect-error ts-migrate(2769) FIXME: Weird overlap between Anchor and Button types
 		return <Button onClick={onClick} {...sharedProps} />;
 	};
 

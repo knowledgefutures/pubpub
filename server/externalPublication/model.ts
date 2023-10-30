@@ -20,29 +20,29 @@ export class ExternalPublication extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	title!: string;
+	declare title: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	url!: string;
+	declare url: string;
 
 	// TODO: add validation for contributors
 	@Column(DataType.JSONB)
-	contributors!: string[] | null;
+	declare contributors: string[] | null;
 
 	@Column(DataType.TEXT)
-	doi!: string | null;
+	declare doi: string | null;
 
 	@Column(DataType.TEXT)
-	description!: string | null;
+	declare description: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.DATE)
-	publicationDate!: string | null;
+	declare publicationDate: string | null;
 }

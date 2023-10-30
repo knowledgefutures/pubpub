@@ -1,21 +1,21 @@
-// @ts-expect-error (TableView is exported by this package but not present in its .d.ts definitions)
 import { TableView as BaseTableView } from 'prosemirror-tables';
+import type { Node } from 'prosemirror-model';
 
 import { buildLabel } from '../utils';
 
 export class TableView extends BaseTableView {
-	constructor(node, ...rest) {
-		super(node, ...rest);
+	constructor(node: Node, cellMinWidth: number) {
+		super(node, cellMinWidth);
 		this.sync(node);
 	}
 
-	update(node, decorations) {
-		const shouldUpdate = super.update(node, decorations);
+	update(node: Node) {
+		const shouldUpdate = super.update(node);
 		this.sync(node);
 		return shouldUpdate;
 	}
 
-	syncCaption(node) {
+	syncCaption(node: Node) {
 		const { dom } = this as any as { dom: HTMLElement };
 		const label = buildLabel(node);
 		const table = dom.querySelector('table');
@@ -32,7 +32,7 @@ export class TableView extends BaseTableView {
 		}
 	}
 
-	syncAttributes(node) {
+	syncAttributes(node: Node) {
 		const {
 			id,
 			suggestionKind,
@@ -58,7 +58,7 @@ export class TableView extends BaseTableView {
 		dom.setAttribute('data-smaller-font', smallerFont);
 	}
 
-	sync(node) {
+	sync(node: Node) {
 		this.syncAttributes(node);
 		this.syncCaption(node);
 	}

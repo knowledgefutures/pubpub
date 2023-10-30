@@ -22,26 +22,26 @@ export class ReviewEvent extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.STRING)
-	type!: string | null;
+	declare type: string | null;
 
 	@Column(DataType.JSONB)
-	data!: object | null;
+	declare data: object | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	reviewId!: string;
+	declare reviewId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

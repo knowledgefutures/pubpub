@@ -57,7 +57,8 @@ export const collectionPubServer = s.router(contract.collectionPub, {
 		});
 		return {
 			status: 201,
-			body: collectionPub,
+			// FIXME: Do some checking of whether the contextHint is valid
+			body: collectionPub as any,
 		};
 		// return res.status(201).json(collectionPub);
 	},

@@ -7,7 +7,7 @@ import {
 	Intent as BlueprintIntent,
 } from '@blueprintjs/core';
 
-import { PubPubIconName, pubPubIcons } from 'client/utils/icons';
+import { PubPubIconName, pubPubIcons } from '../../utils/icons';
 
 import customIcons from './customIcons';
 

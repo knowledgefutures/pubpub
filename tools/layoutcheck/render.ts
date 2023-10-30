@@ -1,5 +1,5 @@
 import { Pub } from 'types';
-import { LayoutBlock, LayoutRenderContext, PubSortOrder } from 'utils/layout/types';
+import { LayoutBlock, LayoutRenderContext, PubSortOrder } from 'types/layout';
 import { sortByRank } from 'utils/rank';
 import { indexByProperty } from 'utils/arrays';
 import { getPubPublishedDate } from 'utils/pub/pubDates';

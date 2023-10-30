@@ -1,6 +1,6 @@
 import { indexByProperty, splitArrayOn } from 'utils/arrays';
 
-import { LayoutPubsByBlock, LayoutBlock, LayoutBlockPubs } from './types';
+import { LayoutPubsByBlock, LayoutBlock, LayoutBlockPubs } from '../../types/layout';
 
 export const resolveLayoutPubsByBlock = <T extends { id: string }>(
 	pubsByBlock: LayoutPubsByBlock<T>,

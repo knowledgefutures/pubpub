@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { ActivityAssociations } from 'types';
 import { Icon } from 'components';
 
-import { DedupedActivityItems, ActivityBundleRow } from '.';
+import { ActivityBundleRow } from './ActivityBundleRow';
+import { DedupedActivityItems } from './Digest';
 
 const MAX_TITLE_CHARS = 65;
 

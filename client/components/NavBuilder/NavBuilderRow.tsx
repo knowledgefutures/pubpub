@@ -4,7 +4,8 @@ import { Button, InputGroup } from '@blueprintjs/core';
 
 import { Icon, IconName } from 'components';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { CommunityNavigationEntry, isCommunityNavigationMenu } from 'client/utils/navigation';
+import { isCommunityNavigationMenu } from 'client/utils/navigation';
+import { CommunityNavigationEntry } from 'types/navigation';
 
 import PageCollectionAutocomplete from './PageCollectionAutocomplete';
 import { NavBuilderContext } from './navBuilderContext';

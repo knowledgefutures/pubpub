@@ -14,7 +14,7 @@ import LayoutPagesCollections, {
 	BlockItem,
 	PageOrCollection,
 } from 'components/Layout/LayoutPagesCollections';
-import { CollectionsPagesJustifyType } from 'utils/layout/types';
+import { CollectionsPagesJustifyType } from 'types/layout';
 
 type Props = {
 	onChange: (index: number, block: Content) => any;

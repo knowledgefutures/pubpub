@@ -20,30 +20,30 @@ export class ScopeSummary extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	collections!: CreationOptional<number>;
+	declare collections: CreationOptional<number>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	pubs!: CreationOptional<number>;
+	declare pubs: CreationOptional<number>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	discussions!: CreationOptional<number>;
+	declare discussions: CreationOptional<number>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	reviews!: CreationOptional<number>;
+	declare reviews: CreationOptional<number>;
 
 	@AllowNull(false)
 	@Default(0)
 	@Column(DataType.INTEGER)
-	submissions!: CreationOptional<number>;
+	declare submissions: CreationOptional<number>;
 }

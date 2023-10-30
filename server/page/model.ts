@@ -20,47 +20,47 @@ export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<P
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	title!: string;
+	declare title: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	slug!: string;
+	declare slug: string;
 
 	@Column(DataType.TEXT)
-	description!: string | null;
+	declare description: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	isPublic!: CreationOptional<boolean>;
+	declare isPublic: CreationOptional<boolean>;
 
 	@Column(DataType.BOOLEAN)
-	isNarrowWidth!: boolean | null;
+	declare isNarrowWidth: boolean | null;
 
 	@Column(DataType.TEXT)
-	viewHash!: string | null;
+	declare viewHash: string | null;
 
 	// TODO: Add @IsArray validation
 	@AllowNull(false)
 	@Column(DataType.JSONB)
-	layout!: LayoutBlock[];
+	declare layout: LayoutBlock[];
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	layoutAllowsDuplicatePubs!: CreationOptional<boolean>;
+	declare layoutAllowsDuplicatePubs: CreationOptional<boolean>;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	communityId!: string;
+	declare communityId: string;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	declare community?: Community;
 }

@@ -10,14 +10,14 @@ export class Thread extends Model<InferAttributes<Thread>, InferCreationAttribut
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.BOOLEAN)
-	isLocked!: boolean | null;
+	declare isLocked: boolean | null;
 
 	@HasMany(() => ThreadComment, { onDelete: 'CASCADE', as: 'comments', foreignKey: 'threadId' })
-	comments?: ThreadComment[];
+	declare comments?: ThreadComment[];
 
 	@HasMany(() => ThreadEvent, { onDelete: 'CASCADE', as: 'events', foreignKey: 'threadId' })
-	events?: ThreadEvent[];
+	declare events?: ThreadEvent[];
 }

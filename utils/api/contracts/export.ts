@@ -14,7 +14,7 @@ export const exportRoute = {
 	body: z.object({
 		accessHash: z.string().nullish(),
 		format: z.enum(exportFormatsArray),
-		historyKey: z.number().int().nonnegative().default(0).openapi({
+		historyKey: z.number().int().min(-1).default(0).openapi({
 			description:
 				'Which revision of the pub to export. Always tries to find the latest one, no real use for passing a value here unless you know of all the revisions.',
 		}),

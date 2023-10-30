@@ -20,30 +20,30 @@ export class WorkerTask extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	type!: string;
+	declare type: string;
 
 	// TODO: Add validation for input and enrich with type information
 	@Column(DataType.JSONB)
-	input!: object | null;
+	declare input: object | null;
 
 	@Column(DataType.BOOLEAN)
-	isProcessing!: boolean | null;
+	declare isProcessing: boolean | null;
 
 	@Column(DataType.INTEGER)
-	attemptCount!: number | null;
+	declare attemptCount: number | null;
 
 	// TODO: Add validation for error and enrich with type information
 	@Column(DataType.JSONB)
-	error!: string | null;
+	declare error: string | null;
 
 	// TODO: Add validation for output and enrich with type information
 	@Column(DataType.JSONB)
-	output!: object | null;
+	declare output: object | null;
 
 	@Column(DataType.INTEGER)
-	priority!: number | null;
+	declare priority: number | null;
 }

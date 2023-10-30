@@ -21,24 +21,24 @@ export class FeatureFlagUser extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.UUID)
-	featureFlagId!: string | null;
+	declare featureFlagId: string | null;
 
 	@Column(DataType.UUID)
-	userId!: string | null;
+	declare userId: string | null;
 
 	@Column(DataType.BOOLEAN)
-	enabled!: boolean | null;
+	declare enabled: boolean | null;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 
 	@BelongsTo(() => FeatureFlag, {
 		onDelete: 'CASCADE',
 		as: 'featureFlag',
 		foreignKey: 'featureFlagId',
 	})
-	featureFlag?: FeatureFlag;
+	declare featureFlag?: FeatureFlag;
 }

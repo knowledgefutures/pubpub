@@ -7,7 +7,7 @@ import { generateHash } from 'utils/hashes';
 import { generateDefaultPageLayout } from 'utils/pages';
 
 import { expect } from 'utils/assert';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { CommunityNavigationEntry } from 'types/navigation';
 import { LayoutBlock } from 'utils/layout';
 import { sanitizePageHtml } from './sanitizePageHtml';
 import { PagePermissions } from './permissions';

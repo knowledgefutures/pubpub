@@ -1,14 +1,10 @@
 import { ForbiddenError } from 'server/utils/errors';
 
 import { createGetRequestIds } from 'utils/getRequestIds';
-import { z } from 'zod';
-import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { AppRouteImplementation } from '@ts-rest/express';
 import { contract } from 'utils/api/contract';
 import { getPermissions } from './permissions';
 import { getOrStartExportTask } from './queries';
-
-extendZodWithOpenApi(z);
 
 const getRequestData = createGetRequestIds<{
 	accessHash?: string | null;

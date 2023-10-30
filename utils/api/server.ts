@@ -19,7 +19,11 @@ import { contract } from './contract';
 
 const s = initServer();
 
-export const server = s.router(contract, {
+// FIXME: Add these routes back in
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { customScript, community, ...contractWithScriptsAndCommunity } = contract;
+
+export const server = s.router(contractWithScriptsAndCommunity, {
 	collection: collectionServer,
 	collectionAttribution: collectionAttributionServer,
 	collectionPub: collectionPubServer,

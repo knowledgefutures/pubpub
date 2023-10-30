@@ -5,7 +5,7 @@
 	// should have any effect on our TS builds since "exclude" only removes files from the "include"
 	// array (which we specify in the client/server specific .tsconfig.json files) and those don't
 	// contain node_modules/ or dist/ to begin with.
-	"exclude": ["**/node_modules/*", "**/dist/*"],
+	"exclude": ["**/node_modules/*", "**/dist/*", "**/sdk/**"],
 	"compilerOptions": {
 		/* Visit https://aka.ms/tsconfig.json to read more about this file */
 		/* Basic Options */
@@ -65,10 +65,10 @@
 			"facets/*": ["./facets/*"]
 		} /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
 		// "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-		"typeRoots": [
-			"./types",
-			"node_modules/@types"
-		] /* List of folders to include type definitions from. */,
+		// "typeRoots": [
+		// 	"./types",
+		// 	"./node_modules/@types"
+		// ] /* List of folders to include type definitions from. */,
 		// "types": [],                           /* Type declaration files to be included in compilation. */
 		// "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
 		"esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,

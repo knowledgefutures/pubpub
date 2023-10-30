@@ -9,9 +9,9 @@ import {
 	Page,
 	PatchFn,
 	ScopeData,
+	DashboardMenuState,
 } from 'types';
-import { NoteManager } from 'client/utils/notes';
-import type { DashboardMenuState } from 'client/utils/navigation';
+import { NoteManager } from '../client/utils/notes';
 
 export type PageContext = {
 	scopeData: ScopeData;

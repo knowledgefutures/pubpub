@@ -19,30 +19,30 @@ export class Export extends Model<InferAttributes<Export>, InferCreationAttribut
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	format!: string;
+	declare format: string;
 
 	@Column(DataType.STRING)
-	url!: string | null;
+	declare url: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
-	historyKey!: number;
+	declare historyKey: number;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@Column(DataType.UUID)
-	workerTaskId!: string | null;
+	declare workerTaskId: string | null;
 
 	@BelongsTo(() => WorkerTask, {
 		onDelete: 'SET NULL',
 		as: 'workerTask',
 		foreignKey: 'workerTaskId',
 	})
-	workerTask?: WorkerTask;
+	declare workerTask?: WorkerTask;
 }

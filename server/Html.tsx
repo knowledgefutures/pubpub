@@ -4,7 +4,11 @@ import classNames from 'classnames';
 import App from 'containers/App/App';
 import { CustomScripts, InitialData } from 'types';
 
-const manifest = require(path.join(process.cwd(), 'dist/client/manifest.json'));
+const manifest = require(path.join(
+	__dirname,
+	__dirname.includes('dist') ? '../..' : '.',
+	'../dist/client/manifest.json',
+));
 
 type OwnProps = {
 	chunkName: string;
@@ -50,8 +54,8 @@ const getActiveSlugClassName = (initialData: InitialData, viewData?: any) => {
 	return '';
 };
 
-const getUserClassName = (initialData: InitialData): String[] => {
-	const classes: String[] = [];
+const getUserClassName = (initialData: InitialData): string[] => {
+	const classes: string[] = [];
 	if (initialData.loginData.id) {
 		classes.push('user-logged-in');
 	}

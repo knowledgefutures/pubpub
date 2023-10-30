@@ -11,7 +11,7 @@ import {
 } from 'components';
 import { LayoutPubs } from 'components/Layout';
 import { Community, Pub, Collection } from 'types';
-import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'utils/layout/types';
+import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'types/layout';
 
 import PreviewElements from './PreviewElements';
 import LimitPubs from './LimitPubs';

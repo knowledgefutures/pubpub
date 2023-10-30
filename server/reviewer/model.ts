@@ -19,15 +19,15 @@ export class Reviewer extends Model<InferAttributes<Reviewer>, InferCreationAttr
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.TEXT)
-	name!: string | null;
+	declare name: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	reviewId!: string;
+	declare reviewId: string;
 
 	@BelongsTo(() => ReviewNew, { onDelete: 'CASCADE', as: 'review', foreignKey: 'reviewId' })
-	review?: ReviewNew;
+	declare review?: ReviewNew;
 }

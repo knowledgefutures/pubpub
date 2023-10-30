@@ -22,38 +22,38 @@ export class Submission extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	// TODO: This should be an ENUM
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	status!: SubmissionStatus;
+	declare status: SubmissionStatus;
 
 	@Column(DataType.DATE)
-	submittedAt!: Date | null;
+	declare submittedAt: Date | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	submissionWorkflowId!: string;
+	declare submissionWorkflowId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	/**
 	 * TODO: add validation and better type for abstract
 	 * Should probably be DocJSON
 	 */
 	@Column(DataType.JSONB)
-	abstract!: DocJson | null;
+	declare abstract: DocJson | null;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 
 	@BelongsTo(() => SubmissionWorkflow, {
 		onDelete: 'CASCADE',
 		as: 'submissionWorkflow',
 		foreignKey: 'submissionWorkflowId',
 	})
-	submissionWorkflow?: SubmissionWorkflow;
+	declare submissionWorkflow?: SubmissionWorkflow;
 }

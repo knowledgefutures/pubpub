@@ -21,34 +21,34 @@ export class DiscussionAnchor extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@Column(DataType.BOOLEAN)
-	isOriginal!: boolean;
+	declare isOriginal: boolean;
 
 	@Index({ using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	discussionId!: string;
+	declare discussionId: string;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
-	historyKey!: number;
+	declare historyKey: number;
 
 	// TODO: Add validation for selection
 	@Column(DataType.JSONB)
-	selection!: null | { type: 'text'; anchor: number; head: number };
+	declare selection: null | { type: 'text'; anchor: number; head: number };
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	originalText!: string;
+	declare originalText: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	originalTextPrefix!: string;
+	declare originalTextPrefix: string;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	originalTextSuffix!: string;
+	declare originalTextSuffix: string;
 }

@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable global-require, import/extensions */
 const {
 	argv: { watch },
 } = require('yargs');

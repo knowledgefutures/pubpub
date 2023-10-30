@@ -4,7 +4,7 @@
 		"target": "es5",
 		"noEmit": false
 	},
-	"include": ["client/**/*", "types/**/*", "utils/**/*", "facets/**/*"],
+	"include": ["client/**/*", "types/**/*", "utils/**/*", "facets/**/*", "deposit/**/*"],
 	"exclude": [
 		"../**/__tests__/**/*",
 		"../**/__test__/**/*",

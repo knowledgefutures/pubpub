@@ -19,36 +19,36 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	// TODO: add validation for noteContent
 	@Column(DataType.JSONB)
-	noteContent!: DocJson | null;
+	declare noteContent: DocJson | null;
 
 	@Column(DataType.TEXT)
-	noteText!: string | null;
+	declare noteText: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	docId!: string;
+	declare docId: string;
 
 	@AllowNull(false)
 	@Column(DataType.INTEGER)
-	historyKey!: number;
+	declare historyKey: number;
 
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	historyKeyMissing!: CreationOptional<boolean>;
+	declare historyKeyMissing: CreationOptional<boolean>;
 
 	@BelongsTo(() => Doc, { as: 'doc', foreignKey: 'docId' })
-	doc?: Doc;
+	declare doc?: Doc;
 }

@@ -2,7 +2,7 @@ import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 
-import { resourceSchema } from 'deposit/resource';
+import { resourceSchema } from '../schemas/resource';
 import {
 	getManyQuerySchema,
 	pubPostSchema,

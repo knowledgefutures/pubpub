@@ -23,36 +23,36 @@ export class CollectionPub extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Index({ unique: true, name: 'collection_pubs_collection_id_pub_id' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@Index({ unique: true, name: 'collection_pubs_collection_id_pub_id' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	collectionId!: string;
+	declare collectionId: string;
 
 	@Column(DataType.TEXT)
-	contextHint!: string | null;
-
-	@AllowNull(false)
-	@Column(DataType.TEXT)
-	rank!: string;
+	declare contextHint: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	pubRank!: string;
+	declare rank: string;
+
+	@AllowNull(false)
+	@Column(DataType.TEXT)
+	declare pubRank: string;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collection',
 		foreignKey: 'collectionId',
 	})
-	collection?: Collection;
+	declare collection?: Collection;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
-	pub?: Pub;
+	declare pub?: Pub;
 }

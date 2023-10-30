@@ -19,22 +19,22 @@ export class Merge extends Model<InferAttributes<Merge>, InferCreationAttributes
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.JSONB)
-	noteContent!: object | null;
+	declare noteContent: object | null;
 
 	@Column(DataType.TEXT)
-	noteText!: string | null;
+	declare noteText: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	userId!: string;
+	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
-	pubId!: string;
+	declare pubId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	user?: User;
+	declare user?: User;
 }

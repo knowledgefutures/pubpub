@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useUpdateEffect } from 'react-use';
 
 import { generateHash } from 'utils/hashes';
-import { LayoutBlock } from 'utils/layout/types';
+import { LayoutBlock } from 'types/layout';
 
 type LayoutUpdateFn = (newLayout: LayoutBlock[]) => LayoutBlock[];
 type ChangeHandler = (newLayout: LayoutBlock[]) => unknown;

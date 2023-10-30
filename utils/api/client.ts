@@ -6,3 +6,6 @@ export const client = initClient(contract, {
 	baseHeaders: {},
 	credentials: 'include',
 });
+
+export const createClient = (options: Parameters<typeof initClient>[1]) =>
+	initClient(contract, options);

@@ -21,24 +21,24 @@ export class FeatureFlagCommunity extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@Column(DataType.UUID)
-	featureFlagId!: string | null;
+	declare featureFlagId: string | null;
 
 	@Column(DataType.UUID)
-	communityId!: string | null;
+	declare communityId: string | null;
 
 	@Column(DataType.BOOLEAN)
-	enabled!: boolean | null;
+	declare enabled: boolean | null;
 
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
-	community?: Community;
+	declare community?: Community;
 
 	@BelongsTo(() => FeatureFlag, {
 		onDelete: 'CASCADE',
 		as: 'featureFlag',
 		foreignKey: 'featureFlagId',
 	})
-	featureFlag?: FeatureFlag;
+	declare featureFlag?: FeatureFlag;
 }

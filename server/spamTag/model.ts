@@ -18,16 +18,16 @@ export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttrib
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	// TODO: this should probably be an enum
 	@AllowNull(false)
 	@Default('unreviewed')
 	@Column(DataType.STRING)
-	status!: CreationOptional<SpamStatus>;
+	declare status: CreationOptional<SpamStatus>;
 
 	@Column(DataType.DATE)
-	statusUpdatedAt!: Date | null;
+	declare statusUpdatedAt: Date | null;
 
 	/**
 	 * TODO: add validation and better type for fields
@@ -36,7 +36,7 @@ export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttrib
   heroText: [
     "casino"
   ],
-  description?: [
+  declare description?: [
     "casino"
   ]
 } | 
@@ -44,27 +44,27 @@ export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttrib
   title: [
     "buy"
   ],
-  heroTitle?: [
+  declare heroTitle?: [
     "buy"
   ],
-  subdomain?: [
+  declare subdomain?: [
     "buy"
   ]
 }
 	 */
 	@AllowNull(false)
 	@Column(DataType.JSONB)
-	fields!: Record<string, string[]>;
+	declare fields: Record<string, string[]>;
 
 	@AllowNull(false)
 	@Column(DataType.DOUBLE)
-	spamScore!: number;
+	declare spamScore: number;
 
 	@AllowNull(false)
 	@Column(DataType.DATE)
-	spamScoreComputedAt!: Date;
+	declare spamScoreComputedAt: Date;
 
 	@Default(1)
 	@Column(DataType.INTEGER)
-	spamScoreVersion!: CreationOptional<number | null>;
+	declare spamScoreVersion: CreationOptional<number | null>;
 }

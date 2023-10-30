@@ -1,12 +1,13 @@
 import { z } from 'zod';
-import * as types from 'types';
+// import * as types from 'types';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 
 extendZodWithOpenApi(z);
 
+export const memberPermissions = ['view', 'edit', 'manage', 'admin'] as const;
 export const memberSchema = z.object({
 	id: z.string().uuid(),
-	permissions: z.enum(types.memberPermissions).default('view'),
+	permissions: z.enum(memberPermissions).default('view'),
 	isOwner: z.boolean().nullable(),
 	subscribedToActivityDigest: z.boolean().default(false),
 	userId: z.string().uuid(),
@@ -35,7 +36,7 @@ export const memberUpdateSchema = z
 	.object({
 		id: memberSchema.shape.id,
 		value: z.object({
-			permissions: z.enum(types.memberPermissions).optional(),
+			permissions: z.enum(memberPermissions).optional(),
 			subscribedToActivityDigest: z.boolean().optional(),
 		}),
 	})

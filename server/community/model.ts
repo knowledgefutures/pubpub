@@ -15,8 +15,7 @@ import {
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import type { SerializedModel } from 'types';
-import { CommunityHeaderLink, CommunityHeroButton } from 'types';
-import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { CommunityHeaderLink, CommunityHeroButton, CommunityNavigationEntry } from 'types';
 import {
 	Organization,
 	Collection,
@@ -37,7 +36,7 @@ export class Community extends Model<
 	@Default(DataType.UUIDV4)
 	@PrimaryKey
 	@Column(DataType.UUID)
-	id!: CreationOptional<string>;
+	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
 	@IsLowercase
@@ -45,199 +44,199 @@ export class Community extends Model<
 	@Is(/^[a-zA-Z0-9-]+$/)
 	@Unique
 	@Column(DataType.TEXT)
-	subdomain!: string;
+	declare subdomain: string;
 
 	@Unique
 	@Column(DataType.TEXT)
-	domain!: string | null;
+	declare domain: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.TEXT)
-	title!: string;
+	declare title: string;
 
 	@Column(DataType.TEXT)
-	citeAs!: string | null;
+	declare citeAs: string | null;
 
 	@Column(DataType.TEXT)
-	publishAs!: string | null;
+	declare publishAs: string | null;
 
 	@Length({ min: 0, max: 280 })
 	@Column(DataType.TEXT)
-	description!: string | null;
+	declare description: string | null;
 
 	@Column(DataType.TEXT)
-	avatar!: string | null;
+	declare avatar: string | null;
 
 	@Column(DataType.TEXT)
-	favicon!: string | null;
+	declare favicon: string | null;
 
 	// TODO: Make this `AllowNull(false)`. Communities always have a color.
 	@Column(DataType.STRING)
-	accentColorLight!: string;
+	declare accentColorLight: string;
 
 	// TODO: Make this `AllowNull(false)`. Communities always have a color.
 	@Column(DataType.STRING)
-	accentColorDark!: string;
+	declare accentColorDark: string;
 
 	@Column(DataType.BOOLEAN)
-	hideCreatePubButton!: boolean | null;
+	declare hideCreatePubButton: boolean | null;
 
 	@Column(DataType.TEXT)
-	headerLogo!: string | null;
+	declare headerLogo: string | null;
 
 	// TODO: Add validation for headerLinks
 	@Column(DataType.JSONB)
-	headerLinks!: CommunityHeaderLink[] | null;
+	declare headerLinks: CommunityHeaderLink[] | null;
 
 	@Default('dark')
 	@Column(DataType.ENUM('light', 'dark', 'custom'))
-	headerColorType!: CreationOptional<'light' | 'dark' | 'custom' | null>;
+	declare headerColorType: CreationOptional<'light' | 'dark' | 'custom' | null>;
 
 	@Column(DataType.BOOLEAN)
-	useHeaderTextAccent!: boolean | null;
+	declare useHeaderTextAccent: boolean | null;
 
 	@Column(DataType.BOOLEAN)
-	hideHero!: boolean | null;
+	declare hideHero: boolean | null;
 
 	@Column(DataType.BOOLEAN)
-	hideHeaderLogo!: boolean | null;
+	declare hideHeaderLogo: boolean | null;
 
 	@Column(DataType.TEXT)
-	heroLogo!: string | null;
+	declare heroLogo: string | null;
 
 	@Column(DataType.TEXT)
-	heroBackgroundImage!: string | null;
+	declare heroBackgroundImage: string | null;
 
 	@Column(DataType.TEXT)
-	heroBackgroundColor!: string | null;
+	declare heroBackgroundColor: string | null;
 
 	@Column(DataType.TEXT)
-	heroTextColor!: string | null;
+	declare heroTextColor: string | null;
 
 	@Column(DataType.BOOLEAN)
-	useHeaderGradient!: boolean | null;
+	declare useHeaderGradient: boolean | null;
 
 	@Column(DataType.TEXT)
-	heroImage!: string | null;
+	declare heroImage: string | null;
 
 	@Column(DataType.TEXT)
-	heroTitle!: string | null;
+	declare heroTitle: string | null;
 
 	@Column(DataType.TEXT)
-	heroText!: string | null;
+	declare heroText: string | null;
 
 	// TODO: Add validation for heroPrimaryButton
 	@Column(DataType.JSONB)
-	heroPrimaryButton!: CommunityHeroButton | null;
+	declare heroPrimaryButton: CommunityHeroButton | null;
 
 	// TODO: Add validation for heroSecondaryButton
 	@Column(DataType.JSONB)
-	heroSecondaryButton!: CommunityHeroButton | null;
+	declare heroSecondaryButton: CommunityHeroButton | null;
 
 	@Column(DataType.TEXT)
-	heroAlign!: string | null;
+	declare heroAlign: string | null;
 
 	// TODO: Add validation for navigation
 	@Column(DataType.JSONB)
-	navigation!: CommunityNavigationEntry[] | null;
+	declare navigation: CommunityNavigationEntry[] | null;
 
 	@Column(DataType.BOOLEAN)
-	hideNav!: boolean | null;
+	declare hideNav: boolean | null;
 
 	// TODO: Add validation for navLinks
 	@Column(DataType.JSONB)
-	navLinks!: CommunityNavigationEntry[] | null;
+	declare navLinks: CommunityNavigationEntry[] | null;
 
 	// TODO: Add validation for footerLinks
 	@Column(DataType.JSONB)
-	footerLinks!: CommunityNavigationEntry[] | null;
+	declare footerLinks: CommunityNavigationEntry[] | null;
 
 	@Column(DataType.TEXT)
-	footerLogoLink!: string | null;
+	declare footerLogoLink: string | null;
 
 	@Column(DataType.TEXT)
-	footerTitle!: string | null;
+	declare footerTitle: string | null;
 
 	@Column(DataType.TEXT)
-	footerImage!: string | null;
+	declare footerImage: string | null;
 
 	@Column(DataType.TEXT)
-	website!: string | null;
+	declare website: string | null;
 
 	@Column(DataType.TEXT)
-	facebook!: string | null;
+	declare facebook: string | null;
 
 	@Column(DataType.TEXT)
-	twitter!: string | null;
+	declare twitter: string | null;
 
 	@Column(DataType.TEXT)
-	email!: string | null;
+	declare email: string | null;
 
 	@Column(DataType.TEXT)
-	issn!: string | null;
+	declare issn: string | null;
 
 	@Column(DataType.BOOLEAN)
-	isFeatured!: boolean | null;
+	declare isFeatured: boolean | null;
 
 	@Column(DataType.STRING)
-	viewHash!: string | null;
+	declare viewHash: string | null;
 
 	@Column(DataType.STRING)
-	editHash!: string | null;
+	declare editHash: string | null;
 
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	premiumLicenseFlag!: CreationOptional<boolean | null>;
+	declare premiumLicenseFlag: CreationOptional<boolean | null>;
 
 	// TODO: Add validation for defaultPubCollections
 	@Column(DataType.JSONB)
-	defaultPubCollections!: string[] | null;
+	declare defaultPubCollections: string[] | null;
 
 	@Column(DataType.UUID)
-	spamTagId!: string | null;
+	declare spamTagId: string | null;
 
 	@Column(DataType.UUID)
-	organizationId!: string | null;
+	declare organizationId: string | null;
 
 	@Column(DataType.UUID)
-	scopeSummaryId!: string | null;
+	declare scopeSummaryId: string | null;
 
 	@BelongsTo(() => Organization, {
 		onDelete: 'CASCADE',
 		as: 'organization',
 		foreignKey: 'organizationId',
 	})
-	organization?: Organization;
+	declare organization?: Organization;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',
 		as: 'collections',
 		foreignKey: 'communityId',
 	})
-	collections?: Collection[];
+	declare collections?: Collection[];
 
 	@HasMany(() => Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'communityId' })
-	pubs?: Pub[];
+	declare pubs?: Pub[];
 
 	@HasMany(() => Page, { onDelete: 'CASCADE', as: 'pages', foreignKey: 'communityId' })
-	pages?: Page[];
+	declare pages?: Page[];
 
 	@HasMany(() => DepositTarget, {
 		onDelete: 'CASCADE',
 		as: 'depositTargets',
 		foreignKey: 'communityId',
 	})
-	depositTargets?: DepositTarget[];
+	declare depositTargets?: DepositTarget[];
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',
 		foreignKey: 'scopeSummaryId',
 		onDelete: 'SET NULL',
 	})
-	scopeSummary?: ScopeSummary;
+	declare scopeSummary?: ScopeSummary;
 
 	@BelongsTo(() => SpamTag, { as: 'spamTag', foreignKey: 'spamTagId' })
-	spamTag?: SpamTag;
+	declare spamTag?: SpamTag;
 
 	declare accentTextColor: CreationOptional<string>;
 }

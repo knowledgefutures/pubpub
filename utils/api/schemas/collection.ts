@@ -2,7 +2,13 @@ import * as types from 'types';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { collectionKinds, readNextPreviewSizes } from 'types/collection';
+import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
 import { layoutBlockSchema } from './layout';
+import { pageSchema } from './page';
+import { collectionPubSchema } from './collectionPub';
+import { collectionAttributionSchema } from './collectionAttribution';
+import { memberSchema } from './member';
+import { communitySchema } from './community';
 
 extendZodWithOpenApi(z);
 
@@ -86,3 +92,33 @@ export const collectionRemoveSchema = z.object({
 	id: collectionSchema.shape.id,
 	communityId: collectionSchema.shape.communityId,
 });
+
+export const collectionWithRelationsSchema = collectionSchema.extend({
+	attributions: collectionAttributionSchema.array().optional(),
+	collectionPubs: collectionPubSchema.array().optional(),
+	members: memberSchema.array().optional(),
+	page: pageSchema.optional(),
+	// crossrefDepositRecord: crossrefDepositRecordSchema.optional(),
+	// scopeSummary: scopeSummarySchema.optional(),
+	community: communitySchema.optional(),
+});
+
+export const getManyCollectionQuerySchema = createGetManyQueryOptions(
+	collectionWithRelationsSchema,
+	{
+		sort: {
+			options: ['title'],
+			default: 'createdAt',
+		},
+		include: {
+			options: ['attributions', 'page', 'collectionPubs', 'community'],
+			defaults: ['attributions', 'page'],
+		},
+		omitFromFilter: {
+			layout: true,
+			layoutAllowsDuplicatePubs: true,
+		},
+	},
+);
+
+export type GetManyCollectionQuery = (typeof getManyCollectionQuerySchema)['_input'];

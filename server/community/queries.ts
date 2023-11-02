@@ -20,6 +20,12 @@ import { updateCommunityData } from 'server/utils/search';
 import { defer } from 'server/utils/deferred';
 import { getSpamTagForCommunity } from 'server/spamTag/queries';
 
+export const getCommunity = (communityId: string) => {
+	return Community.findOne({
+		where: { id: communityId },
+	});
+};
+
 export const createCommunity = (inputValues, userData, alertAndSubscribe = true) => {
 	const newCommunityId = uuidv4();
 	const homePageId = uuidv4();

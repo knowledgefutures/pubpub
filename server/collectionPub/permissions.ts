@@ -7,7 +7,7 @@ const canManagePub = async ({
 	communityId,
 	pubId,
 }: {
-	userId: string;
+	userId?: string | null;
 	communityId: string;
 	pubId: string;
 }) => {
@@ -18,17 +18,28 @@ const canManagePub = async ({
 	);
 };
 
-export const canCreateCollectionPub = async ({ userId, communityId, collectionId, pubId }) => {
+export const canCreateCollectionPub = async ({
+	userId,
+	communityId,
+	collectionId,
+	pubId,
+}: {
+	userId?: string | null;
+	communityId: string;
+	collectionId: string;
+	pubId: string;
+}) => {
 	const {
 		activePermissions: { canManage },
-		elements: {
-			activeCollection: { isRestricted },
-		},
+		elements: { activeCollection },
 	} = await getScope({
 		communityId,
 		collectionId,
 		loginId: userId,
 	});
+
+	const isRestricted = activeCollection?.isRestricted;
+
 	if (canManage) {
 		return true;
 	}
@@ -92,14 +103,15 @@ export const canDestroyCollectionPub = async ({
 	);
 	const {
 		activePermissions: { canManage },
-		elements: {
-			activeCollection: { isRestricted },
-		},
+		elements: { activeCollection },
 	} = await getScope({
 		communityId,
 		collectionId,
 		loginId: userId,
 	});
+
+	const isRestricted = activeCollection?.isRestricted;
+
 	if (canManage) {
 		return true;
 	}

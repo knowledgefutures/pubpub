@@ -19,7 +19,8 @@ const DashboardImpact = (props: Props) => {
 		elements: { activeTargetType, activeTargetName, activeTarget },
 		activePermissions: { canView },
 	} = scopeData;
-	const displayDataWarning = activeTarget.createdAt < '2020-04-29';
+
+	const displayDataWarning = activeTarget?.createdAt < '2020-04-29';
 	const isCollection = activeTargetType === 'collection';
 	const genUrl = (token) => {
 		return `https://metabase.pubpub.org/embed/dashboard/${token}#bordered=false&titled=false`;

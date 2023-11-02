@@ -1,4 +1,5 @@
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
+import { GetManyCollectionQuery, collectionSchema } from 'utils/api/schemas/collection';
 import { createCollection } from '../queries';
 import { Collection } from '../../models';
 
@@ -7,6 +8,10 @@ const models = modelize`
 		Member {
 			permissions: "admin"
 			User admin {}
+		}
+		Member {
+			permissions: "view"
+			User nonAdmin {}
 		}
 		Page {
 			title: "I'm a page"
@@ -28,11 +33,70 @@ const models = modelize`
 			kind: "book"
 			slug: "i-exist-too"
 		}
+		Collection {
+			title: "The Enigmatic Cosmos"
+			kind: "book"
+			slug: "the-enigmatic-cosmos"
+		}
+		Collection ancientScripts {
+			title: "Ancient Scripts and Codes"
+			kind: "issue"
+			slug: "ancient-scripts"
+		}
+		Collection techConference2023 {
+			title: "Tech Innovations 2023"
+			kind: "conference"
+			slug: "tech-innovations-2023"
+		}
+		Collection {
+			title: "Mysteries of the Deep Ocean"
+			kind: "book"
+			slug: "deep-ocean-mysteries"
+		}
+		Collection tagAI {
+			title: "Artificial Intelligence Breakthroughs"
+			kind: "tag"
+			slug: "ai-breakthroughs"
+		}
+		Collection {
+			title: "Exploring Quantum Realities"
+			kind: "issue"
+			slug: "quantum-realities"
+		}
+		Collection confCyberSec {
+			title: "Cybersecurity Conference 2023"
+			kind: "conference"
+			slug: "cybersecurity-2023"
+		}
+		Collection {
+			title: "The Art of Cryptography"
+			kind: "book"
+			slug: "art-of-cryptography"
+			metadata: '{"doi":"10.21428/3f857d3b.1e2a4b3e"}'
+		}
+		Collection tagSpaceExploration {
+			title: "Space Exploration Milestones"
+			kind: "tag"
+			slug: "space-milestones"
+		}
+		Collection {
+			title: "Historical Epochs"
+			kind: "issue"
+			slug: "historical-epochs"
+			CollectionAttribution {
+				name: "John Schmoe"
+			}
+		}
 	}
-	Community {
+	Community anotherCommunity {
 		Member {
 			permissions: "admin"
 			User anotherAdmin {}
+		}
+		Collection {
+			title: "AAAAA"
+			kind: "issue"
+			slug: "aaaaa"
 		}
 	}
 	User guest {}
@@ -41,6 +105,8 @@ const models = modelize`
 setup(beforeAll, async () => {
 	await models.resolve();
 });
+
+const getHost = (community) => `${community.subdomain}.pubpub.org`;
 
 it('creates a new collection', async () => {
 	const { admin, community } = models;
@@ -227,7 +293,11 @@ it('deletes an existing collection with appropriate permissions', async () => {
 			.delete('/api/collections')
 			.send({ id: collection.id, communityId: community.id })
 			.expect(200),
-	).toMatchObject({ kind: 'collection-removed', collectionId: collection.id, actorId: admin.id });
+	).toMatchObject({
+		kind: 'collection-removed',
+		collectionId: collection.id,
+		actorId: admin.id,
+	});
 	const collectionNow = await Collection.findOne({ where: { id: collection.id } });
 	expect(collectionNow).toEqual(null);
 });
@@ -246,6 +316,214 @@ it('does not allow normal users to delete a collection', async () => {
 		.expect(403);
 	const collectionNow = await Collection.findOne({ where: { id: collection.id } });
 	expect(collectionNow?.id).toEqual(collection.id);
+});
+
+describe('GET /api/collections', () => {
+	it('should get a collection by id', async () => {});
+
+	it('should throw a ForbiddenError for non-admin users', async () => {
+		const { nonAdmin, community } = models;
+		const agent = await login(nonAdmin);
+
+		await agent.get('/api/collections').set('Host', getHost(community)).expect(403); // Forbidden
+	});
+
+	it('should not return collections from other communities', async () => {
+		const { anotherAdmin, anotherCommunity } = models;
+		const agent = await login(anotherAdmin);
+
+		const { body } = await agent
+			.get('/api/collections')
+			.set('Host', getHost(anotherCommunity))
+			.expect(200);
+
+		expect(body).toBeInstanceOf(Array);
+		expect(body.length).toEqual(1);
+	});
+
+	it('should return collections with default query parameters', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get('/api/collections')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body).toBeInstanceOf(Array);
+		expect(body.length).toBeLessThanOrEqual(10); // default limit
+		expect(body.length).toBeGreaterThanOrEqual(1);
+		// Additional assertions based on default sort, order, etc.
+	});
+
+	it('should return collections with custom query parameters', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get('/api/collections?limit=5&offset=5&sort=updatedAt&order=ASC')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body).toBeInstanceOf(Array);
+		expect(body.length).toBeLessThanOrEqual(5);
+		// Additional assertions based on custom sort, order, etc.
+	});
+
+	it('should return collections with a specific title', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get(
+				`/api/collections?filter=${encodeURIComponent(
+					JSON.stringify({ title: { contains: 'crypto' } }),
+				)}`,
+			)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body).toBeInstanceOf(Array);
+		expect(body.length).toBeGreaterThanOrEqual(1);
+		body.forEach((collection) => {
+			expect(collection.title).toBe('The Art of Cryptography');
+		});
+	});
+	it('should return collections with specified includes', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get('/api/collections?include[]=attributions&include[]=members')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body).toBeInstanceOf(Array);
+		expect(body.length).toBeGreaterThanOrEqual(1);
+		body.forEach((collection) => {
+			expect(collection).toHaveProperty('attributions');
+			expect(collection).toHaveProperty('members');
+			expect(collection).not.toHaveProperty('pubs');
+			expect(collection).not.toHaveProperty('page');
+		});
+
+		const historicEpoch = body.find((collection) => collection.title === 'Historical Epochs');
+
+		expect(historicEpoch).toHaveProperty('attributions');
+		expect(historicEpoch.attributions[0].name).toBe('John Schmoe');
+	});
+	it('should return collections that match the expected schema', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get('/api/collections')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		body.forEach((collection) => {
+			expect(() => collectionSchema.parse(collection)).not.toThrow();
+		});
+	});
+
+	it('should order collections differently for different sort parameters', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const { body: orderByTitle } = await agent
+			.get('/api/collections?sort=title')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		const { body: orderByUpdatedAt } = await agent
+			.get('/api/collections?sort=updatedAt')
+			.set('Host', getHost(community))
+			.expect(200);
+
+		// Assuming IDs are unique and can be used to differentiate collections
+		expect(orderByTitle[0].id).not.toEqual(orderByUpdatedAt[0].id);
+	});
+
+	it('should reverse the order of collections when changing sort order', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const [{ body: orderAsc }, { body: orderDesc }] = await Promise.all([
+			agent
+				.get('/api/collections?sort=slug&order=ASC&limit=100')
+				.set('Host', getHost(community))
+				.expect(200),
+
+			agent
+				.get('/api/collections?sort=slug&order=DESC&limit=100')
+				.set('Host', getHost(community))
+				.expect(200),
+		]);
+
+		expect(orderAsc.length).toEqual(orderDesc.length);
+		expect(orderAsc.at(0)).toEqual(orderDesc.at(-1));
+		expect(orderAsc.at(1)).toEqual(orderDesc.at(-2));
+	});
+
+	it('should limit the number of collections returned', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const limit = 5;
+
+		const { body } = await agent
+			.get(`/api/collections?limit=${limit}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body.length).toEqual(limit);
+	});
+
+	it('should return correct collections with offset and limit', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+
+		const limit = 5;
+		const offset = 5;
+
+		const { body: firstPage } = await agent
+			.get(`/api/collections?limit=${limit}&offset=${offset}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		const { body: secondPage } = await agent
+			.get(`/api/collections?limit=${limit}&offset=${offset + limit}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		// Ensure no overlap in collections between pages
+		const firstPageIds = firstPage.map((c) => c.id);
+		const secondPageIds = secondPage.map((c) => c.id);
+		const intersection = firstPageIds.filter((id) => secondPageIds.includes(id));
+
+		expect(intersection.length).toEqual(0);
+	});
+
+	it('should do some sophisticated filtering', async () => {
+		const { admin, community } = models;
+
+		const agent = await login(admin);
+
+		const filter = {
+			kind: ['book', 'conference'],
+			title: [{ contains: 'the' }],
+			metadata: {
+				doi: [{ contains: '10.21428' }],
+			},
+		} satisfies NonNullable<GetManyCollectionQuery>['filter'];
+
+		const { body } = await agent
+			.get(`/api/collections?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		body[0]?.metadata?.doi?.startsWith('10.21428');
+	});
 });
 
 teardown(afterAll);

@@ -148,6 +148,7 @@
 		"katex": "^0.13.18",
 		"keyboardjs": "^2.5.1",
 		"knex": "^2.4.0",
+		"linkify-html": "^3.0.5",
 		"linkifyjs": "^3.0.0-beta.3",
 		"lodash.flow": "^3.5.0",
 		"lodash.mergewith": "^4.6.2",

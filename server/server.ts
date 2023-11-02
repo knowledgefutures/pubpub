@@ -170,7 +170,11 @@ app.use((req, res, next) => {
 		// @ts-expect-error
 		req.headers.host = req.headers.communityhostname;
 	}
-	if (process.env.PUBPUB_LOCAL_COMMUNITY || req.hostname.indexOf('localhost') > -1) {
+	if (
+		process.env.PUBPUB_LOCAL_COMMUNITY ||
+		req.hostname.includes('localhost') ||
+		req.hostname.includes('127.0.0.1')
+	) {
 		req.headers.localhost = req.headers.host;
 		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
 			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
@@ -211,6 +215,7 @@ createExpressEndpoints(contract, server, app, {
 		}
 		next(err);
 	},
+	jsonQuery: true,
 });
 
 /* ------------- */

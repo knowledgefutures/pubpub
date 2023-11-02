@@ -32,7 +32,7 @@ app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 				}}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Layout · ${initialData.scopeData.elements.activeTarget.title}`,
+					title: `Layout · ${collection.title}`,
 					unlisted: true,
 				})}
 			/>,

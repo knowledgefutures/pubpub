@@ -49,7 +49,7 @@ const canManageCollection = (
 };
 
 const getPrimaryOrFirstCollection = (
-	activePub: Pub | undefined,
+	activePub: Pub | undefined | null,
 	communityData,
 ): Collection | undefined => {
 	if (!activePub || !activePub.collectionPubs || activePub.collectionPubs.length === 0)

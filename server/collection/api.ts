@@ -4,14 +4,17 @@ import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { expect } from 'utils/assert';
 
 import { z } from 'zod';
+import { initServer } from '@ts-rest/express';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 
 import { transformCollectionToResource } from 'deposit/transform/collection';
 import { contract } from 'utils/api/contract';
 import { createGetRequestIds } from 'utils/getRequestIds';
-import { initServer } from '@ts-rest/express';
+import { queryOne, queryMany } from 'utils/query';
+
 import { getPermissions } from './permissions';
 import { createCollection, destroyCollection, findCollection, updateCollection } from './queries';
+import { Collection } from './model';
 
 extendZodWithOpenApi(z);
 
@@ -24,6 +27,9 @@ const getRequestIds = createGetRequestIds<{
 const s = initServer();
 
 export const collectionServer = s.router(contract.collection, {
+	get: queryOne(Collection),
+	getMany: queryMany(Collection),
+
 	create: async ({ req, body }) => {
 		const requestIds = getRequestIds(body, req.user);
 		const permissions = await getPermissions({ ...requestIds });

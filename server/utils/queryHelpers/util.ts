@@ -11,19 +11,20 @@ export const stripFalsyIdsFromQuery = (whereQueryObject) => {
 	return Object.fromEntries(Object.entries(whereQueryObject).filter((entry) => entry[1]));
 };
 
-export const ensureSerialized = (item) => {
+export const ensureSerialized = (item: any) => {
 	if (Array.isArray(item)) {
-		return item.map(ensureSerialized);
+		return item.map(ensureSerialized) as any;
 	}
 	if (item && typeof item === 'object') {
-		if (typeof item.toJSON === 'function') {
+		if ('toJSON' in item && typeof item.toJSON === 'function') {
 			return item.toJSON();
 		}
 		const res = {};
+
 		Object.keys(item).forEach((key) => {
 			res[key] = ensureSerialized(item[key]);
 		});
-		return res;
+		return res as any;
 	}
 	return item;
 };

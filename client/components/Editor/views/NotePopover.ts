@@ -1,7 +1,7 @@
 import { DOMSerializer, Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { createPopper } from '@popperjs/core';
-import linkifyHtml from 'linkifyjs/html';
+import linkifyHtml from 'linkify-html';
 import { Classes } from '@blueprintjs/core';
 
 import { rectContainsPoint, rectUnion } from 'utils/geom';

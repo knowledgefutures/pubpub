@@ -52,7 +52,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 				viewData={{ pubData: { ...pubData, citationData } }}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,
+					title: `Overview · ${pubData.title}`,
 					unlisted: true,
 				})}
 			/>,

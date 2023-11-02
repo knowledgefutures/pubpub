@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import * as Sentry from '@sentry/node';
-import { ForbiddenSlugStatus } from 'types';
+import type { ForbiddenSlugStatus } from 'types';
 
 export enum PubPubApplicationError {
 	ForbiddenSlug = 'forbidden-slug',

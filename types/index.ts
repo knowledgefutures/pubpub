@@ -20,6 +20,7 @@ export * from './navigation';
 export * from './page';
 export * from './pub';
 export * from './pubEdge';
+export * from './publicPermissions';
 export * from './pubQuery';
 export * from './request';
 export * from './review';

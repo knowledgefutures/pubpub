@@ -42,7 +42,7 @@ export type LocationData = {
 
 export type ScopeData = {
 	activePermissions: {
-		activePermission: MemberPermission;
+		activePermission: MemberPermission | null;
 		canAdmin: boolean;
 		canAdminCommunity: boolean;
 		canCreateDiscussions: boolean;
@@ -60,16 +60,16 @@ export type ScopeData = {
 	elements: {
 		activeIds: {
 			communityId: string;
-			collectionId?: string;
-			pubId?: string;
+			collectionId: string | null;
+			pubId: string | null;
 		};
-		activeTarget: Community | Collection | Pub;
-		activeTargetType: 'organization' | 'community' | 'collection' | 'pub';
+		activeTarget: Community | Collection | Pub | null;
+		activeTargetType: 'community' | 'collection' | 'pub';
 		activeTargetName: string;
 		activeCommunity: Community;
-		activeCollection?: Collection;
-		activePub?: Pub;
-		inactiveCollections?: Collection[];
+		activeCollection: Collection | null;
+		activePub: Pub | null;
+		inactiveCollections: Collection[];
 	};
 	activeCounts: {
 		reviews: number;

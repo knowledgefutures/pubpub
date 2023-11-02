@@ -1,12 +1,15 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
+import { createGetQueryOptions } from 'utils/query/createGetQuery';
 import { resourceSchema } from '../schemas/resource';
 import {
 	collectionCreationSchema,
 	collectionRemoveSchema,
 	collectionSchema,
 	collectionUpdateSchema,
+	collectionWithRelationsSchema,
 } from '../schemas/collection';
 import { resourceASTSchema } from '../schemas/pub';
 
@@ -15,6 +18,43 @@ extendZodWithOpenApi(z);
 const c = initContract();
 
 export const collectionContract = c.router({
+	get: {
+		path: '/api/collections/:id',
+		method: 'GET',
+		summary: "Get a collection by it's id",
+		description: 'Get a collection',
+		pathParams: z.object({
+			id: z.string().uuid(),
+		}),
+		query: createGetQueryOptions(collectionWithRelationsSchema, {
+			include: {
+				options: ['community', 'page', 'attributions', 'collectionPubs', 'members'],
+				defaults: ['attributions', 'collectionPubs'],
+			},
+		}),
+		responses: {
+			200: collectionWithRelationsSchema,
+		},
+	},
+	getMany: {
+		path: '/api/collections',
+		method: 'GET',
+		summary: 'Get many collections',
+		description: 'Get many collections',
+		query: createGetManyQueryOptions(collectionWithRelationsSchema, {
+			omitFromFilter: { layout: true },
+			sort: {
+				options: ['title', 'kind', 'slug'],
+			},
+			include: {
+				options: ['community', 'page', 'attributions', 'collectionPubs', 'members'],
+				defaults: ['attributions', 'collectionPubs'],
+			},
+		}),
+		responses: {
+			200: z.array(collectionWithRelationsSchema),
+		},
+	},
 	create: {
 		path: '/api/collections',
 		method: 'POST',

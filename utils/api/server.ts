@@ -15,18 +15,20 @@ import { pubEdgeServer } from 'server/pubEdge/api';
 import { workerTaskServer } from 'server/workerTask/api';
 import { releaseServer } from 'server/release/api';
 import { uploadPolicyRouteImplementation } from 'server/uploadPolicy/api';
+import { communityServer } from 'server/community/api';
 import { contract } from './contract';
 
 const s = initServer();
 
 // FIXME: Add these routes back in
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { customScript, community, ...contractWithScriptsAndCommunity } = contract;
+const { customScript, ...contractWithScriptsAndCommunity } = contract;
 
 export const server = s.router(contractWithScriptsAndCommunity, {
 	collection: collectionServer,
 	collectionAttribution: collectionAttributionServer,
 	collectionPub: collectionPubServer,
+	community: communityServer,
 	export: exportRouteImplementation,
 	facets: facetsServer,
 	import: importRouteImplementation,

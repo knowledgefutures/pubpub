@@ -152,9 +152,16 @@ const MembersOptions = (props: SharedProps) => {
 			{!!membersByType.community.length && activeTargetType !== 'community' && (
 				<InheritedMembersBlock members={membersByType.community} scope="Community" />
 			)}
-			{!!membersByType.organization.length && activeTargetType !== 'organization' && (
-				<InheritedMembersBlock members={membersByType.organization} scope="Organization" />
-			)}
+
+			{
+				// @ts-expect-error FIXME: Organization aren't really a thing anymore
+				!!membersByType.organization.length && activeTargetType !== 'organization' && (
+					<InheritedMembersBlock
+						members={membersByType.organization}
+						scope="Organization"
+					/>
+				)
+			}
 		</React.Fragment>
 	);
 };

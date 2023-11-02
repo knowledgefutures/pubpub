@@ -37,7 +37,7 @@ app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 				viewData={{ pageData }}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
+					title: `Pages · ${pageData.title}`,
 					unlisted: true,
 				})}
 			/>,

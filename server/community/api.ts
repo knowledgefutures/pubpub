@@ -1,39 +1,62 @@
-import app, { wrap } from 'server/server';
-import { ForbiddenError } from 'server/utils/errors';
+import { initServer } from '@ts-rest/express';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { expect } from 'utils/assert';
+import { contract } from 'utils/api';
+import { findCommunityByHostname } from 'utils/ensureUserIsCommunityAdmin';
 
 import { getPermissions } from './permissions';
-import { createCommunity, updateCommunity } from './queries';
+import { createCommunity, getCommunity, updateCommunity } from './queries';
 
-const getRequestIds = (req) => {
-	const user = req.user || {};
-	return {
-		userId: user.id,
-		communityId: req.body.communityId || null,
-	};
-};
+const getRequestIds = createGetRequestIds<{
+	communityId?: string | null;
+}>();
 
-app.post(
-	'/api/communities',
-	wrap(async (req, res) => {
-		const requestIds = getRequestIds(req);
-		const permissions = await getPermissions(requestIds);
+const s = initServer();
+
+export const communityServer = s.router(contract.community, {
+	getCommunities: async ({ req }) => {
+		const community = expect(await findCommunityByHostname(req.hostname));
+
+		return {
+			body: [community],
+			status: 200,
+		};
+	},
+	get: async ({ params }) => {
+		const community = await getCommunity(params.id);
+
+		if (!community) {
+			throw new NotFoundError();
+		}
+
+		return {
+			body: community,
+			status: 200,
+		};
+	},
+	create: async ({ req }) => {
+		const permissions = await getPermissions({ userId: req.user?.id || null });
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
 		const newCommunity = await createCommunity(req.body, req.user);
-		return res.status(201).json(`https://${newCommunity.subdomain}.pubpub.org`);
-	}),
-);
-
-app.put(
-	'/api/communities',
-	wrap(async (req, res) => {
-		const requestIds = getRequestIds(req);
+		return {
+			body: `https://${newCommunity.subdomain}.pubpub.org`,
+			status: 201,
+		};
+	},
+	update: async ({ body, req }) => {
+		const requestIds = getRequestIds(body, req.user);
 		const permissions = await getPermissions(requestIds);
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
 		const updatedValues = await updateCommunity(req.body, permissions.update, req.user.id);
-		return res.status(200).json(updatedValues);
-	}),
-);
+		return {
+			body: updatedValues,
+			status: 200,
+		};
+	},
+});

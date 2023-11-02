@@ -51,6 +51,7 @@ const shouldShowMenuItemInContext = (item: MenuItem, context: ReadablePageContex
 		},
 	} = context;
 	const { requiredPermission, shown } = item;
+	// @ts-expect-error FIXME: Organization aren't really a thing anymore
 	if (requiredPermission && !checkMemberPermission(activePermission, requiredPermission)) {
 		return false;
 	}

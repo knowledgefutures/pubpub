@@ -1,6 +1,12 @@
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId }) => {
+export const getPermissions = async ({
+	userId,
+	communityId,
+}: {
+	userId?: string | null;
+	communityId?: string | null;
+}) => {
 	if (!userId) {
 		return {};
 	}
@@ -54,11 +60,12 @@ export const getPermissions = async ({ userId, communityId }) => {
 		'footerTitle',
 		'footerLogoLink',
 		'footerImage',
-	];
+	] as const;
 
 	const canUpdate = scopeData.activePermissions.canManage;
 	return {
 		create: true,
 		update: canUpdate ? editProps : false,
+		admin: scopeData.activePermissions.canAdminCommunity,
 	};
 };

@@ -32,7 +32,35 @@ setup(beforeAll, async () => {
 	await models.resolve();
 });
 
+const getHost = (community) => `${community.subdomain}.pubpub.org`;
+
 describe('/api/communities', () => {
+	it('gets a community by id', async () => {
+		const { existingCommunity, admin } = models;
+		const agent = await login(admin);
+		const { body: community } = await agent
+			.get(`/api/communities/${existingCommunity.id}`)
+			.expect(200);
+		expect(community.id).toEqual(existingCommunity.id);
+	});
+
+	it('returns the current community from /api/communities', async () => {
+		const { existingCommunity } = models;
+
+		const agent = await login();
+
+		const { body: communities } = await agent
+			.get('/api/communities')
+			.set('Host', getHost(existingCommunity))
+			.expect(200);
+
+		expect(communities).toHaveLength(1);
+
+		const [community] = communities;
+
+		expect(community.id).toEqual(existingCommunity.id);
+	});
+
 	it('creates a community', async () => {
 		const { willCreateCommunity } = models;
 		const agent = await login(willCreateCommunity);

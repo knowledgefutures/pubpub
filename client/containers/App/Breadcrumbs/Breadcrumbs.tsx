@@ -84,7 +84,7 @@ const Breadcrumbs = (props: Props) => {
 				text: 'Visit Collection',
 				href: `/${activeCollection.slug}`,
 			},
-		].filter((x) => x),
+		].filter((x): x is NonNullable<typeof x> => Boolean(x)),
 		pub: [
 			{
 				text: 'Go to Pub',
@@ -181,11 +181,13 @@ const Breadcrumbs = (props: Props) => {
 					{actions[activeTargetType]
 						.filter((action) => {
 							const permissionValues = ['view', 'edit', 'manage', 'admin'];
-							const activePermissionIndex =
-								permissionValues.indexOf(activePermission);
-							const minPermissionsIndex = permissionValues.indexOf(
-								action.minPermissions,
+							const activePermissionIndex = permissionValues.indexOf(
+								activePermission as string,
 							);
+							const minPermissionsIndex =
+								'minPermissions' in action && action.minPermissions
+									? permissionValues.indexOf(action.minPermissions)
+									: -1;
 							return activePermissionIndex >= minPermissionsIndex;
 						})
 						.map((action) => {
@@ -193,8 +195,8 @@ const Breadcrumbs = (props: Props) => {
 								key: action.text,
 								text: action.text,
 								intent: Intent.PRIMARY,
-								onClick: action.onClick,
-								href: action.href,
+								...('onClick' in action && { onClick: action.onClick }),
+								...('href' in action && { href: action.href }),
 								loading: action.text === 'Create Pub' && newPubIsLoading,
 								disabled: action.text !== 'Create Pub' && newPubIsLoading,
 								outlined: true,

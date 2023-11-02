@@ -77,6 +77,7 @@
 		"import/no-dynamic-require": 0,
 		"import/no-extraneous-dependencies": [2, { "devDependencies": true }],
 		"import/no-unresolved": [2, { "ignore": ["\\config.js$"] }],
+		"import/no-cycle": [2, { "commonjs": true }],
 		"import/prefer-default-export": 0,
 		"jsx-a11y/click-events-have-key-events": 0,
 		"jsx-a11y/accessible-emoji": 0,

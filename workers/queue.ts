@@ -19,6 +19,8 @@ if (process.env.NODE_ENV === 'production') {
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
 		environment: isProd() ? 'prod' : 'dev',
 		release: getAppCommit(),
+		tracesSampleRate: 1,
+		integrations: [new Sentry.Integrations.Postgres()],
 	});
 }
 

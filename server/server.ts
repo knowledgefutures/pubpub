@@ -90,13 +90,20 @@ import { contract } from 'utils/api/contract';
 import { server } from 'utils/api/server';
 
 if (process.env.NODE_ENV === 'production') {
-	// The Sentry request handler must be the first middleware on the app
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
 		environment: isProd() ? 'prod' : 'dev',
 		release: getAppCommit(),
+		tracesSampleRate: 1,
+		integrations: [
+			new Sentry.Integrations.Http({ tracing: true }),
+			new Sentry.Integrations.Postgres(),
+			new Sentry.Integrations.Express({ app }),
+		],
 	});
+	// The Sentry request handler must be the first middleware on the app
 	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
+	app.use(Sentry.Handlers.tracingHandler());
 	app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
 app.use(deduplicateSlash());

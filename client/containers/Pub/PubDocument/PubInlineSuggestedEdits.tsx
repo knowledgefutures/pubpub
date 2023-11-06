@@ -50,9 +50,7 @@ const PubInlineSuggestedEdits = () => {
 	const fetchSuggestedEditsUserInfo = useCallback(async () => {
 		if (selectedSuggestion) {
 			const suggestionUser: SuggestedEditsUser = await apiFetch.get(
-				`/api/users?suggestionUserId=${encodeURIComponent(
-					selectedSuggestion.suggestionUserId,
-				)}`,
+				`/api/users/${encodeURIComponent(selectedSuggestion.suggestionUserId)}`,
 			);
 			if (suggestionUser) {
 				setSuggestionAuthor(suggestionUser);

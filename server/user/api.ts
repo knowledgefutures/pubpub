@@ -1,7 +1,7 @@
 import passport from 'passport';
 
 import app, { wrap } from 'server/server';
-import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { NotFoundError } from 'server/utils/errors';
 
 import { isProd, isDuqDuq } from 'utils/environment';
 import { getPermissions } from './permissions';
@@ -45,24 +45,19 @@ app.post('/api/users', (req, res) => {
 });
 
 app.get(
-	'/api/users',
+	'/api/users/:id',
 	wrap(async (req, res) => {
-		const requestIds = getRequestIds(req);
-		const permissions = await getPermissions(requestIds);
-		if (!permissions.read) {
-			throw new ForbiddenError();
-		}
-		const { suggestionUserId } = req.query;
-		if (!suggestionUserId) {
+		const { id } = req.params;
+		if (!id) {
 			throw new NotFoundError();
 		}
 
-		const userInfo = await getSuggestedEditsUserInfo(suggestionUserId);
-		if (userInfo) {
-			return res.status(201).json(userInfo);
+		const userInfo = await getSuggestedEditsUserInfo(id);
+		if (!userInfo) {
+			throw new NotFoundError();
 		}
 
-		throw new NotFoundError();
+		return res.status(201).json(userInfo);
 	}),
 );
 

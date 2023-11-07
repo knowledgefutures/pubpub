@@ -13,10 +13,6 @@ const main = async () => {
 		await setupLocalDatabase();
 	}
 
-	if (process.env.NODE_ENV === 'production') {
-		require('newrelic');
-	}
-
 	const loadServer = () => {
 		return require('./dist/server/server/server').startServer();
 	};

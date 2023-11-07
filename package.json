@@ -160,7 +160,6 @@
 		"mailgun.js": "^2.0.1",
 		"mudder": "^1.0.4",
 		"mutationobserver-shim": "^0.3.3",
-		"newrelic": "^5.7.0",
 		"no-slash": "^1.2.15",
 		"node-fetch": "^2.6.7",
 		"passport": "^0.5.0",

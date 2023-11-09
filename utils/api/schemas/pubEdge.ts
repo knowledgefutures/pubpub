@@ -83,15 +83,15 @@ export const pubEdgeUpdateSchema = pubEdgeSchema
 		z.union([
 			z.object({
 				targetPubId: z.string().uuid(),
-				externalPublication: z.undefined().optional(),
+				externalPublication: z.null().optional(),
 			}),
 			z.object({
-				targetPubId: z.undefined().optional(),
-				externalPublication: externalPublicationCreateSchema.partial(),
+				targetPubId: z.null().optional(),
+				externalPublication: externalPublicationSchema.partial(),
 			}),
 			z.object({
-				targetPubId: z.undefined().optional(),
-				externalPublication: z.undefined().optional(),
+				targetPubId: z.null().optional(),
+				externalPublication: z.null().optional(),
 			}),
 		]),
 	);

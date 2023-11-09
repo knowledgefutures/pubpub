@@ -216,3 +216,30 @@ it('lets a Pub manager destroy a PubEdge', async () => {
 	const edgeNow = await PubEdge.findOne({ where: { id: existingEdge?.id } });
 	expect(edgeNow).toBeNull();
 });
+
+it('lets a Pub manager update the direction of a pubEdge', async () => {
+	const { anotherPub, sourcePub, sourcePubManager } = models;
+
+	const existingEdge = await createPubEdge({
+		pubId: sourcePub.id,
+		targetPubId: anotherPub.id,
+		relationType: 'comment',
+		pubIsParent: true,
+	});
+
+	expect(existingEdge.pubIsParent).toEqual(true);
+	const sourcePubAgent = await login(sourcePubManager);
+
+	const {
+		body: { pubIsParent },
+	} = await sourcePubAgent
+		.put('/api/pubEdges')
+		.send({
+			...existingEdge,
+			pubEdgeId: existingEdge.id,
+			pubIsParent: false,
+		})
+		.expect(200);
+
+	expect(pubIsParent).toEqual(false);
+});

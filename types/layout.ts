@@ -87,6 +87,7 @@ export type LayoutBlockBanner = {
 		buttonUrl?: string;
 		showButton?: boolean;
 		text?: string;
+		defaultCollectionIds?: string[];
 	};
 };
 

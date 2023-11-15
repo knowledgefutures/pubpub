@@ -24,6 +24,7 @@ export const layoutBlockBannerSchema = z
 			buttonUrl: z.string().optional(),
 			showButton: z.boolean().optional(),
 			text: z.string().optional(),
+			defaultCollectionIds: z.array(z.string().uuid()).optional(),
 		}),
 	})
 	.openapi({

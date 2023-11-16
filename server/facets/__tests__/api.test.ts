@@ -69,6 +69,29 @@ describe('/api/facets', () => {
 		});
 	});
 
+	it('allows you to disable a facets prop for a certain scope by passing null', async () => {
+		const { userWhoCanManage, pub } = models;
+
+		const agent = await login(userWhoCanManage);
+
+		await agent
+			.post('/api/facets')
+			.send({
+				scope: { kind: 'pub', id: pub.id },
+				facets: {
+					CitationStyle: { citationStyle: null },
+				},
+			})
+			.expect(200);
+		expect(await fetchFacetsForScope({ pubId: pub.id }, ['CitationStyle'])).toMatchObject({
+			CitationStyle: {
+				value: {
+					citationStyle: 'apa', // the default
+				},
+			},
+		});
+	});
+
 	it('updates facets, and creates ActivityItems for each one', async () => {
 		const { userWhoCanManage, pub } = models;
 		const t0 = Date.now();
@@ -128,7 +151,7 @@ describe('/api/facets', () => {
 				facetName: 'CitationStyle',
 				facetProps: {
 					citationStyle: {
-						from: 'apa-7',
+						from: null,
 						to: 'cell',
 					},
 				},

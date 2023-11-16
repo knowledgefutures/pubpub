@@ -1,4 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
+import type { Model, ModelCtor } from 'sequelize-typescript';
 import { FacetBinding } from './models/facetBinding';
 
 import { ALL_FACET_DEFINITIONS, FacetName, FacetProp, FacetProps } from '../../facets';
@@ -55,7 +56,11 @@ export const createSequelizeModelsFromFacetDefinitions = (sequelize: Sequelize) 
 		}
 	});
 	return {
-		facetModels: modelsByName as Record<FacetName, any>,
+		facetModels: modelsByName as {
+			[N in FacetName]: ModelCtor<
+				Model<FacetProps[N], Omit<FacetProps[N], '__facetProp' | 'propType'>>
+			>;
+		},
 		FacetBinding,
 	};
 };

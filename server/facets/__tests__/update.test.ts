@@ -73,11 +73,11 @@ describe('updateFacetsForScope', () => {
 				include: includeFacetBindingWhere({ pubId: pub.id }),
 			}),
 		]);
-		expect(citationStyleModel.toJSON()).toMatchObject({
+		expect(citationStyleModel?.toJSON()).toMatchObject({
 			citationStyle: 'cell',
 			inlineCitationStyle: 'authorYear',
 		});
-		expect(pubEdgeDisplayModel.toJSON()).toMatchObject({
+		expect(pubEdgeDisplayModel?.toJSON()).toMatchObject({
 			defaultsToCarousel: true,
 			descriptionIsVisible: null,
 		});

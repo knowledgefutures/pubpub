@@ -27,7 +27,8 @@ const facetSchemas = Object.entries(ALL_FACET_DEFINITIONS).reduce((acc, [njame, 
 
 	const rawShape = Object.entries(facet.props).reduce((accc, [propNjame, prop]) => {
 		const propName = propNjame as any;
-		accc[propName] = prop.propType.schema.openapi({
+		// nullable bc that allows the facet to return to higher scope value
+		accc[propName] = prop.propType.schema.nullable().openapi({
 			description: prop.label,
 			example: prop.rootValue,
 		});
@@ -41,7 +42,11 @@ const facetSchemas = Object.entries(ALL_FACET_DEFINITIONS).reduce((acc, [njame, 
 }, {} as FacetSchema);
 
 export const facetSchema = z.object({
-	facets: z.object(facetSchemas).partial() satisfies z.ZodType<UpdateFacetsQuery>,
+	facets: z.object(facetSchemas).partial().default({}) satisfies z.ZodType<
+		UpdateFacetsQuery,
+		any,
+		any
+	>,
 	scope: z.object({
 		kind: z.enum(['community', 'collection', 'pub']),
 		id: z.string().uuid(),

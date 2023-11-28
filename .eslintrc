@@ -32,13 +32,15 @@
 					["utils", "./utils"],
 					["types", "./types"],
 					["facets", "./facets"],
-					["deposit", "./deposit"]
+					["deposit", "./deposit"],
+					["workers", "./workers"]
 				],
 				"extensions": [".js", ".ts", ".tsx"]
 			}
 		}
 	},
 	"rules": {
+		"no-redeclare": 0,
 		"no-restricted-imports": 0,
 		"@typescript-eslint/no-restricted-imports": [
 			"warn",

@@ -319,7 +319,52 @@ it('does not allow normal users to delete a collection', async () => {
 });
 
 describe('GET /api/collections', () => {
-	it('should get a collection by id', async () => {});
+	it('should get a collection by id', async () => {
+		const { confCyberSec, admin, community } = models;
+
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get(`/api/collections/${confCyberSec.id}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body.title).toEqual(confCyberSec.title);
+	});
+
+	it('should get a collection by slug', async () => {
+		const { confCyberSec, admin, community } = models;
+
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get(`/api/collections/${confCyberSec.slug}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body.title).toEqual(confCyberSec.title);
+	});
+
+	it('should be able to include the community in the get response, but not do so by default', async () => {
+		const { confCyberSec, admin, community } = models;
+
+		const agent = await login(admin);
+
+		const { body } = await agent
+			.get(`/api/collections/${confCyberSec.id}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(body.community).toBeUndefined();
+
+		const { body: bodyWithCommunity } = await agent
+			.get(`/api/collections/${confCyberSec.id}?include=${JSON.stringify(['community'])}`)
+			.set('Host', getHost(community))
+			.expect(200);
+
+		expect(bodyWithCommunity.community).toBeDefined();
+		expect(bodyWithCommunity.community.id).toEqual(community.id);
+	});
 
 	it('should throw a ForbiddenError for non-admin users', async () => {
 		const { nonAdmin, community } = models;
@@ -361,7 +406,7 @@ describe('GET /api/collections', () => {
 		const agent = await login(admin);
 
 		const { body } = await agent
-			.get('/api/collections?limit=5&offset=5&sort=updatedAt&order=ASC')
+			.get('/api/collections?limit=5&offset=5&sortBy=updatedAt&orderBy=ASC')
 			.set('Host', getHost(community))
 			.expect(200);
 
@@ -431,12 +476,12 @@ describe('GET /api/collections', () => {
 		const agent = await login(admin);
 
 		const { body: orderByTitle } = await agent
-			.get('/api/collections?sort=title')
+			.get('/api/collections?sortBy=title')
 			.set('Host', getHost(community))
 			.expect(200);
 
 		const { body: orderByUpdatedAt } = await agent
-			.get('/api/collections?sort=updatedAt')
+			.get('/api/collections?sortBy=updatedAt')
 			.set('Host', getHost(community))
 			.expect(200);
 
@@ -450,12 +495,12 @@ describe('GET /api/collections', () => {
 
 		const [{ body: orderAsc }, { body: orderDesc }] = await Promise.all([
 			agent
-				.get('/api/collections?sort=slug&order=ASC&limit=100')
+				.get('/api/collections?sortBy=slug&orderBy=ASC&limit=100')
 				.set('Host', getHost(community))
 				.expect(200),
 
 			agent
-				.get('/api/collections?sort=slug&order=DESC&limit=100')
+				.get('/api/collections?sortBy=slug&orderBy=DESC&limit=100')
 				.set('Host', getHost(community))
 				.expect(200),
 		]);

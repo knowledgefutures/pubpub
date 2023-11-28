@@ -19,12 +19,15 @@ const c = initContract();
 
 export const collectionContract = c.router({
 	get: {
-		path: '/api/collections/:id',
+		path: '/api/collections/:slugOrId',
 		method: 'GET',
-		summary: "Get a collection by it's id",
-		description: 'Get a collection',
+		summary: "Get a collection by it's id or slug",
+		description: "Get a collection by it's id or slug",
 		pathParams: z.object({
-			id: z.string().uuid(),
+			slugOrId: z.string().openapi({
+				description:
+					'UUID input will be interpreted as an ID, otherwise it will be interpreted as a slug.',
+			}),
 		}),
 		query: createGetQueryOptions(collectionWithRelationsSchema, {
 			include: {
@@ -87,7 +90,7 @@ export const collectionContract = c.router({
 	},
 	doi: {
 		deposit: {
-			path: '/api/collection/:collectionId/doi',
+			path: '/api/collections/:collectionId/doi',
 			method: 'POST',
 			summary: 'Create a DOI',
 			description: 'Deposit metadata to create a DOI',
@@ -101,7 +104,7 @@ export const collectionContract = c.router({
 			},
 		},
 		preview: {
-			path: '/api/collection/:collectionId/doi/preview',
+			path: '/api/collections/:collectionId/doi/preview',
 			method: 'POST',
 			summary: 'Preview a DOI deposit',
 			description: 'Preview a DOI deposit',
@@ -116,7 +119,7 @@ export const collectionContract = c.router({
 		},
 	},
 	getResource: {
-		path: '/api/collection/:collectionId/resource',
+		path: '/api/collections/:collectionId/resource',
 		method: 'GET',
 		summary: 'Get collection as a resource',
 		description: 'Get collection as a resource',

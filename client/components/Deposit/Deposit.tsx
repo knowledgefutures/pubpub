@@ -50,7 +50,7 @@ export default function Deposit(props: Props) {
 	const doiPrefix = depositTarget?.doiPrefix;
 	const fetchResource = async () => {
 		if ('pub' in props) {
-			await apiFetch(`/api/pub/${props.pub.id}/resource`, { method: 'GET' }).then(
+			await apiFetch(`/api/pubs/${props.pub.id}/resource`, { method: 'GET' }).then(
 				(pubResource: Resource) => {
 					const pubDoi = pubResource.identifiers.find(
 						(identifier) => identifier.identifierKind === 'DOI',
@@ -61,7 +61,7 @@ export default function Deposit(props: Props) {
 				},
 			);
 		} else {
-			await apiFetch(`/api/collection/${props.collection.id}/resource`, {
+			await apiFetch(`/api/collections/${props.collection.id}/resource`, {
 				method: 'GET',
 			}).then((collectionResource: Resource) => {
 				const collectionDoi = collectionResource.identifiers.find(

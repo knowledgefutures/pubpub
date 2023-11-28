@@ -1,5 +1,4 @@
 import { z } from 'zod';
-// import * as types from 'types';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 
 extendZodWithOpenApi(z);

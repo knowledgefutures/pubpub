@@ -35,8 +35,8 @@ export default function DataciteDeposit(props: Props) {
 	const [status, setStatus] = useState(SubmitDepositStatus.Initial);
 	const baseUrl =
 		'pub' in props
-			? `/api/pub/${props.pub.id}/doi`
-			: `/api/collection/${props.collection.id}/doi`;
+			? `/api/pubs/${props.pub.id}/doi`
+			: `/api/collections/${props.collection.id}/doi`;
 	const fetchDepositPreview = useCallback(
 		() =>
 			apiFetch(`${baseUrl}/preview`, { method: 'POST' })

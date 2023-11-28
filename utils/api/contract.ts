@@ -19,6 +19,7 @@ import { workerTaskContract } from './contracts/workerTask';
 import { importRoute } from './contracts/import';
 import { releaseContract } from './contracts/release';
 import { uploadPolicyRoute } from './contracts/uploadPolicy';
+import { uploadRoute } from './contracts/upload';
 
 extendZodWithOpenApi(z);
 
@@ -47,6 +48,7 @@ export const contract = c.router(
 		login: loginRoute,
 		logout: logoutRoute,
 		uploadPolicy: uploadPolicyRoute,
+		upload: uploadRoute,
 	},
 	{
 		strictStatusCodes: true,

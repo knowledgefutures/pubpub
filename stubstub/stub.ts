@@ -85,6 +85,7 @@ export const stubFirebaseAdmin = () => {
 				},
 				firstTimestamp: 0,
 				latestTimestamp: 0,
+				size: 0,
 			}),
 		);
 		const getFirebaseTokenStub = sinon

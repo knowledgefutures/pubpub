@@ -1,4 +1,5 @@
 import type { Global } from '@jest/types';
+import { finishDeferredTasks } from 'server/utils/deferred';
 import { clearUserToAgentMap } from './userToAgentMap';
 import { sequelize } from '../server/sequelize';
 
@@ -36,6 +37,7 @@ export const teardown = (
 		}
 		clearUserToAgentMap();
 		await sequelize.close();
+		await finishDeferredTasks();
 		// global.gc?.();
 	});
 };

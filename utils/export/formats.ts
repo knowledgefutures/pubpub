@@ -26,6 +26,7 @@ export const exportFormatsArray = [
 	'tex',
 	'json',
 ] as const;
+
 export type ExportFormat = (typeof exportFormatsArray)[number];
 
 type ExportFormatDescription = {

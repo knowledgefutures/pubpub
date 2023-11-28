@@ -4,12 +4,13 @@
  */
 import { apiFetch } from 'client/utils/apiFetch';
 
-const pingTaskOnce = (taskId) => apiFetch(`/api/workerTasks?workerTaskId=${taskId}`);
+const pingTaskOnce = (taskId: string, baseUrl = '') =>
+	apiFetch(`${baseUrl}/api/workerTasks?workerTaskId=${taskId}`);
 
-export const pingTask = (taskId, interval, startInterval = interval) =>
+export const pingTask = (taskId, interval, startInterval = interval, baseUrl?: string) =>
 	new Promise((resolve, reject) => {
 		const checkTask = () => {
-			pingTaskOnce(taskId)
+			pingTaskOnce(taskId, baseUrl)
 				.then((taskData) => {
 					if (taskData.isProcessing) {
 						setTimeout(checkTask, interval);

@@ -19,6 +19,10 @@ export const createPage = async (
 		slug: string;
 		description?: string | null;
 		avatar?: string | null;
+		isPublic?: boolean;
+		layout?: LayoutBlock[] | null;
+		isNarrowWidth?: boolean | null;
+		layoutAllowsDuplicatePubs?: boolean | null;
 	},
 	actorId: string | null = null,
 ) => {
@@ -41,8 +45,10 @@ export const createPage = async (
 			slug: await findAcceptableSlug(inputValues.slug, inputValues.communityId),
 			description: inputValues.description,
 			avatar: inputValues.avatar || null,
-			isPublic: false,
-			layout: generateDefaultPageLayout(),
+			isPublic: inputValues.isPublic ?? false,
+			layout: inputValues.layout ?? generateDefaultPageLayout(),
+			layoutAllowsDuplicatePubs: inputValues.layoutAllowsDuplicatePubs ?? false,
+			isNarrowWidth: inputValues.isNarrowWidth,
 			viewHash: generateHash(8),
 		},
 		{ actorId },

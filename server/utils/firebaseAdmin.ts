@@ -86,6 +86,7 @@ export const getPubDraftDoc = async (
 
 	return {
 		doc: doc.toJSON() as DocJson,
+		size: doc.content.size,
 		mostRecentRemoteKey: currentKey,
 		firstTimestamp,
 		latestTimestamp,

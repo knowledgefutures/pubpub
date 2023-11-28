@@ -23,6 +23,20 @@ export const pickKeys = <T extends Record<any, any>, K extends keyof T>(
 	return nextObject as Pick<T, K>;
 };
 
+export const omitKeys = <T extends Record<any, any>, K extends keyof T>(
+	object: T,
+	keys: readonly K[],
+): Omit<T, K> => {
+	const nextObject: Partial<Omit<T, K>> = {};
+	const objectKeys = Object.keys(object) as any[];
+	objectKeys.forEach((key) => {
+		if (!keys.includes(key)) {
+			nextObject[key] = object[key];
+		}
+	});
+	return nextObject as Omit<T, K>;
+};
+
 export const mapObject = <Keys extends string, From, To>(
 	object: Record<Keys, From>,
 	mapper: (from: From, key: Keys) => To,

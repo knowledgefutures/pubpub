@@ -90,6 +90,7 @@ export type PubHistoryState = {
 
 export type PubDraftInfo = {
 	doc: DocJson;
+	size: number;
 	mostRecentRemoteKey: number;
 	firstTimestamp: number;
 	latestTimestamp: number;

@@ -1,14 +1,22 @@
-import { Pub } from 'server/models';
-
 import * as types from 'types';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+
+import { Pub } from 'server/models';
+
+import { getProposedMetadata } from 'workers/tasks/import/metadata';
 import { pubAttributionSchema } from './pubAttribution';
 import { discussionSchema } from './discussion';
 import { collectionPubSchema } from './collectionPub';
 import { collectionSchema } from './collection';
 import { collectionAttributionSchema } from './collectionAttribution';
-import { releaseSchema } from './release';
+import { communitySchema } from './community';
+import { draftSchema } from './draft';
+import { reviewNewSchema } from './review';
+import { memberSchema } from './member';
+import { pubEdgeSchema } from './pubEdge';
+import { submissionSchema } from './submission';
+import { docJsonSchema, releaseSchema } from './release';
 
 extendZodWithOpenApi(z);
 
@@ -85,10 +93,21 @@ export const pubSchema = z.object({
 	crossrefDepositRecordId: z.string().uuid().nullable(),
 }) satisfies z.ZodType<types.Pub>;
 
-export const pubPostSchema = z
-	.object({
-		communityId: z.string(),
-	})
+export const optionalPubCreateParamSchema = pubSchema.pick({
+	slug: true,
+	title: true,
+	avatar: true,
+	description: true,
+	htmlTitle: true,
+	htmlDescription: true,
+	doi: true,
+	customPublishedAt: true,
+	downloads: true,
+});
+
+export const pubCreateSchema = optionalPubCreateParamSchema
+	.partial()
+	.extend({ communityId: pubSchema.shape.communityId })
 	.and(
 		z.union([
 			z.object({
@@ -204,4 +223,96 @@ export const resourceASTSchema = z.object({
 	name: z.string(),
 	attributes: z.record(z.string()).optional(),
 	children: z.array(z.any()).optional(),
+});
+
+export const pubWithRelationsSchema = pubSchema.extend({
+	attributions: pubAttributionSchema.array().optional(),
+	collectionPubs: collectionPubSchema.array().optional(),
+	community: communitySchema.optional(),
+	draft: draftSchema.optional(),
+	discussions: discussionSchema.array().optional(),
+	members: memberSchema.array().optional(),
+	releases: releaseSchema.array().optional(),
+	inboundEdges: pubEdgeSchema.array().optional(),
+	outboundEdges: pubEdgeSchema.array().optional(),
+	reviews: reviewNewSchema.array().optional(),
+	submission: submissionSchema.optional(),
+});
+
+export const importCreateParams = optionalPubCreateParamSchema
+	.extend({ collectionId: z.string().uuid().optional() })
+	.partial();
+
+export type ImportCreatePubParams = (typeof importCreateParams)['_input'];
+
+export const base = z.object({
+	files: z.union([
+		z.array(
+			z
+				.tuple([z.custom<Blob>(), z.string({ description: 'filename' })])
+				.openapi({ title: 'Blob + filename (Node 18)' }),
+		),
+		z.custom<File[]>().openapi({ title: 'File (Node 20+, browser)' }),
+	]),
+});
+
+export const importMethodSchema = z
+	.enum(['replace', 'append', 'prepend', 'overwrite'])
+	.default('replace');
+
+export type ImportMethod = (typeof importMethodSchema)['_input'];
+
+export const overrideableMetadata = ['title', 'slug', 'description', 'customPublishedAt'] as const;
+export const overrideableMetadataSchema = z.enum(overrideableMetadata);
+
+export const metadataOptionsSchema = z.object({
+	attributions: z
+		.union([z.boolean(), z.literal('match')], {
+			invalid_type_error: 'Must be a boolean or "match"',
+		})
+		.optional()
+		.openapi({
+			description:
+				"Whether to import author information.\n\n- `false` will not import authors.\n- `true` will import authors.\n- `'match'` will import authors and attempt to match to match them to existing users.\n",
+		}),
+	overrides: overrideableMetadataSchema
+		.or(overrideableMetadataSchema.array())
+		.optional()
+		.openapi({
+			description:
+				"Which detected metadata to override with user supplied metadata.\n\n Example: Set it to `['title']` if you want to detected title to override the user supplied title.\n",
+		}),
+	overrideAll: z.boolean().optional().openapi({
+		description:
+			'Whether to override all existing and user supplied metadata with detected metadata.\n',
+	}),
+});
+
+export type MetadataOptions = (typeof metadataOptionsSchema)['_input'];
+
+export const baseWithPubId = base
+	.extend({
+		method: importMethodSchema,
+	})
+	.extend(metadataOptionsSchema.shape);
+
+export const baseWithImport = base
+	.extend(importCreateParams.shape)
+	.extend(metadataOptionsSchema.shape)
+	.extend({ pubId: z.undefined() });
+
+const pubWithAttributionsSchema = pubSchema.extend({
+	attributions: pubAttributionSchema.array(),
+});
+
+export const fullImportOutput = z.object({ doc: docJsonSchema, pub: pubWithAttributionsSchema });
+export const toPubImportOutput = z.object({ doc: docJsonSchema, pub: pubWithAttributionsSchema });
+
+export type ProposedMetadata = Awaited<ReturnType<typeof getProposedMetadata>>;
+export const pandocOutputSchema = z.object({
+	rawMetadata: z.record(z.any()).optional(),
+	doc: docJsonSchema,
+	warnings: z.array(z.any()),
+	pandocErrorOutput: z.string(),
+	proposedMetadata: z.record(z.any()), // satisfies z.ZodType<ProposedMetadata>,
 });

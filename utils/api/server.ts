@@ -16,6 +16,7 @@ import { workerTaskServer } from 'server/workerTask/api';
 import { releaseServer } from 'server/release/api';
 import { uploadPolicyRouteImplementation } from 'server/uploadPolicy/api';
 import { communityServer } from 'server/community/api';
+import { uploadRouteImplementation } from 'server/upload/api';
 import { contract } from './contract';
 
 const s = initServer();
@@ -39,6 +40,7 @@ export const server = s.router(contractWithScriptsAndCommunity, {
 	pubEdge: pubEdgeServer,
 	release: releaseServer,
 	uploadPolicy: uploadPolicyRouteImplementation,
+	upload: uploadRouteImplementation,
 	workerTask: workerTaskServer,
 	logout: logoutRouteImplementation,
 	login: loginRouteImplementation,

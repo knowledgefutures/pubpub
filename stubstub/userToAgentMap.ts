@@ -1,4 +1,4 @@
-import supertest, { SuperTest, Test } from 'supertest';
+import supertest from 'supertest';
 import { UserWithPrivateFieldsAndHashedPassword } from 'types';
 
 import type { Server } from 'http';
@@ -10,7 +10,7 @@ let server: Server | null = null;
 
 export const login = async (
 	user?: UserWithPrivateFieldsAndHashedPassword,
-): Promise<SuperTest<Test>> => {
+): Promise<supertest.SuperAgentTest> => {
 	server ??= app.listen();
 
 	if (!user) {

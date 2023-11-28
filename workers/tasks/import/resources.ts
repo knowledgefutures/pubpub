@@ -17,7 +17,7 @@ type MissingCitationWarning = {
 	id: string;
 };
 
-type ResourceWarning = MissingImageWarning | MissingCitationWarning;
+export type ResourceWarning = MissingImageWarning | MissingCitationWarning;
 
 const getSourceFileForResource = (resourcePath, sourceFiles, document) => {
 	const possibleSourceFiles = sourceFiles.filter((file) => file.clientPath);

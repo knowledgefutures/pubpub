@@ -17,16 +17,21 @@ export const createPubAttribution = async ({
 	roles,
 	affiliation,
 }: PubAttributionCreationParams) => {
-	const newAttribution = await PubAttribution.create({
-		userId,
-		pubId,
-		orcid,
-		name,
-		roles,
-		affiliation,
-		order,
-		isAuthor,
-	});
+	const newAttribution = await PubAttribution.create(
+		{
+			userId,
+			pubId,
+			orcid,
+			name,
+			roles,
+			affiliation,
+			order,
+			isAuthor,
+		},
+		{
+			include: [includeUserModel({ as: 'user', required: false })],
+		},
+	);
 	const populatedPubAttribution = expect(
 		await PubAttribution.findOne({
 			where: { id: newAttribution.id },

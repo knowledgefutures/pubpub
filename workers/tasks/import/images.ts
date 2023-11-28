@@ -2,7 +2,7 @@ import tmp from 'tmp-promise';
 
 import { extensionFor, spawn } from './util';
 
-export const convertFileTypeIfNecessary = async (tmpFilePath) => {
+export const convertFileTypeIfNecessary = async (tmpFilePath: string) => {
 	const extension = extensionFor(tmpFilePath);
 	if (extension === 'pdf') {
 		// Convert with pdftoppm

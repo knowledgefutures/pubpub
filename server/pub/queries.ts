@@ -1,6 +1,8 @@
 import striptags from 'striptags';
 import unescape from 'lodash.unescape';
+import type { Attributes } from 'sequelize';
 
+import * as types from 'types';
 import {
 	Collection,
 	Community,
@@ -13,16 +15,21 @@ import {
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { createDraft } from 'server/draft/queries';
+import { createImport } from 'server/import/queries';
+import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
+
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { getReadableDateInYear } from 'utils/dates';
 import { asyncForEach } from 'utils/async';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
-import * as types from 'types';
-import { Attributes } from 'sequelize';
-import { PubPut } from 'utils/api/schemas/pub';
-import { PubUpdateableFields } from './permissions';
+import type { PubPut } from 'utils/api/schemas/pub';
+
+import { pingTask } from 'client/utils/pingTask';
+import type { ImportBody } from 'utils/api/schemas/import';
+
+import type { PubUpdateableFields } from './permissions';
 
 export const createPub = async (
 	{
@@ -30,9 +37,11 @@ export const createPub = async (
 		collectionIds,
 		slug,
 		titleKind = 'Untitled Pub',
+		title,
 		...restArgs
 	}: { communityId: string; collectionIds?: string[] | null; slug?: string; [key: string]: any },
 	actorId?: string,
+	including?: ('draft' | 'members' | 'attributions')[],
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const dateString = getReadableDateInYear(new Date());
@@ -41,20 +50,30 @@ export const createPub = async (
 	);
 	const draft = await createDraft();
 
-	const newPub = await Pub.create(
-		{
-			title: `${titleKind} on ${dateString}`,
-			slug: newPubSlug,
-			communityId,
-			viewHash: generateHash(8),
-			editHash: generateHash(8),
-			reviewHash: generateHash(8),
-			commentHash: generateHash(8),
-			draftId: draft.id,
-			...restArgs,
-		},
-		{ actorId },
-	);
+	let newPub: Pub;
+	try {
+		newPub = await Pub.create(
+			{
+				title: title ?? `${titleKind} on ${dateString}`,
+				slug: newPubSlug,
+				communityId,
+				viewHash: generateHash(8),
+				editHash: generateHash(8),
+				reviewHash: generateHash(8),
+				commentHash: generateHash(8),
+				draftId: draft.id,
+				...restArgs,
+			},
+			{ actorId },
+		);
+	} catch (e: any) {
+		e.errors.forEach((error: any) => {
+			if (error.type === 'unique violation') {
+				throw new Error('Slug is already in use');
+			}
+		});
+		throw new Error(e);
+	}
 
 	const createPubAttribution =
 		actorId &&
@@ -97,9 +116,34 @@ export const createPub = async (
 		},
 	);
 
-	await Promise.all([createPubAttribution, createCollectionPubs, createMember].filter((x) => x));
+	const [attribution, _, member] = await Promise.all([
+		createPubAttribution,
+		createCollectionPubs,
+		createMember,
+	]);
 
 	setPubSearchData(newPub.id);
+
+	switch (true) {
+		case including?.includes('draft'):
+			newPub.draft = draft;
+			break;
+
+		case including?.includes('members'):
+			if (member) {
+				newPub.members = [member];
+			}
+			break;
+
+		case including?.includes('attributions'):
+			if (attribution) {
+				newPub.attributions = [attribution];
+			}
+			break;
+		default:
+			break;
+	}
+
 	return newPub;
 };
 
@@ -194,3 +238,25 @@ export const findPub = (pubId: string) =>
 		Pub,
 		'community'
 	> | null>;
+
+export const importToPub = async ({
+	pubId,
+	baseUrl,
+	importBody,
+	method,
+}: {
+	pubId: string;
+	baseUrl: string;
+	importBody: ImportBody;
+	method?: 'replace' | 'overwrite' | 'append' | 'prepend';
+}) => {
+	const taskData = await createImport(importBody);
+
+	const task = (await pingTask(taskData.id, 1000, 1000, baseUrl)) as {
+		doc: any;
+		pandocErrorOutput: string;
+	};
+
+	await writeDocumentToPubDraft(pubId, task.doc, { method });
+	return task;
+};

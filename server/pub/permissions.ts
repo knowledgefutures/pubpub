@@ -5,7 +5,7 @@ import { expect } from 'utils/assert';
 import { CanCreatePub } from 'types';
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
-const managerUpdatableFields = [
+export const managerUpdatableFields = [
 	'avatar',
 	'customPublishedAt',
 	'description',
@@ -68,10 +68,9 @@ export const getUpdatablePubFields = async ({
 
 	if (canManage) {
 		if (canAdmin) {
-			return [...managerUpdatableFields, ...adminUpdatableFields] as [
-				...typeof managerUpdatableFields,
-				...typeof adminUpdatableFields,
-			];
+			return [...managerUpdatableFields, ...adminUpdatableFields] as Readonly<
+				[...typeof managerUpdatableFields, ...typeof adminUpdatableFields]
+			>;
 		}
 		return managerUpdatableFields;
 	}

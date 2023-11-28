@@ -1,7 +1,7 @@
 import * as types from 'types';
 import { z } from 'zod';
 
-import { createGetManyQueryOptions } from './createGetManyQuery';
+import { nonRelationFields } from './createGetManyQuery';
 
 export type GetQueryAny = ReturnType<typeof createGetQueryOptions>['_output'];
 
@@ -17,6 +17,13 @@ export const createGetQueryOptions = <
 		// IncludeOptions[number],
 		...IncludeOptions[number][],
 	] = [],
+	NonRelationFields extends [
+		Exclude<keyof Schema['_output'] & string, types.OptionalKeys<Schema['_output']>>,
+		...Exclude<keyof Schema['_output'] & string, types.OptionalKeys<Schema['_output']>>[],
+	] = [
+		Exclude<keyof Schema['_output'] & string, types.OptionalKeys<Schema['_output']>>,
+		...Exclude<keyof Schema['_output'] & string, types.OptionalKeys<Schema['_output']>>[],
+	],
 >(
 	schema: Schema,
 	options: {
@@ -39,7 +46,23 @@ export const createGetQueryOptions = <
 		};
 	},
 ) => {
-	const manyQuery = createGetManyQueryOptions(schema, options);
+	const includeOptions = options?.include?.options;
+	return z.object({
+		/**
+		 * Include certain relations
+		 */
+		include:
+			includeOptions && (includeOptions?.length ?? 0) > 0
+				? z
+						.array(z.enum(includeOptions as Exclude<IncludeOptions, []>))
+						.default(options?.include?.defaults ?? [])
+				: z.undefined(),
 
-	return manyQuery.unwrap().pick({ attributes: true, include: true }).default({});
+		/**
+		 * Which non-relation fields to include in the response
+		 *
+		 * @default All fields
+		 */
+		attributes: z.array(z.enum(nonRelationFields(schema) as NonRelationFields)).optional(),
+	});
 };

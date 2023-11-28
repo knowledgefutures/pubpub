@@ -7,6 +7,8 @@ import * as types from 'types';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { contract } from 'utils/api/contract';
 import { initServer } from '@ts-rest/express';
+import { queryMany } from 'utils/query/queryMany';
+import { queryOne } from 'utils/query/queryOne';
 import { getPermissions } from './permissions';
 import {
 	createPubAttribution,
@@ -14,6 +16,8 @@ import {
 	destroyPubAttribution,
 	getPubAttributions,
 } from './queries';
+import { PubAttribution } from './model';
+import { Pub } from '../pub/model';
 
 const getRequestIds = createGetRequestIds<{
 	communityId?: string;
@@ -75,7 +79,22 @@ export const attributionCreationSchema = attributionSchema
 
 const s = initServer();
 
+const pubAttributionCustomScope = [
+	{
+		model: Pub,
+		as: 'pub',
+		foreignKey: 'pubId',
+	},
+];
+
 export const pubAttributionServer = s.router(contract.pubAttribution, {
+	get: queryOne(PubAttribution, {
+		customScope: pubAttributionCustomScope,
+	}),
+	getMany: queryMany(PubAttribution, {
+		customScope: pubAttributionCustomScope,
+	}),
+
 	batchCreate: async ({ req, body }) => {
 		const { attributions } = body;
 		const requestIds = getRequestIds(body, req.user);
@@ -114,58 +133,43 @@ export const pubAttributionServer = s.router(contract.pubAttribution, {
 	},
 
 	create: async ({ req, body }) => {
-		try {
-			const requestIds = getRequestIds(body, req.user);
-			const permissions = await getPermissions(requestIds);
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			const newPubAttribution = await createPubAttribution({
-				...body,
-			});
-			return { status: 201, body: newPubAttribution };
-		} catch (err: any) {
-			console.error('Error in postPubAttribution: ', err);
-			return { status: 500, body: err.message };
+		const requestIds = getRequestIds(body, req.user);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.create) {
+			throw new ForbiddenError();
 		}
+		const newPubAttribution = await createPubAttribution({
+			...body,
+		});
+		return { status: 201, body: newPubAttribution };
 	},
 
 	update: async ({ req, body }) => {
-		try {
-			const requestIds = getRequestIds(body, req.user);
-			const permissions = await getPermissions(requestIds);
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-
-			const updatedValues = await updatePubAttribution(
-				{
-					...body,
-					pubAttributionId: body.id,
-				},
-				permissions.update,
-			);
-			return { status: 201, body: updatedValues };
-		} catch (err: any) {
-			console.error('Error in putPubAttribution: ', err);
-			return { status: 500, body: err.message };
+		const requestIds = getRequestIds(body, req.user);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.update) {
+			throw new ForbiddenError();
 		}
-	},
-	remove: async ({ req, body }) => {
-		try {
-			const requestIds = getRequestIds(body, req.user);
-			const permissions = await getPermissions(requestIds);
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			await destroyPubAttribution({
+
+		const updatedValues = await updatePubAttribution(
+			{
 				...body,
 				pubAttributionId: body.id,
-			});
-			return { status: 201, body: body.id };
-		} catch (err: any) {
-			console.error('Error in deletePubAttribution: ', err);
-			return { status: 500, body: err.message };
+			},
+			permissions.update,
+		);
+		return { status: 200, body: updatedValues };
+	},
+	remove: async ({ req, body }) => {
+		const requestIds = getRequestIds(body, req.user);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.destroy) {
+			throw new ForbiddenError();
 		}
+		await destroyPubAttribution({
+			...body,
+			pubAttributionId: body.id,
+		});
+		return { status: 200, body: body.id };
 	},
 });

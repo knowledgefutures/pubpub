@@ -8,6 +8,7 @@ import {
 	waitUntilObjectExists,
 	HeadObjectCommandOutput,
 } from '@aws-sdk/client-s3';
+import { Progress, Upload } from '@aws-sdk/lib-storage';
 
 type UploadInput = PutObjectCommandInput['Body'];
 
@@ -24,6 +25,26 @@ type PubPubS3ClientConfig = {
 
 type PubPubS3Client = {
 	uploadFile: (key: string, file: UploadInput, bufferStream?: boolean) => Promise<UploadResult>;
+	uploadFileSplit: (
+		key: string,
+		file: UploadInput,
+		options?: {
+			contentType?: string;
+			/**
+			 * Max number of concurrent uploads
+			 *
+			 * @default 3
+			 */
+			partSize?: number;
+			/**
+			 * Size of each unit
+			 *
+			 * @default 5MB
+			 */
+			queueSize?: number;
+			progressCallback?: (progress: Progress) => void | Promise<void>;
+		},
+	) => Promise<void>;
 	downloadFile: (key: string) => Promise<Readable>;
 	retrieveFileHead: (key: string) => Promise<null | HeadObjectCommandOutput>;
 	checkIfFileExists: (key: string) => Promise<boolean>;
@@ -54,6 +75,7 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 		key: string,
 		file: UploadInput,
 		buffer?: boolean,
+		contentLength?: number,
 	): Promise<UploadResult> => {
 		const body = buffer ? await bufferStream(file as Stream) : file;
 		const putObjectCommand = new PutObjectCommand({
@@ -61,9 +83,40 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 			Key: key,
 			Body: body,
 			ACL,
+			...(!buffer && { ContentLength: contentLength }),
 		});
 		await s3Client.send(putObjectCommand);
 		return { url: `https://${bucket}/${key}` };
+	};
+
+	const uploadFileSplit: PubPubS3Client['uploadFileSplit'] = async (
+		key,
+		file,
+		{ contentType, queueSize, partSize, progressCallback } = {},
+	) => {
+		const parallelUploads3 = new Upload({
+			client: s3Client,
+			params: {
+				Bucket: bucket,
+				Key: key,
+				Body: file,
+				ACL,
+				ContentType: contentType,
+			},
+			queueSize: queueSize ?? 3, // optional concurrency configuration
+			partSize: partSize ?? 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
+			leavePartsOnError: false, // optional manually handle dropped parts
+		});
+
+		parallelUploads3.on(
+			'httpUploadProgress',
+			progressCallback ??
+				((progress) => {
+					console.log(progress);
+				}),
+		);
+
+		await parallelUploads3.done();
 	};
 
 	const downloadFile = async (key: string) => {
@@ -105,6 +158,7 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 
 	return {
 		uploadFile,
+		uploadFileSplit,
 		downloadFile,
 		checkIfFileExists,
 		waitForFileToExist,

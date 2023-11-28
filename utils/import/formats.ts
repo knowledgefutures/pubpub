@@ -1,3 +1,16 @@
+export const pandocFormatArray = [
+	'docx+citations',
+	'epub',
+	'html',
+	'markdown+tex_math_dollars',
+	'odt',
+	'markdown_strict',
+	'jats',
+	'latex',
+] as const;
+
+export type PandocFormat = (typeof pandocFormatArray)[number];
+
 export const extensionToPandocFormat = {
 	docx: 'docx+citations',
 	epub: 'epub',
@@ -7,10 +20,9 @@ export const extensionToPandocFormat = {
 	txt: 'markdown_strict',
 	xml: 'jats',
 	tex: 'latex',
-} as const;
+} as const satisfies Record<string, PandocFormat>;
 
 export type Extension = keyof typeof extensionToPandocFormat;
-export type PandocFormat = (typeof extensionToPandocFormat)[Extension];
 
 export const bibliographyFormats = [
 	'bib',

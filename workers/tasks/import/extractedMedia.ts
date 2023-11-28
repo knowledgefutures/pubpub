@@ -10,6 +10,7 @@ export const uploadExtractedMedia = async (tmpDirPath, mediaDirName = 'media') =
 	if (!fs.existsSync(mediaPath)) {
 		return [];
 	}
+	console.log('Uploading extracted media...');
 	return Promise.all(
 		getFullPathsInDir(mediaPath).map(async (unconvertedFilePath) => {
 			const filePath = await convertFileTypeIfNecessary(unconvertedFilePath);

@@ -3,7 +3,8 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import { parsePandocJson, fromPandoc, setPandocApiVersion } from '@pubpub/prosemirror-pandoc';
 
-import { extensionToPandocFormat } from 'utils/import/formats';
+import { PandocFormat, extensionToPandocFormat } from 'utils/import/formats';
+import { BaseSourceFile, ImporterFlags, SourceFile } from 'utils/api/schemas/import';
 
 import { rules } from './rules';
 import { downloadAndConvertFiles } from './download';
@@ -19,7 +20,11 @@ setPandocApiVersion([1, 22]);
 
 const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
 
-const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
+const createPandocArgs = (
+	pandocFormat: PandocFormat,
+	tmpDirPath: string,
+	metadataPath?: string,
+) => {
 	const shouldExtractMedia = ['odt', 'docx+citations', 'epub'].includes(pandocFormat);
 	return [
 		dataRoot && [`--data-dir=${dataRoot}`],
@@ -34,7 +39,7 @@ const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
 		.reduce((acc, next) => [...acc, ...next], []);
 };
 
-const callPandoc = (tmpDirPath, files, args) => {
+const callPandoc = (tmpDirPath: string, files, args) => {
 	const proc = spawnSync('pandoc', [...files, ...args], {
 		maxBuffer: 1024 * 1024 * 25,
 		cwd: tmpDirPath,
@@ -44,7 +49,7 @@ const callPandoc = (tmpDirPath, files, args) => {
 	return { output, error };
 };
 
-export const categorizeSourceFiles = (sourceFiles) => {
+export const categorizeSourceFiles = <T extends BaseSourceFile>(sourceFiles: T[]) => {
 	const preambles = sourceFiles.filter((file) => file.label === 'preamble');
 	const document = sourceFiles.find((file) => file.label === 'document');
 	const metadata = sourceFiles.find((file) => file.label === 'metadata');
@@ -69,6 +74,13 @@ const getPandocAst = ({
 	metadataPath,
 	tmpDirPath,
 	importerFlags,
+}: {
+	documentPath: string;
+	tmpDirPath: string;
+	importerFlags: ImporterFlags;
+	preamblePaths: string[];
+	supplementPaths: string[];
+	metadataPath?: string;
 }) => {
 	const extension = extensionFor(documentPath);
 	const pandocFormat = importerFlags.pandocFormat || extensionToPandocFormat[extension];
@@ -101,8 +113,12 @@ export const importFiles = async ({
 	tmpDirPath,
 	provideRawMetadata = false,
 	importerFlags = {},
+}: {
+	sourceFiles: (BaseSourceFile & { tmpPath: string })[];
+	tmpDirPath: string;
+	provideRawMetadata?: boolean;
+	importerFlags?: ImporterFlags;
 }) => {
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'keepStraightQuotes' does not exist on ty... Remove this comment to see the full error message
 	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
 	const { preambles, document, bibliography, supplements, metadata } =
 		categorizeSourceFiles(sourceFiles);
@@ -145,7 +161,13 @@ export const importFiles = async ({
 	};
 };
 
-export const importTask = async ({ sourceFiles: clientSourceFilesList, importerFlags }) => {
+export const importTask = async ({
+	sourceFiles: clientSourceFilesList,
+	importerFlags,
+}: {
+	sourceFiles: SourceFile[];
+	importerFlags: ImporterFlags;
+}) => {
 	const tmpDirPath = await getTmpDirectoryPath();
 	const sourceFiles = await downloadAndConvertFiles(clientSourceFilesList, tmpDirPath);
 	return importFiles({

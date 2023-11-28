@@ -10,16 +10,19 @@ import {
 	Classes,
 } from '@blueprintjs/core';
 
+import type { BaseSourceFile } from 'utils/api/schemas/import';
+
 import { getPotentialLabelsForFile } from './formats';
 
 type Props = {
-	file: {
-		clientPath?: string;
-		state?: string;
-		loaded?: number;
-		total?: number;
-		label?: string;
-	};
+	// file: {
+	// 	clientPath?: string;
+	// 	state?: string;
+	// 	loaded?: number;
+	// 	total?: number;
+	// 	label?: string;
+	// };
+	file: BaseSourceFile;
 	onLabelFile: (...args: any[]) => any;
 	onDelete: (...args: any[]) => any;
 };
@@ -29,11 +32,8 @@ require('./fileImportEntry.scss');
 const FileImportEntry = (props: Props) => {
 	const { file, onDelete, onLabelFile } = props;
 	const { loaded, total, state, clientPath, label } = file;
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const displayTitleBreak = Math.max(clientPath.length - 5, 0);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const displayTitleStart = clientPath.slice(0, displayTitleBreak);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const displayTitleEnd = clientPath.slice(displayTitleBreak);
 
 	const renderProgressContent = () => {
@@ -51,10 +51,8 @@ const FileImportEntry = (props: Props) => {
 		return (
 			<React.Fragment>
 				<span className="screenreader-only">
-					{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 					{Math.round((100 * loaded) / total)}% complete
 				</span>
-				{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 				<ProgressBar value={state === 'uploading' ? loaded / total : undefined} />
 			</React.Fragment>
 		);

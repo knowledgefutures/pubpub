@@ -6,7 +6,7 @@ extendZodWithOpenApi(z);
 
 export const docJsonSchema = z.object({
 	type: z.literal('doc'),
-	attrs: z.record(z.any()),
+	attrs: z.record(z.any()).optional(),
 	content: z.array(z.any()),
 });
 

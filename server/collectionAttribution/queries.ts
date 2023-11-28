@@ -4,6 +4,9 @@ import { expect } from 'utils/assert';
 import { CollectionAttributionCreationParams, UpdateParams } from 'types';
 import { Permissions } from './permissions';
 
+export const getCollectionAttributions = (collectionId: string) =>
+	CollectionAttribution.findAll({ where: { id: collectionId } });
+
 export const createCollectionAttribution = async (
 	inputValues: CollectionAttributionCreationParams,
 ) => {

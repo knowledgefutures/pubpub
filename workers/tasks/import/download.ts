@@ -3,12 +3,17 @@ import path from 'path';
 import { ensureDir } from 'fs-extra';
 import tmp from 'tmp-promise';
 
+import { SourceFile } from 'utils/api/schemas/import';
+
 import { downloadFileFromAssetStore, uploadFileToAssetStore } from './assetStore';
 import { convertFileTypeIfNecessary } from './images';
 
 tmp.setGracefulCleanup();
 
-export const downloadAndConvertFiles = async (sourceFiles, tmpDirectoryPath) => {
+export const downloadAndConvertFiles = async (
+	sourceFiles: SourceFile[],
+	tmpDirectoryPath: string,
+) => {
 	return Promise.all(
 		sourceFiles.map(async (sourceFile) => {
 			const { assetKey, clientPath } = sourceFile;

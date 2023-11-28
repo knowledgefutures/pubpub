@@ -3,6 +3,7 @@ import { metaValueToString, metaValueToJsonSerializable } from '@pubpub/prosemir
 
 import { getSearchUsers } from 'server/search/queries';
 import { isValidDate } from 'utils/dates';
+import { Falsy } from 'types';
 
 const getAuthorsArray = (author) => {
 	if (author.type === 'MetaList') {
@@ -25,9 +26,9 @@ const getDateStringFromMetaValue = (metaDateString) => {
 const getAttributions = async (author) => {
 	if (author) {
 		const authorsArray = getAuthorsArray(author);
-		const authorEntries = authorsArray.map(metaValueToJsonSerializable);
+		const authorEntries = authorsArray.map(metaValueToJsonSerializable) as any[];
 		const attributions = await Promise.all(
-			authorEntries.map(async (authorEntry) => {
+			authorEntries.map(async (authorEntry: string) => {
 				if (typeof authorEntry === 'string') {
 					const users = await getSearchUsers(authorEntry);
 					return { name: authorEntry, users: users.map((user) => user.toJSON()) };
@@ -40,17 +41,21 @@ const getAttributions = async (author) => {
 	return null;
 };
 
-const stripFalseyValues = (object) =>
-	Object.fromEntries(Object.entries(object).filter((kv) => kv[1]));
+type Unfalsied<T extends Record<string, any>> = {
+	[K in keyof T]: Exclude<T[K], Falsy>;
+};
+
+const stripFalseyValues = <T extends Record<string, any>>(object: T) =>
+	Object.fromEntries(Object.entries(object).filter((kv) => kv[1])) as Unfalsied<T>;
 
 export const getProposedMetadata = async (meta) => {
 	const { title, subtitle, author, authors, date, pubMetadata, slug } = meta;
 	return stripFalseyValues({
-		slug: slug && unidecode(metaValueToString(slug)),
-		title: title && metaValueToString(title),
-		description: subtitle && metaValueToString(subtitle),
+		slug: !!slug && unidecode(metaValueToString(slug)),
+		title: !!title && (metaValueToString(title) as string),
+		description: !!subtitle && (metaValueToString(subtitle) as string),
 		attributions: await getAttributions(authors || author),
-		customPublishedAt: date && getDateStringFromMetaValue(date),
+		customPublishedAt: !!date && getDateStringFromMetaValue(date),
 		metadata: pubMetadata !== undefined && metaValueToJsonSerializable(pubMetadata),
 	});
 };

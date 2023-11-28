@@ -7,9 +7,9 @@ import { assetsClient } from 'server/utils/s3';
 import { sleep } from 'utils/promises';
 import { extensionFor } from './util';
 
-export const getUrlForAssetKey = (assetKey) => `https://assets.pubpub.org/${assetKey}`;
+export const getUrlForAssetKey = (assetKey: string) => `https://assets.pubpub.org/${assetKey}`;
 
-export const generateAssetKeyForFile = (filePath) => {
+export const generateAssetKeyForFile = (filePath: string) => {
 	const fileExtension = extensionFor(filePath);
 	const folderName = isProd() ? generateHash(8) : '_testing';
 	const randomness = Math.floor(Math.random() * 8);

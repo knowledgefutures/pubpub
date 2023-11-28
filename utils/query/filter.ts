@@ -1,9 +1,10 @@
 import { z, ZodRawShape, ZodTypeAny } from 'zod';
 
-import { Op, WhereOptions } from 'sequelize';
+const plainAndBooleanAndArrayFilter = <Z extends ZodTypeAny>(schema: Z) => {
+	const plainOrBooleanOrArray = z.union([schema, z.boolean(), z.array(schema)]);
 
-const plainAndBooleanAndArrayFilter = <Z extends ZodTypeAny>(schema: Z) =>
-	z.union([schema, z.boolean(), z.array(schema)]).optional();
+	return z.union([plainOrBooleanOrArray, z.array(plainOrBooleanOrArray)]);
+};
 
 const dateNumberFilter = <Z extends ZodTypeAny>(fieldSchema: Z) =>
 	plainAndBooleanAndArrayFilter(
@@ -15,36 +16,38 @@ const dateNumberFilter = <Z extends ZodTypeAny>(fieldSchema: Z) =>
 				gte: fieldSchema.optional(),
 				lt: fieldSchema.optional(),
 				lte: fieldSchema.optional(),
-				invert: z.boolean().optional(),
+				ne: fieldSchema.optional(),
 			}),
 		]),
 	);
 
 const booleanFilter = z.boolean();
 
-const stringFilter = <Z extends z.ZodString>(schema: Z) =>
-	plainAndBooleanAndArrayFilter(
-		z.union([
-			schema,
-			z.union([
-				z.object({
-					exact: schema.optional(),
-					contains: z.undefined(),
-					invert: z.undefined(),
-				}),
-				z.object({
-					exact: z.undefined(),
-					contains: z.string().optional(),
-					invert: z.boolean().optional(),
-				}),
-				z.object({
-					exact: z.undefined(),
-					contains: z.undefined(),
-					invert: z.undefined(),
-				}),
-			]),
-		]),
-	).optional();
+const stringFilter = <Z extends z.ZodString>(schema: Z, strict?: boolean) =>
+	strict
+		? z.union([schema, schema.array()])
+		: plainAndBooleanAndArrayFilter(
+				z.union([
+					schema,
+					z.union([
+						z.object({
+							exact: schema.optional(),
+							contains: z.undefined(),
+							not: z.undefined(),
+						}),
+						z.object({
+							exact: z.undefined(),
+							contains: z.string().optional(),
+							not: z.boolean().optional(),
+						}),
+						z.object({
+							exact: z.undefined(),
+							contains: z.undefined(),
+							not: z.undefined(),
+						}),
+					]),
+				]),
+		  ).optional();
 
 const enumFilter = <Z extends z.ZodEnum<any>>(schema: Z) => plainAndBooleanAndArrayFilter(schema);
 
@@ -88,7 +91,7 @@ export const generateFilterSchema = <Z extends z.ZodType<any>>(baseSchema: Z) =>
 		return enumFilter(baseSchema);
 	}
 	if (baseSchema instanceof z.ZodString) {
-		return stringFilter(baseSchema);
+		return stringFilter(baseSchema, baseSchema.isUUID);
 	}
 	if (baseSchema instanceof z.ZodNumber || baseSchema instanceof z.ZodDate) {
 		return dateNumberFilter(baseSchema);
@@ -100,14 +103,15 @@ export const generateFilterSchema = <Z extends z.ZodType<any>>(baseSchema: Z) =>
 	return z.any();
 };
 
-export type FilterType<T> = T extends z.ZodType<infer U, any, any>
+export type FilterType<T, isUUID extends boolean = false> = T extends z.ZodType<infer U, any, any>
 	? U extends Array<infer X>
 		? Array<FilterType<z.ZodType<X, any, any>>>
 		: U extends string
 		? string extends U
-			? // @ts-expect-error FIXME: Typescript doesn't understand that if
-			  // `U extends string` then `T extends z.ZodType<string>`
-			  StringFilter<T>
+			? isUUID extends false
+				? // @ts-expect-error FIXME: Typescript doesn't understand that if
+				  StringFilter<T>
+				: string | string[]
 			: EnumFilter<T>
 		: U extends number | Date
 		? // @ts-expect-error FIXME: Typescript doesn't understand that if
@@ -127,8 +131,10 @@ type StringFilter<T extends z.ZodString> = z.infer<ReturnType<typeof stringFilte
 type NumberDateFilter<T extends z.ZodType<number> | z.ZodType<Date>> = z.infer<
 	ReturnType<typeof dateNumberFilter<T>>
 >;
-type ObjectFilter<T extends Record<string, any>> = {
-	[K in keyof T]?: FilterType<z.ZodType<T[K], any, any>>;
+export type ObjectFilter<T extends Record<string, any>> = {
+	[K in keyof T]?: K extends 'id' | `${string}Id`
+		? FilterType<z.ZodType<T[K], any, any>, true>
+		: FilterType<z.ZodType<T[K], any, any>>;
 };
 
 type FilterT<T> = z.ZodType<FilterType<T>>;
@@ -141,67 +147,4 @@ export const generateFilterForModelSchema = <Z extends z.ZodObject<any>>(modelSc
 		}),
 	) as FilterT<Z>;
 	return result;
-};
-
-type ZodTypes =
-	| z.ZodNumber
-	| z.ZodString
-	| z.ZodDate
-	| z.ZodBoolean
-	| z.ZodEnum<any>
-	| z.ZodObject<any>;
-
-const buildFieldWhereClause = <T extends ZodTypes>(filterField: FilterType<T>) => {
-	if (Array.isArray(filterField)) {
-		return { [Op.or]: filterField.map(buildFieldWhereClause) };
-	}
-
-	if (typeof filterField === 'boolean') {
-		if (filterField) {
-			return { [Op.not]: null };
-		}
-
-		return { [Op.is]: null };
-	}
-
-	if (typeof filterField === 'object') {
-		const w = Object.entries(filterField).reduce((acc, [key, value]) => {
-			if (key === 'exact') {
-				acc[Op.eq] = value;
-			}
-			if (key === 'contains') {
-				acc[Op.iLike] = `%${value}%`;
-			}
-
-			if (key === 'invert') {
-				acc[Op.not] = value;
-			}
-
-			if (['gt', 'lt', 'gte', 'lte', 'eq'].includes(key)) {
-				acc[Op[key]] = value;
-			}
-
-			return acc;
-		}, {} as any);
-
-		return w;
-	}
-
-	return filterField;
-};
-
-/**
- * Builds a Sequelize `where` clause based on the provided filters.
- * @param filters - An object containing the filters to apply to the query.
- * @returns A Sequelize `where` clause object.
- */
-export const buildWhereClause = <T extends ObjectFilter<any>>(filters: T) => {
-	const where: WhereOptions<z.infer<FilterType<T>>> = {};
-
-	Object.keys(filters).forEach((key) => {
-		const filterField = filters[key];
-		where[key] = buildFieldWhereClause(filterField);
-	});
-
-	return where;
 };

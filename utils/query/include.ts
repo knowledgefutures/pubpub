@@ -29,7 +29,6 @@ export const globalAssociationsMap = {
 		as: 'attributions',
 		include: [includeUserModel({ as: 'user', required: false })],
 	},
-
 	PubAttribution: {
 		model: PubAttribution,
 		as: 'attributions',

@@ -1,7 +1,7 @@
 import { AppRoute } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { importerFlagsSchema, sourceFileSchema } from '../schemas/import';
+import { createImportTaskSchema } from '../schemas/import';
 
 extendZodWithOpenApi(z);
 
@@ -10,10 +10,7 @@ export const importRoute = {
 	method: 'POST',
 	summary: 'Import a file to a pub',
 	description: 'Import a file to a pub',
-	body: z.object({
-		sourceFiles: z.array(sourceFileSchema),
-		importerFlags: importerFlagsSchema.default({}),
-	}),
+	body: createImportTaskSchema,
 	responses: {
 		201: z.string().uuid().openapi({
 			description:

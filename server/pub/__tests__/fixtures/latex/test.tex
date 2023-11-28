@@ -1,0 +1,31 @@
+% create a demo file for testing which imports a bib and a figure
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{biblatex}
+
+\addbibresource{test.bib}
+
+\title{On Testing}
+\author{Testy McTestface}
+\date{1337-01-01}
+
+\begin{document}
+
+\section{Introduction}
+
+Test driven development is when you write tests at any point during development\parencite{Fucci_2017}.
+
+If you don't do TDD, you are a bad person, and, even worse, a bad software engineer.\parencite{Pan_ur_2011}.
+
+This is demonstrated in this figure.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{image1.png}
+  \caption{Proof of your badness}
+  \label{fig:test}
+\end{figure}
+
+
+\printbibliography
+\end{document}

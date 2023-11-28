@@ -14,6 +14,12 @@ export const collectionAttributionSchema = attributionSchema.extend({
 	collectionId: z.string().uuid(),
 }) satisfies z.ZodType<types.CollectionAttribution>;
 
+export const batchCollectionAttributionCreationSchema = z.object({
+	attributions: z.array(attributionCreationSchema),
+	communityId: z.string(),
+	collectionId: z.string(),
+});
+
 export const collectionAttributionCreationSchema = z
 	.object({
 		communityId: z.string().uuid(),

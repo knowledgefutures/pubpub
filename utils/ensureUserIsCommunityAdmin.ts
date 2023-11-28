@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
-import { Community, Member } from 'server/models';
-import { isUserSuperAdmin } from 'server/user/queries';
-import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { Community, Member, User, includeUserModel } from 'server/models';
+import { ForbiddenError } from 'server/utils/errors';
+import { expect } from './assert';
 
 /**
  * Finds a community by its domain or subdomain.
@@ -45,39 +45,49 @@ export const findCommunityByHostname = async (hostname: string) => {
  * @throws A {@link NotFoundError} - If the community or member is not found.
  * @throws A {@link ForbiddenError} - If the user is not an admin.
  */
-export const ensureUserIsCommunityAdmin = async (req: {
-	hostname: string;
-	user?: {
-		id: string;
-	};
-}) => {
+export const ensureUserIsCommunityAdmin = async (req: { hostname: string; user?: User }) => {
 	if (!req.user?.id) {
 		throw new ForbiddenError(new Error('User not found'));
 	}
 
-	const community = await findCommunityByHostname(req.hostname);
-	if (!community) {
-		throw new NotFoundError();
+	const domainOrSubmdomain = req.hostname.replace(/\.pubpub\.org$|\.duqduq\.org$/, '');
+
+	if (req.user.isSuperAdmin) {
+		return expect(await findCommunityByDomain(domainOrSubmdomain));
 	}
 
-	const member = await Member.findOne({
+	const autherMember = await Member.findOne({
+		include: [
+			includeUserModel({ as: 'user', required: true }),
+			{
+				model: Community,
+				as: 'community',
+				required: true,
+			},
+		],
 		where: {
-			communityId: community.id,
-			userId: req.user?.id,
+			userId: req.user.id,
+			[Op.and]: [
+				{
+					permissions: 'admin',
+				},
+				{
+					[Op.or]: [
+						{
+							'$community.domain$': domainOrSubmdomain,
+						},
+						{
+							'$community.subdomain$': domainOrSubmdomain,
+						},
+					],
+				},
+			],
 		},
 	});
 
-	if (!member) {
-		if (await isUserSuperAdmin({ userId: req.user?.id })) {
-			return community;
-		}
-
-		throw new NotFoundError(new Error('Member not found'));
+	if (!autherMember) {
+		throw new ForbiddenError();
 	}
 
-	if (member.permissions !== 'admin') {
-		throw new ForbiddenError(new Error('You are not an admin of this community'));
-	}
-
-	return community;
+	return expect(autherMember.community);
 };

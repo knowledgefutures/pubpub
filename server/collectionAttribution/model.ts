@@ -10,7 +10,6 @@ import {
 } from 'sequelize-typescript';
 import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import type { SerializedModel } from 'types';
-import { MinimalUser } from 'types';
 import { User, Collection } from '../models';
 
 @Table
@@ -59,7 +58,7 @@ export class CollectionAttribution extends Model<
 	declare collectionId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
-	declare user?: MinimalUser;
+	declare user?: User;
 
 	@BelongsTo(() => Collection, {
 		onDelete: 'CASCADE',

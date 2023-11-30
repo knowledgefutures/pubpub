@@ -11,7 +11,7 @@ import { indexByProperty } from 'utils/arrays';
 import { transformPubToResource } from 'deposit/transform/pub';
 import { generateDoi } from 'server/doi/queries';
 import { assert, expect } from 'utils/assert';
-import { prepareResource } from 'deposit/datacite/deposit';
+import { prepareResource, submitResource } from 'deposit/datacite/deposit';
 import { assertValidResource } from 'deposit/validate';
 import { queryOne } from 'utils/query/queryOne';
 import { queryMany } from 'utils/query/queryMany';
@@ -197,7 +197,9 @@ export const pubServer = s.router(contract.pub, {
 				return { status: 400, body: { error: (error as Error).message } };
 			}
 			try {
-				const { resourceAst } = await prepareResource(pub, resource, expect(pubDoi));
+				const { resourceAst } = await submitResource(pub, resource, expect(pubDoi), {
+					pubId,
+				});
 				return { status: 200, body: resourceAst };
 			} catch (error) {
 				return { status: 400, body: { error: (error as Error).message } };

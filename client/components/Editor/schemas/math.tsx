@@ -12,6 +12,7 @@ const inlineMathSchema = {
 	atom: true,
 	parseDOM: [
 		{
+			contentElement: 'annotation',
 			tag: 'math-inline', // important!
 		},
 	],
@@ -24,6 +25,7 @@ const mathDisplaySchema = {
 	code: true,
 	parseDOM: [
 		{
+			contentElement: 'annotation',
 			tag: 'math-display',
 		},
 	],

@@ -22,6 +22,7 @@ export type PubMetadata = {
 	primaryCollectionTitle?: string | null;
 	primaryCollectionMetadata?: Record<string, any> | null;
 	license: RenderedLicense;
+	hostname: string;
 };
 
 export type NotesData = {

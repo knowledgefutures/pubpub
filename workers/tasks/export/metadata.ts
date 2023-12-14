@@ -17,6 +17,7 @@ import {
 } from 'server/models';
 
 import { renderLicenseForPub } from 'utils/licenses';
+import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
 import { getAllPubContributors } from 'utils/contributors';
 import { fetchFacetsForScope } from 'server/facets';
 
@@ -87,6 +88,8 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	const attributions = getAllPubContributors(pubData, 'contributors', false, true);
+
+	const hostname = getCorrectHostname(pubData.community.subdomain, pubData.community.domain);
 	return {
 		title: pubData.title,
 		slug: pubData.slug,
@@ -107,5 +110,6 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		publisher: pubData.community.publishAs,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 		license,
+		hostname,
 	};
 };

@@ -9,6 +9,7 @@ import { isProd, getAppCommit } from 'utils/environment';
 import { TaskPriority, taskQueueName } from 'utils/workers';
 import { WorkerTask } from 'server/models';
 import { expect } from 'utils/assert';
+import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
 
 const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;
@@ -23,6 +24,12 @@ if (process.env.NODE_ENV === 'production') {
 		integrations: [new Sentry.Integrations.Postgres()],
 	});
 }
+
+const { schedulePurge: schedulePurgeWorker } = createCachePurgeDebouncer({
+	errorHandler: process.env.NODE_ENV === 'production' ? Sentry.captureException : undefined,
+	debounceTime: 5000,
+	throttleTime: 1000,
+});
 
 // Every worker task should be run exactly once, but we keep an attemptCount field in the database
 // to account for cases where a task is interrupted, never acked, and then resent from the queue.
@@ -61,9 +68,23 @@ const processTask = (channel) => async (message) => {
 		console.log(
 			`Finished ${taskData.id} in ${duration} secs (load ${currentWorkerThreads}/${maxWorkerThreads})`,
 		);
-		await WorkerTask.update(updatedTaskData, {
-			where: { id: taskData.id },
-		});
+
+		// Export tasks return a URL and a hostname as output, we want to purge the cache of the hostname
+		const { output, ...rest } = updatedTaskData;
+
+		const { hostname, ...restOutput } = output || {};
+
+		await WorkerTask.update(
+			{ ...rest, output: hostname ? restOutput : output },
+			{
+				where: { id: taskData.id },
+			},
+		);
+
+		if (hostname) {
+			schedulePurgeWorker(hostname);
+		}
+
 		channel.ack(message);
 	};
 

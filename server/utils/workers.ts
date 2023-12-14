@@ -45,7 +45,7 @@ const getOrCreateOpenChannel = async () => {
 
 getOrCreateOpenChannel();
 
-export const sendMessageToOpenChannel = async (message, priority) => {
+export const sendMessageToOpenChannel = async (message: Buffer, priority: number) => {
 	const openChannel = await getOrCreateOpenChannel();
 	openChannel.sendToQueue(taskQueueName, message, {
 		deliveryMode: true,
@@ -54,7 +54,15 @@ export const sendMessageToOpenChannel = async (message, priority) => {
 	await openChannel.waitForConfirms();
 };
 
-export const addWorkerTask = async ({ type, input, priority = getDefaultTaskPriority() }) => {
+export const addWorkerTask = async ({
+	type,
+	input,
+	priority = getDefaultTaskPriority(),
+}: {
+	type: 'import' | 'export';
+	input;
+	priority?: number;
+}) => {
 	const workerTask = await createWorkerTask({ type, input, priority });
 	const message = Buffer.from(JSON.stringify({ id: workerTask.id, type, input }));
 	await sendMessageToOpenChannel(message, priority);

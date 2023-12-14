@@ -9,5 +9,13 @@ export const getWorkerTask = ({ workerTaskId }) => {
 	});
 };
 
+export const updateWorkerTask = ({ id, body }: { id: string; body: any }) => {
+	return WorkerTask.update(body, {
+		where: {
+			id,
+		},
+	});
+};
+
 export const createWorkerTask = ({ type, input, priority }) =>
 	WorkerTask.create({ isProcessing: true, type, input, priority });

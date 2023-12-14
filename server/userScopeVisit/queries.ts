@@ -29,7 +29,7 @@ export const getUserScopeVisits = async ({
 	userId,
 	communityId,
 }: {
-	userId: string;
+	userId?: string | null;
 	communityId: string;
 }) => {
 	if (!userId) {

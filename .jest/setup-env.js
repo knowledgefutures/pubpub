@@ -22,6 +22,12 @@ process.env.FIREBASE_TEST_DB_URL = 'http://localhost:9875?ns=pubpub-v6';
 process.env.ZOTERO_CLIENT_KEY = 'abc';
 process.env.ZOTERO_CLIENT_SECRET = 'def';
 
+process.env.FASTLY_PURGE_TOKEN_PROD = 'token';
+process.env.FASTLY_SERVICE_ID_PROD = 'prod';
+
+process.env.FASTLY_PURGE_TOKEN_DUQDUQ = 'token_duqduq';
+process.env.FASTLY_SERVICE_ID_DUQDUQ = 'duqduq';
+
 if (process.env.INTEGRATION) {
 	try {
 		require('../config.js');

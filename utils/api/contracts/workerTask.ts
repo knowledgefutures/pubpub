@@ -28,4 +28,24 @@ export const workerTaskContract = c.router({
 			}),
 		},
 	},
+	update: {
+		path: '/api/workerTasks/:id',
+		method: 'PUT',
+		summary: 'Update a worker task',
+		description: 'Update the data of a worker task. INTERNAL USE ONLY.',
+		headers: z.object({
+			'x-worker-secret': z.string(),
+		}),
+		pathParams: z.object({
+			id: z.string().uuid(),
+		}),
+		body: z.object({
+			isProcessing: z.boolean().nullable(),
+			error: z.any().nullable(),
+			output: z.any().nullable(),
+		}),
+		responses: {
+			200: z.any(),
+		},
+	},
 });

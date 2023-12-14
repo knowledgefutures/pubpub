@@ -25,13 +25,21 @@ import {
 	getPub,
 } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
-import { InitialData } from 'types';
+import { CustomScripts, InitialData, PubEdge } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
-import { RequestHandler } from 'express';
+import type { RequestHandler, Response, Request } from 'express';
+import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
 
-const getInitialDataForPub = (req) => getInitialData(req, { includeFacets: true });
+const getInitialDataForPub = (req: Request) => getInitialData(req, { includeFacets: true });
 
-const renderPubDocument = (res, pubData, initialData, customScripts) => {
+const renderPubDocument = (
+	res: Response,
+	pubData: Awaited<ReturnType<typeof getEnrichedPubData>> & {
+		membersData?: Awaited<ReturnType<typeof getMembers>>;
+	},
+	initialData: InitialData,
+	customScripts: CustomScripts,
+) => {
 	const {
 		communityData: { id: communityId },
 		loginData: { id: userId },
@@ -40,6 +48,7 @@ const renderPubDocument = (res, pubData, initialData, customScripts) => {
 	const { collectionPubs } = pubData;
 	const primaryCollection = collectionPubs && getPrimaryCollection(collectionPubs);
 	const collectionAttributions = primaryCollection?.attributions ?? [];
+
 	return renderToNodeStream(
 		res,
 		<Html
@@ -73,10 +82,17 @@ type EnrichedPubOptions = {
 	initialData: InitialData;
 	historyKey?: null | number;
 	releaseNumber?: null | number;
+	includeCommunityForPubs?: boolean;
 };
 
 const getEnrichedPubData = async (options: EnrichedPubOptions) => {
-	const { pubSlug, initialData, historyKey = null, releaseNumber = null } = options;
+	const {
+		pubSlug,
+		initialData,
+		historyKey = null,
+		releaseNumber = null,
+		includeCommunityForPubs,
+	} = options;
 	const pubData = await getPubForRequest({
 		slug: pubSlug,
 		initialData,
@@ -84,6 +100,9 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		getSubmissions: true,
 		getDraft: true,
 		getDiscussions: true,
+		getEdgesOptions: {
+			includeCommunityForPubs,
+		},
 	});
 
 	if (!pubData) {
@@ -153,6 +172,46 @@ const checkHistoryKey = (key) => {
 	return { historyKey, hasHistoryKey };
 };
 
+const setSurrogateKeysHeadersForPubEdges = async (
+	req: Request,
+	res: Response,
+	pubData: Awaited<ReturnType<typeof getEnrichedPubData>>,
+	initialData: InitialData,
+) => {
+	const { outboundEdges, inboundEdges, siblingEdges } = pubData;
+	const edges = (outboundEdges ?? [])
+		.concat(inboundEdges ?? [])
+		.concat(siblingEdges ?? []) as PubEdge[];
+	if (edges.length === 0) {
+		return;
+	}
+
+	const hostnames = edges.reduce(
+		(acc, edge: PubEdge) => {
+			const { pub, targetPub } = edge;
+			const maybePub = pub || targetPub;
+			if (!maybePub) {
+				return acc;
+			}
+
+			if (maybePub.communityId === initialData.communityData.id) {
+				return acc;
+			}
+
+			const hostname = getCorrectHostname(
+				maybePub.community!.subdomain,
+				maybePub.community!.domain,
+			);
+
+			acc.push(hostname);
+			return acc;
+		},
+		[req.hostname] as string[],
+	);
+
+	res.setHeader('Surrogate-Key', hostnames.join(' '));
+};
+
 app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
@@ -161,17 +220,22 @@ app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, n
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
 
 		const initialData = await getInitialDataForPub(req);
-		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
 			throw new NotFoundError();
 		}
 
-		const pubData = await getEnrichedPubData({
-			pubSlug,
-			releaseNumber,
-			initialData,
-		});
+		const [pubData, customScripts] = await Promise.all([
+			getEnrichedPubData({
+				pubSlug,
+				releaseNumber,
+				initialData,
+				includeCommunityForPubs: true,
+			}),
+			getCustomScriptsForCommunity(initialData.communityData.id),
+		]);
+
+		await setSurrogateKeysHeadersForPubEdges(req, res, pubData, initialData);
 
 		return renderPubDocument(res, pubData, initialData, customScripts);
 	} catch (err) {

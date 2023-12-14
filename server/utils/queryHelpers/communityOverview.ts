@@ -3,7 +3,6 @@ import { getManyPubs } from 'server/pub/queryMany';
 import { getUserScopeVisits } from 'server/userScopeVisit/queries';
 import { InitialData, SanitizedPubData } from 'types';
 
-import { expect } from 'utils/assert';
 import sanitizeCollection from './collectionSanitize';
 
 type Options = {
@@ -39,7 +38,7 @@ const getRecentItems = async (initialData: InitialData) => {
 		loginData: { id: userId },
 		communityData: { id: communityId },
 	} = initialData;
-	const userScopeVisits = await getUserScopeVisits({ userId: expect(userId), communityId });
+	const userScopeVisits = await getUserScopeVisits({ userId, communityId });
 	const result = await getManyPubs({
 		query: {
 			withinPubIds: userScopeVisits.map(({ pubId }) => pubId).filter(Boolean) as string[],

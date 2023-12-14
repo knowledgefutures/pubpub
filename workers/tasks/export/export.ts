@@ -50,5 +50,8 @@ export const exportTask = async ({ exportId }: { exportId: string }) => {
 		url = await uploadDocument(pubId, tmpFile, extension);
 	}
 	await assignFileToExportById(exportId, url);
-	return { url };
+
+	const { hostname } = pubMetadata;
+
+	return { url, hostname };
 };

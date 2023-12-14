@@ -24,7 +24,7 @@ export const getUrlForPub = (
 		return pubUrl(communityData, pubData);
 	}
 	if (pubData.community) {
-		return pubUrl(pubData.communityId, pubData);
+		return pubUrl(pubData.community, pubData);
 	}
 	return pubShortUrl(pubData);
 };

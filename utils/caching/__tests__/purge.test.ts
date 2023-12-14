@@ -34,6 +34,7 @@ setup(beforeAll, async () => {
 
 teardown(afterAll, () => {
 	delete process.env.TEST_FASTLY_PURGE;
+	setEnvironment(false, false, false);
 
 	jest.restoreAllMocks();
 });

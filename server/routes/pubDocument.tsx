@@ -172,6 +172,14 @@ const checkHistoryKey = (key) => {
 	return { historyKey, hasHistoryKey };
 };
 
+/**
+ * Sets the Surrogate-Key headers for pub edges on releases
+ *
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param pubData - The enriched pub data.
+ * @param initialData - The initial data.
+ */
 const setSurrogateKeysHeadersForPubEdges = async (
 	req: Request,
 	res: Response,
@@ -186,6 +194,7 @@ const setSurrogateKeysHeadersForPubEdges = async (
 		return;
 	}
 
+	const { id, domain, subdomain } = initialData.communityData;
 	const hostnames = edges.reduce(
 		(acc, edge: PubEdge) => {
 			const { pub, targetPub } = edge;
@@ -194,7 +203,7 @@ const setSurrogateKeysHeadersForPubEdges = async (
 				return acc;
 			}
 
-			if (maybePub.communityId === initialData.communityData.id) {
+			if (maybePub.communityId === id) {
 				return acc;
 			}
 
@@ -206,7 +215,7 @@ const setSurrogateKeysHeadersForPubEdges = async (
 			acc.push(hostname);
 			return acc;
 		},
-		[req.hostname] as string[],
+		[getCorrectHostname(subdomain, domain)] as string[],
 	);
 
 	res.setHeader('Surrogate-Key', hostnames.join(' '));

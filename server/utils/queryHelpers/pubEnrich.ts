@@ -113,7 +113,11 @@ export const getPubEdges = async (pubData: SanitizedPubData, initialData: Initia
 	const edgeIds = [...inboundEdges, ...outboundEdges].map((edge) => edge.id);
 
 	const siblingEdges = await PubEdge.findAll({
-		include: getPubEdgeIncludes({ includePub: true, includeTargetPub: true }),
+		include: getPubEdgeIncludes({
+			includePub: true,
+			includeTargetPub: true,
+			includeCommunityForPubs: true,
+		}),
 		where: {
 			id: { [Op.notIn]: edgeIds },
 			[Op.or]: [

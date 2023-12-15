@@ -2,7 +2,7 @@ import path from 'path';
 import React from 'react';
 import classNames from 'classnames';
 import App from 'containers/App/App';
-import type { CustomScripts, InitialData } from 'types';
+import { CustomScripts, InitialData } from 'types';
 
 const manifest = require(path.join(
 	__dirname,
@@ -123,20 +123,19 @@ const Html = (props: Props) => {
 				/>
 				<script
 					id="initial-data"
-					type="application/json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(props.initialData) }}
+					type="text/plain"
+					data-json={JSON.stringify(props.initialData)}
 				/>
 				<script
 					id="view-data"
-					type="application/json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(props.viewData) }}
+					type="text/plain"
+					data-json={JSON.stringify(props.viewData)}
 				/>
 				<script
 					id="chunk-name"
-					type="application/json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(props.chunkName) }}
+					type="text/plain"
+					data-json={JSON.stringify(props.chunkName)}
 				/>
-
 				<script src={getPath('vendor', 'js')} />
 				<script src={getPath('main', 'js')} />
 				{customScripts?.js && (

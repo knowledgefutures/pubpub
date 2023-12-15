@@ -32,10 +32,10 @@ export const hydrateWrapper = (Component) => {
 		}
 
 		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		const viewData = JSON.parse(document.getElementById('view-data')?.innerText);
+		const viewData = JSON.parse(document.getElementById('view-data').getAttribute('data-json'));
 		const chunkName = JSON.parse(
 			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-			document.getElementById('chunk-name').innerText,
+			document.getElementById('chunk-name').getAttribute('data-json'),
 		);
 		if (!isLocalEnv(window)) {
 			setupHeap(initialData);

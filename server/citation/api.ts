@@ -1,11 +1,13 @@
 import zoteroClient from 'zotero-api-client';
 
-import app from 'server/server';
+import app, { wrap } from 'server/server';
 import { CitationStyleKind } from 'utils/citations';
 
 import { ZoteroStyleKind } from 'types';
 
 import { expect } from 'utils/assert';
+import { ForbiddenError, BadRequestError, NotFoundError } from 'server/utils/errors';
+
 import { ZoteroIntegration, IntegrationDataOAuth1 } from '../models';
 
 // mapping our citation style keys to zotero's keys
@@ -27,29 +29,40 @@ const zoteroStyleKindMap: Record<CitationStyleKind, ZoteroStyleKind> = {
 
 // the parameters which can be passed to the get() method
 // can be found at https://www.zotero.org/support/dev/web_api/v3/basics
-app.get('/api/citations/zotero', (req, res) => {
-	const userId = req.user?.id;
-	const { q, include, style = 'apa' } = req.query;
-	const zoteroStyle = zoteroStyleKindMap[style as CitationStyleKind];
-	if (!userId) return new Error('Log in to request citations');
-	return ZoteroIntegration.findOne({
-		where: { userId },
-		include: { model: IntegrationDataOAuth1 },
-	})
-		.then((zoteroIntegration) => {
-			if (!zoteroIntegration) {
-				throw new Error('No zotero integration found');
-			}
-			const { integrationDataOAuth1 } = zoteroIntegration;
-			if (!integrationDataOAuth1) {
-				throw new Error('Zotero not authenticated');
-			}
-			const zoteroId = parseInt(expect(zoteroIntegration.zoteroUserId), 10);
-			const zoteroAPI = zoteroClient(integrationDataOAuth1.accessToken).library(
-				'user',
-				zoteroId,
-			);
-			return zoteroAPI.items().get({ q, include, style: zoteroStyle });
-		})
-		.then((results) => res.status(200).json({ items: results.raw }));
-});
+app.get(
+	'/api/citations/zotero',
+	wrap(async (req, res) => {
+		const userId = req.user?.id;
+		const { q, include, style = 'apa' } = req.query;
+		const zoteroStyle = zoteroStyleKindMap[style as CitationStyleKind];
+
+		if (!userId) {
+			throw new ForbiddenError(new Error('Log in to request citations'));
+		}
+
+		if (!q) {
+			throw new BadRequestError(new Error('No query provided'));
+		}
+
+		const zoteroIntegration = await ZoteroIntegration.findOne({
+			where: { userId },
+			include: { model: IntegrationDataOAuth1 },
+		});
+
+		if (!zoteroIntegration) {
+			throw new NotFoundError(Error('No zotero integration found'));
+		}
+
+		const { integrationDataOAuth1 } = zoteroIntegration;
+
+		if (!integrationDataOAuth1) {
+			throw new ForbiddenError(Error('Zotero not authenticated'));
+		}
+
+		const zoteroId = parseInt(expect(zoteroIntegration.zoteroUserId), 10);
+		const zoteroAPI = zoteroClient(integrationDataOAuth1.accessToken).library('user', zoteroId);
+		const results = await zoteroAPI.items().get({ q, include, style: zoteroStyle });
+
+		return res.status(200).json({ items: results.raw });
+	}),
+);

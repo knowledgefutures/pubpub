@@ -280,6 +280,24 @@ describe('/api/pubs', () => {
 		await agent.delete('/api/pubs').send({ pubId: destroyThisPub.id }).expect(403);
 	});
 
+	it('throws a clear 400 error if you try to change the slug to an already-taken slug', async () => {
+		const { ewPub, wowPub, admin } = models;
+		const agent = await login(admin);
+		await agent
+			.put('/api/pubs')
+			.send({ pubId: ewPub.id, slug: wowPub.slug })
+			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: 'wow' });
+	});
+
+	it('throws a clear 400 error if you try to create a pub with an already-taken slug', async () => {
+		const { wowPub, admin, community } = models;
+		const agent = await login(admin);
+		await agent
+			.post('/api/pubs')
+			.send({ communityId: community.id, slug: wowPub.slug })
+			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: 'wow' });
+	});
+
 	it('allows a Pub manager to delete a Pub', async () => {
 		const { destroyThisPub, destructivePubManager } = models;
 		const agent = await login(destructivePubManager);

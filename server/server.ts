@@ -118,6 +118,7 @@ app.use(cookieParser());
 /* --------------------- */
 import session from 'express-session';
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
+import { fromZodError } from 'zod-validation-error';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
@@ -212,24 +213,24 @@ createExpressEndpoints(contract, server, app, {
 	logInitialization: false,
 	// eslint-disable-next-line consistent-return
 	requestValidationErrorHandler: (err, req, res, next) => {
-		if (err instanceof RequestValidationError) {
-			if (process.env.NODE_ENV !== 'production') {
-				console.error(err);
-			}
-			if (err.pathParams) {
-				return res.status(400).json(err.pathParams);
-			}
-			if (err.headers) {
-				return res.status(400).json(err.headers);
-			}
-			if (err.query) {
-				return res.status(400).json(err.query);
-			}
-			if (err.body) {
-				return res.status(400).json(err.body);
-			}
+		if (!(err instanceof RequestValidationError)) {
+			next(err);
 		}
-		next(err);
+		const error = Object.values(err).find(Boolean);
+
+		if (!error) {
+			next(err);
+		}
+		const prettifiedError = fromZodError(error);
+
+		if (process.env.NODE_ENV !== 'production') {
+			console.error(prettifiedError);
+		}
+
+		return res.status(400).json({
+			...prettifiedError,
+			message: prettifiedError.message,
+		});
 	},
 	jsonQuery: true,
 });

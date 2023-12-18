@@ -29,6 +29,7 @@ import type { PubPut } from 'utils/api/schemas/pub';
 import { pingTask } from 'client/utils/pingTask';
 import type { ImportBody } from 'utils/api/schemas/import';
 
+import { PubPubError } from 'server/utils/errors';
 import type { PubUpdateableFields } from './permissions';
 
 export const createPub = async (
@@ -69,7 +70,7 @@ export const createPub = async (
 	} catch (e: any) {
 		e.errors.forEach((error: any) => {
 			if (error.type === 'unique violation') {
-				throw new Error('Slug is already in use');
+				throw new PubPubError.ForbiddenSlugError(newPubSlug, 'used');
 			}
 		});
 		throw new Error(e);
@@ -186,11 +187,20 @@ export const updatePub = async (
 		return acc;
 	}, {} as Attributes<Pub>);
 
-	await Pub.update(actualFilteredValues, {
-		where: { id: inputValues.pubId },
-		individualHooks: true,
-		actorId,
-	});
+	try {
+		await Pub.update(actualFilteredValues, {
+			where: { id: inputValues.pubId },
+			individualHooks: true,
+			actorId,
+		});
+	} catch (e: any) {
+		e.errors.forEach((error: any) => {
+			if (error.type === 'unique violation') {
+				throw new PubPubError.ForbiddenSlugError(actualFilteredValues.slug, 'used');
+			}
+		});
+		throw new Error(e);
+	}
 	setPubSearchData(inputValues.pubId);
 	return 'customPublishedAt' in actualFilteredValues
 		? { ...actualFilteredValues, customPublishedAt: inputValues.customPublishedAt }

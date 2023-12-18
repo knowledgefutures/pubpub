@@ -5,7 +5,7 @@ import { initServer } from '@ts-rest/express';
 
 import * as types from 'types';
 
-import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { indexByProperty } from 'utils/arrays';
 import { transformPubToResource } from 'deposit/transform/pub';
@@ -104,22 +104,15 @@ export const pubServer = s.router(contract.pub, {
 			throw new ForbiddenError();
 		}
 		const createParams = omitKeys(body, ['communityId', 'collectionId', 'createPubToken']);
-		try {
-			const newPub = await createPub(
-				{ communityId: ids.communityId, collectionIds, ...createParams },
-				ids.userId,
-			);
-			const jsonedPub = newPub.toJSON();
-			return {
-				status: 201,
-				body: jsonedPub,
-			};
-		} catch (e: any) {
-			if (e.message === 'Slug is already in use') {
-				throw new BadRequestError(e);
-			}
-			throw new Error(e);
-		}
+		const newPub = await createPub(
+			{ communityId: ids.communityId, collectionIds, ...createParams },
+			ids.userId,
+		);
+		const jsonedPub = newPub.toJSON();
+		return {
+			status: 201,
+			body: jsonedPub,
+		};
 	},
 	update: async ({ body, req }) => {
 		const { userId, pubId } = getRequestIds(body, req.user);

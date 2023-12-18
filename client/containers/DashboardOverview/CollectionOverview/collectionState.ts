@@ -143,7 +143,10 @@ export const useCollectionPubs = (options: UseCollectionPubsOptions) => {
 	};
 };
 
-const getSlugStatus = (error: Maybe<Record<string, any>>, currentSlug: string): SlugStatus => {
+export const getSlugStatus = (
+	error: Maybe<Record<string, any>>,
+	currentSlug: string,
+): SlugStatus => {
 	if (error && error.desiredSlug === currentSlug && error.type === 'forbidden-slug') {
 		return error.slugStatus;
 	}

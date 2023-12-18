@@ -49,8 +49,10 @@ const PubSettings = (props: Props) => {
 		updatePersistedState: updatePersistedPubData,
 		persistedState: persistedPubData,
 		persist,
+		error,
 	} = usePersistableState<Pub>(settingsData.pubData, async (update) => {
 		await pendingPromise(apiFetch.put('/api/pubs', { pubId: pubData.id, ...update }));
+
 		if (update.slug && update.slug !== settingsData.pubData.slug) {
 			// The setTimeout() gives the usePersistableState hook a chance to disable its
 			// onBeforeUnload hook. which triggers a browser popup asking the user if they really
@@ -64,6 +66,12 @@ const PubSettings = (props: Props) => {
 		}
 	});
 	const headerBackgroundImage = useFacetsQuery((F) => F.PubHeaderTheme.backgroundImage);
+
+	const slugError = !pubData.slug
+		? 'Required'
+		: error?.slugStatus === 'used'
+		? 'This URL is not available because it is in use by another Pub.'
+		: null;
 
 	const renderDetails = () => {
 		return (
@@ -83,7 +91,7 @@ const PubSettings = (props: Props) => {
 						helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}
 						value={pubData.slug}
 						onChange={(evt) => updatePubData({ slug: slugifyString(evt.target.value) })}
-						error={!pubData.slug ? 'Required' : null}
+						error={slugError}
 					/>
 					<InputField
 						label="Custom publication date"

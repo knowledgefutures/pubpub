@@ -13,7 +13,6 @@ const nonPurgeNonGetRoutes = {
 	'/api/upload': ['POST'],
 	'/api/pubs/text/convert': ['POST'],
 	'/api/login': ['POST'],
-	'/api/logout': ['POST'],
 	'/api/register': ['POST'],
 	'/api/signup': ['POST'],
 	'/api/subscribe': ['POST'],
@@ -32,6 +31,46 @@ const nonPurgeNonGetRoutes = {
  */
 const otherNonPurgeRoutes = /\/api\/(pubs|collections)\/[^/]+\/doi\/preview/;
 
+function getSurrogateTag(req: Request): string | null {
+	// after logout we want to purge the surrogate keys for the session
+	if (req.method === 'GET' && req.path === '/api/logout') {
+		const connectionSid = req.cookies['connect.sid'];
+
+		return connectionSid ? encodeURIComponent(connectionSid) : null;
+	}
+
+	/**
+	 * We don't want to purge GET/CORS/HEAD etc requests, that's the whole point!
+	 */
+	if (!ALLOWED_METHODS.includes(req.method as AllowedMethods)) {
+		return null;
+	}
+
+	/**
+	 * Very strong fail safe, but don't purge cache on non-API requests
+	 */
+	if (!req.path.startsWith('/api')) {
+		return null;
+	}
+
+	const shouldNotPurgeMethodsForPath = nonPurgeNonGetRoutes[req.path];
+
+	if (shouldNotPurgeMethodsForPath && shouldNotPurgeMethodsForPath.includes(req.method)) {
+		return null;
+	}
+
+	if (otherNonPurgeRoutes.test(req.path)) {
+		return null;
+	}
+
+	/**
+	 * On Fastly, we set the surrogate tag to the hostname
+	 */
+	const surrogateTag = req.hostname;
+
+	return surrogateTag;
+}
+
 /**
  * Purge domain cache on CRUD operations
  *
@@ -42,34 +81,7 @@ export const purgeMiddleware = (errorHandler = (error: any): any => console.erro
 	const { schedulePurge } = createCachePurgeDebouncer({ errorHandler });
 
 	return async (req: Request, res: Response, next: NextFunction) => {
-		/**
-		 * We don't want to purge GET/CORS/HEAD etc requests, that's the whole point!
-		 */
-		if (!ALLOWED_METHODS.includes(req.method as AllowedMethods)) {
-			return next();
-		}
-
-		/**
-		 * Very strong fail safe, but don't purge cache on non-API requests
-		 */
-		if (!req.path.startsWith('/api')) {
-			return next();
-		}
-
-		const shouldNotPurgeMethodsForPath = nonPurgeNonGetRoutes[req.path];
-
-		if (shouldNotPurgeMethodsForPath && shouldNotPurgeMethodsForPath.includes(req.method)) {
-			return next();
-		}
-
-		if (otherNonPurgeRoutes.test(req.path)) {
-			return next();
-		}
-
-		/**
-		 * On Fastly, we set the surrogate tag to the hostname
-		 */
-		const surrogateTag = req.hostname;
+		const surrogateTag = getSurrogateTag(req);
 
 		if (!surrogateTag) {
 			return next();

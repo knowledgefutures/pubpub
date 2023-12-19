@@ -37,7 +37,7 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 	if (process.env.NODE_ENV !== 'production' && !process.env.TEST_FASTLY_PURGE) {
 		console.log(
 			`Skipping Fastly purge for ${modifiedTag} in ${
-				duqduq ? 'DuqDuq' : qubqub ? 'qubqub' : 'prod'
+				duqduq ? 'DuqDuq' : qubqub ? 'qubqub' : process.env.NODE_ENV ?? 'dev'
 			} because NODE_ENV is not production and TEST_FASTLY_PURGE is not set`,
 		);
 		return '';

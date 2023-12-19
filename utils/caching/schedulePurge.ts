@@ -40,6 +40,7 @@ export const createCachePurgeDebouncer = (
 		if (now - lastExecutionTime > throttleTime) {
 			lastExecutionTime = now;
 
+			// this is where the magic happens
 			purgeSurrogateTag(key, soft)
 				.then(() => resolvePromiseForKey(key))
 				.catch(errorHandler);

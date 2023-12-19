@@ -12,5 +12,6 @@ export const logoutRouteImplementation: AppRouteImplementation<typeof contract.l
 		...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 	});
 	req.logout();
+
 	return { status: 200, body: 'success' } as const;
 };

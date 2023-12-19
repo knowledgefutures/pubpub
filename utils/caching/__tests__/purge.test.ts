@@ -248,4 +248,30 @@ describe('purging', () => {
 			},
 		);
 	});
+
+	it('should purge the session id Surrogate key on logout', async () => {
+		const { admin } = models;
+
+		const agent = await login(admin);
+		const get = agent.get('/api/communities').send().expect(200);
+		const cookies = get.cookies;
+		const sid = cookies.replace(/.*connect.sid=([^;]*?)/, '$1');
+
+		await agent.get('/api/logout').send().expect(200);
+
+		await finishDeferredTasks();
+
+		expect(global.fetch).toHaveBeenCalledTimes(1);
+
+		expect(global.fetch).toHaveBeenCalledWith(
+			`https://api.fastly.com/service/${process.env.FASTLY_SERVICE_ID_PROD}/purge/${sid}`,
+			{
+				headers: {
+					Accept: 'application/json',
+					'Fastly-Key': process.env.FASTLY_PURGE_TOKEN_PROD,
+				},
+				method: 'POST',
+			},
+		);
+	});
 });

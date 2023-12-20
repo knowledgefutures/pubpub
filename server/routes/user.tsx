@@ -2,6 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
+import type { Response } from 'express';
 import { getUser } from 'server/utils/queryHelpers';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -19,7 +20,7 @@ import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
  *
  * That way, if any changes are made in any of those communities, the user page will be purged.
  */
-const getSurrogateKeys = (attributions: Awaited<ReturnType<typeof getUser>>['attributions']) => {
+const getHostnames = (attributions: Awaited<ReturnType<typeof getUser>>['attributions']) => {
 	const hostNames = attributions.reduce((acc, attribution) => {
 		const { domain, subdomain } = attribution.pub!.community!;
 
@@ -33,6 +34,13 @@ const getSurrogateKeys = (attributions: Awaited<ReturnType<typeof getUser>>['att
 	}, {} as Record<string, string>);
 
 	return Object.values(hostNames).join(' ');
+};
+
+const setSurrogateKeys = (res: Response, userData: Awaited<ReturnType<typeof getUser>>) => {
+	const hostnames = getHostnames(userData.attributions);
+	const surrogateKeys = `${userData.id} ${hostnames}`;
+
+	res.setHeader('Surrogate-Key', surrogateKeys);
 };
 
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
@@ -52,11 +60,9 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 			if (!isThisUserAPartOfThisCommunity) {
 				return res.redirect(`https://www.pubpub.org/user/${userData.slug}`);
 			}
-		} else {
-			const surrogateKeys = getSurrogateKeys(userData.attributions);
-
-			res.setHeader('Surrogate-Key', surrogateKeys);
 		}
+
+		setSurrogateKeys(res, userData);
 
 		return renderToNodeStream(
 			res,

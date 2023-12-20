@@ -8,6 +8,7 @@ import { User } from 'server/models';
 import { isDuqDuq, isProd } from 'utils/environment';
 import { contract } from 'utils/api/contract';
 import { AppRouteImplementation } from '@ts-rest/express';
+import { getHashedUserId } from 'utils/caching/getHashedUserId';
 
 type SetPasswordData = { hash: string; salt: string };
 type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields];
@@ -115,7 +116,9 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.lo
 		.then(async (user) => {
 			const logIn = promisify(req.logIn.bind(req));
 			await logIn(user);
-			res.cookie('pp-cache', 'pp-no-cache', {
+			const hashedUserId = getHashedUserId(user);
+
+			res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
 				...(isProd() &&
 					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 				...(isDuqDuq() &&

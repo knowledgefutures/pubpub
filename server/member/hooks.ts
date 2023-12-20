@@ -10,6 +10,7 @@ import { getOrCreateUserNotificationPreferences } from 'server/userNotificationP
 
 Member.afterCreate(async (member) => {
 	const { userId, pubId } = member;
+
 	if (pubId) {
 		const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);
 		if (userNotificationPreferences.subscribeToPubsAsMember) {

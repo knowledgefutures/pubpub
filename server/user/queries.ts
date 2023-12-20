@@ -12,54 +12,53 @@ type InputValues = CreationAttributes<User> & {
 	subscribed?: boolean;
 	password: string;
 };
-export const createUser = (inputValues: InputValues) => {
+export const createUser = async (inputValues: InputValues) => {
 	const email = inputValues.email.toLowerCase().trim();
 	const firstName = inputValues.firstName.trim();
 	const lastName = inputValues.lastName.trim();
 	const fullName = `${firstName} ${lastName}`;
 	const initials = `${firstName[0]}${lastName[0]}`;
 	const newSlug = slugifyString(fullName);
-	return User.count({
+	const existingSlugCount = await User.count({
 		where: {
 			slug: { [Op.iLike]: `${newSlug}%` },
 		},
-	})
-		.then((existingSlugCount) => {
-			const newUser = {
-				slug: `${newSlug}${existingSlugCount ? `-${existingSlugCount + 1}` : ''}`,
-				firstName,
-				lastName,
-				fullName,
-				initials,
-				email,
-				avatar: inputValues.avatar,
-				title: inputValues.title,
-				bio: inputValues.bio,
-				location: inputValues.location,
-				website: inputValues.website,
-				orcid: inputValues.orcid,
-				github: inputValues.github,
-				twitter: inputValues.twitter,
-				facebook: inputValues.facebook,
-				googleScholar: inputValues.googleScholar,
-				gdprConsent: inputValues.gdprConsent,
-				passwordDigest: 'sha512',
-			};
+	});
+	const newUser = {
+		slug: `${newSlug}${existingSlugCount ? `-${existingSlugCount + 1}` : ''}`,
+		firstName,
+		lastName,
+		fullName,
+		initials,
+		email,
+		avatar: inputValues.avatar,
+		title: inputValues.title,
+		bio: inputValues.bio,
+		location: inputValues.location,
+		website: inputValues.website,
+		orcid: inputValues.orcid,
+		github: inputValues.github,
+		twitter: inputValues.twitter,
+		facebook: inputValues.facebook,
+		googleScholar: inputValues.googleScholar,
+		gdprConsent: inputValues.gdprConsent,
+		passwordDigest: 'sha512',
+	};
 
-			const userRegister = promisify(User.register.bind(User));
-			return userRegister(newUser, inputValues.password);
-		})
-		.then(() => {
-			if (inputValues.subscribed) {
-				subscribeUser(inputValues.email, 'be26e45660', ['Users']);
-			}
-			return Signup.update(
-				{ completed: true },
-				{
-					where: { email, hash: inputValues.hash, completed: false },
-				},
-			);
-		});
+	const userRegister = promisify(User.register.bind(User));
+	const registeredUser = (await userRegister(newUser, inputValues.password)) as User;
+
+	if (inputValues.subscribed) {
+		subscribeUser(inputValues.email, 'be26e45660', ['Users']);
+	}
+	await Signup.update(
+		{ completed: true },
+		{
+			where: { email, hash: inputValues.hash, completed: false },
+		},
+	);
+
+	return registeredUser;
 };
 
 export const getSuggestedEditsUserInfo = async (suggestionUserId: string) => {

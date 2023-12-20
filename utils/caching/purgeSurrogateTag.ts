@@ -1,4 +1,5 @@
-import { isDuqDuq, isQubQub } from 'utils/environment';
+import { isDuqDuq } from 'utils/environment';
+import { shouldntPurge } from './skipPurgeConditions';
 
 /**
  * Purge a surrogate tag from Fastly
@@ -13,7 +14,13 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 	let id: string;
 
 	const duqduq = isDuqDuq();
-	const qubqub = isQubQub();
+	const modifiedTag = duqduq ? tag.replace('pubpub.org', 'duqduq.org') : tag;
+
+	const shouldnt = shouldntPurge(modifiedTag);
+	if (shouldnt) {
+		console.log(shouldnt);
+		return '';
+	}
 
 	const [serviceId, token] = duqduq
 		? [process.env.FASTLY_SERVICE_ID_DUQDUQ, process.env.FASTLY_PURGE_TOKEN_DUQDUQ]
@@ -26,21 +33,6 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 	if (!serviceId) {
 		throw new Error(`No Fastly service ID found for ${duqduq ? 'DuqDuq' : 'prod'}'}
 		Did you forget to set FASTLY_SERVICE_ID_${duqduq ? 'DUQDUQ' : 'PROD'}?`);
-	}
-
-	const modifiedTag = duqduq ? tag.replace('pubpub.org', 'duqduq.org') : tag;
-	if (qubqub) {
-		console.log(`Skipping Fastly purge for ${modifiedTag} because qubqub doesn't use Fastly`);
-		return '';
-	}
-
-	if (process.env.NODE_ENV !== 'production' && !process.env.TEST_FASTLY_PURGE) {
-		console.log(
-			`Skipping Fastly purge for ${modifiedTag} in ${
-				duqduq ? 'DuqDuq' : qubqub ? 'qubqub' : process.env.NODE_ENV ?? 'dev'
-			} because NODE_ENV is not production and TEST_FASTLY_PURGE is not set`,
-		);
-		return '';
 	}
 
 	try {

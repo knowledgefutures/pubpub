@@ -4,6 +4,7 @@ import app, { wrap } from 'server/server';
 import { NotFoundError } from 'server/utils/errors';
 
 import { isProd, isDuqDuq } from 'utils/environment';
+import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { getPermissions } from './permissions';
 import { createUser, updateUser, getSuggestedEditsUserInfo } from './queries';
 
@@ -28,7 +29,9 @@ app.post('/api/users', (req, res) => {
 		})
 		.then((newUser) => {
 			passport.authenticate('local')(req, res, () => {
-				res.cookie('pp-cache', 'pp-no-cache', {
+				const hashedUserId = getHashedUserId(newUser);
+
+				res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
 					...(isProd() &&
 						req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 					...(isDuqDuq() &&

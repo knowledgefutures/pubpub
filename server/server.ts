@@ -119,6 +119,7 @@ app.use(cookieParser());
 import session from 'express-session';
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
 import { fromZodError } from 'zod-validation-error';
+import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
@@ -199,12 +200,18 @@ app.use((req, res, next) => {
 });
 
 /**
+ * we instantiate the purgedebouncer here to add the Sentry error handler
+ * now we can use this schedulePurge function in other files
+ */
+export const { schedulePurge } = createCachePurgeDebouncer({
+	errorHandler: Sentry.captureException,
+});
+
+/**
  * Set up purge middleware before api routes are initialized and
  * after hostname is set
  */
-app.use(
-	purgeMiddleware(process.env.NODE_ENV === 'production' ? Sentry.captureException : undefined),
-);
+app.use(purgeMiddleware(schedulePurge));
 
 /* ------------------------- */
 /* Create ts-rest api routes */

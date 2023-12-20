@@ -26,7 +26,6 @@ import {
 	Pub as PubType,
 	FacetBinding as FacetBindingType,
 	DefinitelyHas,
-	DocJson,
 } from 'types';
 import { CreationAttributes } from 'sequelize';
 
@@ -226,7 +225,15 @@ export const builders = {
 
 		let resolvedDocId = docId;
 		if (!resolvedDocId) {
-			const fakeDoc = await createDoc({} as DocJson);
+			const fakeDoc = await createDoc({
+				type: 'doc',
+				content: [
+					{
+						type: 'paragraph',
+						content: [{ type: 'text', text: 'test' }],
+					},
+				],
+			});
 			resolvedDocId = fakeDoc.id;
 		}
 

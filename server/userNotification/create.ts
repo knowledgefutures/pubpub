@@ -6,14 +6,21 @@ import {
 	UserSubscription,
 	UserNotificationPreferences,
 	ActivityItem,
+	User,
 } from 'server/models';
 import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
 import { expect } from 'utils/assert';
+import { getPPLic } from 'utils/caching/getHashedUserId';
+import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
 
 type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
 	item: types.ActivityItemOfKind<Kind>,
 ) => Promise<void>;
+
+const { schedulePurge } = createCachePurgeDebouncer({
+	debounceTime: 50,
+});
 
 const createNotificationsForThreadComment = async (
 	item: types.ActivityItemOfKind<'pub-discussion-comment-added' | 'pub-review-comment-added'>,
@@ -86,7 +93,24 @@ const createNotificationsForThreadComment = async (
 				activityItemId: item.id,
 			};
 		}),
-		{ individualHooks: true },
+	);
+
+	// purge cache for users who are receiving notifications
+
+	const users = await User.findAll({
+		where: {
+			id: { [Op.in]: deduplicatedUserIdsToNotify },
+		},
+		attributes: ['id', 'salt'],
+	});
+
+	await Promise.all(
+		users.map(async (user) => {
+			// we need to purge the user pages they see if they're logged in
+			const lic = getPPLic(user);
+
+			return schedulePurge(lic);
+		}),
 	);
 };
 

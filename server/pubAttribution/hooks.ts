@@ -1,19 +1,13 @@
-import { PubAttribution } from 'server/models';
+import { PubAttribution, includeUserModel } from 'server/models';
 import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
-import { schedulePurge } from 'server/server';
-import { defer } from 'server/utils/deferred';
+import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
 
 PubAttribution.afterCreate(async (attribution) => {
 	const { userId, pubId } = attribution;
 	if (!userId) {
 		return;
 	}
-
-	defer(async () => {
-		// refresh all the user pages that have this pub
-		await schedulePurge(userId);
-	});
 
 	const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);
 	if (userNotificationPreferences.subscribeToPubsAsContributor) {
@@ -24,4 +18,20 @@ PubAttribution.afterCreate(async (attribution) => {
 			setAutomatically: true,
 		});
 	}
+});
+
+createPurgeHooks({
+	model: PubAttribution,
+	onModelCreated: async (attribution) => {
+		if (!attribution.userId) {
+			return '';
+		}
+
+		const populatedPubAttribution = await PubAttribution.findOne({
+			where: { id: attribution.id, userId: attribution.userId },
+			include: [includeUserModel({ as: 'user', required: true })],
+		});
+
+		return populatedPubAttribution?.user?.slug;
+	},
 });

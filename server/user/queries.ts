@@ -103,6 +103,7 @@ export const updateUser = (
 
 	return User.update(filteredValues, {
 		where: { id: inputValues.userId },
+		individualHooks: true,
 	}).then(() => {
 		if (req.user.fullName !== filteredValues.fullName) {
 			updateUserData(req.user.id);

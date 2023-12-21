@@ -2,7 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { getUser } from 'server/utils/queryHelpers';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -36,9 +36,13 @@ const getHostnames = (attributions: Awaited<ReturnType<typeof getUser>>['attribu
 	return Object.values(hostNames).join(' ');
 };
 
-const setSurrogateKeys = (res: Response, userData: Awaited<ReturnType<typeof getUser>>) => {
+const setSurrogateKeys = (
+	req: Request,
+	res: Response,
+	userData: Awaited<ReturnType<typeof getUser>>,
+) => {
 	const hostnames = getHostnames(userData.attributions);
-	const surrogateKeys = `${userData.id} ${hostnames}`;
+	const surrogateKeys = [userData.slug, hostnames, req.hostname].join(' ');
 
 	res.setHeader('Surrogate-Key', surrogateKeys);
 };
@@ -62,7 +66,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 			}
 		}
 
-		setSurrogateKeys(res, userData);
+		setSurrogateKeys(req, res, userData);
 
 		return renderToNodeStream(
 			res,

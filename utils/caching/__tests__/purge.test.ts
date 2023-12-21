@@ -105,6 +105,18 @@ const models = modelize`
 			}
 		}
 	}
+
+	Community releaseTestCommunity {
+		domain: "releasetest.com"
+		Pub releaseTestPub {
+			slug: "release-test-pub"
+			PubAttribution {
+				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				affiliation: "test"
+				order: 0.5
+			}
+		}
+	}
 `;
 
 setup(beforeAll, async () => {
@@ -398,7 +410,7 @@ describe('surrogate keys', () => {
 		expect(surrogateKeys).toEqual(['fake.com', 'something.pubpub.org', 'test.pubpub.org']);
 	}, 20_000);
 
-	it('should return all the hostnames of every releases authored pub and user-id on user pages', async () => {
+	it('should return all the hostnames of every released authored pub, user slug, and hostname on user pages', async () => {
 		const { superAdmin } = models;
 
 		const agent = await login(superAdmin);
@@ -425,8 +437,9 @@ describe('surrogate keys', () => {
 		expect(surrogateKeys).toEqual([
 			'fake.com',
 			'something.pubpub.org',
+			superAdmin.slug,
 			'test.pubpub.org',
-			superAdmin.id,
+			'www.pubpub.org',
 		]);
 	});
 });
@@ -453,6 +466,7 @@ describe('advanced purging tests', () => {
 			communityMemberCommunity,
 			pubMemberCommunity,
 			collectionMemberCommunity,
+			releaseTestCommunity,
 		} = models;
 
 		const agent = await login(superAdmin);
@@ -486,17 +500,14 @@ describe('advanced purging tests', () => {
 				collectionMemberCommunity.subdomain,
 				collectionMemberCommunity.domain,
 			),
-			superAdmin.id,
+			getCorrectHostname(releaseTestCommunity.subdomain, releaseTestCommunity.domain),
+			superAdmin.slug,
 			getPPLic(superAdmin),
 			unique,
 		];
 
 		purges.forEach((key) => expectFastlyPurge({ key }));
-		/**
-		 * this shows that is has debounced the requests
-		 * there are 6 calls to schedulePurge, 3 from the 3 api calls to create pubAttributions
-		 * and 3 calls to purge the user page for the user that is in the attribution
-		 */
+
 		expect(global.fetch).toHaveBeenCalledTimes(purges.length);
 	}, 20_000);
 
@@ -518,7 +529,7 @@ describe('advanced purging tests', () => {
 
 		await finishDeferredTasks();
 
-		expectFastlyPurge({ key: superAdmin.id });
+		expectFastlyPurge({ key: superAdmin.slug });
 		expectFastlyPurge({ key: unique });
 
 		jest.clearAllMocks();
@@ -559,7 +570,7 @@ describe('advanced purging tests', () => {
 				attributions: [
 					{
 						userId: superAdmin.id,
-						affiliation: 'test',
+						affiliation: 'batch',
 						order: 0.5,
 					},
 				],
@@ -568,8 +579,32 @@ describe('advanced purging tests', () => {
 
 		await finishDeferredTasks();
 
-		expectFastlyPurge({ key: superAdmin.id });
+		expectFastlyPurge({ key: superAdmin.slug });
 		expectFastlyPurge({ key: unique });
+	});
+
+	it('purges the user pages for PubAttributions whenever a Release is created', async () => {
+		const { superAdmin, releaseTestCommunity, releaseTestPub } = models;
+
+		const agent = await login(superAdmin);
+
+		await agent
+			.post('/api/releases')
+			.set(
+				'Host',
+				getCorrectHostname(releaseTestCommunity.subdomain, releaseTestCommunity.domain),
+			)
+			.send({
+				pubId: releaseTestPub.id,
+			})
+			.expect(201);
+
+		await finishDeferredTasks();
+
+		expectFastlyPurge({ key: superAdmin.slug });
+		expectFastlyPurge({
+			key: getCorrectHostname(releaseTestCommunity.subdomain, releaseTestCommunity.domain),
+		});
 	});
 
 	it.todo('purges the pp-lic cookie tag when usernotification related apis are hit');

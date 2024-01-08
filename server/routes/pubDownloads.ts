@@ -9,10 +9,14 @@ import { getPubForRequest } from 'server/utils/queryHelpers';
 import { getBestDownloadUrl } from 'utils/pub/downloads';
 import { defer } from 'server/utils/deferred';
 import { createPubExportsForLatestRelease } from 'server/export/queries';
+import { hostIsValid } from 'server/utils/routes';
 
 app.get(
 	['/pub/:pubSlug/download', '/pub/:pubSlug/download/:format'],
-	wrap(async (req, res) => {
+	wrap(async (req, res, next) => {
+		if (!hostIsValid(req, 'community')) {
+			return next();
+		}
 		const initialData = await getInitialData(req);
 		const { pubSlug, format = null } = req.params;
 

@@ -15,13 +15,9 @@ const copy = (
 const PrimaryCollectionExplanation = (props: Props) => {
 	const { children = 'Primary Collection' } = props;
 	return (
-		<>
-			<React.Fragment>
-				<Tooltip content={copy}>
-					<span className={Classes.TOOLTIP_INDICATOR}>{children}</span>
-				</Tooltip>
-			</React.Fragment>
-		</>
+		<Tooltip content={copy}>
+			<span className={Classes.TOOLTIP_INDICATOR}>{children}</span>
+		</Tooltip>
 	);
 };
 

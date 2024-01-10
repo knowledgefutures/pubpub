@@ -118,9 +118,8 @@ export const createPubEdgeProposalFromArbitraryUrl = async (url: string) => {
 	const { doi } = externalPublication;
 
 	if (doi) {
-		const externalPublicationFromCrossrefDoi = await createExternalPublicationFromCrossrefDoi(
-			doi,
-		);
+		const externalPublicationFromCrossrefDoi =
+			await createExternalPublicationFromCrossrefDoi(doi);
 
 		externalPublication = assignNotNull(
 			{},

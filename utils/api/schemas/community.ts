@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import * as types from 'types';
+import { baseSchema } from '../utils/baseSchema';
 
 const communityHeaderLinkSchema = z.object({
 	title: z.string(),
@@ -35,8 +36,7 @@ const communityNavigationEntrySchema = z.union([
 	communityNavigationMenuSchema,
 ]);
 
-export const communitySchema = z.object({
-	id: z.string().uuid(),
+export const communitySchema = baseSchema.extend({
 	subdomain: z
 		.string()
 		.min(1)
@@ -116,6 +116,8 @@ export const communityUpdateSchema = communitySchema
 	.partial()
 	.omit({
 		id: true,
+		createdAt: true,
+		updatedAt: true,
 	})
 	.extend({
 		communityId: communitySchema.shape.id,

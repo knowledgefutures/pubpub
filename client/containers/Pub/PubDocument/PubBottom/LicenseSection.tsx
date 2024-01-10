@@ -32,24 +32,22 @@ const LicenseSection = () => {
 			className="pub-bottom-license"
 			title="License"
 			centerItems={
-				<React.Fragment>
-					<SectionBullets>
-						<a
-							target="_blank"
-							rel="license noopener noreferrer"
-							className="license-link"
-							href={link!}
-						>
-							<img
-								width={75}
-								alt=""
-								src={`/static/license/${kind}.svg`}
-								className="license-image"
-							/>
-							{full} {summary && `(${summary})`}
-						</a>
-					</SectionBullets>
-				</React.Fragment>
+				<SectionBullets>
+					<a
+						target="_blank"
+						rel="license noopener noreferrer"
+						className="license-link"
+						href={link!}
+					>
+						<img
+							width={75}
+							alt=""
+							src={`/static/license/${kind}.svg`}
+							className="license-image"
+						/>
+						{full} {summary && `(${summary})`}
+					</a>
+				</SectionBullets>
 			}
 			iconItems={({ iconColor }) => {
 				if (!scopeData.activePermissions.canManage) {

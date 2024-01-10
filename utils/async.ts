@@ -8,12 +8,11 @@ type AsyncForEachIteratee<T> = (
 ) => unknown | Promise<unknown>;
 
 /**
- * Native port of Bluebird's Promise.prototype.each. Accepts an iterable (or
- * Promise-wrapped iterable) of any value, and an callback function to be
- * executed for each value that the iterable yields.
+ * Native port of Bluebird's Promise.prototype.each. Accepts an iterable (or Promise-wrapped
+ * iterable) of any value, and an callback function to be executed for each value that the iterable
+ * yields.
  *
- * If a value is a promise, `asyncForEach` will wait for it before iterating
- * further.
+ * If a value is a promise, `asyncForEach` will wait for it before iterating further.
  */
 export async function asyncForEach<T>(
 	iterable: AsyncIterable<T>,

@@ -66,19 +66,17 @@ class FileUploadButton extends Component<Props, State> {
 				<Button
 					className="upload-button"
 					text={
-						<React.Fragment>
-							<label htmlFor={this.randKey} className="file-select">
-								{text}
-								<input
-									id={this.randKey}
-									name="file-input"
-									type="file"
-									accept={accept}
-									onChange={this.handleFileSelect}
-									className="file-input"
-								/>
-							</label>
-						</React.Fragment>
+						<label htmlFor={this.randKey} className="file-select">
+							{text}
+							<input
+								id={this.randKey}
+								name="file-input"
+								type="file"
+								accept={accept}
+								onChange={this.handleFileSelect}
+								className="file-input"
+							/>
+						</label>
 					}
 					icon={icon ? <Icon icon={icon} /> : null}
 					large={isLarge}

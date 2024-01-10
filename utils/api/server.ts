@@ -7,8 +7,6 @@ import { collectionServer } from 'server/collection/api';
 import { facetsServer } from 'server/facets/api';
 import { logoutRouteImplementation } from 'server/logout/api';
 import { loginRouteImplementation } from 'server/login/api';
-import { exportRouteImplementation } from 'server/export/api';
-import { importRouteImplementation } from 'server/import/api';
 import { pageServer } from 'server/page/api';
 import { memberServer } from 'server/member/api';
 import { pubEdgeServer } from 'server/pubEdge/api';
@@ -26,22 +24,24 @@ const s = initServer();
 const { customScript, ...contractWithScriptsAndCommunity } = contract;
 
 export const server = s.router(contractWithScriptsAndCommunity, {
+	auth: {
+		login: loginRouteImplementation,
+		logout: logoutRouteImplementation,
+	},
 	collection: collectionServer,
 	collectionAttribution: collectionAttributionServer,
 	collectionPub: collectionPubServer,
 	community: communityServer,
-	export: exportRouteImplementation,
 	facets: facetsServer,
-	import: importRouteImplementation,
 	member: memberServer,
 	page: pageServer,
 	pub: pubServer,
 	pubAttribution: pubAttributionServer,
 	pubEdge: pubEdgeServer,
 	release: releaseServer,
-	uploadPolicy: uploadPolicyRouteImplementation,
-	upload: uploadRouteImplementation,
+	upload: {
+		file: uploadRouteImplementation,
+		policy: uploadPolicyRouteImplementation,
+	},
 	workerTask: workerTaskServer,
-	logout: logoutRouteImplementation,
-	login: loginRouteImplementation,
 });

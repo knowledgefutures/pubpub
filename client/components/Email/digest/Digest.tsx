@@ -10,7 +10,7 @@ import { Spacer } from '../Spacer';
 import { Section } from '../Section';
 import { Wrapper } from '../Wrapper';
 import { CommunityHeader } from '../CommunityHeader';
-import { ActivityBundle, DigestIntro, DigestSectionTitle, DigestFooter } from '.';
+import { ActivityBundle, DigestIntro, DigestSectionTitle, DigestFooter } from './index';
 
 type DisplayKey = string;
 

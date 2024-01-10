@@ -15,7 +15,7 @@ const passportLocalSequelize = require('passport-local-sequelize');
 // };
 
 const sequelize = new Sequelize(process.env.V5_PROD_DATABASE_URL, {
-	logging: () => { },
+	logging: () => {},
 	dialectOptions: { ssl: true },
 });
 

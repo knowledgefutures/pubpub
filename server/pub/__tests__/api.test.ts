@@ -763,9 +763,7 @@ describe('/api/pubs/text', () => {
 
 		expect(url).toMatch(/\.png$/);
 
-		/**
-		 * this tests the metadata inf
-		 */
+		/** This tests the metadata inf */
 		expect(pub.title).toEqual('On Testing');
 		expect(pub.attributions?.[0]?.name).toEqual('Testy McTestface');
 		expect(pub.customPublishedAt).toMatch(/^1337-01-01/);
@@ -781,7 +779,7 @@ describe('/api/pubs/text', () => {
 		const html = String.raw;
 
 		const text = html`
-			<!DOCTYPE html>
+			<!doctype html>
 			<html>
 				<head>
 					<title>A new title that might be inferred</title>

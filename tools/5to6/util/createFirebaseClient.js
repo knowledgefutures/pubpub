@@ -70,7 +70,7 @@ const createFirebaseClient = (url, serviceAccountB64) => {
 			const jwtClient = new JWT({
 				email: serviceAccount.client_email,
 				key: serviceAccount.private_key,
-				scopes: GOOGLE_SCOPES
+				scopes: GOOGLE_SCOPES,
 			});
 			// Use the JWT client to generate an access token.
 			jwtClient.authorize((error, tokens) => {

@@ -1,6 +1,4 @@
-/**
- * Renders a preprint for a journal article.
- */
+/** Renders a preprint for a journal article. */
 import postedContent from '../schema/postedContent';
 
 import transformCommunity from '../transform/community';

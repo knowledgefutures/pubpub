@@ -31,8 +31,8 @@ type PurgeHook<
 	options?: T extends 'afterCreate'
 		? CreateOptions<A>
 		: T extends 'afterUpdate'
-		? UpdateOptions<A>
-		: DestroyOptions<A>,
+		  ? UpdateOptions<A>
+		  : DestroyOptions<A>,
 ) => Promise<string | string[] | null | undefined | void>;
 
 export const createPurgeHooks = <M extends ModelCtor>(options: {
@@ -41,13 +41,15 @@ export const createPurgeHooks = <M extends ModelCtor>(options: {
 	/**
 	 * Only runs by default on <instance>.update(), not on <Model>.update()
 	 *
-	 * If this isn't running, be sure to check that you have `{individualHooks: true}` in your `Model.update` call.
+	 * If this isn't running, be sure to check that you have `{individualHooks: true}` in your
+	 * `Model.update` call.
 	 */
 	onModelUpdated?: PurgeHook<M, 'afterUpdate'>;
 	/**
 	 * Only runs by default on <instance>.update(), not on <Model>.update()
 	 *
-	 * If this isn't running, be sure to check that you have `{individualHooks: true}` in your `Model.destroy` call.
+	 * If this isn't running, be sure to check that you have `{individualHooks: true}` in your
+	 * `Model.destroy` call.
 	 */
 	onModelDestroyed?: PurgeHook<M, 'afterDestroy'>;
 }) => {

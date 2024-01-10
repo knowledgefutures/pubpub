@@ -5,6 +5,7 @@ import { expect } from './assert';
 
 /**
  * Finds a community by its domain or subdomain.
+ *
  * @param domain - The domain or subdomain of the community to find.
  * @returns A Promise that resolves to the community object if found, or null if not found.
  */
@@ -26,8 +27,9 @@ export const findCommunityByDomain = async (domain: string) => {
 
 /**
  * Finds a community by its hostname.
+ *
  * @param hostname - The hostname of the community to find.
- * @returns  A promise that resolves to the community object, or null if not found.
+ * @returns A promise that resolves to the community object, or null if not found.
  */
 export const findCommunityByHostname = async (hostname: string) => {
 	const domainOrSubmdomain = hostname.replace(/\.pubpub\.org$|\.duqduq\.org$/, '');
@@ -37,7 +39,9 @@ export const findCommunityByHostname = async (hostname: string) => {
 
 /**
  * Checks if the user is an admin of the community associated with the given hostname.
- * @param req - An object containing at least the hostname and user information. Usually an Express request object.
+ *
+ * @param req - An object containing at least the hostname and user information. Usually an Express
+ *   request object.
  * @param req.hostname - The hostname of the community to check.
  * @param req.user - An optional object containing the user ID.
  * @param req.user.id - The ID of the user to check.

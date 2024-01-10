@@ -8,10 +8,10 @@ export const setupHeap = (initialData) => {
 	const hasGdprConsent = getGdprConsentElection(loginData);
 	const heapEnvironment = isProd() ? '422727431' : '3777990325';
 	// eslint-disable-next-line
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
 	(window.heap = window.heap || []),
 		// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'heap'.
-		(heap.load = function(e, t) {
+		(heap.load = function (e, t) {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
 			(window.heap.appid = e), (window.heap.config = t = t || {});
 			const r = document.createElement('script');
@@ -22,8 +22,8 @@ export const setupHeap = (initialData) => {
 			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			a.parentNode.insertBefore(r, a);
 			for (
-				let n = function(e) {
-						return function() {
+				let n = function (e) {
+						return function () {
 							// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'heap'.
 							heap.push([e].concat(Array.prototype.slice.call(arguments, 0)));
 						};

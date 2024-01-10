@@ -1,6 +1,4 @@
-/**
- * Renders a date
- */
+/** Renders a date */
 export default (kind, date, mediaType = 'online') => {
 	if (!date) {
 		return {};

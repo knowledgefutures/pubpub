@@ -1,6 +1,4 @@
-/**
- * Manages a drag-and-droppable listing of pubs using react-beautiful-dnd.
- */
+/** Manages a drag-and-droppable listing of pubs using react-beautiful-dnd. */
 import React from 'react';
 import classNames from 'classnames';
 import {

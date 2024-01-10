@@ -4,11 +4,11 @@ import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { Page } from 'server/models';
 import { layoutBlockSchema } from './layout';
 import { communitySchema } from './community';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
-export const pageSchema = z.object({
-	id: z.string().uuid(),
+export const pageSchema = baseSchema.extend({
 	title: z.string().nonempty(),
 	slug: z.string().nonempty().openapi({
 		description: 'The URL slug for the page',
@@ -51,7 +51,7 @@ export const pageCreateSchema = pageSchema
 	});
 
 export const pageUpdateSchema = pageSchema
-	.omit({ id: true })
+	.omit({ id: true, updatedAt: true, createdAt: true })
 	.partial()
 	.required({
 		communityId: true,

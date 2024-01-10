@@ -388,8 +388,8 @@ const ControlsLink = (props: Props) => {
 							isStatus(status, Status.EditingLinkExtra, Status.EditingEdge)
 								? Status.EditingLink
 								: pubEdge != null
-								? Status.EditingEdge
-								: Status.EditingLinkExtra,
+								  ? Status.EditingEdge
+								  : Status.EditingLinkExtra,
 						)
 					}
 					disabled={isStatus(status, Status.UpdatingEdge)}

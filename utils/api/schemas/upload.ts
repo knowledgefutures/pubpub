@@ -15,8 +15,8 @@ export const textMimeTypes = [
 	'application/x-tex',
 ] as const;
 /**
- * Non-exhaustive list of mime-types that we allow to be uploaded to PubPub,
- * minus image types, which are handled separately.
+ * Non-exhaustive list of mime-types that we allow to be uploaded to PubPub, minus image types,
+ * which are handled separately.
  */
 export const allowedMimeTypes = [
 	...textMimeTypes,
@@ -27,7 +27,19 @@ export const allowedMimeTypes = [
 	'application/pdf',
 ] as const;
 
-const fileSchema = z.union([z.string(), z.custom<File | Blob>()]);
+export const fileSchema = z.union([
+	z.custom<File>(),
+	z
+		.object({
+			blob: z.custom<Blob>(),
+			filename: z
+				.string({
+					description: 'Name of the file',
+				})
+				.min(1),
+		})
+		.openapi({ description: `Allowed mime types are: ${allowedMimeTypes.join(', ')}` }),
+]);
 
 export const mimeTypeSchema = z.union(
 	[z.enum(allowedMimeTypes), z.string().regex(/image\/.*/)],
@@ -35,10 +47,7 @@ export const mimeTypeSchema = z.union(
 );
 
 export const uploadSchema = z.object({
-	file: z
-		.tuple([z.custom<Blob>(), z.string({ description: 'Name of the file' }).min(1)])
-		.or(z.custom<File>())
-		.openapi({ description: `Allowed mime types are: ${allowedMimeTypes.join(', ')}` }),
+	file: fileSchema,
 });
 
 export const awsFormdataSchema = z.object({

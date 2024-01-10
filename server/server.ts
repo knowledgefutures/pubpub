@@ -200,17 +200,14 @@ app.use((req, res, next) => {
 });
 
 /**
- * we instantiate the purgedebouncer here to add the Sentry error handler
- * now we can use this schedulePurge function in other files
+ * We instantiate the purgedebouncer here to add the Sentry error handler now we can use this
+ * schedulePurge function in other files
  */
 export const { schedulePurge } = createCachePurgeDebouncer({
 	errorHandler: Sentry.captureException,
 });
 
-/**
- * Set up purge middleware before api routes are initialized and
- * after hostname is set
- */
+/** Set up purge middleware before api routes are initialized and after hostname is set */
 app.use(purgeMiddleware(schedulePurge));
 
 /* ------------------------- */

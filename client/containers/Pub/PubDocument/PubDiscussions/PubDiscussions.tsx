@@ -86,8 +86,8 @@ const PubDiscussions = (props: Props) => {
 			discussions.filter((th) => th && !th.isClosed).length > 0
 				? 'No matching comments (some are hidden by filters)'
 				: canView || canCreateDiscussions
-				? ' Why not start the discussion?'
-				: '';
+				  ? ' Why not start the discussion?'
+				  : '';
 		return (
 			<React.Fragment>
 				{showBottomInput && (

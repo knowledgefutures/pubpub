@@ -139,9 +139,8 @@ const fetchFacetsForResolvedScopeIds = async <FacetNames extends FacetName>(
 	facetNames: FacetNames[],
 ): Promise<CascadedFacetsForScopes<FacetNames>> => {
 	const { scopeStacks } = resolvedScopeIds;
-	const { facetBindings, facetBindingIds } = await getFacetBindingsForResolvedScopeIds(
-		resolvedScopeIds,
-	);
+	const { facetBindings, facetBindingIds } =
+		await getFacetBindingsForResolvedScopeIds(resolvedScopeIds);
 	const facetInstances = await getFacetInstancesForBindingIds(facetBindingIds, facetNames);
 	const cascadedFacets = mapByScopeKind(
 		scopeStacks,

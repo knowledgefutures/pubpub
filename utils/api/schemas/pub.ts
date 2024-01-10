@@ -17,11 +17,12 @@ import { memberSchema } from './member';
 import { pubEdgeSchema } from './pubEdge';
 import { submissionSchema } from './submission';
 import { docJsonSchema, releaseSchema } from './release';
+import { fileSchema } from './upload';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
-export const pubSchema = z.object({
-	id: z.string().uuid(),
+export const pubSchema = baseSchema.extend({
 	slug: z
 		.string({
 			description: 'Slug',
@@ -204,9 +205,12 @@ export const sanitizedPubSchema = pubSchema.merge(
 
 export type PubPut = types.UpdateParams<Pub> & { pubId: string };
 
-export const pubPutSchema = pubSchema
+export const pubUpdateSchema = pubSchema
 	.partial()
 	.omit({
+		id: true,
+		createdAt: true,
+		updatedAt: true,
 		communityId: true,
 		draftId: true,
 		scopeSummaryId: true,
@@ -226,6 +230,7 @@ export const resourceASTSchema = z.object({
 });
 
 export const pubWithRelationsSchema = pubSchema.extend({
+	/** Attributions */
 	attributions: pubAttributionSchema.array().optional(),
 	collectionPubs: collectionPubSchema.array().optional(),
 	community: communitySchema.optional(),
@@ -246,14 +251,7 @@ export const importCreateParams = optionalPubCreateParamSchema
 export type ImportCreatePubParams = (typeof importCreateParams)['_input'];
 
 export const base = z.object({
-	files: z.union([
-		z.array(
-			z
-				.tuple([z.custom<Blob>(), z.string({ description: 'filename' })])
-				.openapi({ title: 'Blob + filename (Node 18)' }),
-		),
-		z.custom<File[]>().openapi({ title: 'File (Node 20+, browser)' }),
-	]),
+	files: z.union([z.array(fileSchema), fileSchema]),
 });
 
 export const importMethodSchema = z
@@ -266,6 +264,11 @@ export const overrideableMetadata = ['title', 'slug', 'description', 'customPubl
 export const overrideableMetadataSchema = z.enum(overrideableMetadata);
 
 export const metadataOptionsSchema = z.object({
+	/**
+	 * Whether to import author information.\n\n- `false` will not import authors.\n- `true` will
+	 * import authors.\n- `'match'` will import authors and attempt to match to match them to
+	 * existing users.\n
+	 */
 	attributions: z
 		.union([z.boolean(), z.literal('match')], {
 			invalid_type_error: 'Must be a boolean or "match"',

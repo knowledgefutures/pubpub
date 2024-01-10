@@ -2,6 +2,7 @@ export type ResourceLicense = {
 	uri: string;
 	/**
 	 * SPDX license identifier.
+	 *
 	 * @see {@link https://spdx.org/licenses}
 	 */
 	spdxIdentifier: string;
@@ -85,9 +86,7 @@ export type ResourceDescriptor = (typeof resourceDescriptors)[number];
 
 export type ResourceDescription = {
 	kind: ResourceDescriptor;
-	/**
-	 * ISO 639.2 language code.
-	 */
+	/** ISO 639.2 language code. */
 	lang: string;
 
 	text: string;
@@ -99,23 +98,17 @@ export type ResourceSummaryKind = (typeof resourceSummaryKinds)[number];
 export type ResourceSummary = {
 	kind: ResourceSummaryKind;
 
-	/**
-	 * ISO 639.2 language code.
-	 */
+	/** ISO 639.2 language code. */
 	lang: string;
 
 	value: string;
 };
 
 export type PartialResource = {
-	/**
-	 * The title of the resource.
-	 */
+	/** The title of the resource. */
 	title: string;
 
-	/**
-	 * The type of resource.
-	 */
+	/** The type of resource. */
 	kind: ResourceKind;
 
 	identifiers: ResourceIdentifier[];
@@ -134,9 +127,7 @@ type ResourceMeta = {
 };
 
 export type Resource = PartialResource & {
-	/**
-	 * The version of the resource expressed as a UTC datetime string.
-	 */
+	/** The version of the resource expressed as a UTC datetime string. */
 	timestamp: string;
 
 	descriptions: ResourceDescription[];
@@ -145,9 +136,7 @@ export type Resource = PartialResource & {
 
 	contributions: ResourceContribution[];
 
-	/**
-	 * Homogeneous list of inter- and intra-work relationships.
-	 */
+	/** Homogeneous list of inter- and intra-work relationships. */
 	relationships: ResourceRelationship[];
 
 	license: ResourceLicense;

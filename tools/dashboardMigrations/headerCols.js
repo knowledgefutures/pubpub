@@ -24,8 +24,8 @@ export default async () => {
 			const headerStyle = hasBlocksStyle
 				? pub.headerStyle
 				: hasHeaderImage
-				? 'light'
-				: 'dark';
+				  ? 'light'
+				  : 'dark';
 			return pub.update({
 				headerBackgroundColor,
 				headerStyle,

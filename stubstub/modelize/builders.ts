@@ -35,12 +35,13 @@ type WithOptionalBase<
 > = K extends keyof T ? Omit<T, K> & Partial<T> : T;
 
 /**
- * Allows properties which are optionally null to also be optionally undefined,
- * and allows you to specify extra optional properties.
+ * Allows properties which are optionally null to also be optionally undefined, and allows you to
+ * specify extra optional properties.
  *
  * @example
+ *
  * ```ts
- * type MyType = { a: string; b: number; c: boolean | null; d: string | null; };
+ * type MyType = { a: string; b: number; c: boolean | null; d: string | null };
  *
  * type MyTypeWithNullAsAlsoUndefined = WithOptional<MyType>;
  * // { a: string; b: number; c: boolean | null | undefined; d: string | null | undefined; }
@@ -48,16 +49,11 @@ type WithOptionalBase<
  * type MyTypeWithNullAsAlsoUndefinedAndOptionalA = WithOptional<MyType, 'd'>;
  * // { a: string | undefined; b: number; c: boolean | null | undefined; d: string | null | undefined; }
  * ```
- *
  */
 type WithOptional<
-	/**
-	 * The object type to operate on
-	 */
+	/** The object type to operate on */
 	T extends Record<string, any>,
-	/**
-	 * @optional The keys to make optional
-	 */
+	/** @optional The keys to make optional */
 	K extends keyof T | undefined = undefined,
 > = {
 	[PossiblyNullKey in keyof WithOptionalBase<T, K>]: WithOptionalBase<

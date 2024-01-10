@@ -415,14 +415,10 @@ const CommunityServices = () => {
 									</React.Fragment>
 								)}
 								{!example.title && (
-									<React.Fragment>
-										<div className="testimonial" key={example.source}>
-											<div className="testimonial-quote">{example.quote}</div>
-											<div className="testimonial-source">
-												— {example.source}
-											</div>
-										</div>
-									</React.Fragment>
+									<div className="testimonial" key={example.source}>
+										<div className="testimonial-quote">{example.quote}</div>
+										<div className="testimonial-source">— {example.source}</div>
+									</div>
 								)}
 							</div>
 						);

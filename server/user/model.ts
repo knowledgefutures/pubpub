@@ -30,9 +30,7 @@ import {
 	ZoteroIntegration,
 } from '../models';
 
-/**
- * Basically typings for passport-local-sequelize
- */
+/** Basically typings for passport-local-sequelize */
 class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C> {
 	declare setPassword: <M extends Model>(
 		this: M,

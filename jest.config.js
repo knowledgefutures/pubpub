@@ -1,9 +1,7 @@
 // @ts-check
 const esModules = ['react-stylable-diff'].join('|');
 
-/**
- * @type {import('@jest/types').Config.InitialOptions}
- */
+/** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
 	testEnvironment: 'node',
 	moduleDirectories: ['node_modules', '<rootDir>', '<rootDir>/client', '<rootDir>/facets'],

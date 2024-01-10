@@ -1,8 +1,8 @@
 import { RelationType, findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
 
 /**
- * Code that builds a submission that we can send to Crossref. We build JSON here, and let that
- * get converted to equivalent XML downstream.
+ * Code that builds a submission that we can send to Crossref. We build JSON here, and let that get
+ * converted to equivalent XML downstream.
  */
 import doiBatch from './schema/doiBatch';
 import renderBook from './render/book';

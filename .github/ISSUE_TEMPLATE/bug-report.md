@@ -4,7 +4,6 @@ about: Find something broken or odd? Report it here.
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
 <!--
@@ -14,23 +13,18 @@ To fill out the report, please fill out each section below. If a section isn't a
 -->
 
 ### What went wrong, step-by-step?
+
 1.
-2.
-...
+2. ...
 
 ### What did you expect to happen?
 
-
 ### What URL can we use to see the issue?
-
 
 ### What browser/operating system were you using?
 
-
 ## Optional
 
-
 ### Have any screenshots? (Attach them by dragging the image here)
-
 
 ### Who reported this? (If not you)

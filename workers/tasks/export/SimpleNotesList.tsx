@@ -1,6 +1,4 @@
-/**
- * This component is used in generated exports to render footnote and citation lists.
- */
+/** This component is used in generated exports to render footnote and citation lists. */
 import React from 'react';
 
 import { PubNoteContent } from 'components';

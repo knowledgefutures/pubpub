@@ -3,29 +3,32 @@ import { z } from 'zod';
 import { OptionalKeys } from 'types';
 import { generateFilterForModelSchema } from './filter';
 
+type OptionalKeysNoCreatedAtUpdatedAt<T> = Exclude<OptionalKeys<T>, 'createdAt' | 'updatedAt'>;
+
 export function nonRelationFields(schema: z.ZodObject<any>) {
 	return Object.entries(schema.shape)
 		.map(([key, value]) => {
-			if (value instanceof z.ZodOptional) {
-				return;
+			if (key === 'createdAt' || key === 'updatedAt') {
+				return key;
 			}
 
-			// eslint-disable-next-line consistent-return
+			if (value instanceof z.ZodOptional) {
+				return '';
+			}
+
 			return key;
 		})
 		.filter(Boolean) as string[];
 }
 
 export type GetManyQueryAny = ReturnType<typeof createGetManyQueryOptions>['_output'];
-/**
- * Create a query schema for getting many items from provided schema
- */
+/** Create a query schema for getting many items from provided schema */
 export function createGetManyQueryOptions<
 	Schema extends z.ZodObject<any>,
 	IncludeOptions extends
 		| [
-				OptionalKeys<Schema['_output']> & string,
-				...(OptionalKeys<Schema['_output']> & string)[],
+				OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']> & string,
+				...(OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']> & string)[],
 		  ]
 		| [] = [],
 	IncludeDefaults extends [
@@ -39,11 +42,23 @@ export function createGetManyQueryOptions<
 	OmitOptions extends { [K in keyof Schema['_output'] & string]?: true } = {},
 	SortByDefault extends SortOptions[number] | 'createdAt' | 'updatedAt' = 'createdAt',
 	NonRelationFields extends [
-		Exclude<keyof Schema['_output'] & string, OptionalKeys<Schema['_output']>>,
-		...Exclude<keyof Schema['_output'] & string, OptionalKeys<Schema['_output']>>[],
+		Exclude<
+			keyof Schema['_output'] & string,
+			OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']>
+		>,
+		...Exclude<
+			keyof Schema['_output'] & string,
+			OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']>
+		>[],
 	] = [
-		Exclude<keyof Schema['_output'] & string, OptionalKeys<Schema['_output']>>,
-		...Exclude<keyof Schema['_output'] & string, OptionalKeys<Schema['_output']>>[],
+		Exclude<
+			keyof Schema['_output'] & string,
+			OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']>
+		>,
+		...Exclude<
+			keyof Schema['_output'] & string,
+			OptionalKeysNoCreatedAtUpdatedAt<Schema['_output']>
+		>[],
 	],
 	OmittedSchema extends z.ZodObject<
 		Omit<Pick<Schema['shape'], NonRelationFields[number]>, keyof OmitOptions>
@@ -51,30 +66,25 @@ export function createGetManyQueryOptions<
 >(
 	schema: Schema,
 	options: {
-		/**
-		 * Which relations are includeable and what are their defaults
-		 */
+		/** Which relations are includeable and what are their defaults */
 		include?: {
 			/**
 			 * Which relations are includeable
 			 *
-			 * @default []
+			 * @default [ ]
 			 */
 			options: IncludeOptions;
 			/**
 			 * Which relations are included by default
 			 *
-			 * @default []
+			 * @default [ ]
 			 */
 			defaults?: IncludeDefaults;
 		};
-		/**
-		 * Which fields are sortable.
-		 */
+		/** Which fields are sortable. */
 		sort?: {
 			/**
-			 * Which fields are sortable.
-			 * `createdAt` and `updatedAt` are always sortable.
+			 * Which fields are sortable. `createdAt` and `updatedAt` are always sortable.
 			 *
 			 * @default ['createdAt', 'updatedAt']
 			 */
@@ -84,19 +94,17 @@ export function createGetManyQueryOptions<
 			 *
 			 * If only a string is provided, it will be sorted by that field in descending order
 			 *
-			 * @default ['createdAt', 'DESC']
+			 * @example {undefined} 'updatedAt', 'ASC'
 			 *
-			 * @example
-			 * ['updatedAt', 'ASC']
+			 * @default ['createdAt', 'DESC']
 			 */
 			default?: SortByDefault | [SortByDefault, 'ASC' | 'DESC'];
 		};
 		/**
 		 * Omit certain fields from being filterable.
 		 *
-		 * This is useful for very complex fields that would either not
-		 * benefit from being filterable, or would be too complex to
-		 * implement.
+		 * This is useful for very complex fields that would either not benefit from being
+		 * filterable, or would be too complex to implement.
 		 */
 		omitFromFilter?: OmitOptions;
 	},
@@ -114,8 +122,8 @@ export function createGetManyQueryOptions<
 
 	const filterOptions = generateFilterForModelSchema(
 		/**
-		 * This is done to make sure that the omitted fields are not included in the filter
-		 * Just doing `.omit` will not provide proper type inference
+		 * This is done to make sure that the omitted fields are not included in the filter Just
+		 * doing `.omit` will not provide proper type inference
 		 */
 		schema.omit({ ...omit }).pick(nonAssocFields) as unknown as OmittedSchema,
 	);
@@ -124,58 +132,77 @@ export function createGetManyQueryOptions<
 		? defaultSort
 		: [defaultSort];
 
-	return z
-		.object({
-			/**
-			 * Pagination
-			 */
-			limit: z.coerce.number().int().positive().default(10),
-			/**
-			 * Pagination
-			 */
-			offset: z.coerce.number().int().default(0),
-			/**
-			 * Sorting
-			 */
-			sortBy: z
-				.enum(['createdAt', 'updatedAt', ...sortOptions])
-				// @ts-expect-error This works, but Zod doesn't like it
-				.default(defaultSortBy),
-			/**
-			 * Sorting order
-			 *
-			 * @default 'DESC'
-			 */
-			orderBy: z.enum(['ASC', 'DESC']).default(defaultOrderBy),
-			/**
-			 * Here you can specify filters for certain fields
-			 *
-			 * There are 4 types of filters for different kinds of fields, which can either be
-			 * supplied directly, or as an array of filters.
-			 *
-			 * ## String fields
-			 *
-			 * String fields can take the following types as options
-			 * - `string` - a string that must match exactly
-			 */
-			filter: filterOptions.optional(),
-			/**
-			 * Include certain relations
-			 */
-			include:
-				includeOptions && (includeOptions?.length ?? 0) > 0
-					? z
-							.array(z.enum(includeOptions as Exclude<IncludeOptions, []>))
-							.default(options?.include?.defaults ?? [])
-					: z.undefined(),
+	return z.optional(
+		z.intersection(
+			z.object({
+				/**
+				 * Pagination
+				 *
+				 * @internal
+				 */
+				limit: z.coerce.number().int().positive().default(10),
+				/**
+				 * Pagination
+				 *
+				 * @internal
+				 */
+				offset: z.coerce.number().int().default(0),
+				/**
+				 * Sorting
+				 *
+				 * @internal
+				 */
+				sortBy: z
+					.enum(['createdAt', 'updatedAt', ...sortOptions])
+					// @ts-expect-error This works, but Zod doesn't like it
+					.default(defaultSortBy),
+				/**
+				 * Sorting order
+				 *
+				 * @default 'DESC'
+				 * @internal
+				 */
+				orderBy: z.enum(['ASC', 'DESC']).default(defaultOrderBy),
+				/**
+				 * Here you can specify filters for certain fields
+				 *
+				 * There are 4 types of filters for different kinds of fields, which can either be
+				 * supplied directly, or as an array of filters.
+				 *
+				 * **String fields**
+				 *
+				 * String fields can take the following types as options
+				 *
+				 * - `string` - a string that must match exactly
+				 *
+				 * @internal
+				 */
+				filter: filterOptions.optional(),
+				/**
+				 * Include certain relations
+				 *
+				 * @internal
+				 */
+				include:
+					includeOptions && (includeOptions?.length ?? 0) > 0
+						? z
+								.array(z.enum(includeOptions as Exclude<IncludeOptions, []>))
+								.default(options?.include?.defaults ?? [])
+						: z.undefined(),
 
-			/**
-			 * Which non-relation fields to include in the response
-			 *
-			 * @default All fields
-			 */
-			attributes: z.array(z.enum(nonRelationFields(schema) as NonRelationFields)).optional(),
-		})
-		.and(filterOptions)
-		.optional();
+				/**
+				 * Which non-relation fields to include in the response
+				 *
+				 * @default
+				 * All fields
+				 *
+				 * @internal
+				 */
+				attributes: z
+					.array(z.enum(nonRelationFields(schema) as NonRelationFields))
+					.optional(),
+			}),
+			filterOptions,
+		),
+	);
 }

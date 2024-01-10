@@ -7,8 +7,8 @@ type Prettify<T> = {
 } & {};
 
 /**
- * Create a function that takes an object and returns a new object with only the
- * keys specified in `deterministicKeys`.
+ * Create a function that takes an object and returns a new object with only the keys specified in
+ * `deterministicKeys`.
  *
  * @param deterministicKeys The keys to keep in the returned object.
  */

@@ -5,8 +5,8 @@ import { getPartsOfFullName } from './names';
 
 /**
  * Attaches a `user` prop to an attribution object if one doesn't already exist, i.e. if the
- * attributed author isn't present on PubPub.
- * TODO(ian): I think we should move towards doing this normalization in the database.
+ * attributed author isn't present on PubPub. TODO(ian): I think we should move towards doing this
+ * normalization in the database.
  */
 export default <A extends types.Attribution | PubAttribution | CollectionAttribution>(
 	attribution: A,

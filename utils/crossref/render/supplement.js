@@ -1,6 +1,4 @@
-/**
- * Renders a preprint for a journal article.
- */
+/** Renders a preprint for a journal article. */
 import componentList from '../schema/componentList';
 
 import transformCommunity from '../transform/community';

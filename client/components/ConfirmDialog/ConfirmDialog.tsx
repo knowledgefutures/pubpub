@@ -1,7 +1,7 @@
 /**
- * A dialog box that confirms an action before going through with it. This component is BYOB
- * (bring your own button) -- it renders a `renderButton` prop with an `open` callback that can be
- * attached to a Button onClick handler, or anything else.
+ * A dialog box that confirms an action before going through with it. This component is BYOB (bring
+ * your own button) -- it renders a `renderButton` prop with an `open` callback that can be attached
+ * to a Button onClick handler, or anything else.
  */
 import React, { useCallback, useState } from 'react';
 import { Button, Callout, Classes, Dialog, Intent } from '@blueprintjs/core';

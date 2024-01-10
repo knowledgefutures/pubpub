@@ -86,15 +86,11 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 		  }[]
 		| null;
 
-	/**  TODO: add validation for downloads
-	// Should be something like
- *   {
-    "url": "https://assets.pubpub.org/44k2vnvm/61595701771772.pdf",
-    "type": "formatted",
-    "branchId": null,
-    "createdAt": "2020-07-25T18:29:32.319Z"
-  }
- */
+	/**
+	 * TODO: add validation for downloads // Should be something like { "url":
+	 * "https://assets.pubpub.org/44k2vnvm/61595701771772.pdf", "type": "formatted", "branchId":
+	 * null, "createdAt": "2020-07-25T18:29:32.319Z" }
+	 */
 	@Column(DataType.JSONB)
 	declare downloads: any[] | null;
 

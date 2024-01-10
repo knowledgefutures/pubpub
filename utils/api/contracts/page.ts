@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import type { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { createGetQueryOptions } from 'utils/query/createGetQuery';
@@ -10,12 +10,21 @@ import {
 	pageUpdateSchema,
 	pageWithRelationsSchema,
 } from '../schemas/page';
+import { Metadata } from '../utils/metadataType';
 
 extendZodWithOpenApi(z);
 
-const c = initContract();
-
-export const pageContract = c.router({
+export const pageRouter = {
+	/**
+	 * `GET /api/pages/:slugOrId`
+	 *
+	 * Get a page by it's slug or id.
+	 *
+	 * @access You need to be an **admin** of this community in order to access this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pages-slugOrId/get}
+	 */
 	get: {
 		path: '/api/pages/:slugOrId',
 		method: 'GET',
@@ -36,7 +45,20 @@ export const pageContract = c.router({
 		responses: {
 			200: pageSchema,
 		},
+		metadata: {
+			loggedIn: 'admin',
+		} satisfies Metadata,
 	},
+	/**
+	 * `GET /api/pages`
+	 *
+	 * Get many pages
+	 *
+	 * @access You need to be an **admin** of this community in order to access this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pages/get}
+	 */
 	getMany: {
 		path: '/api/pages',
 		method: 'GET',
@@ -55,7 +77,20 @@ export const pageContract = c.router({
 		responses: {
 			200: z.array(pageSchema),
 		},
+		metadata: {
+			loggedIn: 'admin',
+		} satisfies Metadata,
 	},
+	/**
+	 * `POST /api/pages`
+	 *
+	 * Create a page
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pages/post}
+	 */
 	create: {
 		path: '/api/pages',
 		method: 'POST',
@@ -66,6 +101,16 @@ export const pageContract = c.router({
 			201: pageSchema,
 		},
 	},
+	/**
+	 * `PUT /api/pages`
+	 *
+	 * Update a page
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pages/put}
+	 */
 	update: {
 		path: '/api/pages',
 		method: 'PUT',
@@ -76,6 +121,16 @@ export const pageContract = c.router({
 			201: pageUpdateSchema.omit({ pageId: true, communityId: true }).partial(),
 		},
 	},
+	/**
+	 * `DELETE /api/pages`
+	 *
+	 * Remove a page
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pages/delete}
+	 */
 	remove: {
 		path: '/api/pages',
 		method: 'DELETE',
@@ -88,4 +143,8 @@ export const pageContract = c.router({
 			}),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type PageRouterType = typeof pageRouter;
+
+export interface PageRouter extends PageRouterType {}

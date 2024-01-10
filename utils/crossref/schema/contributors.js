@@ -1,6 +1,4 @@
-/**
- * Renders a list of contributors
- */
+/** Renders a list of contributors */
 
 const roleList = {
 	'Writing – Review & Editing': 'editor',

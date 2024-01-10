@@ -9,6 +9,7 @@ import { collectionPubSchema } from './collectionPub';
 import { collectionAttributionSchema } from './collectionAttribution';
 import { memberSchema } from './member';
 import { communitySchema } from './community';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
@@ -17,8 +18,7 @@ const collectionLayoutSchema = z.object({
 	blocks: z.array(layoutBlockSchema),
 });
 
-export const collectionSchema = z.object({
-	id: z.string().uuid(),
+export const collectionSchema = baseSchema.extend({
 	title: z
 		.string()
 		.openapi({ description: 'The title of the collection', example: 'A wonderful title' }),

@@ -19,7 +19,10 @@ $accent-color: var(--accent-color);
 .facet-prop-editor-skeleton-component {
 	--accent-color: #{$inherited-accent-color};
 	position: relative;
-	transition: background 100ms ease-out, box-shadow 100ms ease-out, border 100ms ease-out;
+	transition:
+		background 100ms ease-out,
+		box-shadow 100ms ease-out,
+		border 100ms ease-out;
 
 	&.local-value {
 		--accent-color: #{$local-accent-color};

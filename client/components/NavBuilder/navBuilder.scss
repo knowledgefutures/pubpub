@@ -29,7 +29,9 @@ $bp: vendor.$bp-namespace;
 
 		&.dragging {
 			.shadow {
-				box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2),
+				box-shadow:
+					0 0 0 1px rgba(16, 22, 26, 0.1),
+					0 2px 4px rgba(16, 22, 26, 0.2),
 					0 8px 24px rgba(16, 22, 26, 0.2);
 			}
 		}
@@ -40,7 +42,9 @@ $bp: vendor.$bp-namespace;
 			padding: 0.5em;
 			background: white;
 			transition: box-shadow 0.1s linear;
-			box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+			box-shadow:
+				0 0 0 1px rgba(16, 22, 26, 0.1),
+				0 0 0 rgba(16, 22, 26, 0),
 				0 1px 1px rgba(16, 22, 26, 0.2);
 		}
 		.drag-handle {
@@ -64,7 +68,9 @@ $bp: vendor.$bp-namespace;
 		flex: 1 1 auto;
 		&.static {
 			padding: calc(8px) calc(34px + 0.5em);
-			box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+			box-shadow:
+				0 0 0 1px rgba(16, 22, 26, 0.1),
+				0 0 0 rgba(16, 22, 26, 0),
 				0 1px 1px rgba(16, 22, 26, 0.2);
 		}
 	}

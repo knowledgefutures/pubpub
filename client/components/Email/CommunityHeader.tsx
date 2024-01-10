@@ -61,13 +61,13 @@ export const CommunityHeader = (props: Props) => {
 	const backgroundColor = props.community.heroBackgroundColor
 		? props.community.heroBackgroundColor
 		: props.community.headerColorType === 'light'
-		? accentColorLight
-		: accentColorDark;
+		  ? accentColorLight
+		  : accentColorDark;
 	const headerColor = props.community.heroTextColor
 		? props.community.heroTextColor
 		: props.community.headerColorType === 'light'
-		? accentColorDark
-		: accentColorLight;
+		  ? accentColorDark
+		  : accentColorLight;
 
 	return (
 		<Section color={headerColor} backgroundColor={backgroundColor} logo={logo} alignment="left">

@@ -7,6 +7,7 @@ import {
 	HeadObjectCommand,
 	waitUntilObjectExists,
 	HeadObjectCommandOutput,
+	ObjectCannedACL,
 } from '@aws-sdk/client-s3';
 import { Progress, Upload } from '@aws-sdk/lib-storage';
 
@@ -20,7 +21,7 @@ type PubPubS3ClientConfig = {
 	accessKeyId: string;
 	secretAccessKey: string;
 	bucket: string;
-	ACL?: string;
+	ACL?: ObjectCannedACL;
 };
 
 type PubPubS3Client = {

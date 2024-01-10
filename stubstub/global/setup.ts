@@ -34,21 +34,22 @@ export default async () => {
 	process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB = 'true';
 	/**
 	 * Two things of note
-	 * 1. Dynamic import inline instead of top-level import in order to set
-	 * process.env.DATABASE_URL as in above
-	 * 2. Imported from '../../server/models' instead of '../../server/sequelize' to
-	 * guarantee that all models are imported
 	 *
-	 * If 2 is not done, then the models will not be imported and the
-	 * sequelize.sync() will not create the tables in the test db,
-	 * leading to "relation does not exist" errors when running tests
+	 * 1. Dynamic import inline instead of top-level import in order to set process.env.DATABASE_URL as
+	 *    in above
+	 * 2. Imported from '../../server/models' instead of '../../server/sequelize' to guarantee that all
+	 *    models are imported
+	 *
+	 * If 2 is not done, then the models will not be imported and the sequelize.sync() will not
+	 * create the tables in the test db, leading to "relation does not exist" errors when running
+	 * tests
 	 */
 	const { sequelize } = await import('../../server/models');
 	await sequelize.sync();
 
 	/**
-	 * This is here because the tests in `server/routes` rely on the
-	 * `customScripts` feature flag being present in the database.
+	 * This is here because the tests in `server/routes` rely on the `customScripts` feature flag
+	 * being present in the database.
 	 *
 	 * If this is not here, then the tests will fail.
 	 */

@@ -983,11 +983,11 @@ This has type:
 
 ```ts
 FacetArchetypeValue<typeof PubInLayout> = {
-    Title: FacetCascadedType<typeof Title>,
-    Description: FacetCascadedType<typeof Description>,
-    Attributions: FacetCascadedType<typeof Attributions>,
-    PreviewImage: FacetCascadedType<typeof PreviewImage>,
-}
+	Title: FacetCascadedType<typeof Title>,
+	Description: FacetCascadedType<typeof Description>,
+	Attributions: FacetCascadedType<typeof Attributions>,
+	PreviewImage: FacetCascadedType<typeof PreviewImage>,
+};
 ```
 
 Our server-side function `createSequelizeModelsFromFacetDefinitions` would then read from the `facets/archetypes` directory to create a new table for each archetype. This table would flatten the props of the constituent facets in a predictable way, e.g. turning `PreviewImage.url` into a column called `PreviewImage__url`.

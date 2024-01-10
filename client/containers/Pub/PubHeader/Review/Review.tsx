@@ -29,8 +29,8 @@ const Review = (props: Props) => {
 	const bgColor = isEmptyDoc(review as DocJson)
 		? 'lightgray'
 		: !hover
-		? lighterAccentColor?.toString()
-		: communityData.accentColorDark;
+		  ? lighterAccentColor?.toString()
+		  : communityData.accentColorDark;
 
 	return (
 		<div className="review-component">

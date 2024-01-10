@@ -37,13 +37,9 @@ export const createCollection = async (
 		kind,
 		pageId = null,
 		doi = null,
-		/**
-		 * @default false
-		 */
+		/** @default false */
 		isPublic = false,
-		/**
-		 * @default true
-		 */
+		/** @default true */
 		isRestricted = true,
 		id = null,
 		slug = null,

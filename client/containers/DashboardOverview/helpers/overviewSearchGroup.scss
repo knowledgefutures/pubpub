@@ -25,7 +25,9 @@ $transition-duration: 100ms;
 		border: 1px solid $accent-color;
 		border-radius: 2px;
 		padding: 12px;
-		transition: box-shadow $transition-duration, color $transition-duration;
+		transition:
+			box-shadow $transition-duration,
+			color $transition-duration;
 
 		.#{$bp}-icon.search-icon {
 			transition: color $transition-duration;

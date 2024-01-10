@@ -22,8 +22,8 @@ export type ValidLandingPageCommunityFeature = LandingPageCommunityFeature & {
 export type LandingPageFeatureOfKind<Kind extends LandingPageFeatureKind> = Kind extends 'pub'
 	? LandingPagePubFeature
 	: Kind extends 'community'
-	? LandingPageCommunityFeature
-	: never;
+	  ? LandingPageCommunityFeature
+	  : never;
 
 export type LandingPageFeatures<Validated extends boolean = true> = {
 	pub: LandingPagePubFeature[];

@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
 export const memberPermissions = ['view', 'edit', 'manage', 'admin'] as const;
-export const memberSchema = z.object({
+export const memberSchema = baseSchema.extend({
 	id: z.string().uuid(),
 	permissions: z.enum(memberPermissions).default('view'),
 	isOwner: z.boolean().nullable(),

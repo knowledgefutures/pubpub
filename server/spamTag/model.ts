@@ -30,27 +30,9 @@ export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttrib
 	declare statusUpdatedAt: Date | null;
 
 	/**
-	 * TODO: add validation and better type for fields
-	 * Should probably be
-	 * {
-  heroText: [
-    "casino"
-  ],
-  declare description?: [
-    "casino"
-  ]
-} | 
-	{
-  title: [
-    "buy"
-  ],
-  declare heroTitle?: [
-    "buy"
-  ],
-  declare subdomain?: [
-    "buy"
-  ]
-}
+	 * TODO: add validation and better type for fields Should probably be { heroText: [ "casino" ],
+	 * declare description?: [ "casino" ] } | { title: [ "buy" ], declare heroTitle?: [ "buy" ],
+	 * declare subdomain?: [ "buy" ] }
 	 */
 	@AllowNull(false)
 	@Column(DataType.JSONB)

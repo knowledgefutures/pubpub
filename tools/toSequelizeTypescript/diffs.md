@@ -1,6 +1,5 @@
 ## ActivityItem
 
-
 ```diff
 id: string
 - kind: "community-created" | "community-updated" | "collection-created" | "collection-updated" | "collection-removed" | "collection-pub-created" | "collection-pub-removed" | "facet-instance-updated" | ... 16 more ... | "submission-status-updated"
@@ -23,10 +22,7 @@ actorId: string | null
 + version?: any
 ```
 
-
-
 ## Collection
-
 
 ```diff
 id: string
@@ -79,10 +75,7 @@ community?: Community
 + version?: any
 ```
 
-
-
 ## CollectionAttribution
-
 
 ```diff
 id: string
@@ -114,10 +107,7 @@ user?: MinimalUser
 + version?: any
 ```
 
-
-
 ## CollectionPub
-
 
 ```diff
 id: string
@@ -135,10 +125,7 @@ pub?: Pub
 + version?: any
 ```
 
-
-
 ## Commenter
-
 
 ```diff
 id: string
@@ -150,10 +137,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## Community
-
 
 ```diff
 id: string
@@ -264,10 +248,7 @@ accentTextColor: string
 + version?: any
 ```
 
-
-
 ## CrossrefDepositRecord
-
 
 ```diff
 id: string
@@ -279,10 +260,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## DepositTarget
-
 
 ```diff
 id: string
@@ -305,10 +283,7 @@ id: string
 - isPubPubManaged?: boolean
 ```
 
-
-
 ## Discussion
-
 
 ```diff
 id: string
@@ -340,10 +315,7 @@ anchors?: DiscussionAnchor[]
 + version?: any
 ```
 
-
-
 ## DiscussionAnchor
-
 
 ```diff
 id: string
@@ -362,10 +334,7 @@ originalTextSuffix: string
 + version?: any
 ```
 
-
-
 ## Doc
-
 
 ```diff
 id: string
@@ -378,10 +347,7 @@ content: DocJson
 + version?: any
 ```
 
-
-
 ## Draft
-
 
 ```diff
 id: string
@@ -394,10 +360,7 @@ firebasePath: string
 + version?: any
 ```
 
-
-
 ## Export
-
 
 ```diff
 id: string
@@ -415,10 +378,7 @@ historyKey: number
 + version?: any
 ```
 
-
-
 ## ExternalPublication
-
 
 ```diff
 id: string
@@ -440,10 +400,7 @@ url: string
 + version?: any
 ```
 
-
-
 ## FeatureFlag
-
 
 ```diff
 id: string
@@ -459,10 +416,7 @@ communities?: FeatureFlagCommunity[]
 + version?: any
 ```
 
-
-
 ## FeatureFlagUser
-
 
 ```diff
 id: string
@@ -480,10 +434,7 @@ user?: User
 + version?: any
 ```
 
-
-
 ## FeatureFlagCommunity
-
 
 ```diff
 id: string
@@ -501,10 +452,7 @@ community?: Community
 + version?: any
 ```
 
-
-
 ## ZoteroIntegration
-
 
 ```diff
 id: string
@@ -524,10 +472,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## IntegrationDataOAuth1
-
 
 ```diff
 id: string
@@ -542,10 +487,7 @@ id: string
 - integration?: ZoteroIntegration
 ```
 
-
-
 ## LandingPageFeature
-
 
 ```diff
 id: string
@@ -565,10 +507,7 @@ payload: Record<string, any> | null
 + version?: any
 ```
 
-
-
 ## Member
-
 
 ```diff
 id: string
@@ -599,10 +538,7 @@ user?: User
 + version?: any
 ```
 
-
-
 ## Page
-
 
 ```diff
 id: string
@@ -628,10 +564,7 @@ communityId: string
 + version?: any
 ```
 
-
-
 ## Pub
-
 
 ```diff
 id: string
@@ -700,10 +633,7 @@ submission?: Submission
 + version?: any
 ```
 
-
-
 ## PubAttribution
-
 
 ```diff
 id: string
@@ -736,10 +666,7 @@ pubId: string
 + version?: any
 ```
 
-
-
 ## PubEdge
-
 
 ```diff
 id: string
@@ -761,10 +688,7 @@ externalPublication?: ExternalPublication
 + version?: any
 ```
 
-
-
 ## PubVersion
-
 
 ```diff
 id: string
@@ -779,10 +703,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## Release
-
 
 ```diff
 id: string
@@ -804,10 +725,7 @@ doc?: Doc
 + version?: any
 ```
 
-
-
 ## ScopeSummary
-
 
 ```diff
 + id: string
@@ -822,10 +740,7 @@ submissions: number
 + version?: any
 ```
 
-
-
 ## Submission
-
 
 ```diff
 id: string
@@ -845,10 +760,7 @@ submissionWorkflow?: SubmissionWorkflow
 + version?: any
 ```
 
-
-
 ## SpamTag
-
 
 ```diff
 id: string
@@ -868,10 +780,7 @@ spamScoreVersion: number
 + version?: any
 ```
 
-
-
 ## SubmissionWorkflow
-
 
 ```diff
 id: string
@@ -900,10 +809,7 @@ collection?: Collection
 + version?: any
 ```
 
-
-
 ## Reviewer
-
 
 ```diff
 id: string
@@ -917,10 +823,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## Thread
-
 
 ```diff
 id: string
@@ -938,10 +841,7 @@ id: string
 - locked?: boolean
 ```
 
-
-
 ## ThreadComment
-
 
 ```diff
 id: string
@@ -964,10 +864,7 @@ commenterId: string | null
 + version?: any
 ```
 
-
-
 ## ThreadEvent
-
 
 ```diff
 id: string
@@ -984,10 +881,7 @@ threadId: string
 + version?: any
 ```
 
-
-
 ## User
-
 
 ```diff
 id: string
@@ -1048,10 +942,7 @@ sha3hashedPassword: string
 + version?: any
 ```
 
-
-
 ## UserNotification
-
 
 ```diff
 id: string
@@ -1074,10 +965,7 @@ user?: User
 + version?: any
 ```
 
-
-
 ## UserNotificationPreferences
-
 
 ```diff
 id: string
@@ -1103,10 +991,7 @@ notificationCadence: number
 + version?: any
 ```
 
-
-
 ## UserScopeVisit
-
 
 ```diff
 id: string
@@ -1123,10 +1008,7 @@ collectionId: string | null
 + version?: any
 ```
 
-
-
 ## UserSubscription
-
 
 ```diff
 id: string
@@ -1146,10 +1028,7 @@ threadId: string | null
 + version?: any
 ```
 
-
-
 ## Visibility
-
 
 ```diff
 id: string
@@ -1163,10 +1042,7 @@ id: string
 + version?: any
 ```
 
-
-
 ## VisibilityUser
-
 
 ```diff
 id: string

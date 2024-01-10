@@ -147,8 +147,8 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 };
 
 /**
- * `express-slow-down` causes a memory leak in Jest while testing.
- * While testing, this is not very useful anyway.
+ * `express-slow-down` causes a memory leak in Jest while testing. While testing, this is not very
+ * useful anyway.
  */
 const speedLimiter: RequestHandler =
 	process.env.NODE_ENV === 'test'

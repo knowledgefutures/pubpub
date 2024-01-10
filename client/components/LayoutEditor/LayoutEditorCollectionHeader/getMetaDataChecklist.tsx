@@ -36,14 +36,12 @@ const MetadataCheckboxes = (props: Props) => {
 				const isFieldSet = !!metadata[field.name];
 				const hideField = hiddenMetadataFields.includes(field.name);
 				return (
-					<>
-						<Checkbox
-							disabled={!isFieldSet}
-							checked={isFieldSet ? !hideField : false}
-							onChange={() => handleToggleMetadataField(field.name)}
-							label={field.label}
-						/>
-					</>
+					<Checkbox
+						disabled={!isFieldSet}
+						checked={isFieldSet ? !hideField : false}
+						onChange={() => handleToggleMetadataField(field.name)}
+						label={field.label}
+					/>
 				);
 			})}
 		</>

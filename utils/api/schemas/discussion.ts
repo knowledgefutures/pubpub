@@ -1,11 +1,11 @@
 import * as types from 'types';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
-export const discussionSchema = z.object({
-	id: z.string().uuid(),
+export const discussionSchema = baseSchema.extend({
 	title: z.string().nullable(),
 	number: z.number().int(),
 	isClosed: z.boolean().nullable(),

@@ -1,6 +1,4 @@
-/**
- * Renders a doi_data
- */
+/** Renders a doi_data */
 export default (doi, timestamp, resource, contentVersion) => {
 	if (!doi) {
 		return {};

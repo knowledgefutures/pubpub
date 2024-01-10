@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import type { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { createGetQueryOptions } from 'utils/query/createGetQuery';
@@ -13,10 +13,9 @@ import {
 import { updateAttributionSchema } from '../schemas/attribution';
 import { pubSchema } from '../schemas/pub';
 import { userSchema } from '../schemas/user';
+import { Metadata } from '../utils/metadataType';
 
 extendZodWithOpenApi(z);
-
-const c = initContract();
 
 // here to avoid circular imports, pubSchema also imports /schemas/pubAttribution
 export const pubAttributionWithRelationsSchema = pubAttributionSchema.extend({
@@ -24,7 +23,17 @@ export const pubAttributionWithRelationsSchema = pubAttributionSchema.extend({
 	user: userSchema.optional(),
 });
 
-export const pubAttributionContract = c.router({
+export const pubAttributionRouter = {
+	/**
+	 * `GET /api/pubAttributions/:id`
+	 *
+	 * Get a pub attribution
+	 *
+	 * @access You need to be an **admin** of this community in order to access this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions-id/get}
+	 */
 	get: {
 		path: '/api/pubAttributions/:id',
 		method: 'GET',
@@ -37,7 +46,20 @@ export const pubAttributionContract = c.router({
 		responses: {
 			200: pubAttributionWithRelationsSchema,
 		},
+		metadata: {
+			loggedIn: 'admin',
+		} satisfies Metadata,
 	},
+	/**
+	 * `GET /api/pubAttributions`
+	 *
+	 * Get multiple pub attributions. You are limited to attributions in your community.
+	 *
+	 * @access You need to be an **admin** of this community in order to access this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions/get}
+	 */
 	getMany: {
 		path: '/api/pubAttributions',
 		method: 'GET',
@@ -53,7 +75,20 @@ export const pubAttributionContract = c.router({
 		responses: {
 			200: z.array(pubAttributionWithRelationsSchema),
 		},
+		metadata: {
+			loggedIn: 'admin',
+		} satisfies Metadata,
 	},
+	/**
+	 * `POST /api/pubAttributions/batch`
+	 *
+	 * Batch create pub attributions
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions-batch/post}
+	 */
 	batchCreate: {
 		path: '/api/pubAttributions/batch',
 		method: 'POST',
@@ -64,6 +99,16 @@ export const pubAttributionContract = c.router({
 			201: z.array(pubAttributionSchema),
 		},
 	},
+	/**
+	 * `POST /api/pubAttributions`
+	 *
+	 * Add an attribution to a pub
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions/post}
+	 */
 	create: {
 		path: '/api/pubAttributions',
 		method: 'POST',
@@ -75,6 +120,16 @@ export const pubAttributionContract = c.router({
 			500: z.string(),
 		},
 	},
+	/**
+	 * `PUT /api/pubAttributions`
+	 *
+	 * Update a pub attribution
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions/put}
+	 */
 	update: {
 		path: '/api/pubAttributions',
 		method: 'PUT',
@@ -86,6 +141,16 @@ export const pubAttributionContract = c.router({
 			500: z.string(),
 		},
 	},
+	/**
+	 * `DELETE /api/pubAttributions`
+	 *
+	 * Remove a pub attribution
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubAttributions/delete}
+	 */
 	remove: {
 		path: '/api/pubAttributions',
 		method: 'DELETE',
@@ -97,4 +162,8 @@ export const pubAttributionContract = c.router({
 			500: z.string(),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type PubAttributionRouterType = typeof pubAttributionRouter;
+
+export interface PubAttributionRouter extends PubAttributionRouterType {}

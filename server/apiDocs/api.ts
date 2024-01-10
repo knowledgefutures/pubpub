@@ -1,5 +1,5 @@
 import app from 'server/server';
-import { openApiMiddleware } from 'utils/api';
+import { openApiMiddleware } from 'utils/api/openapi-router';
 
 app.use(
 	'/apidocs',

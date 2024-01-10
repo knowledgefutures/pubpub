@@ -13,10 +13,10 @@ export type SerializedModel<
 			? SerializedModel<M, C>[] | undefined
 			: SerializedModel<NonNullable<S[P]>, C> | undefined
 		: S[P] extends Date | null
-		? S[P] extends Date
-			? string
-			: string | null
-		: S[P];
+		  ? S[P] extends Date
+				? string
+				: string | null
+		  : S[P];
 };
 
 export type RecursiveCreationAttributes<T extends Model> = SerializedModel<T, true>;

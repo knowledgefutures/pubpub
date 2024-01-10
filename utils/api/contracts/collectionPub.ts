@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import { type AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import {
@@ -10,9 +10,17 @@ import { pubSchema } from '../schemas/pub';
 
 extendZodWithOpenApi(z);
 
-const c = initContract();
-
-export const collectionPubContract = c.router({
+export const collectionPubRouter = {
+	/**
+	 * `GET /api/collectionPubs`
+	 *
+	 * Get the pubs associated with a collection
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-collectionPubs/get}
+	 */
 	get: {
 		path: '/api/collectionPubs',
 		method: 'GET',
@@ -27,6 +35,16 @@ export const collectionPubContract = c.router({
 			200: z.array(pubSchema),
 		},
 	},
+	/**
+	 * `POST /api/collectionPubs`
+	 *
+	 * Add a pub to a collection
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-collectionPubs/post}
+	 */
 	create: {
 		path: '/api/collectionPubs',
 		method: 'POST',
@@ -37,6 +55,16 @@ export const collectionPubContract = c.router({
 			201: collectionPubSchema,
 		},
 	},
+	/**
+	 * `PUT /api/collectionPubs`
+	 *
+	 * Change the pubs that are associated with a collection
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-collectionPubs/put}
+	 */
 	update: {
 		path: '/api/collectionPubs',
 		method: 'PUT',
@@ -51,6 +79,16 @@ export const collectionPubContract = c.router({
 			200: updateCollectionPubSchema.omit({ id: true }),
 		},
 	},
+	/**
+	 * `DELETE /api/collectionPubs`
+	 *
+	 * Remove a pub from a collection
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-collectionPubs/delete}
+	 */
 	remove: {
 		path: '/api/collectionPubs',
 		method: 'DELETE',
@@ -64,4 +102,8 @@ export const collectionPubContract = c.router({
 			200: z.string().uuid(),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type CollectionPubRouterType = typeof collectionPubRouter;
+
+export interface CollectionPubRouter extends CollectionPubRouterType {}

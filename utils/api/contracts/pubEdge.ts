@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import type { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { pubEdgeCreateSchema, pubEdgeSchema, pubEdgeUpdateSchema } from '../schemas/pubEdge';
@@ -6,9 +6,17 @@ import { sanitizedPubSchema } from '../schemas/pub';
 
 extendZodWithOpenApi(z);
 
-const c = initContract();
-
-export const pubEdgeContract = c.router({
+export const pubEdgeRouter = {
+	/**
+	 * `GET /api/pubEdges/:id`
+	 *
+	 * Get a pubEdge by id
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubEdges-id/get}
+	 */
 	get: {
 		path: '/api/pubEdges/:id',
 		method: 'GET',
@@ -21,6 +29,16 @@ export const pubEdgeContract = c.router({
 			200: pubEdgeSchema,
 		},
 	},
+	/**
+	 * `POST /api/pubEdges`
+	 *
+	 * Create a connection from one pub to another, or to an external publication
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubEdges/post}
+	 */
 	create: {
 		path: '/api/pubEdges',
 		method: 'POST',
@@ -37,6 +55,16 @@ export const pubEdgeContract = c.router({
 			}),
 		},
 	},
+	/**
+	 * `PUT /api/pubEdges`
+	 *
+	 * Update a pubEdge
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubEdges/put}
+	 */
 	update: {
 		path: '/api/pubEdges',
 		method: 'PUT',
@@ -45,6 +73,16 @@ export const pubEdgeContract = c.router({
 		body: pubEdgeUpdateSchema,
 		responses: { 200: pubEdgeSchema },
 	},
+	/**
+	 * `PUT /api/pubEdges/approvedByTarget`
+	 *
+	 * Update the approvedByTarget field of a pubEdge
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubEdges-approvedByTarget/put}
+	 */
 	updateApprovedByTarget: {
 		path: '/api/pubEdges/approvedByTarget',
 		method: 'PUT',
@@ -58,6 +96,16 @@ export const pubEdgeContract = c.router({
 			200: pubEdgeSchema,
 		},
 	},
+	/**
+	 * `DELETE /api/pubEdges`
+	 *
+	 * Remove a connection for a pub
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-pubEdges/delete}
+	 */
 	remove: {
 		path: '/api/pubEdges',
 		method: 'DELETE',
@@ -70,4 +118,8 @@ export const pubEdgeContract = c.router({
 			200: z.object({}),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type PubEdgeRouterType = typeof pubEdgeRouter;
+
+export interface PubEdgeRouter extends PubEdgeRouterType {}

@@ -145,13 +145,11 @@ const Header = (props: Props) => {
 						{!hideHeaderLogo && (
 							<a href="/" aria-label={communityData.title}>
 								{communityData.headerLogo && (
-									<React.Fragment>
-										<img
-											alt=""
-											style={isBasePubPub ? { padding: '1px 0px' } : {}}
-											src={resizedHeaderLogo}
-										/>
-									</React.Fragment>
+									<img
+										alt=""
+										style={isBasePubPub ? { padding: '1px 0px' } : {}}
+										src={resizedHeaderLogo}
+									/>
 								)}
 								{!communityData.headerLogo && <span>{communityData.title}</span>}
 							</a>

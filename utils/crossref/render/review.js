@@ -1,6 +1,4 @@
-/**
- * Renders a peer review of another work.
- */
+/** Renders a peer review of another work. */
 import peerReview from '../schema/peerReview';
 
 import transformCommunity from '../transform/community';

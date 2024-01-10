@@ -1,13 +1,21 @@
-import { initContract } from '@ts-rest/core';
+import type { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { releaseSchema } from '../schemas/release';
 
 extendZodWithOpenApi(z);
 
-const c = initContract();
-
-export const releaseContract = c.router({
+export const releaseRouter = {
+	/**
+	 * `POST /api/releases`
+	 *
+	 * Create a release
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-releases/post}
+	 */
 	create: {
 		path: '/api/releases',
 		method: 'POST',
@@ -26,4 +34,8 @@ export const releaseContract = c.router({
 			400: z.string(),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type ReleaseRouterType = typeof releaseRouter;
+
+export interface ReleaseRouter extends ReleaseRouterType {}

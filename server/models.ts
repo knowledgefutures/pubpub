@@ -210,15 +210,18 @@ export {
 	WorkerTask,
 };
 
-/** This import is here to guarantee that when you import the `sequelize` object
-    all the models will be defined on it.
-
-    In previous versions of Sequelize, the models were defined by importing it
-    in the object using `Sequlize.import`. This is no longer the case, instead
-    we first create the sequelize object and then import it in the relevant 
-    `model.ts` file.
-
-    TD:DR if you get "Model is not defined" errors, make sure you import the
-    `sequelize` object from this file, not form `server/sequelize.ts`.
-*/
+/**
+ * This import is here to guarantee that when you import the `sequelize` object all the models will
+ * be defined on it.
+ *
+ * ```
+ * In previous versions of Sequelize, the models were defined by importing it
+ * in the object using `Sequlize.import`. This is no longer the case, instead
+ * we first create the sequelize object and then import it in the relevant
+ * `model.ts` file.
+ *
+ * TD:DR if you get "Model is not defined" errors, make sure you import the
+ * `sequelize` object from this file, not form `server/sequelize.ts`.
+ * ```
+ */
 export { sequelize };

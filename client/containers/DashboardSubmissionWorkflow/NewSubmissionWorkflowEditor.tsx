@@ -66,28 +66,26 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 	const renderInner = () => {
 		if (isCreating) {
 			return (
-				<>
-					<SubmissionWorkflowEditor
-						workflow={workflow}
-						onUpdateWorkflow={(update) =>
-							setWorkflow((current) => ({ ...current, ...update }))
-						}
-						onValidateWorkflow={setIsValid}
-						collection={activeCollection!}
-						finalStepButton={
-							<Button
-								disabled={!isValid}
-								onClick={handleCreateNewWorkflow}
-								loading={isPersisting}
-								icon="tick"
-								intent="primary"
-								className="save-changes-button"
-							>
-								Finish creating workflow
-							</Button>
-						}
-					/>
-				</>
+				<SubmissionWorkflowEditor
+					workflow={workflow}
+					onUpdateWorkflow={(update) =>
+						setWorkflow((current) => ({ ...current, ...update }))
+					}
+					onValidateWorkflow={setIsValid}
+					collection={activeCollection!}
+					finalStepButton={
+						<Button
+							disabled={!isValid}
+							onClick={handleCreateNewWorkflow}
+							loading={isPersisting}
+							icon="tick"
+							intent="primary"
+							className="save-changes-button"
+						>
+							Finish creating workflow
+						</Button>
+					}
+				/>
 			);
 		}
 		return <StartWorkflowCallout onStartWorkflow={() => setIsCreating(true)} />;

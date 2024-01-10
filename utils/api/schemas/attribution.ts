@@ -3,11 +3,11 @@ import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { PubAttribution } from 'server/models';
 import * as types from 'types';
 import { DEFAULT_ROLES } from 'types/attribution';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
-export const attributionSchema = z.object({
-	id: z.string().uuid(),
+export const attributionSchema = baseSchema.extend({
 	order: z.number().max(1).min(0),
 	roles: z.array(z.string()).openapi({ example: DEFAULT_ROLES }).nullable(),
 	affiliation: z.string().nullable(),

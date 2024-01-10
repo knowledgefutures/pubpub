@@ -25,7 +25,9 @@
 			transform: scale(0.4);
 			opacity: 0;
 			transform-origin: bottom left;
-			transition: 0.1s 0.3s linear transform, 0s 0.4s linear opacity;
+			transition:
+				0.1s 0.3s linear transform,
+				0s 0.4s linear opacity;
 			display: block;
 			position: absolute;
 			bottom: 100%;
@@ -91,7 +93,9 @@
 		.hover-wrapper {
 			opacity: 1;
 			transform: scale(1);
-			transition: 0.1s linear transform, 0s 0s linear opacity;
+			transition:
+				0.1s linear transform,
+				0s 0s linear opacity;
 		}
 	}
 }

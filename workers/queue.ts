@@ -158,8 +158,8 @@ amqplib
 						process.env.WORKER
 							? 2
 							: process.env.SEQUELIZE_MAX_CONNECTIONS
-							? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-							: 5
+							  ? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
+							  : 5
 					}`,
 				);
 				console.log(` [*] Waiting for messages on ${taskQueueName}. To exit press CTRL+C`);

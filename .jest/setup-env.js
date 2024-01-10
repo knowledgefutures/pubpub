@@ -1,8 +1,7 @@
 /**
- * This file helps us prepare an environment for Jest tests to run. Because
- * these run in Node rather than the browser, there are some things we do to
- * make these environments match. A lot of this is handled by JSDom, but there
- * are some edge cases.
+ * This file helps us prepare an environment for Jest tests to run. Because these run in Node rather
+ * than the browser, there are some things we do to make these environments match. A lot of this is
+ * handled by JSDom, but there are some edge cases.
  */
 
 process.env.DOI_SUBMISSION_URL = '';
@@ -83,8 +82,9 @@ if (typeof window !== 'undefined') {
 
 if (typeof window === 'undefined') {
 	/**
-	 * This is here because Jest overrides setImmediate in a strange way.
-	 * This fixes @see{../utils/async/__tests__/async.test.ts}
+	 * This is here because Jest overrides setImmediate in a strange way. This fixes
+	 *
+	 * @see {../utils/async/__tests__/async.test.ts}
 	 */
 	global.setImmediateNode = setImmediate;
 }

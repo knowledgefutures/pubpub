@@ -19,30 +19,33 @@ function extractTypeSignature(filename: string) {
 	// 	(s) => ts.isTypeAliasDeclaration(s) && s.name.text === aliasName,
 	// );
 
-	const statements = sourceFile?.statements.reduce((acc, s) => {
-		if (!ts.isTypeAliasDeclaration(s) || !/\d$/.test(s.name.text)) {
-			return acc;
-		}
+	const statements = sourceFile?.statements.reduce(
+		(acc, s) => {
+			if (!ts.isTypeAliasDeclaration(s) || !/\d$/.test(s.name.text)) {
+				return acc;
+			}
 
-		const matches = s.name.text.match(/(.*)(\d)$/);
-		if (!matches) {
-			return acc;
-		}
+			const matches = s.name.text.match(/(.*)(\d)$/);
+			if (!matches) {
+				return acc;
+			}
 
-		const name = matches[1];
-		const num = matches[2];
+			const name = matches[1];
+			const num = matches[2];
 
-		if (num === '1') {
-			acc[name] = [s, s];
-			return acc;
-		}
+			if (num === '1') {
+				acc[name] = [s, s];
+				return acc;
+			}
 
-		if (num === '2') {
-			acc[name][1] = s;
+			if (num === '2') {
+				acc[name][1] = s;
+				return acc;
+			}
 			return acc;
-		}
-		return acc;
-	}, {} as Record<string, [ts.Statement, ts.Statement]>);
+		},
+		{} as Record<string, [ts.Statement, ts.Statement]>,
+	);
 
 	// if (!statement) {
 	// 	throw new Error(`Type: '${aliasName}' not found in file: '${filename}'`);

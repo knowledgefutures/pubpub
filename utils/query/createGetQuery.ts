@@ -27,20 +27,18 @@ export const createGetQueryOptions = <
 >(
 	schema: Schema,
 	options: {
-		/**
-		 * Which relations are includeable and what are their defaults
-		 */
+		/** Which relations are includeable and what are their defaults */
 		include?: {
 			/**
 			 * Which relations are includeable
 			 *
-			 * @default []
+			 * @default [ ]
 			 */
 			options: IncludeOptions;
 			/**
 			 * Which relations are included by default
 			 *
-			 * @default []
+			 * @default [ ]
 			 */
 			defaults?: IncludeDefaults;
 		};
@@ -50,6 +48,8 @@ export const createGetQueryOptions = <
 	return z.object({
 		/**
 		 * Include certain relations
+		 *
+		 * @internal
 		 */
 		include:
 			includeOptions && (includeOptions?.length ?? 0) > 0
@@ -62,6 +62,7 @@ export const createGetQueryOptions = <
 		 * Which non-relation fields to include in the response
 		 *
 		 * @default All fields
+		 * @internal
 		 */
 		attributes: z.array(z.enum(nonRelationFields(schema) as NonRelationFields)).optional(),
 	});

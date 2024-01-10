@@ -88,16 +88,19 @@ const BlockTypeSelector = React.forwardRef((props: Props, ref) => {
 		const { ref: innerRef, ...restDisclosureElementProps } = disclosureElementProps;
 		const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
 
-		const activeCommandEntry = commandsFlat.reduce((found, entry) => {
-			if (found) {
-				return found;
-			}
-			const commandState = commandStates[entry.key];
-			if (commandState?.isActive && 'command' in entry) {
-				return entry;
-			}
-			return null;
-		}, null as null | CommandDefinition);
+		const activeCommandEntry = commandsFlat.reduce(
+			(found, entry) => {
+				if (found) {
+					return found;
+				}
+				const commandState = commandStates[entry.key];
+				if (commandState?.isActive && 'command' in entry) {
+					return entry;
+				}
+				return null;
+			},
+			null as null | CommandDefinition,
+		);
 
 		const matchingBlockType = blockTypeDefinitions.find(
 			(def) => def.command === activeCommandEntry?.command,

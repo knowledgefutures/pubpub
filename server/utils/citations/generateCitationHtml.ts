@@ -18,7 +18,7 @@ const collectionKindToCitationJSPart = (kind) =>
 		book: 'chapter',
 		conference: 'paper-conference',
 		issue: 'article-journal',
-	}[kind] || 'article-journal');
+	})[kind] || 'article-journal';
 
 const getCollectionLevelData = (collection) => {
 	if (!collection) {

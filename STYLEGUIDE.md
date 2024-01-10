@@ -36,7 +36,7 @@ const defaultProps = {
 const ExampleBlock = (props) => {
 	/* Destructure props before other declarations */
 	const { onThing } = props;
-	
+
 	/* Set the className of the outermost element to the hyphen-separated */
 	/* name of the react component with a `-component` or `-container` suffix */
 	return (
@@ -57,7 +57,9 @@ export default ExampleBlock;
 ```
 
 ## Utility files
+
 This repo uses three main utilities folders:
+
 ```
 /utils: Shared util files
 /client/utils: Client specific util files (e.g. dependent on window or DOM)
@@ -65,9 +67,10 @@ This repo uses three main utilities folders:
 ```
 
 There can be a bit of craft in deciding where a certain utility file goes, so it's nice to be clear about the tradeoffs:
-- **`/utils`**: These are expected to be called on both the server and client. They are likely to be bundled and sent to the client, so file size should be a consideration.
-- **`/client/utils`**: These are expected to only be called on the client. They *can* be called from the server, but doing so may be bad practice. If your function uses `apiFetch()`, `window` or `document` it likely belongs here.
-- **`/server/utils`**: These are expected to only be called on the server. They should not be bundled and sent to the client (they may rely on config var values) - and as such *must* not be called by the client.
+
+-   **`/utils`**: These are expected to be called on both the server and client. They are likely to be bundled and sent to the client, so file size should be a consideration.
+-   **`/client/utils`**: These are expected to only be called on the client. They _can_ be called from the server, but doing so may be bad practice. If your function uses `apiFetch()`, `window` or `document` it likely belongs here.
+-   **`/server/utils`**: These are expected to only be called on the server. They should not be bundled and sent to the client (they may rely on config var values) - and as such _must_ not be called by the client.
 
 Do not use `utils/index.js` files. Separate utils files and be specific in calling them. This can help prevent cyclic dependencies and makes navigating to the right file simpler. For example:
 
@@ -76,14 +79,14 @@ import { buildUrl } from 'utils/urls';
 import { usePageContext } from 'utils/hooks';
 ```
 
-
 ## Imports
-Relative paths should only be used in imports for neighbor or child files. That is, never use `../` in an import or require statement. The webpack configs in `client/webpack` and `.storybook` as well as `.eslintrc` have been configured with a set of aliases to allow parent resolutions. 
+
+Relative paths should only be used in imports for neighbor or child files. That is, never use `../` in an import or require statement. The webpack configs in `client/webpack` and `.storybook` as well as `.eslintrc` have been configured with a set of aliases to allow parent resolutions.
 
 If you are finding yourself consistently wanting to import a parent file, you can either reconsider the structure of the code you're working on or create an additional alias in the webpack and eslint configs.
 
-
 ## Storybook
+
 Storybook will iterate over all files, grabbing any that end in `Stories.js`. Place storybook files alongside the component file they are testing and name them as `${camelCased component name}Stories.js`. This makes it much simpler to see whether a certain component has a corresponding stories file and keeps it closer to mind when changes are made to the component.
 
 ```
@@ -92,6 +95,3 @@ SimpleEditor/
 	simpleEditorStories.js
 	editorFuncs.js
 ```
-
-
-

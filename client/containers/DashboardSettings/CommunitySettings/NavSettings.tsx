@@ -27,21 +27,19 @@ const NavSettings = (props: Props) => {
 					}}
 				/>
 				{!hideNav && (
-					<>
-						<NavBuilder
-							initialNav={communityData.navigation ?? []}
-							prefix={[
-								...(communityData.navigation?.[0]
-									? [communityData.navigation[0]]
-									: ([] as CommunityNavigationEntry[])),
-							]}
-							pages={pages}
-							collections={collections}
-							onChange={(val) => {
-								updateCommunityData({ navigation: val });
-							}}
-						/>
-					</>
+					<NavBuilder
+						initialNav={communityData.navigation ?? []}
+						prefix={[
+							...(communityData.navigation?.[0]
+								? [communityData.navigation[0]]
+								: ([] as CommunityNavigationEntry[])),
+						]}
+						pages={pages}
+						collections={collections}
+						onChange={(val) => {
+							updateCommunityData({ navigation: val });
+						}}
+					/>
 				)}
 			</SettingsSection>
 			{!hideNav && (

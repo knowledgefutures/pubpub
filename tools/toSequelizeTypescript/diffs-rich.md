@@ -1,6 +1,5 @@
 ## ActivityItem
 
-
 <pre>
 {
   id: string
@@ -17,11 +16,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Collection
-
 
 <pre>
 {
@@ -57,11 +52,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## CollectionAttribution
-
 
 <pre>
 {
@@ -84,11 +75,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## CollectionPub
-
 
 <pre>
 {
@@ -106,11 +93,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Commenter
-
 
 <pre>
 {
@@ -122,11 +105,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Community
-
 
 <pre>
 {
@@ -193,11 +172,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## CrossrefDepositRecord
-
 
 <pre>
 {
@@ -209,11 +184,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## DepositTarget
-
 
 <pre>
 {
@@ -231,11 +202,7 @@
   <del style="background: red">isPubPubManaged?: boolean</del>
 }</pre>
 
-
-
-
 ## Discussion
-
 
 <pre>
 {
@@ -262,11 +229,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## DiscussionAnchor
-
 
 <pre>
 {
@@ -286,11 +249,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Doc
-
 
 <pre>
 {
@@ -302,11 +261,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Draft
-
 
 <pre>
 {
@@ -319,11 +274,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Export
-
 
 <pre>
 {
@@ -340,11 +291,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## ExternalPublication
-
 
 <pre>
 {
@@ -362,11 +309,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## FeatureFlag
-
 
 <pre>
 {
@@ -382,11 +325,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## FeatureFlagUser
-
 
 <pre>
 {
@@ -402,11 +341,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## FeatureFlagCommunity
-
 
 <pre>
 {
@@ -422,11 +357,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## ZoteroIntegration
-
 
 <pre>
 {
@@ -443,11 +374,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## IntegrationDataOAuth1
-
 
 <pre>
 {
@@ -462,11 +389,7 @@
   <del style="background: red">integration?: ZoteroIntegration</del>
 }</pre>
 
-
-
-
 ## LandingPageFeature
-
 
 <pre>
 {
@@ -483,11 +406,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Member
-
 
 <pre>
 {
@@ -510,11 +429,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Page
-
 
 <pre>
 {
@@ -536,11 +451,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Pub
-
 
 <pre>
 {
@@ -588,11 +499,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## PubAttribution
-
 
 <pre>
 {
@@ -615,11 +522,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## PubEdge
-
 
 <pre>
 {
@@ -640,11 +543,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## PubVersion
-
 
 <pre>
 {
@@ -658,11 +557,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Release
-
 
 <pre>
 {
@@ -681,11 +576,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## ScopeSummary
-
 
 <pre>
 {
@@ -701,11 +592,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Submission
-
 
 <pre>
 {
@@ -723,11 +610,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## SpamTag
-
 
 <pre>
 {
@@ -744,11 +627,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## SubmissionWorkflow
-
 
 <pre>
 {
@@ -772,11 +651,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Reviewer
-
 
 <pre>
 {
@@ -790,11 +665,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Thread
-
 
 <pre>
 {
@@ -809,11 +680,7 @@
   <del style="background: red">locked?: boolean</del>
 }</pre>
 
-
-
-
 ## ThreadComment
-
 
 <pre>
 {
@@ -831,11 +698,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## ThreadEvent
-
 
 <pre>
 {
@@ -851,11 +714,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## User
-
 
 <pre>
 {
@@ -900,11 +759,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## UserNotification
-
 
 <pre>
 {
@@ -923,11 +778,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## UserNotificationPreferences
-
 
 <pre>
 {
@@ -946,11 +797,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## UserScopeVisit
-
 
 <pre>
 {
@@ -965,11 +812,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## UserSubscription
-
 
 <pre>
 {
@@ -988,11 +831,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## Visibility
-
 
 <pre>
 {
@@ -1005,11 +844,7 @@
   <ins style="background:green">version?: any</ins>
 }</pre>
 
-
-
-
 ## VisibilityUser
-
 
 <pre>
 {
@@ -1021,4 +856,3 @@
   <ins style="background:green">deletedAt?: any</ins>
   <ins style="background:green">version?: any</ins>
 }</pre>
-

@@ -1,6 +1,4 @@
-/**
- * Renders a submission for a book.
- */
+/** Renders a submission for a book. */
 import book from '../schema/book';
 import contentItem from '../schema/contentItem';
 

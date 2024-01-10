@@ -15,7 +15,7 @@ type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPr
 type Step2Result = [types.UserWithPrivateFields, null] | [null, SetPasswordData];
 type Step3Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields[][]];
 
-export const loginRouteImplementation: AppRouteImplementation<typeof contract.login> = async ({
+export const loginRouteImplementation: AppRouteImplementation<typeof contract.auth.login> = async ({
 	req,
 	res,
 }) => {

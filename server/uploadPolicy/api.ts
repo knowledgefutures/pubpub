@@ -3,7 +3,7 @@ import { contract } from 'utils/api/contract';
 import { getUploadPolicy } from './queries';
 
 export const uploadPolicyRouteImplementation: AppRouteImplementation<
-	typeof contract.uploadPolicy
+	typeof contract.upload.policy
 > = async ({ query }) => {
 	const uploadPolicy = getUploadPolicy(query);
 	return {

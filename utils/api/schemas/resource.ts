@@ -63,9 +63,7 @@ export const resourceSchema = partialResourceSchema.extend({
 		}),
 	),
 
-	/**
-	 * Homogeneous list of inter- and intra-work relationships.
-	 */
+	/** Homogeneous list of inter- and intra-work relationships. */
 	relationships: z
 		.array(
 			z.object({
@@ -82,6 +80,7 @@ export const resourceSchema = partialResourceSchema.extend({
 		uri: z.string(),
 		/**
 		 * SPDX license identifier.
+		 *
 		 * @see {@link https://spdx.org/licenses}
 		 */
 		spdxIdentifier: z.string().openapi({

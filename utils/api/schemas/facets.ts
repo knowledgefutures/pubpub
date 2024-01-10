@@ -25,15 +25,18 @@ type FacetSchema = {
 const facetSchemas = Object.entries(ALL_FACET_DEFINITIONS).reduce((acc, [njame, facet]) => {
 	const name = njame as typeof facet extends FacetDefinition<infer N, any> ? N : never;
 
-	const rawShape = Object.entries(facet.props).reduce((accc, [propNjame, prop]) => {
-		const propName = propNjame as any;
-		// nullable bc that allows the facet to return to higher scope value
-		accc[propName] = prop.propType.schema.nullable().openapi({
-			description: prop.label,
-			example: prop.rootValue,
-		});
-		return accc;
-	}, {} as FacetSchema[typeof name] extends z.ZodObject<infer S extends ZodRawShape> ? S : never);
+	const rawShape = Object.entries(facet.props).reduce(
+		(accc, [propNjame, prop]) => {
+			const propName = propNjame as any;
+			// nullable bc that allows the facet to return to higher scope value
+			accc[propName] = prop.propType.schema.nullable().openapi({
+				description: prop.label,
+				example: prop.rootValue,
+			});
+			return accc;
+		},
+		{} as FacetSchema[typeof name] extends z.ZodObject<infer S extends ZodRawShape> ? S : never,
+	);
 
 	acc[name as any] = z.object(rawShape).partial().openapi({
 		description: facet.label,
@@ -42,7 +45,7 @@ const facetSchemas = Object.entries(ALL_FACET_DEFINITIONS).reduce((acc, [njame, 
 }, {} as FacetSchema);
 
 export const facetSchema = z.object({
-	facets: z.object(facetSchemas).partial().default({}) satisfies z.ZodType<
+	facets: z.object(facetSchemas).deepPartial().default({}) satisfies z.ZodType<
 		UpdateFacetsQuery,
 		any,
 		any

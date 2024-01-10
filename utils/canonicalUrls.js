@@ -1,6 +1,4 @@
-/**
- * Utilities for providing canonical URLs for different entities
- */
+/** Utilities for providing canonical URLs for different entities */
 import queryString from 'query-string';
 
 import { isDuqDuq, isQubQub } from 'utils/environment';

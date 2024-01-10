@@ -1,6 +1,4 @@
-/**
- * Renders a submission for a paper from a conference.
- */
+/** Renders a submission for a paper from a conference. */
 import transformCollection from '../transform/collection';
 import transformPub from '../transform/pub';
 import conference from '../schema/conference';

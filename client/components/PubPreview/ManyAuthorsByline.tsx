@@ -23,11 +23,7 @@ const ManyAuthorsByline = (props: Props) => {
 	}
 
 	if (isExpanded && isTruncating) {
-		return (
-			<>
-				<WithinCommunityByline contributors={authors} linkToUsers={false} />
-			</>
-		);
+		return <WithinCommunityByline contributors={authors} linkToUsers={false} />;
 	}
 	return (
 		<WithinCommunityByline

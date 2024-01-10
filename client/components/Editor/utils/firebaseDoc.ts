@@ -157,14 +157,17 @@ export const getFirebaseDoc = async (
 			? flattenedChanges[flattenedChanges.length - 1].t
 			: checkpointTimestamp;
 
-	const currentDoc: Node = stepsJson.reduce((intermediateDoc: Node, stepJson: any) => {
-		const step = Step.fromJSON(prosemirrorSchema, stepJson);
-		const { failed, doc } = step.apply(intermediateDoc);
-		if (failed) {
-			console.error(`Failed with: ${failed}`);
-		}
-		return doc;
-	}, Node.fromJSON(prosemirrorSchema, checkpointDocJson));
+	const currentDoc: Node = stepsJson.reduce(
+		(intermediateDoc: Node, stepJson: any) => {
+			const step = Step.fromJSON(prosemirrorSchema, stepJson);
+			const { failed, doc } = step.apply(intermediateDoc);
+			if (failed) {
+				console.error(`Failed with: ${failed}`);
+			}
+			return doc;
+		},
+		Node.fromJSON(prosemirrorSchema, checkpointDocJson),
+	);
 
 	return {
 		doc: currentDoc,

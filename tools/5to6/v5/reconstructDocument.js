@@ -8,6 +8,7 @@ const { createReplaceWholeDocumentChange } = require('./changes');
 
 /**
  * A container representing an intermediate state in reconstructing a doc from its changes
+ *
  * @param {Document} doc -- a document created by applying changes 1...index
  * @param {Change} change -- the change that was most recently applied to produce this document
  * @param {string} index -- the index of this intermediate state in the timeline

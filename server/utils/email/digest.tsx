@@ -66,10 +66,10 @@ const getAffectedObjectIcon = (item: types.ActivityItem) =>
 	item.pubId
 		? 'pubDoc'
 		: item.collectionId
-		? 'collection'
-		: 'page' in item.payload && item.payload.page.id
-		? 'page-layout'
-		: 'office';
+		  ? 'collection'
+		  : 'page' in item.payload && item.payload.page.id
+		    ? 'page-layout'
+		    : 'office';
 
 const groupByObjectId =
 	(associations: types.ActivityAssociations) =>

@@ -30,7 +30,8 @@ import { updatePub, createPub } from './queries';
 import { Pub } from './model';
 
 /**
- * We need to dynamically create the middleware in order to set a different temporary directory for each request, otherwise there's a chance that two requests will try to write to the same file.
+ * We need to dynamically create the middleware in order to set a different temporary directory for
+ * each request, otherwise there's a chance that two requests will try to write to the same file.
  */
 export const createUploadMiddleware = async () => {
 	const tmpDirPath = await getTmpDirectoryPath();

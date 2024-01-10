@@ -7,8 +7,8 @@ import { expect } from 'utils/assert';
 const baseRedirectUrl = isDuqDuq()
 	? 'https://duqduq.org'
 	: isDevelopment()
-	? 'http://lvh.me:9876'
-	: 'https://pubpub.org';
+	  ? 'http://lvh.me:9876'
+	  : 'https://pubpub.org';
 
 export const zoteroAuthStrategy = () =>
 	new passportOAuth1.Strategy(

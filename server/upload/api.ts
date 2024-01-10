@@ -20,8 +20,8 @@ export const generateFileNameForUpload = (file: string) => {
 };
 
 /**
- * This is here because the default test enviroment does not have the AWS keys set.
- * Only runs if you are integration testing
+ * This is here because the default test enviroment does not have the AWS keys set. Only runs if you
+ * are integration testing
  */
 if (
 	process.env.NODE_ENV === 'test' &&
@@ -75,30 +75,27 @@ const validateFileNameAndMimeType = ({
 }): { filename: string; mimeType: string } => {
 	switch (true) {
 		/**
-		 * filename === undefined || 'blob' and mimetype === undefined || 'application/octect-stream'
-		 * Exit, because we will not be able to properly set the mimetype or filename
-		 * which makes donwloading the file from AWS weird
+		 * Filename === undefined || 'blob' and mimetype === undefined ||
+		 * 'application/octect-stream' Exit, because we will not be able to properly set the
+		 * mimetype or filename which makes donwloading the file from AWS weird
 		 */
 		case isDefaultMimeType(mimeType) && isDefaultFileName(filename): {
 			throw new Error('No filename or mimetype provided');
 		}
-		/**
-		 * no mimetype provided or it's `application/octet-stream`, infer from filename
-		 */
+		/** No mimetype provided or it's `application/octet-stream`, infer from filename */
 		case isDefaultMimeType(mimeType) && !isDefaultFileName(filename): {
 			mimeType = inferMimeTypeFromFileName(filename);
 			break;
 		}
 		/**
-		 * mimetype provided, no filename provided or filename = 'blob' || 'file', generate filename from mimetype
+		 * Mimetype provided, no filename provided or filename = 'blob' || 'file', generate filename
+		 * from mimetype
 		 */
 		case !isDefaultMimeType(mimeType) && isDefaultFileName(filename): {
 			filename = generateFileNameFromMimeType(mimeType as string);
 			break;
 		}
-		/**
-		 * both mimetype and filename provided, do nothing
-		 */
+		/** Both mimetype and filename provided, do nothing */
 		default:
 			break;
 	}
@@ -108,7 +105,7 @@ const validateFileNameAndMimeType = ({
 	return { filename: filename as string, mimeType: mimeType as string };
 };
 
-export const uploadRouteImplementation: AppRouteOptions<typeof contract.upload> = {
+export const uploadRouteImplementation: AppRouteOptions<typeof contract.upload.file> = {
 	handler: async ({ req }) => {
 		await ensureUserIsCommunityAdmin(req);
 

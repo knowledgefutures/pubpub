@@ -20,12 +20,15 @@ $gray: rgba(110, 110, 110, 0.6);
 			right: -2px;
 			top: -2px;
 			border-radius: 2px;
-			transition: background-color 100ms cubic-bezier(0.4, 1, 0.75, 0.9),
+			transition:
+				background-color 100ms cubic-bezier(0.4, 1, 0.75, 0.9),
 				box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9);
 		}
 
 		&:hover::before {
-			box-shadow: 0 0 0 0 rgba(54, 54, 54, 0), 0 0 0 0 rgba(54, 54, 54, 0),
+			box-shadow:
+				0 0 0 0 rgba(54, 54, 54, 0),
+				0 0 0 0 rgba(54, 54, 54, 0),
 				inset 0 0 0 1px rgba(16, 22, 26, 0.15);
 		}
 	}

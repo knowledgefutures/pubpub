@@ -12,18 +12,15 @@ import { createIncludes } from './include';
 import type { GetManyQueryAny } from './createGetManyQuery';
 
 export type CustomScopeInput = {
-	/**
-	 * The associated model you want to make sure is scoped to the community.
-	 */
+	/** The associated model you want to make sure is scoped to the community. */
 	model: ModelCtor;
-	/**
-	 * The alias of the model you want to make sure is scoped to the community.
-	 */
+	/** The alias of the model you want to make sure is scoped to the community. */
 	as: string;
 	/**
 	 * This is the foreign key of the model that is being queried.
 	 *
 	 * @example
+	 *
 	 * ```markdown
 	 * You are querying `Member` and want to make sure the `pubId` of the member is in the community.
 	 *
@@ -32,9 +29,8 @@ export type CustomScopeInput = {
 	 */
 	foreignKey: string;
 	/**
-	 * This is the identifier of the communityId in the model.
-	 * You should only specify this if the communityId is not called `communityId`,
-	 * e.g. `id` for the `Community` model
+	 * This is the identifier of the communityId in the model. You should only specify this if the
+	 * communityId is not called `communityId`, e.g. `id` for the `Community` model
 	 *
 	 * @default `communityId`
 	 */
@@ -76,9 +72,7 @@ export const queryMany =
 	<M extends ModelCtor>(
 		model: M,
 		options?: {
-			/**
-			 * If provided, this will create additional where clauses to make sure that the
-			 */
+			/** If provided, this will create additional where clauses to make sure that the */
 			customScope?: CustomScopeInput[];
 		},
 	) =>

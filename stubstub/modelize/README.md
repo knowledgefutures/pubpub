@@ -6,9 +6,7 @@ Modelize is a tool we use to quickly create interrelated database models for use
 
 Consider this fairly common scenario, which might be the setup for a unit or integration test in the PubPub codebase:
 
-
 > _a Collection contains a Pub, which has a Member with `view` permissions_
-
 
 Perhaps we could write this using helper functions like `createPub()`. We'd start by creating a Pub, but...oh, wait. Actually we need to create a Community first, but actually that Community needs an admin...
 
@@ -27,10 +25,10 @@ const pubViewMember = await createMember(anotherUser, pub, 'view');
 
 Writing test setup code like this is painful for a few reasons:
 
-- It requires importing a large number of `create` utilities for all of the relevant models, figuring out the right order to call them in, and providing irrelevant details like the `my-test-user` slug.
-- It makes poor use of parallelism. In the example above, both `collection` and `pub` can be created at the same time, but this can be hard to spot and awkward to express with big `Promise.all` blocks of seemingly unrelated expressions. This slows down our tests.
-- It has to be written in a Jest `beforeAll` or `beforeEach` block in a way that makes the models available in the global scope. Often this means writing a bunch of empty `let` definitions at the top of the file and then assigning to them later.
-- It's difficult for readers of the code to understand the relationship between these models at a glance.
+-   It requires importing a large number of `create` utilities for all of the relevant models, figuring out the right order to call them in, and providing irrelevant details like the `my-test-user` slug.
+-   It makes poor use of parallelism. In the example above, both `collection` and `pub` can be created at the same time, but this can be hard to spot and awkward to express with big `Promise.all` blocks of seemingly unrelated expressions. This slows down our tests.
+-   It has to be written in a Jest `beforeAll` or `beforeEach` block in a way that makes the models available in the global scope. Often this means writing a bunch of empty `let` definitions at the top of the file and then assigning to them later.
+-   It's difficult for readers of the code to understand the relationship between these models at a glance.
 
 With `modelize`, we can express the same thing in the following way:
 
@@ -69,15 +67,15 @@ const models = modelize`
 
 // Actually create the models in Postgres
 setup(beforeAll, async () => {
-    await models.resolve();
+	await models.resolve();
 });
 
 // Run some tests
 describe('my thing', () => {
-    it('uses a model for something', async () => {
-        const { myCommunity } = models;
-        expect(myCommunity.subdomain).toEqual('hello');
-    });
+	it('uses a model for something', async () => {
+		const { myCommunity } = models;
+		expect(myCommunity.subdomain).toEqual('hello');
+	});
 });
 ```
 
@@ -100,7 +98,7 @@ ModelName {}
 To add a JavaScript object or array as a value you can interpolate it into the template string:
 
 ```ts
-const navigation = [{title: "foo", href: "/foo"}];
+const navigation = [{ title: 'foo', href: '/foo' }];
 
 const models = modelize`
     Community {
@@ -111,9 +109,9 @@ const models = modelize`
 
 Depending on the model you want to work with, you may need to specify a number of properties or only a handful.
 
-- Many fields in our Sequelize models are nullable and can be omitted
-- Foreign key fields (IDs of other models) are set by nested models
-- Some models have [builder functions](#Builders) which automatically populate instances with default or random data.
+-   Many fields in our Sequelize models are nullable and can be omitted
+-   Foreign key fields (IDs of other models) are set by nested models
+-   Some models have [builder functions](#Builders) which automatically populate instances with default or random data.
 
 ## Nesting and relating models
 
@@ -133,9 +131,9 @@ Here, a Collection and a Pub are created, and associated with together (putting 
 
 ```ts
 CollectionPub.belongsTo(Pub, {
-    onDelete: 'CASCADE',
-    as: 'pub',
-    foreignKey: 'pubId',
+	onDelete: 'CASCADE',
+	as: 'pub',
+	foreignKey: 'pubId',
 });
 ```
 

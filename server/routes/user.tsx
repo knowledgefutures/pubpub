@@ -15,23 +15,26 @@ import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
 /**
  * Get the Fastly surroagate keys for a user.
  *
- * The user page is one of the few pages that is not cached at the community level,
- * we need to set keys for each community that the user has a pub in.
+ * The user page is one of the few pages that is not cached at the community level, we need to set
+ * keys for each community that the user has a pub in.
  *
  * That way, if any changes are made in any of those communities, the user page will be purged.
  */
 const getHostnames = (attributions: Awaited<ReturnType<typeof getUser>>['attributions']) => {
-	const hostNames = attributions.reduce((acc, attribution) => {
-		const { domain, subdomain } = attribution.pub!.community!;
+	const hostNames = attributions.reduce(
+		(acc, attribution) => {
+			const { domain, subdomain } = attribution.pub!.community!;
 
-		if (acc[subdomain]) {
+			if (acc[subdomain]) {
+				return acc;
+			}
+
+			const correctHostname = getCorrectHostname(subdomain, domain);
+			acc[subdomain] = correctHostname;
 			return acc;
-		}
-
-		const correctHostname = getCorrectHostname(subdomain, domain);
-		acc[subdomain] = correctHostname;
-		return acc;
-	}, {} as Record<string, string>);
+		},
+		{} as Record<string, string>,
+	);
 
 	return Object.values(hostNames).join(' ');
 };

@@ -1,10 +1,10 @@
 import * as types from 'types';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
-export const collectionPubSchema = z.object({
-	id: z.string().uuid(),
+export const collectionPubSchema = baseSchema.extend({
 	pubId: z.string().uuid(),
 	collectionId: z.string().uuid(),
 	contextHint: z.string().nullable(),
@@ -13,7 +13,7 @@ export const collectionPubSchema = z.object({
 }) satisfies z.ZodType<types.CollectionPub>;
 
 export const updateCollectionPubSchema = collectionPubSchema
-	.omit({ id: true })
+	.omit({ id: true, updatedAt: true, createdAt: true })
 	.partial()
 	.merge(collectionPubSchema.pick({ id: true }));
 

@@ -38,9 +38,7 @@ declare module 'sequelize' {
 		actorId?: string | null;
 	}
 
-	/**
-	 * Options used for Instance.update method
-	 */
+	/** Options used for Instance.update method */
 	export interface InstanceUpdateOptions<TAttributes = any>
 		extends SaveOptions<TAttributes>,
 			SetOptions,

@@ -30,9 +30,7 @@ export class PubAttribution extends Model<
 	@Column(DataType.TEXT)
 	declare avatar: string | null;
 
-	/**
-	 * @deprecated
-	 */
+	/** @deprecated */
 	@Column(DataType.TEXT)
 	declare title: string | null;
 

@@ -303,9 +303,7 @@ describe('/api/members', () => {
 				[communityManager, communityManagerMember],
 				[communityViewer, communityViewerMember],
 			].map(async ([user, member]) =>
-				(
-					await login(user)
-				)
+				(await login(user))
 					.put('/api/members')
 					.send(createMemberRequest({ permissions: 'admin', member }))
 					.expect(403),

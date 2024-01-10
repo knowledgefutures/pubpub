@@ -422,9 +422,7 @@ describe('surrogate keys', () => {
 			.send()
 			.expect(200);
 
-		/**
-		 * Sort so that the id is at the end
-		 */
+		/** Sort so that the id is at the end */
 		const surrogateKeys = result.headers['surrogate-key']?.split(' ').sort((a, b) => {
 			if (a.length > 30) {
 				return 1;

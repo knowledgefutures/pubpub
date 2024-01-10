@@ -1,6 +1,7 @@
 /**
- * The inner bits 'n' pieces of the form that lets you edit structured collection metadata, i.e. to create
- * a collection that represents a structured collection of content like a journal issue or book.
+ * The inner bits 'n' pieces of the form that lets you edit structured collection metadata, i.e. to
+ * create a collection that represents a structured collection of content like a journal issue or
+ * book.
  */
 import * as React from 'react';
 import {

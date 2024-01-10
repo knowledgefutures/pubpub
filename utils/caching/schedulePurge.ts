@@ -3,7 +3,8 @@ import { purgeSurrogateTag } from './purgeSurrogateTag';
 /**
  * Creates a cache purge debouncer function.
  *
- * @param errorHandler - The error handler function to handle any errors that occur during the purge process. Defaults to console.error.
+ * @param errorHandler - The error handler function to handle any errors that occur during the purge
+ *   process. Defaults to console.error.
  * @param debounceTime - The debounce time in milliseconds. Defaults to 1000ms.
  * @param throttleTime - The throttle time in milliseconds. Defaults to 250ms.
  * @returns A function that can be used to schedule cache purges.
@@ -69,8 +70,8 @@ export const createCachePurgeDebouncer = (
 		 * Schedule a purge for a surrogate tag from Fastly
 		 *
 		 * @param tag The tag to purge, e.g. the hostname
-		 * @param soft Whether to do a soft purge. This marks the content as stale and will serve stale content while the new content is being fetched
-		 *
+		 * @param soft Whether to do a soft purge. This marks the content as stale and will serve
+		 *   stale content while the new content is being fetched
 		 */
 		schedulePurge,
 	};

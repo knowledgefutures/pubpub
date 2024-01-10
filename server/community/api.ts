@@ -3,7 +3,7 @@ import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 
 import { createGetRequestIds } from 'utils/getRequestIds';
 import { expect } from 'utils/assert';
-import { contract } from 'utils/api';
+import { contract } from 'utils/api/contract';
 import { findCommunityByHostname } from 'utils/ensureUserIsCommunityAdmin';
 
 import { getPermissions } from './permissions';

@@ -55,9 +55,7 @@ module.exports = {
 					resolve(__dirname, '../../facets'),
 				],
 				loader: 'esbuild-loader',
-				/**
-				 * @type {import('esbuild-loader').LoaderOptions}
-				 */
+				/** @type {import('esbuild-loader').LoaderOptions} */
 				options: {
 					tsconfig: resolve(__dirname, '../../tsconfig.client.json'),
 				},

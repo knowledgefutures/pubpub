@@ -68,16 +68,14 @@ const DashboardCollectionLayout = (props: Props) => {
 
 	const renderControls = () => {
 		return (
-			<React.Fragment>
-				<Button
-					type="button"
-					intent="primary"
-					text="Save Changes"
-					disabled={!canPersistChanges}
-					loading={isPersisting}
-					onClick={handleSaveChanges}
-				/>
-			</React.Fragment>
+			<Button
+				type="button"
+				intent="primary"
+				text="Save Changes"
+				disabled={!canPersistChanges}
+				loading={isPersisting}
+				onClick={handleSaveChanges}
+			/>
 		);
 	};
 

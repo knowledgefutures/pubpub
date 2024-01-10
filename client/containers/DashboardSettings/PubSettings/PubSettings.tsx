@@ -70,108 +70,102 @@ const PubSettings = (props: Props) => {
 	const slugError = !pubData.slug
 		? 'Required'
 		: error?.slugStatus === 'used'
-		? 'This URL is not available because it is in use by another Pub.'
-		: null;
+		  ? 'This URL is not available because it is in use by another Pub.'
+		  : null;
 
 	const renderDetails = () => {
 		return (
-			<React.Fragment>
-				<SettingsSection title="Details" showTitle={false}>
-					<InputField label="Title" error={!pubData.title ? 'Required' : null}>
+			<SettingsSection title="Details" showTitle={false}>
+				<InputField label="Title" error={!pubData.title ? 'Required' : null}>
+					<TitleEditor
+						className={Classes.INPUT}
+						initialValue={pubData.htmlTitle ?? pubData.title}
+						onInput={(nextHtmlTitle, nextTitle) =>
+							updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
+						}
+					/>
+				</InputField>
+				<InputField
+					label="Link"
+					helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}
+					value={pubData.slug}
+					onChange={(evt) => updatePubData({ slug: slugifyString(evt.target.value) })}
+					error={slugError}
+				/>
+				<InputField
+					label="Custom publication date"
+					helperText="If set, this will be shown instead of the first Release date."
+				>
+					<DatePicker
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ style: { width: number; }; date: any; onSe... Remove this comment to see the full error message
+						style={{ width: 200 }}
+						date={pubData.customPublishedAt}
+						onSelectDate={(date) =>
+							updatePubData({ customPublishedAt: date && date.toUTCString() })
+						}
+					/>
+				</InputField>
+				{featureFlags.htmlPubHeaderValues ? (
+					<InputField
+						label="Description"
+						placeholder="Enter description"
+						helperText={`${(pubData.description || '').length}/280 characters`}
+						error={undefined}
+					>
 						<TitleEditor
 							className={Classes.INPUT}
-							initialValue={pubData.htmlTitle ?? pubData.title}
-							onInput={(nextHtmlTitle, nextTitle) =>
-								updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
-							}
-						/>
-					</InputField>
-					<InputField
-						label="Link"
-						helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}
-						value={pubData.slug}
-						onChange={(evt) => updatePubData({ slug: slugifyString(evt.target.value) })}
-						error={slugError}
-					/>
-					<InputField
-						label="Custom publication date"
-						helperText="If set, this will be shown instead of the first Release date."
-					>
-						<DatePicker
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ style: { width: number; }; date: any; onSe... Remove this comment to see the full error message
-							style={{ width: 200 }}
-							date={pubData.customPublishedAt}
-							onSelectDate={(date) =>
-								updatePubData({ customPublishedAt: date && date.toUTCString() })
-							}
-						/>
-					</InputField>
-					{featureFlags.htmlPubHeaderValues ? (
-						<InputField
-							label="Description"
-							placeholder="Enter description"
-							helperText={`${(pubData.description || '').length}/280 characters`}
-							error={undefined}
-						>
-							<TitleEditor
-								className={Classes.INPUT}
-								initialValue={pubData.htmlDescription ?? pubData.description}
-								onInput={(nextHtmlDescription, nextDescription) =>
-									updatePubData({
-										htmlDescription: nextHtmlDescription,
-										description: nextDescription,
-									})
-								}
-								maxLength={280}
-							/>
-						</InputField>
-					) : (
-						<InputField
-							label="Description"
-							placeholder="Enter description"
-							helperText={`${(pubData.description || '').length}/280 characters`}
-							isTextarea={true}
-							value={pubData.description || ''}
-							onChange={(evt) =>
+							initialValue={pubData.htmlDescription ?? pubData.description}
+							onInput={(nextHtmlDescription, nextDescription) =>
 								updatePubData({
-									description: evt.target.value
-										.substring(0, 280)
-										.replace(/\n/g, ' '),
+									htmlDescription: nextHtmlDescription,
+									description: nextDescription,
 								})
 							}
-							error={undefined}
+							maxLength={280}
 						/>
-					)}
-					<ImageUpload
-						htmlFor="avatar-upload"
-						label={
-							<LabelWithInfo
-								label="Preview Image"
-								info="This image is shown as a preview from Pages and other Pubs."
-							/>
+					</InputField>
+				) : (
+					<InputField
+						label="Description"
+						placeholder="Enter description"
+						helperText={`${(pubData.description || '').length}/280 characters`}
+						isTextarea={true}
+						value={pubData.description || ''}
+						onChange={(evt) =>
+							updatePubData({
+								description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
+							})
 						}
-						canClear={true}
-						key={pubData.avatar}
-						defaultImage={pubData.avatar}
-						onNewImage={(value) => updatePubData({ avatar: value })}
-						width={150}
-						helperText={
-							<span>
-								Suggested minimum dimensions: <br />
-								1200px x 800px
-							</span>
-						}
+						error={undefined}
 					/>
-					<Button
-						disabled={
-							!headerBackgroundImage || pubData.avatar === headerBackgroundImage
-						}
-						onClick={() => updatePubData({ avatar: headerBackgroundImage! })}
-					>
-						Use header image as preview
-					</Button>
-				</SettingsSection>
-			</React.Fragment>
+				)}
+				<ImageUpload
+					htmlFor="avatar-upload"
+					label={
+						<LabelWithInfo
+							label="Preview Image"
+							info="This image is shown as a preview from Pages and other Pubs."
+						/>
+					}
+					canClear={true}
+					key={pubData.avatar}
+					defaultImage={pubData.avatar}
+					onNewImage={(value) => updatePubData({ avatar: value })}
+					width={150}
+					helperText={
+						<span>
+							Suggested minimum dimensions: <br />
+							1200px x 800px
+						</span>
+					}
+				/>
+				<Button
+					disabled={!headerBackgroundImage || pubData.avatar === headerBackgroundImage}
+					onClick={() => updatePubData({ avatar: headerBackgroundImage! })}
+				>
+					Use header image as preview
+				</Button>
+			</SettingsSection>
 		);
 	};
 

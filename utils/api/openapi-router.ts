@@ -34,36 +34,38 @@ export const openApiMiddleware = (options: OpenAPIOptions) => {
 	router.get('/', (req: Request, res: Response) => {
 		const path = req.baseUrl + req.path;
 		res.type('.html');
-		res.send(html`<!DOCTYPE html>
-			<html lang="en">
-				<head>
-					<meta charset="utf-8" />
-					<meta
-						name="viewport"
-						content="width=device-width, initial-scale=1, shrink-to-fit=no"
-					/>
-					<title>Elements in HTML</title>
+		res.send(
+			html`<!doctype html>
+				<html lang="en">
+					<head>
+						<meta charset="utf-8" />
+						<meta
+							name="viewport"
+							content="width=device-width, initial-scale=1, shrink-to-fit=no"
+						/>
+						<title>Elements in HTML</title>
 
-					<script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
-					<link
-						rel="stylesheet"
-						href="https://unpkg.com/@stoplight/elements/styles.min.css"
-					/>
-				</head>
-				<body>
-					<style>
-						.sl-elements.sl-antialiased.sl-h-full.sl-text-base.sl-font-ui.sl-text-body {
-							height: 100vh !important;
-						}
-					</style>
+						<script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+						<link
+							rel="stylesheet"
+							href="https://unpkg.com/@stoplight/elements/styles.min.css"
+						/>
+					</head>
+					<body>
+						<style>
+							.sl-elements.sl-antialiased.sl-h-full.sl-text-base.sl-font-ui.sl-text-body {
+								height: 100vh !important;
+							}
+						</style>
 
-					<elements-api
-						apiDescriptionUrl="${path}${openApiJsonPath}"
-						router="hash"
-						tryItCredentialsPolicy="same-origin"
-					/>
-				</body>
-			</html>`);
+						<elements-api
+							apiDescriptionUrl="${path}${openApiJsonPath}"
+							router="hash"
+							tryItCredentialsPolicy="same-origin"
+						/>
+					</body>
+				</html>`,
+		);
 	});
 
 	return router;

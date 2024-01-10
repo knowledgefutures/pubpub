@@ -24,8 +24,8 @@ const getEquationTranslationTransactionForState = (editorState: EditorState) => 
 			node.type.name === 'equation'
 				? mathInlineType
 				: node.type.name === 'block_equation'
-				? mathDisplayType
-				: null;
+				  ? mathDisplayType
+				  : null;
 		if (replacementNodeType) {
 			// There are some equation nodes floating around out there with node.attrs.value = ''
 			// But Prosemirror does not permit text nodes containing the empty string.

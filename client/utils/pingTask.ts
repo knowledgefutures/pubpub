@@ -1,6 +1,6 @@
 /**
- * Given the ID of a worker task, pings the server until the task is done and resolves a promise,
- * or rejects if there was a problem with the task.
+ * Given the ID of a worker task, pings the server until the task is done and resolves a promise, or
+ * rejects if there was a problem with the task.
  */
 import { apiFetch } from 'client/utils/apiFetch';
 

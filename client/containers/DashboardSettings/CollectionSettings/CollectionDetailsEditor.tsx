@@ -1,6 +1,4 @@
-/**
- * Dashboard collection tab pane that holds some miscellaneous options for collections
- */
+/** Dashboard collection tab pane that holds some miscellaneous options for collections */
 import React, { useState } from 'react';
 import { Checkbox, FormGroup, Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';

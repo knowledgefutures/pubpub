@@ -2,9 +2,9 @@ import { contract } from 'utils/api/contract';
 import { AppRouteImplementation } from '@ts-rest/express';
 import { createImport } from './queries';
 
-export const importRouteImplementation: AppRouteImplementation<typeof contract.import> = async ({
-	body,
-}) => {
+export const importRouteImplementation: AppRouteImplementation<
+	typeof contract.workerTask.createImport
+> = async ({ body }) => {
 	try {
 		const taskData = await createImport(body);
 		return { status: 201, body: taskData.id };

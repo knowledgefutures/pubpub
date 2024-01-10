@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import type { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import {
@@ -9,11 +9,16 @@ import {
 
 extendZodWithOpenApi(z);
 
-const c = initContract();
-
-export const communityContract = c.router({
+export const communityRouter = {
 	/**
+	 * `GET /api/communities`
+	 *
 	 * Get a list of communities. Currently only returns the current community.
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-communities/get}
 	 */
 	getCommunities: {
 		path: '/api/communities',
@@ -24,6 +29,16 @@ export const communityContract = c.router({
 			200: z.array(communitySchema),
 		},
 	},
+	/**
+	 * `GET /api/communities/:id`
+	 *
+	 * Get a community
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-communities-id/get}
+	 */
 	get: {
 		path: '/api/communities/:id',
 		method: 'GET',
@@ -36,6 +51,16 @@ export const communityContract = c.router({
 			200: communitySchema,
 		},
 	},
+	/**
+	 * `POST /api/communities`
+	 *
+	 * Create a community
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-communities/post}
+	 */
 	create: {
 		path: '/api/communities',
 		method: 'POST',
@@ -46,6 +71,16 @@ export const communityContract = c.router({
 			201: z.string().url(),
 		},
 	},
+	/**
+	 * `PUT /api/communities`
+	 *
+	 * Update a community
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 *
+	 * @routeDocumentation
+	 * {@link https://pubpub.org/apiDocs#/paths/api-communities/put}
+	 */
 	update: {
 		path: '/api/communities',
 		method: 'PUT',
@@ -56,4 +91,8 @@ export const communityContract = c.router({
 			200: communityUpdateSchema.partial(),
 		},
 	},
-});
+} as const satisfies AppRouter;
+
+type CommunityRouterType = typeof communityRouter;
+
+export interface CommunityRouter extends CommunityRouterType {}

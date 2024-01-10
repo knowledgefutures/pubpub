@@ -19,8 +19,8 @@
 			],
 			"formation": {
 				"test": {
-				  "quantity": 1,
-				  "size": "performance-l"
+					"quantity": 1,
+					"size": "performance-l"
 				}
 			},
 			"scripts": {

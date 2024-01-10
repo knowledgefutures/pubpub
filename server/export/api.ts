@@ -14,10 +14,9 @@ const getRequestData = createGetRequestIds<{
 	communityId?: string;
 }>();
 
-export const exportRouteImplementation: AppRouteImplementation<typeof contract.export> = async ({
-	req,
-	body,
-}) => {
+export const exportRouteImplementation: AppRouteImplementation<
+	typeof contract.workerTask.createExport
+> = async ({ req, body }) => {
 	const { accessHash, format, historyKey, pubId, userId, communityId } = getRequestData(
 		body,
 		req.user,

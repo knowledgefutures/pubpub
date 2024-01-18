@@ -30,7 +30,10 @@ const s = initServer();
 
 export const collectionPubServer = s.router(contract.collectionPub, {
 	get: async ({ req, query }) => {
-		const pubsInCollection = await getPubsInCollection(getRequestIds(query, req.user));
+		const pubsInCollection = await getPubsInCollection({
+			...query,
+			userId: req.user?.id,
+		});
 		return {
 			status: 200,
 			body: pubsInCollection,

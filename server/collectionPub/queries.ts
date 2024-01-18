@@ -12,16 +12,15 @@ import {
 import * as types from 'types';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { expect } from 'utils/assert';
+import { CollectionPubQueryInput } from './schemas';
 
 export const getPubsInCollection = async ({
-	communityId,
 	collectionId,
+	communityId,
 	userId,
-}: {
-	communityId: string;
-	collectionId: string;
-	userId?: string | null;
-}) => {
+	limit,
+	offset,
+}: CollectionPubQueryInput & { userId?: string | null }) => {
 	const collectionPubsQuery = CollectionPub.findAll({
 		where: { collectionId: collectionId ?? null },
 		order: [['rank', 'ASC']],
@@ -57,6 +56,8 @@ export const getPubsInCollection = async ({
 				],
 			},
 		],
+		limit,
+		offset,
 	});
 	const membersQuery = userId ? Member.findAll({ where: { userId } }) : [];
 	const [collectionPubs, members] = await Promise.all([collectionPubsQuery, membersQuery]);

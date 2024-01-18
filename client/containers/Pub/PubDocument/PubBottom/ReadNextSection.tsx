@@ -1,30 +1,23 @@
 import React from 'react';
 
-import { Pub } from 'types';
+import { CollectionPub, DefinitelyHas, Pub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 import { PubTitle } from 'components';
-import {
-	chooseCollectionForPub,
-	createReadingParamUrl,
-	getNeighborsInCollectionPub,
-	useCollectionPubs,
-} from 'client/utils/collections';
-import { usePubContext } from '../../pubHooks';
+import { chooseCollectionForPub, createReadingParamUrl } from 'client/utils/collections';
 
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 type Props = {
-	pubData: Pub;
+	pubData: Pub & { nextCollectionPub?: DefinitelyHas<CollectionPub, 'pub'> };
 };
 
 const ReadNextSection = (props: Props) => {
 	const { pubData } = props;
 	const { locationData, communityData } = usePageContext();
-	const { updateLocalData } = usePubContext();
+	const nextPub = pubData.nextCollectionPub?.pub;
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
-	const { pubs } = useCollectionPubs(updateLocalData, currentCollection);
-	const { nextPub } = getNeighborsInCollectionPub(pubs, pubData);
+
 	const { readNextPreviewSize = 'choose-best' } = currentCollection || {};
 
 	if (readNextPreviewSize === 'none' || !nextPub || !currentCollection) {

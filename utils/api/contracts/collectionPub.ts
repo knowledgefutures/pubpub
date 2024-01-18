@@ -1,6 +1,7 @@
 import { type AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { collectionPubQuerySchema } from 'server/collectionPub/schemas';
 import {
 	createCollectionPubSchema,
 	collectionPubSchema,
@@ -26,11 +27,7 @@ export const collectionPubRouter = {
 		method: 'GET',
 		summary: 'Get the pubs associated with a collection',
 		description: 'Get the pubs associated with a collection',
-		query: z.object({
-			pubId: z.string().uuid().optional(),
-			collectionId: z.string().uuid(),
-			communityId: z.string().uuid(),
-		}),
+		query: collectionPubQuerySchema,
 		responses: {
 			200: z.array(pubSchema),
 		},

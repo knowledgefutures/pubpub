@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
@@ -15,6 +15,8 @@ export type MenuProps = {
 	onDismiss?: () => unknown;
 	placement?: RK.MenuProps['placement'];
 	unstable_fixed?: boolean;
+	menuListRef?: React.Ref<HTMLUListElement> | null;
+	onVisibleChange?: (visible: boolean) => void;
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -34,7 +36,9 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 		onDismiss = () => {},
 		gutter,
 		unstable_fixed = false,
+		onVisibleChange,
 		menuStyle = {},
+		menuListRef,
 		...restProps
 	} = props;
 
@@ -47,6 +51,14 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 		unstable_flip: false,
 		unstable_fixed,
 	});
+
+	// RK doesn't provide a way to listen to visibility changes
+	// so we implement it ourselves here
+	useEffect(() => {
+		if (onVisibleChange) {
+			onVisibleChange(menu.visible);
+		}
+	}, [menu.visible, onVisibleChange]);
 
 	const handleDismiss = () => {
 		menu.hide();
@@ -74,6 +86,7 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 				style={{ zIndex: 20, ...menuStyle }}
 				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
 				unstable_portal={menuConfig.usePortal}
+				ref={menuListRef}
 				{...menu}
 			>
 				<MenuContext.Provider value={{ parentMenu: menu, dismissMenu: handleDismiss }}>

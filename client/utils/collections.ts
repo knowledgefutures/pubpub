@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 import { getPrimaryCollection } from 'utils/collections/primary';
@@ -11,8 +11,25 @@ const getCollectionFromReadingParam = (queryObj, collections) => {
 	);
 };
 
-const fetchCollectionPubs = ({ collectionId, communityId }) =>
-	apiFetch(`/api/collectionPubs?collectionId=${collectionId}&communityId=${communityId}`);
+const fetchCollectionPubs = ({
+	collectionId,
+	communityId,
+	offset = 0,
+	limit = 10,
+}: {
+	collectionId: string;
+	communityId: string;
+	offset?: number;
+	limit?: number;
+}) => {
+	const searchParams = new URLSearchParams();
+	searchParams.append('collectionId', collectionId);
+	searchParams.append('communityId', communityId);
+	searchParams.append('offset', offset.toString());
+	searchParams.append('limit', limit.toString());
+
+	return apiFetch(`/api/collectionPubs?${searchParams.toString()}`);
+};
 
 export const getNeighborsInCollectionPub = (pubs, currentPub) => {
 	if (!pubs) {
@@ -45,14 +62,18 @@ export const chooseCollectionForPub = (pubData, locationData) => {
 	);
 };
 
+const DEFAULT_LIMIT = 10 as const;
+
 export const useCollectionPubs = (updateLocalData, collection) => {
 	const [error, setError] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
-	const [pubs, setPubs] = useState(collection && collection.pubs);
+	const [isLoading, setIsLoading] = useState(false);
+	const [pubs, setPubs] = useState(collection?.pubs ?? []);
 	const { communityData } = usePageContext();
+	const [offset, setOffset] = useState(0);
+	const [hasLoadedAllPubs, setHasLoadedAllPubs] = useState(false);
 
 	const updatePubs = (nextPubs) => {
-		setPubs(nextPubs);
+		setPubs((currentPubs) => [...currentPubs, ...nextPubs]);
 		updateLocalData('pub', (pubData) => {
 			const collectionPubs = pubData.collectionPubs.map((cp) => {
 				if (cp.collection.id === collection.id) {
@@ -70,27 +91,36 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 		});
 	};
 
-	useEffect(() => {
-		if (!collection) {
+	const requestMorePubs = () => {
+		if (hasLoadedAllPubs) {
 			return;
 		}
-		if (Array.isArray(collection.pubs)) {
-			setIsLoading(false);
-		}
-		fetchCollectionPubs({ collectionId: collection.id, communityId: communityData.id })
+		setIsLoading(true);
+
+		fetchCollectionPubs({
+			collectionId: collection.id,
+			communityId: communityData.id,
+			offset,
+		})
 			.then((res) => {
 				updatePubs(res);
 				setIsLoading(false);
+				setOffset((oldOffset) => oldOffset + DEFAULT_LIMIT);
+				if (res.length < DEFAULT_LIMIT) {
+					setHasLoadedAllPubs(true);
+				}
 			})
 			.catch((err) => {
 				setError(err);
 				setIsLoading(false);
 			});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collection && collection.id]);
+	};
+
 	return {
 		isLoading,
 		error,
 		pubs,
+		hasLoadedAllPubs,
+		requestMorePubs,
 	};
 };

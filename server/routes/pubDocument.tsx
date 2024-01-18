@@ -29,6 +29,7 @@ import { CustomScripts, InitialData, PubEdge } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
 import type { RequestHandler, Response, Request } from 'express';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
+import { getNextCollectionPub } from 'utils/collections/getNextCollectionPub';
 
 const getInitialDataForPub = (req: Request) => getInitialData(req, { includeFacets: true });
 
@@ -121,12 +122,17 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		};
 	};
 
-	const [docInfo, edges, subscription] = await Promise.all([
+	const currentCollectionPub = pubData.collectionPubs.find((collectionPub) =>
+		collectionPub.collectionId.startsWith(initialData.locationData.query.readingCollection),
+	);
+
+	const [docInfo, edges, subscription, nextCollectionPub] = await Promise.all([
 		getDocInfo(),
 		getPubEdges(pubData, initialData),
 		initialData.loginData.id
 			? findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id })
 			: null,
+		currentCollectionPub ? getNextCollectionPub(currentCollectionPub) : null,
 	]);
 
 	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
@@ -143,6 +149,7 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		...docInfo,
 		isAVisitingCommenter,
 		isReviewingPub,
+		nextCollectionPub,
 	};
 };
 

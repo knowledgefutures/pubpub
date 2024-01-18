@@ -25,9 +25,14 @@ export const getNeighborsInCollectionPub = (pubs, currentPub) => {
 };
 
 export const createReadingParamUrl = (url, collectionId) => {
-	const urlObject = new URL(url);
-	urlObject.searchParams.append(readingCollectionParam, collectionId.split('-')[0]);
-	return urlObject.toString();
+	try {
+		const urlObject = new URL(url);
+		urlObject.searchParams.append(readingCollectionParam, collectionId.split('-')[0]);
+		return urlObject.toString();
+	} catch (err) {
+		// on e.g. qubqub we don't know the actual origin, so we can't construct a URL object
+		return `${url}?${readingCollectionParam}=${collectionId.split('-')[0]}`;
+	}
 };
 
 export const chooseCollectionForPub = (pubData, locationData) => {

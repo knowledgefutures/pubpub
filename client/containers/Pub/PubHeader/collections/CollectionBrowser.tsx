@@ -82,25 +82,25 @@ const CollectionBrowser = (props: Props) => {
 				href={collectionUrl(communityData, collection)}
 			/>
 			<MenuItemDivider />
-			{pubs &&
-				pubs.length &&
-				pubs.map((pub) => (
-					<MenuItem
-						active={currentPub.id === pub.id}
-						href={readingPubUrl(pub)}
-						textClassName="menu-item-text"
-						icon="pubDoc"
-						key={pub.id}
-						text={
-							<>
-								<div className="title">
-									<PubTitle pubData={pub} />
-								</div>
-								<PubByline pubData={pub} linkToUsers={false} />
-							</>
-						}
-					/>
-				))}
+			{pubs?.length > 0
+				? pubs.map((pub) => (
+						<MenuItem
+							active={currentPub.id === pub.id}
+							href={readingPubUrl(pub)}
+							textClassName="menu-item-text"
+							icon="pubDoc"
+							key={pub.id}
+							text={
+								<>
+									<div className="title">
+										<PubTitle pubData={pub} />
+									</div>
+									<PubByline pubData={pub} linkToUsers={false} />
+								</>
+							}
+						/>
+				  ))
+				: null}
 			{isLoading && (
 				<MenuItem
 					disabled

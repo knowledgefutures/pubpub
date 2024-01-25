@@ -26,4 +26,6 @@ export type PageContext = {
 	initialNotificationsData: InitialNotificationsData;
 	dashboardMenu: DashboardMenuState;
 	dismissedUserDismissables: InitialData['dismissedUserDismissables'];
+	gdprConsent: boolean | null;
+	setGdprConsent: (consent: boolean | null) => void;
 };

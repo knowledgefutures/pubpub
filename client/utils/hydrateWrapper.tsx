@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
+import { shouldUseNewAnalytics } from 'utils/analytics/shouldUseNewAnalytics';
 import { setEnvironment, setAppCommit } from 'utils/environment';
 
 import { getClientInitialData } from './initialData';
@@ -38,7 +39,9 @@ export const hydrateWrapper = (Component) => {
 			document.getElementById('chunk-name').getAttribute('data-json'),
 		);
 		if (!isLocalEnv(window)) {
-			setupHeap(initialData);
+			if (!shouldUseNewAnalytics(initialData)) {
+				setupHeap(initialData);
+			}
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'sentryIsActive' does not exist on type '... Remove this comment to see the full error message
 			window.sentryIsActive = true;
 			Sentry.init({

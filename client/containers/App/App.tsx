@@ -1,6 +1,10 @@
 import React, { ReactNode } from 'react';
 import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
+import { AnalyticsProvider } from 'use-analytics';
+
+import { createAnalyticsInstance } from 'utils/analytics/createAnalyticsInstance';
+import { shouldUseNewAnalytics } from 'utils/analytics/shouldUseNewAnalytics';
 
 import {
 	Header,
@@ -47,7 +51,24 @@ type Props = {
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
 	const pageContextProps = usePageState(initialData, viewData);
-	const { communityData, locationData, scopeData, loginData, featureFlags } = pageContextProps;
+	const { communityData, locationData, scopeData, loginData, featureFlags, gdprConsent } =
+		pageContextProps;
+
+	const { analyticsSettings } = communityData;
+
+	const settings =
+		analyticsSettings.type === 'default'
+			? { consent: false as const, ...analyticsSettings }
+			: {
+					consent: Boolean(gdprConsent),
+					...analyticsSettings,
+			  };
+
+	// TODO: figure out some way to lazy load plugins
+	const analyticsInstance = createAnalyticsInstance({
+		shouldUseNewAnalytics: !shouldUseNewAnalytics(initialData),
+		...settings,
+	});
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, hideHeader, isDashboard } = pathObject;
@@ -104,40 +125,42 @@ const App = (props: Props) => {
 
 	return (
 		<PageContext.Provider value={pageContextProps}>
-			<FacetsStateProvider
-				options={{ currentScope: scopeData.scope, cascadeResults: scopeData.facets }}
-			>
-				<RKProvider>
-					<div id="app" className={classNames({ dashboard: isDashboard })}>
-						{communityData.spamTag?.status === 'confirmed-spam' && <SpamBanner />}
-						<AccentStyle communityData={communityData} isNavHidden={!showNav} />
-						{(locationData.isDuqDuq || locationData.isQubQub) && (
-							<div className="duqduq-warning">Development Environment</div>
-						)}
-						<SkipLink targetId="main-content">Skip to main content</SkipLink>
-						<LegalBanner />
-						{showHeader && header}
-						{showNav && <NavBar />}
-						{isDashboard && (
-							<MobileAware
-								mobile={({ className }) => (
-									<BottomMenu isMobile className={className} />
-								)}
-								desktop={({ className }) => (
-									<>
-										<SideMenu className={className} />
-										<Breadcrumbs className={className} />
-									</>
-								)}
-							/>
-						)}
-						<div id="main-content" tabIndex={-1}>
-							<ActiveComponent {...viewData} />
+			<AnalyticsProvider instance={analyticsInstance}>
+				<FacetsStateProvider
+					options={{ currentScope: scopeData.scope, cascadeResults: scopeData.facets }}
+				>
+					<RKProvider>
+						<div id="app" className={classNames({ dashboard: isDashboard })}>
+							{communityData.spamTag?.status === 'confirmed-spam' && <SpamBanner />}
+							<AccentStyle communityData={communityData} isNavHidden={!showNav} />
+							{(locationData.isDuqDuq || locationData.isQubQub) && (
+								<div className="duqduq-warning">Development Environment</div>
+							)}
+							<SkipLink targetId="main-content">Skip to main content</SkipLink>
+							<LegalBanner />
+							{showHeader && header}
+							{showNav && <NavBar />}
+							{isDashboard && (
+								<MobileAware
+									mobile={({ className }) => (
+										<BottomMenu isMobile className={className} />
+									)}
+									desktop={({ className }) => (
+										<>
+											<SideMenu className={className} />
+											<Breadcrumbs className={className} />
+										</>
+									)}
+								/>
+							)}
+							<div id="main-content" tabIndex={-1}>
+								<ActiveComponent {...viewData} />
+							</div>
+							{showFooter && footer}
 						</div>
-						{showFooter && footer}
-					</div>
-				</RKProvider>
-			</FacetsStateProvider>
+					</RKProvider>
+				</FacetsStateProvider>
+			</AnalyticsProvider>
 		</PageContext.Provider>
 	);
 };

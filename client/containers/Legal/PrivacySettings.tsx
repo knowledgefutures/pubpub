@@ -39,8 +39,9 @@ const possibleIntegrations = [
 	},
 ];
 
+// TODO: Replace this with text mentioning other services that can be used
 const ThirdPartyAnalyticsCard = () => {
-	const { loginData } = usePageContext();
+	const { loginData, setGdprConsent } = usePageContext();
 	const [hasUsedToggle, setHasUsedToggle] = useState(false);
 	const [isEnabled, setIsEnabled] = useState(null);
 
@@ -52,9 +53,9 @@ const ThirdPartyAnalyticsCard = () => {
 			setIsEnabled(!!getGdprConsentElection(loginData));
 		}
 		if (hasUsedToggle) {
-			updateGdprConsent(loginData, isEnabled);
+			updateGdprConsent(loginData, isEnabled, setGdprConsent);
 		}
-	}, [hasUsedToggle, isEnabled, loginData]);
+	}, [hasUsedToggle, isEnabled, loginData, setGdprConsent]);
 
 	return (
 		<Card>

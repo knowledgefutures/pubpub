@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { defer } from 'server/utils/deferred';
-import type { createCachePurgeDebouncer } from './schedulePurge';
+import type { createCachePurgeDebouncer } from './createCachePurgeDebouncer';
 import { shouldntPurge } from './skipPurgeConditions';
 
 const ALLOWED_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH'] as const;

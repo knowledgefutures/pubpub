@@ -32,7 +32,7 @@ const banners: Banner[] = [
 			);
 		},
 		// eslint-disable-next-line react/prop-types
-		buttons: ({ loginData }, next) => {
+		buttons: (props, next) => {
 			return (
 				<>
 					<Button
@@ -43,7 +43,7 @@ const banners: Banner[] = [
 						}}
 						intent="success"
 					>
-						{shouldShowGdprBanner(loginData) ? 'Next' : 'Close'}
+						{shouldShowGdprBanner(props) ? 'Next' : 'Close'}
 					</Button>
 					<Button
 						large
@@ -59,7 +59,7 @@ const banners: Banner[] = [
 	},
 	{
 		title: 'Cookies and data privacy',
-		shouldShow: ({ loginData }) => shouldShowGdprBanner(loginData),
+		shouldShow: (props) => shouldShowGdprBanner(props),
 		notice: () => {
 			return (
 				<p>
@@ -72,9 +72,9 @@ const banners: Banner[] = [
 			);
 		},
 		// eslint-disable-next-line react/prop-types
-		buttons: ({ loginData }, next) => {
+		buttons: ({ loginData, setGdprConsent }, next) => {
 			const closeWithConsent = (doesConsent) => {
-				updateGdprConsent(loginData, doesConsent);
+				updateGdprConsent(loginData, doesConsent, setGdprConsent);
 				next();
 			};
 			return (

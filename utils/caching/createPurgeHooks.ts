@@ -1,14 +1,22 @@
 import type { Attributes, CreateOptions, DestroyOptions, UpdateOptions } from 'sequelize';
 import type { Model, ModelCtor } from 'sequelize-typescript';
-import { schedulePurge } from 'server/server';
 import { defer } from 'server/utils/deferred';
+import { schedulePurge } from './schedulePurgeWithSentry';
+import { shouldntPurge } from './skipPurgeConditions';
 
 const deferPurge =
 	<M extends Model<any, any>>(
 		func: (instance: M, options?: any) => Promise<string | string[] | null | undefined | void>,
 	) =>
 	(instance: any, options: any) => {
-		return defer(async () => {
+		// mostly here to prematurely prevent purges during tests which don't need them
+		// otherwise tons of deferred tasks get created, which makes tests take forever and
+		// possibly cause stackoverflows in heroku
+		if (shouldntPurge('true')) {
+			return;
+		}
+
+		defer(async () => {
 			const key = await func(instance, options);
 			if (!key) {
 				return;

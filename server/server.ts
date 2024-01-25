@@ -1,6 +1,5 @@
 /* eslint-disable import/first, import/order */
 import * as Sentry from '@sentry/node';
-import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -109,8 +108,8 @@ if (process.env.NODE_ENV === 'production') {
 app.use(deduplicateSlash());
 app.use(noSlash());
 app.use(compression());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 /* --------------------- */
@@ -119,7 +118,7 @@ app.use(cookieParser());
 import session from 'express-session';
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
 import { fromZodError } from 'zod-validation-error';
-import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
+import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
@@ -197,14 +196,6 @@ app.use((req, res, next) => {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
 	}
 	next();
-});
-
-/**
- * We instantiate the purgedebouncer here to add the Sentry error handler now we can use this
- * schedulePurge function in other files
- */
-export const { schedulePurge } = createCachePurgeDebouncer({
-	errorHandler: Sentry.captureException,
 });
 
 /** Set up purge middleware before api routes are initialized and after hostname is set */

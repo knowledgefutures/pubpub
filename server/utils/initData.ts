@@ -96,6 +96,10 @@ export const getInitialData = async (
 					{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
 				],
 				collections: [],
+				analyticsSettings: {
+					type: 'default',
+					credentials: null,
+				},
 			} as any,
 			loginData,
 			locationData,

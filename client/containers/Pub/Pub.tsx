@@ -24,6 +24,7 @@ const SomePubHeader = () => {
 
 const Pub = (props: Props) => {
 	const { pubData } = props;
+
 	return (
 		<div id="pub-container">
 			<PubSuspendWhileTypingProvider>

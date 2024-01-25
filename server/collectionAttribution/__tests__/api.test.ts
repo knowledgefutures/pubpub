@@ -317,7 +317,9 @@ describe('GET /api/collectionAttributions', () => {
 		const { queryCollection } = models;
 
 		const { body: unsorted } = await adminAgent
-			.get(`/api/collectionAttributions?collectionId=${queryCollection.id}`)
+			.get(
+				`/api/collectionAttributions?collectionId=${queryCollection.id}&orderBy=DESC&sortBy=order`,
+			)
 			.expect(200);
 
 		const unsortedOrder = unsorted.map((attr: any) => attr.order);

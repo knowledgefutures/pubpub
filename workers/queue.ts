@@ -9,7 +9,7 @@ import { isProd, getAppCommit } from 'utils/environment';
 import { TaskPriority, taskQueueName } from 'utils/workers';
 import { WorkerTask } from 'server/models';
 import { expect } from 'utils/assert';
-import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
+import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
 
 const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;

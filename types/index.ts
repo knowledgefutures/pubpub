@@ -1,4 +1,5 @@
 export * from './activity';
+export * from './analyticsSettings';
 export * from './attribution';
 export * from './collection';
 export * from './community';

@@ -12,6 +12,7 @@ type Props = {
 
 const Collection = (props: Props) => {
 	const { layoutPubsByBlock, layout, collection } = props;
+
 	if (layout) {
 		const { blocks, isNarrow } = layout;
 		return (

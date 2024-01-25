@@ -20,6 +20,7 @@ require('server/hooks');
 
 const command = process.argv[2];
 const commandFiles = {
+	backfillAnalyticsSettings: './backfillAnalyticsSettings',
 	backfillActivity: './activityItem/allCommunities',
 	backfillCommunityActivity: './activityItem/singleCommunityCli',
 	backfillCheckpoints: './backfillCheckpoints',

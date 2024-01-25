@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useEffectOnce } from 'react-use';
 
 import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';
@@ -8,6 +9,9 @@ import {
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
 import { useFacetsQuery } from 'client/utils/useFacets';
+import { useAnalytics } from 'utils/analytics/useAnalytics';
+import { chooseCollectionForPub } from 'client/utils/collections';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
@@ -34,7 +38,7 @@ const PubDocument = () => {
 		pubBodyState: { isReadOnly, hidePubBody },
 	} = usePubContext();
 	const { isViewingHistory } = historyData;
-	const { communityData, scopeData, featureFlags } = usePageContext();
+	const { communityData, scopeData, featureFlags, locationData } = usePageContext();
 	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const { isReviewingPub } = pubData;
@@ -46,6 +50,32 @@ const PubDocument = () => {
 	usePubHrefs({ enabled: !isReadOnly });
 
 	const showPubFileImport = (canEdit || canEditDraft) && !isReadOnly;
+
+	const uniqueCollectionIds = Array.from(
+		new Set((pubData.collectionPubs ?? []).map((cp) => cp.collectionId)),
+	);
+	const collection = chooseCollectionForPub(pubData, locationData);
+
+	const { page } = useAnalytics();
+
+	// TODO: replace this with an effect that listens to changes in user cookie consent
+	// fire again if the user agrees to analytics
+	useEffectOnce(() => {
+		page({
+			type: 'pub',
+			communityId: pubData.communityId,
+			communityName: communityData.title,
+			title: pubData.title,
+			pubSlug: pubData.slug,
+			pubId: pubData.id,
+			pubTitle: pubData.title,
+			collectionIds: uniqueCollectionIds,
+			collectionId: collection?.id,
+			collectionTitle: collection?.title,
+			collectionSlug: collection?.slug,
+			primaryCollectionId: getPrimaryCollection(pubData?.collectionPubs)?.id,
+		});
+	});
 
 	if (hidePubBody) {
 		return null;

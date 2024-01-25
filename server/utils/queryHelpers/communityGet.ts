@@ -37,6 +37,9 @@ export default async (locationData, whereQuery) => {
 		if (!communityResult) {
 			throw new Error('Community Not Found');
 		}
-		return communityResult.toJSON() as DefinitelyHas<CommunityType, 'pages' | 'collections'>;
+		return communityResult.toJSON() as DefinitelyHas<
+			CommunityType,
+			'pages' | 'collections' | 'spamTag' | 'scopeSummary'
+		>;
 	});
 };

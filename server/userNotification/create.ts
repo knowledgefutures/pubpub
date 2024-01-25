@@ -12,7 +12,7 @@ import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
 import { expect } from 'utils/assert';
 import { getPPLic } from 'utils/caching/getHashedUserId';
-import { createCachePurgeDebouncer } from 'utils/caching/schedulePurge';
+import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
 
 type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
 	item: types.ActivityItemOfKind<Kind>,

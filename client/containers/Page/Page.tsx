@@ -10,11 +10,15 @@ type Props = {
 		isNarrow: boolean;
 		isNarrowWidth: boolean;
 		layout: LayoutBlock[];
+		communityId: string;
+		title: string;
+		slug: string;
 	};
 };
 
 const Page = (props: Props) => {
 	const { pageData } = props;
+
 	return (
 		<Layout
 			blocks={pageData.layout}

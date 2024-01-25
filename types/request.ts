@@ -21,7 +21,7 @@ export type LoginData = {
 	lastName?: string;
 	avatar?: string;
 	title?: string;
-	gdprConsent?: string;
+	gdprConsent?: boolean | null;
 	isSuperAdmin: boolean;
 	integrations?: Integration[];
 };

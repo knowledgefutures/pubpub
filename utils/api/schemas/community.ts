@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import * as types from 'types';
 import { baseSchema } from '../utils/baseSchema';
+import { analyticsSettingsSchema } from './analyticsSettings';
 
 const communityHeaderLinkSchema = z.object({
 	title: z.string(),
@@ -90,6 +91,7 @@ export const communitySchema = baseSchema.extend({
 	organizationId: z.string().uuid().nullable(),
 	scopeSummaryId: z.string().uuid().nullable(),
 	accentTextColor: z.string(),
+	analyticsSettings: analyticsSettingsSchema,
 }) satisfies z.ZodType<types.Community, any, any>;
 
 export const communityCreateSchema = communitySchema

@@ -4,12 +4,8 @@ import { type analyticsSettingsSchema } from 'utils/api/schemas/analyticsSetting
 
 export type AnalyticsSettings = z.infer<typeof analyticsSettingsSchema>;
 
-export type AnalyticsType = AnalyticsSettings['type'];
+export type AnalyticsType = NonNullable<AnalyticsSettings>['type'];
 
 export type AnalyticsSettingsOfType<T extends AnalyticsType = AnalyticsType> = Prettify<
 	AnalyticsSettings & { type: T }
 >;
-
-export type AnalyticsWithConsent =
-	| (AnalyticsSettingsOfType<'default'> & { consent?: false })
-	| (AnalyticsSettingsOfType<Exclude<AnalyticsType, 'default'>> & { consent?: boolean });

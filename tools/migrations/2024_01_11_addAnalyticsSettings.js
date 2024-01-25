@@ -9,10 +9,7 @@ export const up = async ({ Sequelize, sequelize }) => {
 	await sequelize.getQueryInterface().addColumn('Communities', 'analyticsSettings', {
 		// @ts-expect-error
 		type: Sequelize.JSONB,
-		defaultValue: {
-			type: 'default',
-			credentials: null,
-		},
+		defaultValue: null,
 	});
 };
 

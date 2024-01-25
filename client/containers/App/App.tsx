@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { AnalyticsProvider } from 'use-analytics';
 
 import { createAnalyticsInstance } from 'utils/analytics/createAnalyticsInstance';
-import { shouldUseNewAnalytics } from 'utils/analytics/shouldUseNewAnalytics';
+import { canUseCustomAnalyticsProvider, shouldUseNewAnalytics } from 'utils/analytics/featureFlags';
 
 import {
 	Header,
@@ -56,18 +56,12 @@ const App = (props: Props) => {
 
 	const { analyticsSettings } = communityData;
 
-	const settings =
-		analyticsSettings.type === 'default'
-			? { consent: false as const, ...analyticsSettings }
-			: {
-					consent: Boolean(gdprConsent),
-					...analyticsSettings,
-			  };
-
 	// TODO: figure out some way to lazy load plugins
 	const analyticsInstance = createAnalyticsInstance({
-		shouldUseNewAnalytics: !shouldUseNewAnalytics(initialData),
-		...settings,
+		shouldUseNewAnalytics: shouldUseNewAnalytics(initialData.featureFlags),
+		canUseCustomAnalyticsProvider: canUseCustomAnalyticsProvider(initialData.featureFlags),
+		gdprConsent,
+		analyticsSettings,
 	});
 
 	const pathObject = getPaths(viewData, locationData, chunkName);

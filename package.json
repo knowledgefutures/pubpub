@@ -46,7 +46,7 @@
 	"dependencies": {
 		"@analytics/core": "^0.12.7",
 		"@analytics/google-analytics": "^1.0.7",
-		"@analytics/google-tag-manager": "^0.5.5",
+		"@analytics/simple-analytics": "^0.4.0",
 		"@anatine/zod-openapi": "^2.1.0",
 		"@aws-sdk/client-s3": "^3.427.0",
 		"@aws-sdk/lib-storage": "^3.427.0",

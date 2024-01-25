@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
-import { shouldUseNewAnalytics } from 'utils/analytics/shouldUseNewAnalytics';
+import { shouldUseNewAnalytics } from 'utils/analytics/featureFlags';
 import { setEnvironment, setAppCommit } from 'utils/environment';
 
 import { getClientInitialData } from './initialData';

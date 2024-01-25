@@ -192,10 +192,9 @@ export class Community extends Model<
 	@Column(DataType.JSONB)
 	declare defaultPubCollections: string[] | null;
 
-	@AllowNull(false)
-	@Default({ type: 'default', credentials: null } satisfies AnalyticsSettings)
+	@Default(null)
 	@Column(DataType.JSONB)
-	declare analyticsSettings: CreationOptional<AnalyticsSettings>;
+	declare analyticsSettings: CreationOptional<AnalyticsSettings | null>;
 
 	@Column(DataType.UUID)
 	declare spamTagId: string | null;

@@ -1,27 +1,24 @@
 import { z } from 'zod';
 
-const defaultCredentialsSchema = z.object({
-	type: z.literal('default'),
+const googleAnalyticsCredentialsSchema = z.object({
+	type: z.literal('google-analytics'),
+	credentials: z.literal(`G-${z.string()}`),
+});
+
+const simpleAnalyticsCredentialsSchema = z.object({
+	type: z.literal('simple-analytics'),
 	credentials: z.null(),
 });
 
-const googleTagCredentialsSchema = z.object({
-	type: z.literal('GTM'),
-	credentials: z.literal(`GTM-${z.string()}`),
-});
-
-const googleAnalyticsCredentialsSchema = z.object({
-	type: z.literal('GA'),
-	credentials: z.literal(`GA-${z.string()}`),
-});
-
+/**
+ * Schema for analytics settings.
+ *
+ * `null` means only our own analytics are enabled.
+ */
 export const analyticsSettingsSchema = z
 	.discriminatedUnion('type', [
-		defaultCredentialsSchema,
-		googleTagCredentialsSchema,
 		googleAnalyticsCredentialsSchema,
+		simpleAnalyticsCredentialsSchema,
 	])
-	.default({
-		type: 'default',
-		credentials: null,
-	});
+	.nullable()
+	.default(null);

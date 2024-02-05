@@ -34,7 +34,7 @@
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
 		"test": "npm run lint && npm run test-no-lint",
 		"test-dev": "jest --forceExit",
-		"test-no-lint": "NODE_OPTIONS=--max-old-space-size=8192 firebase emulators:exec --only database --import .firebase/default-contents \"jest --runInBand\"",
+		"test-no-lint": "NODE_OPTIONS=--max-old-space-size=8192 firebase emulators:exec --only database --import .firebase/default-contents \"node --expose-gc ./node_modules/.bin/jest --runInBand\"",
 		"test-file-upload": "INGERATION_TESTING=true jest server/upload/__tests__/integration-test.ts --testMatch '**/*.ts'",
 		"test-import": "NODE_OPTIONS=--max-old-space-size=8192 firebase emulators:exec --only database --import .firebase/default-contents \"jest server/pub/__tests__/api.test.ts --runInBand\"",
 		"tools": "NODE_PATH=./client:./ node -r ts-node/register/transpile-only -r esm --max-old-space-size=12000 ./tools",

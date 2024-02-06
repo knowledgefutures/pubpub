@@ -20,9 +20,10 @@ const DashboardCustomScripts = (props: Props) => {
 	const { featureFlags } = usePageContext();
 	const [Editor, setEditor] = useState<null | EditorComponentType>(null);
 	useEffect(() => {
-		import('@monaco-editor/react').then(({ default: EditorComponent }) =>
-			setEditor(EditorComponent),
-		);
+		import(
+			/* webpackChunkName: "@monaco-editor/react" */
+			'@monaco-editor/react'
+		).then(({ default: EditorComponent }) => setEditor(EditorComponent));
 	}, []);
 
 	const renderLoading = () => {

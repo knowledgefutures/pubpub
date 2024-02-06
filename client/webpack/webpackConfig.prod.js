@@ -1,4 +1,5 @@
 const { resolve } = require('path');
+
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -8,9 +9,12 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const crypto = require('crypto');
 
+const { lazyModuleRegExp } = require('./lazyLoadedModules');
+
 const cryptoCreateHash = crypto.createHash;
 crypto.createHash = (algorithm) => cryptoCreateHash(algorithm === 'md4' ? 'sha256' : algorithm);
 
+/** @type {import('webpack').Configuration} */
 module.exports = {
 	mode: 'production',
 	entry: {
@@ -35,8 +39,9 @@ module.exports = {
 	output: {
 		filename: '[name].[chunkhash].js',
 		path: resolve(__dirname, '../../dist/client'),
-		publicPath: '/',
+		publicPath: '/dist/',
 		hashFunction: 'sha256',
+		chunkFilename: '[name].[chunkHash].bundle.js',
 	},
 	module: {
 		rules: [
@@ -132,11 +137,16 @@ module.exports = {
 		splitChunks: {
 			cacheGroups: {
 				vendors: {
-					// test: /[\\/]node_modules[\\/]/,
-					test: /([\\/]node_modules[\\/])/,
+					test: (module) => {
+						// Don't bundle lazy-loaded modules into vendor.js
+						if (lazyModuleRegExp.test(module.context)) {
+							return false;
+						}
+
+						return /([\\/]node_modules[\\/])/.test(module.context);
+					},
 					name: 'vendor',
 					chunks: 'all',
-					// minChunks: 2, // This was causing weird vendor.css issues where it wouldn't output.
 				},
 			},
 		},

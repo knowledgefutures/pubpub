@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useAnalytics as useOldAnalytics } from 'use-analytics';
+import type { AnalyticsInstance } from 'analytics';
 import type { AnalyticsType } from 'types';
-import { usePage, useTrack } from 'use-analytics';
+import { stubPlugin } from './plugin';
 
 type Tracks = {
 	type: 'download';
@@ -53,89 +54,32 @@ type Analytics = {
 			} & { [K in AnalyticsType]?: boolean };
 		},
 	) => void;
-};
+} & Omit<AnalyticsInstance, 'page' | 'track'>;
 
+/**
+ * A custom hook that wraps the use-analytics hook.
+ *
+ * Used in order to get proper types for the analytics instance, to stub the analytics instance when
+ * SSRing, and provide easy to aceses information about whether the analytics instance is stubbed or
+ * not.
+ */
 export const useAnalytics = () => {
-	const page = usePage();
-	const track = useTrack();
+	const { getState, ...analytics } = useOldAnalytics();
 
+	const { track: stubTrack, page: stubPage } = stubPlugin();
+
+	/** We do not want to send any events when SSRing */
 	if (typeof window === 'undefined') {
 		return {
-			track: () => {},
-			page: () => {},
+			...analytics,
+			track: stubTrack,
+			page: stubPage,
+			getState,
 		} as Analytics;
 	}
 
 	return {
-		track,
-		page,
+		...analytics,
+		getState,
 	} as Analytics;
-};
-
-/**
- * Custom hook that sends a page view event to the analytics services only once.
- *
- * Also handles rerender logic for GDPR consent when using Google Analytics.
- *
- * Flow for non-Google Analytics and Google Analytics + consent already given:
- *
- * 1. User visits page
- * 2. Page view event is sent to all analytics services
- *
- * Flow for Google Analytics + no consent yet given:
- *
- * 1. User visits page
- * 2. Page view event is sent to our analytics service
- * 3. User clicks "Accept" on the GDPR banner
- * 4. Page view is sent to Google Analytics.
- *
- * Flow for Google Analytics + consent refused:
- *
- * 1. User visits page
- * 2. Page view event is sent to only our analytics service
- *
- * @param payload - The payload containing the page view data or a function that returns the
- *   payload.
- * @param gdprConsent - Optional boolean indicating whether GDPR consent has been given.
- */
-export const usePageOnce = (
-	payload: PageViewPayload | (() => PageViewPayload | null),
-	gdprConsent?: boolean | null,
-) => {
-	const { page } = useAnalytics();
-
-	const [calls, setCalls] = useState(0);
-
-	const toBeSentPayload = typeof payload === 'function' ? payload() : payload;
-
-	useEffect(() => {
-		if (toBeSentPayload === null) {
-			return;
-		}
-
-		if (calls > 1 || (calls === 1 && !gdprConsent)) {
-			return;
-		}
-
-		if (calls === 0) {
-			page(toBeSentPayload, {
-				plugins: {
-					'google-analytics': Boolean(gdprConsent),
-				},
-			});
-			setCalls((currentRenders) => currentRenders + 1);
-			return;
-		}
-
-		if (calls === 1 && gdprConsent) {
-			page(toBeSentPayload, {
-				plugins: {
-					all: false,
-					'google-analytics': true,
-				},
-			});
-			setCalls((currentRenders) => currentRenders + 1);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [Boolean(gdprConsent)]);
 };

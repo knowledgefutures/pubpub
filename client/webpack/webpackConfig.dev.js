@@ -4,12 +4,16 @@ const { resolve } = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const autoprefixer = require('autoprefixer');
 const crypto = require('crypto');
+
+const { lazyModuleRegExp } = require('./lazyLoadedModules');
 
 const cryptoCreateHash = crypto.createHash;
 crypto.createHash = (algorithm) => cryptoCreateHash(algorithm === 'md4' ? 'sha256' : algorithm);
 
+/** @type {import('webpack').Configuration} */
 module.exports = {
 	mode: 'development',
 	entry: {
@@ -34,8 +38,9 @@ module.exports = {
 	output: {
 		filename: '[name].js',
 		path: resolve(__dirname, '../../dist/client'),
-		publicPath: '/',
+		publicPath: '/dist/',
 		hashFunction: 'sha256',
+		chunkFilename: '[name].[chunkHash].bundle.js',
 	},
 	stats: {
 		colors: true,
@@ -43,9 +48,9 @@ module.exports = {
 		assets: false,
 		children: false,
 		timings: true,
-		chunks: false,
-		chunkModules: false,
-		entrypoints: false,
+		chunks: true,
+		chunkModules: true,
+		entrypoints: true,
 		modules: false,
 	},
 	module: {
@@ -110,17 +115,22 @@ module.exports = {
 		}),
 		// Allow shared utils to import the sentry/node package by replacing it in the webpack build
 		new webpack.NormalModuleReplacementPlugin(/@sentry\/node/, '@sentry/react'),
+		// new BundleAnalyzerPlugin(),
 	],
 	optimization: {
 		splitChunks: {
 			cacheGroups: {
 				vendors: {
-					// TODO: bundle components into vendor, I think...
-					// test: /([\\/]node_modules[\\/]|[\\/]components[\\/])/,
-					test: /([\\/]node_modules[\\/])/,
+					test: (module) => {
+						// Don't bundle lazy-loaded modules into vendor.js
+						if (lazyModuleRegExp.test(module.context)) {
+							return false;
+						}
+
+						return /([\\/]node_modules[\\/])/.test(module.context);
+					},
 					name: 'vendor',
 					chunks: 'all',
-					// minChunks: 2,
 				},
 			},
 		},

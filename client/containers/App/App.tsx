@@ -3,8 +3,8 @@ import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
 import { AnalyticsProvider } from 'use-analytics';
 
-import { createAnalyticsInstance } from 'utils/analytics/createAnalyticsInstance';
-import { canUseCustomAnalyticsProvider, shouldUseNewAnalytics } from 'utils/analytics/featureFlags';
+import { shouldUseNewAnalytics, canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
+import { useLazyLoadedAnalyticsInstance } from 'utils/analytics/useLazyLoadedAnalyticsInstance';
 
 import {
 	Header,
@@ -56,12 +56,12 @@ const App = (props: Props) => {
 
 	const { analyticsSettings } = communityData;
 
-	// TODO: figure out some way to lazy load plugins
-	const analyticsInstance = createAnalyticsInstance({
-		shouldUseNewAnalytics: shouldUseNewAnalytics(initialData.featureFlags),
-		canUseCustomAnalyticsProvider: canUseCustomAnalyticsProvider(initialData.featureFlags),
-		gdprConsent,
+	const analyticsInstance = useLazyLoadedAnalyticsInstance({
+		shouldUseNewAnalytics: shouldUseNewAnalytics(featureFlags),
+		canUseCustomAnalyticsProvider: canUseCustomAnalyticsProvider(featureFlags),
 		analyticsSettings,
+		gdprConsent,
+		locationData,
 	});
 
 	const pathObject = getPaths(viewData, locationData, chunkName);

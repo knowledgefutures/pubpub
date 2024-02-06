@@ -9,8 +9,8 @@ import {
 	resolveLayoutPubsByBlock,
 } from 'utils/layout';
 import { usePageContext } from 'utils/hooks';
-import { usePageOnce } from 'utils/analytics/useAnalytics';
 import { assert } from 'utils/assert';
+import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import LayoutPubs from './LayoutPubs';
 import LayoutHtml from './LayoutHtml';

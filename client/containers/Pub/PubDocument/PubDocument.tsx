@@ -8,9 +8,9 @@ import {
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
 import { useFacetsQuery } from 'client/utils/useFacets';
-import { usePageOnce } from 'utils/analytics/useAnalytics';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import { getPrimaryCollection } from 'utils/collections/primary';
+import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';

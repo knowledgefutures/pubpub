@@ -87,7 +87,7 @@ const Html = (props: Props) => {
 					name="google-site-verification"
 					content="jmmJFnkSOeIEuS54adOzGMwc0kwpsa8wQ-L4GyPpPDg"
 				/>
-				<link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} />
+				{/* <link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} /> */}
 				<link rel="stylesheet" type="text/css" href={getPath('main', 'css')} />
 				{customScripts?.css && (
 					<style

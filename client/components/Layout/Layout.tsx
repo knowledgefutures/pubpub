@@ -9,7 +9,7 @@ import {
 	resolveLayoutPubsByBlock,
 } from 'utils/layout';
 import { usePageContext } from 'utils/hooks';
-import { assert } from 'utils/assert';
+import { assert, expect } from 'utils/assert';
 import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import LayoutPubs from './LayoutPubs';
@@ -43,22 +43,26 @@ const Layout = (props: Props) => {
 
 		if (collection) {
 			return {
-				type: 'collection' as const,
+				event: 'collection' as const,
 				communityId: collection.communityId,
 				title: collection.title,
 				collectionId: collection.id,
 				collectionTitle: collection.title,
 				collectionSlug: collection.slug,
+				collectionKind: expect(collection.kind),
+				communityName: communityData.title,
 			};
 		}
 
 		assert(!!pageData);
 
 		return {
-			type: 'page' as const,
+			event: 'page' as const,
 			communityId: communityData.id,
+			communityName: communityData.title,
 			pageSlug: pageData.slug,
-			title: pageData.title,
+			pageTitle: pageData.title,
+			pageId: pageData.id,
 		};
 	}, gdprConsent);
 

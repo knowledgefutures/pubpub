@@ -1,50 +1,11 @@
+import type { AnalyticsType } from 'types';
+import type { PageViewPayload, Track } from 'utils/api/schemas/analytics';
 import { useAnalytics as useOldAnalytics } from 'use-analytics';
 import type { AnalyticsInstance } from 'analytics';
-import type { AnalyticsType } from 'types';
 import { stubPlugin } from './plugin';
 
-type Tracks = {
-	type: 'download';
-	payload: {
-		format: string;
-		pubId: string;
-	};
-};
-
-type PageViewPayloadBase = {
-	communityId: string;
-	communityName?: string;
-	title: string;
-};
-
-type CollectionPayloadPart = {
-	collectionId: string;
-	collectionSlug: string;
-	collectionTitle: string;
-};
-
-type PageViewPub = PageViewPayloadBase & {
-	type: 'pub';
-	pubId: string;
-	pubSlug: string;
-	pubTitle: string;
-	collectionIds?: string[];
-	primaryCollectionId?: string;
-} & Partial<CollectionPayloadPart>;
-
-type PageViewCollection = PageViewPayloadBase & {
-	type: 'collection';
-} & CollectionPayloadPart;
-
-type PageViewPage = PageViewPayloadBase & {
-	type: 'page';
-	pageSlug: string;
-};
-
-export type PageViewPayload = PageViewPub | PageViewCollection | PageViewPage;
-
 type Analytics = {
-	track: <T extends Tracks>(event: T['type'], data: T['payload']) => void;
+	track: <T extends Track>(event: T['event'], data: Omit<T, 'type' | 'event'>) => void;
 	page: <Payload extends PageViewPayload>(
 		payload?: Payload,
 		options?: {

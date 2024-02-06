@@ -1,6 +1,7 @@
 import { AppRouter } from '@ts-rest/core';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { analyticsEventSchema } from '../schemas/analytics';
 
 extendZodWithOpenApi(z);
 
@@ -9,7 +10,7 @@ export const analyticsRouter = {
 		path: '/api/analytics/track',
 		method: 'POST',
 		summary: 'Track event',
-		body: z.record(z.any()),
+		body: analyticsEventSchema,
 		responses: {
 			204: z.never().optional(),
 		},

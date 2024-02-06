@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { PageViewPayload, useAnalytics } from './useAnalytics';
+import type { PageViewPayload } from 'utils/api/schemas/analytics';
+import { useAnalytics } from './useAnalytics';
 import { getThirdPartyPluginsObjectWithGdprConsent } from './thirdPartyPlugins';
 
 /**

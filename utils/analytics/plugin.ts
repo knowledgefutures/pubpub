@@ -1,5 +1,5 @@
 /* eslint-disable no-undef, import/no-unresolved */
-import { type AnalyticsPlugin } from 'analytics';
+import { AnalyticsInstance, type AnalyticsPlugin } from 'analytics';
 
 const ANALYTICS_ENDPOINT = '/api/analytics/track' as const;
 
@@ -22,34 +22,59 @@ const getReferrerAndUnique = () => {
 	return { referrer: document.referrer, unique: referrerUrl.origin === currentUrl.origin };
 };
 
-/**
- * Adds referrer information to the payload. If there is no referrer, sets referrer to null and
- * sameReferrer to false.
- *
- * @param payload - The payload object containing properties.
- * @returns The updated payload object with referrer and sameReferrer properties.
- */
-const updatePayload = <P extends { properties: Record<string, any> }>(payload: P) => {
-	return {
-		...payload,
-		properties: {
-			...payload.properties,
-			...getReferrerAndUnique(),
-		},
-	};
-};
+const sendData = (data: { payload: any; instance: AnalyticsInstance }) => {
+	const { payload, instance } = data;
 
-const sendData = ({ payload }: { payload: any }) => {
 	// we don't want to track page renders on the server, as we cache most pages
 	if (!globalThis.navigator || typeof globalThis?.navigator?.sendBeacon !== 'function') {
 		return;
 	}
 
-	const updatedPayload = updatePayload(payload);
+	const { context } = instance.getState();
+
+	const {
+		timezone,
+		os: { name: os },
+		locale,
+		campaign,
+		userAgent,
+	} = context;
+
+	const {
+		event,
+		type,
+		meta: { ts },
+		properties,
+	} = payload;
+
+	const utmCampaign = campaign
+		? Object.fromEntries(
+				Object.entries(campaign).map(([key, value]) => [
+					`utm${
+						key === 'name' ? 'Campaign' : key.charAt(0).toUpperCase() + key.slice(1)
+					}`,
+					value,
+				]),
+		  )
+		: {};
 
 	// we use navigator.sendBeacon to make sure the request is sent even if the user navigates away from the page
 	// and doesn't block the rest of the page
-	navigator.sendBeacon(ANALYTICS_ENDPOINT, JSON.stringify(updatedPayload));
+	navigator.sendBeacon(
+		ANALYTICS_ENDPOINT,
+		JSON.stringify({
+			event,
+			type,
+			timestamp: ts,
+			timezone,
+			locale,
+			userAgent,
+			os,
+			...properties,
+			...getReferrerAndUnique(),
+			...utmCampaign,
+		}),
+	);
 };
 
 export const analyticsPlugin = () => {

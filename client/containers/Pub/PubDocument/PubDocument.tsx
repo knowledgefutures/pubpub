@@ -58,8 +58,6 @@ const PubDocument = () => {
 	usePageOnce(
 		{
 			event: 'pub',
-			communityId: pubData.communityId,
-			communityName: communityData.title,
 			pubSlug: pubData.slug,
 			pubId: pubData.id,
 			pubTitle: pubData.title,
@@ -69,6 +67,10 @@ const PubDocument = () => {
 			collectionSlug: collection?.slug,
 			primaryCollectionId: getPrimaryCollection(pubData?.collectionPubs)?.id,
 			collectionKind: collection?.kind,
+			communityId: pubData.communityId,
+			communityName: communityData.title,
+			communitySubdomain: communityData.subdomain,
+			isProd: locationData.isProd,
 		},
 		gdprConsent,
 	);

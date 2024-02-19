@@ -59,8 +59,12 @@ const Download = (props: Props) => {
 	// eslint-disable-next-line consistent-return
 	const handleStartDownload = (type) => {
 		track('download', {
+			communityId: communityData.id,
+			communityName: communityData.title,
+			communitySubdomain: communityData.subdomain,
 			format: type.format,
 			pubId: pubData.id,
+			isProd: locationData.isProd,
 		});
 		if (type.format === 'formatted') {
 			return download(formattedDownload.url);

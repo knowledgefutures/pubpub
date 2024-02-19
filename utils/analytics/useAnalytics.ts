@@ -1,11 +1,11 @@
 import type { AnalyticsType } from 'types';
-import type { PageViewPayload, Track } from 'utils/api/schemas/analytics';
+import type { PageViewPayload, TrackPayload, TrackEvent } from 'utils/api/schemas/analytics';
 import { useAnalytics as useOldAnalytics } from 'use-analytics';
 import type { AnalyticsInstance } from 'analytics';
 import { stubPlugin } from './plugin';
 
 type Analytics = {
-	track: <T extends Track>(event: T['event'], data: Omit<T, 'type' | 'event'>) => void;
+	track: <T extends TrackEvent>(event: T, data: TrackPayload<T>) => void;
 	page: <Payload extends PageViewPayload>(
 		payload?: Payload,
 		options?: {

@@ -9,7 +9,9 @@ import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
 
 const s = initServer();
 
-const sendToStitch = async (payload: AnalyticsEvent & { country: string | null }) => {
+const sendToStitch = async (
+	payload: AnalyticsEvent & { country: string | null; countryCode: string | null },
+) => {
 	if (!process.env.STITCH_WEBHOOK_URL) {
 		throw new Error('Missing STITCH_WEBHOOK_URL');
 	}
@@ -45,9 +47,9 @@ export const analyticsServer = s.router(contract.analytics, {
 		handler: async ({ body: payload }) => {
 			const { timezone } = payload;
 
-			const { name: country = null } = getCountryForTimezone(timezone) || {};
+			const { name: country = null, id = null } = getCountryForTimezone(timezone) || {};
 
-			await sendToStitch({ country, ...payload });
+			await sendToStitch({ country, countryCode: id, ...payload });
 
 			return {
 				status: 204,

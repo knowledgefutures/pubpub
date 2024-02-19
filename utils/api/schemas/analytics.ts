@@ -20,6 +20,14 @@ export const baseSchema = z.object({
 	os: z.string(),
 });
 
+/** Information that should always be included in any event payload */
+export const sharedEventPayloadSchema = z.object({
+	communityId: z.string().uuid(),
+	communitySubdomain: z.string(),
+	communityName: z.string(),
+	isProd: z.boolean(),
+});
+
 export const basePageViewSchema = baseSchema.merge(
 	z.object({
 		type: z.literal('page'),
@@ -32,11 +40,11 @@ export const basePageViewSchema = baseSchema.merge(
 	}),
 );
 
-export const sharedPageViewPayloadSchema = z.object({
-	communityId: z.string().uuid(),
-	communityName: z.string(),
-	event: z.enum(['page', 'collection', 'pub']),
-});
+export const sharedPageViewPayloadSchema = sharedEventPayloadSchema.merge(
+	z.object({
+		event: z.enum(['page', 'collection', 'pub']),
+	}),
+);
 
 export const pagePageViewPayloadSchema = sharedPageViewPayloadSchema.merge(
 	z.object({
@@ -78,29 +86,44 @@ export const pageViewPayloadSchema = z.discriminatedUnion('event', [
 
 export const pageViewSchema = pageViewPayloadSchema.and(basePageViewSchema);
 
-export const pubDownloadTrackPayloadSchema = z.object({
-	format: z.string(),
-	pubId: z.string().uuid(),
-});
+export const baseTrackSchema = baseSchema.merge(
+	z.object({
+		type: z.literal('track'),
+	}),
+);
 
-export const pubDownloadTrackSchema = pubDownloadTrackPayloadSchema.extend({
-	type: z.literal('track'),
-	event: z.literal('download'),
-});
+export const sharedTrackPayloadSchema = sharedEventPayloadSchema;
+
+export const pubDownloadTrackPayloadSchema = sharedTrackPayloadSchema.merge(
+	z.object({
+		format: z.string(),
+		pubId: z.string().uuid(),
+	}),
+);
+
+export const pubDownloadTrackSchema = pubDownloadTrackPayloadSchema.merge(
+	z.object({
+		event: z.literal('download'),
+	}),
+);
 
 // this is just here to set up the discriminated union, can't have a union of one
-export const stubTrackPayloadSchema = z.object({});
+export const stubTrackPayloadSchema = sharedTrackPayloadSchema.merge(z.object({}));
 
-export const stubTrackSchema = z.object({
-	type: z.literal('track'),
-	event: z.literal('stub'),
-});
+export const stubTrackSchema = stubTrackPayloadSchema.merge(
+	z.object({
+		event: z.literal('stub'),
+	}),
+);
 
-export const trackSchema = z.discriminatedUnion('event', [pubDownloadTrackSchema, stubTrackSchema]);
+export const trackSchemaPayloadSchemaWithEvent = z.discriminatedUnion('event', [
+	pubDownloadTrackSchema,
+	stubTrackSchema,
+]);
 
-export const trackSchemaFull = baseSchema.and(trackSchema);
+export const trackSchema = trackSchemaPayloadSchemaWithEvent.and(baseTrackSchema);
 
-export const analyticsEventSchema = z.union([trackSchemaFull, pageViewSchema]);
+export const analyticsEventSchema = z.union([trackSchema, pageViewSchema]);
 
 export type AnalyticsEvent = z.infer<typeof analyticsEventSchema>;
 
@@ -112,6 +135,10 @@ export type PubDownloadPayload = z.infer<typeof pubDownloadTrackPayloadSchema>;
 
 export type Track = z.infer<typeof trackSchema>;
 
-export type TrackPayload<T extends Track = Track> = T extends any
-	? Prettify<Omit<T, 'event' | 'type'>>
+export type TrackPayloadWithEvent = z.infer<typeof trackSchemaPayloadSchemaWithEvent>;
+
+export type TrackEvent = TrackPayloadWithEvent['event'];
+
+export type TrackPayload<T extends TrackEvent = TrackEvent> = T extends any
+	? Prettify<Omit<TrackPayloadWithEvent & { event: T }, 'event'>>
 	: never;

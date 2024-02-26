@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const googleAnalyticsCredentialsSchema = z.object({
 	type: z.literal('google-analytics'),
-	credentials: z.literal(`G-${z.string()}`),
+	credentials: z.string().regex(/^G-[A-Z0-9]+$/),
 });
 
 const simpleAnalyticsCredentialsSchema = z.object({

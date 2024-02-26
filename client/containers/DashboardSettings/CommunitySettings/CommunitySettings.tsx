@@ -4,6 +4,7 @@ import pick from 'lodash.pick';
 import { Community, PageContext } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
+import { canUseCustomAnalyticsProvider, shouldUseNewAnalytics } from 'utils/analytics/featureFlags';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
@@ -17,6 +18,7 @@ import FooterSettings from './FooterSettings';
 import HomepageBannerSettings from './HomepageBannerSettings';
 import SocialSettings from './SocialSettings';
 import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
+import AnalyticsSettings from './AnalyticsSettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -77,7 +79,7 @@ const CommunitySettings = () => {
 		};
 	}, [pageContext, communityData]);
 
-	const tabs: Subtab[] = [
+	const tabs = [
 		{
 			id: 'details',
 			title: 'Details',
@@ -146,7 +148,25 @@ const CommunitySettings = () => {
 				<CommunityOrCollectionLevelPubSettings />,
 			],
 		},
-	];
+		...(shouldUseNewAnalytics(pageContext.featureFlags) &&
+		canUseCustomAnalyticsProvider(pageContext.featureFlags) &&
+		(pageContext.scopeData.activePermissions.canAdminCommunity ||
+			pageContext.scopeData.activePermissions.isSuperAdmin)
+			? [
+					{
+						id: 'analytics-settings',
+						title: 'Analytics',
+						pubPubIcon: 'impact',
+						sections: [
+							<AnalyticsSettings
+								communityData={communityData}
+								updateCommunityData={updateCommunityData}
+							/>,
+						],
+					} as const,
+			  ]
+			: ([] as Subtab[])),
+	].filter((x): x is Subtab => Boolean(x)) satisfies Subtab[];
 
 	return (
 		<DashboardSettingsFrame

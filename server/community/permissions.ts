@@ -63,9 +63,16 @@ export const getPermissions = async ({
 	] as const;
 
 	const canUpdate = scopeData.activePermissions.canManage;
+	const canAdmin = scopeData.activePermissions.canAdmin;
+
+	// only admins can edit analytics settings
+	const editPropsWithAnalytics = canAdmin
+		? ([...editProps, 'analyticsSettings'] as const)
+		: editProps;
+
 	return {
 		create: true,
-		update: canUpdate ? editProps : false,
-		admin: scopeData.activePermissions.canAdminCommunity,
+		update: canUpdate ? editPropsWithAnalytics : false,
+		admin: canAdmin,
 	};
 };

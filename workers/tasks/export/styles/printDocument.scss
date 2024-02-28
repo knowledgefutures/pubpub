@@ -109,12 +109,20 @@ section.cover {
 			font-size: 10px;
 			font-family: $header-font;
 			content: string(top-heading-items);
+			vertical-align: top;
+			padding-top: 1cm;
 		}
 		@top-right {
 			color: #666;
 			font-size: 10px;
 			font-family: $header-font;
 			content: string(title);
+			vertical-align: top;
+			padding-top: 1cm;
+		}
+		@top-center {
+			content: '';
+			width: 1cm;
 		}
 		@bottom-center {
 			color: #666;

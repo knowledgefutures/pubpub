@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Checkbox, Classes, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
 import { AttributionWithUser } from 'types';
+import { ORCID_ID_OR_URL_PATTERN } from 'utils/orcid';
 
 import { getFilteredRoles } from './roles';
+import InputField from '../InputField/InputField';
 
 type Props = {
 	attribution: AttributionWithUser;
@@ -19,12 +21,26 @@ const AttributionDetailControls = (props: Props) => {
 		props;
 	const { affiliation, id, isAuthor, orcid } = attribution;
 
+	const isOrcidInvalid = (input?: string | null) =>
+		Boolean(input && !input.match(ORCID_ID_OR_URL_PATTERN));
+
+	const [invalidOrcid, setInvalidOrcid] = useState(isOrcidInvalid(orcid));
+
+	const onAttributionUpdateWithValidation = (newAttribution: Partial<AttributionWithUser>) => {
+		if (isOrcidInvalid(newAttribution.orcid)) {
+			setInvalidOrcid(true);
+			return;
+		}
+
+		onAttributionUpdate(newAttribution);
+	};
+
 	return (
 		<div className="detail-controls">
 			<Checkbox
 				checked={!!isAuthor}
 				onChange={(evt) =>
-					onAttributionUpdate({
+					onAttributionUpdateWithValidation({
 						id,
 						// @ts-expect-error ts-migrate(2339) FIXME: Property 'checked' does not exist on type 'EventTa... Remove this comment to see the full error message
 						isAuthor: evt.target.checked,
@@ -56,7 +72,7 @@ const AttributionDetailControls = (props: Props) => {
 						const newRoles = roles.filter((_, filterIndex) => {
 							return filterIndex !== roleIndex;
 						});
-						onAttributionUpdate({
+						onAttributionUpdateWithValidation({
 							id,
 							roles: newRoles,
 						});
@@ -73,7 +89,7 @@ const AttributionDetailControls = (props: Props) => {
 				onItemSelect={(newRole) => {
 					const existingRoles = roles;
 					const newRoles = [...existingRoles, newRole];
-					onAttributionUpdate({
+					onAttributionUpdateWithValidation({
 						id,
 						roles: newRoles,
 					});
@@ -105,28 +121,41 @@ const AttributionDetailControls = (props: Props) => {
 						}
 					}}
 					onBlur={(evt) =>
-						onAttributionUpdate({
+						onAttributionUpdateWithValidation({
 							id,
 							affiliation: evt.target.value.trim(),
 						})
 					}
 				/>
 				{isShadowAttribution && (
-					<InputGroup
+					<InputField
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '"" | Element | undefined' is not assignable ... Remove this comment to see the full error message
 						rightElement={orcid && <Tag minimal>ORCID</Tag>}
 						placeholder="ORCID"
 						defaultValue={orcid ?? undefined}
-						onKeyDown={(evt) => {
-							if (evt.key === 'Enter') {
-								evt.currentTarget.blur();
+						onChange={(evt) => {
+							const input = evt.target.value;
+							const orcidInvalidity = isOrcidInvalid(input);
+							setInvalidOrcid(orcidInvalidity);
+
+							if (!orcidInvalidity) {
+								onAttributionUpdateWithValidation({
+									id,
+									orcid: input.trim(),
+								});
 							}
 						}}
-						onBlur={(evt) =>
-							onAttributionUpdate({
+						onBlur={(evt) => {
+							setInvalidOrcid(isOrcidInvalid(evt.target.value));
+							onAttributionUpdateWithValidation({
 								id,
 								orcid: evt.target.value.trim(),
-							})
+							});
+						}}
+						error={
+							invalidOrcid
+								? 'Invalid ORCID. Please enter a valid ORCID or leave the field blank.'
+								: undefined
 						}
 					/>
 				)}

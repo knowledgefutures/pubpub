@@ -361,3 +361,100 @@ describe('GET /api/pubAttributions', () => {
 		expect(sortedOrder).toEqual(structuredClone(unsortedOrder).sort());
 	});
 });
+
+describe('orcid update tests', () => {
+	it('should allow you to create attributions with orcid ids, empty strings, nulls, and orcid urls', async () => {
+		const { pubManager, community, pub } = models;
+
+		const agent = await login(pubManager);
+
+		const { body: attr } = await agent
+			.post('/api/pubAttributions')
+			.send({
+				order: 0,
+				name: 'Test Person',
+				communityId: community.id,
+				pubId: pub.id,
+				orcid: '0000-0000-0000-0000',
+			})
+			.expect(201);
+
+		expect(attr.orcid).toEqual('0000-0000-0000-0000');
+
+		const { body: attr2 } = await agent
+			.post('/api/pubAttributions')
+			.send({
+				order: 0,
+				name: 'Test Person',
+				communityId: community.id,
+				pubId: pub.id,
+				orcid: '',
+			})
+			.expect(201);
+
+		expect(attr2.orcid).toEqual('');
+
+		const { body: attr3 } = await agent
+			.post('/api/pubAttributions')
+			.send({
+				order: 0,
+				name: 'Test Person',
+				communityId: community.id,
+				pubId: pub.id,
+				orcid: null,
+			})
+			.expect(201);
+
+		expect(attr3.orcid).toEqual(null);
+
+		const { body: attr4 } = await agent
+			.post('/api/pubAttributions')
+			.send({
+				order: 0,
+				name: 'Test Person',
+				communityId: community.id,
+				pubId: pub.id,
+				orcid: 'https://orcid.org/0000-0000-0000-0000',
+			})
+			.expect(201);
+
+		expect(attr4.orcid).toEqual('0000-0000-0000-0000');
+	});
+
+	it('should not allow you to update attributions with invalid orcids', async () => {
+		const { pubManager, community, pub } = models;
+
+		const agent = await login(pubManager);
+
+		const { body: attr } = await agent
+			.post('/api/pubAttributions')
+			.send({
+				order: 0,
+				name: 'Test Person',
+				communityId: community.id,
+				pubId: pub.id,
+				orcid: '0000-0000-0000-0000',
+			})
+			.expect(201);
+
+		await agent
+			.put('/api/pubAttributions')
+			.send({
+				orcid: 'random string',
+				communityId: community.id,
+				pubId: pub.id,
+				id: attr.id,
+			})
+			.expect(400);
+
+		await agent
+			.put('/api/pubAttributions')
+			.send({
+				orcid: '0000',
+				communityId: community.id,
+				pubId: pub.id,
+				id: attr.id,
+			})
+			.expect(400);
+	});
+});

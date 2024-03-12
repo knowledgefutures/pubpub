@@ -7,6 +7,7 @@ import { sequelize } from './sequelize';
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 
+import { AuthToken } from './authToken/model';
 import { Collection } from './collection/model';
 import { CollectionAttribution } from './collectionAttribution/model';
 import { CollectionPub } from './collectionPub/model';
@@ -63,6 +64,7 @@ import { VisibilityUser } from './visibilityUser/model';
 import { WorkerTask } from './workerTask/model';
 
 sequelize.addModels([
+	AuthToken,
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
@@ -155,6 +157,7 @@ export const includeUserModel = (() => {
 })();
 
 export {
+	AuthToken,
 	Collection,
 	CollectionAttribution,
 	CollectionPub,

@@ -15,6 +15,7 @@ import { releaseServer } from 'server/release/api';
 import { uploadPolicyRouteImplementation } from 'server/uploadPolicy/api';
 import { communityServer } from 'server/community/api';
 import { uploadRouteImplementation } from 'server/upload/api';
+import { authTokenServer } from 'server/authToken/api';
 import { analyticsServer } from 'server/analytics/api';
 import { contract } from './contract';
 
@@ -30,6 +31,7 @@ export const server = s.router(contractWithScriptsAndCommunity, {
 		login: loginRouteImplementation,
 		logout: logoutRouteImplementation,
 	},
+	authToken: authTokenServer,
 	collection: collectionServer,
 	collectionAttribution: collectionAttributionServer,
 	collectionPub: collectionPubServer,

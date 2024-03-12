@@ -120,6 +120,9 @@ import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
 import { fromZodError } from 'zod-validation-error';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
+import { bearerStrategy } from './authToken/strategy';
+import { authTokenMiddleware } from './authToken/authTokenMiddleware';
+
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
 app.use(
@@ -159,9 +162,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(User.createStrategy());
 passport.use('zotero', zoteroAuthStrategy());
+passport.use('bearer', bearerStrategy());
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 /* ---------------- */
 /* Server Endpoints */
 /* ---------------- */
@@ -197,6 +201,8 @@ app.use((req, res, next) => {
 	}
 	next();
 });
+
+app.use(authTokenMiddleware);
 
 /** Set up purge middleware before api routes are initialized and after hostname is set */
 app.use(purgeMiddleware(schedulePurge));

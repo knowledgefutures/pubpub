@@ -1,7 +1,9 @@
 import { User as UserModel } from 'server/models';
 import { SerializedModel } from './serializedModel';
 
-type UserType = SerializedModel<UserModel>;
+type UserType = SerializedModel<UserModel> & {
+	isAdminOfThisCommunity?: boolean;
+};
 
 export type MinimalUser = Pick<
 	UserType,
@@ -29,8 +31,10 @@ export type User = Pick<
 	| 'github'
 	| 'googleScholar'
 	| 'authRedirectHost'
+	| 'isAdminOfThisCommunity'
 	| keyof MinimalUser
 >;
+
 export type UserWithPrivateFields = Pick<
 	UserType,
 	| keyof User

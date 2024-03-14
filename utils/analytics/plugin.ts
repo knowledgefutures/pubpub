@@ -1,6 +1,7 @@
 /* eslint-disable no-undef, import/no-unresolved */
 import { AnalyticsInstance, type AnalyticsPlugin } from 'analytics';
 
+// this gets rewritten to the AWS lambda on fastly
 const ANALYTICS_ENDPOINT = '/api/analytics/track' as const;
 
 /**
@@ -60,21 +61,20 @@ const sendData = (data: { payload: any; instance: AnalyticsInstance }) => {
 
 	// we use navigator.sendBeacon to make sure the request is sent even if the user navigates away from the page
 	// and doesn't block the rest of the page
-	navigator.sendBeacon(
-		ANALYTICS_ENDPOINT,
-		JSON.stringify({
-			event,
-			type,
-			timestamp: ts,
-			timezone,
-			locale,
-			userAgent,
-			os,
-			...properties,
-			...getReferrerAndUnique(),
-			...utmCampaign,
-		}),
-	);
+	const payloadToSend = {
+		event,
+		type,
+		timestamp: ts,
+		timezone,
+		locale,
+		userAgent,
+		os,
+		...properties,
+		...getReferrerAndUnique(),
+		...utmCampaign,
+	};
+
+	navigator.sendBeacon(ANALYTICS_ENDPOINT, JSON.stringify(payloadToSend));
 };
 
 export const analyticsPlugin = () => {

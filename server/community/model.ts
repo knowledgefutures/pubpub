@@ -170,7 +170,26 @@ export class Community extends Model<
 	declare twitter: string | null;
 
 	@Column(DataType.TEXT)
+	declare instagram: string | null;
+
+	@Column(DataType.TEXT)
+	declare mastodon: string | null;
+
+	@Column(DataType.TEXT)
+	declare linkedin: string | null;
+
+	@Column(DataType.TEXT)
+	declare bluesky: string | null;
+
+	@Column(DataType.TEXT)
+	declare github: string | null;
+
+	@Column(DataType.TEXT)
 	declare email: string | null;
+
+	// null means both
+	@Column(DataType.ENUM('header', 'footer'))
+	declare socialLinksLocation: 'header' | 'footer' | null;
 
 	@Column(DataType.TEXT)
 	declare issn: string | null;

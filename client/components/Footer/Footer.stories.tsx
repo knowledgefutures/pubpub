@@ -12,6 +12,12 @@ const socialItems = createSocialNavItems({
 	twitter: communityData.twitter,
 	facebook: communityData.facebook,
 	email: communityData.email,
+	mastodon: communityData.mastodon,
+	linkedin: communityData.linkedin,
+	github: communityData.github,
+	bluesky: communityData.bluesky,
+	socialLinksLocation: null,
+	instagram: communityData.instagram,
 });
 
 storiesOf('components/Footer', module)

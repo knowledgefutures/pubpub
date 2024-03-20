@@ -182,6 +182,18 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	declare github: string | null;
 
 	@Column(DataType.TEXT)
+	declare instagram: string | null;
+
+	@Column(DataType.TEXT)
+	declare mastodon: string | null;
+
+	@Column(DataType.TEXT)
+	declare linkedin: string | null;
+
+	@Column(DataType.TEXT)
+	declare bluesky: string | null;
+
+	@Column(DataType.TEXT)
 	declare orcid: string | null;
 
 	@Column(DataType.TEXT)

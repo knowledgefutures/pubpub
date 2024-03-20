@@ -4,7 +4,19 @@ import { Community } from './community';
 import { Page } from './page';
 import { IconName } from '../client/components/Icon/Icon';
 
-export type NavBuilderCommunity = Pick<Community, 'website' | 'twitter' | 'facebook' | 'email'>;
+export type NavBuilderCommunity = Pick<
+	Community,
+	| 'website'
+	| 'twitter'
+	| 'facebook'
+	| 'instagram'
+	| 'mastodon'
+	| 'linkedin'
+	| 'bluesky'
+	| 'github'
+	| 'email'
+	| 'socialLinksLocation'
+>;
 export type NavBuilderPage = Pick<Page, 'title' | 'id' | 'isPublic' | 'slug'>;
 export type NavBuilderCollection = Pick<Collection, 'title' | 'id' | 'isPublic' | 'slug'>;
 

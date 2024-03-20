@@ -27,6 +27,10 @@ const UserEdit = (props: Props) => {
 	const [github, setGithub] = useState(userData.github || '');
 	const [twitter, setTwitter] = useState(userData.twitter || '');
 	const [facebook, setFacebook] = useState(userData.facebook || '');
+	const [linkedin, setLinkedin] = useState(userData.linkedin || '');
+	const [instagram, setInstagram] = useState(userData.instagram || '');
+	const [mastodon, setMastodon] = useState(userData.mastodon || '');
+	const [bluesky, setBluesky] = useState(userData.bluesky || '');
 	const [googleScholar, setGoogleScholar] = useState(userData.googleScholar || '');
 	const [putUserIsLoading, setPutUserIsLoading] = useState(false);
 	const [putUserError, setPutUserError] = useState('');
@@ -75,6 +79,10 @@ const UserEdit = (props: Props) => {
 			github,
 			twitter,
 			facebook,
+			linkedin,
+			instagram,
+			mastodon,
+			bluesky,
 			googleScholar,
 		};
 
@@ -154,9 +162,9 @@ const UserEdit = (props: Props) => {
 			},
 		},
 		{
-			label: 'Twitter',
+			label: 'X (Twitter)',
 			// icon: `${Classes.ICON}-twitter`,
-			helperText: `https://twitter.com/${twitter}`,
+			helperText: `https://twitter.com/${twitter || '<your x/twitter handle>'} `,
 			value: twitter,
 			onChange: (evt) => {
 				setTwitter(evt.target.value);
@@ -165,10 +173,47 @@ const UserEdit = (props: Props) => {
 		{
 			label: 'Facebook',
 			// icon: `${Classes.ICON}-facebook`,
-			helperText: `https://facebook.com/${facebook}`,
+			helperText: `https://facebook.com/${facebook || '<your facebook handle>'}`,
 			value: facebook,
 			onChange: (evt) => {
 				setFacebook(evt.target.value);
+			},
+		},
+		{
+			label: 'LinkedIn',
+			helperText: `https://linkedin.com/in/${linkedin || '<your linkedin handle>'}`,
+			value: linkedin,
+			onChange: (evt) => {
+				setLinkedin(evt.target.value);
+			},
+		},
+		{
+			label: 'Instagram',
+			// icon: `${Classes.ICON}-instagram`,
+			helperText: `https://instagram.com/${instagram || '<your instagram handle>'}`,
+			value: instagram,
+			onChange: (evt) => {
+				setInstagram(evt.target.value);
+			},
+		},
+		{
+			label: 'Mastodon',
+			// icon: `${Classes.ICON}-mastodon`,
+			helperText: `https://${mastodon || '<Mastodon instance URL>/@<handle>'}`,
+			value: mastodon,
+			onChange: (evt) => {
+				setMastodon(evt.target.value);
+			},
+		},
+		{
+			label: 'Bluesky',
+			// icon: `${Classes.ICON}-bluesky`,
+			helperText: `https://bsky.app/profile/@${
+				bluesky || '<your bluesky handle>.<your-server.social>'
+			}`,
+			value: bluesky,
+			onChange: (evt) => {
+				setBluesky(evt.target.value);
 			},
 		},
 		{

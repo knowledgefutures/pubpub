@@ -14,6 +14,10 @@ export const updatePermissions = [
 	'github',
 	'twitter',
 	'facebook',
+	'linkedin',
+	'instagram',
+	'mastodon',
+	'bluesky',
 	'googleScholar',
 	'gdprConsent',
 ] as const;

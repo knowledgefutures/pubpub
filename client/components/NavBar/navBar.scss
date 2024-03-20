@@ -67,6 +67,9 @@ $bp: vendor.$bp-namespace;
 		width: 100%;
 	}
 	ul.social-list {
+		@media only screen and (max-width: 720px) {
+			display: none;
+		}
 		list-style: none;
 		margin: 0px;
 		padding: 0px;

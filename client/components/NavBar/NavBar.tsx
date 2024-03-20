@@ -31,7 +31,7 @@ const NavBar = function (props) {
 		pages,
 		collections,
 	});
-	const socialItems = createSocialNavItems(communityData);
+	const socialItems = createSocialNavItems(communityData, 'header');
 
 	const renderMenuSubitem = (subitem: NavbarItem, index: number) => {
 		if (!isNavbarMenu(subitem)) {
@@ -99,7 +99,11 @@ const NavBar = function (props) {
 					{socialItems.map((item) => {
 						return (
 							<li key={`social-item-${item.id}`}>
-								<a href={item.url} aria-label={item.title}>
+								<a
+									href={item.url}
+									aria-label={item.title}
+									{...item.additionalAttributes}
+								>
 									<Icon icon={item.icon} />
 								</a>
 							</li>

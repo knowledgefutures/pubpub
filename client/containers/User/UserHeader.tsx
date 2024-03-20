@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
 import { Classes } from '@blueprintjs/core';
+import { SocialItem } from 'client/utils/navigation';
 
 require('./userHeader.scss');
 
@@ -17,44 +18,61 @@ const defaultProps = {
 
 const UserHeader = function (props) {
 	const links = [
-		{ id: 0, value: props.userData.location, icon: <Icon icon="map-marker" /> },
+		{ value: props.userData.location, icon: 'map-marker' as const, url: '' },
 		{
-			id: 1,
 			value: props.userData.website,
-			icon: <Icon icon="link" />,
-			href: props.userData.website,
+			icon: 'link' as const,
+			url: props.userData.website,
 		},
 		{
-			id: 2,
 			value: props.userData.orcid,
-			icon: <Icon icon="orcid" />,
-			href: `https://www.orcid.org/${props.userData.orcid}`,
+			icon: 'orcid' as const,
+			url: `https://www.orcid.org/${props.userData.orcid}`,
 		},
 		{
-			id: 3,
 			value: props.userData.github,
-			icon: <Icon icon="github" />,
-			href: `https://github.com/${props.userData.github}`,
+			icon: 'github' as const,
+			url: `https://github.com/${props.userData.github}`,
 		},
 		{
-			id: 4,
 			value: props.userData.facebook,
-			icon: <Icon icon="facebook" />,
-			href: `https://www.facebook.com/${props.userData.facebook}`,
+			icon: 'facebook' as const,
+			url: `https://www.facebook.com/${props.userData.facebook}`,
 		},
 		{
-			id: 5,
 			value: props.userData.twitter,
-			icon: <Icon icon="twitter" />,
-			href: `https://twitter.com/${props.userData.twitter}`,
+			icon: 'twitter' as const,
+			url: `https://twitter.com/${props.userData.twitter}`,
 		},
 		{
-			id: 6,
-			value: props.userData.googleScholar,
-			icon: <Icon icon="google-scholar" />,
-			href: `https://scholar.google.com/citations?user=${props.userData.googleScholar}`,
+			icon: 'instagram' as const,
+			value: props.userData.instagram,
+			url: `https://instagram.com/${props.userData.instagram}`,
 		},
-	];
+		{
+			icon: 'mastodon' as const,
+			value: props.userData.mastodon,
+			url: `https://${props.userData.mastodon}`,
+			additionalAttributes: {
+				rel: 'me',
+			},
+		},
+		{
+			icon: 'linkedin' as const,
+			value: props.userData.linkedin,
+			url: `https://linkedin.com/in/${props.userData.linkedin}`,
+		},
+		{
+			icon: 'bluesky' as const,
+			value: props.userData.bluesky,
+			url: `https://bsky.app/profile/@${props.userData.bluesky}`,
+		},
+		{
+			value: props.userData.googleScholar,
+			icon: 'google-scholar' as const,
+			url: `https://scholar.google.com/citations?user=${props.userData.googleScholar}`,
+		},
+	] satisfies Omit<SocialItem, 'id' | 'title'>[];
 	return (
 		<div className="user-header-component">
 			<div className="avatar-wrapper">
@@ -86,14 +104,18 @@ const UserHeader = function (props) {
 						.map((link) => {
 							return (
 								<a
-									key={`link-${link.id}`}
+									key={`link-${link.icon}`}
 									className={`${Classes.BUTTON} ${Classes.MINIMAL} ${
-										!link.href ? 'no-click' : ''
+										!link.url ? 'no-click' : ''
 									}`}
-									href={link.href}
-									rel="noopener noreferrer"
+									href={link.url}
+									rel={`noopener noreferrer${
+										link.additionalAttributes?.rel
+											? ` ${link.additionalAttributes.rel}`
+											: ''
+									}`}
 								>
-									{link.icon}
+									<Icon icon={link.icon} />
 									{link.value}
 								</a>
 							);

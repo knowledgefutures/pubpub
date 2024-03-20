@@ -72,8 +72,12 @@ export const pubPageViewPayloadSchema = sharedPageViewPayloadSchema
 			pubTitle: z.string(),
 			pubId: z.string().uuid(),
 			pubSlug: z.string(),
-			collectionIds: z.array(z.string().uuid()),
+			collectionIds: z
+				.string()
+				.regex(/^[a-f0-9-]+(,[a-f0-9-]+)*$/)
+				.optional(),
 			primaryCollectionId: z.string().uuid().optional(),
+			release: z.literal('draft').or(z.number().int()),
 		}),
 	)
 	.merge(collectionPageViewPayloadSchema.omit({ event: true }).partial());

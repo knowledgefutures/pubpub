@@ -8,9 +8,6 @@ import {
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
 import { useFacetsQuery } from 'client/utils/useFacets';
-import { chooseCollectionForPub } from 'client/utils/collections';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
@@ -37,7 +34,7 @@ const PubDocument = () => {
 		pubBodyState: { isReadOnly, hidePubBody },
 	} = usePubContext();
 	const { isViewingHistory } = historyData;
-	const { communityData, scopeData, featureFlags, locationData, gdprConsent } = usePageContext();
+	const { communityData, scopeData, featureFlags } = usePageContext();
 	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const { isReviewingPub } = pubData;
@@ -49,39 +46,6 @@ const PubDocument = () => {
 	usePubHrefs({ enabled: !isReadOnly });
 
 	const showPubFileImport = (canEdit || canEditDraft) && !isReadOnly;
-
-	const uniqueCollectionIds = Array.from(
-		new Set((pubData.collectionPubs ?? []).map((cp) => cp.collectionId)),
-	);
-	// we want to make this a string of comma separated UUIDs instead of an array
-	// because Stitch will turn an array into a separate table with an event for each
-	// UUID in the array, which creates a ton of events for a single page view if the pub
-	// is in a lot of collections
-	// much easier to just have a single event with a string of UUIDs and then do some
-	// processing in Metabase
-	const collectionIds = uniqueCollectionIds.join(',') || undefined;
-	const collection = chooseCollectionForPub(pubData, locationData);
-
-	usePageOnce(
-		{
-			event: 'pub',
-			pubSlug: pubData.slug,
-			pubId: pubData.id,
-			pubTitle: pubData.title,
-			collectionIds,
-			collectionId: collection?.id,
-			collectionTitle: collection?.title,
-			collectionSlug: collection?.slug,
-			primaryCollectionId: getPrimaryCollection(pubData?.collectionPubs)?.id,
-			collectionKind: collection?.kind,
-			communityId: pubData.communityId,
-			communityName: communityData.title,
-			communitySubdomain: communityData.subdomain,
-			isProd: locationData.isProd,
-			release: pubData.isRelease && pubData.releaseNumber ? pubData.releaseNumber : 'draft',
-		},
-		gdprConsent,
-	);
 
 	if (hidePubBody) {
 		return null;

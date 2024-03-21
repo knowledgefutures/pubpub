@@ -1,7 +1,109 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PageViewPayload } from 'utils/api/schemas/analytics';
-import { useAnalytics } from './useAnalytics';
+// eslint-disable-next-line import/no-unresolved
+import { AnalyticsInstance } from 'analytics';
+import { InitialData, Page, PubPageData } from 'types';
+import { expect } from 'utils/assert';
+import { chooseCollectionForPub } from 'client/utils/collections';
+import { getPrimaryCollection } from 'utils/collections/primary';
 import { getThirdPartyPluginsObjectWithGdprConsent } from './thirdPartyPlugins';
+
+const determinePayload = (
+	props:
+		| {
+				initialData: InitialData;
+				viewData: any;
+		  }
+		| {
+				payload: PageViewPayload | (() => PageViewPayload | null);
+		  },
+): PageViewPayload | null => {
+	if ('payload' in props) {
+		const { payload } = props;
+		return typeof payload === 'function' ? payload() : payload;
+	}
+	const { initialData, viewData } = props;
+	const { scopeData, communityData, locationData } = initialData;
+
+	// pub pageview
+	if ('pubId' in scopeData.scope && scopeData.scope.pubId) {
+		const pubData = viewData.pubData as PubPageData;
+
+		const uniqueCollectionIds = Array.from(
+			new Set((pubData.collectionPubs ?? []).map((cp) => cp.collectionId)),
+		);
+		// we want to make this a string of comma separated UUIDs instead of an array
+		// because Stitch will turn an array into a separate table with an event for each
+		// UUID in the array, which creates a ton of events for a single page view if the pub
+		// is in a lot of collections
+		// much easier to just have a single event with a string of UUIDs and then do some
+		// processing in Metabase
+		const collectionIds = uniqueCollectionIds.join(',') || undefined;
+		const collection = chooseCollectionForPub(pubData, locationData);
+
+		return {
+			event: 'pub',
+			pubSlug: pubData.slug,
+			pubId: pubData.id,
+			pubTitle: pubData.title,
+			collectionIds,
+			collectionId: collection?.id,
+			collectionTitle: collection?.title,
+			collectionSlug: collection?.slug,
+			primaryCollectionId: getPrimaryCollection(pubData?.collectionPubs)?.id,
+			collectionKind: collection?.kind,
+			communityId: pubData.communityId,
+			communityName: communityData.title,
+			communitySubdomain: communityData.subdomain,
+			isProd: locationData.isProd,
+			release: pubData.isRelease && pubData.releaseNumber ? pubData.releaseNumber : 'draft',
+		};
+	}
+
+	/** Only track actual page visits, not dashboard visits e.g. when editing a page */
+	if (locationData.isDashboard) {
+		return null;
+	}
+
+	const base = {
+		communityId: communityData.id,
+		communityName: communityData.title,
+		communitySubdomain: communityData.subdomain,
+		isProd: locationData.isProd,
+	};
+
+	const collection = scopeData.elements.activeCollection;
+
+	// collection pageview
+	if (collection) {
+		return {
+			event: 'collection' as const,
+			collectionId: collection.id,
+			collectionTitle: collection.title,
+			collectionSlug: collection.slug,
+			collectionKind: expect(collection.kind),
+			...base,
+		};
+	}
+
+	const pageData = viewData.pageData as Page;
+
+	if (!pageData) {
+		return {
+			event: 'other' as const,
+			...base,
+		};
+	}
+
+	// normal pageview
+	return {
+		event: 'page' as const,
+		pageSlug: pageData.slug,
+		pageTitle: pageData.title,
+		pageId: pageData.id,
+		...base,
+	};
+};
 
 /**
  * Custom hook that sends a page view event to the analytics services only once.
@@ -35,18 +137,22 @@ import { getThirdPartyPluginsObjectWithGdprConsent } from './thirdPartyPlugins';
  * @param gdprConsent - Optional boolean indicating whether GDPR consent has been given.
  */
 export const usePageOnce = (
-	payload: PageViewPayload | (() => PageViewPayload | null),
-	gdprConsent?: boolean | null,
+	props: { analyticsInstance: AnalyticsInstance; gdprConsent?: boolean | null } & (
+		| {
+				payload: PageViewPayload | (() => PageViewPayload | null);
+		  }
+		| {
+				initialData: InitialData;
+				viewData: any;
+		  }
+	),
 ) => {
-	const { page, getState } = useAnalytics();
+	const { analyticsInstance, gdprConsent, ...rest } = props;
+
+	const { page, getState } = analyticsInstance;
+
 	const [hasFiredInitialEvent, setHasFiredInitialEvent] = useState(false);
 	const [hasFiredLazyPlugin, setHasFiredLazyPlugin] = useState(false);
-
-	// Function to get the payload
-	const getPayload = useCallback(
-		() => (typeof payload === 'function' ? payload() : payload),
-		[payload],
-	);
 
 	const { plugins } = getState();
 
@@ -58,7 +164,7 @@ export const usePageOnce = (
 			return;
 		}
 
-		const toBeSentPayload = getPayload();
+		const toBeSentPayload = determinePayload(rest);
 		if (!toBeSentPayload) {
 			return;
 		}

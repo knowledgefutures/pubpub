@@ -3,7 +3,7 @@ import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
 import { AnalyticsProvider } from 'use-analytics';
 
-import { shouldUseNewAnalytics, canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
+import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
 import { useLazyLoadedAnalyticsInstance } from 'utils/analytics/useLazyLoadedAnalyticsInstance';
 
 import {
@@ -30,6 +30,7 @@ import {
 	CollapsibleHeaderBPC,
 	collapsibleHeaderDataBPC,
 } from 'client/layouts';
+import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
@@ -51,17 +52,24 @@ type Props = {
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
 	const pageContextProps = usePageState(initialData, viewData);
+
 	const { communityData, locationData, scopeData, loginData, featureFlags, gdprConsent } =
 		pageContextProps;
 
 	const { analyticsSettings } = communityData;
 
 	const analyticsInstance = useLazyLoadedAnalyticsInstance({
-		shouldUseNewAnalytics: shouldUseNewAnalytics(featureFlags),
 		canUseCustomAnalyticsProvider: canUseCustomAnalyticsProvider(featureFlags),
 		analyticsSettings,
 		gdprConsent,
 		locationData,
+	});
+
+	usePageOnce({
+		analyticsInstance,
+		initialData,
+		viewData,
+		gdprConsent,
 	});
 
 	const pathObject = getPaths(viewData, locationData, chunkName);

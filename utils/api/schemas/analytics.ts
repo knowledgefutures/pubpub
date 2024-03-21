@@ -42,7 +42,14 @@ export const basePageViewSchema = baseSchema.merge(
 
 export const sharedPageViewPayloadSchema = sharedEventPayloadSchema.merge(
 	z.object({
-		event: z.enum(['page', 'collection', 'pub']),
+		event: z.enum(['page', 'collection', 'pub', 'other']),
+	}),
+);
+
+// for search, legal, explore, etc
+export const otherPageViewPayloadSchema = sharedPageViewPayloadSchema.merge(
+	z.object({
+		event: z.literal('other'),
 	}),
 );
 
@@ -83,6 +90,7 @@ export const pubPageViewPayloadSchema = sharedPageViewPayloadSchema
 	.merge(collectionPageViewPayloadSchema.omit({ event: true }).partial());
 
 export const pageViewPayloadSchema = z.discriminatedUnion('event', [
+	otherPageViewPayloadSchema,
 	pagePageViewPayloadSchema,
 	collectionPageViewPayloadSchema,
 	pubPageViewPayloadSchema,

@@ -9,8 +9,6 @@ import {
 	resolveLayoutPubsByBlock,
 } from 'utils/layout';
 import { usePageContext } from 'utils/hooks';
-import { assert, expect } from 'utils/assert';
-import { usePageOnce } from 'utils/analytics/usePageOnce';
 
 import LayoutPubs from './LayoutPubs';
 import LayoutHtml from './LayoutHtml';
@@ -30,46 +28,9 @@ type Props = LayoutOptions & {
 };
 
 const Layout = (props: Props) => {
-	const { locationData, loginData, communityData, pageData, gdprConsent } = usePageContext();
+	const { locationData, loginData, communityData } = usePageContext();
 	const { blocks, isNarrow, layoutPubsByBlock, id = '', collection } = props;
 	const pubsByBlockId = resolveLayoutPubsByBlock(layoutPubsByBlock, blocks);
-
-	/** Page track should only be done on mount & on client side */
-	usePageOnce(() => {
-		/** Only track actual page visits, not dashboard visits e.g. when editing a page */
-		if (locationData.isDashboard) {
-			return null;
-		}
-
-		const base = {
-			communityId: communityData.id,
-			communityName: communityData.title,
-			communitySubdomain: communityData.subdomain,
-			isProd: locationData.isProd,
-		};
-
-		if (collection) {
-			return {
-				event: 'collection' as const,
-				title: collection.title,
-				collectionId: collection.id,
-				collectionTitle: collection.title,
-				collectionSlug: collection.slug,
-				collectionKind: expect(collection.kind),
-				...base,
-			};
-		}
-
-		assert(!!pageData);
-
-		return {
-			event: 'page' as const,
-			pageSlug: pageData.slug,
-			pageTitle: pageData.title,
-			pageId: pageData.id,
-			...base,
-		};
-	}, gdprConsent);
 
 	const renderBlock = (block: LayoutBlock, index: number) => {
 		if (block.type === 'pubs') {

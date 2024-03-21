@@ -1,5 +1,5 @@
 /** Paths for which analytics should not be loaded */
-export const ingoredPaths = [
+export const ignoredPaths = [
 	/^\/dash\/.*/,
 	/^\/login/,
 	/^\/signup/,

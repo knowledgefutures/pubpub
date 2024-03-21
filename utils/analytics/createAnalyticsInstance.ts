@@ -69,19 +69,16 @@ export const setGdprSensitivePlugins = async (
 
 export const createAnalyticsInstance = async ({
 	appname = 'pubpub',
-	shouldUseNewAnalytics,
 	canUseCustomAnalyticsProvider,
 	gdprConsent,
 	analyticsSettings,
 }: {
 	appname?: string;
-	shouldUseNewAnalytics?: boolean;
 	canUseCustomAnalyticsProvider?: boolean;
 	gdprConsent?: boolean | null;
 	analyticsSettings: AnalyticsSettings;
 }) => {
 	const plugins = await loadAnalyticsPlugins({
-		shouldStub: !shouldUseNewAnalytics,
 		canUseCustomAnalyticsProvider,
 		analyticsSettings,
 		gdprConsent,
@@ -98,16 +95,9 @@ export const createAnalyticsInstance = async ({
 	return analytics;
 };
 
-export const createInitialAnalyticsInstance = (shouldUseNewAnalytics = true) => {
-	const initialAnalyticsPluginToUse = shouldUseNewAnalytics ? analyticsPlugin() : stubPlugin();
-
-	const stubInstance = Analytics({
+export const createInitialAnalyticsInstance = () =>
+	Analytics({
 		app: 'pubpub',
 		debug: true,
-		plugins: [initialAnalyticsPluginToUse],
-	});
-
-	stubInstance.isStub = true;
-
-	return stubInstance as AnalyticsInstance & { isStub: true };
-};
+		plugins: [analyticsPlugin()],
+	}) as AnalyticsInstance;

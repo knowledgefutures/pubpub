@@ -17,16 +17,20 @@ export const useLazyLoadedAnalyticsInstance = ({
 	analyticsSettings: AnalyticsSettings;
 	locationData: LocationData;
 }) => {
-	// first we load the initial instance without any third party plugins
-	const [analytics, setAnalytics] = useState<AnalyticsInstance>(createInitialAnalyticsInstance());
-
 	const isIgnoredPath = ignoredPaths.some((path) => path.test(locationData.path));
 
-	const needsCustomPlugin =
-		canUseCustomAnalyticsProvider && analyticsSettings !== null && !isIgnoredPath;
+	// first we load the initial instance without any third party plugins
+	const [analytics, setAnalytics] = useState<AnalyticsInstance>(
+		createInitialAnalyticsInstance({
+			// we don't want the analytics plugin to load on ignored paths
+			stub: isIgnoredPath,
+		}),
+	);
+
+	const needsCustomPlugin = canUseCustomAnalyticsProvider && analyticsSettings !== null;
 
 	useEffect(() => {
-		if (!needsCustomPlugin) {
+		if (!needsCustomPlugin || isIgnoredPath) {
 			return;
 		}
 

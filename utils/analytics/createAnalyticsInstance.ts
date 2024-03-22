@@ -95,9 +95,9 @@ export const createAnalyticsInstance = async ({
 	return analytics;
 };
 
-export const createInitialAnalyticsInstance = () =>
+export const createInitialAnalyticsInstance = ({ stub }: { stub?: boolean } = { stub: false }) =>
 	Analytics({
 		app: 'pubpub',
 		debug: true,
-		plugins: [analyticsPlugin()],
+		plugins: [stub ? stubPlugin() : analyticsPlugin()],
 	}) as AnalyticsInstance;

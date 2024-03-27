@@ -61,9 +61,14 @@ export const getUpdatableFieldsForCollectionPub = async ({
 	if (!userId) {
 		return null;
 	}
-	const { pubId, collectionId } = expect(
-		await CollectionPub.findOne({ where: { id: collectionPubId } }),
-	);
+	const collectionPub = await CollectionPub.findOne({ where: { id: collectionPubId } });
+	if (!collectionPub) {
+		// we pretend the user doesn't have permission to update the collectionPub
+		return null;
+	}
+
+	const { pubId, collectionId } = collectionPub;
+
 	const {
 		elements: { activeCollection },
 		activePermissions,
@@ -98,9 +103,14 @@ export const canDestroyCollectionPub = async ({
 	if (!userId) {
 		return false;
 	}
-	const { collectionId, pubId } = expect(
-		await CollectionPub.findOne({ where: { id: collectionPubId } }),
-	);
+	const collectionPub = await CollectionPub.findOne({ where: { id: collectionPubId } });
+	if (!collectionPub) {
+		// we pretend the user doesn't have permission to delete the collectionPub
+		return null;
+	}
+
+	const { pubId, collectionId } = collectionPub;
+
 	const {
 		activePermissions: { canManage },
 		elements: { activeCollection },

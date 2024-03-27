@@ -37,9 +37,15 @@ const CitationBuilder = (props: Props) => {
 	const [hasZoteroIntegration, setHasZoteroIntegration] = useState(false);
 
 	useEffect(() => {
-		apiFetch('/api/zoteroIntegration').then((res) => {
-			setHasZoteroIntegration(res.id);
-		});
+		apiFetch('/api/zoteroIntegration')
+			.then((res) => {
+				setHasZoteroIntegration(res.id);
+			})
+			.catch((e) => {
+				if (e.message !== 'no zotero integration present for user') {
+					console.error(e);
+				}
+			});
 	}, []);
 
 	useEffect(

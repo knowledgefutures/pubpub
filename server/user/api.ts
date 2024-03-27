@@ -1,7 +1,8 @@
 import passport from 'passport';
+import { z } from 'zod';
 
 import app, { wrap } from 'server/server';
-import { NotFoundError } from 'server/utils/errors';
+import { BadRequestError, NotFoundError } from 'server/utils/errors';
 
 import { isProd, isDuqDuq } from 'utils/environment';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
@@ -47,12 +48,14 @@ app.post('/api/users', (req, res) => {
 		});
 });
 
+const uuidParser = z.string().uuid();
+
 app.get(
 	'/api/users/:id',
 	wrap(async (req, res) => {
 		const { id } = req.params;
-		if (!id) {
-			throw new NotFoundError();
+		if (!id || !uuidParser.safeParse(id).success) {
+			throw new BadRequestError();
 		}
 
 		const userInfo = await getSuggestedEditsUserInfo(id);

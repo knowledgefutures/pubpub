@@ -54,4 +54,13 @@ describe('/api/users', () => {
 			avatar: suggestionUser.avatar,
 		});
 	});
+
+	it('returns 400 for /api/users/:id if its not a valid uuid', async () => {
+		const { user } = models;
+		const agent = await login(user);
+		await Promise.all([
+			agent.get('/api/users/not-a-uuid').expect(400),
+			agent.get('/api/users/null').expect(400),
+		]);
+	});
 });

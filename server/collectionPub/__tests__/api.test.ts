@@ -307,4 +307,30 @@ it('lets a user destroy a collectionPub for their Pub in an unrestricted Collect
 	expect(deletedCollectionPub).toEqual(null);
 });
 
+describe('what to do if pub is missing', () => {
+	it('403s if trying to delete a pub that does not exits', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+		await agent
+			.delete('/api/collectionPubs')
+			.send({
+				id: '51cdd239-2cf4-483d-8c25-2a1b90a153df',
+				communityId: community.id,
+			})
+			.expect(403);
+	});
+
+	it('403s if trying to update a pub that does not exits', async () => {
+		const { admin, community } = models;
+		const agent = await login(admin);
+		await agent
+			.put('/api/collectionPubs')
+			.send({
+				id: '51cdd239-2cf4-483d-8c25-2a1b90a153df',
+				communityId: community.id,
+			})
+			.expect(403);
+	});
+});
+
 teardown(afterAll);

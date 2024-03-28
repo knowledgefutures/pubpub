@@ -121,7 +121,7 @@ const Html = (props: Props) => {
 				</div>
 				<script
 					crossOrigin="anonymous"
-					src={`https://polyfill.io/v3/polyfill.min.js?features=${polyfills}`}
+					src={`https://polyfill-fastly.io/v3/polyfill.min.js?features=${polyfills}`}
 				/>
 				<script
 					id="initial-data"

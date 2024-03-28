@@ -62,7 +62,10 @@ const determinePayload = (
 			communityName: communityData.title,
 			communitySubdomain: communityData.subdomain,
 			isProd: locationData.isProd,
-			release: pubData.isRelease && pubData.releaseNumber ? pubData.releaseNumber : 'draft',
+			release:
+				pubData.isRelease && pubData.releaseNumber
+					? pubData.releaseNumber
+					: ('draft' as const),
 		};
 	}
 

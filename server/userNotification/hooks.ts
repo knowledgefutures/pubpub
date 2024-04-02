@@ -16,7 +16,7 @@ import { discussionTitle } from 'utils/activity/titles/discussion';
 import { ActivityRenderContext } from 'client/utils/activity/types';
 import { expect } from 'utils/assert';
 
-const mg = mailgun.client({
+export const mg = mailgun.client({
 	username: 'api',
 	key: process.env.MAILGUN_API_KEY!,
 });

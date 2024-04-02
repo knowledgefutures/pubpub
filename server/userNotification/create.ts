@@ -93,6 +93,7 @@ const createNotificationsForThreadComment = async (
 				activityItemId: item.id,
 			};
 		}),
+		{ individualHooks: true },
 	);
 
 	// purge cache for users who are receiving notifications

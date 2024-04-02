@@ -8,6 +8,11 @@ import { DocJson } from 'types';
 const models = modelize`
     User rando {}
     User chattyUser {}
+	User craveEmailUser {
+		UserNotificationPreferences {
+			receiveDiscussionThreadEmails: true
+		}
+	}
     Community {
         Member {
             permissions: "admin"
@@ -26,12 +31,19 @@ const models = modelize`
                 permissions: "view"
                 User sickOfThisThreadUser {} 
             }
+			Member {
+				permissions: "view"
+				user: craveEmailUser
+			}
             UserSubscription {
                 user: pubSubscriber
             }
             UserSubscription {
                 user: sickOfThisThreadUser
             }
+			UserSubscription {
+				user: craveEmailUser
+			}
             Discussion membersDiscussion {
                 number: 0
                 author: chattyUser
@@ -49,6 +61,9 @@ const models = modelize`
                         user: sickOfThisThreadUser
                         status: "muted"
                     }
+					UserSubscription {
+						user: craveEmailUser
+					}
                 }
             }
             Discussion publicDiscussion {
@@ -65,6 +80,9 @@ const models = modelize`
 						status: "inactive"
 						User inactiveSubscriptionUser {}
 					}
+					UserSubscription {
+						user: craveEmailUser
+					}
                 }
             }
             ReviewNew review {
@@ -77,17 +95,40 @@ const models = modelize`
                     UserSubscription {
                         user: communityAdmin
                     }
+					UserSubscription {
+						user: craveEmailUser
+					}
                 }
             }
         }
     }
 `;
 
-setup(beforeAll, models.resolve);
-teardown(afterAll);
+// eslint-disable-next-line import/extensions
+const mailgunMessages = require('../hooks.ts').mg.messages;
+
+setup(beforeAll, async () => {
+	await models.resolve();
+
+	// mock mailgun messages so we can listen for them
+	jest.spyOn(mailgunMessages, 'create').mockImplementation(
+		() =>
+			Promise.resolve({
+				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
+			}) as unknown as Promise<Response>,
+	);
+});
+
+afterEach(() => {
+	jest.clearAllMocks();
+});
+
+teardown(afterAll, () => {
+	jest.restoreAllMocks();
+});
 
 describe('UserNotifications created when ActivityItems are created', () => {
-	it('creates the right notifications for a members-only Discussion ThreadComment', async () => {
+	it('creates the right notifications for a members-only Discussion ThreadComment and sends email to users who have explicitly opted in', async () => {
 		const {
 			membersThread,
 			chattyUser,
@@ -131,11 +172,24 @@ describe('UserNotifications created when ActivityItems are created', () => {
 				),
 			),
 		).toEqual([0, 1, 1, 0, 0]);
+
+		// sends email to craveEmailUser
+		expect(mailgunMessages.create).toHaveBeenCalledTimes(1);
 	});
 
-	it('creates the right notifications for a public Discussion ThreadComment', async () => {
-		const { chattyUser, inactiveSubscriptionUser, rando, pubSubscriber, publicThread, pub } =
-			models;
+	it('creates the right notifications for a public Discussion ThreadComment and send emails to users who have explicitly opted in', async () => {
+		// check that mock has been reset correctly
+		expect(mailgunMessages.create).toHaveBeenCalledTimes(0);
+
+		const {
+			chattyUser,
+			inactiveSubscriptionUser,
+			rando,
+			pubSubscriber,
+			craveEmailUser,
+			publicThread,
+			pub,
+		} = models;
 		const threadComment = await createThreadComment({
 			text: 'Hello world',
 			threadId: publicThread.id,
@@ -157,6 +211,8 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					rando,
 					// Creates a UserNotification for a user subscribed to a Pub
 					pubSubscriber,
+					// Creates a UserNotification for a user subscribed to a pub and thread
+					craveEmailUser,
 					// Does not create a UserNotification for one's own ThreadComment
 					chattyUser,
 					// Does not create a UserNotification for an inactive subscription
@@ -167,11 +223,15 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					}),
 				),
 			),
-		).toEqual([1, 1, 0, 0]);
+		).toEqual([1, 1, 1, 0, 0]);
+
+		// sends one email
+		expect(mailgunMessages.create).toHaveBeenCalledTimes(1);
 	});
 
-	it('creates the right notifications for a members-only Review ThreadComment', async () => {
-		const { chattyUser, communityAdmin, pubSubscriber, reviewThread, pub } = models;
+	it('creates the right notifications for a members-only Review ThreadComment and does not send emails', async () => {
+		const { chattyUser, communityAdmin, pubSubscriber, craveEmailUser, reviewThread, pub } =
+			models;
 		const threadComment = await createThreadComment({
 			text: 'Hello world',
 			threadId: reviewThread.id,
@@ -191,6 +251,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 				[
 					// Creates a UserNotification for a subscriber to the Thread
 					communityAdmin,
+					craveEmailUser,
 					// Does not create a UserNotification for a user subscribed to the parent Pub
 					pubSubscriber,
 				].map((user) =>
@@ -199,6 +260,9 @@ describe('UserNotifications created when ActivityItems are created', () => {
 					}),
 				),
 			),
-		).toEqual([1, 0]);
+		).toEqual([1, 1, 0]);
+
+		// sends no email for review thread
+		expect(mailgunMessages.create).toHaveBeenCalledTimes(0);
 	});
 });

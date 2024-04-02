@@ -21,6 +21,8 @@ import PubInlineMenu from './PubInlineMenu';
 import PubInlineSuggestedEdits from './PubInlineSuggestedEdits';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
+import ContributorsListCondensed from '../../../components/ContributorsListCondensed/ContributorsListCondensed';
+import { getAllPubContributors } from '../../../../utils/contributors';
 
 require('./pubDocument.scss');
 
@@ -41,6 +43,7 @@ const PubDocument = () => {
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
+	const contributors = getAllPubContributors(pubData, 'contributors');
 
 	usePermalinkOnMount();
 	usePubHrefs({ enabled: !isReadOnly });
@@ -83,6 +86,16 @@ const PubDocument = () => {
 					{!isViewingHistory && <PubInlineMenu />}
 					{featureFlags.suggestedEdits && !isViewingHistory && (
 						<PubInlineSuggestedEdits />
+					)}
+					{featureFlags.bodyContributors && (
+						<div className="body-contributors">
+							<h5 className="body-contributors-header">
+								Contributors
+								<br />
+								(A–Z)
+							</h5>
+							<ContributorsListCondensed attributions={contributors} />
+						</div>
 					)}
 					<PubEdgeListing
 						className="bottom-pub-edges"

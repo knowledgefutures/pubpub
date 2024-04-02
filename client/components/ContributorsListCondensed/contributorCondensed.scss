@@ -1,0 +1,100 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.body-contributors {
+	display: flex;
+	gap: 92px;
+	.body-contributors-header {
+		line-height: 24px;
+		color: #333;
+	}
+}
+
+.contributors-list-condensed_contributor-component {
+	display: flex;
+	margin-bottom: 8px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.avatar-wrapper {
+		flex-shrink: 0;
+		z-index: 0;
+		a {
+			text-decoration: none;
+			display: block;
+		}
+	}
+
+	.details-wrapper {
+		padding-left: 7px;
+		.name {
+			font-size: 16px;
+			font-weight: 600;
+			width: 100%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			a,
+			a:hover,
+			a:visited {
+				color: inherit;
+			}
+			&:first-child:last-child {
+				line-height: 26px; // Center w.r.t. avatar
+			}
+		}
+	}
+
+	.avatar-component {
+		margin-bottom: 2px;
+	}
+
+	.separator {
+		color: #ffa35c;
+		margin-left: 12px;
+		margin-right: 12px;
+	}
+
+	.roles {
+		font-size: 16px;
+		margin-top: 3px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	.contributors-list-condensed_contributor-component {
+		.body-contributors {
+			display: block;
+		}
+	}
+	.pub-document-component {
+		.body-contributors {
+			display: block;
+		}
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.contributors-list-condensed_contributor-component {
+		display: block;
+		.avatar-wrapper {
+			float: left;
+		}
+		.details-wrapper {
+			display: inline-block;
+		}
+		.avatar-component {
+			margin-top: 3px;
+		}
+		.roles {
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+	}
+	.separator {
+		display: none;
+	}
+}

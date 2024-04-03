@@ -4,7 +4,7 @@ import pick from 'lodash.pick';
 import { Community, PageContext } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { canUseCustomAnalyticsProvider, shouldUseNewAnalytics } from 'utils/analytics/featureFlags';
+import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
@@ -148,8 +148,7 @@ const CommunitySettings = () => {
 				<CommunityOrCollectionLevelPubSettings />,
 			],
 		},
-		...(shouldUseNewAnalytics(pageContext.featureFlags) &&
-		canUseCustomAnalyticsProvider(pageContext.featureFlags) &&
+		...(canUseCustomAnalyticsProvider(pageContext.featureFlags) &&
 		(pageContext.scopeData.activePermissions.canAdminCommunity ||
 			pageContext.scopeData.activePermissions.isSuperAdmin)
 			? [

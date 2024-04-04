@@ -8,6 +8,13 @@ if (process.env.NODE_ENV !== 'production') {
 	// FIXME: Weird eslint issue where either with or without the extension is an error
 	// eslint-disable-next-line import/extensions
 	require('../config.js');
+} else {
+	const Sentry = require('@sentry/node');
+	Sentry.init({
+		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
+		environment: 'prod',
+		tracesSampleRate: 1.0,
+	});
 }
 
 require('server/utils/serverModuleOverwrite');

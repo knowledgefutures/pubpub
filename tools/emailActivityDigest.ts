@@ -3,6 +3,7 @@
 import { Op } from 'sequelize';
 import mailgun from 'mailgun.js';
 
+import * as Sentry from '@sentry/node';
 import { asyncMap } from 'utils/async';
 import { iterAllCommunities } from 'server/community/queries';
 import { Member, includeUserModel } from 'server/models';
@@ -46,7 +47,7 @@ async function main() {
 						console.log(`user ${user.id} ${email}`);
 						// Create an activity digest email
 						const scope = { communityId: community.id };
-						const digest = await renderDigestEmail(community.toJSON(), { scope, user });
+						const digest = await renderDigestEmail(community, { scope, user });
 						if (digest === null) return;
 						await mg.messages.create('mg.pubpub.org', {
 							from: 'PubPub Team <hello@mg.pubpub.org>',
@@ -58,6 +59,7 @@ async function main() {
 					} catch (err) {
 						// eslint-disable-next-line no-console
 						console.log(`sending email failed: ${err}`);
+						Sentry.captureException(err);
 					}
 				},
 				{ concurrency: 10 },

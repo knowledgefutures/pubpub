@@ -19,6 +19,7 @@ import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { updateCommunityData } from 'server/utils/search';
 import { defer } from 'server/utils/deferred';
 import { getSpamTagForCommunity } from 'server/spamTag/queries';
+import * as types from 'types';
 
 export const getCommunity = (communityId: string) => {
 	return Community.findOne({
@@ -222,7 +223,7 @@ export const isUserAffiliatedWithCommunity = async (userId: string, communityId:
 	return isHere;
 };
 
-export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<Community[]> {
+export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {
 	let offset = 0;
 	while (true) {
 		const communities = await Community.findAll({
@@ -230,7 +231,7 @@ export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<C
 			offset,
 			raw: true,
 		});
-		yield communities;
+		yield communities as types.Community[];
 		if (communities.length < limit) break;
 		offset += limit;
 	}

@@ -41,13 +41,19 @@ const downloadGcpFile = async (file: File): Promise<BackupFile> => {
 	const writeStream = fs.createWriteStream(localPath);
 	return new Promise((resolve, reject) => {
 		readStream
-			.on('end', () =>
-				resolve({
+			.on('end', () => {
+				let size;
+				if (typeof metadata.size === 'string') {
+					size = parseInt(metadata.size, 10);
+				} else {
+					size = metadata.size;
+				}
+				return resolve({
 					localPath,
 					remotePath: file.name,
-					size: parseInt(metadata.size, 10),
-				}),
-			)
+					size,
+				});
+			})
 			.on('error', reject);
 		readStream.pipe(writeStream);
 	});

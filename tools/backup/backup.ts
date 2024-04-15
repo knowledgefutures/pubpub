@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import prettyBytes from 'pretty-bytes';
 
 import { postToSlack } from 'server/utils/slack';
@@ -47,6 +48,7 @@ const main = async () => {
 	} catch (err) {
 		if (err instanceof Error) {
 			console.error(err);
+			Sentry.captureException(err);
 			postToSlackAboutError(err);
 		}
 	}

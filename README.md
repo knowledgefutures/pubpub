@@ -10,7 +10,7 @@ The roadmap is intended to be a general overview of our plans. It will provide a
 
 The easiest way to access the PubPub API is through the [PubPub SDK](https://github.com/pubpub/sdk).
 
-You can find documentation about the PubPub API at https://pubpub.org/apiDocs, or https://<yourcommunityURL>/apiDocs.
+You can find documentation about the PubPub API at https://pubpub.org/apiDocs, or https://\<yourcommunityURL\>/apiDocs.
 
 ## Bugs, Feature Requests, Help, and Feedback
 

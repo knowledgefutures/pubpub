@@ -329,33 +329,39 @@ const PrivacyPolicy = function () {
 
 			<h3>5. Third-Party Analytics</h3>
 			<p>
-				PubPub uses Heap, a third-party analytics service. Heap collects anonymous
-				information from users to help us track Site usage and referrals from other
-				websites. Information collected and processed by Heap includes the user’s IP
-				address, network location, and geographic location. Heap acquires all its
-				information directly from the user, by installing a cookie on JavaScript-enabled
-				computers.
+				PubPub does not use third-party analytics. PubPub does use cookieless first-party
+				analytics to help us and Third-Party Publishers (as defined in our Terms of Service)
+				understand user behavior and track Site usage and referrals from other websites.
+				Information collected and processed by our first-party analytics service does not
+				include IP address or any other sensitive or personal information.
 			</p>
 			<p>
-				We use the information collected by Heap to perform Site usage analytics through
-				storing, aggregating and summarizing information about user behavior on our
-				platform. We do this to optimize the website experience for our visitors, to help
-				our engineering team make product decisions, and to help communities who use our
-				service to measure the performance of their content. If you allow us to enable Heap
-				while you browse, we will send requests to Heap’s servers containing things like the
-				URL of the current page, your browser version, and your IP address. If you&#x27;re
-				logged in, we will also send your PubPub user ID, which is made of random letters
-				and numbers.
+				PubPub allows Third-Party Publishers to use Google Analytics or Simple Analytics to
+				collect anonymous information from users to help them track Site usage and referrals
+				from other websites. Information collected and processed by Third-Party Publishers
+				using Google Analytics includes the user’s IP address, network location, and
+				geographic location. Google Analytics acquires all its information directly from the
+				user, by installing a cookie on JavaScript-enabled computers. Simple Analytics does
+				not use cookies and does not collect IP addresses or any other sensitive
+				information. Third-Party Publishers choosing to use Google Analytics or Simple
+				Analytics must use PubPub's default tracking library and cannot add custom tracking
+				events. Third-Party Publishers are wholly responsible for complying with PubPub's
+				terms, as well as the terms of their chosen analytics service.
 			</p>
 			<p>
-				We will never send Heap any identifying information such as your name, affiliation,
-				or email address.
+				If you allow Third-Party Publishers to enable Google Analytics while you browse,
+				they will send requests to Google Analytic's servers containing things like the URL
+				of the current page, your browser version, and your IP address.
 			</p>
 			<p>
-				We do not share with Heap or other third parties any Personal Information, and Heap
-				does not collect any personal identifying information.
+				We will never send Third-Party Publishers, Google Analytis, or Simple Analytics any
+				identifying information such as your name, affiliation, or email address.
 			</p>
-			<p>For more information about Heap, please visit https://heap.io/tos/.</p>
+			<p>
+				We do not share with Google Analytics, Simple Analytics, or other third parties any
+				Personal Information, and Google Analytics and Simple Analytics do not collect any
+				personal identifying information as configured on PubPub.
+			</p>
 			<h3>6. Third-Party Links</h3>
 
 			<p>

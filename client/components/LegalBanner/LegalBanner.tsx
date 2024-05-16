@@ -63,11 +63,13 @@ const banners: Banner[] = [
 		notice: () => {
 			return (
 				<p>
-					PubPub uses third-party cookies to help our team and our communities understand
-					which features and content on PubPub are receiving traffic.{' '}
-					<b>We don't sell this data or share it with anyone else</b>, and we don't use
-					third-party processors who aggregate and sell data. Visit your{' '}
-					<a href="/legal/settings">privacy settings</a> to learn more.
+					This community uses third-party cookies to understand which features and content
+					on their site are receiving traffic.{' '}
+					<b>
+						We don't allow communities to share personal data or sell or share this data
+						with anyone else.
+					</b>
+					. Visit your <a href="/legal/settings">privacy settings</a> to learn more.
 				</p>
 			);
 		},

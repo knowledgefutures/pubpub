@@ -61,20 +61,18 @@ const ThirdPartyAnalyticsCard = () => {
 		<Card>
 			<h5>Third-party analytics</h5>
 			<p>
-				PubPub uses a third-party analytics service called Heap to store, aggregate and
-				summarize information about user behavior on our platform. We do this to help our
-				engineering team make product decisions and communities who use our service to
-				measure the performance of their content. We do not share any personally
-				identifiable information with communities on PubPub or any other third parties. We
-				pay Heap rather than using a more popular platform like Google Analytics, which is
-				free but allows Google to process your data and re-sell it across the web.
+				PubPub allows Third Party Publishers to use Google Analytics to store, aggregate and
+				summarize information about user behavior on our platform. We do this to help
+				communities who use our service to measure the performance of their content. We do
+				not share any personally identifiable information with communities on PubPub or any
+				other third parties.
 			</p>
 			<p>
-				If you allow us to enable Heap while you browse, we'll send requests to their
-				servers containing things like the URL of the current page, your browser version,
-				and your IP address. If you're logged in, we'll also send your PubPub user ID, which
-				is made of random letters and numbers. We'll never send Heap any identifying
-				information such as your name, affiliation, or email address.
+				If you allow us to enable Google Analytics on behalf of other communities while you
+				browse, we'll send requests to their servers containing things like the URL of the
+				current page, your browser version, and your IP address. We'll never send Google
+				Analytics any identifying information such as your name, affiliation, or email
+				address.
 			</p>
 			<Switch
 				checked={!!isEnabled}

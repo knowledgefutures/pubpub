@@ -6,7 +6,6 @@ import { FocusStyleManager } from '@blueprintjs/core';
 import { setEnvironment, setAppCommit } from 'utils/environment';
 
 import { getClientInitialData } from './initialData';
-import { setupHeap } from './heap';
 
 const isStorybookEnv = (windowObj) =>
 	windowObj.location.origin === 'http://localhost:9001' || windowObj.STORYBOOK_ENV === 'react';
@@ -38,7 +37,6 @@ export const hydrateWrapper = (Component) => {
 			document.getElementById('chunk-name').getAttribute('data-json'),
 		);
 		if (!isLocalEnv(window)) {
-			setupHeap(initialData);
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'sentryIsActive' does not exist on type '... Remove this comment to see the full error message
 			window.sentryIsActive = true;
 			Sentry.init({

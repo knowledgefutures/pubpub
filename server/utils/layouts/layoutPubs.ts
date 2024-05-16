@@ -58,7 +58,6 @@ const getPubIdsForLayoutBlock = async (
 const getPubsForPubIds = async (pubIds: string[], initialData: InitialData) => {
 	return getPubsById(pubIds, {
 		isPreview: true,
-		getCollections: true,
 	}).sanitize(initialData);
 };
 

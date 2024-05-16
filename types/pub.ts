@@ -114,7 +114,7 @@ export type SanitizedPubData = Pub & {
 	releaseNumber: number | null;
 };
 
-export type PubWithCollections = Pub & {
+export type PubWithCollections = Omit<Pub, 'collectionPubs'> & {
 	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 };
 

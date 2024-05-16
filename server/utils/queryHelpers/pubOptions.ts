@@ -120,35 +120,61 @@ export default ({
 			},
 		];
 	}
+
 	if (getCollections) {
+		const shouldFetchCollection = getCollections === true || getCollections.collection;
+		const isNested = typeof getCollections === 'object';
+
+		const { page, members, attributions } = shouldFetchCollection
+			? isNested
+				? typeof getCollections.collection === 'object'
+					? getCollections.collection
+					: {
+							page: false,
+							members: false,
+							attributions: false,
+					  }
+				: {
+						page: true,
+						members: true,
+						attributions: true,
+				  }
+			: {
+					page: false,
+					members: false,
+					attributions: false,
+			  };
+
 		collectionPubs = [
 			{
 				model: CollectionPub,
 				as: 'collectionPubs',
 				separate: true,
 				order: [['pubRank', 'ASC']],
-				include: [
-					{
-						model: Collection,
-						as: 'collection',
-						include: [
-							{
-								model: Page,
-								as: 'page',
-								attributes: ['id', 'title', 'slug'],
-							},
-							{
-								model: Member,
-								as: 'members',
-							},
-							{
-								model: CollectionAttribution,
-								as: 'attributions',
-								include: [includeUserModel({ as: 'user' })],
-							},
-						],
-					},
-				],
+				...(shouldFetchCollection && {
+					include: [
+						{
+							model: Collection,
+							as: 'collection',
+							include: [
+								page && {
+									model: Page,
+									as: 'page',
+									attributes: ['id', 'title', 'slug'],
+								},
+								members && {
+									model: Member,
+									as: 'members',
+								},
+								attributions && {
+									model: CollectionAttribution,
+									as: 'attributions',
+									include: [includeUserModel({ as: 'user' })],
+								},
+							].filter(Boolean),
+						},
+					],
+				}),
 			},
 		];
 	}

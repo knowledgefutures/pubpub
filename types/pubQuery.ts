@@ -36,7 +36,27 @@ export type PubEdgeIncludesOptions = {
 export type PubGetOptions = {
 	isAuth?: boolean;
 	isPreview?: boolean;
-	getCollections?: boolean;
+	// get collection pubs for pub
+	getCollections?:
+		| boolean
+		| {
+				/**
+				 * ```
+				 * 	false - don't include collections
+				 * 	{} - include collections with default options
+				 * 	{ page: true } - include collections with page data
+				 * 	{ members: true } - include collections with members data
+				 * 	{ attributions: true } - include collections with attributions data
+				 * ```
+				 */
+				collection:
+					| false
+					| {
+							page?: boolean;
+							members?: boolean;
+							attributions?: boolean;
+					  };
+		  };
 	getMembers?: boolean;
 	getCommunity?: boolean;
 	getExports?: boolean;

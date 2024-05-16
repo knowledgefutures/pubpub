@@ -48,8 +48,10 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 			throw new ForbiddenError();
 		}
 
-		const overviewData = await getCollectionOverview(initialData);
-		const submissionWorkflow = await getSubmissionWorkflow(overviewData.collection.id);
+		const [overviewData, submissionWorkflow] = await Promise.all([
+			getCollectionOverview(initialData),
+			getSubmissionWorkflow(elements.activeCollection.id),
+		]);
 
 		const hasEnabledSubmissionWorkflow = submissionWorkflow && submissionWorkflow.enabled;
 

@@ -32,7 +32,9 @@ const getPubs = async (initialData: InitialData, collectionId: string, limit: nu
 			ordering: { field: 'collectionRank', direction: 'ASC' },
 		},
 		options: {
-			getCollections: true,
+			getCollections: {
+				collection: {},
+			},
 		},
 	});
 	return result.sanitize(initialData);

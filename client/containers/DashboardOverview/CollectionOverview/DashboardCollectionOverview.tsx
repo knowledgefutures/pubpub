@@ -15,6 +15,7 @@ import {
 	Maybe,
 	DefinitelyHas,
 	UserScopeVisit,
+	Pub,
 } from 'types';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
@@ -40,7 +41,7 @@ type Props = {
 	overviewData: {
 		collection: DefinitelyHas<Collection, 'scopeSummary'>;
 		collectionPubs: CollectionPub[];
-		pubs: PubWithCollections[];
+		pubs: Pub[];
 		userScopeVisits: UserScopeVisit[];
 		includesAllPubs: boolean;
 	};
@@ -105,7 +106,9 @@ const DashboardCollectionOverview = (props: Props) => {
 			...query,
 		},
 		pubOptions: {
-			getCollections: true,
+			getCollections: {
+				collection: {},
+			},
 		},
 	});
 

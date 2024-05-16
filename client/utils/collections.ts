@@ -103,12 +103,13 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 			offset,
 		})
 			.then((res) => {
-				updatePubs(res);
-				setIsLoading(false);
-				setOffset((oldOffset) => oldOffset + DEFAULT_LIMIT);
+				// for some reason this has to be done first, seems like the setstate updates don't get batched properly
 				if (res.length < DEFAULT_LIMIT) {
 					setHasLoadedAllPubs(true);
 				}
+				updatePubs(res);
+				setIsLoading(false);
+				setOffset((oldOffset) => oldOffset + DEFAULT_LIMIT);
 			})
 			.catch((err) => {
 				setError(err);

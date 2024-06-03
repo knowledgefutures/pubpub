@@ -17,6 +17,7 @@ const buildRobotsFile = (community) => {
 		return stripIndent(`
 			User-agent: *
 			Disallow: /login?redirect=*
+			Disallow: /dash/*
 			Sitemap: ${communityUrl(community)}/sitemap-index.xml
 		`).trim();
 	}

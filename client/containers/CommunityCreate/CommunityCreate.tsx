@@ -18,13 +18,11 @@ const CommunityCreate = () => {
 	const [accentColorLight, setAccentColorLight] = useState('#FFFFFF');
 	const [acceptTerms, setAcceptTerms] = useState(false);
 	const [createIsLoading, setCreateIsLoading] = useState(false);
-	const [createError, setCreateError] = useState(undefined);
+	const [createError, setCreateError] = useState<string | undefined>(undefined);
 
 	const onCreateSubmit = (evt) => {
 		evt.preventDefault();
 		setCreateIsLoading(true);
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'true' is not assignable to param... Remove this comment to see the full error message
-		setCreateError(true);
 		if (!acceptTerms) return false;
 		return apiFetch('/api/communities', {
 			method: 'POST',
@@ -160,7 +158,15 @@ const CommunityCreate = () => {
 									.
 								</Checkbox>
 							</InputField>
-							<InputField error={createError && 'Error Creating Community'}>
+							<InputField
+								error={
+									createError
+										? createError === 'URL already used'
+											? 'URL already in use by another community'
+											: 'Error Creating Community'
+										: undefined
+								}
+							>
 								<Button
 									name="create"
 									type="submit"

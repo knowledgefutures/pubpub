@@ -69,6 +69,7 @@ export const communityRouter = {
 		body: communityCreateSchema,
 		responses: {
 			201: z.string().url(),
+			409: z.string(),
 		},
 	},
 	/**

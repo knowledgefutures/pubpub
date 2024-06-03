@@ -21,6 +21,8 @@ import { defer } from 'server/utils/deferred';
 import { getSpamTagForCommunity } from 'server/spamTag/queries';
 import * as types from 'types';
 
+export class CommunityURLAlreadyExistsError extends Error {}
+
 export const getCommunity = (communityId: string) => {
 	return Community.findOne({
 		where: { id: communityId },
@@ -51,7 +53,7 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 		'test',
 	];
 	if (forbiddenSubdomains.indexOf(subdomain) > -1) {
-		throw new Error('URL already used');
+		throw new CommunityURLAlreadyExistsError('URL already used');
 	}
 	return Community.findOne({
 		where: { subdomain },
@@ -59,7 +61,7 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 	})
 		.then((existingCommunity) => {
 			if (existingCommunity) {
-				throw new Error('URL already used');
+				throw new CommunityURLAlreadyExistsError('URL already used');
 			}
 			const description = inputValues.description.substring(0, 280).replace(/\n/g, ' ') || '';
 			return Community.create(

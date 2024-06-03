@@ -7,7 +7,12 @@ import { contract } from 'utils/api/contract';
 import { findCommunityByHostname } from 'utils/ensureUserIsCommunityAdmin';
 
 import { getPermissions } from './permissions';
-import { createCommunity, getCommunity, updateCommunity } from './queries';
+import {
+	createCommunity,
+	getCommunity,
+	updateCommunity,
+	CommunityURLAlreadyExistsError,
+} from './queries';
 
 const getRequestIds = createGetRequestIds<{
 	communityId?: string | null;
@@ -41,11 +46,23 @@ export const communityServer = s.router(contract.community, {
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
-		const newCommunity = await createCommunity(req.body, req.user);
-		return {
-			body: `https://${newCommunity.subdomain}.pubpub.org`,
-			status: 201,
-		};
+		try {
+			const newCommunity = await createCommunity(req.body, req.user);
+			return {
+				body: `https://${newCommunity.subdomain}.pubpub.org`,
+				status: 201,
+			};
+		} catch (e) {
+			if (e instanceof CommunityURLAlreadyExistsError) {
+				return {
+					body: e.message,
+					status: 409,
+				};
+			}
+			console.error(e);
+
+			throw new Error('Failed to create community');
+		}
 	},
 	update: async ({ body, req }) => {
 		const requestIds = getRequestIds(body, req.user);

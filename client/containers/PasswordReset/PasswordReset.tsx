@@ -113,7 +113,7 @@ const PasswordReset = (props: Props) => {
 				{/* Show password reset request confirmation, with directions to check email  */}
 				{!resetHash && showConfirmation && (
 					<NonIdealState
-						description="Check your inbox for an email with a reset link"
+						description="If your email is known to us, we have sent you an email with a reset link"
 						title="Reset Password Email Sent"
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ description: string; title: string; visual... Remove this comment to see the full error message
 						visual="envelope"

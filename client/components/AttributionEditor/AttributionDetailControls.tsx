@@ -6,7 +6,6 @@ import { AttributionWithUser } from 'types';
 import { ORCID_ID_OR_URL_PATTERN } from 'utils/orcid';
 
 import { getFilteredRoles } from './roles';
-import InputField from '../InputField/InputField';
 
 type Props = {
 	attribution: AttributionWithUser;
@@ -128,36 +127,40 @@ const AttributionDetailControls = (props: Props) => {
 					}
 				/>
 				{isShadowAttribution && (
-					<InputField
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '"" | Element | undefined' is not assignable ... Remove this comment to see the full error message
-						rightElement={orcid && <Tag minimal>ORCID</Tag>}
-						placeholder="ORCID"
-						defaultValue={orcid ?? undefined}
-						onChange={(evt) => {
-							const input = evt.target.value;
-							const orcidInvalidity = isOrcidInvalid(input);
-							setInvalidOrcid(orcidInvalidity);
-
-							if (!orcidInvalidity) {
+					<div
+						className={`${invalidOrcid ? `${Classes.INTENT_DANGER} ` : ''}${
+							Classes.INPUT_GROUP
+						} ${Classes.FORM_GROUP}`}
+					>
+						<InputGroup
+							rightElement={orcid ? <Tag minimal>ORCID</Tag> : undefined}
+							placeholder="ORCID"
+							defaultValue={orcid ?? undefined}
+							onChange={(evt) => {
+								const input = evt.target.value;
+								const orcidInvalidity = isOrcidInvalid(input);
+								setInvalidOrcid(orcidInvalidity);
+								if (!orcidInvalidity) {
+									onAttributionUpdateWithValidation({
+										id,
+										orcid: input.trim(),
+									});
+								}
+							}}
+							onBlur={(evt) => {
+								setInvalidOrcid(isOrcidInvalid(evt.target.value));
 								onAttributionUpdateWithValidation({
 									id,
-									orcid: input.trim(),
+									orcid: evt.target.value.trim(),
 								});
-							}
-						}}
-						onBlur={(evt) => {
-							setInvalidOrcid(isOrcidInvalid(evt.target.value));
-							onAttributionUpdateWithValidation({
-								id,
-								orcid: evt.target.value.trim(),
-							});
-						}}
-						error={
-							invalidOrcid
-								? 'Invalid ORCID. Please enter a valid ORCID or leave the field blank.'
-								: undefined
-						}
-					/>
+							}}
+						/>
+						{invalidOrcid && (
+							<div className={`${Classes.FORM_HELPER_TEXT}`}>
+								Invalid ORCID. Please enter a valid ORCID or leave the field blank.
+							</div>
+						)}
+					</div>
 				)}
 			</div>
 		</div>

@@ -5,7 +5,7 @@
 
 declare module 'use-analytics' {
 	import type { ComponentType, Context, FC, ReactNode } from 'react';
-	import type { AnalyticsInstance } from 'analytics';
+	import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 
 	export function withAnalytics<P extends object>(Component: ComponentType<P>): FC<P>;
 
@@ -22,4 +22,6 @@ declare module 'use-analytics' {
 		children: ReactNode;
 		// eslint-disable-next-line no-undef
 	}): JSX.Element;
+
+	export type { AnalyticsInstance, AnalyticsPlugin };
 }

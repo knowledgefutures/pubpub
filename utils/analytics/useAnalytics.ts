@@ -1,7 +1,6 @@
 import type { AnalyticsType } from 'types';
 import type { PageViewPayload, TrackPayload, TrackEvent } from 'utils/api/schemas/analytics';
-import { useAnalytics as useOldAnalytics } from 'use-analytics';
-import type { AnalyticsInstance } from 'analytics';
+import { AnalyticsInstance, useAnalytics as useOldAnalytics } from 'use-analytics';
 import { stubPlugin } from './plugin';
 
 type Analytics = {

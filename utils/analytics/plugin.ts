@@ -1,5 +1,5 @@
 /* eslint-disable no-undef, import/no-unresolved */
-import { AnalyticsInstance, type AnalyticsPlugin } from 'analytics';
+import { type AnalyticsInstance, type AnalyticsPlugin } from 'use-analytics';
 import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
 
 // this gets rewritten to the AWS lambda on fastly

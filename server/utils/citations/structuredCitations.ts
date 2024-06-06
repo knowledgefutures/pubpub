@@ -64,7 +64,7 @@ const getSingleCitationAsync = expiringPromise(
 	async (structuredValue: string) => {
 		return Cite.async(structuredValue);
 	},
-	{ timeout: 8000, throws: () => new Error('Citation data failed to load') },
+	{ timeout: 1000, throws: () => new Error('Citation data failed to load') },
 );
 
 const getSingleStructuredCitation = async (
@@ -72,8 +72,8 @@ const getSingleStructuredCitation = async (
 	citationStyle: CitationStyleKind,
 	inlineStyle: CitationInlineStyleKind,
 ) => {
+	const fallbackValue = generateFallbackHash(structuredInput);
 	try {
-		const fallbackValue = generateFallbackHash(structuredInput);
 		const citationData = await getSingleCitationAsync(structuredInput);
 		if (citationData) {
 			const citationJson = citationData.format('data', { format: 'object' });
@@ -100,10 +100,9 @@ const getSingleStructuredCitation = async (
 		};
 	} catch (err) {
 		return {
-			html: 'Error',
+			html: '<div>' + structuredInput + '</div>',
 			json: 'Error',
-			inline: '(Error)',
-			error: true,
+			inline: inlineStyle === 'label' ? `(${fallbackValue})` : null,
 		};
 	}
 };

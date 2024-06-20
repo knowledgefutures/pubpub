@@ -60,12 +60,12 @@ const UserHeader = function (props) {
 		{
 			icon: 'linkedin' as const,
 			value: props.userData.linkedin,
-			url: `https://linkedin.com/in/${props.userData.linkedin}`,
+			url: `https://linkedin.com/${props.userData.linkedin}`,
 		},
 		{
 			icon: 'bluesky' as const,
 			value: props.userData.bluesky,
-			url: `https://bsky.app/profile/@${props.userData.bluesky}`,
+			url: `https://bsky.app/profile/${props.userData.bluesky}`,
 		},
 		{
 			value: props.userData.googleScholar,

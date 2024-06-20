@@ -94,14 +94,14 @@ export const createSocialNavItems = (
 			icon: 'linkedin' as const,
 			title: 'LinkedIn',
 			value: communityData.linkedin,
-			url: `https://linkedin.com/in/${communityData.linkedin}`,
+			url: `https://linkedin.com/${communityData.linkedin}`,
 		},
 		{
 			id: 'si-6',
 			icon: 'bluesky' as const,
 			title: 'Bluesky',
 			value: communityData.bluesky,
-			url: `https://bsky.app/profile/@${communityData.bluesky}`,
+			url: `https://bsky.app/profile/${communityData.bluesky}`,
 		},
 		{
 			id: 'si-7',

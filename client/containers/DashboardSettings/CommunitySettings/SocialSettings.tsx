@@ -111,7 +111,9 @@ const SocialSettings = (props: Props) => {
 				label="LinkedIn"
 				type="text"
 				value={linkedin}
-				helperText={`https://linkedin.com/in/${linkedin || '<your linkedin handle>'}`}
+				helperText={`https://linkedin.com/${
+					linkedin || '<in|company|school>/<your linkedin handle>'
+				}`}
 				onChange={(evt) => {
 					updateCommunityData({ linkedin: evt.target.value });
 				}}
@@ -120,7 +122,7 @@ const SocialSettings = (props: Props) => {
 				label="Bluesky"
 				type="text"
 				value={bluesky}
-				helperText={`https://bsky.app/profile/@${
+				helperText={`https://bsky.app/profile/${
 					bluesky || '<your bluesky handle>.<your-server.social>'
 				}`}
 				onChange={(evt) => {

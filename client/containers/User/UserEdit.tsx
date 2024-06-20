@@ -181,7 +181,9 @@ const UserEdit = (props: Props) => {
 		},
 		{
 			label: 'LinkedIn',
-			helperText: `https://linkedin.com/in/${linkedin || '<your linkedin handle>'}`,
+			helperText: `https://linkedin.com/${
+				linkedin || '<in|company|school>/<your linkedin handle>'
+			}`,
 			value: linkedin,
 			onChange: (evt) => {
 				setLinkedin(evt.target.value);
@@ -208,7 +210,7 @@ const UserEdit = (props: Props) => {
 		{
 			label: 'Bluesky',
 			// icon: `${Classes.ICON}-bluesky`,
-			helperText: `https://bsky.app/profile/@${
+			helperText: `https://bsky.app/profile/${
 				bluesky || '<your bluesky handle>.<your-server.social>'
 			}`,
 			value: bluesky,

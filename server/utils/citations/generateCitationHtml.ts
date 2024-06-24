@@ -97,6 +97,13 @@ export const generateCitationHtml = async (
 		...getCollectionLevelData(primaryCollection),
 		publisher: communityData.publishAs || '',
 	};
+
+	/* Set the user agent with a mailto to use Crossref's "polite" pool. */
+	/* https://www.crossref.org/blog/rebalancing-our-rest-api-traffic/ */
+	Cite.util.setUserAgent(
+		'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/18.7.0',
+	);
+
 	const pubCiteObject = await Cite.async({
 		...commonData,
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'containerDoi' does not exist on type '{ ... Remove this comment to see the full error message

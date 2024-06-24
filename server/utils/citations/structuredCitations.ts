@@ -4,7 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
-
 import { DocJson } from 'types';
 import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
@@ -27,6 +26,12 @@ citationStyles.forEach((style) => {
 /* https://github.com/citation-js/citation-js/blob/master/packages/core/src/plugins/input/data.js#L90-L97 */
 Cite.plugins.input.removeDataParser('@else/url', false);
 Cite.plugins.input.removeDataParser('@else/url', true);
+
+/* Set the user agent with a mailto to use Crossref's "polite" pool. */
+/* https://www.crossref.org/blog/rebalancing-our-rest-api-traffic/ */
+Cite.util.setUserAgent(
+	'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/18.7.0',
+);
 
 const generateFallbackHash = (structuredValue: string) =>
 	crypto.createHash('md5').update(structuredValue).digest('base64').substring(0, 10);

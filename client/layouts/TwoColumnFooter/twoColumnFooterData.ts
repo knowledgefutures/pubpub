@@ -16,8 +16,8 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 	},
 	addressLines: [
 		'eLife Sciences Publications, Ltd',
-		'Westbrook Centre, Milton Road',
-		'Cambridge CB4 1YG',
+		'95 Regent Street',
+		'Cambridge CB2 1AW',
 		'UK',
 	],
 	fullWidthLink: {

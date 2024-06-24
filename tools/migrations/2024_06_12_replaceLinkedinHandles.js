@@ -8,7 +8,7 @@ const { Op } = require('sequelize');
  * @param {import('sequelize').Sequelize} options.Sequelize
  * @param {import('server/sequelize').sequelize} options.sequelize
  */
-export const up = async ({ Sequelize, sequelize }) => {
+export const up = async ({ sequelize }) => {
 	const communitiesWithLinkedin = await sequelize.models.Community.findAll({
 		where: {
 			linkedin: {
@@ -23,6 +23,7 @@ export const up = async ({ Sequelize, sequelize }) => {
 		communitiesWithLinkedin,
 		async (community) =>
 			community.update({
+				// @ts-expect-error linkedin does exist
 				linkedin: `in/${community.linkedin}`,
 			}),
 		{ concurrency: 20 },
@@ -43,6 +44,7 @@ export const up = async ({ Sequelize, sequelize }) => {
 		usersWithLinkedin,
 		async (user) =>
 			user.update({
+				// @ts-expect-error linkedin does exist
 				linkedin: `https://www.linkedin.com/in/${user.linkedin}`,
 			}),
 		{ concurrency: 20 },
@@ -70,6 +72,7 @@ export const down = async ({ sequelize }) => {
 		communitiesWithLinkedin,
 		async (community) =>
 			community.update({
+				// @ts-expect-error linkedin does exist
 				linkedin: community.linkedin.replace('in/', ''),
 			}),
 		{ concurrency: 20 },
@@ -90,6 +93,7 @@ export const down = async ({ sequelize }) => {
 		usersWithLinkedin,
 		async (user) =>
 			user.update({
+				// @ts-expect-error linkedin does exist
 				linkedin: user.linkedin.replace('https://www.linkedin.com/in/', ''),
 			}),
 		{ concurrency: 20 },

@@ -23,7 +23,11 @@ const models = modelize`
 			User someOtherAdmin {}
 		}
 	}
-	User willCreateCommunity {}
+	User willNotCreateCommunity {
+	}
+	User superAdmin {
+		isSuperAdmin: true
+	}
 `;
 
 setup(beforeAll, async () => {
@@ -61,9 +65,9 @@ describe('/api/communities', () => {
 		expect(community.id).toEqual(existingCommunity.id);
 	});
 
-	it('creates a community', async () => {
-		const { willCreateCommunity } = models;
-		const agent = await login(willCreateCommunity);
+	it('creates a community if you are a superAdmin', async () => {
+		const { superAdmin } = models;
+		const agent = await login(superAdmin);
 		const subdomain = 'burn-book-' + uuid.v4();
 		const { body: url } = await expectCreatedActivityItem(
 			agent
@@ -77,11 +81,24 @@ describe('/api/communities', () => {
 		).toMatchResultingObject((response) => ({
 			kind: 'community-created',
 			communityId: response.body.id,
-			actorId: willCreateCommunity.id,
+			actorId: superAdmin.id,
 		}));
 		expect(url).toEqual(`https://${subdomain}.pubpub.org`);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
 		expect(newCommunity?.title).toEqual('Burn Book');
+	});
+
+	it('does not create a community if you are not a superAdmin', async () => {
+		const { willNotCreateCommunity } = models;
+		const agent = await login(willNotCreateCommunity);
+		await agent
+			.post('/api/communities')
+			.send({
+				subdomain: 'notSuperAdmin',
+				title: 'Journal of Forgetting To Log In First',
+				description: 'oops, I forgot',
+			})
+			.expect(403);
 	});
 
 	it('does not create a community if you are logged out', async () => {

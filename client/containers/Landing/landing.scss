@@ -157,7 +157,7 @@ $leftColumnWidth: 20%;
 		padding-top: 56px;
 		@include light(false, false);
 		background-image: $bgGradientWhiteFirst;
-		min-height: 600px;
+		min-height: calc(100vh - 272px);
 		&:before {
 			content: '';
 			position: absolute;

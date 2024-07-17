@@ -82,15 +82,16 @@ const CommunityCreate = () => {
 					<div>
 						<h1>Create Community</h1>
 						<p>
-							PubPub and all its features are free to use.<sup>*</sup> If you value
-							PubPub, we ask you to consider supporting our work by becoming a member
-							of the Knowledge Futures Group.{' '}
+							PubPub is evolving, and we are currently only allowing new community
+							creation for existing users with an explicit short-term need. Learn more
+							by reading our announcement. If you are an existing user who needs to
+							create a community, please{' '}
 							<a
-								href="https://knowledgefutures.org/membership"
+								href="mailto:partnerships@knowledgefutures.org?mailto=PubPub%20Legacy%20Community"
 								target="_blank"
 								rel="noreferrer"
 							>
-								Learn more
+								get in touch
 							</a>
 							.
 						</p>
@@ -178,21 +179,6 @@ const CommunityCreate = () => {
 								/>
 							</InputField>
 						</form>
-						<p>
-							<sup>*</sup> We limit DOI registrations to 10 per community per year, if
-							published via PubPub's Crossref membership. Once the limit is reached,
-							we ask that you become a{' '}
-							<a
-								href="https://knowledgefutures.org/membership"
-								target="_blank"
-								rel="noreferrer"
-							>
-								KFG member
-							</a>
-							, at any level, and allow us to pass on the Crossref fee of $1 per DOI
-							registered. For groups with their own Crossref membership, there is no
-							additional fee for creating or depositing DOIs.
-						</p>
 					</div>
 				)}
 			</GridWrapper>

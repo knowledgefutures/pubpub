@@ -26,11 +26,11 @@ require('./submit');
 
 /* Routes for PubPub */
 require('./communityCreate'); // Route: '/community/create'
-require('./communityServices'); // Route: '/community-services'
-require('./explore'); // Route: '/explore'
-require('./about'); // Route: '/about'
+/* require('./communityServices'); // Route: '/community-services' */
+/* require('./explore'); // Route: '/explore' */
+/* require('./about'); // Route: '/about' */
 require('./email'); // Route: '/email'
-require('./pricing'); // Route: '/pricing'
+/* require('./pricing'); // Route: '/pricing' */
 
 require('./adminDashboard'); // Route: '/admin'
 require('./landing'); // Route: '/'

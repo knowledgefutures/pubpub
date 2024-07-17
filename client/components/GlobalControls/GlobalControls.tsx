@@ -99,9 +99,10 @@ const GlobalControls = (props: Props) => {
 		if (isBasePubPub) {
 			return (
 				<>
-					<GlobalControlsButton href="/explore" mobileOrDesktop={{ text: 'Explore' }} />
-					<GlobalControlsButton href="/pricing" mobileOrDesktop={{ text: 'Pricing' }} />
-					<GlobalControlsButton href="/about" mobileOrDesktop={{ text: 'About' }} />
+					<GlobalControlsButton
+						href="https://www.knowledgefutures.org/pubpub/"
+						mobileOrDesktop={{ text: 'PubPub Platform (new!)' }}
+					/>
 					{renderSearch()}
 				</>
 			);

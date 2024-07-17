@@ -19,10 +19,6 @@ const About = function () {
 					from drafting documents, conducting peer review, and hosting entire journal and
 					book websites to collecting and displaying reader feedback and analytics.
 				</p>
-				<p>
-					You can get started now by{' '}
-					<a href="/community/create">creating your community</a>.
-				</p>
 				<h2>Features, Benefits, and Tradeoffs</h2>
 				<p>
 					PubPub is an open-source, hosted, free-to-use content management system designed

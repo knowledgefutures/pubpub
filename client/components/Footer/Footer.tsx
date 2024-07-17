@@ -33,7 +33,6 @@ const defaultProps = {
 type Props = OwnProps & typeof defaultProps;
 
 const basePubPubFooterLinks = [
-	{ id: '1', title: 'Create your community', href: '/community/create' },
 	{ id: '2', title: 'Login', href: '/login' },
 	{ id: '3', title: 'Signup', href: '/signup' },
 	{ id: '4', title: 'Legal', href: '/legal' },
@@ -144,19 +143,15 @@ const Footer = (props: Props) => {
 							</div>
 							<ul className="separated">
 								<li>
-									<a href="https://pubpub.org/about">About</a>
-								</li>
-								<li>
-									<a href="https://pubpub.org/explore">Explore</a>
-								</li>
-								<li>
-									<a href="https://pubpub.org/pricing">Pricing</a>
-								</li>
-								<li>
 									<a href="https://help.pubpub.org">Help</a>
 								</li>
 								<li>
 									<a href="https://github.com/pubpub/pubpub/discussions">Forum</a>
+								</li>
+								<li>
+									<a href="https://www.knowledgefutures.org/pubpub/">
+										Learn about the new PubPub Platform
+									</a>
 								</li>
 							</ul>
 

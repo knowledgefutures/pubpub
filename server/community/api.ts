@@ -42,8 +42,7 @@ export const communityServer = s.router(contract.community, {
 		};
 	},
 	create: async ({ req }) => {
-		const permissions = await getPermissions({ userId: req.user?.id || null });
-		if (!permissions.create) {
+		if (!req.user || !req.user?.dataValues.isSuperAdmin) {
 			throw new ForbiddenError();
 		}
 		try {

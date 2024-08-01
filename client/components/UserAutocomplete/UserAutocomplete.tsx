@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Classes, MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
-
+import debounce from 'debounce';
 import { Avatar } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 
@@ -28,12 +28,22 @@ type Props = OwnProps & typeof defaultProps;
 class UserAutocomplete extends Component<Props, State> {
 	static defaultProps = defaultProps;
 
+	runUserQuery = (queryValue) => {
+		apiFetch(`/api/search/users?q=${queryValue}`).then((result) => {
+			const { usedUserIds } = this.props;
+			this.setState({
+				items: result.filter((item) => !usedUserIds.includes(item.id)),
+			});
+		});
+	};
+
 	constructor(props: Props) {
 		super(props);
 		this.state = {
 			items: [],
 			queryValue: '',
 		};
+		this.runUserQuery = debounce(this.runUserQuery, 300);
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'inputRef' does not exist on type 'UserAu... Remove this comment to see the full error message
 		this.inputRef = undefined;
 		this.handleSelect = this.handleSelect.bind(this);
@@ -41,13 +51,8 @@ class UserAutocomplete extends Component<Props, State> {
 
 	componentDidUpdate(_: Props, prevState: State) {
 		const { queryValue } = this.state;
-		if (queryValue !== prevState.queryValue) {
-			apiFetch(`/api/search/users?q=${queryValue}`).then((result) => {
-				const { usedUserIds } = this.props;
-				this.setState({
-					items: result.filter((item) => !usedUserIds.includes(item.id)),
-				});
-			});
+		if (queryValue !== prevState.queryValue && queryValue !== '') {
+			this.runUserQuery(queryValue);
 		}
 	}
 

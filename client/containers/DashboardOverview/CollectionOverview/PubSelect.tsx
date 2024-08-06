@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
 import { PubMenuItem, QueryListDropdown } from 'components';
 import { PubWithCollections } from 'types';
@@ -16,6 +17,7 @@ type Props = {
 const PubSelect = (props: Props) => {
 	const { children, onSelectPub, collectionId, usedPubIds } = props;
 	const [searchTerm, setSearchTerm] = useState('');
+	const [debouncedSearchTerm] = useDebounce(searchTerm, 200);
 
 	const {
 		allQueries: { isLoading },
@@ -23,7 +25,7 @@ const PubSelect = (props: Props) => {
 	} = useManyPubs<PubWithCollections>({
 		batchSize: 50,
 		query: {
-			term: searchTerm,
+			term: debouncedSearchTerm,
 			excludeCollectionIds: [collectionId],
 			ordering: { field: 'updatedDate', direction: 'DESC' },
 		},

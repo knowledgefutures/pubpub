@@ -3,7 +3,7 @@ import { getCookieOptions } from './cookieOptions';
 
 const cookieKey = 'tos-update';
 const tosLastUpdated = Date.parse('2024-05-16');
-const isBannerDisplayed = true;
+const isBannerDisplayed = false;
 
 export const shouldShowTosUpdate = () => {
 	const cookieValue = Cookie.get(cookieKey);

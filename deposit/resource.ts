@@ -17,6 +17,7 @@ export const resourceKinds = [
 	'Conference',
 	'ConferenceProceeding',
 	'ConferencePaper',
+	'Preprint',
 	'Other',
 ] as const;
 
@@ -31,6 +32,7 @@ export const resourceKindToProperNoun: Record<ResourceKind, string> = {
 	Conference: 'Conference',
 	ConferenceProceeding: 'Conference Proceeding',
 	ConferencePaper: 'Conference Paper',
+	Preprint: 'Preprint',
 	Other: 'Other',
 };
 

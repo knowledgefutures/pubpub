@@ -73,6 +73,7 @@ function transformPubAttributionToResourceContribution(
 function derivePubResourceKind(
 	pubPrimaryParentEdge?: types.PubEdge | null,
 	pubPrimaryCollection?: types.Collection | null,
+	pubCommunity?: types.Community | null,
 ): ResourceKind {
 	switch (pubPrimaryParentEdge?.relationType) {
 		case RelationType.Preprint:
@@ -85,7 +86,9 @@ function derivePubResourceKind(
 		switch (pubPrimaryCollection.kind) {
 			case 'issue':
 			case 'tag':
-				return 'JournalArticle';
+				return pubCommunity?.id === '1a71ef4d-f6fe-40d3-8379-42fa2141db58'
+					? 'Preprint'
+					: 'JournalArticle';
 			case 'book':
 				return 'BookChapter';
 			case 'conference':
@@ -94,7 +97,9 @@ function derivePubResourceKind(
 				throw new Error('Invalid primary collection kind');
 		}
 	}
-	return 'JournalArticle';
+	return pubCommunity?.id === '1a71ef4d-f6fe-40d3-8379-42fa2141db58'
+		? 'Preprint'
+		: 'JournalArticle';
 }
 
 function derivePubEdgeRelation(pubEdge: types.PubEdge): ResourceRelation {
@@ -153,7 +158,7 @@ export async function transformPubToPartialResource(
 		: null;
 	const pubResource: PartialResource = {
 		title: pub.title,
-		kind: derivePubResourceKind(pubPrimaryParentEdge, pubPrimaryCollection),
+		kind: derivePubResourceKind(pubPrimaryParentEdge, pubPrimaryCollection, pub.community),
 		identifiers: [
 			{
 				identifierKind: 'URL',
@@ -198,7 +203,7 @@ export async function transformPubToResource(
 			),
 		);
 	const pubResource: Resource = {
-		kind: derivePubResourceKind(pubPrimaryParentEdge, pubPrimaryCollection),
+		kind: derivePubResourceKind(pubPrimaryParentEdge, pubPrimaryCollection, pub.community),
 		title: pub.title,
 		timestamp: new Date().toUTCString(),
 		license: { spdxIdentifier: license.spdxIdentifier, uri: license.link },

@@ -37,6 +37,8 @@ function transformResourceKindToDataciteResourceType(kind: ResourceKind) {
 			return 'Journal';
 		case 'JournalArticle':
 			return 'JournalArticle';
+		case 'Preprint':
+			return 'Preprint';
 		default:
 			return 'Other';
 	}

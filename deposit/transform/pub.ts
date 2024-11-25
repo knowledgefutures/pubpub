@@ -247,7 +247,8 @@ export async function transformPubToResource(
 		pubResource.meta['created-date'] = expect(pub.releases?.[0]).createdAt.toString();
 		if (depositJson) {
 			// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
-			const dateOfLastDeposit = new Date(depositJson.data.attributes.updated);
+			const updatedDate = depositJson.data?.attributes?.updated || depositJson.timestamp;
+			const dateOfLastDeposit = new Date(updatedDate);
 			const dateOfLatestRelease = new Date(release.createdAt);
 			if (dateOfLastDeposit.getTime() !== dateOfLatestRelease.getTime()) {
 				pubResource.meta['updated-date'] = dateOfLatestRelease.toString();

@@ -35,11 +35,13 @@ export const exportTask = async ({ exportId }: { exportId: string }) => {
 			notesData,
 		});
 	} else {
-		const staticHtml = await renderStaticHtml({
+		const staticHtmlOptions = {
 			pubDoc,
 			notesData,
 			pubMetadata,
-		});
+			pagedTarget,
+		};
+		const staticHtml = await renderStaticHtml(staticHtmlOptions);
 		if (pagedTarget) {
 			url = (await exportWithPaged(staticHtml)).url;
 		} else {

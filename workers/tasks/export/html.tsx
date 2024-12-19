@@ -273,10 +273,11 @@ type RenderStaticHtmlOptions = {
 	pubDoc: DocJson;
 	pubMetadata: PubMetadata;
 	notesData: NotesData;
+	pagedTarget: boolean;
 };
 
 export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
-	const { pubDoc, pubMetadata, notesData } = options;
+	const { pubDoc, pubMetadata, notesData, pagedTarget } = options;
 	const { title, nodeLabels, citationInlineStyle } = pubMetadata;
 	const { footnotes, citations, noteManager, renderedStructuredValues } = notesData;
 
@@ -287,9 +288,13 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 		renderedStructuredValues,
 	});
 
-	const renderableNodes = [filterNonExportableNodes, addHrefsToNotes, blankIframes]
-		.filter((x): x is (nodes: any) => any => !!x)
-		.reduce((nodes, fn) => fn(nodes), pubDoc.content);
+	const renderableNodes = pagedTarget
+		? [filterNonExportableNodes, addHrefsToNotes, blankIframes]
+				.filter((x): x is (nodes: any) => any => !!x)
+				.reduce((nodes, fn) => fn(nodes), pubDoc.content)
+		: [filterNonExportableNodes, addHrefsToNotes]
+				.filter((x): x is (nodes: any) => any => !!x)
+				.reduce((nodes, fn) => fn(nodes), pubDoc.content);
 
 	const docContent = renderStatic({
 		schema: editorSchema,

@@ -217,7 +217,13 @@ export const getPubsById = (pubIds: string[], options: PubGetOptions = {}) => {
 		sanitize: async (initialData: InitialData) => {
 			const pubs = await pubsPromise;
 			return pubs
-				.map((pub) => sanitizePub(pub.toJSON(), initialData))
+				.map((pub) =>
+					sanitizePub(
+						pub.toJSON(),
+						initialData,
+						pub.releases && pub.releases.length > 0 ? pub.releases.length : null,
+					),
+				)
 				.filter((pub): pub is SanitizedPubData => !!pub);
 		},
 	};

@@ -25,7 +25,7 @@ const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease:
 
 const getFilteredExports = (pubData, isRelease) => {
 	const { exports, releases } = pubData;
-	if (!isRelease) {
+	if (!isRelease || !exports) {
 		return exports;
 	}
 	const releaseHistoryKeys = new Set(releases.map((release) => release.historyKey));

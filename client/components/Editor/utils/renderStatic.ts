@@ -105,7 +105,7 @@ const fillHoleInSpec = (outputSpec, children, isMark) => {
 };
 
 const wrapOutputSpecInMarks = (outputSpec, marks, schema) => {
-	return marks.reduce((child, mark) => {
+	return [...marks].reverse().reduce((child, mark) => {
 		const { spec: markSpec } = schema.marks[mark.type];
 		return fillHoleInSpec(markSpec.toDOM(mark), [child], true);
 	}, outputSpec);

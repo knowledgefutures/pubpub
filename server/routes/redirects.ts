@@ -77,6 +77,50 @@ const redirectHosts = {
 		'/useful-computing': 'https://research.arcadiascience.com/software',
 		'/functional-annotation': 'https://research.arcadiascience.com/annotation',
 	},
+	'jeed.pubpub.org': {
+		'/': 'https://journals.uvm.edu/jeed/',
+		'/pub/beutel-farewell-message': 'https://journals.uvm.edu/jeed/article/id/10/',
+		'/pub/process-mdl-leachate-trtmnt-adsorbent-amended-const-wetlands':
+			'https://journals.uvm.edu/jeed/article/id/9/',
+		'/pub/journal-takes-flight': 'https://journals.uvm.edu/jeed/article/id/11/',
+		'/pub/lt-channel-geometry-adj-ref-streams-nc-piedmont':
+			'https://journals.uvm.edu/jeed/article/id/7/',
+		'/pub/phosphorus-retention-release-riparian-wetlands':
+			'https://journals.uvm.edu/jeed/article/id/6/',
+		'/pub/model-impact-hydraulic-reconnect': 'https://journals.uvm.edu/jeed/article/id/2/',
+		'/pub/performance-cahr-commercial-composting':
+			'https://journals.uvm.edu/jeed/article/id/3/',
+		'/pub/physicochemical-properties-cattail-typha-bioproducts':
+			'https://journals.uvm.edu/jeed/article/id/8/',
+		'/pub/quantification-of-ammonium-release-from-wetland':
+			'https://journals.uvm.edu/jeed/article/id/4/',
+		'/pub/stream-restoration-that-allows-self-adjustment':
+			'https://journals.uvm.edu/jeed/article/id/5/',
+		'/pub/peer-review-process': 'https://journals.uvm.edu/jeed/site/editorial-procedures/',
+		'/pub/submission-overview': 'https://journals.uvm.edu/jeed/submissions/',
+		'/pub/templates-and-forms': 'https://journals.uvm.edu/jeed/site/required-templates-forms/',
+		'/pub/research-publication-ethics':
+			'https://journals.uvm.edu/jeed/site/research-and-publication-ethics/',
+		'/pub/submission-checklist': 'https://journals.uvm.edu/jeed/submissions/',
+		'/ai-policy': 'https://journals.uvm.edu/jeed/site/ai-policy/',
+		'/aims-and-scope': 'https://journals.uvm.edu/jeed/site/aims-and-scope/',
+		'/author-guidelines': 'https://journals.uvm.edu/jeed/site/author-guidelines/',
+		'/contact-us': 'https://journals.uvm.edu/jeed/contact/',
+		'/editorial-board': 'https://journals.uvm.edu/jeed/site/editorial-board/',
+		'/editorial-policy': 'https://journals.uvm.edu/jeed/site/editorial-policy/',
+		'/open-access-statement': 'https://journals.uvm.edu/jeed/site/oa-statement/',
+		'/reviewer-guidelines': 'https://journals.uvm.edu/jeed/site/reviewer-guidelines/',
+		'/submissions': 'https://journals.uvm.edu/jeed/submissions/',
+		'/upcoming-accepted-for-publication': 'https://journals.uvm.edu/jeed/news/',
+	},
+	'copim.pubpub.org': {
+		'/work-package-2': 'https://copim.pubpub.org/open-book-collective',
+		'/work-package-3': 'https://copim.pubpub.org/opening-the-future',
+		'/work-package-4': 'https://copim.pubpub.org/governance',
+		'/work-package-5': 'https://copim.pubpub.org/thoth',
+		'/work-package-6': 'https://copim.pubpub.org/experimental-publishing-group',
+		'/work-package-7': 'https://copim.pubpub.org/archiving-and-digital-preservation',
+	},
 };
 
 app.use((req, res, next) => {

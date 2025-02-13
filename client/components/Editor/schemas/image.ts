@@ -58,13 +58,15 @@ export default {
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
 						altText: node.getAttribute('data-alt-text') || '',
+						hideLabel: node.getAttribute('data-hide-label') || '',
 						href: node.getAttribute('data-href') || null,
 					};
 				},
 			},
 		],
 		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
-			const { url, align, id, altText, caption, fullResolution, size, href } = node.attrs;
+			const { url, align, id, altText, caption, fullResolution, size, hideLabel, href } =
+				node.attrs;
 
 			const width = align === 'breakout' ? 1920 : 800;
 			const isResizeable = isResizeableFormat(url) && !fullResolution;
@@ -92,6 +94,7 @@ export default {
 					'data-caption': caption,
 					'data-href': href,
 					'data-alt-text': altText,
+					'data-hide-label': hideLabel,
 				},
 				href
 					? [

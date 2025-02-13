@@ -36,6 +36,7 @@ export default {
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
 						caption: node.firstChild.getAttribute('alt') || '',
+						hideLabel: node.getAttribute('data-hide-label') || '',
 					};
 				},
 			},
@@ -49,6 +50,7 @@ export default {
 					'data-node-type': 'audio',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,
+					'data-hide-label': node.attrs.hideLabel,
 				},
 				[
 					'audio',

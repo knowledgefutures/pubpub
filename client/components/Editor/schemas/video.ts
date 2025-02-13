@@ -39,6 +39,7 @@ export default {
 						align: node.getAttribute('data-align') || 'center',
 						caption: node.firstChild.getAttribute('alt') || '',
 						loop: !!node.firstChild.getAttribute('loop'),
+						hideLabel: node.getAttribute('data-hide-label') || '',
 					};
 				},
 			},
@@ -52,6 +53,7 @@ export default {
 					'data-node-type': 'video',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,
+					'data-hide-label': node.attrs.hideLabel,
 				},
 				[
 					'video',

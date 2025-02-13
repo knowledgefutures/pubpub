@@ -38,6 +38,7 @@ export default {
 						height: Number(node.firstChild.getAttribute('height')) || 419,
 						align: node.getAttribute('data-align') || 'center',
 						caption: node.firstChild.getAttribute('alt') || '',
+						hideLabel: node.getAttribute('data-hide-label') || '',
 					};
 				},
 			},
@@ -51,6 +52,7 @@ export default {
 					'data-node-type': 'iframe',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,
+					'data-hide-label': node.attrs.hideLabel,
 				},
 				[
 					'iframe',

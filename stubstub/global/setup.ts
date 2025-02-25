@@ -29,7 +29,9 @@ export default async () => {
 		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
 	}
-
+	// only use one database for the test db
+	process.env.DATABASE_READ_REPLICA_1_URL = process.env.DATABASE_URL;
+	process.env.DATABASE_READ_REPLICA_2_URL = process.env.DATABASE_URL;
 	// see hack comment above
 	process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB = 'true';
 	/**

@@ -1,8 +1,10 @@
-import { DataTypes, ConnectionError } from 'sequelize';
+import { DataTypes, ConnectionError, ConnectionOptions } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { knex } from 'knex';
 
 const database_url = process.env.DATABASE_URL;
+const database_read_replica_1_url = process.env.DATABASE_READ_REPLICA_1_URL;
+const database_read_replica_2_url = process.env.DATABASE_READ_REPLICA_2_URL;
 
 class SequelizeWithId extends Sequelize {
 	/* Create standard id type for our database */
@@ -16,12 +18,34 @@ class SequelizeWithId extends Sequelize {
 if (!database_url) {
 	throw new Error('DATABASE_URL environment variable not set');
 }
+if (!database_read_replica_1_url) {
+	throw new Error('DATABASE_READ_REPLICA_1_URL environment variable not set');
+}
+if (!database_read_replica_2_url) {
+	throw new Error('DATABASE_READ_REPLICA_2_URL environment variable not set');
+}
 
 const useSSL = database_url.indexOf('localhost') === -1;
+
+const parseDBUrl = (url: string): ConnectionOptions => {
+	const parsed = new URL(url);
+	return {
+		host: parsed.hostname,
+		username: parsed.username,
+		password: parsed.password,
+		port: parsed.port,
+		database: parsed.pathname.slice(1),
+	};
+};
 
 export const sequelize = new SequelizeWithId(database_url, {
 	logging: false,
 	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
+	dialect: 'postgres',
+	replication: {
+		read: [parseDBUrl(database_read_replica_1_url), parseDBUrl(database_read_replica_2_url)],
+		write: parseDBUrl(database_url),
+	},
 	pool: {
 		max: process.env.SEQUELIZE_MAX_CONNECTIONS
 			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)

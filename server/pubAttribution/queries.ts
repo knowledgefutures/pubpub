@@ -37,6 +37,7 @@ export const createPubAttribution = async ({
 			where: { id: newAttribution.id },
 			attributes: { exclude: ['updatedAt'] },
 			include: [includeUserModel({ as: 'user', required: false })],
+			useMaster: true,
 		}),
 	);
 

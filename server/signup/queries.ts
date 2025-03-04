@@ -39,7 +39,7 @@ export const createSignup = (inputValues, hostname) => {
 			});
 		})
 		.then(() => {
-			return Signup.findOne({ where: { email } });
+			return Signup.findOne({ where: { email }, useMaster: true });
 		})
 		.then((signUpData) => {
 			return sendSignupEmail({

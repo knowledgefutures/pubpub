@@ -25,7 +25,7 @@ import { getDiffsForPayload, getChangeFlagsForPayload, createActivityItem } from
 
 const resolvePartialMemberItem = async (member: Member) => {
 	if (member.pubId) {
-		const pub = expect(await Pub.findOne({ where: { id: member.pubId } }));
+		const pub = expect(await Pub.findOne({ where: { id: member.pubId }, useMaster: true }));
 		return {
 			tag: 'pub',
 			value: {
@@ -45,6 +45,7 @@ const resolvePartialMemberItem = async (member: Member) => {
 				where: {
 					id: member.collectionId,
 				},
+				useMaster: true,
 			}),
 		);
 		return {
@@ -64,6 +65,7 @@ const resolvePartialMemberItem = async (member: Member) => {
 		const community = expect(
 			await Community.findOne({
 				where: { id: member.communityId },
+				useMaster: true,
 			}),
 		);
 		return {
@@ -101,7 +103,9 @@ export const createCommunityCreatedActivityItem = async (
 	actorId: null | string,
 	communityId: string,
 ) => {
-	const community = expect(await Community.findOne({ where: { id: communityId } }));
+	const community = expect(
+		await Community.findOne({ where: { id: communityId }, useMaster: true }),
+	);
 	return createActivityItem({
 		actorId,
 		kind: 'community-created' as const,
@@ -119,7 +123,9 @@ export const createCommunityUpdatedActivityItem = async (
 	communityId: string,
 	oldCommunity: Community,
 ) => {
-	const community = expect(await Community.findOne({ where: { id: communityId } }));
+	const community = expect(
+		await Community.findOne({ where: { id: communityId }, useMaster: true }),
+	);
 	const diffs = getDiffsForPayload(community, oldCommunity, ['title', 'subdomain']);
 	return createActivityItem({
 		actorId,
@@ -135,7 +141,7 @@ export const createCommunityUpdatedActivityItem = async (
 };
 
 export const createMemberCreatedActivityItem = async (actorId: null | string, memberId: string) => {
-	const member = expect(await Member.findOne({ where: { id: memberId } }));
+	const member = expect(await Member.findOne({ where: { id: memberId }, useMaster: true }));
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
 		kind: 'member-created' as const,
@@ -162,7 +168,7 @@ export const createMemberCreatedActivityItem = async (actorId: null | string, me
 };
 
 export const createMemberRemovedActivityItem = async (actorId: null | string, memberId: string) => {
-	const member = expect(await Member.findOne({ where: { id: memberId } }));
+	const member = expect(await Member.findOne({ where: { id: memberId }, useMaster: true }));
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
 		kind: 'member-removed' as const,
@@ -188,7 +194,7 @@ export const createMemberUpdatedActivityItem = async (
 	memberId: string,
 	oldMember: Member,
 ) => {
-	const member = expect(await Member.findOne({ where: { id: memberId } }));
+	const member = expect(await Member.findOne({ where: { id: memberId }, useMaster: true }));
 	const partial = await resolvePartialMemberItem(member);
 	const diffs = getDiffsForPayload(member, oldMember, ['permissions']);
 	const item = {
@@ -216,7 +222,9 @@ export const createCollectionActivityItem = async (
 	actorId: null | string,
 	collectionId: string,
 ) => {
-	const collection = expect(await Collection.findOne({ where: { id: collectionId } }));
+	const collection = expect(
+		await Collection.findOne({ where: { id: collectionId }, useMaster: true }),
+	);
 	const { title } = collection;
 	return createActivityItem({
 		kind,
@@ -236,7 +244,9 @@ export const createCollectionUpdatedActivityItem = async (
 	collectionId: string,
 	oldCollection: Collection,
 ) => {
-	const collection = expect(await Collection.findOne({ where: { id: collectionId } }));
+	const collection = expect(
+		await Collection.findOne({ where: { id: collectionId }, useMaster: true }),
+	);
 	const { title } = collection;
 	const diffs = getDiffsForPayload(collection, oldCollection, [
 		'isPublic',
@@ -265,7 +275,7 @@ export const createPageActivityItem = async (
 	actorId: null | string,
 	pageId: string,
 ) => {
-	const page = expect(await Page.findOne({ where: { id: pageId } }));
+	const page = expect(await Page.findOne({ where: { id: pageId }, useMaster: true }));
 	return createActivityItem({
 		kind,
 		actorId,
@@ -284,7 +294,7 @@ export const createPageUpdatedActivityItem = async (
 	pageId: string,
 	oldPage: Page,
 ) => {
-	const page = expect(await Page.findOne({ where: { id: pageId } }));
+	const page = expect(await Page.findOne({ where: { id: pageId }, useMaster: true }));
 	const diffs = getDiffsForPayload(page, oldPage, ['isPublic', 'title', 'slug', 'description']);
 	const flags = getChangeFlagsForPayload(page, oldPage, ['layout']);
 	return createActivityItem({
@@ -315,10 +325,11 @@ export const createPubReviewCreatedActivityItem = async (reviewId: string) => {
 					],
 				},
 			],
+			useMaster: true,
 		}),
 	);
 	const threadComment = expect(expect(review.thread).comments)[0];
-	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) } }));
+	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) }, useMaster: true }));
 
 	const payloadThreadComment = threadComment && {
 		id: threadComment.id,
@@ -352,14 +363,15 @@ export const createPubReviewCommentAddedActivityItem = async (
 	const promises = await Promise.all([
 		ReviewNew.findOne({
 			where: { id: reviewId },
+			useMaster: true,
 		}),
-		ThreadComment.findOne({ where: { id: threadCommentId } }),
+		ThreadComment.findOne({ where: { id: threadCommentId }, useMaster: true }),
 	]);
 
 	const review = expect(promises[0]);
 	const threadComment = expect(promises[1]);
 
-	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) } }));
+	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) }, useMaster: true }));
 	return createActivityItem({
 		communityId: pub.communityId,
 		actorId: threadComment.userId,
@@ -388,8 +400,8 @@ export const createPubReviewUpdatedActivityItem = async (
 	reviewId: string,
 	oldReview: ReviewNew,
 ) => {
-	const review = expect(await ReviewNew.findOne({ where: { id: reviewId } }));
-	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) } }));
+	const review = expect(await ReviewNew.findOne({ where: { id: reviewId }, useMaster: true }));
+	const pub = expect(await Pub.findOne({ where: { id: expect(review.pubId) }, useMaster: true }));
 	const diffs = getDiffsForPayload(review, oldReview, ['status']);
 	return createActivityItem({
 		kind: 'pub-review-updated',
@@ -421,6 +433,7 @@ export const createCollectionPubActivityItem = async (
 				{ model: Pub, as: 'pub' },
 				{ model: Collection, as: 'collection' },
 			],
+			useMaster: true,
 		}),
 	) as types.DefinitelyHas<CollectionPub, 'pub' | 'collection'>;
 	return createActivityItem({
@@ -446,7 +459,7 @@ export const createPubActivityItem = async (
 	actorId: null | string,
 	pubId: string,
 ) => {
-	const pub = expect(await Pub.findOne({ where: { id: pubId } }));
+	const pub = expect(await Pub.findOne({ where: { id: pubId }, useMaster: true }));
 	return createActivityItem({
 		kind,
 		actorId,
@@ -465,7 +478,7 @@ export const createPubUpdatedActivityItem = async (
 	pubId: string,
 	oldPub: Pub,
 ) => {
-	const pub = expect(await Pub.findOne({ where: { id: pubId } }));
+	const pub = expect(await Pub.findOne({ where: { id: pubId }, useMaster: true }));
 	const diffs = getDiffsForPayload(pub, oldPub, ['title', 'doi', 'slug']);
 	return createActivityItem({
 		kind: 'pub-updated' as const,
@@ -482,8 +495,8 @@ export const createPubUpdatedActivityItem = async (
 };
 
 export const createPubReleasedActivityItem = async (actorId: null | string, releaseId: string) => {
-	const release = expect(await Release.findOne({ where: { id: releaseId } }));
-	const pub = expect(await Pub.findOne({ where: { id: release.pubId } }));
+	const release = expect(await Release.findOne({ where: { id: releaseId }, useMaster: true }));
+	const pub = expect(await Pub.findOne({ where: { id: release.pubId }, useMaster: true }));
 	return createActivityItem({
 		kind: 'pub-release-created' as const,
 		actorId,
@@ -511,6 +524,7 @@ export const createPubEdgeActivityItem = async (
 				{ model: Pub, as: 'targetPub' },
 				{ model: ExternalPublication, as: 'externalPublication' },
 			],
+			useMaster: true,
 		}),
 	) as types.DefinitelyHas<PubEdge, 'pub'> &
 		types.DefinitelyHas<PubEdge, 'targetPub' | 'externalPublication'>;
@@ -554,16 +568,20 @@ export const createPubDiscussionCommentAddedActivityItem = async (
 	const promises = await Promise.all([
 		ThreadComment.findOne({
 			where: { id: threadCommentId },
+			useMaster: true,
 		}),
 		Discussion.findOne({
 			where: { id: discussionId },
+			useMaster: true,
 		}),
 	]);
 
 	const threadComment = expect(promises[0]);
 	const discussion = expect(promises[1]);
 
-	const pub = expect(await Pub.findOne({ where: { id: expect(discussion.pubId) } }));
+	const pub = expect(
+		await Pub.findOne({ where: { id: expect(discussion.pubId) }, useMaster: true }),
+	);
 
 	return createActivityItem({
 		kind: 'pub-discussion-comment-added',
@@ -605,6 +623,7 @@ export const createSubmissionUpdatedActivityItem = async (
 					as: 'submissionWorkflow',
 				},
 			],
+			useMaster: true,
 		}),
 	) as types.DefinitelyHas<Submission, 'pub' | 'submissionWorkflow'>;
 
@@ -644,6 +663,7 @@ export const createFacetInstanceUpdatedActivityItem = async (
 		await FacetModel.findOne({
 			where: { id: facetModelInstanceId },
 			include: [{ model: FacetBinding, as: 'facetBinding' }],
+			useMaster: true,
 		}),
 	);
 	const { valid: newProps } = parsePartialFacetInstance(facetDefinition, facetInstance.toJSON());

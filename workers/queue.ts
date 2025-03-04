@@ -35,7 +35,9 @@ const { schedulePurge: schedulePurgeWorker } = createCachePurgeDebouncer({
 // to account for cases where a task is interrupted, never acked, and then resent from the queue.
 // This could happen if a task causes the worker dyno to crash, for instance.
 const incrementAttemptCount = async (taskId, maxAttemptCount = 2) => {
-	const workerTaskData = expect(await WorkerTask.findOne({ where: { id: taskId } }));
+	const workerTaskData = expect(
+		await WorkerTask.findOne({ where: { id: taskId }, useMaster: true }),
+	);
 	if (workerTaskData.attemptCount && workerTaskData.attemptCount >= maxAttemptCount) {
 		throw new Error('Too many attempts');
 	}

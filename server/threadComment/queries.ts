@@ -8,6 +8,7 @@ const findThreadCommentWithUser = async (id: string) => {
 		await ThreadComment.findOne({
 			where: { id },
 			include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
+			useMaster: true,
 		}),
 	);
 	return threadComment as types.DefinitelyHas<ThreadComment, 'author' | 'commenter'>;

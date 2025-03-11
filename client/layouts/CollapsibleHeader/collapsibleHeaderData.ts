@@ -15,6 +15,7 @@ export default {
 	},
 	headerNavLeft: [
 		{ url: '/', title: 'Home' },
+		{ url: '/browse', title: 'Browse' },
 		{ url: '/magazine', title: 'Magazine' },
 		{ url: '/community', title: 'Community' },
 		{ url: '/about', title: 'About' },
@@ -27,6 +28,7 @@ export default {
 	menuNav: [
 		[
 			{ isMobileOnly: true, url: '/', title: 'Home' },
+			{ isMobileOnly: true, url: '/browse', title: 'Browse' },
 			{ isMobileOnly: true, url: '/magazine', title: 'Magazine' },
 			{ isMobileOnly: true, url: '/community', title: 'Community' },
 			{ isMobileOnly: true, url: '/about', title: 'About' },

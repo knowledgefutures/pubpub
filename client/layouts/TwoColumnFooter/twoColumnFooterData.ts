@@ -3,9 +3,9 @@ import { iconPaths } from './iconPaths';
 
 const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 	certification: {
-		url: 'https://positiveplanet.uk/company-dashboards/elife-sciences/',
-		alt: 'Positive Planet - Certified Carbon Neutral',
-		imageUrl: 'https://assets.pubpub.org/f2hftv2x/carbon-neutral-21688988941692.svg',
+		url: 'https://www.carbonfootprint.com/',
+		alt: 'Carbon Neutral Organisation carbon footprint standard [TM]',
+		imageUrl: 'https://assets.pubpub.org/umtgzgk9/carbon-neutral-org-11747831320464.svg',
 	},
 	copyright: {
 		date: '2023',

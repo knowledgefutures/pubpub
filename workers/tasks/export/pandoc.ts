@@ -55,7 +55,12 @@ const createPandocArgs = (
 };
 
 const createCslJsonBibliographyFile = async (notes: PandocNotes) => {
-	const cslJson = Object.values(notes).map((note) => note.cslJson);
+	const cslJson = Object.values(notes).map((note) => {
+		if (!note.id && note.structuredHtml) {
+			note.id = note.structuredHtml;
+		}
+		return note.cslJson;
+	});
 	const file = await getTmpFileForExtension('json');
 	fs.writeFileSync(file.path, JSON.stringify(cslJson));
 	return file.path;

@@ -1,19 +1,25 @@
 /* eslint-disable no-console */
 import path from 'path';
 // eslint-disable-next-line import/no-unresolved
-import { Worker } from 'worker_threads';
-import amqplib from 'amqplib';
 import * as Sentry from '@sentry/node';
+import amqplib from 'amqplib';
+import { Worker } from 'worker_threads';
 
-import { isProd, getAppCommit } from 'utils/environment';
-import { TaskPriority, taskQueueName } from 'utils/workers';
 import { WorkerTask } from 'server/models';
 import { expect } from 'utils/assert';
 import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
+import { getAppCommit, isProd } from 'utils/environment';
+import { TaskPriority, taskQueueName } from 'utils/workers';
+import type { TaskType } from './worker';
 
 const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;
 let currentWorkerThreads = 0;
+
+/** Nice to be able to run certain tasks longer than the default timeout */
+const customTimeouts = {
+	archive: 7200,
+} satisfies Partial<Record<TaskType, number>>;
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({
@@ -54,7 +60,6 @@ const processTask = (channel) => async (message) => {
 	console.log(`Beginning ${taskData.id} (load ${currentWorkerThreads}/${maxWorkerThreads})`);
 
 	const worker = new Worker(path.join(__dirname, 'initWorker.js'), {
-		execArgv: ['-r', 'esm'],
 		workerData: taskData,
 	});
 
@@ -123,15 +128,18 @@ const processTask = (channel) => async (message) => {
 
 	worker.on('error', onWorkerError);
 	worker.on('message', onWorkerMessage);
+
+	const maxWorkerTime = customTimeouts[taskData.type] ?? maxWorkerTimeSeconds;
+
 	taskTimeout = setTimeout(() => {
 		// Ask the worker nicely to kill its subprocesses
 		worker.postMessage('yield');
 		setTimeout(() => {
 			// Well, you had your chance
 			worker.terminate();
-			onWorkerError(`Worker terminated after ${maxWorkerTimeSeconds} seconds`);
+			onWorkerError(`Worker terminated after ${maxWorkerTime} seconds`);
 		}, 1000);
-	}, maxWorkerTimeSeconds * 1000);
+	}, maxWorkerTime * 1000);
 };
 
 const cloudAmqpUrl = process.env.CLOUDAMQP_URL;

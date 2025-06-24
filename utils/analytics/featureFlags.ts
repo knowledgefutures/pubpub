@@ -8,3 +8,6 @@ export const canUseCustomAnalyticsProvider = (featureFlags: InitialData['feature
 
 export const noCookieBanner = (featureFlags: InitialData['featureFlags']) =>
 	featureFlags?.noCookieBanner;
+
+export const isDataExportEnabled = (featureFlags: InitialData['featureFlags']) =>
+	featureFlags?.dataExport;

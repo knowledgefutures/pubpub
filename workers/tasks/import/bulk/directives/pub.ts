@@ -4,7 +4,7 @@ import path from 'path';
 import YAML from 'yaml';
 import tmp from 'tmp-promise';
 import filesize from 'filesize';
-import jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 import { Op } from 'sequelize';
 import { Node, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
@@ -96,7 +96,7 @@ const resolveDirectiveValue = async (value, context) => {
 	const { $fileSize, $sourceFile, $metadata, $docQuery } = value;
 	const { sourceFiles, rawMetadata, assetUrlForTmpPath, doc, withLeafValue = (x) => x } = context;
 	if ($docQuery) {
-		return jp.value(doc, $docQuery);
+		return JSONPath({ json: doc, path: $docQuery });
 	}
 	if ($fileSize) {
 		const pathLike = await resolveDirectiveValue($fileSize, context);

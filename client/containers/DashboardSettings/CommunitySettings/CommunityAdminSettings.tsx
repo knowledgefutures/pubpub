@@ -1,11 +1,14 @@
-import React, { useMemo } from 'react';
-import { AnchorButton, Callout } from '@blueprintjs/core';
+import React, { useMemo, useState } from 'react';
+import { AnchorButton, Button, Callout } from '@blueprintjs/core';
 import stripIndent from 'strip-indent';
 
 import { Community } from 'types';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { SettingsSection } from 'components';
+import type { WorkerTask } from 'server/models';
+import { isDataExportEnabled } from 'utils/analytics/featureFlags';
+import { ExportCommunityDataButton } from './ExportCommunityDataButton';
 
 const getEmails = (communityData: Community) => {
 	const exportEmailBody = stripIndent(`
@@ -28,22 +31,99 @@ const getEmails = (communityData: Community) => {
 	return { exportEmailBody, deleteEmailBody };
 };
 
-const ExportAndDeleteSettings = () => {
+type Props = {
+	settingsData: {
+		archives?: WorkerTask[];
+	};
+};
+
+const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
+const MAX_DAILY_EXPORTS = 5;
+
+const ExportDataSection = (props: Props) => {
+	const [seePreviousExports, setSeePreviousExports] = useState(false);
+	const {
+		loginData: { isSuperAdmin },
+	} = usePageContext();
+
+	const alreadyDoneExports = props.settingsData.archives?.filter(
+		(archiveTask) =>
+			new Date().getTime() - new Date(archiveTask.createdAt).getTime() < ONE_DAY_IN_MS,
+	);
+	const remainingExports = isSuperAdmin
+		? '∞'
+		: Math.max(MAX_DAILY_EXPORTS - (alreadyDoneExports?.length || 0), 0);
+
+	return (
+		<SettingsSection title="Export">
+			<p>
+				Export your communities data. Will create a zip archive with all publically
+				accessible pages in your community as HTML files, as well as a JSON file containing
+				structured information about your community.
+			</p>
+			<p>You have {remainingExports} remaining daily exports.</p>
+			<ExportCommunityDataButton disabled={remainingExports === 0} />
+
+			<hr />
+			<Button
+				icon={seePreviousExports ? 'arrow-up' : 'arrow-down'}
+				minimal
+				onClick={() => setSeePreviousExports(!seePreviousExports)}
+			>
+				{seePreviousExports ? 'Hide previous exports' : 'Show previous exports'}
+			</Button>
+			{seePreviousExports && (
+				<section>
+					{props.settingsData.archives?.map(
+						(archive) =>
+							typeof archive.output === 'string' && (
+								<div
+									key={archive.id}
+									style={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										marginBottom: '4px',
+										fontSize: '10px',
+									}}
+								>
+									<span>
+										Data export from{' '}
+										{new Date(archive.createdAt).toLocaleString()}{' '}
+									</span>
+									<AnchorButton
+										minimal
+										href={archive.output as string}
+										target="_blank"
+									>
+										Download
+									</AnchorButton>
+								</div>
+							),
+					)}
+				</section>
+			)}
+		</SettingsSection>
+	);
+};
+
+const ExportAndDeleteSettings = (props: Props) => {
 	const {
 		communityData,
 		scopeData: {
 			activePermissions: { canAdminCommunity },
 		},
+		loginData: { isSuperAdmin },
+		featureFlags,
 	} = usePageContext();
 
-	const { exportEmailBody, deleteEmailBody } = useMemo(
-		() => getEmails(communityData),
-		[communityData],
-	);
+	const { deleteEmailBody } = useMemo(() => getEmails(communityData), [communityData]);
 
 	if (!canAdminCommunity) {
 		return null;
 	}
+
+	const canExportData = isDataExportEnabled(featureFlags) || isSuperAdmin;
 
 	return (
 		<>
@@ -61,7 +141,8 @@ const ExportAndDeleteSettings = () => {
 					</AnchorButton>
 				</Callout>
 			</SettingsSection>
-			<SettingsSection title="Data Export">
+			{canExportData && <ExportDataSection settingsData={props.settingsData} />}
+			{/* <SettingsSection title="Data Export">
 				<p>
 					You can request an export of the data associated with your Community on PubPub
 					using the button below.
@@ -72,7 +153,7 @@ const ExportAndDeleteSettings = () => {
 				>
 					Request data export
 				</AnchorButton>
-			</SettingsSection>
+			</SettingsSection> */}
 			<SettingsSection title="Community Deletion">
 				<p>
 					You can request that we completely delete your PubPub Community using the button

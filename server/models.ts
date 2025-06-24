@@ -7,6 +7,7 @@ import { sequelize } from './sequelize';
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 
+import { ActivityItem } from './activityItem/model';
 import { AuthToken } from './authToken/model';
 import { Collection } from './collection/model';
 import { CollectionAttribution } from './collectionAttribution/model';
@@ -23,10 +24,10 @@ import { Doc } from './doc/model';
 import { Draft } from './draft/model';
 import { Export } from './export/model';
 import { ExternalPublication } from './externalPublication/model';
+import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding';
 import { FeatureFlag } from './featureFlag/model';
-import { FeatureFlagUser } from './featureFlagUser/model';
 import { FeatureFlagCommunity } from './featureFlagCommunity/model';
-import { ZoteroIntegration } from './zoteroIntegration/model';
+import { FeatureFlagUser } from './featureFlagUser/model';
 import { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
 import { LandingPageFeature } from './landingPageFeature/model';
 import { Member } from './member/model';
@@ -40,14 +41,14 @@ import { PubManager } from './pubManager/model';
 import { PubVersion } from './pubVersion/model';
 import { PublicPermissions } from './publicPermissions/model';
 import { Release } from './release/model';
+import { ReviewNew } from './review/model';
 import { ReviewEvent } from './reviewEvent/model';
+import { Reviewer } from './reviewer/model';
 import { ScopeSummary } from './scopeSummary/model';
-import { Submission } from './submission/model';
 import { Signup } from './signup/model';
 import { SpamTag } from './spamTag/model';
+import { Submission } from './submission/model';
 import { SubmissionWorkflow } from './submissionWorkflow/model';
-import { ReviewNew } from './review/model';
-import { Reviewer } from './reviewer/model';
 import { Thread } from './thread/model';
 import { ThreadComment } from './threadComment/model';
 import { ThreadEvent } from './threadEvent/model';
@@ -57,13 +58,13 @@ import { UserNotification } from './userNotification/model';
 import { UserNotificationPreferences } from './userNotificationPreferences/model';
 import { UserScopeVisit } from './userScopeVisit/model';
 import { UserSubscription } from './userSubscription/model';
-import { ActivityItem } from './activityItem/model';
 import { Visibility } from './visibility/model';
-import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding';
 import { VisibilityUser } from './visibilityUser/model';
 import { WorkerTask } from './workerTask/model';
+import { ZoteroIntegration } from './zoteroIntegration/model';
 
 sequelize.addModels([
+	ActivityItem,
 	AuthToken,
 	Collection,
 	CollectionAttribution,
@@ -115,7 +116,6 @@ sequelize.addModels([
 	UserNotificationPreferences,
 	UserScopeVisit,
 	UserSubscription,
-	ActivityItem,
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
@@ -157,6 +157,7 @@ export const includeUserModel = (() => {
 })();
 
 export {
+	ActivityItem,
 	AuthToken,
 	Collection,
 	CollectionAttribution,
@@ -174,9 +175,8 @@ export {
 	Export,
 	ExternalPublication,
 	FeatureFlag,
-	FeatureFlagUser,
 	FeatureFlagCommunity,
-	ZoteroIntegration,
+	FeatureFlagUser,
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
@@ -186,18 +186,18 @@ export {
 	Pub,
 	PubAttribution,
 	PubEdge,
+	PublicPermissions,
 	PubManager,
 	PubVersion,
-	PublicPermissions,
 	Release,
+	Reviewer,
 	ReviewEvent,
+	ReviewNew,
 	ScopeSummary,
-	Submission,
 	Signup,
 	SpamTag,
+	Submission,
 	SubmissionWorkflow,
-	ReviewNew,
-	Reviewer,
 	Thread,
 	ThreadComment,
 	ThreadEvent,
@@ -207,10 +207,10 @@ export {
 	UserNotificationPreferences,
 	UserScopeVisit,
 	UserSubscription,
-	ActivityItem,
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	ZoteroIntegration,
 };
 
 /**

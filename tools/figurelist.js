@@ -1,5 +1,5 @@
 import fs from 'fs';
-import jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 import sanitizeHtml from 'sanitize-html';
 import dedent from 'dedent';
 
@@ -18,7 +18,7 @@ const getReferenceUrl = (pub, nodeId) => {
 
 const getFigureEntriesForPubId = async (pub) => {
 	const { doc } = await getPubDraftDoc(pub.id);
-	const imageNodes = jp.query(doc, `$..content[?(@.type=="image")]`);
+	const imageNodes = JSONPath({ path: '$..content[?(@.type=="image")]', json: doc });
 	return imageNodes
 		.map((image) => {
 			const { url, caption, id } = image.attrs;

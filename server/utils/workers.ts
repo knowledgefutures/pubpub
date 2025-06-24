@@ -59,7 +59,7 @@ export const addWorkerTask = async ({
 	input,
 	priority = getDefaultTaskPriority(),
 }: {
-	type: 'import' | 'export';
+	type: 'import' | 'export' | 'archive';
 	input;
 	priority?: number;
 }) => {

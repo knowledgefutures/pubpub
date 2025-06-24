@@ -67,4 +67,6 @@ export type PubGetOptions = {
 	getEdgesOptions?: PubEdgeIncludesOptions;
 	getSubmissions?: boolean;
 	getFacets?: boolean;
+	/** Get releases with the docs. Only use when generating archives */
+	getFullReleases?: boolean;
 };

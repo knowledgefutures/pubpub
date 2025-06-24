@@ -18,6 +18,11 @@ const nonPurgeNonGetRoutes = {
 	'/api/activityItems': ['POST'],
 	/** Exports get purged in the export task */
 	'/api/export': ['POST'],
+	/**
+	 * Archive is a special case, it's not a CRUD operation and it only affects non-cached routes
+	 * (community admin dashboard) Also, otherwise archiving would put a lot of stress on the app
+	 */
+	'/api/communities/archive': ['POST'],
 } satisfies {
 	[Path in `/api/${string}`]: AllowedMethods[];
 };

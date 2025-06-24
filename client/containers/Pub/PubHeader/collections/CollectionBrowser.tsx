@@ -69,56 +69,62 @@ const CollectionBrowser = (props: Props) => {
 	};
 
 	return (
-		<Menu
-			className="collection-browser-component_menu"
-			disclosure={renderDisclosure}
-			aria-label="Browse this collection"
-			menuListRef={menuRef}
-			onVisibleChange={setVisible}
-		>
-			<MenuItem
-				icon="collection"
-				text={collection.title}
-				href={collectionUrl(communityData, collection)}
-			/>
-			<MenuItemDivider />
-			{pubs?.length > 0
-				? pubs.map((pub) => (
-						<MenuItem
-							active={currentPub.id === pub.id}
-							href={readingPubUrl(pub)}
-							textClassName="menu-item-text"
-							icon="pubDoc"
-							key={pub.id}
-							text={
-								<>
-									<div className="title">
-										<PubTitle pubData={pub} />
-									</div>
-									<PubByline pubData={pub} linkToUsers={false} />
-								</>
-							}
-						/>
-				  ))
-				: null}
-			{isLoading && (
+		<>
+			{/* Hidden link for web crawlers  */}
+			<a href={collectionUrl(communityData, collection)} style={{ display: 'none' }}>
+				{collection.title}
+			</a>
+			<Menu
+				className="collection-browser-component_menu"
+				disclosure={renderDisclosure}
+				aria-label="Browse this collection"
+				menuListRef={menuRef}
+				onVisibleChange={setVisible}
+			>
 				<MenuItem
-					disabled
-					className="loading-menu-item"
-					textClassName="menu-item-text"
-					icon={<Spinner size={30} />}
-					text="Loading..."
+					icon="collection"
+					text={collection.title}
+					href={collectionUrl(communityData, collection)}
 				/>
-			)}
-			{error && (
-				<MenuItem
-					disabled
-					className="loading-menu-item"
-					textClassName="menu-item-text"
-					text="Error loading Pubs"
-				/>
-			)}
-		</Menu>
+				<MenuItemDivider />
+				{pubs?.length > 0
+					? pubs.map((pub) => (
+							<MenuItem
+								active={currentPub.id === pub.id}
+								href={readingPubUrl(pub)}
+								textClassName="menu-item-text"
+								icon="pubDoc"
+								key={pub.id}
+								text={
+									<>
+										<div className="title">
+											<PubTitle pubData={pub} />
+										</div>
+										<PubByline pubData={pub} linkToUsers={false} />
+									</>
+								}
+							/>
+					  ))
+					: null}
+				{isLoading && (
+					<MenuItem
+						disabled
+						className="loading-menu-item"
+						textClassName="menu-item-text"
+						icon={<Spinner size={30} />}
+						text="Loading..."
+					/>
+				)}
+				{error && (
+					<MenuItem
+						disabled
+						className="loading-menu-item"
+						textClassName="menu-item-text"
+						text="Error loading Pubs"
+					/>
+				)}
+			</Menu>
+		</>
 	);
 };
 export default CollectionBrowser;

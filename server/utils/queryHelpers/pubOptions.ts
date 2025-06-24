@@ -20,9 +20,11 @@ import {
 	ScopeSummary,
 	Submission,
 	SubmissionWorkflow,
+	Doc,
 } from 'server/models';
 import { PubGetOptions } from 'types';
 
+import type { IncludeOptions } from 'sequelize';
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
@@ -38,6 +40,7 @@ export default ({
 	getDraft,
 	getDiscussions,
 	getSubmissions,
+	getFullReleases,
 }: PubGetOptions) => {
 	const allowUnapprovedEdges = getEdges === 'all';
 	/* Initialize values assuming all inputs are false. */
@@ -61,7 +64,7 @@ export default ({
 			separate: true,
 			order: [['createdAt', 'ASC']],
 		},
-	];
+	] as IncludeOptions[];
 	let collectionPubs: any = [];
 	let community: any = [];
 	let anchors = [{ model: DiscussionAnchor, as: 'anchors' }];
@@ -117,6 +120,22 @@ export default ({
 				include: getPubEdgeIncludes({ ...getEdgesOptions, includePub: true }),
 				where: !allowUnapprovedEdges && { approvedByTarget: true },
 				order: [['rank', 'ASC']],
+			},
+		];
+	}
+
+	if (getFullReleases) {
+		pubReleases = [
+			{
+				model: Release,
+				as: 'releases',
+				separate: true,
+				include: [
+					{
+						model: Doc,
+						as: 'doc',
+					},
+				],
 			},
 		];
 	}

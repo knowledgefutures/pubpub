@@ -3,23 +3,25 @@
 import uuidv4 from 'uuid/v4';
 
 import {
-	Community,
-	Page,
-	Member,
 	Collection,
 	CollectionAttribution,
-	PubAttribution,
+	Community,
+	Member,
+	Page,
 	Pub,
+	PubAttribution,
+	WorkerTask,
 } from 'server/models';
-import { slugifyString } from 'utils/strings';
-import { generateHash } from 'utils/hashes';
-import { isProd } from 'utils/environment';
-import { subscribeUser } from 'server/utils/mailchimp';
-import { postToSlackAboutNewCommunity } from 'server/utils/slack';
-import { updateCommunityData } from 'server/utils/search';
-import { defer } from 'server/utils/deferred';
 import { getSpamTagForCommunity } from 'server/spamTag/queries';
+import { defer } from 'server/utils/deferred';
+import { subscribeUser } from 'server/utils/mailchimp';
+import { updateCommunityData } from 'server/utils/search';
+import { postToSlackAboutNewCommunity } from 'server/utils/slack';
+import { addWorkerTask } from 'server/utils/workers';
 import * as types from 'types';
+import { isProd } from 'utils/environment';
+import { generateHash } from 'utils/hashes';
+import { slugifyString } from 'utils/strings';
 
 export class CommunityURLAlreadyExistsError extends Error {}
 
@@ -237,4 +239,44 @@ export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<t
 		if (communities.length < limit) break;
 		offset += limit;
 	}
+};
+
+export const getOrStartArchiveTask = async (communityId: string, key: string) => {
+	const pendingTask = await WorkerTask.findOne({
+		where: {
+			type: 'archive',
+			input: {
+				communityId,
+			},
+			isProcessing: true,
+			error: null,
+		},
+		order: [['createdAt', 'DESC']],
+	});
+
+	if (pendingTask) {
+		return pendingTask;
+	}
+
+	const workerTask = await addWorkerTask({
+		type: 'archive',
+		input: { communityId, key },
+	});
+
+	return workerTask;
+};
+
+export const getComunityArchives = async (communityId: string) => {
+	const archives = await WorkerTask.findAll({
+		where: {
+			type: 'archive',
+			input: {
+				communityId,
+			},
+			isProcessing: false,
+			error: null,
+		},
+		order: [['createdAt', 'DESC']],
+	});
+	return archives;
 };

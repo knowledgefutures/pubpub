@@ -8,19 +8,33 @@ import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubForRequest } from 'server/utils/queryHelpers';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
+import { InitialData } from 'types';
+import { getComunityArchives } from 'server/community/queries';
 
-const getSettingsData = async (pubSlug, initialData) => {
+const getSettingsData = async (
+	initialData: InitialData,
+	pubSlug?: string,
+	isSuperAdmin?: boolean,
+) => {
+	const [depositTarget, pubData, archives] = await Promise.all([
+		getCommunityDepositTarget(initialData.communityData.id),
+		pubSlug
+			? getPubForRequest({
+					slug: pubSlug,
+					initialData,
+					getEdges: 'all',
+			  })
+			: null,
+		isSuperAdmin ? getComunityArchives(initialData.communityData.id) : null,
+	]);
 	const baseSettingsData = {
-		depositTarget: await getCommunityDepositTarget(initialData.communityData.id),
+		depositTarget,
+		archives,
 	};
 	if (pubSlug) {
 		return {
 			...baseSettingsData,
-			pubData: await getPubForRequest({
-				slug: pubSlug,
-				initialData,
-				getEdges: 'all',
-			}),
+			pubData,
 		};
 	}
 	return baseSettingsData;
@@ -45,7 +59,11 @@ app.get(
 				throw new NotFoundError();
 			}
 
-			const settingsData = await getSettingsData(req.params.pubSlug, initialData);
+			const settingsData = await getSettingsData(
+				initialData,
+				req.params.pubSlug,
+				initialData.loginData.isSuperAdmin,
+			);
 
 			if (!initialData.scopeData.activePermissions.canView) {
 				throw new ForbiddenError();

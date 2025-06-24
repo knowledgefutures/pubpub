@@ -24,6 +24,7 @@ import {
 	DepositTarget,
 	ScopeSummary,
 	SpamTag,
+	Member,
 } from '../models';
 
 @Table
@@ -243,6 +244,9 @@ export class Community extends Model<
 
 	@HasMany(() => Page, { onDelete: 'CASCADE', as: 'pages', foreignKey: 'communityId' })
 	declare pages?: Page[];
+
+	@HasMany(() => Member, { onDelete: 'CASCADE', as: 'members', foreignKey: 'communityId' })
+	declare members?: Member[];
 
 	@HasMany(() => DepositTarget, {
 		onDelete: 'CASCADE',

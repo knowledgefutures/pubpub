@@ -2,12 +2,12 @@
 import Cite from 'citation-js';
 
 import * as types from 'types';
-import getCollectionDoi from 'utils/collections/getCollectionDoi';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { pubUrl } from 'utils/canonicalUrls';
-import { getPrimaryCollection } from 'utils/collections/primary';
 import { CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
+import getCollectionDoi from 'utils/collections/getCollectionDoi';
+import { getPrimaryCollection } from 'utils/collections/primary';
 import { getAllPubContributors } from 'utils/contributors';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
@@ -101,7 +101,7 @@ export const generateCitationHtml = async (
 	/* Set the user agent with a mailto to use Crossref's "polite" pool. */
 	/* https://www.crossref.org/blog/rebalancing-our-rest-api-traffic/ */
 	Cite.util.setUserAgent(
-		'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/18.7.0',
+		'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/22.14.0',
 	);
 
 	const pubCiteObject = await Cite.async({

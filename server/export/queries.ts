@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize';
 
-import { WorkerTask, Export } from 'server/models';
-import { addWorkerTask } from 'server/utils/workers';
-import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { Export, WorkerTask } from 'server/models';
 import { getReleasesForPub } from 'server/release/queries';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { addWorkerTask } from 'server/utils/workers';
 import { getExportFormats } from 'utils/export/formats';
 
 export const getOrStartExportTask = async ({
@@ -29,11 +29,11 @@ export const getOrStartExportTask = async ({
 	if (existingExport) {
 		const { url, workerTask } = existingExport;
 		if (url) {
-			return { url };
+			return { url, format };
 		}
 		const shouldAllowTaskToComplete = workerTask && !workerTask.error;
 		if (shouldAllowTaskToComplete) {
-			return { taskId: workerTask.id };
+			return { taskId: workerTask.id, format };
 		}
 	}
 
@@ -51,7 +51,7 @@ export const getOrStartExportTask = async ({
 	});
 
 	await theExport.update({ workerTaskId: task.id });
-	return { taskId: task.id };
+	return { taskId: task.id, format: theExport.format, url: theExport.url };
 };
 
 export const createPubExportsForHistoryKey = async (pubId: string, historyKey: number) => {

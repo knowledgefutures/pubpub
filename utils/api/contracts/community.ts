@@ -10,6 +10,26 @@ import {
 extendZodWithOpenApi(z);
 
 export const communityRouter = {
+	archive: {
+		path: '/api/communities/archive',
+		method: 'POST',
+		summary: 'Archive a community',
+		description: 'Archive a community. Super admin only',
+		body: z.object({
+			dontWait: z.coerce
+				.boolean()
+				.default(false)
+				.describe(
+					"Don't wait for the archive to complete. If true, the archive will be queued and a URL will be returned and workertask will be returned.",
+				),
+		}),
+		responses: {
+			200: z.object({
+				url: z.string(),
+				workerTaskId: z.string().uuid(),
+			}),
+		},
+	},
 	/**
 	 * `GET /api/communities`
 	 *

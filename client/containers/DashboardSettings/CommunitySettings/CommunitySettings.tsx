@@ -8,6 +8,7 @@ import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
+import type { WorkerTask } from 'server/models';
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 import CommunityAdminSettings from './CommunityAdminSettings';
 import PublicNewPubs from './PublicNewPubsSettings';
@@ -35,7 +36,13 @@ const mustRefreshAfterPersist = (oldCommunity: Community, update: Partial<Commun
 	return attributesRequiringRefresh.some((attr) => newCommunity[attr] !== oldCommunity[attr]);
 };
 
-const CommunitySettings = () => {
+type Props = {
+	settingsData: {
+		archives?: WorkerTask[];
+	};
+};
+
+const CommunitySettings = (props: Props) => {
 	const pageContext = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 	const { communityData: initialCommunityData } = pageContext;
@@ -93,7 +100,7 @@ const CommunitySettings = () => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				<CommunityAdminSettings />,
+				<CommunityAdminSettings {...props} />,
 			],
 		},
 		{

@@ -1,15 +1,15 @@
 /* eslint-disable no-restricted-syntax */
 
+import Cite from 'citation-js';
+import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
+import crypto from 'crypto';
+import { CitationStyle, FacetValue } from 'facets';
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
-import Cite from 'citation-js';
 import { DocJson } from 'types';
-import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
-import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
-import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
+import { CitationInlineStyleKind, CitationStyleKind, citationStyles } from 'utils/citations';
+import { RenderedStructuredValue, StructuredValue } from 'utils/notes';
 import { expiringPromise } from 'utils/promises';
-import { CitationStyle, FacetValue } from 'facets';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -30,7 +30,7 @@ Cite.plugins.input.removeDataParser('@else/url', true);
 /* Set the user agent with a mailto to use Crossref's "polite" pool. */
 /* https://www.crossref.org/blog/rebalancing-our-rest-api-traffic/ */
 Cite.util.setUserAgent(
-	'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/18.7.0',
+	'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/22.14.0',
 );
 
 const generateFallbackHash = (structuredValue: string) =>

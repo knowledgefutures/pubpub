@@ -204,6 +204,16 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	return (
 		<div className="draft-release-buttons-component">
 			{isRelease ? renderForRelease() : renderForDraft()}
+			{/* Hidden links for web crawlers  */}
+			{expect(pubData.releases).map((release, index) => (
+				<a
+					key={release.id}
+					href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
+					style={{ display: 'none' }}
+				>
+					{pubData.title} - Release #{index + 1}
+				</a>
+			))}
 		</div>
 	);
 };

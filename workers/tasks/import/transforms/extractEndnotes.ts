@@ -1,4 +1,4 @@
-import jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 
 import { walkAndReplace } from './util';
 
@@ -48,10 +48,10 @@ const maybeRemoveStrayPeriod = (div) => {
 };
 
 export const extractEndnotesTransformer = (ast) => {
-	const endnoteDivs = jp.query(ast, getEndnoteDivsQuery);
+	const endnoteDivs = JSONPath({ json: ast, path: getEndnoteDivsQuery });
 	const notes = endnoteDivs
 		.map((divNode) => {
-			const linkback = jp
+			const linkback = JSONPath({ json: divNode, path: getLinksQuery })
 				.query(divNode, getLinksQuery)
 				.find((link) => link.attr.classes.includes('ennum'));
 			if (linkback) {

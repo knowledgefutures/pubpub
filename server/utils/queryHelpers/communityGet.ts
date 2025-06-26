@@ -10,13 +10,16 @@ export default async (locationData, whereQuery) => {
 				as: 'pages',
 				separate: true,
 				attributes: {
-					exclude: ['updatedAt', 'communityId'],
+					exclude: ['updatedAt', 'communityId', 'layout'],
 				},
 			},
 			{
 				model: Collection,
 				as: 'collections',
 				separate: true,
+				attributes: {
+					exclude: ['layout'],
+				},
 				include: [
 					{
 						model: Member,

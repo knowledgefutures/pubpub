@@ -34,8 +34,11 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 			return next();
 		}
 
-		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
-		const pageData = await getPage({ query: { id: pageId }, initialData });
+		const [customScripts, pageData] = await Promise.all([
+			getCustomScriptsForCommunity(initialData.communityData.id),
+			getPage({ query: { id: pageId }, initialData }),
+		]);
+
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title
 			: `${pageData.title} · ${initialData.communityData.title}`;

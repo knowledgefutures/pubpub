@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
+
+import React from 'react';
+
 import {
 	Collection,
 	CollectionAttribution,
@@ -10,6 +13,7 @@ import {
 	Member,
 	Page,
 	Pub,
+	Release,
 	ScopeSummary,
 	sequelize,
 } from 'server/models';
@@ -31,6 +35,12 @@ import { SerializedModel } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import scrape from 'website-scraper';
+import { renderStatic } from 'client/components/Editor/utils/renderStatic';
+import { editorSchema } from 'client/components/Editor/utils/schema';
+import ReactDOMServer from 'react-dom/server';
+import { getNotesData } from './export/notes';
+import { getPubMetadata } from './export/metadata';
+import { addHrefsToNotes, filterNonExportableNodes } from './export/html';
 
 const zipDir = (dirPath: string) => {
 	return new Promise<string>((resolve, reject) => {
@@ -62,12 +72,21 @@ const archiveCommunityHtml = async (directory: string, community: SerializedMode
 		(resourceUrl.indexOf(url) === 0 && !resourceUrl.includes('login')) ||
 		resourceUrl.includes('https://resize-v3.pubpub.org') ||
 		resourceUrl.includes('https://assets.pubpub.org');
+
+	const sitemap = await (await fetch(new URL('sitemap-0.xml', url).toString())).text();
+	if (!sitemap) {
+		throw new Error('No sitemap found');
+	}
+
+	const urls = Array.from(sitemap.match(/https?[^<]+/g) ?? []).filter(urlFilter);
+
 	const result = await scrape({
 		directory,
-		urls: [url],
+		urls,
 		urlFilter,
 		recursive: true,
-		maxRecursiveDepth: 2,
+		maxRecursiveDepth: 1,
+
 		requestConcurrency: 5,
 		filenameGenerator: 'bySiteStructure',
 		request: {
@@ -82,10 +101,19 @@ const archiveCommunityHtml = async (directory: string, community: SerializedMode
 						const resourceUrl = new URL(resource.url);
 						resourceUrl.searchParams.delete('readingCollection');
 						resource.url = resourceUrl.toString();
-						console.log(`Fetching ${resource.url}`);
+						console.log(`Fetching ${resource.url}`, requestOptions);
+						requestOptions.url = resource.url;
+						const { searchParams } = requestOptions;
+						const { readingCollection: _, ...rest } = searchParams ?? {};
+
+						const newRequestOptions = {
+							...requestOptions,
+							searchParams: rest,
+						};
+
 						return {
 							resource,
-							requestOptions,
+							requestOptions: newRequestOptions,
 						};
 					});
 					register('afterResponse', async ({ response }) => {
@@ -154,22 +182,68 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 						}
 
 						try {
-							const draftDoc = await getPubDraftDoc(
-								getDatabaseRef(firebasePath),
-								null,
-								false,
-							);
+							const hasRelease = p.releases && p.releases.length > 0;
+							const latestRelease = hasRelease ? p.releases?.at(-1) : null;
+							const latestReleaseKey = latestRelease?.historyKey;
+							const latestReleaseIsDraft =
+								latestRelease?.createdAt > (p.draft?.latestKeyAt ?? new Date(0));
+
+							const shouldFetchLatestRelease =
+								latestReleaseKey && !latestReleaseIsDraft;
+
+							const [draftDoc, maybeLatestReleaseDoc] = await Promise.all([
+								getPubDraftDoc(getDatabaseRef(firebasePath), null, false),
+								shouldFetchLatestRelease
+									? getPubDraftDoc(p.id, latestReleaseKey, false)
+									: null,
+							]);
+
 							if (!draftDoc) {
 								return {
 									content: null,
 									firebasePath,
 								};
 							}
+
 							const { doc, ...rest } = draftDoc;
+
+							if (!latestRelease) {
+								return {
+									...rest,
+									content: doc,
+									firebasePath,
+								};
+							}
+
+							const releaseDoc = latestReleaseIsDraft
+								? draftDoc
+								: maybeLatestReleaseDoc!;
+
+							const pubMetadata = await getPubMetadata(p.id);
+							const notesData = await getNotesData(pubMetadata, releaseDoc.doc!);
+							const { nodeLabels } = pubMetadata;
+							const { noteManager } = notesData;
+
+							// i don't really understand why this works, but
+							// doc.content?.map(filterNonExportableNotes) doesn't
+							const renderableNodes = [filterNonExportableNodes, addHrefsToNotes]
+								.filter((x): x is (nodes: any) => any => !!x)
+								.reduce((nodes, fn) => fn(nodes), doc.content);
+
+							const docContent = renderStatic({
+								schema: editorSchema,
+								doc: { type: 'doc', content: renderableNodes },
+								noteManager,
+								nodeLabels,
+							});
+							const releaseHtml = ReactDOMServer.renderToStaticMarkup(
+								<article>{docContent}</article>,
+							);
 
 							return {
 								...rest,
 								content: doc,
+								html: releaseHtml,
 								firebasePath,
 							};
 						} catch (e) {
@@ -197,6 +271,8 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 						...pubJson.draft,
 						doc: firebaseDraft,
 					},
+					// @ts-expect-error
+					html: firebaseDraft?.html,
 				};
 			});
 
@@ -412,6 +488,12 @@ const getPubs = async (communityId: string) => {
 				model: Draft,
 				as: 'draft',
 				attributes: ['firebasePath'],
+			},
+			{
+				model: Release,
+				as: 'releases',
+				attributes: ['historyKey', 'createdAt'],
+				separate: true,
 			},
 		],
 		order: [['createdAt', 'ASC']],

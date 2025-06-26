@@ -68,10 +68,10 @@ const createCss = () => {
 
 const staticCss = createCss();
 
-const filterNonExportableNodes = (nodes) =>
+export const filterNonExportableNodes = (nodes) =>
 	nodes.filter((n) => !nonExportableNodeTypes.includes(n.type));
 
-const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
+export const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
 	nodes.map((node) => {
 		if (matchNodeTypes.includes(node.type)) {
 			return {
@@ -106,7 +106,7 @@ const getFootnoteLinkage = (index) => {
 	};
 };
 
-const addHrefsToNotes = (nodes) => {
+export const addHrefsToNotes = (nodes) => {
 	let footnoteIndex = -1;
 	return addAttrsToNodes(
 		(node) => {

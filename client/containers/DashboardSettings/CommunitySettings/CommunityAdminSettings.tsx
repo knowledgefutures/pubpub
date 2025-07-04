@@ -93,7 +93,7 @@ const ExportDataSection = (props: Props) => {
 									</span>
 									<AnchorButton
 										minimal
-										href={archive.output as string}
+										href={`${archive.output}.zip` as string}
 										target="_blank"
 									>
 										Download

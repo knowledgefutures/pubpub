@@ -19,113 +19,25 @@ import {
 } from 'server/models';
 
 import archiver from 'archiver';
-import { createReadStream, createWriteStream } from 'fs';
-import fs from 'fs/promises';
+import { renderStatic } from 'client/components/Editor/utils/renderStatic';
+import { editorSchema } from 'client/components/Editor/utils/schema';
 import { performance } from 'perf_hooks';
+import ReactDOMServer from 'react-dom/server';
 import { Op } from 'sequelize';
 import { CollectionPub } from 'server/collectionPub/model';
 import { fetchFacetsForScopeIds } from 'server/facets';
 import { getDatabaseRef, getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { assetsClient } from 'server/utils/s3';
-import { Readable, Transform } from 'stream';
-import { pipeline } from 'stream/promises';
-import tmp from 'tmp-promise';
-import { SerializedModel } from 'types';
+import { PassThrough, Readable, Transform } from 'stream';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
-import scrape from 'website-scraper';
-import { renderStatic } from 'client/components/Editor/utils/renderStatic';
-import { editorSchema } from 'client/components/Editor/utils/schema';
-import ReactDOMServer from 'react-dom/server';
-import { getNotesData } from './export/notes';
-import { getPubMetadata } from './export/metadata';
+import { createSiteDownloaderTransform } from './archive/siteDownloaderTransform';
+import { createSitemapUrlStreams } from './archive/sitemapUrlStream';
 import { addHrefsToNotes, filterNonExportableNodes } from './export/html';
-
-const zipDir = (dirPath: string) => {
-	return new Promise<string>((resolve, reject) => {
-		const archivePath = `${dirPath}.zip`;
-		const archiveWriteStream = createWriteStream(archivePath);
-		const archive = archiver('zip', {
-			zlib: { level: 9 },
-		})
-			.on('warning', (error) => {
-				if (error.code === 'ENOENT') {
-					console.error(error);
-				} else {
-					reject(error);
-				}
-			})
-			.on('end', () => {
-				resolve(archivePath);
-			})
-			.on('error', reject)
-			.directory(dirPath, false);
-		archive.pipe(archiveWriteStream);
-		archive.finalize();
-	});
-};
-
-const archiveCommunityHtml = async (directory: string, community: SerializedModel<Community>) => {
-	const url = communityUrl(community);
-	const urlFilter = (resourceUrl: string) =>
-		(resourceUrl.indexOf(url) === 0 && !resourceUrl.includes('login')) ||
-		resourceUrl.includes('https://resize-v3.pubpub.org') ||
-		resourceUrl.includes('https://assets.pubpub.org');
-
-	const sitemap = await (await fetch(new URL('sitemap-0.xml', url).toString())).text();
-	if (!sitemap) {
-		throw new Error('No sitemap found');
-	}
-
-	const urls = Array.from(sitemap.match(/https?[^<]+/g) ?? []).filter(urlFilter);
-
-	const result = await scrape({
-		directory,
-		urls,
-		urlFilter,
-		recursive: true,
-		maxRecursiveDepth: 1,
-
-		requestConcurrency: 5,
-		filenameGenerator: 'bySiteStructure',
-		request: {
-			headers: {
-				'User-Agent': 'PubPub Archive Tool',
-			},
-		},
-		plugins: [
-			{
-				apply(register) {
-					register('beforeRequest', async ({ resource, requestOptions }) => {
-						const resourceUrl = new URL(resource.url);
-						resourceUrl.searchParams.delete('readingCollection');
-						resource.url = resourceUrl.toString();
-						console.log(`Fetching ${resource.url}`, requestOptions);
-						requestOptions.url = resource.url;
-						const { searchParams } = requestOptions;
-						const { readingCollection: _, ...rest } = searchParams ?? {};
-
-						const newRequestOptions = {
-							...requestOptions,
-							searchParams: rest,
-						};
-
-						return {
-							resource,
-							requestOptions: newRequestOptions,
-						};
-					});
-					register('afterResponse', async ({ response }) => {
-						console.log(`Fetched ${response.url}: ${response.statusCode}`);
-						return response;
-					});
-				},
-			},
-		],
-	});
-	return result;
-};
+import { getPubMetadata } from './export/metadata';
+import { getNotesData } from './export/notes';
+import { ReadableStreamClone } from './archive/readableStreamClone';
 
 const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 	let offset = 0;
@@ -515,45 +427,60 @@ export const archiveTask = async ({ communityId, key }: { communityId: string; k
 
 	console.log(`Found ${pubs.length} pubs`);
 
-	const tmpDir = await tmp.dir();
-	const tmpArchiveDir = `${tmpDir.path}/${communityId}`;
-
-	console.log(`Scraping ${communityUrl(communityData.community)}`);
-
-	// scrape community html and assets
-	await archiveCommunityHtml(
-		tmpArchiveDir,
-		communityData.community as SerializedModel<Community>,
+	const archiveStream = archiver('zip', { zlib: { level: 9 } });
+	const sitemapUrlStreams = await createSitemapUrlStreams(
+		communityUrl(communityData.community),
+		5,
 	);
 
-	console.log(`Scraped community HTML to ${tmpArchiveDir}`);
+	let nCompletedSitemapUrlStreams = 0;
 
-	// create streams
+	const end = () => {
+		if (++nCompletedSitemapUrlStreams === sitemapUrlStreams.length) {
+			archiveStream.finalize();
+		}
+	};
+
+	// eslint-disable-next-line no-restricted-syntax
+	for (const sitemapUrlStream of sitemapUrlStreams) {
+		sitemapUrlStream
+			.pipe(
+				createSiteDownloaderTransform({
+					headers: {
+						'User-Agent': 'PubPub-Archive-Bot/1.0',
+					},
+				}),
+			)
+			.on('data', (file) => {
+				archiveStream.append(file.stream, { name: file.name });
+			})
+			.on('end', end)
+			.on('error', (err) => {
+				console.error('Stream error:', err);
+				end();
+			});
+	}
+
 	const pubReadStream = await createPubStream(pubs, BATCH_SIZE);
-	const pubWriteStream = createWriteStream(`${tmpArchiveDir}/static.json`);
 	const communityJsonTransform = createCommunityJsonTransform(communityData);
+	const communityJsonStream = pubReadStream.pipe(communityJsonTransform);
 
 	const pubTracker = devTools.createMemoryTracker(pubReadStream, BATCH_SIZE);
 	const jsonTracker = devTools.createMemoryTracker(communityJsonTransform, BATCH_SIZE);
 
-	// pipe everything together
-	await pipeline(pubReadStream, communityJsonTransform, pubWriteStream);
+	const communityJsonArchiveStream = new ReadableStreamClone(communityJsonStream);
 
-	const archivePath = await zipDir(tmpArchiveDir);
-	const archiveReadStream = createReadStream(archivePath);
+	archiveStream.append(communityJsonArchiveStream, {
+		name: 'export.json',
+	});
 
-	await assetsClient.uploadFileSplit(`${key}.zip`, archiveReadStream);
-	await assetsClient.uploadFileSplit(`${key}.json`, createReadStream(pubWriteStream.path));
+	const communityArchiveStream = new PassThrough();
+
+	archiveStream.pipe(communityArchiveStream);
+
+	await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream);
 
 	console.log(`Uploaded archive to ${key}`);
-
-	await Promise.all([
-		// remove the archive directory
-		fs.rm(tmpArchiveDir, { recursive: true, force: true }),
-		// remove the archive file
-		fs.rm(archivePath),
-	]);
-	await tmpDir.cleanup();
 
 	devTools.logStats(startTime, pubTracker, jsonTracker);
 	const endTime = performance.now();

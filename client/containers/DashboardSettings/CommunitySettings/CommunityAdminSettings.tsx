@@ -57,7 +57,7 @@ const ExportDataSection = (props: Props) => {
 	return (
 		<SettingsSection title="Export">
 			<p>
-				Export your communities data. Will create a zip archive with all publically
+				Export your communities data. Will create a .zip archive with all publically
 				accessible pages in your community as HTML files, as well as a JSON file containing
 				structured information about your community.
 			</p>
@@ -93,7 +93,7 @@ const ExportDataSection = (props: Props) => {
 									</span>
 									<AnchorButton
 										minimal
-										href={`${archive.output}.zip` as string}
+										href={`${archive.output}` as string}
 										target="_blank"
 									>
 										Download

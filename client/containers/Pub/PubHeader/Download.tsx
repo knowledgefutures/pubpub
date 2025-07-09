@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Classes, Icon, Spinner, Tooltip } from '@blueprintjs/core';
 
 import { Menu, MenuItem } from 'components/Menu';
@@ -55,7 +55,11 @@ const Download = (props: Props) => {
 		setDownloadUrl(null);
 		window.open(url);
 	};
-
+	const getMatchingExport = useCallback(
+		(format: string) =>
+			pubData.exports.find((ex) => ex.format === format && ex.historyKey >= latestKey),
+		[pubData.exports, latestKey],
+	);
 	// eslint-disable-next-line consistent-return
 	const handleStartDownload = (type) => {
 		track('download', {
@@ -70,9 +74,7 @@ const Download = (props: Props) => {
 			return download(formattedDownload.url);
 		}
 
-		const matchingExport = pubData.exports.find(
-			(ex) => ex.format === type.format && ex.historyKey >= latestKey,
-		);
+		const matchingExport = getMatchingExport(type.format);
 
 		if (matchingExport && matchingExport.url) {
 			return download(matchingExport.url);
@@ -135,67 +137,104 @@ const Download = (props: Props) => {
 	]);
 
 	return (
-		<Menu
-			disclosure={children}
-			className="pub-download-component"
-			aria-label="Pub download formats"
-			placement="bottom-end"
-		>
-			{formattedDownload && (
-				<React.Fragment>
-					<li className={Classes.MENU_HEADER}>
-						<h6 className={Classes.HEADING}>Formatted Download</h6>
-					</li>
-					<MenuItem
-						dismissOnClick={false}
-						labelElement={<Icon icon="star" />}
-						className="formatted-button"
-						// intent={Intent.PRIMARY}
-						text={`Formatted ${formattedDownload.url.split('.').pop().toUpperCase()}`}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ dismissOnClick: false; labelElement: Eleme... Remove this comment to see the full error message
-						loading={isLoading && selectedType?.format === 'formatted'}
-						onClick={() => handleStartDownload({ format: 'formatted' })}
-					/>
-				</React.Fragment>
-			)}
-			<li className={Classes.MENU_HEADER}>
-				<h6 className={Classes.HEADING}>Auto Generated Download</h6>
-			</li>
-			{formatTypes.map((type, i) => {
-				const shouldRenderButton = downloadUrl && selectedType?.format === type.format;
-				return (
-					<MenuItem
-						// eslint-disable-next-line react/no-array-index-key
-						key={`${i}-${type.format}`}
-						dismissOnClick={false}
-						disabled={isLoading && selectedType?.format !== type.format}
-						rightElement={
-							<span>
-								{isLoading && selectedType?.format === type.format && (
-									<Spinner size={Spinner.SIZE_SMALL} />
-								)}
-							</span>
-						}
-						onClick={() => handleStartDownload(type)}
-						text={
-							<Tooltip
-								key={type.format}
-								isOpen={isError && selectedType?.format === type.format}
-								content="There was a problem generating the file."
-							>
-								{shouldRenderButton ? (
-									<Button icon="download" onClick={() => download(downloadUrl)}>
-										Download {type.title} file
-									</Button>
-								) : (
-									type.title
-								)}
-							</Tooltip>
-						}
-					/>
-				);
-			})}
-		</Menu>
+		<>
+			{/* hidden download links that are always rendered */}
+			<div style={{ display: 'none' }}>
+				{formattedDownload && (
+					<a
+						href={formattedDownload.url}
+						download
+						aria-hidden="true"
+						data-export-format="formatted"
+						data-export-available={Boolean(formattedDownload.url)}
+					>
+						Formatted Download
+					</a>
+				)}
+				{formatTypes.map((type) => {
+					const matchingExport = getMatchingExport(type.format);
+					return (
+						<a
+							key={type.format}
+							href={matchingExport?.url || '#'}
+							download
+							aria-hidden="true"
+							data-export-format={type.format}
+							data-export-available={Boolean(matchingExport?.url)}
+						>
+							{type.title} Download
+						</a>
+					);
+				})}
+			</div>
+			<Menu
+				disclosure={children}
+				className="pub-download-component"
+				aria-label="Pub download formats"
+				placement="bottom-end"
+			>
+				{formattedDownload && (
+					<React.Fragment>
+						<li className={Classes.MENU_HEADER}>
+							<h6 className={Classes.HEADING}>Formatted Download</h6>
+						</li>
+						<MenuItem
+							dismissOnClick={false}
+							labelElement={<Icon icon="star" />}
+							className="formatted-button"
+							// intent={Intent.PRIMARY}
+							text={`Formatted ${formattedDownload.url
+								.split('.')
+								.pop()
+								.toUpperCase()}`}
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ dismissOnClick: false; labelElement: Eleme... Remove this comment to see the full error message
+							loading={isLoading && selectedType?.format === 'formatted'}
+							onClick={() => handleStartDownload({ format: 'formatted' })}
+						/>
+					</React.Fragment>
+				)}
+				<li className={Classes.MENU_HEADER}>
+					<h6 className={Classes.HEADING}>Auto Generated Download</h6>
+				</li>
+				{formatTypes.map((type, i) => {
+					const shouldRenderButton = downloadUrl && selectedType?.format === type.format;
+					return (
+						<MenuItem
+							// eslint-disable-next-line react/no-array-index-key
+							key={`${i}-${type.format}`}
+							dismissOnClick={false}
+							disabled={isLoading && selectedType?.format !== type.format}
+							rightElement={
+								<span>
+									{isLoading && selectedType?.format === type.format && (
+										<Spinner size={Spinner.SIZE_SMALL} />
+									)}
+								</span>
+							}
+							onClick={() => handleStartDownload(type)}
+							text={
+								<Tooltip
+									key={type.format}
+									isOpen={isError && selectedType?.format === type.format}
+									content="There was a problem generating the file."
+								>
+									{shouldRenderButton ? (
+										<Button
+											icon="download"
+											onClick={() => download(downloadUrl)}
+										>
+											Download {type.title} file
+										</Button>
+									) : (
+										type.title
+									)}
+								</Tooltip>
+							}
+						/>
+					);
+				})}
+			</Menu>
+		</>
 	);
 };
 export default Download;

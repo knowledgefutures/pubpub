@@ -32,12 +32,11 @@ import { assetsClient } from 'server/utils/s3';
 import { PassThrough, Readable, Transform } from 'stream';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
+import { getTextAbstract } from 'utils/pub/metadata';
 import { createSiteDownloaderTransform } from './archive/siteDownloaderTransform';
-import { createSitemapUrlStreams } from './archive/sitemapUrlStream';
 import { addHrefsToNotes, filterNonExportableNodes } from './export/html';
 import { getPubMetadata } from './export/metadata';
 import { getNotesData } from './export/notes';
-import { ReadableStreamClone } from './archive/readableStreamClone';
 
 const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 	let offset = 0;
@@ -142,6 +141,8 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 								.filter((x): x is (nodes: any) => any => !!x)
 								.reduce((nodes, fn) => fn(nodes), doc.content);
 
+							const abstract = getTextAbstract(doc);
+
 							const docContent = renderStatic({
 								schema: editorSchema,
 								doc: { type: 'doc', content: renderableNodes },
@@ -156,6 +157,7 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 								...rest,
 								content: doc,
 								html: releaseHtml,
+								abstract,
 								firebasePath,
 							};
 						} catch (e) {
@@ -394,7 +396,7 @@ const getCommunityData = async (communityId: string) => {
 const getPubs = async (communityId: string) => {
 	const pubs = await Pub.findAll({
 		where: { communityId },
-		attributes: ['id'],
+		attributes: ['id', 'slug'],
 		include: [
 			{
 				model: Draft,
@@ -415,35 +417,126 @@ const getPubs = async (communityId: string) => {
 	return pubs;
 };
 
-export const archiveTask = async ({ communityId, key }: { communityId: string; key: string }) => {
+// create multiple readable streams that generate URLs for public pages, collections, and all pub releases
+const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) => {
+	const baseUrl =
+		process.env.NODE_ENV === 'production'
+			? communityUrl(communityData.community)
+			: 'http://localhost:9876';
+
+	const urls: string[] = [];
+	const param = '?pubpubArchiveBot=1';
+
+	// add public pages
+	communityData.pages
+		.filter((page: any) => page.isPublic)
+		.forEach((page: any) => {
+			// home page
+			if (!page.slug) {
+				urls.push(`${baseUrl}/`);
+				return;
+			}
+
+			urls.push(`${baseUrl}/${page.slug}${param}`);
+		});
+
+	// add public collections
+	communityData.collections
+		.filter((collection: any) => collection.isPublic)
+		.forEach((collection: any) => {
+			urls.push(`${baseUrl}/${collection.slug}${param}`);
+		});
+
+	// add pub releases
+	pubs.forEach((pub) => {
+		if (pub.releases && pub.releases.length > 0) {
+			pub.releases.forEach((release, index) => {
+				const releaseNumber = index + 1;
+				urls.push(`${baseUrl}/pub/${pub.slug}/release/${releaseNumber}${param}`);
+			});
+			urls.push(`${baseUrl}/pub/${pub.slug}${param}`);
+		}
+	});
+
+	console.log(`Generated ${urls.length} URLs to be split across ${numStreams} streams`);
+
+	// split URLs into chunks for each stream
+	const chunkSize = Math.ceil(urls.length / numStreams);
+	const urlChunks: string[][] = [];
+
+	for (let i = 0; i < numStreams; i++) {
+		const start = i * chunkSize;
+		const end = Math.min(start + chunkSize, urls.length);
+		urlChunks.push(urls.slice(start, end));
+	}
+
+	// create a stream for each chunk
+	return urlChunks.map((urlChunk) => {
+		let urlIndex = 0;
+
+		return new Readable({
+			objectMode: true,
+			read() {
+				if (urlIndex >= urlChunk.length) {
+					this.push(null);
+					return;
+				}
+
+				this.push(urlChunk[urlIndex]);
+				urlIndex++;
+			},
+		});
+	});
+};
+
+export const archiveTask = async ({
+	communityId,
+	key,
+	numUrlStreams = 5,
+}: {
+	communityId: string;
+	key: string;
+	numUrlStreams?: number;
+}) => {
 	const startTime = performance.now();
 	devTools.getMemoryStats();
 
 	// get community data + all pubs first
-	const [communityData, pubs] = await Promise.all([
+	// eslint-disable-next-line prefer-const
+	let [communityData, pubs] = await Promise.all([
 		getCommunityData(communityId),
 		getPubs(communityId),
 	]);
 
 	console.log(`Found ${pubs.length} pubs`);
 
-	const archiveStream = archiver('zip', { zlib: { level: 9 } });
-	const sitemapUrlStreams = await createSitemapUrlStreams(
-		communityUrl(communityData.community),
-		5,
-	);
+	const pubReadStream = await createPubStream(pubs, BATCH_SIZE);
+	const communityJsonTransform = createCommunityJsonTransform(communityData);
+	const communityJsonArchiveStream = pubReadStream.pipe(communityJsonTransform);
 
-	let nCompletedSitemapUrlStreams = 0;
+	const archiveStream = archiver('zip', { zlib: { level: 9 } });
+
+	// create URL streams for pages, collections, and pub releases
+	const urlStreams = createUrlStreams(communityData, pubs, numUrlStreams);
+
+	// free up memory
+	// @ts-expect-error blah blah
+	communityData = null;
+
+	let nCompletedStreams = 0;
+	const totalStreams = urlStreams.length;
 
 	const end = () => {
-		if (++nCompletedSitemapUrlStreams === sitemapUrlStreams.length) {
+		if (++nCompletedStreams === totalStreams) {
 			archiveStream.finalize();
 		}
 	};
 
-	// eslint-disable-next-line no-restricted-syntax
-	for (const sitemapUrlStream of sitemapUrlStreams) {
-		sitemapUrlStream
+	// process each URL stream
+	urlStreams.forEach((urlStream, index) => {
+		console.log(`Starting URL stream ${index + 1}/${totalStreams}`);
+
+		urlStream
 			.pipe(
 				createSiteDownloaderTransform({
 					headers: {
@@ -454,21 +547,18 @@ export const archiveTask = async ({ communityId, key }: { communityId: string; k
 			.on('data', (file) => {
 				archiveStream.append(file.stream, { name: file.name });
 			})
-			.on('end', end)
+			.on('end', () => {
+				console.log(`URL stream ${index + 1} completed`);
+				end();
+			})
 			.on('error', (err) => {
-				console.error('Stream error:', err);
+				console.error(`URL stream ${index + 1} error:`, err);
 				end();
 			});
-	}
-
-	const pubReadStream = await createPubStream(pubs, BATCH_SIZE);
-	const communityJsonTransform = createCommunityJsonTransform(communityData);
-	const communityJsonStream = pubReadStream.pipe(communityJsonTransform);
+	});
 
 	const pubTracker = devTools.createMemoryTracker(pubReadStream, BATCH_SIZE);
 	const jsonTracker = devTools.createMemoryTracker(communityJsonTransform, BATCH_SIZE);
-
-	const communityJsonArchiveStream = new ReadableStreamClone(communityJsonStream);
 
 	archiveStream.append(communityJsonArchiveStream, {
 		name: 'export.json',
@@ -480,11 +570,11 @@ export const archiveTask = async ({ communityId, key }: { communityId: string; k
 
 	await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream);
 
-	console.log(`Uploaded archive to ${key}`);
+	console.log(`Uploaded archive to ${key}.zip`);
 
 	devTools.logStats(startTime, pubTracker, jsonTracker);
 	const endTime = performance.now();
 	console.log(`Time taken to archive: ${endTime - startTime} milliseconds`);
 
-	return `https://assets.pubpub.org/${key}`;
+	return `https://assets.pubpub.org/${key}.zip`;
 };

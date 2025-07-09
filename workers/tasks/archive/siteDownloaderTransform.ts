@@ -1,5 +1,6 @@
 import { PassThrough, Readable, Transform, TransformOptions } from 'node:stream';
 import { RewritingStream } from 'parse5-html-rewriting-stream';
+import type { StartTag } from 'parse5-sax-parser';
 
 import type * as streamWeb from 'node:stream/web';
 
@@ -9,6 +10,8 @@ declare global {
 		readonly body: streamWeb.ReadableStream<Uint8Array> | null;
 	}
 }
+
+const allowedExportFormats = ['formatted', 'pdf', 'jats'];
 
 export type SiteDownloaderTransformConfig = TransformOptions & {
 	assetDir?: string;
@@ -84,6 +87,7 @@ export class SiteDownloaderTransform extends Transform {
 
 	#pushAsset(assetUrl: URL, assetPath: string) {
 		if (SiteDownloaderTransform.hasAssetUrl(assetUrl.href)) {
+			console.log(`Skipping ${assetUrl.href} because it's already been pushed`);
 			return;
 		}
 
@@ -105,9 +109,32 @@ export class SiteDownloaderTransform extends Transform {
 		SiteDownloaderTransform.#assetUrls.add(assetUrl.href);
 	}
 
-	transformTag(tag: any, pageUrl: URL) {
+	transformTag(tag: StartTag, pageUrl: URL) {
 		switch (tag.tagName) {
 			case 'a': {
+				const { exportAvailable, exportFormat, exportHref } = tag.attrs.reduce(
+					(acc, attr) => {
+						if (attr.name === 'data-export-available' && attr.value !== 'false') {
+							acc.exportAvailable = true;
+						}
+						if (attr.name === 'data-export-format') {
+							acc.exportFormat = attr.value;
+						}
+						if (attr.name === 'href') {
+							acc.exportHref = attr.value;
+						}
+						return acc;
+					},
+					{
+						exportAvailable: false,
+						exportFormat: '',
+						exportHref: '',
+					},
+				);
+				if (exportAvailable && allowedExportFormats.includes(exportFormat)) {
+					console.log(`Pushing ${exportFormat} export:`, exportHref);
+					this.#pushAsset(new URL(exportHref), exportHref);
+				}
 				transformAnchorTag(tag, pageUrl);
 				break;
 			}
@@ -118,6 +145,7 @@ export class SiteDownloaderTransform extends Transform {
 				if (result === null) {
 					break;
 				}
+				console.log('Pushing asset:', result.assetUrl.href);
 				this.#pushAsset(result.assetUrl, result.assetPath);
 				break;
 			}

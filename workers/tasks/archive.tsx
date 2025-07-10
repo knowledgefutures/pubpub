@@ -436,7 +436,6 @@ const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) =
 				urls.push(`${baseUrl}/`);
 				return;
 			}
-
 			urls.push(`${baseUrl}/${page.slug}${param}`);
 		});
 

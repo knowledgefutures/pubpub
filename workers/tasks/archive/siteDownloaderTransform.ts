@@ -30,8 +30,8 @@ const transformAnchorTag = (tag: any, pageUrl: URL) => {
 	if (href?.value === undefined) {
 		return;
 	}
-	if (href.value.startsWith(pageUrl.href)) {
-		href.value = href.value.replace(pageUrl.href, '/');
+	if (href.value.startsWith(pageUrl.origin)) {
+		href.value = href.value.replace(pageUrl.origin, '');
 	}
 };
 

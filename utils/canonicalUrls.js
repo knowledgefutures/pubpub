@@ -3,19 +3,14 @@ import queryString from 'query-string';
 
 import { isDuqDuq, isQubQub } from 'utils/environment';
 
-let isArchiving = false;
-
-if ('window' in globalThis) {
-	const url = new URL(window.location.href);
-	if (url.searchParams.has('pubpubArchiveBot')) {
-		isArchiving = true;
-	}
-}
-
 export const profileUrl = (userSlug) => `/user/${userSlug}`;
 
+const isArchiving = () =>
+	'window' in globalThis &&
+	window.__pubpub_pageContextProps__.locationData.queryString.includes('pubpubArchiveBot');
+
 export const communityUrl = (community) => {
-	if (isArchiving) {
+	if (isArchiving()) {
 		return '/';
 	}
 	if (isDuqDuq()) {
@@ -30,11 +25,15 @@ export const communityUrl = (community) => {
 	return `https://${community.subdomain}.pubpub.org`;
 };
 
-export const collectionUrl = (community, collection) =>
-	`${communityUrl(community)}/${collection.slug}`;
+export const collectionUrl = (community, collection) => {
+	if (isArchiving()) {
+		return `/${collection.slug}`;
+	}
+	return `${communityUrl(community)}/${collection.slug}`;
+};
 
 export const pubShortUrl = (pub) => {
-	return isArchiving ? `/pub/{pub.slug}` : `https://pubpub.org/pub/${pub.slug}`;
+	return isArchiving() ? `/pub/{pub.slug}` : `https://pubpub.org/pub/${pub.slug}`;
 };
 
 export const pubUrl = (community, pub, options = {}) => {
@@ -52,7 +51,7 @@ export const pubUrl = (community, pub, options = {}) => {
 	} = options;
 
 	// Include the community in the URL if the absolute flag is set to true.
-	const skipCommunity = isArchiving || (absolute ? false : community === null || isQubQub());
+	const skipCommunity = isArchiving() || (absolute ? false : community === null || isQubQub());
 	const baseCommunityUrl = skipCommunity ? '' : communityUrl(community);
 
 	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
@@ -89,4 +88,6 @@ export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
 
 export const doiUrl = (doi) => `https://doi.org/${doi}`;
 
-export const pageUrl = (community, page) => `${communityUrl(community)}/${page.slug}`;
+export const pageUrl = (community, page) => {
+	return isArchiving() ? `/${page.slug}` : `${communityUrl(community)}/${page.slug}`;
+};

@@ -27,7 +27,7 @@ const getRequestIds = createGetRequestIds<{
 
 const s = initServer();
 
-const MAX_DAILY_EXPORTS = 5;
+const MAX_DAILY_EXPORTS = 2;
 
 export const communityServer = s.router(contract.community, {
 	// @ts-expect-error

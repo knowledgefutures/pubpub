@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Icon, Byline, PubByline } from 'components';
-import { Pub, PubEdge } from 'types';
-import { pubShortUrl } from 'utils/canonicalUrls';
+import { InitialCommunityData, Pub, PubEdge } from 'types';
+import { pubShortUrl, pubUrl } from 'utils/canonicalUrls';
 import { intersperse } from 'utils/arrays';
 import { getRelationTypeName } from 'utils/pubEdge/relations';
 import { usePageContext } from 'utils/hooks';
@@ -42,7 +42,11 @@ const getEdgesByRelationType = (edges: PubEdge[]): Record<string, PubEdge[]> => 
 	return res;
 };
 
-const renderEdgeLink = (edge: PubEdge, renderTitle = false) => {
+const renderEdgeLink = (
+	edge: PubEdge,
+	communityData: InitialCommunityData,
+	renderTitle = false,
+) => {
 	const { pubIsParent, targetPub, pub, externalPublication } = edge;
 	if (externalPublication) {
 		const { contributors, title, url } = externalPublication;
@@ -61,8 +65,13 @@ const renderEdgeLink = (edge: PubEdge, renderTitle = false) => {
 		);
 	}
 	const childPub = (pubIsParent ? targetPub : pub) as Pub;
+	const href =
+		childPub.communityId === communityData.id
+			? pubUrl(communityData, childPub)
+			: pubShortUrl(childPub);
+
 	return (
-		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
+		<a href={href} key={edge.id} className="edge-link">
 			{renderTitle ? (
 				childPub.title
 			) : (
@@ -115,7 +124,7 @@ const PubPreviewEdges = (props: Props) => {
 								&nbsp;
 								{intersperse(
 									edges.map((edge) => {
-										return renderEdgeLink(edge, isArcadia);
+										return renderEdgeLink(edge, communityData, isArcadia);
 									}),
 									' • ',
 								)}

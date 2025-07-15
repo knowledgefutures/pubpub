@@ -57,8 +57,10 @@ export const sanitizePageHtml = (html: string) => {
 				'viewBox',
 				'd',
 				'fill-rule',
+				'role',
 			],
 			a: ['href', 'target', 'rel'],
+			img: ['alt'],
 		},
 		allowedSchemes: ['https', 'mailto'],
 		transformTags: {

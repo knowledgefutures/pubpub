@@ -35,7 +35,7 @@ export const getExportById = (exportId) => Export.findOne({ where: { id: exportI
 export const assignFileToExportById = (exportId, fileUrl) =>
 	Export.update({ url: fileUrl }, { where: { id: exportId } });
 
-export const digestCitation = (unstructuredValue, structuredValue) =>
+export const digestCitation = (unstructuredValue: string, structuredValue: string) =>
 	crypto
 		.createHash('md5')
 		.update(unstructuredValue)

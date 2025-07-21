@@ -91,7 +91,11 @@ export const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
 		return node;
 	});
 
-const getCitationLinkage = (unstructuredValue, structuredValue, nodeId = null) => {
+export const getCitationLinkage = (
+	unstructuredValue: string,
+	structuredValue: string,
+	nodeId: string | null,
+) => {
 	const digest = digestCitation(unstructuredValue, structuredValue);
 	return {
 		inlineElementId: `citation-${digest}${nodeId ? '-' + nodeId : ''}-inline`,
@@ -99,7 +103,7 @@ const getCitationLinkage = (unstructuredValue, structuredValue, nodeId = null) =
 	};
 };
 
-const getFootnoteLinkage = (index) => {
+export const getFootnoteLinkage = (index: number) => {
 	return {
 		inlineElementId: `fn-${index}-inline`,
 		bottomElementId: `fn-${index}-bottom`,

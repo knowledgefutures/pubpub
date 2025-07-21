@@ -33,10 +33,72 @@ import { PassThrough, Readable, Transform } from 'stream';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
+import { DocJson } from 'types';
 import { createSiteDownloaderTransform } from './archive/siteDownloaderTransform';
-import { addHrefsToNotes, filterNonExportableNodes } from './export/html';
+import {
+	addHrefsToNotes,
+	filterNonExportableNodes,
+	getCitationLinkage,
+	getFootnoteLinkage,
+} from './export/html';
 import { getPubMetadata } from './export/metadata';
 import { getNotesData } from './export/notes';
+import SimpleNotesList from './export/SimpleNotesList';
+// for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
+import { renderNotesForListing } from '../../utils/notes';
+
+const getReleaseHtml = async (pub: Pub, doc: DocJson) => {
+	const pubMetadata = await getPubMetadata(pub.id);
+	const notesData = await getNotesData(pubMetadata, doc!);
+	const { nodeLabels, citationInlineStyle } = pubMetadata;
+	const { footnotes, citations, noteManager, renderedStructuredValues } = notesData;
+
+	const renderedNotes = renderNotesForListing({
+		footnotes,
+		citations,
+		citationInlineStyle,
+		renderedStructuredValues,
+	});
+
+	// i don't really understand why this works, but
+	// `doc.content?.map(filterNonExportableNotes)` doesn't
+	const renderableNodes = [filterNonExportableNodes, addHrefsToNotes]
+		.filter((x): x is (nodes: any) => any => !!x)
+		.reduce((nodes, fn) => fn(nodes), doc.content);
+
+	const docContent = renderStatic({
+		schema: editorSchema,
+		doc: { type: 'doc', content: renderableNodes },
+		noteManager,
+		nodeLabels,
+	});
+
+	const notes = (
+		<div className="pub-notes">
+			<SimpleNotesList
+				title="Footnotes"
+				notes={renderedNotes.footnotes}
+				getLinkage={(_, index) => getFootnoteLinkage(index)}
+			/>
+			<SimpleNotesList
+				title="References"
+				notes={renderedNotes.citations}
+				getLinkage={(note) =>
+					getCitationLinkage(note.unstructuredValue, note.structuredValue, note.id)
+				}
+			/>
+		</div>
+	);
+
+	const releaseHtml = ReactDOMServer.renderToStaticMarkup(
+		<article>
+			{docContent}
+			{notes}
+		</article>,
+	);
+
+	return releaseHtml;
+};
 
 const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 	let offset = 0;
@@ -54,6 +116,7 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 				return;
 			}
 
+			performance.mark('get pubs start');
 			// its more efficient to first get all the pub ids + draftRefs, then get the pubs + drafts in one go,
 			// rather than first getting the pubs, looking at their draftRefs, and then getting the drafts
 			// the latter would take too much time, but the current uses more memory
@@ -113,6 +176,8 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 								return {
 									content: null,
 									firebasePath,
+									html: null,
+									abstract: null,
 								};
 							}
 
@@ -123,6 +188,8 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 									...rest,
 									content: doc,
 									firebasePath,
+									html: null,
+									abstract: null,
 								};
 							}
 
@@ -130,28 +197,8 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 								? draftDoc
 								: maybeLatestReleaseDoc!;
 
-							const pubMetadata = await getPubMetadata(p.id);
-							const notesData = await getNotesData(pubMetadata, releaseDoc.doc!);
-							const { nodeLabels } = pubMetadata;
-							const { noteManager } = notesData;
-
-							// i don't really understand why this works, but
-							// doc.content?.map(filterNonExportableNotes) doesn't
-							const renderableNodes = [filterNonExportableNodes, addHrefsToNotes]
-								.filter((x): x is (nodes: any) => any => !!x)
-								.reduce((nodes, fn) => fn(nodes), doc.content);
-
-							const abstract = getTextAbstract(doc);
-
-							const docContent = renderStatic({
-								schema: editorSchema,
-								doc: { type: 'doc', content: renderableNodes },
-								noteManager,
-								nodeLabels,
-							});
-							const releaseHtml = ReactDOMServer.renderToStaticMarkup(
-								<article>{docContent}</article>,
-							);
+							const abstract = getTextAbstract(releaseDoc.doc);
+							const releaseHtml = await getReleaseHtml(p, releaseDoc.doc);
 
 							return {
 								...rest,
@@ -178,20 +225,30 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 					console.error(`Draft not found for pub ${pubJson.id}`);
 				}
 
+				const { html, abstract, ...draft } = firebaseDraft ?? {};
+
 				return {
 					...pubJson,
 					facets: pubFacets,
 					draft: {
 						...pubJson.draft,
-						doc: firebaseDraft,
+						doc: draft,
 					},
-					// @ts-expect-error
-					html: firebaseDraft?.html,
+					html,
+					abstract,
 				};
 			});
 
 			hasMore = foundPubs.length === batchSize;
 			offset += batchSize;
+
+			performance.mark('get pubs end');
+			console.log(
+				`Time taken to handle batch: ${
+					performance.measure('get pubs', 'get pubs start', 'get pubs end').duration
+				}ms`,
+			);
+
 			console.log(`Has more: ${hasMore}. Offset: ${offset}. Limit: ${pubs.length}`);
 
 			// eslint-disable-next-line no-restricted-syntax
@@ -567,7 +624,12 @@ export const archiveTask = async ({
 
 	archiveStream.pipe(communityArchiveStream);
 
-	await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream);
+	try {
+		await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream);
+	} catch (e) {
+		console.error(`Something went wrong while uploading:`, e);
+		throw e;
+	}
 
 	console.log(`Uploaded archive to ${key}.zip`);
 

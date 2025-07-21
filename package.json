@@ -255,7 +255,7 @@
 		"zustand": "^4.0.0-rc.1"
 	},
 	"engines": {
-		"node": "22.14.0"
+		"node": "24.x"
 	},
 	"devDependencies": {
 		"@blueprintjs/eslint-plugin": "^2.5.2",
@@ -365,10 +365,10 @@
 	},
 	"overrides": {
 		"@ts-rest/express": {
-			"@ts-rest/core": "3.30.52"
+			"@ts-rest/core": "github:pubpub/ts-rest#ts-rest-core-v3.30.52-gitpkg"
 		},
 		"@ts-rest/open-api": {
-			"@ts-rest/core": "3.30.52"
+			"@ts-rest/core": "github:pubpub/ts-rest#ts-rest-core-v3.30.52-gitpkg"
 		}
 	}
 }

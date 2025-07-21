@@ -57,10 +57,15 @@ const ExportDataSection = (props: Props) => {
 	return (
 		<SettingsSection title="Export">
 			<p>
-				Export your communities data. Will create a .zip archive with all publically
+				Export your communities data. This will create a .zip archive with all publically
 				accessible pages in your community as HTML files, as well as a JSON file containing
 				structured information about your community.
 			</p>
+			<p>
+				<strong>Note</strong>: If you don't see your Pub or page/collection in the export,
+				please publish it or set it to public respectively, then try again.
+			</p>
+
 			<p>You have {remainingExports} remaining daily exports.</p>
 			<ExportCommunityDataButton disabled={remainingExports === 0} />
 

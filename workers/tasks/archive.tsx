@@ -30,11 +30,11 @@ import { getDatabaseRef, getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { assetsClient } from 'server/utils/s3';
 import { PassThrough, Readable, Transform } from 'stream';
+import { DocJson } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
-import { DocJson } from 'types';
-import { createSiteDownloaderTransform } from './archive/siteDownloaderTransform';
+import { createSiteDownloaderTransform, generateAssetUrl } from './archive/siteDownloaderTransform';
 import {
 	addHrefsToNotes,
 	filterNonExportableNodes,
@@ -545,6 +545,23 @@ const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) =
 	});
 };
 
+const ASSET_URL_PATTERN = /"https:\/\/assets\.pubpub\.org\/[a-z0-9]*\/[0-9]*\.[a-zA-Z]+"/g;
+
+const transformAssetLinksInViewDataJSON = (startTag: any, pageUrl: URL) => {
+	const viewDataAttr = startTag.attrs.find((attr) => attr.name === 'data-json');
+
+	if (viewDataAttr === undefined) {
+		return;
+	}
+
+	viewDataAttr.value = (viewDataAttr.value as string).replace(ASSET_URL_PATTERN, (url) => {
+		const result = generateAssetUrl(url, pageUrl, {
+			assetDir: 'assets',
+		});
+		return result === null ? url : result.assetPath;
+	});
+};
+
 export const archiveTask = async ({
 	communityId,
 	key,
@@ -598,6 +615,7 @@ export const archiveTask = async ({
 					headers: {
 						'User-Agent': 'PubPub-Archive-Bot/1.0',
 					},
+					onStartTag: transformAssetLinksInViewDataJSON,
 				}),
 			)
 			.on('data', (file) => {

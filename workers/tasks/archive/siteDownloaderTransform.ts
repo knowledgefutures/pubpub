@@ -3,6 +3,7 @@ import { RewritingStream } from 'parse5-html-rewriting-stream';
 import type { StartTag } from 'parse5-sax-parser';
 
 import type * as streamWeb from 'node:stream/web';
+import { getAssetUrlFromResizedUrl } from 'utils/images';
 
 // https://stackoverflow.com/questions/76958222/how-to-pipe-response-from-nodejs-fetch-response-to-an-express-response#comment139165202_77589444
 declare global {
@@ -17,6 +18,7 @@ export type SiteDownloaderTransformConfig = TransformOptions & {
 	assetDir?: string;
 	assetUrlFilter?: (url: string) => boolean;
 	headers?: Record<string, string>;
+	onStartTag?: (tag: StartTag, pageUrl: URL) => void;
 };
 
 const isLinkTag = (tag: any) => tag.tagName === 'link';
@@ -39,6 +41,20 @@ const transformAnchorTag = (tag: any, pageUrl: URL) => {
 	}
 };
 
+export const generateAssetUrl = (
+	assetSrc: string,
+	pageUrl: URL,
+	config: SiteDownloaderTransformConfig,
+) => {
+	const assetUrl = new URL(getAssetUrlFromResizedUrl(assetSrc), pageUrl);
+	if (config.assetUrlFilter?.(assetUrl.href) === false) {
+		return null;
+	}
+	const assetDir = `/${config.assetDir}/${assetUrl.hostname.replace(/\./g, '_')}`;
+	const assetPath = `${assetDir}${assetUrl.pathname}`;
+	return { assetUrl, assetPath };
+};
+
 const transformAssetTag = (
 	tag: any,
 	pageUrl: URL,
@@ -51,16 +67,17 @@ const transformAssetTag = (
 	if (assetSrc === undefined) {
 		return null;
 	}
-	const assetUrl = new URL(assetSrc.value, pageUrl);
-	if (config.assetUrlFilter?.(assetUrl.href) === false) {
+	const assetUrlResult = generateAssetUrl(assetSrc.value, pageUrl, config);
+	if (assetUrlResult === null) {
 		return null;
 	}
-	const assetDir = `/${config.assetDir}/${assetUrl.hostname.replace(/\./g, '_')}`;
-	const assetPath = `${assetDir}${assetUrl.pathname}`;
-	tag.attrs = tag.attrs.map((attr: any) =>
-		attr.name === assetSrc.name ? { ...attr, value: assetPath } : attr,
-	);
-	return { assetUrl, assetPath };
+
+	assetSrc.value = assetUrlResult.assetPath; // Update the src or href attribute to point to the new asset path
+
+	// Remove the srcset attribute
+	tag.attrs = tag.attrs.filter((attr) => attr.name !== 'srcset');
+
+	return assetUrlResult;
 };
 
 const ogImageTags = ['og:image', 'twitter:image', 'og:image:url'];
@@ -252,6 +269,7 @@ export class SiteDownloaderTransform extends Transform {
 
 			htmlRewriter.on('startTag', (tag) => {
 				this.transformTag(tag, pageUrl);
+				this.#config.onStartTag?.(tag, pageUrl);
 				htmlRewriter.emitStartTag(tag);
 			});
 

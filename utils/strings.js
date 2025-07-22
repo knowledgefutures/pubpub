@@ -48,3 +48,11 @@ export const btoaUniversal = (input) => {
 		return Buffer.from(input).toString('base64');
 	}
 };
+
+export const atobUniversal = (input) => {
+	try {
+		return atob(input);
+	} catch (err) {
+		return Buffer.from(input, 'base64').toString('utf-8');
+	}
+};

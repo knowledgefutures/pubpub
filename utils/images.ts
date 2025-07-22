@@ -1,6 +1,6 @@
 import { Maybe } from 'types';
 
-import { btoaUniversal } from './strings';
+import { atobUniversal, btoaUniversal } from './strings';
 
 type ResizerFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
 
@@ -50,4 +50,15 @@ export const getSrcSet = (url: string, fit: ResizerFit, width: number) => {
 			return `${resizedUrl} ${density}x`;
 		})
 		.join(',');
+};
+
+export const getAssetUrlFromResizedUrl = (resizedUrl: string) => {
+	if (resizedUrl.indexOf('https://resize-v3.pubpub.org/') === -1) {
+		return resizedUrl;
+	}
+	const imageRequest = JSON.parse(
+		atobUniversal(resizedUrl.replace('https://resize-v3.pubpub.org/', '')),
+	);
+	const assetUrl = `https://assets.pubpub.org/${imageRequest.key}`;
+	return assetUrl;
 };

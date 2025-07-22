@@ -2,7 +2,7 @@ import { DOMOutputSpec } from 'prosemirror-model';
 
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
-import { getSrcSet, getResizedUrl } from 'utils/images';
+import { getResizedUrl, getSrcSet } from 'utils/images';
 import { isResizeableFormat } from '../utils/media';
 
 import { buildLabel } from '../utils/references';

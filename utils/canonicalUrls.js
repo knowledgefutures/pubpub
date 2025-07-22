@@ -5,7 +5,7 @@ import { isDuqDuq, isQubQub } from 'utils/environment';
 
 export const profileUrl = (userSlug) => `/user/${userSlug}`;
 
-const isArchiving = () =>
+export const isArchiving = () =>
 	'window' in globalThis &&
 	window.__pubpub_pageContextProps__.locationData.queryString.includes('pubpubArchiveBot');
 

@@ -273,7 +273,6 @@ export const getComunityArchives = async (communityId: string) => {
 			input: {
 				communityId,
 			},
-			isProcessing: false,
 			error: null,
 		},
 		order: [['createdAt', 'DESC']],

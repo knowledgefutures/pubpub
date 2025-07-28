@@ -11,11 +11,7 @@ import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { InitialData } from 'types';
 import { getComunityArchives } from 'server/community/queries';
 
-const getSettingsData = async (
-	initialData: InitialData,
-	pubSlug?: string,
-	isSuperAdmin?: boolean,
-) => {
+const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdmin?: boolean) => {
 	const [depositTarget, pubData, archives] = await Promise.all([
 		getCommunityDepositTarget(initialData.communityData.id),
 		pubSlug
@@ -25,7 +21,7 @@ const getSettingsData = async (
 					getEdges: 'all',
 			  })
 			: null,
-		isSuperAdmin ? getComunityArchives(initialData.communityData.id) : null,
+		isAdmin ? getComunityArchives(initialData.communityData.id) : null,
 	]);
 	const baseSettingsData = {
 		depositTarget,
@@ -59,15 +55,15 @@ app.get(
 				throw new NotFoundError();
 			}
 
-			const settingsData = await getSettingsData(
-				initialData,
-				req.params.pubSlug,
-				initialData.loginData.isSuperAdmin,
-			);
-
 			if (!initialData.scopeData.activePermissions.canView) {
 				throw new ForbiddenError();
 			}
+
+			const settingsData = await getSettingsData(
+				initialData,
+				req.params.pubSlug,
+				initialData.scopeData.activePermissions.canAdmin,
+			);
 
 			return renderToNodeStream(
 				res,

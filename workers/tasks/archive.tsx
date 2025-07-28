@@ -34,6 +34,7 @@ import { DocJson } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
+import { updateWorkerTask } from 'server/workerTask/queries';
 import { createSiteDownloaderTransform, generateAssetUrl } from './archive/siteDownloaderTransform';
 import {
 	addHrefsToNotes,
@@ -46,6 +47,64 @@ import { getNotesData } from './export/notes';
 import SimpleNotesList from './export/SimpleNotesList';
 // for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
 import { renderNotesForListing } from '../../utils/notes';
+
+// progress tracking utilities
+class ProgressTracker {
+	private workerTaskId: string;
+	private totalUrls: number;
+	private processedUrls: number = 0;
+	private lastUpdateTime: number = 0;
+	private updateThrottleMs: number = 2000; // update every 2 seconds
+
+	constructor(workerTaskId: string, totalUrls: number) {
+		this.workerTaskId = workerTaskId;
+		this.totalUrls = totalUrls;
+	}
+
+	async incrementProcessed() {
+		this.processedUrls++;
+		const now = Date.now();
+
+		// throttle updates to avoid too many database writes
+		if (
+			now - this.lastUpdateTime > this.updateThrottleMs ||
+			this.processedUrls === this.totalUrls
+		) {
+			await this.updateProgress();
+			this.lastUpdateTime = now;
+		}
+	}
+
+	private async updateProgress() {
+		const percentage = Math.round((this.processedUrls / this.totalUrls) * 100);
+
+		try {
+			await updateWorkerTask({
+				id: this.workerTaskId,
+				body: {
+					output: {
+						progress: {
+							totalUrls: this.totalUrls,
+							processedUrls: this.processedUrls,
+							percentage,
+						},
+					},
+				},
+			});
+			console.log(`Progress: ${this.processedUrls}/${this.totalUrls} (${percentage}%)`);
+		} catch (error) {
+			console.error('Failed to update progress:', error);
+		}
+	}
+
+	getProgress() {
+		return {
+			totalUrls: this.totalUrls,
+			processedUrls: this.processedUrls,
+			percentage: Math.round((this.processedUrls / this.totalUrls) * 100),
+		};
+	}
+}
 
 const getReleaseHtml = async (pub: Pub, doc: DocJson) => {
 	const pubMetadata = await getPubMetadata(pub.id);
@@ -527,7 +586,7 @@ const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) =
 	}
 
 	// create a stream for each chunk
-	return urlChunks.map((urlChunk) => {
+	const urlStreams = urlChunks.map((urlChunk) => {
 		let urlIndex = 0;
 
 		return new Readable({
@@ -543,6 +602,11 @@ const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) =
 			},
 		});
 	});
+
+	return {
+		urlStreams,
+		totalUrls: urls.length,
+	};
 };
 
 const ASSET_URL_PATTERN = /"https:\/\/assets\.pubpub\.org\/[a-z0-9]*\/[0-9]*\.[a-zA-Z]+"/g;
@@ -566,10 +630,12 @@ export const archiveTask = async ({
 	communityId,
 	key,
 	numUrlStreams = 5,
+	workerTaskId,
 }: {
 	communityId: string;
 	key: string;
 	numUrlStreams?: number;
+	workerTaskId?: string;
 }) => {
 	const startTime = performance.now();
 	devTools.getMemoryStats();
@@ -590,7 +656,14 @@ export const archiveTask = async ({
 	const archiveStream = archiver('zip', { zlib: { level: 9 } });
 
 	// create URL streams for pages, collections, and pub releases
-	const urlStreams = createUrlStreams(communityData, pubs, numUrlStreams);
+	const { urlStreams, totalUrls } = createUrlStreams(communityData, pubs, numUrlStreams);
+
+	// initialize progress tracking
+	let progressTracker: ProgressTracker | null = null;
+	if (workerTaskId) {
+		progressTracker = new ProgressTracker(workerTaskId, totalUrls);
+		console.log(`Starting archive with ${totalUrls} URLs to process`);
+	}
 
 	// free up memory
 	// @ts-expect-error blah blah
@@ -616,6 +689,7 @@ export const archiveTask = async ({
 						'User-Agent': 'PubPub-Archive-Bot/1.0',
 					},
 					onStartTag: transformAssetLinksInViewDataJSON,
+					progressTracker,
 				}),
 			)
 			.on('data', (file) => {
@@ -651,9 +725,26 @@ export const archiveTask = async ({
 
 	console.log(`Uploaded archive to ${key}.zip`);
 
+	const finalUrl = `https://assets.pubpub.org/${key}.zip`;
+
+	// set final result in worker task (replacing progress info)
+	if (workerTaskId) {
+		try {
+			await updateWorkerTask({
+				id: workerTaskId,
+				body: {
+					output: finalUrl,
+				},
+			});
+			console.log('Updated worker task with final download URL');
+		} catch (error) {
+			console.error('Failed to update worker task with final URL:', error);
+		}
+	}
+
 	devTools.logStats(startTime, pubTracker, jsonTracker);
 	const endTime = performance.now();
 	console.log(`Time taken to archive: ${endTime - startTime} milliseconds`);
 
-	return `https://assets.pubpub.org/${key}.zip`;
+	return finalUrl;
 };

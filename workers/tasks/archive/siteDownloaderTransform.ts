@@ -4,6 +4,7 @@ import type { StartTag } from 'parse5-sax-parser';
 
 import type * as streamWeb from 'node:stream/web';
 import { getAssetUrlFromResizedUrl } from 'utils/images';
+import { defer } from 'server/utils/deferred';
 
 // https://stackoverflow.com/questions/76958222/how-to-pipe-response-from-nodejs-fetch-response-to-an-express-response#comment139165202_77589444
 declare global {
@@ -19,6 +20,9 @@ export type SiteDownloaderTransformConfig = TransformOptions & {
 	assetUrlFilter?: (url: string) => boolean;
 	headers?: Record<string, string>;
 	onStartTag?: (tag: StartTag, pageUrl: URL) => void;
+	progressTracker?: {
+		incrementProcessed: () => Promise<void>;
+	} | null;
 };
 
 const isLinkTag = (tag: any) => tag.tagName === 'link';
@@ -282,6 +286,13 @@ export class SiteDownloaderTransform extends Transform {
 
 			htmlStream.on('end', async () => {
 				try {
+					// update progress tracking
+					if (this.#config.progressTracker) {
+						// we don't actually want to wait for this to complete,
+						defer(async () => {
+							await this.#config.progressTracker?.incrementProcessed();
+						});
+					}
 					callback();
 				} catch (err) {
 					callback(err as Error);

@@ -8,7 +8,7 @@ import { getDashUrl } from 'utils/dashboard';
 import { SettingsSection } from 'components';
 import type { WorkerTask } from 'server/models';
 import { isDataExportEnabled } from 'utils/analytics/featureFlags';
-import { ExportCommunityDataButton } from './ExportCommunityDataButton';
+import { ArchiveTask, ExportCommunityDataButton } from './ExportCommunityDataButton';
 
 const getEmails = (communityData: Community) => {
 	const exportEmailBody = stripIndent(`
@@ -50,6 +50,9 @@ const ExportDataSection = (props: Props) => {
 		(archiveTask) =>
 			new Date().getTime() - new Date(archiveTask.createdAt).getTime() < ONE_DAY_IN_MS,
 	);
+
+	const lastExport = props.settingsData.archives?.[0] as ArchiveTask;
+
 	const remainingExports = isSuperAdmin
 		? '∞'
 		: Math.max(MAX_DAILY_EXPORTS - (alreadyDoneExports?.length || 0), 0);
@@ -67,7 +70,7 @@ const ExportDataSection = (props: Props) => {
 			</p>
 
 			<p>You have {remainingExports} remaining daily exports.</p>
-			<ExportCommunityDataButton disabled={remainingExports === 0} />
+			<ExportCommunityDataButton disabled={remainingExports === 0} lastExport={lastExport} />
 
 			<hr />
 			<Button
@@ -100,9 +103,11 @@ const ExportDataSection = (props: Props) => {
 										minimal
 										href={`${archive.output}` as string}
 										target="_blank"
-									>
-										Download
-									</AnchorButton>
+										icon="download"
+										title="Download Archive"
+										aria-label="Download Archive"
+										download
+									/>
 								</div>
 							),
 					)}

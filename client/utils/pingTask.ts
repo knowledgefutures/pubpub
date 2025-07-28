@@ -7,12 +7,25 @@ import { apiFetch } from 'client/utils/apiFetch';
 const pingTaskOnce = (taskId: string, baseUrl = '') =>
 	apiFetch(`${baseUrl}/api/workerTasks?workerTaskId=${taskId}`);
 
-export const pingTask = (taskId, interval, startInterval = interval, baseUrl?: string) =>
-	new Promise((resolve, reject) => {
+export const pingTask = (
+	taskId: string,
+	interval: number,
+	startInterval = interval,
+	baseUrl?: string,
+	/**
+	 * Callback to call when the task is processing. Can be used to provide feedback to the user if
+	 * the task is configured for that
+	 */
+	progressCallback?: (taskData: any) => void,
+) => {
+	return new Promise((resolve, reject) => {
 		const checkTask = () => {
 			pingTaskOnce(taskId, baseUrl)
 				.then((taskData) => {
 					if (taskData.isProcessing) {
+						if (progressCallback) {
+							progressCallback(taskData);
+						}
 						setTimeout(checkTask, interval);
 					} else if (taskData.error) {
 						reject(new Error(taskData.error));
@@ -24,3 +37,4 @@ export const pingTask = (taskId, interval, startInterval = interval, baseUrl?: s
 		};
 		setTimeout(checkTask, startInterval);
 	});
+};

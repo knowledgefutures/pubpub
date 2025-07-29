@@ -29,12 +29,12 @@ import { fetchFacetsForScopeIds } from 'server/facets';
 import { getDatabaseRef, getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { assetsClient } from 'server/utils/s3';
+import { updateWorkerTask } from 'server/workerTask/queries';
 import { PassThrough, Readable, Transform } from 'stream';
 import { DocJson } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
-import { updateWorkerTask } from 'server/workerTask/queries';
 import { createSiteDownloaderTransform, generateAssetUrl } from './archive/siteDownloaderTransform';
 import {
 	addHrefsToNotes,
@@ -375,7 +375,7 @@ const createDevTools = () => {
 };
 
 const devTools = createDevTools();
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 200;
 
 // create a transform that prepends community data before pubs array
 const createCommunityJsonTransform = (communityData: any) => {
@@ -655,31 +655,32 @@ export const archiveTask = async ({
 
 	const archiveStream = archiver('zip', { zlib: { level: 9 } });
 
-	// create URL streams for pages, collections, and pub releases
-	const { urlStreams, totalUrls } = createUrlStreams(communityData, pubs, numUrlStreams);
+	const pubTracker = devTools.createMemoryTracker(pubReadStream, BATCH_SIZE);
+	const jsonTracker = devTools.createMemoryTracker(communityJsonTransform, BATCH_SIZE);
 
-	// initialize progress tracking
-	let progressTracker: ProgressTracker | null = null;
-	if (workerTaskId) {
-		progressTracker = new ProgressTracker(workerTaskId, totalUrls);
-		console.log(`Starting archive with ${totalUrls} URLs to process`);
-	}
+	archiveStream.append(communityJsonArchiveStream, {
+		name: 'export.json',
+	});
 
-	// free up memory
-	// @ts-expect-error blah blah
-	communityData = null;
+	const begin = () => {
+		// create URL streams for pages, collections, and pub releases
+		const { urlStreams, totalUrls } = createUrlStreams(communityData, pubs, numUrlStreams);
 
-	let nCompletedStreams = 0;
-	const totalStreams = urlStreams.length;
+		let nCompletedStreams = 0;
+		const totalStreams = urlStreams.length;
+		const endUrlStream = () => {
+			if (++nCompletedStreams === totalStreams) {
+				archiveStream.finalize();
+			}
+		};
 
-	const endUrlStream = () => {
-		if (++nCompletedStreams === totalStreams) {
-			archiveStream.finalize();
+		// initialize progress tracking
+		let progressTracker: ProgressTracker | null = null;
+		if (workerTaskId) {
+			progressTracker = new ProgressTracker(workerTaskId, totalUrls);
+			console.log(`Starting archive with ${totalUrls} URLs to process`);
 		}
-	};
 
-	const beginUrlStreams = () => {
-		// process each URL stream
 		urlStreams.forEach((urlStream, index) => {
 			console.log(`Starting URL stream ${index + 1}/${totalStreams}`);
 			urlStream
@@ -706,23 +707,23 @@ export const archiveTask = async ({
 		});
 	};
 
-	const pubTracker = devTools.createMemoryTracker(pubReadStream, BATCH_SIZE);
-	const jsonTracker = devTools.createMemoryTracker(communityJsonTransform, BATCH_SIZE);
-
-	archiveStream.append(communityJsonArchiveStream, {
-		name: 'export.json',
-	});
-
+	// Wait until the community JSON archive stream is fully processed before
+	// initializing URL streams and S3 upload.
 	communityJsonArchiveStream.on('end', () => {
-		beginUrlStreams();
+		console.log('Community JSON archive stream ended');
+		begin();
+		// free up memory
+		// @ts-expect-error blah blah
+		communityData = null;
 	});
 
 	const communityArchiveStream = new PassThrough();
-
 	archiveStream.pipe(communityArchiveStream);
 
 	try {
-		await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream);
+		await assetsClient.uploadFileSplit(`${key}.zip`, communityArchiveStream, {
+			queueSize: 10,
+		});
 	} catch (e) {
 		console.error(`Something went wrong while uploading:`, e);
 		throw e;

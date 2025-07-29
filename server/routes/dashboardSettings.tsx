@@ -9,7 +9,7 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubForRequest } from 'server/utils/queryHelpers';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { InitialData } from 'types';
-import { getComunityArchives } from 'server/community/queries';
+import { getCommunityArchives } from 'server/community/queries';
 
 const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdmin?: boolean) => {
 	const [depositTarget, pubData, archives] = await Promise.all([
@@ -21,7 +21,7 @@ const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdm
 					getEdges: 'all',
 			  })
 			: null,
-		isAdmin ? getComunityArchives(initialData.communityData.id) : null,
+		isAdmin ? getCommunityArchives(initialData.communityData.id) : null,
 	]);
 	const baseSettingsData = {
 		depositTarget,

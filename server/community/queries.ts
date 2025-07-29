@@ -266,7 +266,7 @@ export const getOrStartArchiveTask = async (communityId: string, key: string) =>
 	return workerTask;
 };
 
-export const getComunityArchives = async (communityId: string) => {
+export const getCommunityArchives = async (communityId: string) => {
 	const archives = await WorkerTask.findAll({
 		where: {
 			type: 'archive',

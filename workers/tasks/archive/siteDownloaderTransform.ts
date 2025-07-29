@@ -3,8 +3,8 @@ import { RewritingStream } from 'parse5-html-rewriting-stream';
 import type { StartTag } from 'parse5-sax-parser';
 
 import type * as streamWeb from 'node:stream/web';
-import { getAssetUrlFromResizedUrl } from 'utils/images';
 import { defer } from 'server/utils/deferred';
+import { getAssetUrlFromResizedUrl } from 'utils/images';
 
 // https://stackoverflow.com/questions/76958222/how-to-pipe-response-from-nodejs-fetch-response-to-an-express-response#comment139165202_77589444
 declare global {
@@ -144,6 +144,8 @@ export class SiteDownloaderTransform extends Transform {
 			console.log(`Skipping ${assetUrl.href} because it's already been pushed`);
 			return;
 		}
+
+		console.log('Pushing asset:', assetUrl.href);
 
 		const stream = new PassThrough();
 

@@ -672,44 +672,49 @@ export const archiveTask = async ({
 	let nCompletedStreams = 0;
 	const totalStreams = urlStreams.length;
 
-	const end = () => {
+	const endUrlStream = () => {
 		if (++nCompletedStreams === totalStreams) {
 			archiveStream.finalize();
 		}
 	};
 
-	// process each URL stream
-	urlStreams.forEach((urlStream, index) => {
-		console.log(`Starting URL stream ${index + 1}/${totalStreams}`);
-
-		urlStream
-			.pipe(
-				createSiteDownloaderTransform({
-					headers: {
-						'User-Agent': 'PubPub-Archive-Bot/1.0',
-					},
-					onStartTag: transformAssetLinksInViewDataJSON,
-					progressTracker,
-				}),
-			)
-			.on('data', (file) => {
-				archiveStream.append(file.stream, { name: file.name });
-			})
-			.on('end', () => {
-				console.log(`URL stream ${index + 1} completed`);
-				end();
-			})
-			.on('error', (err) => {
-				console.error(`URL stream ${index + 1} error:`, err);
-				end();
-			});
-	});
+	const beginUrlStreams = () => {
+		// process each URL stream
+		urlStreams.forEach((urlStream, index) => {
+			console.log(`Starting URL stream ${index + 1}/${totalStreams}`);
+			urlStream
+				.pipe(
+					createSiteDownloaderTransform({
+						headers: {
+							'User-Agent': 'PubPub-Archive-Bot/1.0',
+						},
+						onStartTag: transformAssetLinksInViewDataJSON,
+						progressTracker,
+					}),
+				)
+				.on('data', (file) => {
+					archiveStream.append(file.stream, { name: file.name });
+				})
+				.on('end', () => {
+					console.log(`URL stream ${index + 1} completed`);
+					endUrlStream();
+				})
+				.on('error', (err) => {
+					console.error(`URL stream ${index + 1} error:`, err);
+					endUrlStream();
+				});
+		});
+	};
 
 	const pubTracker = devTools.createMemoryTracker(pubReadStream, BATCH_SIZE);
 	const jsonTracker = devTools.createMemoryTracker(communityJsonTransform, BATCH_SIZE);
 
 	archiveStream.append(communityJsonArchiveStream, {
 		name: 'export.json',
+	});
+
+	communityJsonArchiveStream.on('end', () => {
+		beginUrlStreams();
 	});
 
 	const communityArchiveStream = new PassThrough();

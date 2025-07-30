@@ -13,7 +13,7 @@ declare global {
 	}
 }
 
-const allowedExportFormats = ['formatted', 'pdf', 'jats'];
+const allowedExportFormats = ['formatted', 'pdf', 'jats', 'html'];
 
 export type SiteDownloaderTransformConfig = TransformOptions & {
 	assetDir?: string;

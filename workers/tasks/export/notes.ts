@@ -4,9 +4,10 @@ import { DocJson, Maybe } from 'types';
 import { jsonToNode, getNotesByKindFromDoc } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
+import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 import { Note, RenderedStructuredValues } from '../../../utils/notes';
 
-import { NotesData, PubMetadata } from './types';
+import { NotesData } from './types';
 
 export type PandocNote = {
 	id: string;
@@ -48,7 +49,10 @@ const getIdForNote = (cslJson: Maybe<Record<string, any>>, id: string): string =
 };
 
 export const getNotesData = async (
-	pubMetadata: PubMetadata,
+	pubMetadata: {
+		citationStyle: CitationStyleKind | undefined;
+		citationInlineStyle: CitationInlineStyleKind | undefined;
+	},
 	pubDoc: DocJson,
 ): Promise<NotesData> => {
 	const { citationStyle, citationInlineStyle } = pubMetadata;

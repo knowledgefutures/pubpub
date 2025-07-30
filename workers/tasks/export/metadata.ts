@@ -38,43 +38,52 @@ const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[] | Co
 };
 
 export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
-	const pubData = expect(
-		await Pub.findOne({
-			where: { id: pubId },
-			include: [
-				{
-					model: CollectionPub,
-					as: 'collectionPubs',
-					include: [
-						{
-							model: Collection,
-							as: 'collection',
-							include: [
-								{
-									model: CollectionAttribution,
-									as: 'attributions',
-									include: [includeUserModel({ as: 'user' })],
-								},
-							],
-						},
-					],
-				},
-				{ model: Community, as: 'community' },
-				{
-					model: PubAttribution,
-					as: 'attributions',
-					include: [includeUserModel({ as: 'user' })],
-				},
-				{
-					model: Release,
-					as: 'releases',
-				},
-			],
-		}),
-	) as types.DefinitelyHas<Pub, 'community' | 'attributions' | 'releases'> & {
+	const pubDataPromise = Pub.findOne({
+		where: { id: pubId },
+		include: [
+			{
+				model: CollectionPub,
+				as: 'collectionPubs',
+				include: [
+					{
+						model: Collection,
+						as: 'collection',
+						include: [
+							{
+								model: CollectionAttribution,
+								as: 'attributions',
+								include: [includeUserModel({ as: 'user' })],
+							},
+						],
+					},
+				],
+			},
+			{ model: Community, as: 'community' },
+			{
+				model: PubAttribution,
+				as: 'attributions',
+				include: [includeUserModel({ as: 'user' })],
+			},
+			{
+				model: Release,
+				as: 'releases',
+			},
+		],
+	});
+
+	const facetPromise = fetchFacetsForScope({ pubId });
+
+	const result = await Promise.all([pubDataPromise, facetPromise]);
+
+	const facets = result[1];
+
+	const pubData = expect(result[0]) as types.DefinitelyHas<
+		Pub,
+		'community' | 'attributions' | 'releases'
+	> & {
 		collectionPubs: types.DefinitelyHas<CollectionPub, 'collection'>[];
 	};
-	const facets = await fetchFacetsForScope({ pubId });
+
 	const pubUrl = getUrlForPub(pubData, pubData.community);
 	const publishedDate = getPubPublishedDate(pubData);
 	const license = renderLicenseForPub({

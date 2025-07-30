@@ -35,6 +35,7 @@ import { DocJson } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
+import type { CascadedFacetsForScopes } from 'facets';
 import { createSiteDownloaderTransform, generateAssetUrl } from './archive/siteDownloaderTransform';
 import {
 	addHrefsToNotes,
@@ -42,7 +43,6 @@ import {
 	getCitationLinkage,
 	getFootnoteLinkage,
 } from './export/html';
-import { getPubMetadata } from './export/metadata';
 import { getNotesData } from './export/notes';
 import SimpleNotesList from './export/SimpleNotesList';
 // for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
@@ -106,10 +106,22 @@ class ProgressTracker {
 	}
 }
 
-const getReleaseHtml = async (pub: Pub, doc: DocJson) => {
-	const pubMetadata = await getPubMetadata(pub.id);
-	const notesData = await getNotesData(pubMetadata, doc!);
-	const { nodeLabels, citationInlineStyle } = pubMetadata;
+type FacetsProps = CascadedFacetsForScopes<
+	'CitationStyle' | 'License' | 'NodeLabels' | 'PubEdgeDisplay' | 'PubHeaderTheme'
+>['pub'][string];
+const getReleaseHtml = async (facets: FacetsProps, doc: DocJson) => {
+	// const pubMetadata = await getPubMetadata(pub.id);
+	const citationInlineStyle = facets.CitationStyle.value.inlineCitationStyle;
+	const citationStyle = facets.CitationStyle.value.citationStyle;
+	const nodeLabels = facets.NodeLabels.value;
+
+	const notesData = await getNotesData(
+		{
+			citationStyle,
+			citationInlineStyle,
+		},
+		doc!,
+	);
 	const { footnotes, citations, noteManager, renderedStructuredValues } = notesData;
 
 	const renderedNotes = renderNotesForListing({
@@ -182,7 +194,7 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 			const pubIdSlice = pubs.slice(offset, offset + batchSize);
 			console.log(`Getting ${pubIdSlice.length} pubs`);
 			performance.mark('get pubs start');
-			const [foundPubs, facets, drafts] = await Promise.all([
+			const [foundPubs, drafts] = await Promise.all([
 				Pub.findAll({
 					where: { id: { [Op.in]: pubIdSlice.map((p) => p.id) } },
 					...buildPubOptions({
@@ -195,16 +207,12 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 						getReviews: true,
 						getDraft: true,
 						getFacets: true,
-						getFullReleases: true,
 						getEdgesOptions: {
 							includeTargetPub: true,
 						},
 					}),
 					order: [['createdAt', 'ASC']],
 					transaction: trx,
-				}),
-				fetchFacetsForScopeIds({
-					pub: pubIdSlice.map((p) => p.id),
 				}),
 				Promise.all(
 					pubIdSlice.map(async (p) => {
@@ -215,24 +223,24 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 						}
 
 						try {
-							const hasRelease = p.releases && p.releases.length > 0;
-							const latestRelease = hasRelease ? p.releases?.at(-1) : null;
-							const latestReleaseKey = latestRelease?.historyKey;
-							const latestReleaseIsDraft =
-								latestRelease?.createdAt > (p.draft?.latestKeyAt ?? new Date(0));
+							const draftDocPromise = getPubDraftDoc(
+								getDatabaseRef(firebasePath),
+								null,
+								false,
+							).then((d) => d.doc);
 
-							const shouldFetchLatestRelease =
-								latestReleaseKey && !latestReleaseIsDraft;
-
-							const [draftDoc, maybeLatestReleaseDoc] = await Promise.all([
-								getPubDraftDoc(getDatabaseRef(firebasePath), null, false),
-								shouldFetchLatestRelease
-									? getPubDraftDoc(p.id, latestReleaseKey, false)
-									: null,
+							const [draftDoc, facets] = await Promise.all([
+								draftDocPromise,
+								fetchFacetsForScopeIds({
+									pub: [p.id],
+								}),
 							]);
+
+							const pubFacets = facets.pub[p.id];
 
 							if (!draftDoc) {
 								return {
+									facets: pubFacets,
 									content: null,
 									firebasePath,
 									html: null,
@@ -240,31 +248,16 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 								};
 							}
 
-							const { doc, ...rest } = draftDoc;
+							const draftHtmlPromise = getReleaseHtml(pubFacets, draftDoc);
 
-							if (!latestRelease) {
-								return {
-									...rest,
-									content: doc,
-									firebasePath,
-									html: null,
-									abstract: null,
-								};
-							}
-
-							const releaseDoc = latestReleaseIsDraft
-								? draftDoc
-								: maybeLatestReleaseDoc!;
-
-							const abstract = getTextAbstract(releaseDoc.doc);
-							const releaseHtml = await getReleaseHtml(p, releaseDoc.doc);
-
+							const draftHtml = await draftHtmlPromise;
+							const abstract = getTextAbstract(draftDoc);
 							return {
-								...rest,
-								content: doc,
-								html: releaseHtml,
-								abstract,
+								facets: pubFacets,
+								content: draftDoc,
 								firebasePath,
+								html: draftHtml,
+								abstract,
 							};
 						} catch (e) {
 							console.error(`Error getting draft doc for pub ${p.id}:`, e);
@@ -276,7 +269,6 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 
 			const pubsWithDraftsAndFacets = foundPubs.map((pub) => {
 				const pubJson = pub.toJSON();
-				const pubFacets = facets.pub[pubJson.id];
 				const firebaseDraft = drafts.find(
 					(d) => d?.firebasePath === pubJson.draft?.firebasePath,
 				);
@@ -284,11 +276,11 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 					console.error(`Draft not found for pub ${pubJson.id}`);
 				}
 
-				const { html, abstract, ...draft } = firebaseDraft ?? {};
+				const { html, abstract, facets, ...draft } = firebaseDraft ?? {};
 
 				return {
 					...pubJson,
-					facets: pubFacets,
+					facets,
 					draft: {
 						...pubJson.draft,
 						doc: draft,

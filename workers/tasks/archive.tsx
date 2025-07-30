@@ -611,10 +611,11 @@ const transformAssetLinksInViewDataJSON = (startTag: any, pageUrl: URL) => {
 	}
 
 	viewDataAttr.value = (viewDataAttr.value as string).replace(ASSET_URL_PATTERN, (url) => {
-		const result = generateAssetUrl(url, pageUrl, {
+		const urlWithoutQuotes = url.replace(/"/g, '');
+		const result = generateAssetUrl(urlWithoutQuotes, pageUrl, {
 			assetDir: 'assets',
 		});
-		return result === null ? url : result.assetPath;
+		return result === null ? url : `"${result.assetPath}"`;
 	});
 };
 

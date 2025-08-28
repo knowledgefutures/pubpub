@@ -1,18 +1,18 @@
 // eslint-disable-next-line import/no-unresolved
-import { parentPort, isMainThread, workerData } from 'worker_threads';
+import { isMainThread, parentPort, workerData } from 'worker_threads';
 
 import { Prettify } from 'types';
+import { archiveTask } from './tasks/archive';
+import { exportTask } from './tasks/export';
+import { importTask } from './tasks/import';
 import {
 	deletePageSearchData,
-	setPageSearchData,
 	deletePubSearchData,
+	setPageSearchData,
 	setPubSearchData,
 	updateCommunityData,
 	updateUserData,
 } from './tasks/search';
-import { exportTask } from './tasks/export';
-import { importTask } from './tasks/import';
-import { archiveTask } from './tasks/archive';
 
 if (isMainThread) {
 	// Don't run outside of a thread spawned by worker_threads in queue.js
@@ -59,10 +59,13 @@ const main = async <T extends TaskType>(taskData: TaskData<T>) => {
 
 	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 	const collectSubprocess = (ps) => subprocesses.push(ps);
+	const newInput = typeof input === 'object' && input !== null && !Array.isArray(input)
+		? { ...input, workerTaskId: id }
+		: input;
 
 	// pass workerTaskId to archive task for progress tracking
 	const taskPromise = taskFn(
-		{ ...input, workerTaskId: id },
+		newInput,
 		// @ts-expect-error FIXME: Expected 1 arguments, but got 2.ts(2554). Does this even do anything?
 		collectSubprocess,
 	);

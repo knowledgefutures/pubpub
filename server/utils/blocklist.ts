@@ -10,6 +10,15 @@ export const blocklistMiddleware: RequestHandler = async (req, res, next) => {
 
 	const ip = req.ip;
 
+	console.log(
+		'X-Forwarded-For',
+		req.headers['x-forwarded-for'],
+		'req.ip',
+		ip,
+		'remoteAddress',
+		req.socket.remoteAddress,
+	);
+
 	if (!ip) {
 		return next();
 	}

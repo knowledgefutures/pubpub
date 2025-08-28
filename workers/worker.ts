@@ -59,9 +59,10 @@ const main = async <T extends TaskType>(taskData: TaskData<T>) => {
 
 	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 	const collectSubprocess = (ps) => subprocesses.push(ps);
-	const newInput = typeof input === 'object' && input !== null && !Array.isArray(input)
-		? { ...input, workerTaskId: id }
-		: input;
+	const newInput =
+		typeof input === 'object' && input !== null && !Array.isArray(input)
+			? { ...input, workerTaskId: id }
+			: input;
 
 	// pass workerTaskId to archive task for progress tracking
 	const taskPromise = taskFn(

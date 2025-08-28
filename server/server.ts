@@ -29,6 +29,7 @@ if (isQubQub() && !process.env.HEROKU_SLUG_COMMIT) {
 import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
+import { blocklistMiddleware } from './utils/blocklist';
 
 import { User } from './models';
 import { sequelize } from './sequelize';
@@ -87,6 +88,10 @@ export default app;
 import { RequestValidationError, createExpressEndpoints } from '@ts-rest/express';
 import { contract } from 'utils/api/contract';
 import { server } from 'utils/api/server';
+
+// just hardcoded blocking, very bad, but we really need it
+// set process.env.BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
+app.use(blocklistMiddleware);
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({

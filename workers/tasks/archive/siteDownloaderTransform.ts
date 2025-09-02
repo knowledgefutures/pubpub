@@ -159,7 +159,7 @@ export class SiteDownloaderTransform extends Transform {
 				console.error(`Failed to fetch asset ${assetUrl.href}:`, err);
 				// If the asset fetch fails, we still want to push an empty stream
 				// so that the archive can be created without errors.
-				stream.destroy();
+				Readable.from([]).pipe(stream);
 			});
 
 		SiteDownloaderTransform.#assetUrls.add(assetUrl.href);

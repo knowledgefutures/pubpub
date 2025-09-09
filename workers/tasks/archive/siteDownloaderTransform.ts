@@ -1,3 +1,4 @@
+/* global RequestInit, RequestInfo */
 import { PassThrough, Readable, Transform, TransformOptions } from 'node:stream';
 import { RewritingStream } from 'parse5-html-rewriting-stream';
 import type { StartTag } from 'parse5-sax-parser';
@@ -14,6 +15,21 @@ declare global {
 }
 
 const allowedExportFormats = ['formatted', 'pdf', 'jats', 'html'];
+
+const fetchWithRetry = async (
+	options: RequestInfo | URL,
+	init?: RequestInit,
+	retries = 3,
+): Promise<Response> => {
+	try {
+		return await fetch(options, init);
+	} catch (error) {
+		if (retries > 0) {
+			return fetchWithRetry(options, init, retries - 1);
+		}
+		throw error;
+	}
+};
 
 export type SiteDownloaderTransformConfig = TransformOptions & {
 	assetDir?: string;
@@ -134,7 +150,7 @@ export class SiteDownloaderTransform extends Transform {
 	}
 
 	async #fetch(url: string | URL) {
-		return fetch(url, {
+		return fetchWithRetry(url, {
 			headers: this.#config.headers,
 		});
 	}

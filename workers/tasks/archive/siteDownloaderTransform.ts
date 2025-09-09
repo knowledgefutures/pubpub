@@ -25,6 +25,7 @@ const fetchWithRetry = async (
 		return await fetch(options, init);
 	} catch (error) {
 		if (retries > 0) {
+			console.log('Fetch failed. Retrying...');
 			return fetchWithRetry(options, init, retries - 1);
 		}
 		throw error;

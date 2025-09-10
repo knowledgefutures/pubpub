@@ -681,6 +681,7 @@ export const archiveTask = async ({
 					createSiteDownloaderTransform({
 						headers: {
 							'User-Agent': 'PubPub-Archive-Bot/1.0',
+							Connection: 'close',
 						},
 						onStartTag: transformAssetLinksInViewDataJSON,
 						progressTracker,

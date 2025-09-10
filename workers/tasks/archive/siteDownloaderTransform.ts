@@ -151,9 +151,10 @@ export class SiteDownloaderTransform extends Transform {
 	}
 
 	async #fetch(url: string | URL) {
-		return fetchWithRetry(url, {
+		const response = await fetchWithRetry(url, {
 			headers: this.#config.headers,
 		});
+		return response.clone();
 	}
 
 	#pushAsset(assetUrl: URL, assetPath: string) {

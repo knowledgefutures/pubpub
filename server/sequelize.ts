@@ -68,12 +68,19 @@ export const poolOptions = {
 		: Infinity,
 } satisfies PoolOptions;
 
+// this is to avoid thundering herd
+// possibly sequelize is always using the same replica at the beginning
+const shouldUse1First = Math.random() < 0.5;
+const readReplicas = shouldUse1First
+	? [parseDBUrl(database_read_replica_1_url), parseDBUrl(database_read_replica_2_url)]
+	: [parseDBUrl(database_read_replica_2_url), parseDBUrl(database_read_replica_1_url)];
+
 export const sequelize = new SequelizeWithId(database_url, {
 	logging: false,
 	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
 	dialect: 'postgres',
 	replication: {
-		read: [parseDBUrl(database_read_replica_1_url), parseDBUrl(database_read_replica_2_url)],
+		read: readReplicas,
 		write: parseDBUrl(database_url),
 	},
 	pool: poolOptions,

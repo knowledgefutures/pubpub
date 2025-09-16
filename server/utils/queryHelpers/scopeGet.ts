@@ -468,14 +468,20 @@ type ScopeInputs = {
 /* When called from an API endpoint, it is likely that collectionId and pubId will be used. */
 const scopeGet = async (scopeInputs: ScopeInputs): Promise<types.ScopeData> => {
 	const scopeElements = await getScopeElements(scopeInputs);
-	const facets = await getFacets(!!scopeInputs.includeFacets, scopeElements);
 
-	const publicPermissionsData = await getPublicPermissionsData(scopeElements);
-	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
-	const [activePermissions, activeCounts] = await Promise.all([
-		getActivePermissions(scopeInputs, scopeElements, publicPermissionsData, scopeMemberData),
+	const [facets, publicPermissionsData, scopeMemberData, activeCounts] = await Promise.all([
+		getFacets(!!scopeInputs.includeFacets, scopeElements),
+		getPublicPermissionsData(scopeElements),
+		getScopeMemberData(scopeInputs, scopeElements),
 		getActiveCounts(!!scopeInputs.isDashboard, scopeElements),
 	]);
+
+	const activePermissions = await getActivePermissions(
+		scopeInputs,
+		scopeElements,
+		publicPermissionsData,
+		scopeMemberData,
+	);
 
 	return {
 		elements: scopeElements,

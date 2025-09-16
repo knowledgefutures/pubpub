@@ -513,7 +513,9 @@ describe('fetchActivityItems', () => {
 			scope: { communityId: community.id, pubId: pub.id },
 		});
 
-		const [updatedItem, commentAddedItem, createdItem] = activityItems;
+		const [commentAddedItem, createdItem, updatedItem] = activityItems.sort((a, b) =>
+			a.kind.localeCompare(b.kind),
+		);
 		expect(createdItem).toMatchObject({
 			actorId: actor.id,
 			communityId: community.id,

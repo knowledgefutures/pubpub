@@ -1,17 +1,17 @@
 /* eslint-disable import/first, import/order */
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
+import CreateSequelizeStore from 'connect-session-sequelize';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import enforce from 'express-sslify';
 import express, { ErrorRequestHandler, RequestHandler } from 'express';
+import enforce from 'express-sslify';
 import fs from 'fs';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
-import CreateSequelizeStore from 'connect-session-sequelize';
 
-import { setEnvironment, setAppCommit, isProd, getAppCommit, isQubQub } from 'utils/environment';
+import { getAppCommit, isProd, isQubQub, setAppCommit, setEnvironment } from 'utils/environment';
 
 // ACHTUNG: These calls must appear before we import any more of our own code to ensure that
 // the environment, and in particular the choice of dev vs. prod, is configured correctly!
@@ -26,15 +26,15 @@ if (isQubQub() && !process.env.HEROKU_SLUG_COMMIT) {
 	setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 }
 
-import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
+import 'server/utils/serverModuleOverwrite';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 import { blocklistMiddleware } from './utils/blocklist';
 
+import './hooks';
 import { User } from './models';
 import { sequelize } from './sequelize';
 import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
-import './hooks';
 
 type Wrap = <
 	P = any,
@@ -122,11 +122,12 @@ app.use(cookieParser());
 /* --------------------- */
 import session from 'express-session';
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
-import { fromZodError } from 'zod-validation-error';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
+import { fromZodError } from 'zod-validation-error';
 
-import { bearerStrategy } from './authToken/strategy';
+import { abortStorage } from './abort';
 import { authTokenMiddleware } from './authToken/authTokenMiddleware';
+import { bearerStrategy } from './authToken/strategy';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
@@ -179,6 +180,50 @@ app.use('/static', express.static(path.join(process.cwd(), 'static')));
 app.use('/service-worker.js', express.static(path.join(process.cwd(), 'static/service-worker.js')));
 app.use('/favicon.png', express.static(path.join(process.cwd(), 'static/favicon.png')));
 app.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.png')));
+
+// extremely graceful iknow
+process.on('uncaughtException', (err) => {
+	// just to be sure, not every route is properly `wrap`ped
+	if (err.name.includes('DatabaseRequestAbortedError')) {
+		return;
+	}
+
+	throw err;
+});
+
+/** Same as Heroku's default timeout */
+const TIMEOUT_MS = process.env.REQUEST_TIMEOUT_MS
+	? parseInt(process.env.REQUEST_TIMEOUT_MS, 10)
+	: 30_000;
+
+app.use((req, res, next) => {
+	// don't abort requests in test environment
+	if (process.env.NODE_ENV === 'test') {
+		return next();
+	}
+
+	const abortController = new AbortController();
+
+	abortStorage.enterWith({ abortController });
+
+	const abort = () => {
+		const store = abortStorage.getStore();
+		store?.abortController.abort();
+	};
+
+	const abortTimeout = setTimeout(abort, TIMEOUT_MS);
+
+	// manually abort the request on close, that frees up connections more quickly if eg user closes the tab
+	req.on('close', () => {
+		// this is any close event, including us ending the request
+		// there's no problem in calling it twice
+		abort();
+		// clean up
+		clearTimeout(abortTimeout);
+	});
+
+	return next();
+});
 
 /* -------------------- */
 /* Set Hostname for Dev */

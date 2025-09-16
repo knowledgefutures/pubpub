@@ -1,6 +1,15 @@
-import { DataTypes, ConnectionError, ConnectionOptions } from 'sequelize';
-import { Sequelize } from 'sequelize-typescript';
+/* eslint-disable */ // necessary otherwise i can't ignore the subpath error triggered by sequelize/types/...
 import { knex } from 'knex';
+import { ConnectionError, ConnectionOptions, DataTypes, PoolOptions } from 'sequelize';
+import type { Pool } from 'sequelize-pool';
+import { Sequelize } from 'sequelize-typescript';
+import type {
+	Connection,
+	ConnectionManager,
+} from 'sequelize/types/dialects/abstract/connection-manager';
+/* eslint-enable */
+import { abortStorage } from './abort';
+import { DatabaseRequestAbortedError } from './utils/errors';
 
 const database_url = process.env.DATABASE_URL;
 const database_read_replica_1_url = process.env.DATABASE_READ_REPLICA_1_URL;
@@ -13,16 +22,20 @@ class SequelizeWithId extends Sequelize {
 		type: DataTypes.UUID,
 		defaultValue: DataTypes.UUIDV4,
 	};
+
+	declare connectionManager: ConnectionManager & {
+		pool: { read: Pool<Connection>; write: Pool<Connection> };
+	};
 }
 
 if (!database_url) {
 	throw new Error('DATABASE_URL environment variable not set');
 }
 if (!database_read_replica_1_url) {
-	throw new Error('DATABASE_READ_REPLICA_1_URL environment variable not set');
+	throw new Error('DATABASE_READ_REPLICA_1_CONNECTION_POOL_URL environment variable not set');
 }
 if (!database_read_replica_2_url) {
-	throw new Error('DATABASE_READ_REPLICA_2_URL environment variable not set');
+	throw new Error('DATABASE_READ_REPLICA_2_CONNECTION_POOL_URL environment variable not set');
 }
 
 const useSSL = database_url.indexOf('localhost') === -1;
@@ -38,6 +51,23 @@ const parseDBUrl = (url: string): ConnectionOptions => {
 	};
 };
 
+export const poolOptions = {
+	max: process.env.SEQUELIZE_MAX_CONNECTIONS
+		? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
+		: 5,
+	evict: 10_000,
+	min: 0,
+	idle: process.env.SEQUELIZE_IDLE_TIMEOUT
+		? parseInt(process.env.SEQUELIZE_IDLE_TIMEOUT, 10)
+		: 10_000,
+	acquire: process.env.SEQUELIZE_ACQUIRE_TIMEOUT
+		? parseInt(process.env.SEQUELIZE_ACQUIRE_TIMEOUT, 10)
+		: 15_000,
+	maxUses: process.env.SEQUELIZE_MAX_USES
+		? parseInt(process.env.SEQUELIZE_MAX_USES, 10)
+		: Infinity,
+} satisfies PoolOptions;
+
 export const sequelize = new SequelizeWithId(database_url, {
 	logging: false,
 	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
@@ -46,28 +76,41 @@ export const sequelize = new SequelizeWithId(database_url, {
 		read: [parseDBUrl(database_read_replica_1_url), parseDBUrl(database_read_replica_2_url)],
 		write: parseDBUrl(database_url),
 	},
-	pool: {
-		max: process.env.SEQUELIZE_MAX_CONNECTIONS
-			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-			: 5, // Some migrations require this number to be 150
-		// Time after which idle connections are released.
-		idle: process.env.SEQUELIZE_IDLE ? parseInt(process.env.SEQUELIZE_IDLE, 10) : 10_000,
-		// Maximum time to wait when acquiring a connection, after which an error
-		// will be thrown.
-		acquire: process.env.SEQUELIZE_ACQUIRE
-			? parseInt(process.env.SEQUELIZE_ACQUIRE, 10)
-			: 15_000,
-		// Maximum number of uses before a connection is released. Helps evenly
-		// distribute connections across dynos during peak load.
-		maxUses: process.env.SEQUELIZE_MAX_USES
-			? parseInt(process.env.SEQUELIZE_MAX_USES, 10)
-			: 1_000,
+	pool: poolOptions,
+	hooks: {
+		// IMPORTANT: This is necessary to abort requests that time out, or are prematurely closed by the client
+		// helps prevent "deathloop" situations where many requests are happening, Heroku times them out,
+		// but we continue processing them and adding extra waiting connections to the pool
+		beforePoolAcquire() {
+			const store = abortStorage.getStore();
+			if (store?.abortController.signal.aborted) {
+				throw new DatabaseRequestAbortedError();
+			}
+		},
 	},
 	retry: {
 		max: 3,
 		match: [/Deadlock/i, ConnectionError],
 	},
 });
+
+// pool loggin in dev
+if (process.env.NODE_ENV === 'development' && process.env.LOG_POOL_STATS === 'true') {
+	// clear any existing pool monitor interval before creating a new one
+	if ((global as any).poolMonitorInterval) {
+		console.log('clearing existing pool monitor interval');
+		clearInterval((global as any).poolMonitorInterval);
+	}
+
+	(global as any).poolMonitorInterval = setInterval(() => {
+		console.log('pool', {
+			size: sequelize.connectionManager.pool.read.size,
+			available: sequelize.connectionManager.pool.read.available,
+			using: sequelize.connectionManager.pool.read.using,
+			waiting: sequelize.connectionManager.pool.read.waiting,
+		});
+	}, 1_000);
+}
 
 export const knexInstance = knex({ client: 'pg' });
 

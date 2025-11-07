@@ -1,24 +1,24 @@
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import * as types from 'types';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 
 import { Pub } from 'server/models';
 
 import { getProposedMetadata } from 'workers/tasks/import/metadata';
-import { pubAttributionSchema } from './pubAttribution';
-import { discussionSchema } from './discussion';
-import { collectionPubSchema } from './collectionPub';
+import { baseSchema } from '../utils/baseSchema';
 import { collectionSchema } from './collection';
 import { collectionAttributionSchema } from './collectionAttribution';
+import { collectionPubSchema } from './collectionPub';
 import { communitySchema } from './community';
+import { discussionSchema } from './discussion';
 import { draftSchema } from './draft';
-import { reviewNewSchema } from './review';
 import { memberSchema } from './member';
+import { pubAttributionSchema } from './pubAttribution';
 import { pubEdgeSchema } from './pubEdge';
-import { submissionSchema } from './submission';
 import { docJsonSchema, releaseSchema } from './release';
+import { reviewNewSchema } from './review';
+import { submissionSchema } from './submission';
 import { fileSchema } from './upload';
-import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);
 
@@ -162,7 +162,16 @@ export const getManyQuerySchema = z.object({
 	pubOptions: z.object({
 		isAuth: z.boolean().optional(),
 		isPreview: z.boolean().optional(),
-		getCollections: z.boolean().optional(),
+		getCollections: z.union([
+			z.boolean(),
+			z.object({
+				collection: z.object({
+					page: z.boolean().optional(),
+					members: z.boolean().optional(),
+					attributions: z.boolean().optional(),
+				}),
+			}),
+		]),
 		getMembers: z.boolean().optional(),
 		getCommunity: z.boolean().optional(),
 		getExports: z.boolean().optional(),

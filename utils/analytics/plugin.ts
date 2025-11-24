@@ -1,5 +1,5 @@
-/* eslint-disable no-undef, import/no-unresolved */
-import { type AnalyticsInstance, type AnalyticsPlugin } from 'use-analytics';
+import type { AnalyticsInstance, AnalyticsPlugin } from 'use-analytics';
+
 import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
 
 // this gets rewritten to the AWS lambda on fastly
@@ -57,7 +57,7 @@ const sendData = (data: { payload: any; instance: AnalyticsInstance }) => {
 					}`,
 					value,
 				]),
-		  )
+			)
 		: {};
 
 	const toBeSentPayload = {

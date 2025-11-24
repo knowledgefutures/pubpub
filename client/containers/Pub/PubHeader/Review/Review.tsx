@@ -1,13 +1,15 @@
+import type { Community, DocJson } from 'types';
+
 import React, { useMemo, useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 import Color from 'color';
 
-import { DocJson, Community } from 'types';
 import { isEmptyDoc } from 'client/components/Editor';
 
 import ReviewEditor from './ReviewEditor';
 
-require('./review.scss');
+import './review.scss';
 
 type Props = {
 	communityData: Community;
@@ -29,8 +31,8 @@ const Review = (props: Props) => {
 	const bgColor = isEmptyDoc(review as DocJson)
 		? 'lightgray'
 		: !hover
-		  ? lighterAccentColor?.toString()
-		  : communityData.accentColorDark;
+			? lighterAccentColor?.toString()
+			: communityData.accentColorDark;
 
 	return (
 		<div className="review-component">

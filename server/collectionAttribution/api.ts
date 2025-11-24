@@ -1,22 +1,23 @@
-import { ForbiddenError } from 'server/utils/errors';
-
-import { createGetRequestIds } from 'utils/getRequestIds';
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { initServer } from '@ts-rest/express';
+import { z } from 'zod';
+
+import { ForbiddenError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
-import { queryOne } from 'utils/query/queryOne';
-import { queryMany } from 'utils/query/queryMany';
 import { expect } from 'utils/assert';
+import { createGetRequestIds } from 'utils/getRequestIds';
+import { queryMany } from 'utils/query/queryMany';
+import { queryOne } from 'utils/query/queryOne';
+
+import { Collection } from '../collection/model';
+import { CollectionAttribution } from './model';
+import { getPermissions } from './permissions';
 import {
 	createCollectionAttribution,
-	updateCollectionAttribution,
 	destroyCollectionAttribution,
 	getCollectionAttributions,
+	updateCollectionAttribution,
 } from './queries';
-import { getPermissions } from './permissions';
-import { CollectionAttribution } from './model';
-import { Collection } from '../collection/model';
 
 extendZodWithOpenApi(z);
 

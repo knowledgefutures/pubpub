@@ -1,4 +1,5 @@
-import { PubsQuery } from 'types';
+import type { PubsQuery } from 'types';
+
 import { pruneFalsyValues } from 'utils/arrays';
 
 export type OverviewSearchFilter<QueryType> = {

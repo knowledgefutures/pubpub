@@ -1,8 +1,8 @@
-/* eslint-disable no-restricted-syntax */
-import uuid from 'uuid/v4';
-import * as graphlib from 'graphlib';
+import type { Model, ModelCtor } from 'sequelize';
 
-import { Model, ModelCtor } from 'sequelize';
+import * as graphlib from 'graphlib';
+import uuid from 'uuid/v4';
+
 import { sequelizeModels } from './models';
 
 const modelByName = (modelName: string) => {
@@ -121,7 +121,7 @@ const walkAst = (ast: ModelBlock[], parameters: Parameters) => {
 						? resolvedSpread
 						: {
 								[entry.value.value]: resolvedSpread,
-						  }),
+							}),
 				};
 			} else if (entry.type === 'keyValuePair') {
 				const { key, value } = entry;

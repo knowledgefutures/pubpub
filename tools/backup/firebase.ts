@@ -1,11 +1,11 @@
-/* eslint-disable no-await-in-loop */
-import fs from 'fs';
+import type { BackupFile } from './types';
+
+import { type Bucket, type File, Storage } from '@google-cloud/storage';
 import dateFormat from 'dateformat';
-import { Storage, Bucket, File } from '@google-cloud/storage';
+import fs from 'fs';
 
 import { firebaseBackupsGcpBucket } from './constants';
 import { getTmpFileForExtension } from './util';
-import { BackupFile } from './types';
 
 const getGoogleCloudServiceAccount = () => {
 	const jsonString = Buffer.from(
@@ -24,6 +24,7 @@ const getFirebaseFilesFromGcp = async (
 	for (let lookbackDays = 0; lookbackDays <= maxLookbackDays; lookbackDays++) {
 		const date = new Date(startDate.getTime() - day * lookbackDays);
 		const dateString = dateFormat(date, 'UTC:yyyy-mm-dd');
+		// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 		const [files] = await bucket.getFiles({ prefix: dateString });
 		const rules = files.find((file) => file.name.endsWith('rules.json.gz'));
 		const data = files.find((file) => file.name.endsWith('data.json.gz'));

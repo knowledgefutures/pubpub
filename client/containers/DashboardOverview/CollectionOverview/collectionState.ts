@@ -1,17 +1,26 @@
+import type {
+	Collection,
+	CollectionPub,
+	Community,
+	DefinitelyHas,
+	Maybe,
+	Pub,
+	SlugStatus,
+} from 'types';
+
 import { useMemo, useState } from 'react';
 
-import { CollectionPub, Pub, Collection, Community, DefinitelyHas, SlugStatus, Maybe } from 'types';
-import { findRankInRankedList, sortByRank } from 'utils/rank';
-import { usePendingChanges, usePageContext } from 'utils/hooks';
-import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { usePersistableState } from 'client/utils/usePersistableState';
 import * as api from 'client/utils/collections/api';
+import { usePersistableState } from 'client/utils/usePersistableState';
+import { expect } from 'utils/assert';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { findRankInRankedList, sortByRank } from 'utils/rank';
 import {
-	MinimalScopeSummary,
 	addScopeSummaries,
+	type MinimalScopeSummary,
 	subtractScopeSummaries,
 } from 'utils/scopeSummaries';
-import { expect } from 'utils/assert';
 
 const linkCollection = <C extends Collection>(collection: C, community: Community) => {
 	const page = community.pages?.find((pg) => pg.id === collection.pageId);

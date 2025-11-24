@@ -1,6 +1,5 @@
-import { setup, login, modelize, teardown } from 'stubstub';
-
 import { LandingPageFeature } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	User superadmin {

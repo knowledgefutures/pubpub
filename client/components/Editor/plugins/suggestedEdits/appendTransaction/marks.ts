@@ -1,7 +1,8 @@
-import { Fragment, Mark, Node, Slice } from 'prosemirror-model';
+import type { SuggestedEditsTransactionContext } from '../types';
+
+import { Fragment, type Mark, type Node, Slice } from 'prosemirror-model';
 import { AddMarkStep, RemoveMarkStep } from 'prosemirror-transform';
 
-import { SuggestedEditsTransactionContext } from '../types';
 import { createSuggestionMark, getSuggestionKindForNode } from '../operations';
 
 const createGetOriginalMarksForStep = (step: AddMarkStep | RemoveMarkStep) => {

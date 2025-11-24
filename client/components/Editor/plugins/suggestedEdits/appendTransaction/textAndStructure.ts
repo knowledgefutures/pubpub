@@ -1,7 +1,8 @@
-import { Fragment, Node, Slice } from 'prosemirror-model';
-import { Change, ChangeSet } from 'prosemirror-changeset';
+import type { SuggestedEditsTransactionContext, SuggestionKind } from '../types';
 
-import { SuggestedEditsTransactionContext, SuggestionKind } from '../types';
+import { type Change, ChangeSet } from 'prosemirror-changeset';
+import { Fragment, type Node, Slice } from 'prosemirror-model';
+
 import { addSuggestionToNode, addSuggestionToRange, nodeHasSuggestionKind } from '../operations';
 
 const canNodeTypeHaveSimultaneousAdditionAndDeletion = (node: Node) => {

@@ -1,11 +1,10 @@
-import { modelize, teardown, setup, login } from 'stubstub';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community community {
        Member {
             permissions: "admin"
             User communityAdmin {
-            	id: "430cf446-f220-4e51-b6ba-68def3f5a8b5"
 				AuthToken adminToken {
 					expiresAt: null
 				}
@@ -18,7 +17,6 @@ const models = modelize`
        Member {
             permissions: "manage"
             User communityManager {
-                id: "930cf446-f220-4e51-b6ba-68def3f5a8b5"
 				AuthToken manageToken {
 					expiresAt: null
 				}
@@ -39,7 +37,6 @@ const models = modelize`
         Member {
             permissions: "admin"
             User anotherCommunityAdmin {
-                id: "530cf446-f220-4e51-b6ba-68def3f5a8b5"
 				AuthToken anotherAuthToken {
 					expiresAt: null
 				}

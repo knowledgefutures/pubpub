@@ -1,21 +1,22 @@
+import type { DefinitelyHas, DocJson } from 'types';
+import type { LayoutBlockText } from 'utils/layout';
+
 import chunkText from 'chunk-text';
 
+import { jsonToNode } from 'components/Editor';
 import {
-	Pub,
 	Community,
-	PubAttribution,
-	Page,
-	Release,
 	Doc,
 	includeUserModel,
+	Page,
+	Pub,
+	PubAttribution,
+	Release,
 } from 'server/models';
-import { jsonToNode } from 'components/Editor';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
-import { getScope, getMembers } from 'server/utils/queryHelpers';
+import { getMembers, getScope } from 'server/utils/queryHelpers';
 import { getAuthorString } from 'utils/contributors';
-import { DefinitelyHas, DocJson } from 'types';
 
-import { LayoutBlockText } from 'utils/layout';
 import { stopwords } from './stopwords';
 
 type AlgoliaPubEntry = {
@@ -150,9 +151,8 @@ export const getPageSearchData = async (pageIds) => {
 	const dataToSync: any[] = [];
 	for (let index = 0; index < pages.length; index++) {
 		const page = pages[index];
-		// eslint-disable-next-line no-await-in-loop
+		// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 		const scopeData = await getScope({ communityId: page.community.id });
-		// eslint-disable-next-line no-await-in-loop
 		const { members } = await getMembers({ scopeData });
 		const accessIds = members.map((member) => {
 			return member.userId;

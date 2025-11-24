@@ -1,13 +1,16 @@
+import type { Callback } from 'types';
+
+import type { FacetEditorDisplayStyle, FacetPropSourceInfo } from './types';
+
 import React, { useMemo, useState } from 'react';
+
 import classNames from 'classnames';
 import { Button } from 'reakit/Button';
 
 import { Icon } from 'components';
-import { Callback } from 'types';
 import { capitalize } from 'utils/strings';
-import { FacetPropSourceInfo, FacetEditorDisplayStyle } from './types';
 
-require('./facetPropEditorSkeleton.scss');
+import './facetPropEditorSkeleton.scss';
 
 type Props = {
 	children: React.ReactNode;

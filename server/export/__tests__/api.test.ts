@@ -1,6 +1,5 @@
-import { setup, teardown, login, modelize } from 'stubstub';
-
 import { Export, WorkerTask } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community community {

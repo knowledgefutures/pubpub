@@ -1,6 +1,7 @@
+import type { BackupFile } from './types';
+
 import { exec } from 'child_process';
 
-import { BackupFile } from './types';
 import { getTmpFileForExtension } from './util';
 
 export const encryptFile = async (file: BackupFile): Promise<BackupFile> => {

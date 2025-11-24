@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+
+import { Button, Menu, MenuItem, Popover } from '@blueprintjs/core';
 import Color from 'color';
-import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 
 import DiscussionBubble from './DiscussionBubble';
 
-require('./discussionNav.scss');
+import './discussionNav.scss';
 
 type OwnProps = {
 	discussions: any[];
@@ -128,15 +129,18 @@ const DiscussionNav = (props: Props) => {
 					onClose={() => setOverflowShown(false)}
 					content={
 						<Menu>
-							{overflowThreads.map((thread, index) => (
-								<MenuItem
-									{...getHandlersForDiscussion(thread)}
-									// eslint-disable-next-line react/no-array-index-key
-									key={index}
-									icon={bubbleRenderer(thread)}
-									text={getLabelForDiscussion(thread)}
-								/>
-							))}
+							{overflowThreads.map((thread, index) => {
+								const label = getLabelForDiscussion(thread);
+								return (
+									<MenuItem
+										{...getHandlersForDiscussion(thread)}
+										// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
+										key={`${label}-${index}`}
+										icon={bubbleRenderer(thread)}
+										text={label}
+									/>
+								);
+							})}
 						</Menu>
 					}
 				>

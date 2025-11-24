@@ -1,15 +1,18 @@
-import type { TsRestRequest } from '@ts-rest/express';
 import type { AppRouteQuery, ServerInferRequest } from '@ts-rest/core';
+import type { TsRestRequest } from '@ts-rest/express';
+import type { Request, Response } from 'express';
 import type { ModelCtor } from 'sequelize-typescript';
+
+import type { SerializedModel } from 'types/serializedModel';
+
+import type { GetManyQueryAny } from './createGetManyQuery';
+
 import { Op } from 'sequelize';
-import type { Express, Response } from 'express-serve-static-core';
 
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
-import { SerializedModel } from 'types/serializedModel';
 
 import { buildWhereClause } from './buildWhereClause';
 import { createIncludes } from './include';
-import type { GetManyQueryAny } from './createGetManyQuery';
 
 export type CustomScopeInput = {
 	/** The associated model you want to make sure is scoped to the community. */
@@ -77,7 +80,7 @@ export const queryMany =
 		},
 	) =>
 	async <T extends AppRouteQuery>(
-		input: ServerInferRequest<T, Express['request']['headers']> & {
+		input: ServerInferRequest<T, Request['headers']> & {
 			req: TsRestRequest<T>;
 			res: Response;
 		},
@@ -126,7 +129,7 @@ export const queryMany =
 					(includeItem) =>
 						(attributes as string[]).includes(includeItem) &&
 						!includes.some((customIncludeItem) => customIncludeItem.as === includeItem),
-			  )
+				)
 			: include;
 
 		const defaultIncludes = createIncludes(model, filteredInclude);

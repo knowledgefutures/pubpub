@@ -1,13 +1,15 @@
-import React from 'react';
-import styled from 'styled-components';
-import Color from 'color';
+import type { Community } from 'types';
 
-import { Community } from 'types';
+import React from 'react';
+
+import Color from 'color';
+import styled from 'styled-components';
+
+import { Icon } from 'components';
 import { communityUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
-import { Icon } from 'components';
 
-import { Section, Button } from '..';
+import { Button, Section } from '..';
 import { BaseTableStyle } from '../shared';
 
 type Props = {

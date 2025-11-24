@@ -1,7 +1,8 @@
-import { AllSelection, Plugin, Selection, PluginKey } from 'prosemirror-state';
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
+import type firebase from 'firebase';
+
 import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
-import firebase from 'firebase';
+import { AllSelection, Plugin, PluginKey, Selection } from 'prosemirror-state';
+import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
 export const cursorsPluginKey = new PluginKey('cursors');
 
@@ -40,7 +41,7 @@ export default (schema, props, collabDocPluginKey) => {
 				editorState.doc,
 				uncompressSelectionJSON(cursorData.selection),
 			);
-		} catch (err) {
+		} catch (_err) {
 			return [];
 		}
 
@@ -237,7 +238,7 @@ export default (schema, props, collabDocPluginKey) => {
 										a: 1,
 										h: 1,
 										t: 'text',
-								  }
+									}
 								: compressSelectionJSON(selection.toJSON()),
 						};
 

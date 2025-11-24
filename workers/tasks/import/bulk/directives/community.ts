@@ -1,6 +1,6 @@
-import { generateHash } from 'utils/hashes';
 import { createCommunity } from 'server/community/queries';
 import { Community } from 'server/models';
+import { generateHash } from 'utils/hashes';
 
 import { BulkImportError } from '../errors';
 

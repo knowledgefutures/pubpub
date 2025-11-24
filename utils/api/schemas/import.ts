@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { pandocFormatArray } from 'utils/import/formats';
 
 extendZodWithOpenApi(z);

@@ -1,4 +1,5 @@
-import { Collection } from 'types';
+import type { Collection } from 'types';
+
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { formatDate, getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
 

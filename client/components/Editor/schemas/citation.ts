@@ -1,6 +1,6 @@
-import { DOMOutputSpec } from 'prosemirror-model';
-import { getCitationInlineLabel } from '../utils/citation';
+import type { DOMOutputSpec } from 'prosemirror-model';
 
+import { getCitationInlineLabel } from '../utils/citation';
 import { counter } from './reactive/counter';
 import { structuredCitation } from './reactive/structuredCitation';
 

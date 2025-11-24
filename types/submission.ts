@@ -1,5 +1,6 @@
-import { Submission as SubmissionModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { Submission as SubmissionModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export const managerStatuses = ['received', 'accepted', 'declined'] as const;
 export const submitterStatuses = ['received'] as const;

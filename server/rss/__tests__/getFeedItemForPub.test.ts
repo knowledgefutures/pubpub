@@ -1,6 +1,6 @@
-import { setup, modelize, teardown } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
-import { getPubData, getFeedItemForPub } from '../queries';
+import { getFeedItemForPub, getPubData } from '../queries';
 
 const models = modelize`
     Community community {

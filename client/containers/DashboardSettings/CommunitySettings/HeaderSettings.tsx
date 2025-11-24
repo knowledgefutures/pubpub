@@ -1,8 +1,10 @@
+import type { Callback, Community } from 'types';
+
 import React from 'react';
-import { ButtonGroup, Button } from '@blueprintjs/core';
+
+import { Button, ButtonGroup } from '@blueprintjs/core';
 
 import { AccentStyle, ImageUpload, InputField, SettingsSection } from 'components';
-import { Callback, Community } from 'types';
 
 import LabelWithInfo from '../LabelWithInfo';
 

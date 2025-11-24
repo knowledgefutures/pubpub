@@ -1,16 +1,16 @@
-import { Fragment, MarkType, NodeType } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
-import {
-	inputRules,
-	wrappingInputRule,
-	textblockTypeInputRule,
-	smartQuotes,
-	emDash,
-	ellipsis,
-	InputRule,
-} from 'prosemirror-inputrules';
+import type { EditorState, Transaction } from 'prosemirror-state';
 
 import { makeBlockMathInputRule, REGEX_BLOCK_MATH_DOLLARS } from '@benrbray/prosemirror-math';
+import {
+	ellipsis,
+	emDash,
+	InputRule,
+	inputRules,
+	smartQuotes,
+	textblockTypeInputRule,
+	wrappingInputRule,
+} from 'prosemirror-inputrules';
+import { Fragment, type MarkType, type NodeType } from 'prosemirror-model';
 
 // : (NodeType) → InputRule
 // Given a blockquote node type, returns an input rule that turns `"> "`
@@ -45,7 +45,7 @@ const codeBlockRule = (nodeType) => textblockTypeInputRule(/^```$/, nodeType);
 const inlineCodeRule = (markType) =>
 	new InputRule(
 		// \040 is the space character
-		/`([^`]+)`\040/,
+		/`([^`]+)`\x20/,
 		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
 			const [_, content] = match;
 			const fragment = Fragment.fromArray([
@@ -76,7 +76,7 @@ const inlineMathRule = (
 ) =>
 	new InputRule(
 		// \040 is the space character
-		/\$([^$]+?)\$\040$/,
+		/\$([^$]+?)\$\x20$/,
 		(state: EditorState, matches: RegExpMatchArray, start: number, end: number) => {
 			const [_, match] = matches;
 			const resolvedStart = state.doc.resolve(start + 1); // +1 to capture non-inclusive marks

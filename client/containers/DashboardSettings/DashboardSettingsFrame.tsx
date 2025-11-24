@@ -1,22 +1,30 @@
+import type { PubPubIconName } from 'client/utils/icons';
+import type { ScopeData } from 'types';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useBeforeUnload, useUpdateEffect } from 'react-use';
+
 import { Button, Spinner, Tab, Tabs, Tooltip } from '@blueprintjs/core';
 import classNames from 'classnames';
+import { useBeforeUnload, useUpdateEffect } from 'react-use';
 
-import { ScopeData } from 'types';
-import { DashboardFrame, Icon, IconName, MobileAware, PendingChangesProvider } from 'components';
-import { MenuSelect } from 'components/Menu';
-import { PubPubIconName } from 'client/utils/icons';
 import { useFacetsState } from 'client/utils/useFacets';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
+import {
+	DashboardFrame,
+	Icon,
+	type IconName,
+	MobileAware,
+	PendingChangesProvider,
+} from 'components';
+import { MenuSelect } from 'components/Menu';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
 
 import AutosaveIndicator from './AutosaveIndicator';
 import IconBullet from './IconBullet';
 
-require('./dashboardSettingsFrame.scss');
+import './dashboardSettingsFrame.scss';
 
 type Section = React.ReactNode | (() => React.ReactNode);
 

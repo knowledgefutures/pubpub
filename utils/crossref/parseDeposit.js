@@ -90,13 +90,13 @@ export const getDepositRecordReviewType = (depositRecord) => {
 	return body.peer_review['@type'];
 };
 
-// eslint-disable-next-line consistent-return
+
 export function setDepositRecordReviewType(depositRecord, reviewType) {
 	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
-	// eslint-disable-next-line no-param-reassign
+	
 	depositRecord.depositJson.deposit.doi_batch.body.peer_review['@type'] = reviewType;
 }
 
@@ -120,13 +120,13 @@ export const getDepositRecordReviewRecommendation = (depositRecord) => {
 	return body.peer_review['@recommendation'];
 };
 
-// eslint-disable-next-line consistent-return
+
 export function setDepositRecordReviewRecommendation(depositRecord, recommendation) {
 	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
-	// eslint-disable-next-line no-param-reassign
+	
 	depositRecord.depositJson.deposit.doi_batch.body.peer_review['@recommendation'] =
 		recommendation;
 }

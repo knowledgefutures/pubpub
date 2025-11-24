@@ -1,5 +1,6 @@
+import type { CollectionAttribution, PubAttribution } from 'server/models';
+
 import * as types from 'types';
-import { CollectionAttribution, PubAttribution } from 'server/models';
 
 import { getPartsOfFullName } from './names';
 

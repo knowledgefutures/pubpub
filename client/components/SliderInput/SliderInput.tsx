@@ -1,7 +1,8 @@
 import React from 'react';
-import { NumericInput, Slider, ISliderProps } from '@blueprintjs/core';
 
-require('./sliderInput.scss');
+import { type ISliderProps, NumericInput, Slider } from '@blueprintjs/core';
+
+import './sliderInput.scss';
 
 type ValueCallback = (value: number, commited: boolean) => unknown;
 

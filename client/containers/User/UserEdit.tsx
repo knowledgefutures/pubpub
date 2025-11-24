@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+
 import { Button, Callout, Intent } from '@blueprintjs/core';
 
-import { GridWrapper } from 'components';
-import InputField from 'components/InputField/InputField';
-import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { apiFetch } from 'client/utils/apiFetch';
+import { GridWrapper } from 'components';
+import ImageUpload from 'components/ImageUpload/ImageUpload';
+import InputField from 'components/InputField/InputField';
 import { ORCID_PATTERN } from 'utils/orcid';
 
-require('./userEdit.scss');
+import './userEdit.scss';
 
 type Props = {
 	userData: any;

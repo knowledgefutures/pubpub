@@ -1,5 +1,6 @@
 import React from 'react';
-import { Tooltip, Classes } from '@blueprintjs/core';
+
+import { Classes, Tooltip } from '@blueprintjs/core';
 
 type Props = {
 	children?: React.ReactNode;

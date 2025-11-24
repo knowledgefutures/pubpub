@@ -1,9 +1,11 @@
+import type { AttributionWithUser, Falsy } from 'types';
+
 import React from 'react';
-import classNames from 'classnames';
+
 import { Button, Icon, Tag } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { Avatar } from 'components';
-import { AttributionWithUser, Falsy } from 'types';
 
 import AttributionDetailControls from './AttributionDetailControls';
 import EditableAvatar from './EditableAvatar';

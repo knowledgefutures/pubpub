@@ -1,9 +1,10 @@
+import type { InitialData, Page, PageContext } from 'types';
+
 import { useMemo, useState } from 'react';
 
-import { NoteManager } from 'client/utils/notes';
-import { InitialData, Page, PageContext } from 'types';
-import { getDashboardMenuState } from 'client/utils/navigation';
 import { getGdprConsentElection } from 'client/utils/legal/gdprConsent';
+import { getDashboardMenuState } from 'client/utils/navigation';
+import { NoteManager } from 'client/utils/notes';
 
 // viewData contains container-specific props that we usually shouldn't peek at when doing
 // operations that could occur inside _any_ container -- but sometimes we cheat. This type
@@ -33,7 +34,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 
 	const updateCommunity = (next) => {
 		if (typeof next === 'function') {
-			// eslint-disable-next-line no-param-reassign
 			next = next(communityData);
 		}
 		setCommunityData((current) => ({ ...current, ...next }));
@@ -43,7 +43,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		const { activeCollection } = scopeData.elements;
 		if (activeCollection) {
 			if (typeof next === 'function') {
-				// eslint-disable-next-line no-param-reassign
 				next = next(activeCollection);
 			}
 			const nextCollection = {

@@ -1,8 +1,13 @@
 import type { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+
+import type { Metadata } from '../utils/metadataType';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { createGetQueryOptions } from 'utils/query/createGetQuery';
+import { z } from 'zod';
+
 import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
+import { createGetQueryOptions } from 'utils/query/createGetQuery';
+
 import {
 	pageCreateSchema,
 	pageRemoveSchema,
@@ -10,7 +15,6 @@ import {
 	pageUpdateSchema,
 	pageWithRelationsSchema,
 } from '../schemas/page';
-import { Metadata } from '../utils/metadataType';
 
 extendZodWithOpenApi(z);
 

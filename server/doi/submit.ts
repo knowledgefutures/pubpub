@@ -3,8 +3,8 @@ import { Readable } from 'stream';
 import xmlbuilder from 'xmlbuilder';
 
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
-import { aes256Decrypt } from 'utils/crypto';
 import { expect } from 'utils/assert';
+import { aes256Decrypt } from 'utils/crypto';
 
 const getDoiLogin = async (communityId: string) => {
 	const depositTarget = await getCommunityDepositTarget(communityId, true);
@@ -41,7 +41,7 @@ export const submitDoiData = async (
 	const { login, password } = await getDoiLogin(communityId);
 	const xmlObject = xmlbuilder.create(json, { headless: true }).end({ pretty: true });
 	const readStream = new Readable();
-	// eslint-disable-next-line no-underscore-dangle
+
 	readStream._read = function noop() {};
 	readStream.push(xmlObject);
 	readStream.push(null);

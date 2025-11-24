@@ -1,12 +1,16 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 import { expect } from 'utils/assert';
 
+import { queryCommunitiesForSpamManagement } from './communities';
 import { canManipulateSpamTags } from './permissions';
 import { updateSpamTagForCommunity } from './queries';
-import { queryCommunitiesForSpamManagement } from './communities';
 
-app.put(
+export const router = Router();
+
+router.put(
 	'/api/spamTags',
 	wrap(async (req, res) => {
 		const { communityId, status } = req.body;
@@ -19,7 +23,7 @@ app.put(
 	}),
 );
 
-app.post('/api/spamTags/queryCommunitiesForSpam', async (req, res) => {
+router.post('/api/spamTags/queryCommunitiesForSpam', async (req, res) => {
 	const { offset, limit, searchTerm, status, ordering } = req.body;
 	const canQuery = await canManipulateSpamTags({
 		userId: expect(req.user).id,

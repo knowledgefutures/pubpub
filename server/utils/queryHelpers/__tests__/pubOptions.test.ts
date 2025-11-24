@@ -1,11 +1,13 @@
-import {
-	CollectionPub,
-	Page,
-	Member,
-	CollectionAttribution,
-	includeUserModel,
-} from 'server/models';
 import { Collection } from 'yaml/types';
+
+import {
+	CollectionAttribution,
+	CollectionPub,
+	includeUserModel,
+	Member,
+	Page,
+} from 'server/models';
+
 import buildPubOptions from '../pubOptions';
 
 describe('buildPubOptions', () => {

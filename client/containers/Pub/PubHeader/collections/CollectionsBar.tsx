@@ -1,18 +1,20 @@
+import type { CollectionPub as BareCollectionPub, Collection, Pub } from 'types';
+
 import React, { useState } from 'react';
+
 import { OverflowList } from '@blueprintjs/core';
 
 import { chooseCollectionForPub } from 'client/utils/collections';
+import { PopoverButton, PubCollectionsListing } from 'components';
+import { Menu, MenuItem } from 'components/Menu';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
-import { Collection, CollectionPub as BareCollectionPub, Pub } from 'types';
-import { PopoverButton, PubCollectionsListing } from 'components';
-import { Menu, MenuItem } from 'components/Menu';
 
 import CollectionBrowser from './CollectionBrowser';
 import CollectionsBarButton from './CollectionsBarButton';
 
-require('./collectionsBar.scss');
+import './collectionsBar.scss';
 
 type CollectionPub = BareCollectionPub & { collection: Collection };
 

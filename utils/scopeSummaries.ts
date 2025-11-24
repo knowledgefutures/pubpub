@@ -1,4 +1,4 @@
-import { ScopeSummary } from 'types';
+import type { ScopeSummary } from 'types';
 
 export type MinimalScopeSummary = Omit<ScopeSummary, 'id' | 'createdAt' | 'updatedAt'>;
 

@@ -1,6 +1,6 @@
+import { editorSchema } from 'components/Editor';
 import { editFirebaseDraft } from 'stubstub';
 
-import { editorSchema } from 'components/Editor';
 import { getStepsInChangeRange } from '../changes';
 
 describe('getStepsInChangeRange', () => {
@@ -152,8 +152,9 @@ describe('getStepsInChangeRange', () => {
 		  ],
 		]
 	`);
-		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 0))
-			.toMatchInlineSnapshot(`
+		expect(
+			await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 0),
+		).toMatchInlineSnapshot(`
 		[
 		  [
 		    {
@@ -219,8 +220,9 @@ describe('getStepsInChangeRange', () => {
 		  ],
 		]
 	`);
-		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 1))
-			.toMatchInlineSnapshot(`
+		expect(
+			await getStepsInChangeRange(editor.getRef(), editorSchema, 0, 1),
+		).toMatchInlineSnapshot(`
 		[
 		  [
 		    {
@@ -314,8 +316,9 @@ describe('getStepsInChangeRange', () => {
 		  ],
 		]
 	`);
-		expect(await getStepsInChangeRange(editor.getRef(), editorSchema, 1, 2))
-			.toMatchInlineSnapshot(`
+		expect(
+			await getStepsInChangeRange(editor.getRef(), editorSchema, 1, 2),
+		).toMatchInlineSnapshot(`
 		[
 		  [
 		    {

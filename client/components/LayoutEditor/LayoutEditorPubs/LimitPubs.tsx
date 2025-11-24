@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, RadioGroup, Radio } from '@blueprintjs/core';
+
+import { Card, Radio, RadioGroup } from '@blueprintjs/core';
 
 import { SliderInput } from 'components';
 import { maxPubsPerBlock } from 'utils/layout';

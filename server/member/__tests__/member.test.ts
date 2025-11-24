@@ -1,6 +1,5 @@
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
-
 import { Member, UserSubscription } from 'server/models';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 import { createMember, getMembersForScope } from '../queries';
 

@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import type { MinimalUser, User, UserWithPrivateFields } from 'types';
 
-import { MinimalUser, User, UserWithPrivateFields } from 'types';
+import { z } from 'zod';
 
 export const privateUserSchema = z.object({
 	id: z.string().uuid(),

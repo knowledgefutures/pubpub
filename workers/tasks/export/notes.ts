@@ -1,13 +1,14 @@
+import type { DocJson, Maybe } from 'types';
+import type { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
+
+import type { Note, RenderedStructuredValues } from '../../../utils/notes';
+import type { NotesData } from './types';
+
 import sanitizeHtml from 'sanitize-html';
 
-import { DocJson, Maybe } from 'types';
-import { jsonToNode, getNotesByKindFromDoc } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
+import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
 import { getStructuredCitations } from 'server/utils/citations';
-import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
-import { Note, RenderedStructuredValues } from '../../../utils/notes';
-
-import { NotesData } from './types';
 
 export type PandocNote = {
 	id: string;
@@ -87,7 +88,7 @@ export const getPandocNotesById = (notesData: NotesData): PandocNotes => {
 		const structuredHtmlWithBareStyling = structuredHtmlFullOfDivs
 			? sanitizeHtml(structuredHtmlFullOfDivs, {
 					allowedTags: ['b', 'i', 'strong', 'em', 'a'],
-			  })
+				})
 			: null;
 		index[note.id] = {
 			id: getIdForNote(cslJson, note.id),

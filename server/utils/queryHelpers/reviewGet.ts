@@ -1,4 +1,4 @@
-import { Pub, ReviewNew, Reviewer } from 'server/models';
+import { Pub, Reviewer, ReviewNew } from 'server/models';
 
 import { baseAuthor, baseThread, baseVisibility } from './util';
 

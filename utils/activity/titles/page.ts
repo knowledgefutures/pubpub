@@ -1,7 +1,8 @@
-import { PageActivityItem } from 'types';
-import { getDashUrl } from 'utils/dashboard';
+import type { PageActivityItem } from 'types';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
+import { getDashUrl } from 'utils/dashboard';
 
 const prefix = 'the Page';
 

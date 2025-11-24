@@ -1,24 +1,26 @@
-import { Node } from 'prosemirror-model';
-import { EditorState, Command } from 'prosemirror-state';
+import type { Node } from 'prosemirror-model';
+import type { Command, EditorState } from 'prosemirror-state';
+
+import type { Dispatch } from './types';
+
 import {
-	isInTable,
+	addColumnAfter,
+	addColumnBefore,
+	addRowAfter,
+	addRowBefore,
+	deleteColumn,
+	deleteRow,
 	deleteTable,
+	isInTable,
 	mergeCells,
 	splitCell,
-	addRowBefore,
-	addRowAfter,
-	deleteRow,
-	addColumnBefore,
-	addColumnAfter,
-	deleteColumn,
-	toggleHeaderRow,
-	toggleHeaderColumn,
 	toggleHeaderCell,
+	toggleHeaderColumn,
+	toggleHeaderRow,
 } from 'prosemirror-tables';
 
 import { ReferenceableNodeType } from '../types';
-import { getCurrentNodeLabels, findParentNodeClosestToPos } from '../utils';
-import { Dispatch } from './types';
+import { findParentNodeClosestToPos, getCurrentNodeLabels } from '../utils';
 import { cacheForEditorState, createCommandSpec } from './util';
 
 const findCurrentTable = cacheForEditorState((state: EditorState) => {

@@ -1,11 +1,12 @@
-import * as types from 'types';
+import type { DiscussionInfo } from 'components/Editor/plugins/discussions/types';
+import type * as types from 'types';
+
 import { jsonToNode } from 'components/Editor';
 import { createFastForwarder } from 'components/Editor/plugins/discussions/fastForward';
-import { DiscussionInfo } from 'components/Editor/plugins/discussions/types';
+import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 import { Discussion, DiscussionAnchor, Doc, Release } from 'server/models';
 import { getPubDraftRef } from 'server/utils/firebaseAdmin';
 import { indexByProperty } from 'utils/arrays';
-import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 
 type ExtendedDiscussionInfo = DiscussionInfo & {
 	discussionId: string;

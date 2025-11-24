@@ -1,11 +1,11 @@
 import { Schema } from 'prosemirror-model';
 
-import { mapObject } from 'utils/objects';
-import { defaultNodes, defaultMarks } from 'components/Editor/schemas';
 import {
-	marks as suggestedEditMarks,
 	amendNodeSpecWithSuggestedEdits,
+	marks as suggestedEditMarks,
 } from 'components/Editor/plugins/suggestedEdits/schema';
+import { defaultMarks, defaultNodes } from 'components/Editor/schemas';
+import { mapObject } from 'utils/objects';
 
 export const buildSchema = (customNodes = {}, customMarks = {}) => {
 	const schemaNodes = mapObject(

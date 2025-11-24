@@ -1,11 +1,13 @@
+import type { AttributionWithUser } from 'types';
+
 import React from 'react';
+
 import { Popover } from '@blueprintjs/core';
 
-import { AttributionWithUser } from 'types';
-import ContributorsList from '../ContributorsList/ContributorsList';
 import Avatars from '../Avatars/Avatars';
+import ContributorsList from '../ContributorsList/ContributorsList';
 
-require('./contributorAvatars.scss');
+import './contributorAvatars.scss';
 
 type Props = {
 	attributions: AttributionWithUser[];

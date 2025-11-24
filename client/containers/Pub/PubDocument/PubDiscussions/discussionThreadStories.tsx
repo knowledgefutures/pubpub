@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import Discussion from 'containers/Pub/PubDocument/PubDiscussions/Discussion';
-import { pubData, discussionsData } from 'utils/storybook/data';
+import { discussionsData, pubData } from 'utils/storybook/data';
 
 const [singleDiscussion] = discussionsData;
 

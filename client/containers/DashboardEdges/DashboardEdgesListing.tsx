@@ -1,12 +1,14 @@
+import type { PubEdge } from 'types';
+
 import React, { useState } from 'react';
+
 import { Button, Icon, Switch } from '@blueprintjs/core';
 import classNames from 'classnames';
 import { DragDropContext } from 'react-beautiful-dnd';
 
-import { PubEdge } from 'types';
-import { usePendingChanges } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { ConfirmDialog, DragDropListing, PubEdgeListingCard } from 'components';
+import { usePendingChanges } from 'utils/hooks';
 
 import NewEdgeEditor from './NewEdgeEditor';
 

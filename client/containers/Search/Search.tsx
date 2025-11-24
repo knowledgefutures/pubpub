@@ -1,14 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
-import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { Button, Classes, InputGroup, NonIdealState, Spinner, Tab, Tabs } from '@blueprintjs/core';
+import algoliasearch, { type SearchClient, type SearchIndex } from 'algoliasearch';
 
 import { Icon } from 'components';
+import { usePageContext, useThrottled } from 'utils/hooks';
 import { getResizedUrl } from 'utils/images';
 import { generatePageBackground } from 'utils/pages';
 import { generatePubBackground } from 'utils/pubs';
-import { usePageContext, useThrottled } from 'utils/hooks';
 
-require('./search.scss');
+import './search.scss';
 
 type Props = {
 	searchData: any;
@@ -65,7 +66,7 @@ const Search = (props: Props) => {
 			input.value = '';
 			input.value = oldValue;
 		}
-	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
+	}, []);
 
 	// Update search client when mode changes
 	useEffect(() => {
@@ -81,7 +82,6 @@ const Search = (props: Props) => {
 			clientRef.current = algoliasearch(searchData.searchId, key);
 			indexRef.current = clientRef.current.initIndex(mode);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mode]);
 
 	useEffect(() => {

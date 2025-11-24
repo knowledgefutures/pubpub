@@ -1,5 +1,6 @@
+import type { FacetDefinition, FacetInstance } from './facet';
+
 import { mapFacet } from './map';
-import { FacetDefinition, FacetInstance } from './facet';
 
 export function createEmptyFacetInstance<Definition extends FacetDefinition>(
 	definition: Definition,

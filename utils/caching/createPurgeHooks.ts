@@ -1,6 +1,8 @@
 import type { Attributes, CreateOptions, DestroyOptions, UpdateOptions } from 'sequelize';
 import type { Model, ModelCtor } from 'sequelize-typescript';
+
 import { defer } from 'server/utils/deferred';
+
 import { schedulePurge } from './schedulePurgeWithSentry';
 import { shouldntPurge } from './skipPurgeConditions';
 
@@ -39,8 +41,8 @@ type PurgeHook<
 	options?: T extends 'afterCreate'
 		? CreateOptions<A>
 		: T extends 'afterUpdate'
-		  ? UpdateOptions<A>
-		  : DestroyOptions<A>,
+			? UpdateOptions<A>
+			: DestroyOptions<A>,
 ) => Promise<string | string[] | null | undefined | void>;
 
 export const createPurgeHooks = <M extends ModelCtor>(options: {

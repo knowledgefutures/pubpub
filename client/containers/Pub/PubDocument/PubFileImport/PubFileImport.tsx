@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+
 import { AnchorButton, Classes } from '@blueprintjs/core';
+
 import { viewIsEmpty } from 'components/Editor';
 
 import FileImportDialog from './FileImportDialog';
 
-require('./pubFileImport.scss');
+import './pubFileImport.scss';
 
 type Props = {
 	editorChangeObject: {

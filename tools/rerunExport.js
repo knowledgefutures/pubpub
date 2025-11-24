@@ -17,7 +17,7 @@ const main = async () => {
 	);
 	await Export.destroy({ where: { branchId: branch.id } });
 	await createLatestPubExports(pub.id, branch.id);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log('Worker tasks created.');
 };
 

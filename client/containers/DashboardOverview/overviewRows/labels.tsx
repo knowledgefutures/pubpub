@@ -1,12 +1,13 @@
+import type { Collection, Pub, ScopeSummary } from 'types';
+
 import React from 'react';
 
-import { ScopeSummary, Collection, Pub } from 'types';
-import { capitalize } from 'utils/strings';
+import { Icon, type IconName, TimeAgo } from 'components';
+import { expect } from 'utils/assert';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { formatDate } from 'utils/dates';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { TimeAgo, Icon, IconName } from 'components';
-import { expect } from 'utils/assert';
+import { capitalize } from 'utils/strings';
 
 export type IconLabelPair = {
 	icon: IconName;
@@ -115,8 +116,8 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 				return (
 					<div
 						className="summary-icon-pair"
-						// eslint-disable-next-line react/no-array-index-key
-						key={index}
+						// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
+						key={`label-${label}-${index}`}
 					>
 						{iconElement}
 						{label}

@@ -23,11 +23,10 @@ export const groupDiscussionsByLine = (decorations, discussions) => {
 			const currentBottom = decoration.boundingBox.bottom;
 			if (lastBottom === currentBottom) {
 				discussionBottoms[lastBottom].push(decoration);
-				return null;
+				return;
 			}
 			lastBottom = currentBottom;
 			discussionBottoms[currentBottom] = [decoration];
-			return null;
 		});
 
 	const groupings: {

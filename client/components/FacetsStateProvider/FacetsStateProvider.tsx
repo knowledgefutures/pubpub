@@ -1,11 +1,13 @@
+import type { MaybeHas } from 'types';
+
+import type { CreateStateOptions } from './state';
+
 import React from 'react';
 
 import { useLazyRef } from 'client/utils/useLazyRef';
 
-import { MaybeHas } from 'types';
-import { CreateStateOptions } from './state';
-import { createFacetsStateStore } from './store';
 import { FacetsContext } from './context';
+import { createFacetsStateStore } from './store';
 
 type Props = {
 	options: MaybeHas<CreateStateOptions, 'cascadeResults'>;

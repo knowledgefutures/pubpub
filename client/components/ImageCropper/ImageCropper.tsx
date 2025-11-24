@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+
 import { Button, Classes, Slider } from '@blueprintjs/core';
 import AvatarEditor from 'react-avatar-editor';
 
 import { s3Upload } from 'client/utils/upload';
 
-require('./imageCropper.scss');
+import './imageCropper.scss';
 
 type OwnProps = {
 	height?: number;

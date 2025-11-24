@@ -1,4 +1,4 @@
-import { Maybe } from 'types';
+import type { Maybe } from 'types';
 
 import { atobUniversal, btoaUniversal } from './strings';
 

@@ -29,7 +29,7 @@ User-facing documentation is a work in progress, and can be found at https://hel
 ## To Install
 
 ```
-npm install
+pnpm install
 
 ```
 
@@ -44,7 +44,7 @@ brew install pandoc poppler
 ## To Run Dev Mode
 
 ```
-npm start
+pnpm start
 ```
 
 Navigate to `localhost:9876`
@@ -54,7 +54,7 @@ Navigate to `localhost:9876`
 To build and test components, we use Storybook. To run:
 
 ```
-npm run storybook
+pnpm run storybook
 ```
 
 Navigate to `localhost:9001`
@@ -62,7 +62,7 @@ Navigate to `localhost:9001`
 ## To Build and Run Production Version
 
 ```
-npm run prod
+pnpm run prod
 ```
 
 Navigate to `localhost:9876`
@@ -114,7 +114,7 @@ containers and components are differentiated:
 
 Before your first pull request, make sure to copy our `.githooks` into your `.git` directory. You can do this with:
 
-`npm run install-git-hooks`
+`pnpm run install-git-hooks`
 
 Preferred practice is to prefix commits with one of the following categories:
 

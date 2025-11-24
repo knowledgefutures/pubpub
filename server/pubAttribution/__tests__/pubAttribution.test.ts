@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
-import { login, modelize, setup, teardown } from 'stubstub';
 
 import { PubAttribution, UserSubscription } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 import { createPubAttribution } from '../queries';
 

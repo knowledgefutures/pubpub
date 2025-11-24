@@ -1,31 +1,34 @@
-import {
-	Model,
-	Table,
-	Column,
-	DataType,
-	PrimaryKey,
-	Default,
-	AllowNull,
-	IsLowercase,
-	Length,
-	Is,
-	Unique,
-	IsEmail,
-	HasMany,
-	HasOne,
-} from 'sequelize-typescript';
-import { SerializedModel } from 'types';
+import type { Strategy } from 'passport';
 import type {
+	CreationAttributes,
+	CreationOptional,
 	InferAttributes,
 	InferCreationAttributes,
-	CreationOptional,
-	CreationAttributes,
 	ModelStatic,
 } from 'sequelize';
-import type { Strategy } from 'passport';
+
+import type { SerializedModel } from 'types';
+
 import {
-	PubAttribution,
+	AllowNull,
+	Column,
+	DataType,
+	Default,
+	HasMany,
+	HasOne,
+	Is,
+	IsEmail,
+	IsLowercase,
+	Length,
+	Model,
+	PrimaryKey,
+	Table,
+	Unique,
+} from 'sequelize-typescript';
+
+import {
 	Discussion,
+	PubAttribution,
 	UserNotificationPreferences,
 	ZoteroIntegration,
 } from '../models';

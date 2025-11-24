@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import Color from 'color';
+
 import { AnchorButton, Classes, Tooltip } from '@blueprintjs/core';
+import Color from 'color';
 
-import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getResizedUrl } from 'utils/images';
 
-require('./layoutBanner.scss');
+import './layoutBanner.scss';
 
 type Props = {
 	communityData: any;

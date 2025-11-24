@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
+
 import { Button, ButtonGroup, Checkbox, Icon, Popover, Radio } from '@blueprintjs/core';
 
-import { toTitleCase, joinOxford } from 'utils/strings';
+import { joinOxford, toTitleCase } from 'utils/strings';
 
-import { Mode, allFilters, filterToPlural } from './constants';
+import { allFilters, filterToPlural, Mode } from './constants';
 
-require('./pubEdgeListingControls.scss');
+import './pubEdgeListingControls.scss';
 
 type OwnProps = {
 	accentColor: string;
@@ -89,8 +90,8 @@ const PubEdgeListingControls = (props: Props) => {
 			<span className="filters">
 				{single && filters.length === 1
 					? // Show "1 of 1 parent" in the case of one filter selected
-					  // AND consumer has indicated a single item via `single` prop
-					  filters[0]
+						// AND consumer has indicated a single item via `single` prop
+						filters[0]
 					: filters.length > 0 && joinOxford(filters.map(filterToPlural))}
 			</span>
 			<ButtonGroup minimal>

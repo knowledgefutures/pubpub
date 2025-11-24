@@ -1,7 +1,8 @@
+import type { CascadedFacetType, FacetName, Facets } from 'facets';
+
 import { useCallback, useContext, useMemo, useRef } from 'react';
 
-import { FacetsContext, FacetsState, FacetState } from 'components';
-import { CascadedFacetType, FacetName, Facets } from 'facets';
+import { type FacetState, FacetsContext, type FacetsState } from 'components';
 
 const throwFacetsStateError = (): never => {
 	throw new Error(`Must call useFacets beneath FacetsStateProvider`);
@@ -65,7 +66,7 @@ export const useFacetsQuery = <T>(
 	// This appears to violate the Rules of Hooks by calling useMemo conditionally, but for the
 	// lifetime of the hook, actuallyUseFacets will never change, so we'll either always call
 	// this hook, or never call it.
-	// eslint-disable-next-line react-hooks/rules-of-hooks
+	// biome-ignore lint/correctness/useHookAtTopLevel: shhhhhh
 	const queryProxy = useMemo(
 		() =>
 			new Proxy({} as FacetsQueryable, {
@@ -78,7 +79,7 @@ export const useFacetsQuery = <T>(
 	);
 
 	// (Same as above)
-	// eslint-disable-next-line react-hooks/rules-of-hooks
+	// biome-ignore lint/correctness/useHookAtTopLevel: shhhhhh
 	const pickFromStore = useCallback(
 		(state: FacetsState) => {
 			latestState.current = state;

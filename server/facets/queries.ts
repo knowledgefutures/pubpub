@@ -1,6 +1,7 @@
-import { FacetBinding } from 'facets';
-import { Pub, Collection } from 'server/models';
-import { ScopeId } from 'types';
+import type { FacetBinding } from 'facets';
+import type { ScopeId } from 'types';
+
+import { Collection, Pub } from 'server/models';
 import { expect } from 'utils/assert';
 
 // A facetBinding has exactly one of { commnunityId, collectionId, pubId }. But some parts of our

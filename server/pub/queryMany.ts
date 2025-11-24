@@ -1,10 +1,12 @@
-import { QueryTypes, Op } from 'sequelize';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
+
+import type { InitialData, PubGetOptions, PubsQuery, SanitizedPubData } from 'types';
+
+import { Op, QueryTypes } from 'sequelize';
 
 import { Pub } from 'server/models';
-import { sequelize, knexInstance } from 'server/sequelize';
+import { knexInstance, sequelize } from 'server/sequelize';
 import { buildPubOptions, sanitizePub } from 'server/utils/queryHelpers';
-import { InitialData, PubsQuery, PubGetOptions, SanitizedPubData } from 'types';
 
 const defaultColumns = {
 	pubId: 'Pubs.id',

@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
-import { Timeline, TimelineItem, TimelineCondenser } from 'components';
+import { Timeline, TimelineCondenser, TimelineItem } from 'components';
 
 storiesOf('components/Timeline', module).add('default', () => (
 	<Timeline accentColor="slateblue">

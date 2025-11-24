@@ -1,21 +1,20 @@
+import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { initServer } from '@ts-rest/express';
+import { z } from 'zod';
+
 import { prepareResource, submitResource } from 'deposit/datacite/deposit';
+import { transformCollectionToResource } from 'deposit/transform/collection';
 import { generateDoi } from 'server/doi/queries';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
-import { expect } from 'utils/assert';
-
-import { z } from 'zod';
-import { initServer } from '@ts-rest/express';
-import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-
-import { transformCollectionToResource } from 'deposit/transform/collection';
 import { contract } from 'utils/api/contract';
+import { expect } from 'utils/assert';
 import { createGetRequestIds } from 'utils/getRequestIds';
-import { queryOne } from 'utils/query/queryOne';
 import { queryMany } from 'utils/query/queryMany';
+import { queryOne } from 'utils/query/queryOne';
 
+import { Collection } from './model';
 import { getPermissions } from './permissions';
 import { createCollection, destroyCollection, findCollection, updateCollection } from './queries';
-import { Collection } from './model';
 
 extendZodWithOpenApi(z);
 

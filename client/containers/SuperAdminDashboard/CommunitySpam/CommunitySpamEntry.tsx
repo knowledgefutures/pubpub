@@ -1,13 +1,15 @@
-import React, { useMemo, useState } from 'react';
-import { Tag, Intent, ButtonGroup } from '@blueprintjs/core';
+import type { Community, DefinitelyHas, SpamStatus } from 'types';
 
-import { Community, DefinitelyHas, SpamStatus } from 'types';
+import React, { useMemo, useState } from 'react';
+
+import { ButtonGroup, type Intent, Tag } from '@blueprintjs/core';
+
 import { communityUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 
 import MarkSpamStatusButton from './MarkSpamStatusButton';
 
-require('./communitySpamEntry.scss');
+import './communitySpamEntry.scss';
 
 type Props = {
 	community: DefinitelyHas<Community, 'spamTag'>;

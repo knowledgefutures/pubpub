@@ -1,6 +1,7 @@
+import type { DocJson } from 'types';
+
 import { Fragment } from 'prosemirror-model';
 
-import { DocJson } from 'types';
 import { isEmptyDoc, jsonToNode } from 'client/components/Editor';
 import { editFirebaseDraftByRef, getPubDraftRef } from 'server/utils/firebaseAdmin';
 

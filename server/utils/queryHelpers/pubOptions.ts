@@ -1,3 +1,7 @@
+import type { IncludeOptions } from 'sequelize';
+
+import type { PubGetOptions } from 'types';
+
 import {
 	Collection,
 	CollectionAttribution,
@@ -5,26 +9,24 @@ import {
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
+	Discussion,
+	DiscussionAnchor,
+	Doc,
+	Draft,
 	Export,
+	includeUserModel,
+	Member,
 	Page,
 	PubAttribution,
 	PubEdge,
 	Release,
-	Discussion,
-	DiscussionAnchor,
-	ReviewNew,
 	Reviewer,
-	Member,
-	includeUserModel,
-	Draft,
+	ReviewNew,
 	ScopeSummary,
 	Submission,
 	SubmissionWorkflow,
-	Doc,
 } from 'server/models';
-import { PubGetOptions } from 'types';
 
-import type { IncludeOptions } from 'sequelize';
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
@@ -152,17 +154,17 @@ export default ({
 							page: false,
 							members: false,
 							attributions: false,
-					  }
+						}
 				: {
 						page: true,
 						members: true,
 						attributions: true,
-				  }
+					}
 			: {
 					page: false,
 					members: false,
 					attributions: false,
-			  };
+				};
 
 		collectionPubs = [
 			{

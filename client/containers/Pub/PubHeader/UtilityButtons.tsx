@@ -1,15 +1,16 @@
+import type { Callback, PubPageData } from 'types';
+
 import React from 'react';
 
-import { usePageContext } from 'utils/hooks';
+import { DialogLauncher, FacetEditor, PopoverButton, PubShareDialog } from 'components';
 import { getDashUrl } from 'utils/dashboard';
-import { DialogLauncher, PubShareDialog, PopoverButton, FacetEditor } from 'components';
-import { Callback, PubPageData } from 'types';
+import { usePageContext } from 'utils/hooks';
 
 import CitationsPreview from './CitationsPreview';
+import DownloadButton from './DownloadButton';
 import PubToc from './PubToc';
 import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
-import DownloadButton from './DownloadButton';
 
 type Props = {
 	onShowHeaderDetails: Callback;

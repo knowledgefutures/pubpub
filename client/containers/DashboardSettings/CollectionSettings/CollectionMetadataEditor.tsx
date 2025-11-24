@@ -3,23 +3,26 @@
  * create a collection that represents a structured collection of content like a journal issue or
  * book.
  */
+
+import type { Collection } from 'types';
+
 import * as React from 'react';
+
 import {
 	Button,
+	ButtonGroup,
+	Callout,
 	FormGroup,
 	InputGroup,
 	NonIdealState,
-	ButtonGroup,
-	Callout,
 } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
-import { Collection } from 'types';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { apiFetch } from 'client/utils/apiFetch';
 
-require('./collectionMetadataEditor.scss');
+import './collectionMetadataEditor.scss';
 
 type Props = {
 	allowUpdateDoi?: boolean;

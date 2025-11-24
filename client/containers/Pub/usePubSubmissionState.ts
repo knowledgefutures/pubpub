@@ -1,10 +1,11 @@
+import type { DefinitelyHas, DocJson, PubPageData, Submission } from 'types';
+
+import type { SpubHeaderTab } from './SpubHeader/SpubHeader';
+
 import { useMemo } from 'react';
 
-import { DefinitelyHas, Submission, PubPageData, DocJson } from 'types';
-import { EditorChangeObject, isEmptyDoc } from 'client/components/Editor';
-
-import { IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
-import { SpubHeaderTab } from './SpubHeader/SpubHeader';
+import { type EditorChangeObject, isEmptyDoc } from 'client/components/Editor';
+import { type IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 
 type Options = {
 	pubData: PubPageData;

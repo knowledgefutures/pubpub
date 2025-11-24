@@ -1,8 +1,11 @@
-import path from 'path';
+import type { CustomScripts, InitialData } from 'types';
+
 import React from 'react';
+
 import classNames from 'classnames';
+import path from 'path';
+
 import App from 'containers/App/App';
-import { CustomScripts, InitialData } from 'types';
 
 const manifest = require(
 	path.join(
@@ -92,7 +95,6 @@ const Html = (props: Props) => {
 				{customScripts?.css && (
 					<style
 						type="text/css"
-						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={{ __html: customScripts.css }}
 					/>
 				)}
@@ -143,7 +145,6 @@ const Html = (props: Props) => {
 				{customScripts?.js && (
 					<script
 						type="text/javascript"
-						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={{ __html: customScripts.js }}
 					/>
 				)}

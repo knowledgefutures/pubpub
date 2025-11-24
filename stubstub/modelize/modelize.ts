@@ -1,17 +1,17 @@
-/* eslint-disable no-restricted-syntax */
-import { Graph } from 'graphlib';
-import { Model } from 'sequelize';
-import { parse } from './parse';
-import { link, ModelDefinition } from './link';
+import type { Graph } from 'graphlib';
+import type { Model } from 'sequelize';
+
 import { builders } from './builders';
-import { buildProxyObject } from './proxy';
+import { link, type ModelDefinition } from './link';
 import { sequelizeModels } from './models';
+import { parse } from './parse';
+import { buildProxyObject } from './proxy';
 
 type BuildNames = keyof typeof builders;
 
 const isBuildName = (name: string): name is BuildNames => {
-	// eslint-disable-next-line no-prototype-builtins
-	return builders.hasOwnProperty(name);
+	// @ts-expect-error FIXME: this is only called from vitest, so it's fine
+	return Object.hasOwn(builders, name);
 };
 
 const buildForModelName = (modelName: string, args: any): Promise<Model> => {
@@ -104,7 +104,7 @@ export const modelize = (strings: TemplateStringsArray, ...slots: any[]) => {
 
 	const resolve = async () => {
 		for (const subset of subsets) {
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 			await Promise.all(
 				subset.map(async (id) => {
 					const definition = definitionsById[id];

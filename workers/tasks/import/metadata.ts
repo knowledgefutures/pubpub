@@ -1,9 +1,10 @@
+import type { Falsy } from 'types';
+
+import { metaValueToJsonSerializable, metaValueToString } from '@pubpub/prosemirror-pandoc';
 import unidecode from 'unidecode';
-import { metaValueToString, metaValueToJsonSerializable } from '@pubpub/prosemirror-pandoc';
 
 import { getSearchUsers } from 'server/search/queries';
 import { isValidDate } from 'utils/dates';
-import { Falsy } from 'types';
 
 const getAuthorsArray = (author) => {
 	if (author.type === 'MetaList') {

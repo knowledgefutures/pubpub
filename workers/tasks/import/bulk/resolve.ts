@@ -1,9 +1,8 @@
-/* eslint-disable no-restricted-syntax */
 import { asyncMapSeries } from 'utils/async';
 
 import {
-	resolveCommunityDirective,
 	resolveCollectionDirective,
+	resolveCommunityDirective,
 	resolvePubDirective,
 } from './directives';
 import { BulkImportError } from './errors';
@@ -58,7 +57,7 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 
 	for (const directive of directives) {
 		try {
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 			const { resolved, parents: nextParents } = await resolveDirective({
 				directive,
 				actor,
@@ -70,7 +69,7 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 			currentParents = { ...currentParents, ...nextParents };
 		} catch (error) {
 			if (error instanceof Error) {
-				// eslint-disable-next-line no-console
+				// biome-ignore lint/suspicious/noConsole: shhhhhh
 				console.log(error.stack);
 				// @ts-expect-error ts-migrate(2322) FIXME: Type '{}' is not assignable to type 'never'.
 				resolvedValues.push({ resolved: {}, error: error && error.stack });

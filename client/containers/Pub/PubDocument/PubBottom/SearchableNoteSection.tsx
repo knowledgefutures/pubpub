@@ -1,7 +1,8 @@
+import type { RenderedNote } from 'utils/notes';
+
 import React from 'react';
 
 import { usePageContext } from 'utils/hooks';
-import { RenderedNote } from 'utils/notes';
 
 import Notes from './Notes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';

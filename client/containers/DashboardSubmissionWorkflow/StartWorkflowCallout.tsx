@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Button, Callout } from '@blueprintjs/core';
 
 import { collectionUrl } from 'utils/canonicalUrls';
+import { getDashUrl } from 'utils/dashboard';
 import { withValue } from 'utils/fp';
 import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
 
 type Props = {
 	onStartWorkflow: () => unknown;

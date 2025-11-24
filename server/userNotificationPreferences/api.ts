@@ -1,7 +1,12 @@
-import app, { wrap } from 'server/server';
-import { UserNotificationPreferences } from 'server/models';
+import type { UserNotificationPreferences } from 'server/models';
+
+import { Router } from 'express';
+
+import { wrap } from 'server/wrap';
 
 import { updateUserNotificationPreferences } from './queries';
+
+export const router = Router();
 
 const unwrapRequest = (req: any) => {
 	const { preferences } = req.body;
@@ -11,7 +16,7 @@ const unwrapRequest = (req: any) => {
 	};
 };
 
-app.put(
+router.put(
 	'/api/userNotificationPreferences',
 	wrap(async (req, res) => {
 		const { userId, preferences } = await unwrapRequest(req);

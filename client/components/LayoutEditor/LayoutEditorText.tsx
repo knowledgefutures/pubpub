@@ -1,13 +1,14 @@
+import type { Node } from 'prosemirror-model';
+
+import type { DocJson } from 'types';
+import type { LayoutBlockText } from 'utils/layout';
+
 import React, { useCallback, useRef } from 'react';
-import { Node } from 'prosemirror-model';
 
-import { GridWrapper } from 'components';
-import { FormattingBar, buttons } from 'components/FormattingBar';
-import Editor, { EditorChangeObject } from 'components/Editor';
-
-import { LayoutBlockText } from 'utils/layout';
-import { DocJson } from 'types';
 import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
+import { GridWrapper } from 'components';
+import Editor, { type EditorChangeObject } from 'components/Editor';
+import { buttons, FormattingBar } from 'components/FormattingBar';
 
 type Content = LayoutBlockText['content'];
 

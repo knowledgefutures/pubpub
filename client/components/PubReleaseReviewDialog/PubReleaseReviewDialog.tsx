@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+
 import { AnchorButton, Button, Callout, Classes, Dialog } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import { MinimalEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'client/utils/apiFetch';
 
-require('./pubReleaseReviewDialog.scss');
+import './pubReleaseReviewDialog.scss';
 
 type OwnProps = {
 	isOpen: boolean;

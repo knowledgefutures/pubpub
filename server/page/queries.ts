@@ -1,16 +1,18 @@
-import { Page, Community } from 'server/models';
-import { setPageSearchData, deletePageSearchData } from 'server/utils/search';
-import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
-import { slugifyString } from 'utils/strings';
+import type { CommunityNavigationEntry } from 'types/navigation';
+import type { LayoutBlock } from 'utils/layout';
+
+import type { PagePermissions } from './permissions';
+
+import { Community, Page } from 'server/models';
 import { PubPubError } from 'server/utils/errors';
+import { deletePageSearchData, setPageSearchData } from 'server/utils/search';
+import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
+import { expect } from 'utils/assert';
 import { generateHash } from 'utils/hashes';
 import { generateDefaultPageLayout } from 'utils/pages';
+import { slugifyString } from 'utils/strings';
 
-import { expect } from 'utils/assert';
-import { CommunityNavigationEntry } from 'types/navigation';
-import { LayoutBlock } from 'utils/layout';
 import { sanitizePageHtml } from './sanitizePageHtml';
-import { PagePermissions } from './permissions';
 
 export const createPage = async (
 	inputValues: {

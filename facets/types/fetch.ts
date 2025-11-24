@@ -1,8 +1,8 @@
-import { Writeable, FacetBinding, DefinitelyHas } from 'types';
+import type { DefinitelyHas, FacetBinding, Writeable } from 'types';
 
-import { FacetCascadeResult, FacetDefinition, FacetInstance } from '../core';
-import { FacetName, Facets, Facet } from '../definitions';
-import { ByScopeKind } from './scopes';
+import type { FacetCascadeResult, FacetDefinition, FacetInstance } from '../core';
+import type { Facet, FacetName, Facets } from '../definitions';
+import type { ByScopeKind } from './scopes';
 
 export type CascadedFacetsByKind = Writeable<{
 	[K in keyof Facets]?: FacetCascadeResult<Facets[K]>;

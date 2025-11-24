@@ -1,8 +1,10 @@
 /** This component is used in generated exports to render footnote and citation lists. */
+
+import type { RenderedNote } from 'utils/notes';
+
 import React from 'react';
 
 import { PubNoteContent } from 'components';
-import { RenderedNote } from 'utils/notes';
 
 type Props = {
 	notes: RenderedNote[];

@@ -1,21 +1,21 @@
 import React from 'react';
 
-import {
-	ScopeDropdown,
-	Menu,
-	UserNotificationsPopover,
-	DevCommunitySwitcherMenu,
-} from 'components';
-import { usePageContext } from 'utils/hooks';
-import { canSelectCommunityForDevelopment } from 'utils/environment';
 import { pubPubIcons } from 'client/utils/icons';
+import {
+	DevCommunitySwitcherMenu,
+	Menu,
+	ScopeDropdown,
+	UserNotificationsPopover,
+} from 'components';
+import { canSelectCommunityForDevelopment } from 'utils/environment';
+import { usePageContext } from 'utils/hooks';
 
-import UserMenu from './UserMenu';
-import LoginButton from './LoginButton';
 import CreatePubButton from './CreatePubButton';
 import GlobalControlsButton from './GlobalControlsButton';
+import LoginButton from './LoginButton';
+import UserMenu from './UserMenu';
 
-require('./globalControls.scss');
+import './globalControls.scss';
 
 type Props = {
 	loggedIn: boolean;

@@ -1,13 +1,17 @@
+import type { PubWithSubmission } from './types';
+
 import React, { useState } from 'react';
+
 import classNames from 'classnames';
 
-import { getSubmissionTimeLabel, IconLabelPair } from '../DashboardOverview/overviewRows/labels';
-
 import { PubOverviewRow } from '../DashboardOverview/overviewRows';
-import { PubWithSubmission } from './types';
+import {
+	getSubmissionTimeLabel,
+	type IconLabelPair,
+} from '../DashboardOverview/overviewRows/labels';
 import ArbitrationMenu from './ArbitrationMenu';
 
-require('./submissionRow.scss');
+import './submissionRow.scss';
 
 type Props = {
 	pub: PubWithSubmission;

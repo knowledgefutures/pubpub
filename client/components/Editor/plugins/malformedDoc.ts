@@ -1,6 +1,8 @@
+import type { Node } from 'prosemirror-model';
+
 import * as Sentry from '@sentry/react';
-import { Node } from 'prosemirror-model';
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { type EditorState, Plugin, type Transaction } from 'prosemirror-state';
+
 import { collabDocPluginKey } from './collaborative';
 
 const flattenKeys = (

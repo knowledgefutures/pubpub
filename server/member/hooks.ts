@@ -1,12 +1,12 @@
-import { Member } from 'server/models';
-import { createActivityHooks } from 'server/utils/activityHooks';
 import {
 	createMemberCreatedActivityItem,
-	createMemberUpdatedActivityItem,
 	createMemberRemovedActivityItem,
+	createMemberUpdatedActivityItem,
 } from 'server/activityItem/queries';
-import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { Member } from 'server/models';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
+import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { createActivityHooks } from 'server/utils/activityHooks';
 
 Member.afterCreate(async (member) => {
 	const { userId, pubId } = member;

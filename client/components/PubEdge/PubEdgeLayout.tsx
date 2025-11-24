@@ -1,7 +1,8 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
-require('./pubEdge.scss');
+import './pubEdge.scss';
 
 export type PubEdgeLayoutProps = {
 	bylineElement: React.ReactNode;
@@ -35,7 +36,7 @@ const PubEdgeLayout = (props: PubEdgeLayoutProps) => {
 							.map(
 								(element, index) =>
 									element && (
-										// eslint-disable-next-line react/no-array-index-key
+										// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
 										<li key={index}>{element}</li>
 									),
 							)

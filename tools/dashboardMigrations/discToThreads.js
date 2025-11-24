@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import uuidv4 from 'uuid/v4';
 
 import {
@@ -30,7 +30,7 @@ export default async () => {
 						databaseURL: getFirebaseConfig().databaseURL,
 					},
 					'firebase-pub-new',
-			  );
+				);
 	const database = firebaseApp.database();
 
 	/* Migrate Discussions to Threads */
@@ -123,7 +123,7 @@ export default async () => {
 			`pub-${header.pubId}/branch-${header.branchId}/discussions/${header.id}`,
 		);
 
-		/* eslint-disable-next-line no-await-in-loop */
+		/* biome-ignore lint/performance/noAwaitInLoops: shhhhhh */
 		const firebaseHighlightSnapshot = await discussionRef.once('value');
 		const firebaseHighlight = firebaseHighlightSnapshot.val() || {};
 		const firebaseFrom =

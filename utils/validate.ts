@@ -1,4 +1,5 @@
-import { DocJson, Maybe } from 'types';
+import type { DocJson, Maybe } from 'types';
+
 import { isEmptyDoc } from 'components/Editor';
 import { isValidEmail } from 'utils/email';
 

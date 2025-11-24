@@ -1,4 +1,5 @@
-import * as types from 'types';
+import type * as types from 'types';
+
 import { DepositTarget } from 'server/models';
 
 /**
@@ -29,8 +30,11 @@ export const getCommunityDepositTarget = async (
 		return depositTargetJson;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { username, password, passwordInitVec, ...sanitizedDepositTargetJson } =
-		depositTargetJson;
+	const {
+		username: _username,
+		password: _password,
+		passwordInitVec: _passwordInitVec,
+		...sanitizedDepositTargetJson
+	} = depositTargetJson;
 	return sanitizedDepositTargetJson as types.DepositTarget;
 };

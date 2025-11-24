@@ -1,7 +1,6 @@
-/* eslint-disable no-console, global-require */
+import type { ChildProcessWithoutNullStreams } from 'child_process';
 
-import { ChildProcessWithoutNullStreams } from 'child_process';
-import { setupTestDatabase, startTestDatabaseServer, initTestDatabase } from '../testDatabase';
+import { initTestDatabase, setupTestDatabase, startTestDatabaseServer } from '../testDatabase';
 
 // HACK(ian): The PUBPUB_SYNCING_MODELS_FOR_TEST_DB flag tells the code that we're only going to use
 // it to sync Sequelize to a test database, and that it's safe to skip certain operations.
@@ -29,11 +28,12 @@ export default async () => {
 		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
 	}
+
 	// only use one database for the test db
 	process.env.DATABASE_READ_REPLICA_1_URL = process.env.DATABASE_URL;
 	process.env.DATABASE_READ_REPLICA_2_URL = process.env.DATABASE_URL;
 	// see hack comment above
-	process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB = 'true';
+	// process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB = 'true';
 	/**
 	 * Two things of note
 	 *
@@ -57,11 +57,16 @@ export default async () => {
 	 */
 	const { FeatureFlag } = await import('../../server/models');
 
-	await FeatureFlag.create({
-		name: 'customScripts',
+	await FeatureFlag.findOrCreate({
+		where: {
+			name: 'customScripts',
+		},
+		defaults: {
+			name: 'customScripts',
+		},
 	});
 
-	delete process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB;
+	// delete process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB;
 
 	// close this connection to the database after setup properly clean up the connection
 	await sequelize.close();

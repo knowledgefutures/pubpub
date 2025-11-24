@@ -1,11 +1,12 @@
 import React, { useCallback, useRef } from 'react';
+
 import classNames from 'classnames';
 
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 
 import { iconSize } from './constants';
 
-require('./overviewRowSkeleton.scss');
+import './overviewRowSkeleton.scss';
 
 type Props = {
 	className?: string;
@@ -59,8 +60,8 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 	return (
 		// This click handler is a convenience for mouse users; the same handler should be made
 		// available in the rightElement (e.g. to disclose a Collection row)
-		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+		// biome-ignore lint/a11y/noNoninteractiveElementInteractions: shhhhhh
+		// biome-ignore lint/a11y/noStaticElementInteractions: shhhhhh
 		<div
 			onClick={onClick}
 			ref={ref}

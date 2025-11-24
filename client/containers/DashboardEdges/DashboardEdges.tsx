@@ -1,18 +1,20 @@
+import type { InboundEdge, OutboundEdge, Pub, PubEdge } from 'types';
+
 import React, { useState } from 'react';
-import { NonIdealState, Tab, Tabs, Callout, Intent, Button } from '@blueprintjs/core';
+
+import { Button, Callout, Intent, NonIdealState, Tab, Tabs } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { useFacetsQuery } from 'client/utils/useFacets';
-import { DashboardFrame, PopoverButton, FacetEditor } from 'components';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { DashboardFrame, FacetEditor, PopoverButton } from 'components';
 import { getDashUrl } from 'utils/dashboard';
-import { Pub, OutboundEdge, InboundEdge, PubEdge } from 'types';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
 
 import DashboardEdgesListing from './DashboardEdgesListing';
 import NewEdgeEditor from './NewEdgeEditor';
 import { useDashboardEdges } from './useDashboardEdges';
 
-require('./dashboardEdges.scss');
+import './dashboardEdges.scss';
 
 type Props = {
 	pubData: Pub & { outboundEdges: OutboundEdge[]; inboundEdges: InboundEdge[] };

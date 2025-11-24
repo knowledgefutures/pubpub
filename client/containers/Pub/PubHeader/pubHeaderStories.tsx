@@ -1,9 +1,10 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import PubHeader from 'containers/Pub/PubHeader';
-import { pubData, communityData, attributionsData } from 'utils/storybook/data';
+import { attributionsData, communityData, pubData } from 'utils/storybook/data';
+
 import { ImmediatePubContext } from '../PubContextProvider';
 
 const altPubData = {

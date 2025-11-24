@@ -1,17 +1,19 @@
+import type { PubPageData } from 'types';
+
 import React, { useState } from 'react';
-import classNames from 'classnames';
+
 import { AnchorButton, Callout, Collapse, Icon } from '@blueprintjs/core';
+import classNames from 'classnames';
 import TimeAgo from 'react-timeago';
 
+import { ClickToCopyButton } from 'components';
+import { expect } from 'utils/assert';
 import { pubUrl } from 'utils/canonicalUrls';
 import { datesAreSameCalendarDate, formatDate, timeAgoBaseProps } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
-import { PubPageData } from 'types';
-import { ClickToCopyButton } from 'components';
-import { expect } from 'utils/assert';
 
-require('./pubHistoricalNotice.scss');
+import './pubHistoricalNotice.scss';
 
 type Props = {
 	pubData: PubPageData;
@@ -97,7 +99,6 @@ const PubHistoricalNotice = (props: Props) => {
 								/>
 								<div
 									className={classNames('note', !noteText && 'empty')}
-									// eslint-disable-next-line react/no-danger
 									dangerouslySetInnerHTML={{
 										__html: noteText || 'No Release Note',
 									}}

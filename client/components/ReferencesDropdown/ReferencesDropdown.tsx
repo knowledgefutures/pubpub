@@ -1,6 +1,7 @@
+import type { NodeReference } from '../Editor/utils/references';
+
 import React from 'react';
 
-import { NodeReference } from '../Editor/utils/references';
 import { MenuButton, MenuItem } from '../Menu';
 
 export type ReferencesDropdownProps = {
@@ -15,8 +16,8 @@ const ReferencesDropdown = (props: ReferencesDropdownProps) => {
 	const currentLabel = selectedReference
 		? selectedReference.label
 		: references.length
-		  ? 'No referenced item'
-		  : 'No items to reference';
+			? 'No referenced item'
+			: 'No items to reference';
 
 	return (
 		<div className="controls-link-component">

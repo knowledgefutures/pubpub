@@ -1,6 +1,7 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
-import { Tooltip, ComposedChart, Bar, Line, XAxis, YAxis } from 'recharts';
+import { Bar, ComposedChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
 
 const propTypes = {
 	title: PropTypes.string.isRequired,

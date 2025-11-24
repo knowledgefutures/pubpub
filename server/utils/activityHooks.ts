@@ -1,4 +1,5 @@
-import { ActivityItem } from 'server/models';
+import type { ActivityItem } from 'server/models';
+
 import { defer } from 'server/utils/deferred';
 
 type MinimalInstanceProperties = {

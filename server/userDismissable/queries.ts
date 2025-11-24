@@ -1,5 +1,6 @@
+import type { UserDismissableKey } from 'utils/userDismissable';
+
 import { UserDismissable } from 'server/models';
-import { UserDismissableKey } from 'utils/userDismissable';
 
 export const getDismissedUserDismissables = async (
 	userId: null | string,

@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import type { NodeSpec } from 'prosemirror-model';
+
+import type { DocJson } from 'types';
+
+import type { FormattingBarButtonData } from '../FormattingBar/types';
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import classNames from 'classnames';
-import { NodeSpec } from 'prosemirror-model';
 
-import { DocJson } from 'types';
-import Editor, { getTextFromDoc, EditorChangeObject, OnEditFn } from 'components/Editor';
-import { FormattingBarButtonData } from '../FormattingBar/types';
+import Editor, { type EditorChangeObject, getTextFromDoc, type OnEditFn } from 'components/Editor';
 
-require('./minimalEditor.scss');
+import './minimalEditor.scss';
 
 type Props = {
 	constrainHeight?: boolean;
@@ -55,7 +59,6 @@ const MinimalEditor = (props: Props) => {
 		if (focusOnLoad && changeObject?.view) {
 			changeObject.view.focus();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -64,7 +67,6 @@ const MinimalEditor = (props: Props) => {
 				<FormattingBarComponent {...innerProps} buttons={getButtons(buttons as any)} />
 			));
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleWrapperClick = () => {
@@ -114,7 +116,7 @@ const MinimalEditor = (props: Props) => {
 					}}
 				/>
 			)}
-			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+			{/* biome-ignore lint/a11y: shhhhhh */}
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<div ref={controlsContainerRef} />
 				<Editor

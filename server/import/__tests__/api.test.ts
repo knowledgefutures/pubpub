@@ -1,5 +1,6 @@
-import { login, modelize, setup, teardown } from 'stubstub';
 import { z } from 'zod';
+
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community community {

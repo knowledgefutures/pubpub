@@ -1,19 +1,21 @@
+import type { Collection, PubsQuery } from 'types';
+
+import type { PubWithSubmission } from './types';
+
 import React, { useState } from 'react';
+
 import { AnchorButton, NonIdealState } from '@blueprintjs/core';
 
-import { Collection, PubsQuery } from 'types';
-import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { useManyPubs } from 'client/utils/useManyPubs';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
-import { OverviewRows, LoadMorePubsRow, SpecialRow } from '../DashboardOverview/overviewRows';
-import { OverviewSearchGroup, PubsOverviewSearchFilter } from '../DashboardOverview/helpers';
-
-import { PubWithSubmission } from './types';
+import { OverviewSearchGroup, type PubsOverviewSearchFilter } from '../DashboardOverview/helpers';
+import { LoadMorePubsRow, OverviewRows, SpecialRow } from '../DashboardOverview/overviewRows';
 import SubmissionRow from './SubmissionRow';
 
-require('./submissionItems.scss');
+import './submissionItems.scss';
 
 type Props = {
 	collection: Collection;

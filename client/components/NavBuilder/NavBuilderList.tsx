@@ -1,13 +1,14 @@
+import type { CommunityNavigationEntry } from 'types/navigation';
+
 import React, { useContext } from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+
 import { Button } from '@blueprintjs/core';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 import Icon from 'components/Icon/Icon';
 
-import { CommunityNavigationEntry } from 'types/navigation';
-
-import { NavBuilderContext } from './navBuilderContext';
 import NavBuilderRow from './NavBuilderRow';
+import { NavBuilderContext } from './navBuilderContext';
 
 type Props = {
 	id: string;

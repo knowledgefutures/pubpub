@@ -1,13 +1,12 @@
-import { Command, EditorState } from 'prosemirror-state';
+import type { Command, EditorState } from 'prosemirror-state';
 
-import { Dispatch, createCommandSpec } from '../../commands';
-
+import { createCommandSpec, type Dispatch } from '../../commands';
+import { acceptSuggestedEdits, rejectSuggestedEdits } from './resolve';
 import {
-	isSuggestedEditsEnabled,
 	getSuggestedEditsState,
+	isSuggestedEditsEnabled,
 	updateSuggestedEditsState,
 } from './state';
-import { acceptSuggestedEdits, rejectSuggestedEdits } from './resolve';
 
 const toggleSuggestedEditsCommand: Command = (state: EditorState, dispatch?: Dispatch) => {
 	const pluginState = getSuggestedEditsState(state);

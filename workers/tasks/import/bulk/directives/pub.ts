@@ -1,30 +1,29 @@
-/* eslint-disable no-restricted-syntax */
-import fs from 'fs-extra';
-import path from 'path';
-import YAML from 'yaml';
-import tmp from 'tmp-promise';
 import filesize from 'filesize';
+import fs from 'fs-extra';
 import { JSONPath } from 'jsonpath-plus';
-import { Op } from 'sequelize';
-import { Node, Fragment, Slice } from 'prosemirror-model';
+import path from 'path';
+import { Fragment, Node, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
+import { Op } from 'sequelize';
+import tmp from 'tmp-promise';
+import YAML from 'yaml';
 
 import { buildSchema, createFirebaseChange } from 'components/Editor/utils';
-import { getPubDraftRef } from 'server/utils/firebaseAdmin';
-import { createPub as createPubQuery } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { Collection, PubAttribution } from 'server/models';
-import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
-
+import { createPub as createPubQuery } from 'server/pub/queries';
 import { setSummarizeParentScopesOnPubCreation } from 'server/scopeSummary';
-import { getFullPathsInDir, extensionFor } from '../../util';
+import { getPubDraftRef } from 'server/utils/firebaseAdmin';
+import { bibliographyFormats, extensionToPandocFormat } from 'utils/import/formats';
+
+import { getUrlForAssetKey, uploadFileToAssetStore } from '../../assetStore';
 import { importFiles } from '../../import';
-import { uploadFileToAssetStore, getUrlForAssetKey } from '../../assetStore';
+import { extensionFor, getFullPathsInDir } from '../../util';
 import { BulkImportError } from '../errors';
-import { pathMatchesPattern } from '../paths';
 import { runMacrosOnSourceFiles } from '../macros';
-import { getAttributionAttributes, cloneWithKeys } from './util';
+import { pathMatchesPattern } from '../paths';
+import { cloneWithKeys, getAttributionAttributes } from './util';
 
 type FileEntry = { tmpPath: string; clientPath: string; label: null | string };
 
@@ -488,7 +487,7 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 		await createCollectionPub({ collectionId: collection.id, pubId: pub.id, isPrimary: true });
 	}
 
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log('created Pub:', pub.title);
 
 	setSummarizeParentScopesOnPubCreation(true);

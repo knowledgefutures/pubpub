@@ -2,7 +2,7 @@ import React from 'react';
 
 import { MobileAware } from 'components';
 
-require('./overviewFrame.scss');
+import './overviewFrame.scss';
 
 type Props = {
 	primary: React.ReactNode;

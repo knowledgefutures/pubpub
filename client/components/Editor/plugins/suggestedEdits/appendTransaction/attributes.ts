@@ -1,7 +1,9 @@
-import { Node } from 'prosemirror-model';
-import { AttrStep, ReplaceAroundStep, ReplaceStep, Step } from 'prosemirror-transform';
+import type { Node } from 'prosemirror-model';
 
-import { SuggestedEditsTransactionContext } from '../types';
+import type { SuggestedEditsTransactionContext } from '../types';
+
+import { AttrStep, ReplaceAroundStep, ReplaceStep, type Step } from 'prosemirror-transform';
+
 import { addSuggestionToNode, getSuggestionKindForNode } from '../operations';
 
 const getModifiedNodeInfo = (

@@ -1,21 +1,22 @@
+import type {
+	DefinitelyHas,
+	DocJson,
+	InitialData,
+	PubDocInfo,
+	PubEdge as PubEdgeType,
+	Pub as PubType,
+	SanitizedPubData,
+} from 'types';
+
 import { Op } from 'sequelize';
 
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
-import { getPubDraftDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
-import {
-	Pub as PubType,
-	DefinitelyHas,
-	PubDocInfo,
-	InitialData,
-	SanitizedPubData,
-	DocJson,
-	PubEdge as PubEdgeType,
-} from 'types';
-
+import { getFirebaseToken, getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { expect } from 'utils/assert';
-import { sanitizePubEdge } from './sanitizePubEdge';
+
 import { getPubEdgeIncludes } from './pubEdgeOptions';
+import { sanitizePubEdge } from './sanitizePubEdge';
 
 export const getPubFirebaseDraft = async (
 	pubData: SanitizedPubData,

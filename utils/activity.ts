@@ -1,4 +1,8 @@
-import { ActivityAssociations, ActivityAssociationType, activityAssociationTypes } from 'types';
+import {
+	type ActivityAssociations,
+	type ActivityAssociationType,
+	activityAssociationTypes,
+} from 'types';
 
 const createEmptyAssociationsObject = <T>(factory: () => T): Record<ActivityAssociationType, T> => {
 	const associations: Partial<Record<ActivityAssociationType, T>> = {};

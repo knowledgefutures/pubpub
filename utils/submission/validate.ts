@@ -1,12 +1,13 @@
-import { DocJson, SubmissionWorkflow } from 'types';
+import type { DocJson, SubmissionWorkflow } from 'types';
+
 import {
-	RecordValidator,
+	isAlwaysValid,
 	isNonEmptyDocJson,
 	isNonEmptyString,
-	isAlwaysValid,
-	validate,
 	isTruthyAnd,
-	ValidatedFields,
+	type RecordValidator,
+	type ValidatedFields,
+	validate,
 } from 'utils/validate';
 
 export type ValidatedSubmission = {

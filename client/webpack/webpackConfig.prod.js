@@ -126,7 +126,7 @@ module.exports = {
 							name: process.env.SOURCE_VERSION,
 						},
 					}),
-			  ]),
+				]),
 	],
 	optimization: {
 		minimizer: [

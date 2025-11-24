@@ -1,19 +1,5 @@
-import * as types from 'types';
-import {
-	ActivityItem,
-	Collection,
-	CollectionPub,
-	Member,
-	ThreadComment,
-	Page,
-	Pub,
-	ReviewNew,
-	Discussion,
-	Release,
-	PubEdge,
-	PubAttribution,
-	Community,
-} from 'server/models';
+import type * as types from 'types';
+
 import {
 	createCollectionActivityItem,
 	createCollectionPubActivityItem,
@@ -21,12 +7,27 @@ import {
 	createMemberCreatedActivityItem,
 	createPageActivityItem,
 	createPubActivityItem,
+	createPubDiscussionCommentAddedActivityItem,
 	createPubEdgeActivityItem,
 	createPubReleasedActivityItem,
-	createPubReviewCreatedActivityItem,
 	createPubReviewCommentAddedActivityItem,
-	createPubDiscussionCommentAddedActivityItem,
+	createPubReviewCreatedActivityItem,
 } from 'server/activityItem/queries';
+import {
+	ActivityItem,
+	Collection,
+	CollectionPub,
+	type Community,
+	Discussion,
+	Member,
+	Page,
+	Pub,
+	PubAttribution,
+	PubEdge,
+	Release,
+	ReviewNew,
+	ThreadComment,
+} from 'server/models';
 
 import { forEach } from '../migrations/util';
 

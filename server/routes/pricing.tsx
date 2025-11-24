@@ -1,13 +1,16 @@
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
-app.get('/pricing', (req, res, next) => {
+export const router = Router();
+
+router.get('/pricing', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {
 		return next();
 	}

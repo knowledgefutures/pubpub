@@ -1,5 +1,6 @@
-import pickBy from 'lodash.pickby';
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+
+import pickBy from 'lodash.pickby';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { InputField, MenuButton, MenuItem } from 'components';
@@ -17,11 +18,11 @@ import {
 } from 'utils/crossref/parseDeposit';
 
 import ReviewDepositCallout from '../Deposit/ReviewDepositCallout';
-import AssignDoiPreview from './AssignDoiPreview';
-import { SubmitDepositStatus } from '../Deposit/SubmitDepositStatus';
 import SubmitDepositButton from '../Deposit/SubmitDepositButton';
+import { SubmitDepositStatus } from '../Deposit/SubmitDepositStatus';
+import AssignDoiPreview from './AssignDoiPreview';
 
-require('./assignDoi.scss');
+import './assignDoi.scss';
 
 const noop = () => {};
 

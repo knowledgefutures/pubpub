@@ -1,7 +1,8 @@
-import { apiFetch } from 'client/utils/apiFetch';
-import { SubmissionWorkflow } from 'types';
+import type { SubmissionWorkflow } from 'types';
 
-import { EditableSubmissionWorkflow } from './types';
+import type { EditableSubmissionWorkflow } from './types';
+
+import { apiFetch } from 'client/utils/apiFetch';
 
 export const createSubmissionWorkflow = (
 	workflow: Omit<EditableSubmissionWorkflow, 'enabled'>,

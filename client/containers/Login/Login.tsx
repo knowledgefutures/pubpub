@@ -1,12 +1,14 @@
-import React, { useState, useRef } from 'react';
-import SHA3 from 'crypto-js/sha3';
-import encHex from 'crypto-js/enc-hex';
+import React, { useRef, useState } from 'react';
+
 import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
+import encHex from 'crypto-js/enc-hex';
+import SHA3 from 'crypto-js/sha3';
+
+import { apiFetch } from 'client/utils/apiFetch';
 import { Avatar, GridWrapper, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'client/utils/apiFetch';
 
-require('./login.scss');
+import './login.scss';
 
 const Login = () => {
 	const [loginLoading, setLoginLoading] = useState(false);
@@ -47,7 +49,7 @@ const Login = () => {
 					? `/${locationData.query.redirect.replace(
 							/^\/+/,
 							'',
-					  )}?breakCache=${cacheBreaker}`
+						)}?breakCache=${cacheBreaker}`
 					: `/?breakCache=${cacheBreaker}`;
 				// window.location.href =
 				// 	`/${trimStart(`${locationData.query.redirect}`, '/')}` || '/';

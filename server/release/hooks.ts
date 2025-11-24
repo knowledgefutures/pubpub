@@ -1,7 +1,9 @@
-import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
+import type { DefinitelyHas } from 'types';
+
 import { Op } from 'sequelize';
-import { PubAttribution, includeUserModel } from 'server/models';
-import { DefinitelyHas } from 'types';
+
+import { includeUserModel, PubAttribution } from 'server/models';
+import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
 
 import { Release } from './model';
 

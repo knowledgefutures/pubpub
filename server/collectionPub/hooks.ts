@@ -1,6 +1,6 @@
+import { createCollectionPubActivityItem } from 'server/activityItem/queries';
 import { CollectionPub } from 'server/models';
 import { createActivityHooks } from 'server/utils/activityHooks';
-import { createCollectionPubActivityItem } from 'server/activityItem/queries';
 
 createActivityHooks({
 	Model: CollectionPub,

@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable no-continue */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-bitwise */
-/* eslint-disable no-restricted-syntax */
 // ./type-printer.ts
-import * as ts from 'typescript';
+
+import { diffLines, diffWordsWithSpace } from 'diff';
 import fs from 'fs';
 import { join } from 'path';
-import { diffWordsWithSpace, diffLines } from 'diff';
+import * as ts from 'typescript';
 
 function extractTypeSignature(filename: string) {
 	const program = ts.createProgram([filename], { emitDeclarationOnly: true });
@@ -112,7 +108,6 @@ const diffs = [typeBSignature, typeBSignature].map((sig, idx) =>
 						.map((pair) => pair.trim()) ?? [],
 			) ?? [];
 
-		// eslint-disable-next-line @typescript-eslint/no-use-before-define
 		return { name: s.name, type: generateDiff(s1, s2, !!idx) };
 	}),
 );
@@ -159,7 +154,7 @@ function generateDiff(obj1Pairs: string[], obj2Pairs: string[], rich = false) {
 			continue;
 		}
 		const matchingPair = obj1Pairs.find((p) => {
-			const [oldkey, oldvalue] = p.split(/\??:/);
+			const [oldkey, _oldvalue] = p.split(/\??:/);
 			return key === oldkey;
 		});
 
@@ -214,7 +209,7 @@ function generateDiff(obj1Pairs: string[], obj2Pairs: string[], rich = false) {
 
 		// const matchingPair = obj2Pairs.find((p) => p.startsWith(key));
 		const matchingPair = obj2Pairs.find((p) => {
-			const [oldkey, oldvalue] = p.split(/\??:/);
+			const [oldkey, _oldvalue] = p.split(/\??:/);
 			return key === oldkey;
 		});
 

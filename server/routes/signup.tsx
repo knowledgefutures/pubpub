@@ -1,12 +1,15 @@
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
-app.get('/signup', (req, res, next) => {
+export const router = Router();
+
+router.get('/signup', (req, res, next) => {
 	return getInitialData(req)
 		.then((initialData) => {
 			return renderToNodeStream(

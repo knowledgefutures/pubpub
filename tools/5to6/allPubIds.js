@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 require('./setup');
 const { getAllPubIds } = require('./v5/queryPub');
 

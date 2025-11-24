@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import fs from 'fs';
 import uuidv4 from 'uuid/v4';
 import firebaseAdmin from 'firebase-admin';
@@ -75,7 +75,7 @@ const newPubs = sectionsData.map((sectionData) => {
 		lastPublishedAt: '2018-08-09 14:02:24.519+00',
 		draftEditHash: generateHash(8),
 		draftViewHash: generateHash(8),
-		/* eslint-disable-next-line */
+		
 		labels: [
 			{
 				id: '696a6603-c195-4116-8a60-a340302a2fec',

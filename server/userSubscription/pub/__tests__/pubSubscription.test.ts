@@ -1,6 +1,5 @@
-import { modelize, login, setup, teardown } from 'stubstub';
-
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community {

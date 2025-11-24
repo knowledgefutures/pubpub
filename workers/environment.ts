@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 if (process.env.NODE_ENV !== 'production') {
 	require(require('path').join(process.cwd(), 'config'));
 }

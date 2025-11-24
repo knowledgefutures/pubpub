@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Branch, Release, Merge, PubVersion, Pub } from '../../server/models';
 
 // TODO: There are a set of pubs (e.g. designandscience) that have changes written on their merge branch.

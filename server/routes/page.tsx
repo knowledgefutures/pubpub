@@ -1,16 +1,20 @@
+import type { Page } from 'types';
+
 import React from 'react';
 
+import { Router } from 'express';
+
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { getPage } from 'server/utils/queryHelpers';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPage } from 'server/utils/queryHelpers';
-import { getCustomScriptsForCommunity } from 'server/customScript/queries';
-import { Page } from 'types';
 
-app.get(['/', '/:slug'], async (req, res, next) => {
+export const router = Router();
+
+router.get(['/', '/:slug'], async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}

@@ -1,13 +1,15 @@
+import type { SubmissionWorkflow } from 'types';
+
 import React, { useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { SubmissionWorkflow } from 'types';
-import { usePageContext } from 'utils/hooks';
 import { usePersistableState } from 'client/utils/usePersistableState';
+import { usePageContext } from 'utils/hooks';
 
 import { updateSubmissionWorkflow } from './api';
-import SubmissionWorkflowEditor from './SubmissionWorkflowEditor';
 import DashboardSubmissionWorkflowFrame from './DashboardSubmissionWorkflowFrame';
+import SubmissionWorkflowEditor from './SubmissionWorkflowEditor';
 
 type Props = {
 	initialWorkflow: SubmissionWorkflow;

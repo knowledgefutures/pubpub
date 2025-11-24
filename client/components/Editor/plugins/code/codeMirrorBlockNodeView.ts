@@ -1,31 +1,34 @@
-import { Node } from 'prosemirror-model';
-import { EditorView as PMEditorView, NodeView } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
+import type { NodeView, EditorView as PMEditorView } from 'prosemirror-view';
+
+import type { CodeBlockSettings } from './types';
+
 import {
+	autocompletion,
 	closeBrackets,
 	closeBracketsKeymap,
-	autocompletion,
 	completionKeymap,
 } from '@codemirror/autocomplete';
-import {
-	rectangularSelection,
-	highlightActiveLineGutter,
-	lineNumbers,
-	drawSelection,
-	EditorView,
-	highlightActiveLine,
-	keymap,
-} from '@codemirror/view';
-import { highlightSelectionMatches, selectNextOccurrence } from '@codemirror/search';
 import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import {
+	bracketMatching,
+	defaultHighlightStyle,
 	foldGutter,
 	foldKeymap,
 	indentOnInput,
 	syntaxHighlighting,
-	defaultHighlightStyle,
-	bracketMatching,
 } from '@codemirror/language';
+import { highlightSelectionMatches, selectNextOccurrence } from '@codemirror/search';
 import { Compartment, EditorState } from '@codemirror/state';
+import {
+	drawSelection,
+	EditorView,
+	highlightActiveLine,
+	highlightActiveLineGutter,
+	keymap,
+	lineNumbers,
+	rectangularSelection,
+} from '@codemirror/view';
 import { exitCode, selectAll } from 'prosemirror-commands';
 
 import {
@@ -36,7 +39,6 @@ import {
 	setMode,
 	valueChanged,
 } from './utils';
-import { CodeBlockSettings } from './types';
 
 export const codeMirrorBlockNodeView = (settings: CodeBlockSettings) => {
 	return (pmNode: Node, view: PMEditorView, getPos: (() => number) | boolean): NodeView => {

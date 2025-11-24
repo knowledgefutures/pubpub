@@ -1,13 +1,15 @@
+import type { Collection, Community } from 'types';
+import type { MinimalScopeSummary } from 'utils/scopeSummaries';
+
 import React from 'react';
+
 import dateFormat from 'dateformat';
 
-import { Icon, IconName } from 'components';
-import { Community, Collection } from 'types';
+import { Icon, type IconName } from 'components';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { enIndefiniteArticle, capitalize } from 'utils/strings';
-import { MinimalScopeSummary } from 'utils/scopeSummaries';
+import { capitalize, enIndefiniteArticle } from 'utils/strings';
 
-require('./scopeSummaryList.scss');
+import './scopeSummaryList.scss';
 
 type Props = {
 	scope: Omit<Community | Collection, 'scopeSummary'> & { scopeSummary: MinimalScopeSummary };

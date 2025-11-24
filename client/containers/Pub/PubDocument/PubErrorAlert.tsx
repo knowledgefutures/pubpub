@@ -1,10 +1,13 @@
+import type { EditorView } from 'prosemirror-view';
+
 import React from 'react';
+
 import { Alert } from '@blueprintjs/core';
-import { EditorView } from 'prosemirror-view';
 import { saveAs } from 'file-saver';
 
-import { getJSON } from 'components/Editor';
 import { TimeAgo } from 'components';
+import { getJSON } from 'components/Editor';
+
 import { usePubContext } from '../pubHooks';
 
 type Props = {

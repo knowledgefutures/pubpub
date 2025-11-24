@@ -60,7 +60,6 @@ export const useHotkeys = <T extends HTMLElement>(options: Options = {}) => {
 		};
 		document.addEventListener('keydown', listener);
 		return () => document.removeEventListener('keydown', listener);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return { hotkeyRef: getRef };

@@ -1,11 +1,12 @@
 import React from 'react';
+
 import TimeAgo from 'react-timeago';
 
 import { Avatar } from 'components';
-import { timeAgoBaseProps } from 'utils/dates';
 import Editor from 'components/Editor';
+import { timeAgoBaseProps } from 'utils/dates';
 
-require('./threadComment.scss');
+import './threadComment.scss';
 
 type Props = {
 	commentData: any;

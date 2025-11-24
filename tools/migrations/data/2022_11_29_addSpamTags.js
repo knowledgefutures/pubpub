@@ -7,7 +7,7 @@ export const up = async () => {
 	await forEachInstance(
 		Community,
 		async (community) => {
-			// eslint-disable-next-line no-console
+			// biome-ignore lint/suspicious/noConsole: shhhhhh
 			console.log('👀', community.title);
 			await addSpamTagToCommunity(community.id);
 		},

@@ -1,9 +1,11 @@
 import React from 'react';
+
+import { Button, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
-import { Popover, PopoverInteractionKind, Position, Button } from '@blueprintjs/core';
+
 import Icon from 'components/Icon/Icon';
 
-require('./dropdownButton.scss');
+import './dropdownButton.scss';
 
 const propTypes = {
 	label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),

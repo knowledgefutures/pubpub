@@ -1,11 +1,15 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 
 import {
 	deleteUserNotifications,
 	fetchUserNotifications,
 	markUserNotificationsRead,
 } from './queries';
+
+export const router = Router();
 
 const unwrapGetRequest = (req: any) => {
 	const { offset, limit } = req.query;
@@ -31,7 +35,7 @@ const unwrapMarkReadRequest = (req: any) => {
 	};
 };
 
-app.get(
+router.get(
 	'/api/userNotifications',
 	wrap(async (req, res) => {
 		const { userId, offset, limit } = unwrapGetRequest(req);
@@ -44,7 +48,7 @@ app.get(
 );
 
 // It would be more appropriate to use PUT here but we need to hit this with the Beacon API
-app.post(
+router.post(
 	'/api/userNotifications',
 	wrap(async (req, res) => {
 		const { userId, userNotificationIds, isRead, manuallySetIsRead } =
@@ -62,7 +66,7 @@ app.post(
 	}),
 );
 
-app.delete(
+router.delete(
 	'/api/userNotifications',
 	wrap(async (req, res) => {
 		const { userId, userNotificationIds } = unwrapRequest(req);

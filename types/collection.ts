@@ -1,5 +1,9 @@
-import { Collection as CollectionModel, CollectionPub as CollectionPubModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type {
+	Collection as CollectionModel,
+	CollectionPub as CollectionPubModel,
+} from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export const collectionKinds = ['tag', 'issue', 'book', 'conference'] as const;
 export type CollectionKind = (typeof collectionKinds)[number];

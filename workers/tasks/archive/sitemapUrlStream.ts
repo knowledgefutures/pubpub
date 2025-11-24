@@ -33,7 +33,6 @@ export const createSitemapUrlStreams = async (communityUrl: string, n: number) =
 	});
 
 	xmlParser.on('end', () => {
-		// eslint-disable-next-line no-restricted-syntax
 		for (const urlStream of urlStreams) {
 			urlStream.end();
 		}

@@ -1,9 +1,9 @@
-import { GetState, SetState } from 'zustand';
+import type { GetState, SetState } from 'zustand';
 
-import { FacetName, mapFacetDefinitions } from 'facets';
+import type { FacetState, FacetsState } from '../types';
+
 import { apiFetch } from 'client/utils/apiFetch';
-
-import { FacetsState, FacetState } from '../types';
+import { type FacetName, mapFacetDefinitions } from 'facets';
 
 function markFacetAsPersisted(state: FacetState): FacetState {
 	const { cascadeResult } = state;

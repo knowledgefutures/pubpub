@@ -1,15 +1,15 @@
+import type { PubPageData } from 'types';
+
 import React from 'react';
 
-import { PubPageData } from 'types';
-
-import PubHeader from './PubHeader';
-import SpubHeader from './SpubHeader';
-import PubDocument from './PubDocument';
-import { usePubContext } from './pubHooks';
 import { PubContextProvider } from './PubContextProvider';
+import PubDocument from './PubDocument';
+import PubHeader from './PubHeader';
 import { PubSuspendWhileTypingProvider } from './PubSuspendWhileTyping';
+import { usePubContext } from './pubHooks';
+import SpubHeader from './SpubHeader';
 
-require('./pub.scss');
+import './pub.scss';
 
 type Props = {
 	pubData: PubPageData;

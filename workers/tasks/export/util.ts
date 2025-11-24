@@ -1,11 +1,12 @@
+import type { AttributionWithUser } from 'types';
+
+import crypto from 'crypto';
 import fs from 'fs';
 import tmp from 'tmp-promise';
-import crypto from 'crypto';
 
 import { Export } from 'server/models';
 import { assetsClient } from 'server/utils/s3';
 import { generateHash } from 'utils/hashes';
-import { AttributionWithUser } from 'types';
 
 tmp.setGracefulCleanup();
 

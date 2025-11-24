@@ -1,10 +1,10 @@
-import { PluginKey } from 'prosemirror-state';
 import { collab } from 'prosemirror-collab';
+import { PluginKey } from 'prosemirror-state';
 
 import { generateHash } from 'utils/hashes';
 
-import buildDocument from './document';
 import buildCursors from './cursors';
+import buildDocument from './document';
 
 export const collabDocPluginKey = new PluginKey('collaborative');
 

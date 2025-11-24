@@ -1,9 +1,13 @@
+import { Router } from 'express';
 import passport from 'passport';
-import app, { wrap } from 'server/server';
+
 import { User } from 'server/models';
+import { wrap } from 'server/wrap';
 import { isDevelopment } from 'utils/environment';
 
-app.get(
+export const router = Router();
+
+router.get(
 	'/auth/zotero',
 	wrap(async (req, res, next) => {
 		if (req.user) {
@@ -19,7 +23,7 @@ app.get(
 
 // callback route for zotero to redirect to
 // hand control to passport to use code to grab profile info
-app.get('/auth/zotero/redirect', (req, res, next) => {
+router.get('/auth/zotero/redirect', (req, res, next) => {
 	const host = req.user?.authRedirectHost;
 	const urlBase = isDevelopment() ? 'http://lvh.me:9876' : `https://${host}`;
 

@@ -1,15 +1,17 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	AllowNull,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	AllowNull,
 	Index,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
 
 @Table
 export class UserDismissable extends Model<

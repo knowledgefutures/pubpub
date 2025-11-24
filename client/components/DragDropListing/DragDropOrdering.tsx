@@ -1,7 +1,11 @@
 import React from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
-import DragDropListing, { Props as DragDropListingProps, MinimalItem } from './DragDropListing';
+import { DragDropContext, type DropResult } from 'react-beautiful-dnd';
+
+import DragDropListing, {
+	type Props as DragDropListingProps,
+	type MinimalItem,
+} from './DragDropListing';
 
 type Props<Item extends MinimalItem> = {
 	onReorderItems: (

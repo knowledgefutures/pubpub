@@ -1,10 +1,12 @@
+import type { Callback } from 'types';
+
 import React from 'react';
+
+import { AnchorButton, Button, type IButtonProps } from '@blueprintjs/core';
 import classNames from 'classnames';
-import { Button, IButtonProps, AnchorButton } from '@blueprintjs/core';
 import omit from 'lodash.omit';
 
-import { Callback } from 'types';
-import { Icon, IconName, MobileAware, MobileAwareRenderProps } from 'components';
+import { Icon, type IconName, MobileAware, type MobileAwareRenderProps } from 'components';
 
 type OnClickProps = {
 	href?: string;

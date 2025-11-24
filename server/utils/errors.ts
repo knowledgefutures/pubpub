@@ -1,7 +1,10 @@
-import * as Sentry from '@sentry/node';
 import type { NextFunction, Request, Response } from 'express';
-import { resolve } from 'path';
+
 import type { ForbiddenSlugStatus } from 'types';
+
+import * as Sentry from '@sentry/node';
+import { resolve } from 'path';
+
 import { isRequestAborted } from '../abort';
 
 export enum PubPubApplicationError {

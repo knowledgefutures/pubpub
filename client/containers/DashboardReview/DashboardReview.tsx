@@ -1,16 +1,18 @@
+import type { Review } from 'types';
+
 import React, { useState } from 'react';
-import { Button, Tag, Callout, Intent } from '@blueprintjs/core';
+
+import { Button, Callout, Intent, Tag } from '@blueprintjs/core';
 import TimeAgo from 'react-timeago';
 
-import { DashboardFrame, Editor, Thread, ThreadInput } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { timeAgoBaseProps } from 'utils/dates';
-import { apiFetch } from 'client/utils/apiFetch';
-import { Review } from 'types';
 import { getEmptyDoc } from 'client/components/Editor';
+import { apiFetch } from 'client/utils/apiFetch';
+import { DashboardFrame, Editor, Thread, ThreadInput } from 'components';
 import { expect } from 'utils/assert';
+import { timeAgoBaseProps } from 'utils/dates';
+import { usePageContext } from 'utils/hooks';
 
-require('./dashboardReview.scss');
+import './dashboardReview.scss';
 
 type Props = {
 	reviewData: Review;

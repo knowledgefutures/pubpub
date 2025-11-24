@@ -1,16 +1,19 @@
+import type { SubmissionWorkflow } from 'types';
+
+import type { EditableSubmissionWorkflow } from './types';
+
 import React, { useCallback, useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { SubmissionWorkflow } from 'types';
-import { useLocalStorage } from 'client/utils/useLocalStorage';
 import { getEmptyDoc } from 'client/components/Editor';
+import { useLocalStorage } from 'client/utils/useLocalStorage';
 import { usePageContext } from 'utils/hooks';
 
-import { EditableSubmissionWorkflow } from './types';
 import { createSubmissionWorkflow } from './api';
-import SubmissionWorkflowEditor from './SubmissionWorkflowEditor';
-import StartWorkflowCallout from './StartWorkflowCallout';
 import DashboardSubmissionWorkflowFrame from './DashboardSubmissionWorkflowFrame';
+import StartWorkflowCallout from './StartWorkflowCallout';
+import SubmissionWorkflowEditor from './SubmissionWorkflowEditor';
 
 const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 	return {

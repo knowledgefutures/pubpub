@@ -1,8 +1,10 @@
-import app from 'server/server';
+import { Router } from 'express';
 
 import { getSearchUsers } from './queries';
 
-app.get('/api/search/users', (req, res) => {
+export const router = Router();
+
+router.get('/api/search/users', (req, res) => {
 	return getSearchUsers(req.query.q as string)
 		.then((searchResults) => {
 			return res.status(200).json(searchResults);

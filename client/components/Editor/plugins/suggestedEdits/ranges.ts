@@ -1,15 +1,16 @@
-import { Node, Slice } from 'prosemirror-model';
-
-import { pruneFalsyValues } from 'utils/arrays';
-
-import { getSuggestionAttrsForNode } from './operations';
-import {
+import type {
 	BaseSuggestionRange,
 	ReplacementSuggestionRange,
 	SuggestionBaseAttrs,
 	SuggestionKind,
 	SuggestionRange,
 } from './types';
+
+import { type Node, Slice } from 'prosemirror-model';
+
+import { pruneFalsyValues } from 'utils/arrays';
+
+import { getSuggestionAttrsForNode } from './operations';
 
 type RawSuggestionRange = {
 	suggestionKind: null | SuggestionKind;

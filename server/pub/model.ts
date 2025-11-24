@@ -1,37 +1,40 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	AllowNull,
+	BelongsTo,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	AllowNull,
+	HasMany,
+	HasOne,
+	Index,
+	Is,
 	IsLowercase,
 	Length,
-	Is,
+	Model,
+	PrimaryKey,
+	Table,
 	Unique,
-	Index,
-	HasMany,
-	BelongsTo,
-	HasOne,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
+
 import {
-	PubAttribution,
 	CollectionPub,
 	Community,
-	Draft,
-	Discussion,
-	Export,
-	ReviewNew,
-	Member,
-	Release,
-	PubVersion,
-	PubEdge,
-	Submission,
 	CrossrefDepositRecord,
+	Discussion,
+	Draft,
+	Export,
+	Member,
+	PubAttribution,
+	PubEdge,
+	PubVersion,
+	Release,
+	ReviewNew,
 	ScopeSummary,
+	Submission,
 } from '../models';
 
 @Table

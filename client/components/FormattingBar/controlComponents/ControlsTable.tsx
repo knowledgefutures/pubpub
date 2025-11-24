@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
-import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
-import { Button } from '@blueprintjs/core';
+import type { CommandMenuEntry } from 'client/components/Editor/commands/types';
+import type { EditorChangeObject } from 'components/Editor';
 
-import { EditorChangeObject } from 'components/Editor';
+import React, { useEffect } from 'react';
+
+import { Button } from '@blueprintjs/core';
+import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+
 import {
 	tableAddColumnAfter,
 	tableAddColumnBefore,
@@ -21,8 +24,7 @@ import {
 	tableToggleSmallerFont,
 } from 'components/Editor/commands';
 
-import { CommandMenuEntry } from 'client/components/Editor/commands/types';
-import CommandMenu, { CommandMenuDisclosureProps } from '../CommandMenu';
+import CommandMenu, { type CommandMenuDisclosureProps } from '../CommandMenu';
 
 type Props = {
 	editorChangeObject: EditorChangeObject;

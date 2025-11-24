@@ -98,7 +98,7 @@ export const communityServer = s.router(contract.community, {
 		let workerTaskData: WorkerTask | null = null;
 
 		while (!done) {
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 			workerTaskData = await getWorkerTask({ workerTaskId: workerTask.id });
 			if (workerTaskData?.isProcessing === false) {
 				done = true;

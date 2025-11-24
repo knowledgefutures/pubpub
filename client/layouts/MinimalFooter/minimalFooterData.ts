@@ -1,4 +1,4 @@
-import { MinimalFooterProps } from './MinimalFooter';
+import type { MinimalFooterProps } from './MinimalFooter';
 
 const defaultMinimalFooterProps: Omit<MinimalFooterProps, 'communityData'> = {
 	leftItem: {

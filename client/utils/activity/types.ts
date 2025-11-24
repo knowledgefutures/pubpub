@@ -1,13 +1,13 @@
-import React from 'react';
-
-import {
+import type { IconName } from 'components';
+import type {
 	ActivityAssociations,
 	ActivityItemKind,
 	InsertableActivityItem,
 	ScopeId,
 	User,
 } from 'types';
-import { IconName } from 'components';
+
+import React from 'react';
 
 // Information we'll pass around about the current render
 export type ActivityRenderContext = {

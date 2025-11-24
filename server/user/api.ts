@@ -1,13 +1,16 @@
+import { Router } from 'express';
 import passport from 'passport';
 import { z } from 'zod';
 
-import app, { wrap } from 'server/server';
 import { BadRequestError, NotFoundError } from 'server/utils/errors';
-
-import { isProd, isDuqDuq } from 'utils/environment';
+import { wrap } from 'server/wrap';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
+import { isDuqDuq, isProd } from 'utils/environment';
+
 import { getPermissions } from './permissions';
-import { createUser, updateUser, getSuggestedEditsUserInfo } from './queries';
+import { createUser, getSuggestedEditsUserInfo, updateUser } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -19,7 +22,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/users', (req, res) => {
+router.post('/api/users', (req, res) => {
 	const requestIds = getRequestIds(req);
 	getPermissions(requestIds)
 		.then((permissions) => {
@@ -50,7 +53,7 @@ app.post('/api/users', (req, res) => {
 
 const uuidParser = z.string().uuid();
 
-app.get(
+router.get(
 	'/api/users/:id',
 	wrap(async (req, res) => {
 		const { id } = req.params;
@@ -67,7 +70,7 @@ app.get(
 	}),
 );
 
-app.put('/api/users', (req, res) => {
+router.put('/api/users', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.update) {

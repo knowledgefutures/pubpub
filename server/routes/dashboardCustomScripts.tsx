@@ -1,14 +1,17 @@
 import React from 'react';
 
+import { Router } from 'express';
+
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
-import app from 'server/server';
-import { ForbiddenError, NotFoundError, handleErrors } from 'server/utils/errors';
+import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 
-app.get('/dash/scripts', async (req, res, next) => {
+export const router = Router();
+
+router.get('/dash/scripts', async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			next();

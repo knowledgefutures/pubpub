@@ -1,7 +1,7 @@
+import type { Callback, PatchFn, PatchFnArg } from 'types';
+
 import { useCallback, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-
-import { Callback, PatchFn, PatchFnArg } from 'types';
 
 type InitialValue<T> = T | (() => T);
 
@@ -91,7 +91,7 @@ export const useIdlyUpdatedState = <T>(initialValue: InitialValue<T>) => {
 			return Object.assign(stateUpdater, { immediately });
 		},
 		// React Hook useMemo has a missing dependency: 'T'
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[commitStateChanges],
 	);
 

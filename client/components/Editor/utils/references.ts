@@ -1,10 +1,11 @@
+import type { IconName } from '@blueprintjs/core';
+import type { Node } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
+
 import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
-import { IconName } from '@blueprintjs/core';
-import { Node } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
 
 import { referencesPluginKey } from '../plugins/references';
-import { NodeLabel, NodeLabelMap, ReferenceableNodeType } from '../types';
+import { type NodeLabel, type NodeLabelMap, ReferenceableNodeType } from '../types';
 
 export type NodeReference = {
 	node: Node;

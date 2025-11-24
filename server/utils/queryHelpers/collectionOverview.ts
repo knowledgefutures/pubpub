@@ -1,6 +1,7 @@
+import type { InitialData } from 'types';
+
 import { Collection, CollectionPub, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
-import { InitialData } from 'types';
 import { expect } from 'utils/assert';
 
 type Options = {

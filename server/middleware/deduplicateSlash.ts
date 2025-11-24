@@ -1,6 +1,5 @@
-/* eslint-disable consistent-return */
+import { format, parse } from 'url';
 
-import { parse, format } from 'url';
 import { expect } from 'utils/assert';
 
 const DUPLICATE_SLASH_PATTERN = /\/\/+/g;

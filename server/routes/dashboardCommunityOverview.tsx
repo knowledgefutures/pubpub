@@ -1,15 +1,18 @@
 import React from 'react';
-import queryString, { ParsedQuery } from 'query-string';
+
+import { Router } from 'express';
+import queryString, { type ParsedQuery } from 'query-string';
 
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { getCommunityOverview } from 'server/utils/queryHelpers';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCommunityOverview } from 'server/utils/queryHelpers';
 
-app.get('/dash', (req, res) => {
+export const router = Router();
+
+router.get('/dash', (req, res) => {
 	res.redirect(
 		queryString.stringifyUrl({
 			url: '/dash/overview',
@@ -18,7 +21,7 @@ app.get('/dash', (req, res) => {
 	);
 });
 
-app.get('/dash/overview', async (req, res, next) => {
+router.get('/dash/overview', async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			next();

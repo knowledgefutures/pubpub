@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
-import { MenuItem, MenuItemDivider } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
+import { MenuItem, MenuItemDivider } from 'components/Menu';
 
 import { communities } from './communities';
 
@@ -12,7 +12,6 @@ const setDevSubdomain = async (subdomain: null | string) => {
 
 const DevCommunitySwitcherMenuItems = () => {
 	const selectDevSubdomain = useCallback(() => {
-		// eslint-disable-next-line no-alert
 		const subdomain = prompt('Enter a Community subdomain');
 		setDevSubdomain(subdomain);
 	}, []);

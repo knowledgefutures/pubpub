@@ -1,5 +1,6 @@
-import { Classes, IconName, ITreeNode, Tree, Tooltip } from '@blueprintjs/core';
-import React, { MouseEvent, useCallback, useLayoutEffect, useMemo, useReducer } from 'react';
+import React, { type MouseEvent, useCallback, useLayoutEffect, useMemo, useReducer } from 'react';
+
+import { Classes, type IconName, type ITreeNode, Tooltip, Tree } from '@blueprintjs/core';
 
 import { expect } from 'utils/assert';
 
@@ -44,14 +45,12 @@ function depositTreeReducer(state: ITreeNode[], action: TreeAction) {
 			);
 		}
 		case 'SET_IS_EXPANDED': {
-			// eslint-disable-next-line no-undef
 			const next = [...state];
 			const node = Tree.nodeFromPath(action.payload.path, next);
 			node.isExpanded = action.payload.isExpanded;
 			return next;
 		}
 		case 'SET_IS_SELECTED': {
-			// eslint-disable-next-line no-undef
 			const next = [...state];
 			const node = Tree.nodeFromPath(action.payload.path, next);
 			node.isSelected = action.payload.isSelected;

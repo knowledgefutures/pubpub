@@ -1,10 +1,11 @@
+import type { Collection, Pub, UserScopeVisit } from 'types';
+
 import React from 'react';
 
-import { Icon, IconName } from 'components';
-import { UserScopeVisit, Pub, Collection } from 'types';
+import { Icon, type IconName } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 
-require('./recentVisitList.scss');
+import './recentVisitList.scss';
 
 type Props = {
 	userScopeVisits: UserScopeVisit[];

@@ -1,15 +1,18 @@
+import type { RenderedActivityItem } from 'client/utils/activity/types';
+import type { User, UserSubscription } from 'types';
+
+import type { ThreadNotificationsState } from './types';
+
 import React, { useEffect, useState } from 'react';
+
+import { Button } from '@blueprintjs/core';
 import classNames from 'classnames';
 import Color from 'color';
-import { Button } from '@blueprintjs/core';
-
-import { User, UserSubscription } from 'types';
-import { unique } from 'utils/arrays';
-import { TimeAgo, Avatars, SubscriptionButton } from 'components';
-import { RenderedActivityItem } from 'client/utils/activity/types';
 
 import { useElementSeen } from 'client/utils/useElementSeen';
-import { ThreadNotificationsState } from './types';
+import { Avatars, SubscriptionButton, TimeAgo } from 'components';
+import { unique } from 'utils/arrays';
+
 import { useNotificationsContext } from './userNotificationsContext';
 
 type Props = {

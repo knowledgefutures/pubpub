@@ -1,5 +1,6 @@
-import { ZoteroIntegration as ZoteroIntegrationModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { ZoteroIntegration as ZoteroIntegrationModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export type ZoteroIntegration = SerializedModel<ZoteroIntegrationModel>;
 

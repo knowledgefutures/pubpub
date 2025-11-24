@@ -1,4 +1,4 @@
-import { spawnSync, execSync } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 import Cite from 'citation-js';
 import path from 'path';
 

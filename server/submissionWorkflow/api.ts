@@ -1,12 +1,16 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 
 import { canManageSubmissionWorkflow } from './permissions';
 import {
 	createSubmissionWorkflow,
-	updateSubmissionWorkflow,
 	destroySubmissionWorkFlow,
+	updateSubmissionWorkflow,
 } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -16,7 +20,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post(
+router.post(
 	'/api/submissionWorkflows',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
@@ -29,7 +33,7 @@ app.post(
 	}),
 );
 
-app.put(
+router.put(
 	'/api/submissionWorkflows',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
@@ -42,7 +46,7 @@ app.put(
 	}),
 );
 
-app.delete(
+router.delete(
 	'/api/submissionWorkflows',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);

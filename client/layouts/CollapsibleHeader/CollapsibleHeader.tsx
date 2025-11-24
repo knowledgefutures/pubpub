@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+
 import classNames from 'classnames';
 
 import './collapsibleHeader.scss';
+
+import type { IconName } from '@blueprintjs/icons';
+
 import { AnchorButton, Button } from '@blueprintjs/core';
-import { IconName } from '@blueprintjs/icons';
 
 export type NavItem = {
 	url: string;

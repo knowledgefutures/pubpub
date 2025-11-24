@@ -1,8 +1,9 @@
-import {
+import type {
 	ExternalPublication as ExternalPublicationModel,
 	PubEdge as PubEdgeModel,
 } from 'server/models';
-import { SerializedModel } from './serializedModel';
+
+import type { SerializedModel } from './serializedModel';
 
 export type ExternalPublication = SerializedModel<ExternalPublicationModel>;
 

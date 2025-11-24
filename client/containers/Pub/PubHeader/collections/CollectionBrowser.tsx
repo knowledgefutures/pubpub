@@ -1,19 +1,21 @@
+import type { Collection, Pub } from 'types';
+
 import React from 'react';
+
 import { Spinner } from '@blueprintjs/core';
 
+import { createReadingParamUrl, useCollectionPubs } from 'client/utils/collections';
+import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { PubByline, PubTitle } from 'components';
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
-import { usePageContext } from 'utils/hooks';
-import { createReadingParamUrl, useCollectionPubs } from 'client/utils/collections';
-import { pubUrl, collectionUrl } from 'utils/canonicalUrls';
+import { collectionUrl, pubUrl } from 'utils/canonicalUrls';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
-import { Collection, Pub } from 'types';
+import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../../pubHooks';
 import CollectionsBarButton from './CollectionsBarButton';
 
-require('./collectionBrowser.scss');
+import './collectionBrowser.scss';
 
 type Props = {
 	collection: Collection;
@@ -53,7 +55,6 @@ const CollectionBrowser = (props: Props) => {
 	const { bpDisplayIcon } = getSchemaForKind(collection.kind)!;
 	const readingPubUrl = (pub) => createReadingParamUrl(pubUrl(communityData, pub), collection.id);
 
-	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = ({ ref, ...disclosureProps }) => {
 		return (
 			<CollectionsBarButton
@@ -104,7 +105,7 @@ const CollectionBrowser = (props: Props) => {
 									</>
 								}
 							/>
-					  ))
+						))
 					: null}
 				{isLoading && (
 					<MenuItem

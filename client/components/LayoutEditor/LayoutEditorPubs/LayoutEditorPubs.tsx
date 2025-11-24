@@ -1,21 +1,23 @@
+import type { Collection, Community, Pub } from 'types';
+import type { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'types/layout';
+
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
+
 import { Button } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import {
 	CollectionMultiSelect,
 	InputField,
-	Popover,
 	MenuSelect,
-	MenuSelectItems,
+	type MenuSelectItems,
+	Popover,
 } from 'components';
 import { LayoutPubs } from 'components/Layout';
-import { Community, Pub, Collection } from 'types';
-import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'types/layout';
 
-import PreviewElements from './PreviewElements';
 import LimitPubs from './LimitPubs';
 import PinnedPubs from './PinnedPubs';
+import PreviewElements from './PreviewElements';
 
 type Content = LayoutBlockPubs['content'];
 

@@ -1,15 +1,17 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import type { Pub } from 'types';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import { usePrevious } from 'react-use';
 
-import { Pub } from 'types';
+import { apiFetch } from 'client/utils/apiFetch';
 import { arraysAreEqual, arraysHaveSameElements } from 'utils/arrays';
 import {
-	LayoutBlock,
-	LayoutBlockPubs,
-	LayoutPubsByBlock,
+	type LayoutBlock,
+	type LayoutBlockPubs,
+	type LayoutPubsByBlock,
 	resolveLayoutPubsByBlock,
 } from 'utils/layout';
-import { apiFetch } from 'client/utils/apiFetch';
 
 type PubBlockContent = LayoutBlockPubs['content'];
 

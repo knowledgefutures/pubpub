@@ -1,8 +1,9 @@
+import type { Collection as CollectionType, Pub } from 'types';
+import type { CollectionLayout, LayoutPubsByBlock } from 'utils/layout';
+
 import React from 'react';
 
 import { Layout } from 'components';
-import { LayoutPubsByBlock, CollectionLayout } from 'utils/layout';
-import { Pub, Collection as CollectionType } from 'types';
 
 type Props = {
 	layoutPubsByBlock: LayoutPubsByBlock<Pub>;

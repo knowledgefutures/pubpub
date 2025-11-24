@@ -1,5 +1,6 @@
+import type * as types from 'types';
+
 import { z } from 'zod';
-import * as types from 'types';
 
 export const customScriptSchema = z.object({
 	id: z.string().uuid(),

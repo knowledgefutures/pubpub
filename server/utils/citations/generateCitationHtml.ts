@@ -1,9 +1,8 @@
-/* eslint-disable import/prefer-default-export */
 import Cite from 'citation-js';
 
 import * as types from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
-import { CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
+import { type CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getAllPubContributors } from 'utils/contributors';

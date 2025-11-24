@@ -1,8 +1,10 @@
+import type { SubmissionWorkflow } from 'types';
+
 import React, { useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
-import { SubmissionWorkflow } from 'types';
 import { expect } from 'utils/assert';
 
 import { updateSubmissionWorkflow } from '../DashboardSubmissionWorkflow/api';

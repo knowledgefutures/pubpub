@@ -1,14 +1,15 @@
+import type { LandingPageFeatures as LandingPageFeaturesType } from 'types';
+
 import React from 'react';
 
 import { SettingsSection } from 'components';
-import { pubUrl, communityUrl } from 'utils/canonicalUrls';
-import { LandingPageFeatures as LandingPageFeaturesType } from 'types';
-
 import { expect } from 'utils/assert';
-import LandingPageFeatureManager, { RenderFeatureProps } from './LandingPageFeatureManager';
-import FeaturedCommunityItem from './FeaturedCommunityItem';
+import { communityUrl, pubUrl } from 'utils/canonicalUrls';
 
-require('./landingPageFeatures.scss');
+import FeaturedCommunityItem from './FeaturedCommunityItem';
+import LandingPageFeatureManager, { type RenderFeatureProps } from './LandingPageFeatureManager';
+
+import './landingPageFeatures.scss';
 
 type Props = {
 	landingPageFeatures: LandingPageFeaturesType<false>;

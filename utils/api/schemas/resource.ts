@@ -1,11 +1,12 @@
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import {
-	resourceKinds,
-	resourceDescriptors,
-	resourceSummaryKinds,
 	resourceContributorRoles,
+	resourceDescriptors,
+	resourceKinds,
 	resourceRelations,
+	resourceSummaryKinds,
 } from 'deposit/resource';
 
 extendZodWithOpenApi(z);
@@ -30,7 +31,6 @@ export const resourceSchema = partialResourceSchema.extend({
 		description: 'The version of the resource expressed as a UTC datetime string',
 		example: '2021-01-01T00:00:00.000Z',
 	}),
-	description: z.string(),
 
 	descriptions: z.array(
 		z.object({
@@ -57,8 +57,8 @@ export const resourceSchema = partialResourceSchema.extend({
 	contributions: z.array(
 		z.object({
 			isAttribution: z.boolean(),
-			contributor: z.object({ name: z.string(), orcid: z.string().optional() }),
-			contributorAffiliation: z.string().optional(),
+			contributor: z.object({ name: z.string(), orcid: z.string().nullish() }),
+			contributorAffiliation: z.string().nullish(),
 			contributorRole: z.enum(resourceContributorRoles),
 		}),
 	),

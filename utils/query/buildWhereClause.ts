@@ -1,6 +1,8 @@
-import { z } from 'zod';
-import { Op, WhereOptions } from 'sequelize';
+import type { z } from 'zod';
+
 import type { FilterType, ObjectFilter } from './filter';
+
+import { Op, type WhereOptions } from 'sequelize';
 
 type ZodTypes =
 	| z.ZodType<number>

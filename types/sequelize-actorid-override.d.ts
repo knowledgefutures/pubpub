@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
 	BuildOptions,
 	Logging,
@@ -13,7 +12,7 @@ import {
 } from 'sequelize';
 
 declare module 'sequelize' {
-	export interface CreateOptions<TAttributes = any>
+	export interface CreateOptions<_TAttributes = any>
 		extends BuildOptions,
 			Logging,
 			Silent,
@@ -30,7 +29,7 @@ declare module 'sequelize' {
 		actorId?: string | null;
 	}
 
-	export interface UpdateOptions<TAttributes = any>
+	export interface UpdateOptions<_TAttributes = any>
 		extends Logging,
 			Transactionable,
 			Paranoid,

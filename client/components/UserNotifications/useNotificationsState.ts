@@ -1,12 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
+import type { UserNotificationsFetchResult } from 'types';
 
-import { UserNotificationsFetchResult } from 'types';
-import { usePageContext } from 'utils/hooks';
+import type { NotificationsContext, NotificationsState } from './types';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import { apiFetch } from 'client/utils/apiFetch';
+import { usePageContext } from 'utils/hooks';
 
-import { NotificationsContext, NotificationsState } from './types';
-import { createInitialState } from './state';
 import { bindActions } from './actions';
+import { createInitialState } from './state';
 
 type ReturnType = null | {
 	state: NotificationsState;

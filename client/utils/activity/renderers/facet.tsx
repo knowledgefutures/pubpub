@@ -1,6 +1,7 @@
+import type { FacetsActivityItem } from 'types';
+
 import React from 'react';
 
-import { FacetsActivityItem } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
 import { facetTitle, scopeTitle } from 'utils/activity/titles';
 

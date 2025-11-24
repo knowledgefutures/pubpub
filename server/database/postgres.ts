@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import hasbin from 'hasbin';
-import * as child_process from 'child_process';
+import type { Config, PostgresHelper } from './types';
 
-import { Config, PostgresHelper } from './types';
+import * as child_process from 'child_process';
+import fs from 'fs';
+import hasbin from 'hasbin';
+import path from 'path';
 
 const requiredBinaries = ['createdb', 'dropuser', 'dropdb', 'pg_ctl', 'psql'];
 
@@ -37,7 +37,7 @@ export const createPostgresHelper = async (config: Config): Promise<PostgresHelp
 	};
 
 	const log = (message: string) => {
-		// eslint-disable-next-line no-console
+		// biome-ignore lint/suspicious/noConsole: shhhhhh
 		console.log(`[${dbName}] ${message}`);
 	};
 

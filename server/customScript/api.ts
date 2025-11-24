@@ -1,9 +1,14 @@
-import app, { wrap } from 'server/server';
+import type { CustomScriptType } from 'types';
+
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
-import { CustomScriptType } from 'types';
+import { wrap } from 'server/wrap';
 
 import { canSetCustomScript } from './permissions';
 import { setCustomScriptForCommunity } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (
 	req: any,
@@ -20,7 +25,7 @@ const getRequestIds = (
 	};
 };
 
-app.post(
+router.post(
 	'/api/customScripts',
 	wrap(async (req, res) => {
 		const { communityId, userId, content, type } = getRequestIds(req);

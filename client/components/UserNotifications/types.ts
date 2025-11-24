@@ -1,16 +1,16 @@
-import { RenderedActivityItem } from 'client/utils/activity/types';
-import { FacetValue, PubHeaderTheme } from 'facets';
-import {
+import type { RenderedActivityItem } from 'client/utils/activity/types';
+import type { FacetValue, PubHeaderTheme } from 'facets';
+import type {
+	Community,
 	Pub,
 	Thread,
-	UserNotificationWithActivityItem,
-	UserSubscription,
-	Community,
 	UserNotificationPreferences,
 	UserNotificationsFetchResult,
+	UserNotificationWithActivityItem,
+	UserSubscription,
 } from 'types';
 
-import { bindActions } from './actions';
+import type { bindActions } from './actions';
 
 export type FilterTerm = string | null;
 

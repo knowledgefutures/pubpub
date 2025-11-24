@@ -1,9 +1,12 @@
+import type { PubAttributionCreationParams, UpdateParams } from 'types';
+
+import type { Permissions } from './permissions';
+
 import assert from 'assert';
-import { PubAttribution, includeUserModel } from 'server/models';
+
+import { includeUserModel, PubAttribution } from 'server/models';
 import { expect } from 'utils/assert';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { UpdateParams, PubAttributionCreationParams } from 'types';
-import { Permissions } from './permissions';
 
 export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
 

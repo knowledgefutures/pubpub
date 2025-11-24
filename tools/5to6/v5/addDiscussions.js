@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax, no-continue */
+
 const { error, warn } = require('../problems');
 const prosemirrorBisect = require('../util/prosemirrorBisect');
 

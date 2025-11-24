@@ -1,20 +1,23 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
-import { setup, teardown, login, modelize } from 'stubstub';
 import { CustomScript } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
+
 import { getFeatureFlag } from '../../featureFlag/interface';
 
 const content = 'web3.startMiningBitcoin()';
 
+const enabledCommunityId = crypto.randomUUID();
+const communityId = crypto.randomUUID();
+
 const models = modelize`
 	Community enabledCommunity {
-        id: "0417b0c0-cd38-48bd-8a84-b0b95da98813"
+        id: ${enabledCommunityId}
         Member {
             permissions: "admin"
             User adminOfEnabledCommunity {}
         }
     }
 	Community community {
-        id: "8678309e-9e86-75bd-8a84-b0b95da91017"
+        id: ${communityId}
         Member {
             permissions: "admin"
             User adminOfCommunity {}

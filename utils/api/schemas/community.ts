@@ -1,5 +1,7 @@
+import type * as types from 'types';
+
 import { z } from 'zod';
-import * as types from 'types';
+
 import { baseSchema } from '../utils/baseSchema';
 import { analyticsSettingsSchema } from './analyticsSettings';
 

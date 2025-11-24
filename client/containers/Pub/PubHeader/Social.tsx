@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Icon, Menu, MenuItem } from 'components';
-import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 
 type Props = {
 	children: React.ReactNode;

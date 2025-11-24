@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import algoliasearch from 'algoliasearch';
 
 import { asyncForEach } from 'utils/async';

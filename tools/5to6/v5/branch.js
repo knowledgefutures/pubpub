@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax */
+
 const { compressChange } = require('./changes');
 const { reconstructDocument } = require('./reconstructDocument');
 

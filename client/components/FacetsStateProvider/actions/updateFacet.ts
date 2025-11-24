@@ -1,19 +1,19 @@
-import { GetState, SetState } from 'zustand';
+import type { GetState, SetState } from 'zustand';
+
+import type { FacetState, FacetsState } from '../types';
 
 import {
-	FacetDefinition,
-	FacetInstanceStack,
-	FacetInstance,
-	FacetSourceScope,
-	FacetName,
-	Facets,
 	cascade,
-	parsePartialFacetInstance,
 	createFacetInstance,
-	FacetCascadeResult,
+	type FacetCascadeResult,
+	type FacetDefinition,
+	type FacetInstance,
+	type FacetInstanceStack,
+	type FacetName,
+	type FacetSourceScope,
+	type Facets,
+	parsePartialFacetInstance,
 } from 'facets';
-
-import { FacetsState, FacetState } from '../types';
 
 function applyPatchToStack<Def extends FacetDefinition>(
 	def: Def,

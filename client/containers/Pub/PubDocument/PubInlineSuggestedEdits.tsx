@@ -1,17 +1,18 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { buttons, FormattingBarSuggestedEdits } from 'components/FormattingBar';
-import { SuggestedEditsUser } from 'types';
+import type { SuggestedEditsUser } from 'types';
+
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { getSuggestionAttrsForNode } from 'client/components/Editor/plugins/suggestedEdits/operations';
 import {
 	acceptSuggestedEdits,
 	getResolvableRangeForSelection,
 } from 'client/components/Editor/plugins/suggestedEdits/resolve';
-import { getSuggestionAttrsForNode } from 'client/components/Editor/plugins/suggestedEdits/operations';
-
 import { apiFetch } from 'client/utils/apiFetch';
+import { buttons, FormattingBarSuggestedEdits } from 'components/FormattingBar';
 
 import { usePubContext } from '../pubHooks';
 
-require('./pubInlineSuggestionMenu.scss');
+import './pubInlineSuggestionMenu.scss';
 
 const shouldOpenBelowSelection = () => {
 	return ['Android', 'iPad', 'iPhone'].some((device) =>

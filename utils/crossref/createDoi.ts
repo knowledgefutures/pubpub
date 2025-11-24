@@ -1,4 +1,4 @@
-import { Collection, Community, DepositTarget, Pub } from 'types';
+import type { Collection, Community, DepositTarget, Pub } from 'types';
 
 import { PUBPUB_DOI_PREFIX } from './communities';
 

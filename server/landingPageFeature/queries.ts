@@ -1,7 +1,8 @@
-import * as types from 'types';
+import type * as types from 'types';
+
 import { Community, LandingPageFeature, Pub } from 'server/models';
-import { splitArrayOn } from 'utils/arrays';
 import { buildPubOptions } from 'server/utils/queryHelpers';
+import { splitArrayOn } from 'utils/arrays';
 import { validateCommunityLandingPageFeature } from 'utils/landingPage/validate';
 
 const landingPageFeatureIncludes = [

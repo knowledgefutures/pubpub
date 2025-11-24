@@ -1,10 +1,11 @@
-/* eslint-disable react/prop-types */
+import type { ExternalPublication } from 'types';
+
 import React, { useState } from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import { PubEdge, PubEdgeEditor } from 'components';
 import { RelationType } from 'utils/pubEdge';
-import { ExternalPublication } from 'types';
 
 const pubEdge = {
 	id: 'pub-edge-id',

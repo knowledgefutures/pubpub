@@ -1,7 +1,8 @@
-import { Node, Schema } from 'prosemirror-model';
-import { Step } from 'prosemirror-transform';
+import type firebase from 'firebase';
+
 import { uncompressStateJSON, uncompressStepJSON } from 'prosemirror-compress-pubpub';
-import firebase from 'firebase';
+import { Node, type Schema } from 'prosemirror-model';
+import { Step } from 'prosemirror-transform';
 
 import { getEmptyDoc } from './doc';
 import { flattenKeyables } from './firebase';

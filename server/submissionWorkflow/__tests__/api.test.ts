@@ -1,7 +1,6 @@
-import { setup, teardown, login, modelize } from 'stubstub';
-
 import { getEmptyDoc } from 'client/components/Editor';
 import { SubmissionWorkflow } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community {

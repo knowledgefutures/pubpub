@@ -1,12 +1,13 @@
+import type { SpamCommunitiesFilter } from './filters';
+import type { CommunityWithSpam } from './types';
+
 import { useCallback, useState } from 'react';
-import useStateRef from 'react-usestateref';
+
 import { useUpdateEffect } from 'react-use';
+import useStateRef from 'react-usestateref';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { unique } from 'utils/arrays';
-
-import { CommunityWithSpam } from './types';
-import { SpamCommunitiesFilter } from './filters';
 
 type UseSpamCommunitiesOptions = {
 	filter: SpamCommunitiesFilter;

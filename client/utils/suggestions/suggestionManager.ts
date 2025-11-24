@@ -1,4 +1,5 @@
-import { SuggestCallbackParams } from 'prosemirror-suggest';
+import type { SuggestCallbackParams } from 'prosemirror-suggest';
+
 import { Signal } from '../signal';
 
 const modFloor = (a: number, n: number) => ((a % n) + n) % n;

@@ -1,7 +1,8 @@
+import type { SlugStatus } from 'types';
+
 import { Op } from 'sequelize';
 
-import { Page, Collection } from 'server/models';
-import { SlugStatus } from 'types';
+import { Collection, Page } from 'server/models';
 
 export const definitelyForbiddenSlugs = [
 	'dash',
@@ -77,7 +78,7 @@ export const findAcceptableSlug = async (desiredSlug: string, communityId: strin
 	];
 	if (allSlugs.includes(desiredSlug)) {
 		let suffix = 2;
-		// eslint-disable-next-line no-constant-condition
+
 		while (true) {
 			const proposedSlug = `${desiredSlug}-${suffix}`;
 			if (!allSlugs.includes(proposedSlug)) {

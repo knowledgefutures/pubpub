@@ -1,8 +1,9 @@
+import type { CanCreatePub } from 'types';
+
 import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
-
 import { expect } from 'utils/assert';
-import { CanCreatePub } from 'types';
+
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
 export const managerUpdatableFields = [

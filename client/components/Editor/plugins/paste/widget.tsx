@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import { Spinner } from '@blueprintjs/core';
 
 export const createPlaceholderWidgetElement = (progress: number) => {

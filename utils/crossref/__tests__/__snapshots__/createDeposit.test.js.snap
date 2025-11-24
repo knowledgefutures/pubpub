@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`createDeposit applies content version to the content version attribute of the resource element 1`] = `
+exports[`createDeposit > applies content version to the content version attribute of the resource element 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -81,7 +81,7 @@ exports[`createDeposit applies content version to the content version attribute 
 }
 `;
 
-exports[`createDeposit creates a deposit for a book 1`] = `
+exports[`createDeposit > creates a deposit for a book 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -166,7 +166,7 @@ exports[`createDeposit creates a deposit for a book 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for a book without any date information 1`] = `
+exports[`createDeposit > creates a deposit for a book without any date information 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -251,7 +251,7 @@ exports[`createDeposit creates a deposit for a book without any date information
 }
 `;
 
-exports[`createDeposit creates a deposit for a conference 1`] = `
+exports[`createDeposit > creates a deposit for a conference 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -343,7 +343,7 @@ exports[`createDeposit creates a deposit for a conference 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for a conference without any date information 1`] = `
+exports[`createDeposit > creates a deposit for a conference without any date information 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -435,7 +435,7 @@ exports[`createDeposit creates a deposit for a conference without any date infor
 }
 `;
 
-exports[`createDeposit creates a deposit for a pub 1`] = `
+exports[`createDeposit > creates a deposit for a pub 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -515,7 +515,7 @@ exports[`createDeposit creates a deposit for a pub 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for a pub in a book 1`] = `
+exports[`createDeposit > creates a deposit for a pub in a book 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -638,7 +638,7 @@ exports[`createDeposit creates a deposit for a pub in a book 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for a pub in a conference 1`] = `
+exports[`createDeposit > creates a deposit for a pub in a conference 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -761,7 +761,7 @@ exports[`createDeposit creates a deposit for a pub in a conference 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for a pub in an issue 1`] = `
+exports[`createDeposit > creates a deposit for a pub in an issue 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -893,7 +893,7 @@ exports[`createDeposit creates a deposit for a pub in an issue 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for an issue 1`] = `
+exports[`createDeposit > creates a deposit for an issue 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -987,7 +987,7 @@ exports[`createDeposit creates a deposit for an issue 1`] = `
 }
 `;
 
-exports[`createDeposit creates a deposit for an issue without any date information 1`] = `
+exports[`createDeposit > creates a deposit for an issue without any date information 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1081,7 +1081,7 @@ exports[`createDeposit creates a deposit for an issue without any date informati
 }
 `;
 
-exports[`createDeposit creates a journal_article deposit for a pub with a hasReview connection 1`] = `
+exports[`createDeposit > creates a journal_article deposit for a pub with a hasReview connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1173,7 +1173,7 @@ exports[`createDeposit creates a journal_article deposit for a pub with a hasRev
 }
 `;
 
-exports[`createDeposit creates a journal_article deposit for a pub with a hasSupplement connection 1`] = `
+exports[`createDeposit > creates a journal_article deposit for a pub with a hasSupplement connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1265,7 +1265,7 @@ exports[`createDeposit creates a journal_article deposit for a pub with a hasSup
 }
 `;
 
-exports[`createDeposit creates a peer_review deposit for a pub with an isReviewOf connection 1`] = `
+exports[`createDeposit > creates a peer_review deposit for a pub with an isReviewOf connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1345,7 +1345,7 @@ exports[`createDeposit creates a peer_review deposit for a pub with an isReviewO
 }
 `;
 
-exports[`createDeposit creates a posted_content deposit for a pub when contentVersion is "preprint" 1`] = `
+exports[`createDeposit > creates a posted_content deposit for a pub when contentVersion is "preprint" 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1413,7 +1413,7 @@ exports[`createDeposit creates a posted_content deposit for a pub when contentVe
 }
 `;
 
-exports[`createDeposit creates a posted_content deposit for a pub with a hasPreprint connection 1`] = `
+exports[`createDeposit > creates a posted_content deposit for a pub with a hasPreprint connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1505,7 +1505,7 @@ exports[`createDeposit creates a posted_content deposit for a pub with a hasPrep
 }
 `;
 
-exports[`createDeposit creates a posted_content deposit for a pub with an isPreprintOf connection 1`] = `
+exports[`createDeposit > creates a posted_content deposit for a pub with an isPreprintOf connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1585,7 +1585,7 @@ exports[`createDeposit creates a posted_content deposit for a pub with an isPrep
 }
 `;
 
-exports[`createDeposit creates a sa_component deposit for a pub with a isSupplementTo connection 1`] = `
+exports[`createDeposit > creates a sa_component deposit for a pub with a isSupplementTo connection 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1657,7 +1657,7 @@ exports[`createDeposit creates a sa_component deposit for a pub with a isSupplem
 }
 `;
 
-exports[`createDeposit creates relationships where the resource is a DOI 1`] = `
+exports[`createDeposit > creates relationships where the resource is a DOI 1`] = `
 {
   "deposit": {
     "doi_batch": {
@@ -1735,7 +1735,7 @@ exports[`createDeposit creates relationships where the resource is a DOI 1`] = `
 }
 `;
 
-exports[`createDeposit creates relationships where the resource is a URL 1`] = `
+exports[`createDeposit > creates relationships where the resource is a URL 1`] = `
 {
   "deposit": {
     "doi_batch": {

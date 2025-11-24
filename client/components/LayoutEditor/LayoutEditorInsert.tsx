@@ -1,4 +1,8 @@
+import type { Page } from 'types';
+import type { LayoutBlock, PubSortOrder } from 'types/layout';
+
 import React from 'react';
+
 import {
 	Button,
 	Classes,
@@ -9,11 +13,9 @@ import {
 	Position,
 } from '@blueprintjs/core';
 
-import { Page } from 'types';
-import { LayoutBlock, PubSortOrder } from 'types/layout';
 import { Icon } from 'components';
 
-require('./layoutEditorInsert.scss');
+import './layoutEditorInsert.scss';
 
 type Props = {
 	communityData: {

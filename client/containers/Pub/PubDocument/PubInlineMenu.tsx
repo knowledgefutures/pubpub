@@ -1,17 +1,18 @@
 import React, { useMemo } from 'react';
-import uuidv4 from 'uuid/v4';
-import { Button, Classes } from '@blueprintjs/core';
 
+import { Button, Classes } from '@blueprintjs/core';
+import uuidv4 from 'uuid/v4';
+
+import { ClickToCopyButton, Icon } from 'components';
+import { isDescendantOf, moveToEndOfSelection, setLocalHighlight } from 'components/Editor';
+import { acceptSuggestedEdits } from 'components/Editor/plugins/suggestedEdits/resolve';
+import { buttons, FormattingBar } from 'components/FormattingBar';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
-import { Icon, ClickToCopyButton } from 'components';
-import { FormattingBar, buttons } from 'components/FormattingBar';
-import { setLocalHighlight, moveToEndOfSelection, isDescendantOf } from 'components/Editor';
-import { acceptSuggestedEdits } from 'components/Editor/plugins/suggestedEdits/resolve';
 
 import { usePubContext } from '../pubHooks';
 
-require('./pubInlineMenu.scss');
+import './pubInlineMenu.scss';
 
 const shouldOpenBelowSelection = () => {
 	return ['Android', 'iPad', 'iPhone'].some((device) =>

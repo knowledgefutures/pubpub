@@ -1,8 +1,10 @@
+import type { Collection } from 'types';
+import type { LayoutBlockCollectionHeader } from 'utils/layout';
+
 import React from 'react';
+
 import { Card, Checkbox } from '@blueprintjs/core';
 
-import { LayoutBlockCollectionHeader } from 'utils/layout';
-import { Collection } from 'types';
 import { getOrderedCollectionMetadataFields } from 'utils/collections/getMetadata';
 
 type Content = LayoutBlockCollectionHeader['content'];

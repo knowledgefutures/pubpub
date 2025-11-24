@@ -1,6 +1,6 @@
-import { TypeOf, ZodSchema } from 'zod';
+import type { TypeOf, ZodSchema } from 'zod';
 
-import { PostgresDatatype } from '../types/database';
+import type { PostgresDatatype } from '../types/database';
 
 type AnyExtension = Record<string, any>;
 

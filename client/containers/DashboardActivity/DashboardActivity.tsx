@@ -1,19 +1,21 @@
+import type { ActivityFilter, Member } from 'types';
+
 import React, { useMemo, useState } from 'react';
+
 import { Button, NonIdealState, Spinner, Switch } from '@blueprintjs/core';
 
-import { ActivityFilter, Member } from 'types';
-import { usePageContext } from 'utils/hooks';
-import { DashboardFrame } from 'components';
-import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import * as api from 'client/utils/members/api';
+import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { DashboardFrame } from 'components';
+import { usePageContext } from 'utils/hooks';
 import { checkMemberPermission } from 'utils/permissions';
 
-import { useActivityItems } from './useActivityItems';
-import { getBoundaryGroupsForSortedActivityItems } from './boundaries';
 import ActivityFilters from './ActivityFilters';
 import ActivityItemGroup from './ActivityItemGroup';
+import { getBoundaryGroupsForSortedActivityItems } from './boundaries';
+import { useActivityItems } from './useActivityItems';
 
-require('./dashboardActivity.scss');
+import './dashboardActivity.scss';
 
 type Props = {
 	activityData: any;

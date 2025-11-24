@@ -1,5 +1,6 @@
+import type { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
+
 import React from 'react';
-import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 import Icon from '../Icon/Icon';
 

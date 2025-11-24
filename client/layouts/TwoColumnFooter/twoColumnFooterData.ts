@@ -1,4 +1,5 @@
-import { TwoColumnFooterProps } from './TwoColumnFooter';
+import type { TwoColumnFooterProps } from './TwoColumnFooter';
+
 import { iconPaths } from './iconPaths';
 
 const defaultTwoColumnFooterProps: TwoColumnFooterProps = {

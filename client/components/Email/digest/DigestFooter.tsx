@@ -1,9 +1,11 @@
+import type { Community } from 'types';
+
 import React from 'react';
+
 import styled from 'styled-components';
 
 import { communityUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
-import { Community } from 'types';
 
 type Props = {
 	community: Community;

@@ -1,8 +1,9 @@
+import type { ScopeData } from 'types';
+
 import { Op } from 'sequelize';
 
-import { Member, includeUserModel } from 'server/models';
+import { includeUserModel, Member } from 'server/models';
 
-import { ScopeData } from 'types';
 import { buildOrQuery } from './scopeGet';
 
 const membersQueryShared = {

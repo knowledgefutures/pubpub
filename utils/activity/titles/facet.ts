@@ -1,7 +1,8 @@
-import { ALL_FACET_DEFINITIONS } from 'facets';
-import { FacetsActivityItem } from 'types';
+import type { FacetsActivityItem } from 'types';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
+import { ALL_FACET_DEFINITIONS } from 'facets';
 
 export const facetTitle: TitleRenderer<FacetsActivityItem> = (item) => {
 	const {

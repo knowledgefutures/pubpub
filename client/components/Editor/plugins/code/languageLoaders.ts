@@ -1,4 +1,4 @@
-import { LanguageLoaders } from './types';
+import type { LanguageLoaders } from './types';
 
 const languageLoaders: LanguageLoaders = {
 	cpp: () => import('@codemirror/lang-cpp').then((i) => i.cpp()),

@@ -12,8 +12,8 @@ export { default as DashboardFacets } from './DashboardFacets/DashboardFacets';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export {
-	DashboardCommunityOverview,
 	DashboardCollectionOverview,
+	DashboardCommunityOverview,
 	DashboardPubOverview,
 } from './DashboardOverview';
 export { default as DashboardPage } from './DashboardPage/DashboardPage';
@@ -25,12 +25,12 @@ export { default as DashboardSubmissions } from './DashboardSubmissions/Dashboar
 export { default as DashboardSubmissionWorkflow } from './DashboardSubmissionWorkflow/DashboardSubmissionWorkflow';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
+export { default as Legal } from './Legal/Legal';
 export { default as Login } from './Login/Login';
 export { default as NoMatch } from './NoMatch/NoMatch';
 export { default as Page } from './Page/Page';
 export { default as PasswordReset } from './PasswordReset/PasswordReset';
 export { default as Pricing } from './Pricing/Pricing';
-export { default as Legal } from './Legal/Legal';
 export { default as Pub } from './Pub/Pub';
 export { default as Search } from './Search/Search';
 export { default as Signup } from './Signup/Signup';

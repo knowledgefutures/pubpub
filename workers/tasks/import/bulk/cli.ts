@@ -3,10 +3,10 @@ import fs from 'fs-extra';
 import { User } from 'server/models';
 import { TaskPriority } from 'utils/workers';
 
-import { runBulkImportFromDirectory } from './import';
 import { discardBulkImportPlan } from './discard';
-import { publishBulkImportPlan } from './publish';
+import { runBulkImportFromDirectory } from './import';
 import { promptOkay } from './prompt';
+import { publishBulkImportPlan } from './publish';
 
 const {
 	argv: { directory, ...args },
@@ -68,7 +68,7 @@ const readPlanFromFile = async (path) => {
 	const contents = await fs.readFile(path, 'utf-8');
 	try {
 		return JSON.parse(contents);
-	} catch (err) {
+	} catch (_err) {
 		throw new Error(`Expected a valid JSON file at ${path}`);
 	}
 };

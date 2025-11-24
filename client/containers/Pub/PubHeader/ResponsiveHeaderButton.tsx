@@ -3,7 +3,7 @@ import React from 'react';
 import { MobileAware } from 'components';
 
 import LargeHeaderButton from './LargeHeaderButton';
-import SmallHeaderButton, { Props as SmallHeaderButtonProps } from './SmallHeaderButton';
+import SmallHeaderButton, { type Props as SmallHeaderButtonProps } from './SmallHeaderButton';
 
 type Props = SmallHeaderButtonProps & {
 	simpleLabel?: React.ReactNode;

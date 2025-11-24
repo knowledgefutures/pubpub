@@ -1,18 +1,20 @@
+import type { AttributionWithUser, DepositTarget } from 'types';
+
 import React, { useState } from 'react';
+
 import { useUpdateEffect } from 'react-use';
 
-import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
+import Deposit from 'client/components/Deposit/Deposit';
 import { CollectionAttributionEditor, SettingsSection } from 'components';
 import { pruneFalsyValues } from 'utils/arrays';
-import { AttributionWithUser, DepositTarget } from 'types';
-import Deposit from 'client/components/Deposit/Deposit';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
 
 import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 import CommunityOrCollectionLevelPubSettings from '../CommunitySettings/CommunityOrCollectionLevelPubSettings';
+import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
-import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {

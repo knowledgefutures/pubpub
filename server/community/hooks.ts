@@ -1,11 +1,11 @@
-import { Community } from 'server/models';
-import { createActivityHooks } from 'server/utils/activityHooks';
 import {
 	createCommunityCreatedActivityItem,
 	createCommunityUpdatedActivityItem,
 } from 'server/activityItem/queries';
-import { defer } from 'server/utils/deferred';
+import { Community } from 'server/models';
 import { addSpamTagToCommunity } from 'server/spamTag/queries';
+import { createActivityHooks } from 'server/utils/activityHooks';
+import { defer } from 'server/utils/deferred';
 
 createActivityHooks({
 	Model: Community,

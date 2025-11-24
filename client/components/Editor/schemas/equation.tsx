@@ -1,5 +1,6 @@
+import type { DOMOutputSpec, Node } from 'prosemirror-model';
+
 import React from 'react';
-import { DOMOutputSpec, Node } from 'prosemirror-model';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -79,7 +80,6 @@ export default {
 				return (
 					<script
 						type="math/tex-display"
-						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={{ __html: node.attrs.value }}
 					/>
 				) as any;

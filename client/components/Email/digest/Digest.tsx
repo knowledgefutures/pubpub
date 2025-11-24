@@ -1,16 +1,18 @@
+import type { IconName } from 'components';
+import type { ActivityAssociations, Community } from 'types';
+import type { ActivityItem } from 'types/activity';
+
 import React from 'react';
+
 import Color from 'color';
 
-import { ActivityAssociations, Community } from 'types';
-import { ActivityItem } from 'types/activity';
-import { IconName } from 'components';
 import { formatDate } from 'utils/dates';
 
-import { Spacer } from '../Spacer';
-import { Section } from '../Section';
-import { Wrapper } from '../Wrapper';
 import { CommunityHeader } from '../CommunityHeader';
-import { ActivityBundle, DigestIntro, DigestSectionTitle, DigestFooter } from './index';
+import { Section } from '../Section';
+import { Spacer } from '../Spacer';
+import { Wrapper } from '../Wrapper';
+import { ActivityBundle, DigestFooter, DigestIntro, DigestSectionTitle } from './index';
 
 type DisplayKey = string;
 

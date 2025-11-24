@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
+
 import { locationData, loginData } from 'utils/storybook/data';
 
 import MinimalHeader from './MinimalHeader';

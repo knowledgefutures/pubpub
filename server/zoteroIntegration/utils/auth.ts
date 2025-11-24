@@ -1,14 +1,14 @@
 import passportOAuth1 from 'passport-oauth1';
 
-import { User, ZoteroIntegration, IntegrationDataOAuth1 } from 'server/models';
-import { isDuqDuq, isDevelopment } from 'utils/environment';
+import { IntegrationDataOAuth1, User, ZoteroIntegration } from 'server/models';
 import { expect } from 'utils/assert';
+import { isDevelopment, isDuqDuq } from 'utils/environment';
 
 const baseRedirectUrl = isDuqDuq()
 	? 'https://duqduq.org'
 	: isDevelopment()
-	  ? 'http://lvh.me:9876'
-	  : 'https://pubpub.org';
+		? 'http://lvh.me:9876'
+		: 'https://pubpub.org';
 
 export const zoteroAuthStrategy = () =>
 	new passportOAuth1.Strategy(

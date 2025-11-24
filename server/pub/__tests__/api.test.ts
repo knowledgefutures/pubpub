@@ -1,16 +1,20 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
+/* biome-ignore-all lint/performance/noAwaitInLoops: shhhhhh */
+
+import type supertest from 'supertest';
+
 import uuid from 'uuid/v4';
+import { vi } from 'vitest';
 
-import supertest from 'supertest';
-
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
-import { CollectionPub, Pub, Draft } from 'server/models';
+import { CollectionPub, Draft, Pub } from 'server/models';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 import { fullImportOutput, pubSchema } from 'utils/api/schemas/pub';
-import { stubModule } from 'stubstub/stub';
 
 import { issueCreatePubToken } from '../tokens';
 
 const defaultCollectionId = uuid();
+
+const wowSlug = `a-wow-${crypto.randomUUID()}-wow`;
+const ewSlug = `b-ew-${crypto.randomUUID()}-ew`;
 
 const models = modelize`
 	Community community {
@@ -48,12 +52,12 @@ const models = modelize`
             }
         }
 		Pub wowPub {
-			slug: "wow"
+			slug: ${wowSlug}
 			title: "Wow, a pub"
 			doi: "10.21428/wow"
 		}
 		Pub ewPub {
-			slug: "xxx"
+			slug: ${ewSlug}
 			title: "Ew, another pub"
 			doi: "10.21428/ew"
 			PubAttribution schmoeAttribution {
@@ -286,7 +290,7 @@ describe('/api/pubs', () => {
 		await agent
 			.put('/api/pubs')
 			.send({ pubId: ewPub.id, slug: wowPub.slug })
-			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: 'wow' });
+			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: wowSlug });
 	});
 
 	it('throws a clear 400 error if you try to create a pub with an already-taken slug', async () => {
@@ -295,7 +299,7 @@ describe('/api/pubs', () => {
 		await agent
 			.post('/api/pubs')
 			.send({ communityId: community.id, slug: wowPub.slug })
-			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: 'wow' });
+			.expect(400, { type: 'forbidden-slug', slugStatus: 'used', desiredSlug: wowSlug });
 	});
 
 	it('allows a Pub manager to delete a Pub', async () => {
@@ -580,8 +584,16 @@ describe('GET /api/pubs', () => {
 	});
 });
 
+vi.mock('utils/import/uploadAndConvertImages', async () => {
+	if (process.env.AWS_ACCESS_KEY_ID) {
+		return import('utils/import/uploadAndConvertImages');
+	}
+	return {
+		uploadAndConvertImages: (files) => files,
+	};
+});
+
 describe('/api/pubs/text', () => {
-	let restore = () => {};
 	const isAWSAccessKeySet = !!process.env.AWS_ACCESS_KEY_ID;
 	let adminAgent: Awaited<ReturnType<typeof login>>;
 
@@ -592,14 +604,6 @@ describe('/api/pubs/text', () => {
 			'Host',
 			getHost(community),
 		) as unknown as supertest.SuperAgentTest;
-
-		if (!isAWSAccessKeySet) {
-			// eslint-disable-next-line global-require
-			const stubbed = stubModule(require('utils/import/uploadAndConvertImages'), {
-				uploadAndConvertImages: (files) => files,
-			});
-			restore = stubbed.restore;
-		}
 	});
 
 	let importedPubId!: string;
@@ -811,8 +815,6 @@ describe('/api/pubs/text', () => {
 	});
 
 	afterAll(() => {
-		if (!isAWSAccessKeySet) {
-			restore();
-		}
+		vi.clearAllMocks();
 	});
 });

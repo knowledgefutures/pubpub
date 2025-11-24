@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax, no-await-in-loop, no-continue */
+
 
 import { Community, DepositTarget } from 'server/models';
 import { communityDoiOverrides } from 'utils/crossref/communities';

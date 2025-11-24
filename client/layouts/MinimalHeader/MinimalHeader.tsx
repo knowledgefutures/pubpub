@@ -1,5 +1,6 @@
-import { AnchorButton } from '@blueprintjs/core';
 import React from 'react';
+
+import { AnchorButton } from '@blueprintjs/core';
 
 import { Icon, MobileAware, UserNotificationsPopover } from 'components';
 import UserMenu from 'components/GlobalControls/UserMenu';

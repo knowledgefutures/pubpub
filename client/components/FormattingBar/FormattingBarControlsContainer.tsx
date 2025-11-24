@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import type { ResolvedControlsConfiguration } from './types';
+
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import classNames from 'classnames';
+
 import { Button, Classes } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
 
-import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
-
-import { ResolvedControlsConfiguration } from './types';
+import { type EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
 type Props = {
 	accentColor: string;

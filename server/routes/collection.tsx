@@ -1,21 +1,25 @@
+import type * as types from 'types';
+import type { LayoutBlockSubmissionBanner } from 'utils/layout';
+
 import React from 'react';
+
+import { Router } from 'express';
 import { Op } from 'sequelize';
 
-import app from 'server/server';
-import Html from 'server/Html';
-import { createUserScopeVisit } from 'server/userScopeVisit/queries';
-import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getInitialData } from 'server/utils/initData';
-import { hostIsValid } from 'server/utils/routes';
-import { enrichCollectionWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
-import { Collection, Page, CollectionAttribution, includeUserModel } from 'server/models';
-import { sequelize } from 'server/sequelize';
-import { handleErrors } from 'server/utils/errors';
-import { withValue } from 'utils/fp';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
+import Html from 'server/Html';
+import { Collection, CollectionAttribution, includeUserModel, Page } from 'server/models';
+import { sequelize } from 'server/sequelize';
 import { getEnabledSubmissionWorkflowForCollection } from 'server/submissionWorkflow/queries';
-import * as types from 'types';
-import { LayoutBlockSubmissionBanner } from 'utils/layout';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { enrichCollectionWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { withValue } from 'utils/fp';
+
+export const router = Router();
 
 const findCollectionByPartialId = (maybePartialId: string) => {
 	return Collection.findOne({
@@ -63,7 +67,7 @@ const getLayoutWithSubmissionWorkflowBlock = async (collection: types.Collection
 	return layout;
 };
 
-app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, next) => {
+router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}

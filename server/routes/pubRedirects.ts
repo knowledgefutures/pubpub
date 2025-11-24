@@ -1,11 +1,14 @@
-import queryString, { ParsedQuery } from 'query-string';
+import type { DefinitelyHas } from 'types';
 
-import { isDuqDuq } from 'utils/environment';
-import app from 'server/server';
+import { Router } from 'express';
+import queryString, { type ParsedQuery } from 'query-string';
+
 import { Community, Pub, Release } from 'server/models';
 import { handleErrors } from 'server/utils/errors';
 import { hostIsValid } from 'server/utils/routes';
-import { DefinitelyHas } from 'types';
+import { isDuqDuq } from 'utils/environment';
+
+export const router = Router();
 
 const getParams = (req) => {
 	const hostname = isDuqDuq()
@@ -20,7 +23,7 @@ const getParams = (req) => {
 };
 
 /* Redirect /pub/slug paths on www.pubpub.org */
-app.get('/pub/:slug', async (req, res, next) => {
+router.get('/pub/:slug', async (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {
 		return next();
 	}
@@ -44,7 +47,7 @@ app.get('/pub/:slug', async (req, res, next) => {
 });
 
 /* Redirect /pub/slug paths on communities to appropriate release or draft */
-app.get('/pub/:slug', async (req, res, next) => {
+router.get('/pub/:slug', async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}
@@ -76,7 +79,7 @@ app.get('/pub/:slug', async (req, res, next) => {
 });
 
 /* Redirect legacy /pub/slug/branch routes */
-app.get(
+router.get(
 	['/pub/:slug/branch/:branchShortId', '/pub/:slug/branch/:branchShortId/:versionNumber'],
 	async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
@@ -110,7 +113,7 @@ app.get(
 );
 
 /* Redirect /pub/slug/manage  */
-app.get(['/pub/:slug/manage/', '/pub/:slug/manage/:manageMode'], async (req, res, next) => {
+router.get(['/pub/:slug/manage/', '/pub/:slug/manage/:manageMode'], async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}

@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-syntax, no-loop-func, no-param-reassign, no-constant-condition */
 import fs from 'fs-extra';
 import tmp from 'tmp-promise';
+
 import { extensionFor } from '../util';
 
 const getConcatableFilesAndDocument = (sourceFiles) => {

@@ -20,7 +20,6 @@ declare module 'use-analytics' {
 	export function AnalyticsProvider(props: {
 		instance: AnalyticsInstance;
 		children: ReactNode;
-		// eslint-disable-next-line no-undef
 	}): JSX.Element;
 
 	export type { AnalyticsInstance, AnalyticsPlugin };

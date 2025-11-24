@@ -1,15 +1,18 @@
 import React from 'react';
-import queryString, { ParsedQuery } from 'query-string';
+
+import { Router } from 'express';
+import queryString, { type ParsedQuery } from 'query-string';
 
 import Html from 'server/Html';
-import app from 'server/server';
-import { handleErrors, ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { SubmissionWorkflow } from 'server/models';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
+import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { getCollectionOverview } from 'server/utils/queryHelpers';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCollectionOverview } from 'server/utils/queryHelpers';
-import { createUserScopeVisit } from 'server/userScopeVisit/queries';
-import { SubmissionWorkflow } from 'server/models';
+
+export const router = Router();
 
 const getSubmissionWorkflow = (collectionId: string) => {
 	return SubmissionWorkflow.findOne({
@@ -17,7 +20,7 @@ const getSubmissionWorkflow = (collectionId: string) => {
 	});
 };
 
-app.get('/dash/collection/:collectionSlug', (req, res) => {
+router.get('/dash/collection/:collectionSlug', (req, res) => {
 	const { collectionSlug } = req.params;
 	res.redirect(
 		queryString.stringifyUrl({
@@ -27,7 +30,7 @@ app.get('/dash/collection/:collectionSlug', (req, res) => {
 	);
 });
 
-app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
+router.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			next();

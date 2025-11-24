@@ -1,8 +1,9 @@
-import React from 'react';
-import { IButtonProps } from '@blueprintjs/core';
+import type { IButtonProps } from '@blueprintjs/core';
 
-import { MenuItem } from './MenuItem';
+import React from 'react';
+
 import { MenuButton } from './MenuButton';
+import { MenuItem } from './MenuItem';
 
 export type MenuSelectItem<Value> = {
 	value: Value;

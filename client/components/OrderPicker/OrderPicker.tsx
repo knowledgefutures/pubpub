@@ -1,13 +1,14 @@
 import React, { useRef, useState } from 'react';
-import classNames from 'classnames';
-import { Button, Spinner, InputGroup, Icon } from '@blueprintjs/core';
 
-import { DragDropOrdering } from 'components';
-import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { Button, Icon, InputGroup, Spinner } from '@blueprintjs/core';
+import classNames from 'classnames';
+
 import { useHotkeys } from 'client/utils/useHotkey';
+import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { DragDropOrdering } from 'components';
 import { generateHash } from 'utils/hashes';
 
-require('./orderPicker.scss');
+import './orderPicker.scss';
 
 type MinimalItem = { id: string };
 

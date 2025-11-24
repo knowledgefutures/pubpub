@@ -1,7 +1,8 @@
 import React from 'react';
+
 import IframeResizer from 'iframe-resizer-react';
 
-require('./adminDashboard.scss');
+import './adminDashboard.scss';
 
 type Props = {
 	impactData: any;
@@ -27,7 +28,6 @@ const AdminDashboard = (props: Props) => {
 					title="Analytics"
 					frameBorder="0"
 					onResized={({ iframe, height, width }) => {
-						/* eslint-disable-next-line no-param-reassign */
 						iframe.style.height = `${height - getOffset(width)}px`;
 					}}
 				/>

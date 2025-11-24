@@ -1,7 +1,7 @@
+import type { MediaUploadHandler } from '../../types';
+
 import { s3Upload } from 'client/utils/upload';
 import { getResizedUrl } from 'utils/images';
-
-import { MediaUploadHandler } from '../../types';
 
 export const defaultMediaUploadHandler: MediaUploadHandler = (file: File) => {
 	const id = Date.now().toString();

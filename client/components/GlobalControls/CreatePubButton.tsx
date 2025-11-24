@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
+import { usePageContext } from 'utils/hooks';
 
 import GlobalControlsButton from './GlobalControlsButton';
 

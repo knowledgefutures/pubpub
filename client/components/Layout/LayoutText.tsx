@@ -1,8 +1,9 @@
+import type { LayoutBlockText } from 'utils/layout';
+
 import React from 'react';
-import Editor from 'components/Editor';
 
 import { GridWrapper } from 'components';
-import { LayoutBlockText } from 'utils/layout';
+import Editor from 'components/Editor';
 
 type Props = {
 	content: LayoutBlockText['content'];

@@ -1,10 +1,11 @@
 import React from 'react';
-import Color from 'color';
+
 import classNames from 'classnames';
+import Color from 'color';
 
 import { usePageContext } from 'utils/hooks';
 
-require('./layoutSubmissionBannerSkeleton.scss');
+import './layoutSubmissionBannerSkeleton.scss';
 
 type Props = {
 	className?: string;

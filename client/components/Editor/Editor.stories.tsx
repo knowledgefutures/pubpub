@@ -1,5 +1,7 @@
-/* eslint-disable no-console */
+/* biome-ignore-all lint/suspicious/noConsole: fine in stories */
+
 import React, { useState } from 'react';
+
 import { storiesOf } from '@storybook/react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -15,8 +17,8 @@ import {
 	removeLocalHighlight,
 	setLocalHighlight,
 } from 'components/Editor/utils';
-import initialContent from 'utils/storybook/initialDocs/plainDoc';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
+import initialContent from 'utils/storybook/initialDocs/plainDoc';
 
 const editorWrapperStyle = {
 	border: '1px solid #CCC',
@@ -174,8 +176,7 @@ storiesOf('Editor', module)
 	})
 	.add('collaborative2', () => {
 		const Thing = () => {
-			/* eslint-disable-next-line */
-			const [changeObject, updatechangeObject] = useState({});
+			const [changeObject, _updatechangeObject] = useState({});
 			return (
 				<div style={editorWrapperStyle}>
 					<button

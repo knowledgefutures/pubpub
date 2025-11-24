@@ -1,6 +1,6 @@
 import { Community } from 'server/models';
-import { promptOkay } from '../utils/prompt';
 
+import { promptOkay } from '../utils/prompt';
 import { backfillItemsForCommunity } from './backfillCommunity';
 
 const {

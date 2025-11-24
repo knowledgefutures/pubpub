@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax */
+
 const { Node } = require('prosemirror-model');
 const stableStringify = require('json-stable-stringify');
 const editorSchema = require('./editorSchema');

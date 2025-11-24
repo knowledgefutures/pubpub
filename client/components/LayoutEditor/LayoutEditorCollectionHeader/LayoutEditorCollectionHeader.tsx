@@ -1,10 +1,13 @@
+import type { Collection } from 'types';
+import type { LayoutBlockCollectionHeader } from 'types/layout';
+
 import React, { useCallback } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
 import { Popover } from 'components';
 import { LayoutCollectionHeader } from 'components/Layout';
-import { Collection } from 'types';
-import { LayoutBlockCollectionHeader } from 'types/layout';
+
 import Metadata from './getMetaDataChecklist';
 import PreviewElements from './PreviewElements';
 

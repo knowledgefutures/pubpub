@@ -1,8 +1,8 @@
 import { License } from 'facets';
 
 import { createFacetKindEditor } from '../../createFacetKindEditor';
-import LicenseKindPicker from './LicenseKindPicker';
 import CopyrightSelectionPicker from './CopyrightSelectionPicker';
+import LicenseKindPicker from './LicenseKindPicker';
 
 export default createFacetKindEditor(License, {
 	propEditors: {

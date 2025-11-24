@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+
 import { storiesOf } from '@storybook/react';
 
-import { FormattingBar, buttons } from 'components/FormattingBar';
 import Editor from 'components/Editor';
+import { buttons, FormattingBar } from 'components/FormattingBar';
 import { fullDoc } from 'utils/storybook/data';
 
 type Props = {

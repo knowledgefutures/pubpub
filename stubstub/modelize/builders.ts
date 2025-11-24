@@ -1,8 +1,23 @@
-import uuid from 'uuid';
-import SHA3 from 'crypto-js/sha3';
-import encHex from 'crypto-js/enc-hex';
+import type { CreationAttributes } from 'sequelize';
 
+import type {
+	ActivityItem as ActivityItemType,
+	Collection as CollectionType,
+	DefinitelyHas,
+	FacetBinding as FacetBindingType,
+	Pub as PubType,
+	UserWithPrivateFields as UserType,
+} from 'types';
+
+import encHex from 'crypto-js/enc-hex';
+import SHA3 from 'crypto-js/sha3';
+import uuid from 'uuid';
+
+import { getEmptyDoc } from 'client/components/Editor';
+import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
+import { createCommunity } from 'server/community/queries';
+import { createDoc } from 'server/doc/queries';
 import {
 	ActivityItem,
 	Community,
@@ -13,21 +28,8 @@ import {
 	User,
 	UserSubscription,
 } from 'server/models';
-import { createPub } from 'server/pub/queries';
-import { createCollection } from 'server/collection/queries';
-import { createDoc } from 'server/doc/queries';
 import { createPage } from 'server/page/queries';
-import { createCommunity } from 'server/community/queries';
-import { getEmptyDoc } from 'client/components/Editor';
-import {
-	ActivityItem as ActivityItemType,
-	Collection as CollectionType,
-	UserWithPrivateFields as UserType,
-	Pub as PubType,
-	FacetBinding as FacetBindingType,
-	DefinitelyHas,
-} from 'types';
-import { CreationAttributes } from 'sequelize';
+import { createPub } from 'server/pub/queries';
 
 type WithOptionalBase<
 	T extends Record<string, any>,
@@ -112,7 +114,7 @@ export const builders = {
 					if (err || !user) {
 						return reject(err);
 					}
-					// eslint-disable-next-line no-param-reassign
+
 					user.sha3hashedPassword = sha3hashedPassword;
 					return resolve(user);
 				},

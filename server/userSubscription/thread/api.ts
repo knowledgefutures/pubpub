@@ -1,9 +1,14 @@
-import app, { wrap } from 'server/server';
+import type { UserSubscriptionStatus } from 'types';
+
+import { Router } from 'express';
+
 import { canUserSeeThread } from 'server/thread/queries';
 import { ForbiddenError } from 'server/utils/errors';
-import { UserSubscriptionStatus } from 'types';
+import { wrap } from 'server/wrap';
 
 import { setUserSubscriptionStatus } from '../shared/queries';
+
+export const router = Router();
 
 const unwrapRequest = (req: any) => {
 	return {
@@ -13,7 +18,7 @@ const unwrapRequest = (req: any) => {
 	};
 };
 
-app.put(
+router.put(
 	'/api/threads/subscriptions',
 	wrap(async (req, res) => {
 		const { threadId, userId, status } = unwrapRequest(req);

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import Color from 'color';
 import {
 	Collection as v5_Collection,

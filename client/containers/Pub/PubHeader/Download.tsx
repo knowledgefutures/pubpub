@@ -1,17 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
+/** biome-ignore-all lint/a11y/useAnchorContent: shhhhhh */
+import type { ExportFormat } from 'utils/export/formats';
+
+import React, { useCallback, useEffect, useState } from 'react';
+
 import { Button, Classes, Icon, Spinner, Tooltip } from '@blueprintjs/core';
 
-import { Menu, MenuItem } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
 import { pingTask } from 'client/utils/pingTask';
-import { usePageContext } from 'utils/hooks';
-import { ExportFormat } from 'utils/export/formats';
+import { Menu, MenuItem } from 'components/Menu';
 import { useAnalytics } from 'utils/analytics/useAnalytics';
+import { usePageContext } from 'utils/hooks';
 
 import { usePubHistory } from '../pubHooks';
 import { getFormattedDownload } from './headerUtils';
 
-require('./download.scss');
+import './download.scss';
 
 type Props = {
 	pubData: any;
@@ -60,7 +63,7 @@ const Download = (props: Props) => {
 			pubData.exports.find((ex) => ex.format === format && ex.historyKey >= latestKey),
 		[pubData.exports, latestKey],
 	);
-	// eslint-disable-next-line consistent-return
+
 	const handleStartDownload = (type) => {
 		track('download', {
 			communityId: communityData.id,
@@ -200,7 +203,6 @@ const Download = (props: Props) => {
 					const shouldRenderButton = downloadUrl && selectedType?.format === type.format;
 					return (
 						<MenuItem
-							// eslint-disable-next-line react/no-array-index-key
 							key={`${i}-${type.format}`}
 							dismissOnClick={false}
 							disabled={isLoading && selectedType?.format !== type.format}

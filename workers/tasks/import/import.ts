@@ -1,20 +1,20 @@
-/* eslint-disable no-restricted-syntax */
-import path from 'path';
+import type { BaseSourceFile, ImporterFlags, SourceFile } from 'utils/api/schemas/import';
+
+import { fromPandoc, parsePandocJson, setPandocApiVersion } from '@pubpub/prosemirror-pandoc';
 import { spawnSync } from 'child_process';
-import { parsePandocJson, fromPandoc, setPandocApiVersion } from '@pubpub/prosemirror-pandoc';
+import path from 'path';
 
-import { PandocFormat, extensionToPandocFormat } from 'utils/import/formats';
-import { BaseSourceFile, ImporterFlags, SourceFile } from 'utils/api/schemas/import';
+import { extensionToPandocFormat, type PandocFormat } from 'utils/import/formats';
 
-import { rules } from './rules';
-import { downloadAndConvertFiles } from './download';
 import { extractBibliographyItems } from './bibliography';
+import { downloadAndConvertFiles } from './download';
 import { uploadExtractedMedia } from './extractedMedia';
-import { extensionFor } from './util';
-import { runTransforms } from './transforms';
 import { getProposedMetadata, getRawMetadata } from './metadata';
-import { getTmpDirectoryPath } from './tmpDirectory';
 import { createTransformResources } from './resources';
+import { rules } from './rules';
+import { getTmpDirectoryPath } from './tmpDirectory';
+import { runTransforms } from './transforms';
+import { extensionFor } from './util';
 
 setPandocApiVersion([1, 22]);
 
@@ -97,7 +97,7 @@ const getPandocAst = ({
 		);
 		pandocError = pandocResult.error;
 		pandocRawAst = JSON.parse(pandocResult.output);
-	} catch (err) {
+	} catch (_err) {
 		throw new Error(
 			`Conversion from ${path.basename(documentPath)} failed. Pandoc says: ${pandocError}`,
 		);

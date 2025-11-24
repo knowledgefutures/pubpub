@@ -1,15 +1,17 @@
+import type { InitialNotificationsData, Maybe } from 'types';
+
+import type { NotificationsState } from './types';
+
 import React, { useMemo } from 'react';
 
 import { Popover } from 'components';
-import { InitialNotificationsData, Maybe } from 'types';
-
 import { usePageContext } from 'utils/hooks';
+
 import UserNotifications from './UserNotifications';
 import { useNotificationsState } from './useNotificationsState';
 import { UserNotificationsContext } from './userNotificationsContext';
-import { NotificationsState } from './types';
 
-require('./userNotifications.scss');
+import './userNotifications.scss';
 
 type ButtonRenderOptions = { hasUnreadNotifications: boolean };
 

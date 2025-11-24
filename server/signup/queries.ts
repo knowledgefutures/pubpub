@@ -1,8 +1,8 @@
-import { generateHash } from 'utils/hashes';
 import { Signup, User } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { sendSignupEmail } from 'server/utils/email';
 import { expect } from 'utils/assert';
+import { generateHash } from 'utils/hashes';
 
 export class DuplicateEmailError extends Error {}
 

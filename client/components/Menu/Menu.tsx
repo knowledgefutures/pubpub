@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react';
-import classNames from 'classnames';
+
 import { Classes } from '@blueprintjs/core';
+import classNames from 'classnames';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext, MenuConfigContext } from './menuContexts';
+import { MenuConfigContext, MenuContext } from './menuContexts';
 
 export type MenuProps = {
 	'aria-label'?: string;

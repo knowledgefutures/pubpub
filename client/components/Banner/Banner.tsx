@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
+
 import Color from 'color';
+
+import './banner.scss';
 
 type Props = {
 	bannerText: String;
 	accentColor: any;
 	right?: React.ReactNode;
 };
-
-require('./banner.scss');
 
 const Banner = (props: Props) => {
 	const { bannerText, accentColor, right } = props;

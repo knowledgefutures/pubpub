@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 const diff = require('diff');
 const chalk = require('chalk');
 const stableStringify = require('json-stable-stringify');

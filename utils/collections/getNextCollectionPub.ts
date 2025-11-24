@@ -1,6 +1,8 @@
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
+
 import { CollectionPub, Pub } from 'server/models';
-import * as types from 'types';
 
 /**
  * Retrieves the next CollectionPub in a collection based on the current rank

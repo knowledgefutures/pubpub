@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
+
 import classNames from 'classnames';
 import { Tab, TabList, useTabState } from 'reakit/Tab';
 
 import { Icon } from 'components';
 
 import {
-	SubmissionWorkflowConfigStep,
-	submissionWorkflowConfigSteps,
+	type SubmissionWorkflowConfigStep,
 	submissionWorkflowConfigStepLabels,
+	submissionWorkflowConfigSteps,
 } from './types';
 
-require('./submissionWorkflowStepPicker.scss');
+import './submissionWorkflowStepPicker.scss';
 
 type Props = {
 	selectedStep: SubmissionWorkflowConfigStep;

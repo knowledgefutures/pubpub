@@ -1,10 +1,10 @@
+import type { Pub } from 'server/models';
+import type * as types from 'types';
+import type { getProposedMetadata } from 'workers/tasks/import/metadata';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import * as types from 'types';
 import { z } from 'zod';
 
-import { Pub } from 'server/models';
-
-import { getProposedMetadata } from 'workers/tasks/import/metadata';
 import { baseSchema } from '../utils/baseSchema';
 import { collectionSchema } from './collection';
 import { collectionAttributionSchema } from './collectionAttribution';
@@ -162,16 +162,18 @@ export const getManyQuerySchema = z.object({
 	pubOptions: z.object({
 		isAuth: z.boolean().optional(),
 		isPreview: z.boolean().optional(),
-		getCollections: z.union([
-			z.boolean(),
-			z.object({
-				collection: z.object({
-					page: z.boolean().optional(),
-					members: z.boolean().optional(),
-					attributions: z.boolean().optional(),
+		getCollections: z
+			.union([
+				z.boolean(),
+				z.object({
+					collection: z.object({
+						page: z.boolean().optional(),
+						members: z.boolean().optional(),
+						attributions: z.boolean().optional(),
+					}),
 				}),
-			}),
-		]),
+			])
+			.optional(),
 		getMembers: z.boolean().optional(),
 		getCommunity: z.boolean().optional(),
 		getExports: z.boolean().optional(),

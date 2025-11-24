@@ -1,7 +1,11 @@
-import app, { wrap } from 'server/server';
-import { sendServicesInquiryEmail } from 'server/utils/email/communityServices';
+import { Router } from 'express';
 
-app.post(
+import { sendServicesInquiryEmail } from 'server/utils/email/communityServices';
+import { wrap } from 'server/wrap';
+
+export const router = Router();
+
+router.post(
 	'/api/communityServices',
 	wrap(async (req, res) => {
 		sendServicesInquiryEmail(req.body);

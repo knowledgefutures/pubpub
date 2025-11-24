@@ -1,26 +1,29 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useUpdate, useUpdateEffect } from 'react-use';
+import type { Pub } from 'types';
 
-import { Pub } from 'types';
-import { usePageContext } from 'utils/hooks';
-import { indexByProperty } from 'utils/arrays';
-import { apiFetch } from 'client/utils/apiFetch';
-import { useLazyRef } from 'client/utils/useLazyRef';
-
-import {
-	getStartLoadingPubsState,
-	getFinishedLoadingPubsState,
-	initialQueryState,
-	getInitialPubsState,
-} from './state';
-import {
+import type {
 	KeyedPubsQuery,
-	ManyPubsQuery,
 	ManyPubsApiResult,
 	ManyPubsOptions,
-	QueryState,
+	ManyPubsQuery,
 	ManyPubsReturnValues,
+	QueryState,
 } from './types';
+
+import { useCallback, useEffect, useState } from 'react';
+
+import { useUpdate, useUpdateEffect } from 'react-use';
+
+import { apiFetch } from 'client/utils/apiFetch';
+import { useLazyRef } from 'client/utils/useLazyRef';
+import { indexByProperty } from 'utils/arrays';
+import { usePageContext } from 'utils/hooks';
+
+import {
+	getFinishedLoadingPubsState,
+	getInitialPubsState,
+	getStartLoadingPubsState,
+	initialQueryState,
+} from './state';
 
 const defaultOrdering = { field: 'creationDate', direction: 'DESC' } as const;
 
@@ -143,7 +146,6 @@ export const useManyPubs = <P extends Pub = Pub>(
 		if (isEager && queryState.offset === 0) {
 			loadMorePubs();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEager, queryKey]);
 
 	const currentQueryState = getCurrentQueryState();

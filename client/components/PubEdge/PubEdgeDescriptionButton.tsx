@@ -1,6 +1,6 @@
 import React from 'react';
 
-require('./pubEdgeDescriptionButton.scss');
+import './pubEdgeDescriptionButton.scss';
 
 export type PubEdgeDescriptionButtonProps = {
 	open: boolean;

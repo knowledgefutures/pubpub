@@ -1,9 +1,10 @@
-import {
-	FeatureFlag as FeatureFlagModel,
+import type {
 	FeatureFlagCommunity as FeatureFlagCommunityModel,
+	FeatureFlag as FeatureFlagModel,
 	FeatureFlagUser as FeatureFlagUserModel,
 } from 'server/models';
-import { SerializedModel } from './serializedModel';
+
+import type { SerializedModel } from './serializedModel';
 
 export type FeatureFlagOverrideState = 'inert' | 'off' | 'on';
 

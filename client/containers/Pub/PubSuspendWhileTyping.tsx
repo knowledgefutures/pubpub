@@ -2,7 +2,7 @@
  * Used to defer the rendering of expensive components while user is typing into a pub. This reduces
  * the amount of paint time after a keypress, which lends to a more responsive editing experience :)
  */
-import React, { useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 type PubSuspendWhileTypingContextType = {
 	markLastInput: () => unknown;
@@ -53,7 +53,7 @@ export const usePubSuspendWhileTyping = <T extends any>(value: T, delay = 1000):
 	const setForceUpdate = useState<null | number>(null)[1];
 	const timeRemainingToUpdate = getTimeRemainingToUpdate(delay, Date.now());
 	const shouldUpdate = timeRemainingToUpdate === 0;
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+
 	const memoizedValue = useMemo(() => value, [shouldUpdate]);
 
 	const maybeClearTimeout = useCallback(() => {

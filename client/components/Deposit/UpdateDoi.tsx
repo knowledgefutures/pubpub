@@ -1,5 +1,7 @@
-import { Button, FormGroup, InputGroup, Intent } from '@blueprintjs/core';
 import React from 'react';
+
+import { Button, FormGroup, InputGroup, Intent } from '@blueprintjs/core';
+
 import { isDoi } from 'utils/crossref/parseDoi';
 import './updateDoi.scss';
 

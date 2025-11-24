@@ -1,19 +1,21 @@
+import type { Collection } from 'types';
+
 import React, { useMemo, useRef, useState } from 'react';
+
 import classNames from 'classnames';
 import Color from 'color';
 
-import { Collection } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
-import { useSticky, isSticky } from 'client/utils/useSticky';
+import { isSticky, useSticky } from 'client/utils/useSticky';
 import { usePageContext } from 'utils/hooks';
 
 import CollectionOverviewRow from './CollectionOverviewRow';
+import LoadMorePubsRow from './LoadMorePubsRow';
 import OverviewRows from './OverviewRows';
 import PubOverviewRow from './PubOverviewRow';
-import LoadMorePubsRow from './LoadMorePubsRow';
 import SpecialRow from './SpecialRow';
 
-require('./expandableCollectionOverviewRow.scss');
+import './expandableCollectionOverviewRow.scss';
 
 type Props = {
 	collection: Collection;

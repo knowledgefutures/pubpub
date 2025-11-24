@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
 	Button,
 	Checkbox,
@@ -9,18 +10,18 @@ import {
 	Position,
 } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
+import {
+	createSocialNavItems,
+	defaultFooterLinks,
+	getNavItemsForCommunityNavigation,
+	type SocialItem,
+} from 'client/utils/navigation';
 import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
-import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
-import {
-	defaultFooterLinks,
-	createSocialNavItems,
-	getNavItemsForCommunityNavigation,
-	SocialItem,
-} from 'client/utils/navigation';
 
-require('./footer.scss');
+import './footer.scss';
 
 type OwnProps = {
 	previewContext?: any;

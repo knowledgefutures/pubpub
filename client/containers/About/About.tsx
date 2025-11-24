@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { GridWrapper } from 'components';
 
-require('./about.scss');
+import './about.scss';
 
 const About = function () {
 	return (

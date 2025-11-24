@@ -1,5 +1,5 @@
-import { modelize, setup, teardown } from 'stubstub';
 import { isUserAffiliatedWithCommunity } from 'server/community/queries';
+import { modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community theCommunity {

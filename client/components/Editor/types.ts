@@ -1,13 +1,13 @@
-import { Node, Schema } from 'prosemirror-model';
-import { Plugin, EditorState, Transaction } from 'prosemirror-state';
-import firebase from 'firebase';
+import type firebase from 'firebase';
+import type { Node, Schema } from 'prosemirror-model';
+import type { EditorState, Plugin, Transaction } from 'prosemirror-state';
 
-import { DiscussionAnchor } from 'types';
-import { NoteManager } from 'client/utils/notes';
-import SuggestionManager from 'client/utils/suggestions/suggestionManager';
+import type { NoteManager } from 'client/utils/notes';
+import type SuggestionManager from 'client/utils/suggestions/suggestionManager';
+import type { DiscussionAnchor } from 'types';
 
-import { getChangeObject } from './plugins/onChange';
-import { NodeReference } from './utils';
+import type { getChangeObject } from './plugins/onChange';
+import type { NodeReference } from './utils';
 
 export enum ReferenceableNodeType {
 	Image = 'image',

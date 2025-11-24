@@ -1,7 +1,8 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
-require('./dashboardRowListing.scss');
+import './dashboardRowListing.scss';
 
 type OwnProps = {
 	children: React.ReactNode;

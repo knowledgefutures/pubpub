@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+
 import { MenuConfigContext } from './menuContexts';
 
 type Props = {

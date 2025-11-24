@@ -1,7 +1,10 @@
+import type { UserWithPrivateFields } from 'types';
+
 import { Op } from 'sequelize';
-import { Community, Member, includeUserModel } from 'server/models';
+
+import { Community, includeUserModel, Member } from 'server/models';
 import { ForbiddenError } from 'server/utils/errors';
-import { type UserWithPrivateFields } from 'types';
+
 import { expect } from './assert';
 
 /**

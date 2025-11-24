@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Pub } from 'server/models';
 
 module.exports = async () => {

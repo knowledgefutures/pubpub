@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { CommunityPreview } from 'components';
 
-require('./explore.scss');
+import './explore.scss';
 
 type Props = {
 	exploreData: any;

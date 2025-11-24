@@ -1,21 +1,25 @@
+import type { EditorView } from 'prosemirror-view';
+
+import type { EditorChangeObject } from 'components/Editor';
+
+import type { ControlsConfiguration, FormattingBarButtonData } from './types';
+
 import React, { useEffect, useRef } from 'react';
+
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
-import { EditorView } from 'prosemirror-view';
 
-import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
-import { EditorChangeObject } from 'components/Editor';
+import { usePageContext } from 'utils/hooks';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarControlsContainer from './FormattingBarControlsContainer';
-import { FormattingBarButtonData, ControlsConfiguration } from './types';
-import { getButtonPopoverComponent } from './utils';
+import { type ButtonState, useControlsState } from './hooks/useControlsState';
 import { usePendingAttrs } from './hooks/usePendingAttrs';
-import { useControlsState, ButtonState } from './hooks/useControlsState';
+import { getButtonPopoverComponent } from './utils';
 
-require('./formattingBar.scss');
+import './formattingBar.scss';
 
 type Props = {
 	editorChangeObject: EditorChangeObject;
@@ -50,7 +54,7 @@ const FormattingBar = (props: Props) => {
 		? props.buttons
 		: props.buttons.map((arr) => {
 				return arr.filter((button) => !button.key.startsWith('suggested-edits'));
-		  });
+			});
 	const buttonElementRefs = useRefMap();
 	const wrapperRef = useRef<null | HTMLDivElement>(null);
 	const toolbar = useToolbarState({ loop: true });
@@ -82,7 +86,6 @@ const FormattingBar = (props: Props) => {
 				buttonElement.parentNode.scrollLeft = buttonElement.offsetLeft - paddingPx;
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openedButton]);
 
 	const renderButtonState = (buttonState: ButtonState) => {

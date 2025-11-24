@@ -1,19 +1,19 @@
 // the lezer parsers that @codemirror depends on
+
+import type { Parsers } from './types';
+
+// the  few we need from codemirror
+import { sql } from '@codemirror/lang-sql';
 import { parser as cppParser } from '@lezer/cpp';
 import { parser as cssParser } from '@lezer/css';
 import { parser as htmlParser } from '@lezer/html';
-import { parser as xmlParser } from '@lezer/xml';
-import { parser as javascriptParser } from '@lezer/javascript';
 import { parser as javaParser } from '@lezer/java';
+import { parser as javascriptParser } from '@lezer/javascript';
 import { parser as jsonParser } from '@lezer/json';
 import { parser as markdownParser } from '@lezer/markdown';
 import { parser as pythonParser } from '@lezer/python';
 import { parser as rustParser } from '@lezer/rust';
-
-// the  few we need from codemirror
-import { sql } from '@codemirror/lang-sql';
-
-import { Parsers } from './types';
+import { parser as xmlParser } from '@lezer/xml';
 
 const parsers: Parsers = {
 	cpp: cppParser,

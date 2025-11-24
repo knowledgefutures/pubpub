@@ -1,7 +1,8 @@
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
-import { GetManyCollectionQuery, collectionSchema } from 'utils/api/schemas/collection';
-import { createCollection } from '../queries';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
+import { collectionSchema, type GetManyCollectionQuery } from 'utils/api/schemas/collection';
+
 import { Collection } from '../../models';
+import { createCollection } from '../queries';
 
 const models = modelize`
 	Community community {

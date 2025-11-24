@@ -1,4 +1,4 @@
-import { setup, modelize, teardown } from 'stubstub';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { fetchFacetsForScope, fetchFacetsForScopeIds } from '..';
 

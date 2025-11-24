@@ -1,5 +1,6 @@
+import type { DOMOutputSpec } from 'prosemirror-model';
+
 import { Classes } from '@blueprintjs/core';
-import { DOMOutputSpec } from 'prosemirror-model';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
 

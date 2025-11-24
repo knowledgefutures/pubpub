@@ -1,10 +1,12 @@
-import type { Global } from '@jest/types';
-import { finishDeferredTasks } from 'server/utils/deferred';
-import { clearUserToAgentMap } from './userToAgentMap';
+import type { beforeAll } from 'vitest';
+
+import { vi } from 'vitest';
+
 import { sequelize } from '../server/sequelize';
+import { clearUserToAgentMap } from './userToAgentMap';
 
 export const setup = (
-	beforeFn: Global.HookBase,
+	beforeFn: typeof beforeAll,
 	actionsFn?: (() => any) | (() => Promise<any>),
 ) => {
 	if (beforeFn.toString().startsWith('after')) {
@@ -22,7 +24,7 @@ export const setup = (
 };
 
 export const teardown = (
-	afterFn: Global.HookBase,
+	afterFn: typeof beforeAll,
 	actionsFn?: (() => any) | (() => Promise<any>),
 ) => {
 	if (afterFn.toString().startsWith('before')) {
@@ -35,9 +37,8 @@ export const teardown = (
 		if (actionsFn) {
 			await actionsFn();
 		}
+		vi.clearAllMocks();
 		clearUserToAgentMap();
 		await sequelize.close();
-		await finishDeferredTasks();
-		// global.gc?.();
 	});
 };

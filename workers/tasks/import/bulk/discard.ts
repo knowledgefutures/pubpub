@@ -1,6 +1,6 @@
-import { Pub, Community, Collection } from 'server/models';
+import { Collection, Community, Pub } from 'server/models';
 
-import { printImportPlan, getCreatedItemsFromPlan } from './plan';
+import { getCreatedItemsFromPlan, printImportPlan } from './plan';
 import { promptOkay } from './prompt';
 
 export const discardBulkImportPlan = async ({ plan, yes, dryRun }) => {

@@ -1,13 +1,14 @@
-import React from 'react';
+import type { FacetDefinition } from 'facets';
 
-import { FacetDefinition } from 'facets';
-
-import GenericFacetEditor from './GenericFacetEditor';
-import {
+import type {
 	FacetEditorComponent,
 	FacetEditorCreationOptions,
 	SpecificFacetEditorProps,
 } from './types';
+
+import React from 'react';
+
+import GenericFacetEditor from './GenericFacetEditor';
 
 export function createFacetKindEditor<Def extends FacetDefinition>(
 	facetDefinition: Def,

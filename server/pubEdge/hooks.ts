@@ -1,6 +1,6 @@
+import { createPubEdgeActivityItem } from 'server/activityItem/queries';
 import { PubEdge } from 'server/models';
 import { createActivityHooks } from 'server/utils/activityHooks';
-import { createPubEdgeActivityItem } from 'server/activityItem/queries';
 
 createActivityHooks({
 	Model: PubEdge,

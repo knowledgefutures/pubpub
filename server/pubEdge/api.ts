@@ -2,13 +2,14 @@ import { initServer } from '@ts-rest/express';
 
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
-import { createPubEdge, updatePubEdge, destroyPubEdge, getPubEdgeById } from './queries';
+
 import {
-	canCreatePubEdge,
-	canUpdateOrDestroyPubEdge,
 	canApprovePubEdge,
 	canApprovePubEdgeWithTargetPubId,
+	canCreatePubEdge,
+	canUpdateOrDestroyPubEdge,
 } from './permissions';
+import { createPubEdge, destroyPubEdge, getPubEdgeById, updatePubEdge } from './queries';
 
 const s = initServer();
 

@@ -1,24 +1,25 @@
+import type {
+	PubCreatedActivityItem,
+	PubDiscussionCommentAddedActivityItem,
+	PubEdgeCreatedActivityItem,
+	PubEdgeRemovedActivityItem,
+	PubReleasedActivityItem,
+	PubRemovedActivityItem,
+	PubReviewCommentAddedActivityItem,
+	PubReviewCreatedActivityItem,
+	PubReviewUpdatedActivityItem,
+	PubUpdatedActivityItem,
+} from 'types';
+
 import React from 'react';
 
 import {
-	PubCreatedActivityItem,
-	PubUpdatedActivityItem,
-	PubRemovedActivityItem,
-	PubReleasedActivityItem,
-	PubEdgeCreatedActivityItem,
-	PubEdgeRemovedActivityItem,
-	PubDiscussionCommentAddedActivityItem,
-	PubReviewCreatedActivityItem,
-	PubReviewCommentAddedActivityItem,
-	PubReviewUpdatedActivityItem,
-} from 'types';
-import {
-	pubTitle,
-	pubEdgeTitle,
+	discussionTitle,
 	pubEdgeTargetTitle,
+	pubEdgeTitle,
+	pubTitle,
 	releaseTitle,
 	reviewTitle,
-	discussionTitle,
 } from 'utils/activity/titles';
 
 import { itemRenderer } from './itemRenderer';

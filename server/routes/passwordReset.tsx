@@ -1,13 +1,16 @@
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
 import { User } from 'server/models';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
-app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
+export const router = Router();
+
+router.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
 	const findUser = User.findOne({
 		where: { slug: req.params.slug ?? null },
 	});

@@ -1,21 +1,22 @@
 import React, { useRef, useState } from 'react';
+
 import classNames from 'classnames';
 
-import { GridWrapper, PubHeaderBackground, ClientOnly } from 'components';
-import { usePageContext } from 'utils/hooks';
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
-import { useFacetsQuery } from 'client/utils/useFacets';
+import { ClientOnly, GridWrapper, PubHeaderBackground } from 'components';
+import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../pubHooks';
 import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';
 import PubHeaderContent from './PubHeaderContent';
-import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
 import ReviewHeaderSticky from './ReviewHeaderSticky';
+import SmallHeaderButton from './SmallHeaderButton';
 
-require('./pubHeader.scss');
+import './pubHeader.scss';
 
 type Props = {
 	sticky?: boolean;

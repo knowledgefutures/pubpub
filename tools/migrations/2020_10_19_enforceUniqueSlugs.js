@@ -4,7 +4,7 @@ import { findAcceptableSlug } from 'server/utils/slugs';
 const updateSlugForCollection = async (collectionModel) => {
 	const { communityId, slug } = collectionModel;
 	const newSlug = await findAcceptableSlug(`${slug}-collection`, communityId);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(`${slug} -> ${newSlug}`);
 	collectionModel.slug = newSlug;
 	await collectionModel.save();

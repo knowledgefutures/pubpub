@@ -1,21 +1,23 @@
+import type { Collection, Pub } from 'types';
+
 import React, { useMemo, useState } from 'react';
+
 import { NonIdealState } from '@blueprintjs/core';
 
-import { Collection, Pub } from 'types';
-import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
-import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { useManyPubs } from 'client/utils/useManyPubs';
+import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
 
+import { KindToggle, OverviewSearchGroup, type PubsOverviewSearchFilter } from '../helpers';
 import {
-	PubOverviewRow,
 	ExpandableCollectionOverviewRow,
-	OverviewRows,
 	LoadMorePubsRow,
+	OverviewRows,
+	PubOverviewRow,
 	SpecialRow,
 } from '../overviewRows';
-import { KindToggle, PubsOverviewSearchFilter, OverviewSearchGroup } from '../helpers';
 
-require('./communityItems.scss');
+import './communityItems.scss';
 
 type Props = {
 	collections: Collection[];

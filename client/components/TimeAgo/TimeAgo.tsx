@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import ReactTimeAgo from 'react-timeago';
+
 import classNames from 'classnames';
+import ReactTimeAgo from 'react-timeago';
 
 import { formatDate, timeAgoBaseProps } from 'utils/dates';
 

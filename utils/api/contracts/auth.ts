@@ -1,6 +1,7 @@
-import { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+import type { AppRouter } from '@ts-rest/core';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 

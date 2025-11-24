@@ -1,5 +1,6 @@
-import { Node } from 'prosemirror-model';
-import { useState, useDocumentState, useEffect } from '@pubpub/prosemirror-reactive';
+import type { Node } from 'prosemirror-model';
+
+import { useDocumentState, useEffect, useState } from '@pubpub/prosemirror-reactive';
 
 export const structuredCitation = (structuredAttr: string) => {
 	return (node: Node) => {

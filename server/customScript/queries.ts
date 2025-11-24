@@ -1,6 +1,7 @@
+import type { CustomScripts, CustomScriptType } from 'types';
+
 import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { CustomScript } from 'server/models';
-import { CustomScriptType, CustomScripts } from 'types';
 
 export const setCustomScriptForCommunity = async (
 	communityId: string,

@@ -1,11 +1,11 @@
-import { ForbiddenError } from 'server/utils/errors';
-
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-
-import { createGetRequestIds } from 'utils/getRequestIds';
 import { initServer } from '@ts-rest/express';
+import { z } from 'zod';
+
+import { ForbiddenError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
+import { createGetRequestIds } from 'utils/getRequestIds';
+
 import {
 	canCreateCollectionPub,
 	canDestroyCollectionPub,
@@ -13,9 +13,9 @@ import {
 } from './permissions';
 import {
 	createCollectionPub,
-	updateCollectionPub,
 	destroyCollectionPub,
 	getPubsInCollection,
+	updateCollectionPub,
 } from './queries';
 
 extendZodWithOpenApi(z);

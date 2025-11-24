@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Collection, Page } from 'server/models';
 
 import { forEachInstance } from '../util';

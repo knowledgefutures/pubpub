@@ -1,4 +1,4 @@
-import { FacetDefinition, FacetInstance } from 'facets/core';
+import type { FacetDefinition, FacetInstance } from 'facets/core';
 
 export type FacetBinding = {
 	communityId: null | string;

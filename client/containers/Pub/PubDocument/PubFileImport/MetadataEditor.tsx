@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import classNames from 'classnames';
-import { Button, Checkbox, InputGroup, TextArea } from '@blueprintjs/core';
+import React, { useEffect, useState } from 'react';
 
+import { Button, Checkbox, InputGroup, TextArea } from '@blueprintjs/core';
+import classNames from 'classnames';
+
+import { apiFetch } from 'client/utils/apiFetch';
 import { Avatar } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
-import { usePageContext } from 'utils/hooks';
 import { profileUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 import { getPartsOfFullName } from 'utils/names';
-import { apiFetch } from 'client/utils/apiFetch';
 
 import { usePubContext } from '../../pubHooks';
 
-require('./metadataEditor.scss');
+import './metadataEditor.scss';
 
 type Attribution = {
 	name?: string;
@@ -195,7 +196,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 		onSetMetadataUpdater(
 			() => () => Promise.all([persistUpdatedPubData(), persistPubAttributions()]),
 		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ignoredFields, metadata]);
 
 	const handleUpdateAttribution = (attrIndex, nextValue) => {
@@ -250,8 +250,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 					<h6>Attributions</h6>
 					{attributions.map((attr, index) => (
 						<ProposedAttribution
-							// eslint-disable-next-line react/no-array-index-key
-							key={index}
+							key={`${attr.name}-${index}`}
 							attribution={attr}
 							onUpdateAttribution={(value) => handleUpdateAttribution(index, value)}
 						/>

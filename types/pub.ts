@@ -1,22 +1,23 @@
 import type {
-	Pub as PubModel,
-	Draft as DraftModel,
-	Doc as DocModel,
-	Release as ReleaseModel,
-	PubVersion as PubVersionModel,
 	CrossrefDepositRecord,
+	Doc as DocModel,
+	Draft as DraftModel,
+	Pub as PubModel,
+	PubVersion as PubVersionModel,
+	Release as ReleaseModel,
 } from 'server/models';
-import { SerializedModel } from './serializedModel';
-import { PubAttribution } from './attribution';
-import { Collection, CollectionPub } from './collection';
-import { Discussion } from './discussion';
-import { DocJson } from './doc';
-import { Member } from './member';
-import { Submission, SubmissionStatus } from './submission';
-import { ThreadComment, Thread } from './thread';
-import { DefinitelyHas, Maybe } from './util';
-import { UserSubscription } from './userSubscription';
-import { PubGetOptions, PubsQuery } from './pubQuery';
+
+import type { PubAttribution } from './attribution';
+import type { Collection, CollectionPub } from './collection';
+import type { Discussion } from './discussion';
+import type { DocJson } from './doc';
+import type { Member } from './member';
+import type { PubGetOptions, PubsQuery } from './pubQuery';
+import type { SerializedModel } from './serializedModel';
+import type { Submission, SubmissionStatus } from './submission';
+import type { Thread, ThreadComment } from './thread';
+import type { UserSubscription } from './userSubscription';
+import type { DefinitelyHas, Maybe } from './util';
 
 export type Draft = SerializedModel<DraftModel>;
 export type Doc = SerializedModel<DocModel>;

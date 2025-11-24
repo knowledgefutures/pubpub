@@ -1,4 +1,4 @@
-import { IconName } from '../components/Icon/Icon';
+import type { IconName } from '../components/Icon/Icon';
 
 export type PubPubIconName =
 	| 'overview'

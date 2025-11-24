@@ -1,17 +1,22 @@
+import type { Collection, DepositTarget, InitialCommunityData, Pub } from 'types';
+
+import React, { useEffect, useState } from 'react';
+
 import { Callout } from '@blueprintjs/core';
+
 import Doi from 'client/containers/DashboardSettings/PubSettings/Doi';
 import { apiFetch } from 'client/utils/apiFetch';
 import {
 	getFirstIntraWorkRelationship,
-	Resource,
+	type Resource,
 	resourceKindToProperNoun,
 } from 'deposit/resource';
-import React, { useEffect, useState } from 'react';
-import { Collection, DepositTarget, InitialCommunityData, Pub } from 'types';
 import { assert, exists } from 'utils/assert';
 import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
+
 import DataciteDeposit from './DataciteDeposit';
 import './deposit.scss';
+
 import { UpdateDoi } from './UpdateDoi';
 
 type PubProps = {
@@ -132,13 +137,9 @@ export default function Deposit(props: Props) {
 		setJustSetDoi(true);
 	};
 
-	useEffect(
-		() => {
-			fetchResource();
-		},
-		/* eslint-disable-next-line react-hooks/exhaustive-deps */
-		[],
-	);
+	useEffect(() => {
+		fetchResource();
+	}, []);
 
 	const firstIntraWorkRelationship = resource && getFirstIntraWorkRelationship(resource);
 	const disabledDueToNoReleases = 'pub' in props && props.pub.releases?.length === 0;

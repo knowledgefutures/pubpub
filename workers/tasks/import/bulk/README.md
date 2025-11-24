@@ -42,25 +42,25 @@ It's okay to gloss over this. A full list of possible values to provide here is 
 Bulk import of Pubs is accomplished using a command-line tool whose contents live in this directory. It is invoked as a two-step process. The first step is as follows:
 
 ```
-npm run tools bulkimport -- --directory /path/to/target --actor=pubpub-user-slug --receipt /path/to/receipt
+pnpm run tools bulkimport -- --directory /path/to/target --actor=pubpub-user-slug --receipt /path/to/receipt
 ```
 
 where:
 
--   `--directory` is a folder full of documents that can be turned into Pubs.
--   `--actor` is a slug of a PubPub user taking these actions.
--   `--receipt` is a path to write a record of what was imported.
+- `--directory` is a folder full of documents that can be turned into Pubs.
+- `--actor` is a slug of a PubPub user taking these actions.
+- `--receipt` is a path to write a record of what was imported.
 
 these arguments are optional:
 
--   `--community` is the subdomain of a community to target (used in lieu of a directive).
--   `--dry-run` to print a description of what will be imported, without doing it.
--   `--yes` to skip all confirmation prompts.
+- `--community` is the subdomain of a community to target (used in lieu of a directive).
+- `--dry-run` to print a description of what will be imported, without doing it.
+- `--yes` to skip all confirmation prompts.
 
 Any Communities, Collections, and Pubs created will be immediately visible online, though Collections will be private and Pubs will remain unreleased. A record of what was created will be stored in the `receipt` file, which will be referenced later when publishing or discarding changes. If you're happy with the way things look on PubPub, you can take the second step of publishing these changes — creating a Release for newly created Pubs, and making Collections public — as follows:
 
 ```
-npm run tools bulkimport -- --actor=pubpub-user-slug --receipt /path/to/receipt --publish
+pnpm run tools bulkimport -- --actor=pubpub-user-slug --receipt /path/to/receipt --publish
 ```
 
 You can choose whether to create Pub exports (which you may not want during testing) using the `--create-exports` flag, which defaults to `true`.
@@ -68,7 +68,7 @@ You can choose whether to create Pub exports (which you may not want during test
 If you want to discard all _created_ objects (preserving those that were targeted by directives but not created by them), then run:
 
 ```
-npm run tools bulkimport -- --actor=pubpub-user-slug --receipt /path/to/receipt --discard
+pnpm run tools bulkimport -- --actor=pubpub-user-slug --receipt /path/to/receipt --discard
 ```
 
 By default, all of these commands will interface with the development (`duqduq`) instance. When you're ready to write things to prod, prepend all of these commands with `PUBPUB_PRODUCTION=true`.
@@ -197,10 +197,10 @@ children:
 
 The keys of `children` can be paths to files or folders, including a simple wildcard syntax in which:
 
--   `*.ext` will match any `.ext` file
--   `foo.*` will match any file named `foo` (minus the extension)
--   `*` will match any directory
--   `*.*` will match any file (you usually don't want this one)
+- `*.ext` will match any `.ext` file
+- `foo.*` will match any file named `foo` (minus the extension)
+- `*` will match any directory
+- `*.*` will match any file (you usually don't want this one)
 
 It is of course possible to nest several layers of directives within a single file by nesting `children`. The importer doesn't support nested collection directives, though — every Pub is expected to be the child of at most one.
 
@@ -587,11 +587,11 @@ This will infer collection titles from directory names, which you will probably 
 
 You may want to specify a Collectin and a Community at the root of the import, which is a little difficult because each `.pubpub.yaml` file contains one directive, and the child directives must match subdirectories. Here, you can:
 
--   Create two sibling directive files, e.g. `community.pubpub.yaml` and `collection.pubpub.yaml`, and they will be resolved in the appropriate order.
+- Create two sibling directive files, e.g. `community.pubpub.yaml` and `collection.pubpub.yaml`, and they will be resolved in the appropriate order.
 
--   Nest the entire import in a new dummy directory with the Community directive
+- Nest the entire import in a new dummy directory with the Community directive
 
--   Target an existing Community with the CLI's `--community` argument instead.
+- Target an existing Community with the CLI's `--community` argument instead.
 
 ## Referencing source files in a shared resource directory
 
@@ -814,10 +814,10 @@ The first macro will cause the importer to match `\sepfootnotecontent{F-25}{priv
 
 The second macro will cause `\sepfootnote{F-25}` to be resolved in the following way:
 
--   The string `"\\footnote{${$1}}"` is the replacement value.
+- The string `"\\footnote{${$1}}"` is the replacement value.
 
--   `$1` is a positional argument from the `\sepfootnote{}` match and `$1 = F-25`. Now we have `"\\footnote{${F-25}}"`.
+- `$1` is a positional argument from the `\sepfootnote{}` match and `$1 = F-25`. Now we have `"\\footnote{${F-25}}"`.
 
--   `${F-25}` tells the importer to look up the stored value for `F-25`, which is `'private correspondence'`.
+- `${F-25}` tells the importer to look up the stored value for `F-25`, which is `'private correspondence'`.
 
--   The string is resolved to `\footnote{private correspondence}`, which is a command that Pandoc understands.
+- The string is resolved to `\footnote{private correspondence}`, which is a command that Pandoc understands.

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const discussionSchema = require('./simpleDiscussionSchema').default;
@@ -18,7 +18,7 @@ const firebaseApp =
 					databaseURL: process.env.V6_FIREBASE_URL,
 				},
 				'firebase-pub-new',
-		  );
+			);
 const database = firebaseApp.database();
 
 const main = async () => {

@@ -1,6 +1,7 @@
+import type { UserSubscription, UserSubscriptionStatus, UserSubscriptionTarget } from 'types';
+
 import { useState } from 'react';
 
-import { UserSubscription, UserSubscriptionStatus, UserSubscriptionTarget } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 
 export type SubscriptionStateOptions = {

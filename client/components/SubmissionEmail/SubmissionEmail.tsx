@@ -1,7 +1,8 @@
+import type { Community } from 'server/models';
+import type * as types from 'types';
+
 import React from 'react';
 
-import * as types from 'types';
-import type { Community } from 'server/models';
 import { communityUrl } from 'utils/canonicalUrls';
 
 type Props = {

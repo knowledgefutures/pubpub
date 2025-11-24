@@ -1,28 +1,52 @@
+import { vi } from 'vitest';
+
 import { createPubEdge } from 'server/pubEdge/queries';
 import { finishDeferredTasks } from 'server/utils/deferred';
 import { login, modelize, setup, teardown } from 'stubstub';
 import { setEnvironment } from 'utils/environment';
+
 import { getCorrectHostname } from '../getCorrectHostname';
 import { getPPLic } from '../getHashedUserId';
 
+const superAdminConfig = {
+	id: crypto.randomUUID(),
+	name: 'Super Admin',
+	slug: `${crypto.randomUUID()}-super-admin`,
+	isSuperAdmin: true,
+};
+
+const testCommunitySubdomain = `${crypto.randomUUID()}-test`;
+const communityTestPubSlug = `${crypto.randomUUID()}-test-pub`;
+
+const connectionCommunitySubdomain = `${crypto.randomUUID()}-connection`;
+
+const fakeCommunitySubdomain = `${crypto.randomUUID()}-fake`;
+const fakeCommunityDomain = `${fakeCommunitySubdomain}.fake.com`;
+const collectionAttributionCommunitySubdomain = `${crypto.randomUUID()}-collection`;
+const communityMemberCommunityDomain = `${crypto.randomUUID()}-member.com`;
+const pubMemberCommunityDomain = `${crypto.randomUUID()}-pub.com`;
+const collectionMemberCommunityDomain = `${crypto.randomUUID()}-collection.com`;
+const releaseTestCommunityDomain = `${crypto.randomUUID()}-release.com`;
+const releaseTestPubSlug = `${crypto.randomUUID()}-release-test-pub`;
+
 const models = modelize`
 	User superAdmin {
-		id: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
-		name: "Super Admin"
-		slug: "super-admin"
-		isSuperAdmin: true
+		id: ${superAdminConfig.id}
+		name: ${superAdminConfig.name}
+		slug: ${superAdminConfig.slug}
+		isSuperAdmin: ${superAdminConfig.isSuperAdmin}
 	}
 		
     Community community {
-		subdomain: "test"
+		subdomain: ${testCommunitySubdomain}
         Pub testPub {
-            slug: "test-pub"
+            slug: ${communityTestPubSlug}
 			Release testRelease {
 				createdAt: "2020-01-01"
 				historyKey: 1
 			}
 			PubAttribution {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 				affiliation: "test"
 				order: 0.5
 			}
@@ -38,11 +62,11 @@ const models = modelize`
     }
 
 	Community connectionCommunity {
-		subdomain: "something"
+		subdomain: ${connectionCommunitySubdomain}
 		Pub connectionPub {
 			title: "connection pub"
 			PubAttribution {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 				affiliation: "test"
 				order: 0.5
 			}
@@ -54,8 +78,8 @@ const models = modelize`
 	}
 
 	Community fakeCommunity {
-		subdomain: "fake"
-		domain: "fake.com"
+		subdomain: ${fakeCommunitySubdomain}
+		domain: ${fakeCommunityDomain}
 		Pub fakePub {
 			title: "fake pub"
 			Release fakeRelease {
@@ -63,7 +87,7 @@ const models = modelize`
 				historyKey: 1
 			}
 			PubAttribution {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 				affiliation: "test"
 				order: 0.5
 			}
@@ -71,10 +95,10 @@ const models = modelize`
 	}
 
 	Community collectionAttributionCommunity {
-		subdomain: "collection"
+		subdomain: ${collectionAttributionCommunitySubdomain}
 		Collection collection {
 			CollectionAttribution {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 				affiliation: "test"
 				order: 0.5
 			}
@@ -82,36 +106,36 @@ const models = modelize`
 	}
 
 	Community communityMemberCommunity {
-		domain: "membersonly.com"
+		domain: ${communityMemberCommunityDomain}
 		Member {
-			userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+			userId: ${superAdminConfig.id}
 		}
 	}
 
 	Community pubMemberCommunity {
-		domain: "pubmember.com"
+		domain: ${pubMemberCommunityDomain}
 		Pub {
 			Member {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 			}
 		}
 	}
 
 	Community collectionMemberCommunity {
-		domain: "collectionmember.com"
+		domain: ${collectionMemberCommunityDomain}
 		Collection {
 			Member {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 			}
 		}
 	}
 
 	Community releaseTestCommunity {
-		domain: "releasetest.com"
+		domain: ${releaseTestCommunityDomain}
 		Pub releaseTestPub {
-			slug: "release-test-pub"
+			slug: ${releaseTestPubSlug}
 			PubAttribution {
-				userId: "af9bc70e-e295-43c9-a09f-ef771a91a1fd"
+				userId: ${superAdminConfig.id}
 				affiliation: "test"
 				order: 0.5
 			}
@@ -125,7 +149,7 @@ setup(beforeAll, async () => {
 	process.env.TEST_FASTLY_PURGE = '1';
 
 	// mock fetch, we don't actually want to send api calls
-	jest.spyOn(global, 'fetch').mockImplementation(
+	vi.spyOn(global, 'fetch').mockImplementation(
 		() =>
 			Promise.resolve({
 				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
@@ -137,7 +161,7 @@ teardown(afterAll, () => {
 	delete process.env.TEST_FASTLY_PURGE;
 	setEnvironment(false, false, false);
 
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 });
 
 const expectFastlyPurge = ({
@@ -164,7 +188,7 @@ const expectFastlyPurge = ({
 describe('purging', () => {
 	beforeEach(() => {
 		// reset "has been called" status of all mocks
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		setEnvironment(false, false, false);
 	});
 	it('should purge on creating collection', async () => {
@@ -371,7 +395,7 @@ describe('purging', () => {
 describe('surrogate keys', () => {
 	beforeEach(() => {
 		// reset "has been called" status of all mocks
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		setEnvironment(false, false, false);
 	});
 	beforeAll(async () => {
@@ -402,12 +426,18 @@ describe('surrogate keys', () => {
 
 		const result = await agent
 			.get(`/pub/${connectionPub.slug}/release/1`)
-			.set('Host', 'something.pubpub.org')
+			.set('Host', `${connectionCommunitySubdomain}.pubpub.org`)
 			.expect(200);
 
 		const surrogateKeys = result.headers['surrogate-key']?.split(' ').sort();
 
-		expect(surrogateKeys).toEqual(['fake.com', 'something.pubpub.org', 'test.pubpub.org']);
+		expect(surrogateKeys).toMatchObject(
+			[
+				fakeCommunityDomain,
+				`${connectionCommunitySubdomain}.pubpub.org`,
+				`${testCommunitySubdomain}.pubpub.org`,
+			].sort(),
+		);
 	}, 20_000);
 
 	it('should return all the hostnames of every released authored pub, user slug, and hostname on user pages', async () => {
@@ -423,29 +453,24 @@ describe('surrogate keys', () => {
 			.expect(200);
 
 		/** Sort so that the id is at the end */
-		const surrogateKeys = result.headers['surrogate-key']?.split(' ').sort((a, b) => {
-			if (a.length > 30) {
-				return 1;
-			}
-			if (b.length > 30) {
-				return -1;
-			}
-			return a.localeCompare(b);
-		});
-		expect(surrogateKeys).toEqual([
-			'fake.com',
-			'something.pubpub.org',
-			superAdmin.slug,
-			'test.pubpub.org',
-			'www.pubpub.org',
-		]);
+		const surrogateKeys = result.headers['surrogate-key']?.split(' ').sort();
+
+		expect(surrogateKeys).toMatchObject(
+			[
+				fakeCommunityDomain,
+				superAdmin.slug,
+				`${testCommunitySubdomain}.pubpub.org`,
+				`${connectionCommunitySubdomain}.pubpub.org`,
+				'www.pubpub.org',
+			].sort(),
+		);
 	});
 });
 
 describe('advanced purging tests', () => {
 	beforeEach(async () => {
 		await finishDeferredTasks();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it(`when PUT /api/users is hit for the specified user, it purges the cache of
@@ -530,7 +555,7 @@ describe('advanced purging tests', () => {
 		expectFastlyPurge({ key: superAdmin.slug });
 		expectFastlyPurge({ key: unique });
 
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		const {
 			body: { attributions },
@@ -556,7 +581,7 @@ describe('advanced purging tests', () => {
 
 		expect(global.fetch).toHaveBeenCalledTimes(1);
 
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// test if batch create works differently
 		await agent

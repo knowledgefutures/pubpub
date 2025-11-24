@@ -1,21 +1,21 @@
-import createDeposit, { getDois } from 'utils/crossref/createDeposit';
+import {
+	createCrossrefDepositRecord,
+	updateCrossrefDepositRecord,
+} from 'server/crossrefDepositRecord/queries';
+import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
 	Community,
-	Pub,
 	includeUserModel,
+	Pub,
 } from 'server/models';
 import buildPubOptions from 'server/utils/queryHelpers/pubOptions';
-import {
-	createCrossrefDepositRecord,
-	updateCrossrefDepositRecord,
-} from 'server/crossrefDepositRecord/queries';
-import { getPrimaryCollectionPub } from 'utils/collections/primary';
-import { getCommunityDepositTarget } from 'server/depositTarget/queries';
-
 import { expect } from 'utils/assert';
+import { getPrimaryCollectionPub } from 'utils/collections/primary';
+import createDeposit, { getDois } from 'utils/crossref/createDeposit';
+
 import { submitDoiData } from './submit';
 
 const collectionIncludes = [
@@ -70,12 +70,12 @@ export const persistCrossrefDepositRecord = async (ids, depositJson) => {
 					where: {
 						id: pubId,
 					},
-			  })
+				})
 			: await Collection.findOne({
 					where: {
 						id: collectionId,
 					},
-			  }),
+				}),
 	);
 	const { crossrefDepositRecordId } = targetModel;
 

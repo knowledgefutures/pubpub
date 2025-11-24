@@ -1,11 +1,12 @@
+import type { NodeLabels } from 'facets';
+
+import type { FacetPropEditorProps } from '../../types';
+
 import React, { useCallback } from 'react';
+
 import { Checkbox, InputGroup, Tooltip } from '@blueprintjs/core';
 
-import { NodeLabels } from 'facets';
-
-import { FacetPropEditorProps } from '../../types';
-
-require('./nodeLabelEditor.scss');
+import './nodeLabelEditor.scss';
 
 type Props = FacetPropEditorProps<typeof NodeLabels, 'image', false>; // But could be any of 'em
 

@@ -1,6 +1,6 @@
-import { Node } from 'prosemirror-model';
-import { Mapping } from 'prosemirror-transform';
-import { Decoration } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
+import type { Mapping } from 'prosemirror-transform';
+import type { Decoration } from 'prosemirror-view';
 
 export type Range = { from: number; to: number };
 

@@ -1,16 +1,16 @@
-/* eslint-disable no-console */
+import type { Community, InitialData } from 'types';
+
 import { diffArrays } from 'diff';
 
-import { LayoutBlock, resolveLayoutPubsByBlock } from 'utils/layout';
-import { Community, InitialData } from 'types';
+import { Collection, Community as CommunityModel, Page } from 'server/models';
 import { getInitialData } from 'server/utils/initData';
-import { Community as CommunityModel, Page, Collection } from 'server/models';
 import { getLayoutPubsByBlock as new_getLayoutPubsByBlock } from 'server/utils/layouts';
 import { arraysAreEqual } from 'utils/arrays';
-import { forEach } from '../migrations/util';
+import { type LayoutBlock, resolveLayoutPubsByBlock } from 'utils/layout';
 
-import { getPubsByBlockIndex as old_getPubsByBlockIndex } from './render';
+import { forEach } from '../migrations/util';
 import { getPubsForLayout as old_getPubsForLayout } from './query';
+import { getPubsByBlockIndex as old_getPubsByBlockIndex } from './render';
 
 const {
 	argv: { community: scopeToCommunitySubdomain },

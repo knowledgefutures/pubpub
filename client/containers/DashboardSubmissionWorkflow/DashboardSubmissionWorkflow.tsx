@@ -1,12 +1,13 @@
+import type { SubmissionWorkflow } from 'types';
+
 import React, { useCallback } from 'react';
 
-import { SubmissionWorkflow } from 'types';
 import { ClientOnly } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
-import NewSubmissionWorkflowEditor from './NewSubmissionWorkflowEditor';
 import ExistingSubmissionWorkflowEditor from './ExistingSubmissionWorkflowEditor';
+import NewSubmissionWorkflowEditor from './NewSubmissionWorkflowEditor';
 
 type Props = {
 	initialSubmissionWorkflow: null | SubmissionWorkflow;

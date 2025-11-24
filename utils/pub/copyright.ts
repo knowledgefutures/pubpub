@@ -1,8 +1,10 @@
-import { FacetValue, License } from 'facets';
-import * as types from 'types';
+import type { FacetValue, License } from 'facets';
+import type { CollectionPub, Pub } from 'server/models';
+import type * as types from 'types';
+
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
-import { CollectionPub, Pub } from 'server/models';
+
 import { getPubPublishedDate } from './pubDates';
 
 type GetPubCopyrightOptions = {

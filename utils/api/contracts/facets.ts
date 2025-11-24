@@ -1,6 +1,8 @@
 import type { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { facetSchema } from '../schemas/facets';
 
 extendZodWithOpenApi(z);

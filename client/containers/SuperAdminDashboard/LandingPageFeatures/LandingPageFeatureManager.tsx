@@ -1,12 +1,14 @@
+import type { LandingPageFeatureKind, LandingPageFeatureOfKind } from 'types';
+
 import React, { useCallback, useState } from 'react';
+
 import { Button, InputGroup } from '@blueprintjs/core';
 
-import { DragDropOrdering, Icon } from 'components';
-import { LandingPageFeatureKind, LandingPageFeatureOfKind } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
+import { DragDropOrdering, Icon } from 'components';
 import { findRankInRankedList } from 'utils/rank';
 
-require('./landingPageFeatureManager.scss');
+import './landingPageFeatureManager.scss';
 
 export type RenderFeatureProps<Kind extends LandingPageFeatureKind> = {
 	feature: LandingPageFeatureOfKind<Kind>;
@@ -51,7 +53,6 @@ const LandingPageFeatureManager = <Kind extends LandingPageFeatureKind>(props: P
 			});
 		});
 		// Wants type Kind as a dep
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleRemoveFeature = useCallback(
@@ -93,7 +94,7 @@ const LandingPageFeatureManager = <Kind extends LandingPageFeatureKind>(props: P
 			}
 		},
 		// Wants type Kind as a dep
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[features],
 	);
 

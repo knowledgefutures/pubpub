@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { FacetEditor, PopoverButton } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { renderLicenseForPub } from 'utils/licenses';
-import { useFacetsQuery } from 'client/utils/useFacets';
 
 import { usePubContext } from '../../pubHooks';
 import PubBottomSection, { AccentedIconButton, SectionBullets } from './PubBottomSection';

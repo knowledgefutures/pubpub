@@ -1,11 +1,13 @@
-import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import type express from 'express';
+
+import type { UserWithPrivateFields } from 'types';
+
+import { Strategy as BearerStrategy } from 'passport-http-bearer';
 
 import { ForbiddenError } from 'server/utils/errors';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
-import type { UserWithPrivateFields } from 'types';
 
-import { includeUserModel, AuthToken } from '../models';
+import { AuthToken, includeUserModel } from '../models';
 
 export const bearerStrategy = () => {
 	return new BearerStrategy(

@@ -1,6 +1,7 @@
+import type { CollectionPub } from 'server/models';
+import type * as types from 'types';
+
 import { sortByRank } from 'utils/rank';
-import * as types from 'types';
-import { CollectionPub } from 'server/models';
 
 const isPrimaryCollectionCandidate = (collectionPub: types.CollectionPub | CollectionPub) => {
 	const { collection } = collectionPub;

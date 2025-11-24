@@ -1,8 +1,10 @@
+import type { BylineProps } from 'components/Byline/Byline';
+import type { Pub } from 'types';
+
 import React from 'react';
 
-import { BylineProps } from 'components/Byline/Byline';
 import { getAllPubContributors } from 'utils/contributors';
-import { Pub } from 'types';
+
 import WithinCommunityByline from '../WithinCommunityByline/WithinCommunityByline';
 
 type OwnProps = {

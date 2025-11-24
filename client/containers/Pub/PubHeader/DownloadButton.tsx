@@ -1,17 +1,19 @@
+import type { EditorState, Transaction } from 'prosemirror-state';
+
 import React from 'react';
+
 import { Button, Callout, Classes } from '@blueprintjs/core';
-import { EditorState, Transaction } from 'prosemirror-state';
 
 import { PopoverButton } from 'components';
 import { hasSuggestions } from 'components/Editor/plugins/suggestedEdits/operations';
-import { usePageContext } from 'utils/hooks';
 import {
 	acceptSuggestions,
 	rejectSuggestions,
 } from 'components/Editor/plugins/suggestedEdits/resolve';
+import { usePageContext } from 'utils/hooks';
 
-import Download from './Download';
 import { usePubContext } from '../pubHooks';
+import Download from './Download';
 import SmallHeaderButton from './SmallHeaderButton';
 
 type Props = {

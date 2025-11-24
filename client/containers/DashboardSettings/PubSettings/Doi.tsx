@@ -1,9 +1,11 @@
+import type { DepositTarget } from 'types';
+
 import React, { Component } from 'react';
+
 import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { AssignDoi } from 'components';
-import { DepositTarget } from 'types';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
@@ -14,7 +16,7 @@ import {
 	relationTypeDefinitions,
 } from 'utils/pubEdge/relations';
 
-require('./doi.scss');
+import './doi.scss';
 
 type Props = {
 	canIssueDoi: boolean;
@@ -169,7 +171,7 @@ class Doi extends Component<Props, State> {
 				success: true,
 			});
 			updatePubData({ doi: response.doi });
-		} catch (err) {
+		} catch (_err) {
 			this.setState({
 				[pendingStateKey]: false,
 				doiSuffix: fallback,
@@ -213,7 +215,7 @@ class Doi extends Component<Props, State> {
 				error: false,
 				success: false,
 			});
-		} catch (err) {
+		} catch (_err) {
 			this.setState({
 				generating: false,
 				error: true,

@@ -1,10 +1,10 @@
-import { DOMOutputSpec } from 'prosemirror-model';
+import type { DOMOutputSpec } from 'prosemirror-model';
 
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
 import { getResizedUrl, getSrcSet } from 'utils/images';
-import { isResizeableFormat } from '../utils/media';
 
+import { isResizeableFormat } from '../utils/media';
 import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -105,7 +105,7 @@ export default {
 							},
 
 							imgTag,
-					  ]
+						]
 					: imgTag,
 				[
 					'figcaption',

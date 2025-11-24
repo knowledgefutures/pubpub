@@ -1,4 +1,5 @@
-import { UserDismissableKey } from '../../utils/userDismissable';
+import type { UserDismissableKey } from '../../utils/userDismissable';
+
 import { apiFetch } from './apiFetch';
 
 export const dismissUserDismissable = async (key: UserDismissableKey) => {

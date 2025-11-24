@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import classNames from 'classnames';
-import { Button, Icon } from '@blueprintjs/core';
+import React, { useEffect, useRef, useState } from 'react';
 
-require('./pubBottomSection.scss');
+import { Button, Icon } from '@blueprintjs/core';
+import classNames from 'classnames';
+
+import './pubBottomSection.scss';
 
 type AccentedIconButtonProps = {
 	accentColor: string;
@@ -26,7 +27,7 @@ export const SectionBullets = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<>
 			{React.Children.map(children, (item, i) => (
-				// eslint-disable-next-line react/no-array-index-key
+				// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
 				<div key={i} className="center-content-item">
 					{item}
 				</div>
@@ -139,7 +140,7 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 			)}
 		>
 			{/* We already have a fully interactive expand button -- this is a bonus */}
-			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+			{/* biome-ignore lint/a11y: shhhhhh */}
 			<div
 				role={largeExpandClickTarget ? 'button' : 'none'}
 				onClick={largeExpandClickTarget ? () => setIsExpanded(!isExpanded) : undefined}

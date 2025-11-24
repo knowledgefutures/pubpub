@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Icon } from 'components';
 
-require('./spamBanner.scss');
+import './spamBanner.scss';
 
 const SpamBanner = () => {
 	return (

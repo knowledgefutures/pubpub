@@ -1,11 +1,14 @@
+import type { Callback } from 'types';
+
 import React from 'react';
+
 import { Classes, Dialog } from '@blueprintjs/core';
 
-import { Callback } from 'types';
+import PubAttributionEditor, {
+	type Props as PubAttributionEditorProps,
+} from './PubAttributionEditor';
 
-import PubAttributionEditor, { Props as PubAttributionEditorProps } from './PubAttributionEditor';
-
-require('./pubAttributionDialog.scss');
+import './pubAttributionDialog.scss';
 
 type Props = {
 	isOpen: boolean;

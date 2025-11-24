@@ -1,6 +1,6 @@
+import { createPubActivityItem, createPubUpdatedActivityItem } from 'server/activityItem/queries';
 import { Pub } from 'server/models';
 import { createActivityHooks } from 'server/utils/activityHooks';
-import { createPubActivityItem, createPubUpdatedActivityItem } from 'server/activityItem/queries';
 
 createActivityHooks({
 	Model: Pub,

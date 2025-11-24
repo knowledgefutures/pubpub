@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { usePopoverState, PopoverDisclosure, Popover, PopoverState } from 'reakit';
 import { Card } from '@blueprintjs/core';
+import { Popover, PopoverDisclosure, type PopoverState, usePopoverState } from 'reakit';
 
 import { adaptDisclosureElementForBlueprintButton } from './blueprintAdapter';
 

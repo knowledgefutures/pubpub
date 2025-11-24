@@ -1,36 +1,34 @@
-import { z } from 'zod';
-import { Request, Express } from 'express';
+import type { Express, Request } from 'express';
+
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { initServer } from '@ts-rest/express';
+import { z } from 'zod';
 
-import * as types from 'types';
-
-import { ForbiddenError, NotFoundError } from 'server/utils/errors';
-import { getInitialData } from 'server/utils/initData';
-import { indexByProperty } from 'utils/arrays';
-import { transformPubToResource } from 'deposit/transform/pub';
-import { generateDoi } from 'server/doi/queries';
-import { assert, expect } from 'utils/assert';
 import { prepareResource, submitResource } from 'deposit/datacite/deposit';
+import { transformPubToResource } from 'deposit/transform/pub';
 import { assertValidResource } from 'deposit/validate';
-import { queryOne } from 'utils/query/queryOne';
-import { queryMany } from 'utils/query/queryMany';
-import { createGetRequestIds } from 'utils/getRequestIds';
-import { contract } from 'utils/api/contract';
-
+import { generateDoi } from 'server/doi/queries';
+import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
-
 import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
-import { isDuqDuq, isProd } from 'utils/environment';
+import { getInitialData } from 'server/utils/initData';
+import { contract } from 'utils/api/contract';
+import { indexByProperty } from 'utils/arrays';
+import { assert, expect } from 'utils/assert';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
+import { isDuqDuq, isProd } from 'utils/environment';
+import { createGetRequestIds } from 'utils/getRequestIds';
 import { omitKeys } from 'utils/objects';
+import { queryMany } from 'utils/query/queryMany';
+import { queryOne } from 'utils/query/queryOne';
+
+import { convertFiles, createUploadMiddleware, handleImport } from './import';
 import { Pub } from './model';
-
 import { canCreatePub, canDestroyPub, getUpdatablePubFields } from './permissions';
-
 import { createPub, destroyPub, findPub, importToPub, updatePub } from './queries';
 import { getPubsById, queryPubIds } from './queryMany';
-import { convertFiles, createUploadMiddleware, handleImport } from './import';
 
 extendZodWithOpenApi(z);
 

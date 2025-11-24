@@ -1,7 +1,9 @@
-import { PubReleasedActivityItem } from 'types';
+import type { PubReleasedActivityItem } from 'types';
+
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
 import { pubUrl } from 'utils/canonicalUrls';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getPubFromContext } from './util';
 
 export const releaseTitle: TitleRenderer<PubReleasedActivityItem> = (item, context) => {

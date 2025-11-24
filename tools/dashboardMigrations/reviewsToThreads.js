@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import uuidv4 from 'uuid/v4';
 import {
 	Pub,

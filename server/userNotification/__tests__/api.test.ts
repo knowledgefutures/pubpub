@@ -1,8 +1,9 @@
+import type { PubDiscussionCommentAddedActivityItem } from 'types';
+
 import uuid from 'uuid/v4';
 
 import { UserNotification } from 'server/models';
-import { modelize, login, setup, teardown } from 'stubstub';
-import { PubDiscussionCommentAddedActivityItem } from 'types';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 import { fetchUserNotifications } from '../queries';
 

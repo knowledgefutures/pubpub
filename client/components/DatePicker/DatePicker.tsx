@@ -5,7 +5,9 @@
  * responsibility to handle these dates correctly, perhaps by using the inUtcTime option of
  * formatDate(), or the getLocalDateMatchingUtcCalendarDate() utility.
  */
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import { InputGroup } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 

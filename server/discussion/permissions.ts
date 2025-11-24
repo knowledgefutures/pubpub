@@ -1,6 +1,6 @@
+import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { Discussion, Pub } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
-import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { expect } from 'utils/assert';
 
 export const getCreatePermission = async ({

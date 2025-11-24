@@ -1,10 +1,12 @@
-import * as types from 'types';
-import { z } from 'zod';
+import type { PubAttribution } from 'server/models';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { PubAttribution } from 'server/models';
+import { z } from 'zod';
+
 import {
-	attributionSchema,
 	attributionCreationSchema,
+	attributionSchema,
 	updateAttributionSchema,
 } from './attribution';
 

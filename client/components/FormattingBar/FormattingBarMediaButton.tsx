@@ -1,11 +1,12 @@
+import type { EditorView } from 'prosemirror-view';
+
 import React, { useState } from 'react';
-import { EditorView } from 'prosemirror-view';
 
 import { Overlay } from 'components';
 
-import FormattingBarButton, { FormattingBarButtonProps } from './FormattingBarButton';
-import Media from './media/Media';
 import { insertNodeIntoEditor } from '../Editor';
+import FormattingBarButton, { type FormattingBarButtonProps } from './FormattingBarButton';
+import Media from './media/Media';
 
 type FormattingBarMediaButtonProps = FormattingBarButtonProps & {
 	view: EditorView;

@@ -1,7 +1,9 @@
-import * as types from 'types';
-import { z } from 'zod';
+import type { CollectionAttribution } from 'server/models';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { CollectionAttribution } from 'server/models';
+import { z } from 'zod';
+
 import {
 	attributionCreationSchema,
 	attributionSchema,

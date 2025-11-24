@@ -1,13 +1,14 @@
 import {
-	Discussion,
-	ReviewNew,
-	Pub,
-	Submission,
-	CollectionPub,
 	Collection,
+	CollectionPub,
 	Community,
+	Discussion,
+	Pub,
+	ReviewNew,
+	Submission,
 } from 'server/models';
 import { expect } from 'utils/assert';
+
 import { summarizeCollection, summarizeCommunity, summarizePub } from './queries';
 
 let summarizeParentScopesOnPubCreation = true;

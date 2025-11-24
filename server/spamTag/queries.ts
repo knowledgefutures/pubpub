@@ -1,8 +1,9 @@
-import * as types from 'types';
-import { Community, SpamTag } from 'server/models';
+import type * as types from 'types';
+import type { SpamStatus } from 'types';
 
-import { SpamStatus } from 'types';
+import { Community, SpamTag } from 'server/models';
 import { expect } from 'utils/assert';
+
 import { getSuspectedCommunitySpamVerdict } from './score';
 
 // Adding a spam tag doesn't imply that the Community _is_ spam, only that we have a score for it.

@@ -1,9 +1,9 @@
-import { ReviewNew } from 'server/models';
-import { createActivityHooks } from 'server/utils/activityHooks';
 import {
 	createPubReviewCreatedActivityItem,
 	createPubReviewUpdatedActivityItem,
 } from 'server/activityItem/queries';
+import { ReviewNew } from 'server/models';
+import { createActivityHooks } from 'server/utils/activityHooks';
 
 createActivityHooks({
 	Model: ReviewNew,

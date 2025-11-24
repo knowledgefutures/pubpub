@@ -1,15 +1,16 @@
-import { Node } from 'prosemirror-model';
-import { Plugin, PluginKey, Transaction, EditorState } from 'prosemirror-state';
-import { DecorationSet, EditorView } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
 
-import { PluginsOptions, DiscussionsOptions } from '../../types';
+import type { DiscussionsOptions, PluginsOptions } from '../../types';
+import type { DiscussionDecoration, DiscussionSelection, DiscussionsUpdateResult } from './types';
+
+import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { DecorationSet, type EditorView } from 'prosemirror-view';
 
 import { getDiscussionsFromAnchors } from './anchors';
 import { getDecorationsForDiscussions, getDecorationsForUpdateResult } from './decorations';
 import { createDiscussionsState } from './discussionsState';
 import { createFastForwarder } from './fastForward';
 import { connectToFirebaseDiscussions } from './firebase';
-import { DiscussionsUpdateResult, DiscussionSelection, DiscussionDecoration } from './types';
 
 export const discussionsPluginKey = new PluginKey('discussions');
 

@@ -1,15 +1,18 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	BelongsTo,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	BelongsTo,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { User, IntegrationDataOAuth1 } from '../models';
+
+import { IntegrationDataOAuth1, User } from '../models';
 
 @Table
 export class ZoteroIntegration extends Model<

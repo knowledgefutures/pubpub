@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
-import { setup, teardown, login, modelize } from 'stubstub';
+
 import { CollectionAttribution } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 import { createCollectionAttribution } from '../queries';
 

@@ -1,10 +1,12 @@
+import type { License } from 'facets';
+
+import type { FacetPropEditorProps } from '../../types';
+
 import React from 'react';
+
 import { NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 
-import { License } from 'facets';
-import { FacetPropEditorProps } from '../../types';
-
-require('./copyrightSelectionPicker.scss');
+import './copyrightSelectionPicker.scss';
 
 type Props = FacetPropEditorProps<typeof License, 'copyrightSelection', false>;
 

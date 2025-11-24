@@ -1,5 +1,6 @@
-import { Community as CommunityModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { Community as CommunityModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export type CommunityHeroButton = {
 	title: string;

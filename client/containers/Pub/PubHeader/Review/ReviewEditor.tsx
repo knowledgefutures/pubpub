@@ -1,7 +1,8 @@
+import type { DocJson } from 'types';
+
 import React, { useCallback } from 'react';
 
 import { MinimalEditor } from 'components';
-import { DocJson } from 'types';
 
 type Props = {
 	setReviewDoc: (doc: DocJson) => void;

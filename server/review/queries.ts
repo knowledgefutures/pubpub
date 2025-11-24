@@ -1,20 +1,20 @@
+import type { DocJson, User } from 'types';
+
 import uuidv4 from 'uuid/v4';
 
-import { Thread, Visibility, ReviewNew, Pub } from 'server/models';
+import { Pub, ReviewNew, Thread, Visibility } from 'server/models';
 import { createReviewer } from 'server/reviewer/queries';
-
 import { getLatestKeyInPubDraft } from 'server/utils/firebaseAdmin';
-
-import { DocJson, User } from 'types';
 import { expect } from 'utils/assert';
+
+import { createRelease } from '../release/queries';
+import { type CreateThreadCommentOptions, createThreadComment } from '../threadComment/queries';
 import {
-	createCreatedThreadEvent,
 	createClosedThreadEvent,
 	createCompletedThreadEvent,
+	createCreatedThreadEvent,
 	createReleasedEvent,
 } from '../threadEvent/queries';
-import { createRelease } from '../release/queries';
-import { createThreadComment, CreateThreadCommentOptions } from '../threadComment/queries';
 
 type CreateReviewOptions = {
 	pubId: string;

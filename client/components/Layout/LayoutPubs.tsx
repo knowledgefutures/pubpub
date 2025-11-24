@@ -1,9 +1,10 @@
+import type { Pub } from 'types';
+import type { LayoutBlockPubs } from 'types/layout';
+
 import React from 'react';
 
-import { PubPreview } from 'components';
-import { Pub } from 'types';
-import { LayoutBlockPubs } from 'types/layout';
 import { createReadingParamUrl } from 'client/utils/collections';
+import { PubPreview } from 'components';
 
 type Props = {
 	content: LayoutBlockPubs['content'];

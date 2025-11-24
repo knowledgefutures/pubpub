@@ -1,15 +1,16 @@
+import type { Readable, Stream } from 'stream';
+
 import {
 	GetObjectCommand,
 	HeadObjectCommand,
-	HeadObjectCommandOutput,
-	ObjectCannedACL,
+	type HeadObjectCommandOutput,
+	type ObjectCannedACL,
 	PutObjectCommand,
-	PutObjectCommandInput,
+	type PutObjectCommandInput,
 	S3Client,
 	waitUntilObjectExists,
 } from '@aws-sdk/client-s3';
-import { Progress, Upload } from '@aws-sdk/lib-storage';
-import { Readable, Stream } from 'stream';
+import { type Progress, Upload } from '@aws-sdk/lib-storage';
 
 type UploadInput = PutObjectCommandInput['Body'];
 

@@ -1,14 +1,18 @@
-/* eslint-disable no-restricted-syntax */
+import type { CitationStyle, FacetValue } from 'facets';
+import type { DocJson } from 'types';
+import type { RenderedStructuredValue, StructuredValue } from 'utils/notes';
 
 import Cite from 'citation-js';
-import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
 import crypto from 'crypto';
-import { CitationStyle, FacetValue } from 'facets';
 import fs from 'fs';
 import path from 'path';
-import { DocJson } from 'types';
-import { CitationInlineStyleKind, CitationStyleKind, citationStyles } from 'utils/citations';
-import { RenderedStructuredValue, StructuredValue } from 'utils/notes';
+
+import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
+import {
+	type CitationInlineStyleKind,
+	type CitationStyleKind,
+	citationStyles,
+} from 'utils/citations';
 import { expiringPromise } from 'utils/promises';
 
 /* Different styles available here: */
@@ -103,7 +107,7 @@ const getSingleStructuredCitation = async (
 			json: '',
 			inline: inlineStyle === 'label' ? `(${fallbackValue})` : null,
 		};
-	} catch (err) {
+	} catch (_err) {
 		return {
 			html: '<div>' + structuredInput + '</div>',
 			json: 'Error',
@@ -132,7 +136,7 @@ export const getStructuredCitations = async (
 	// Some Pubs have many (100+) citations, so we batch the `Cite.async` calls
 	// to avoid timeouts.
 	for (const structuredValueSlice of iterStructuredValues(structuredValues, 10)) {
-		// eslint-disable-next-line no-await-in-loop
+		// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 		const renderedStructuredValuesSlice = await Promise.all(
 			structuredValueSlice.map((structuredValue) =>
 				getSingleStructuredCitation(structuredValue, citationStyle, inlineStyle),

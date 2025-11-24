@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-unused-vars */
+
 import headerCols from './headerCols';
 import dashCols from './dashCols';
 import discToThreads from './discToThreads';

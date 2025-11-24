@@ -1,9 +1,10 @@
-import React from 'react';
-import { Node, Mark, Schema, NodeType, MarkType } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import type { Mark, MarkType, Node, NodeType, Schema } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
+import type { EditorView } from 'prosemirror-view';
 
-import { IconName } from 'components';
+import type { IconName } from 'components';
+
+import React from 'react';
 
 export type Dispatch = EditorView['dispatch'];
 export type Attrs = Node['attrs'] | Mark['attrs'];

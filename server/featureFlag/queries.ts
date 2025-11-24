@@ -1,6 +1,6 @@
-import { FeatureFlag, FeatureFlagUser, FeatureFlagCommunity } from 'server/models';
-
+import { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
 import { expect } from 'utils/assert';
+
 import { isFeatureFlagEnabledForUserInCommunity } from './helpers';
 
 const throwExists = (name: string) => {

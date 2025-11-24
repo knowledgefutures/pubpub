@@ -10,4 +10,4 @@ import { isDuqDuq } from 'utils/environment';
  * @returns The correct hostname based on the provided subdomain and domain.
  */
 export const getCorrectHostname = (subdomain: string, domain?: string | null) =>
-	isDuqDuq() ? `${subdomain}.duqduq.org` : domain ?? `${subdomain}.pubpub.org`;
+	isDuqDuq() ? `${subdomain}.duqduq.org` : (domain ?? `${subdomain}.pubpub.org`);

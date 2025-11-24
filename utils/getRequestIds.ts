@@ -1,5 +1,6 @@
-import { Request } from 'express';
-import { User } from 'server/models';
+import type { Request } from 'express';
+
+import type { User } from 'server/models';
 
 type WithUserId<T> = T & { userId?: string };
 

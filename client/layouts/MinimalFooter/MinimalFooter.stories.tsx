@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
+
 import { communityData } from 'utils/storybook/data';
 
 import MinimalFooter from './MinimalFooter';

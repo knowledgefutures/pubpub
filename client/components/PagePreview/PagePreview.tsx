@@ -3,7 +3,7 @@ import React from 'react';
 import { getResizedUrl } from 'utils/images';
 import { generatePageBackground } from 'utils/pages';
 
-require('./pagePreview.scss');
+import './pagePreview.scss';
 
 type Props = {
 	pageData: {

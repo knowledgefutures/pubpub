@@ -48,8 +48,7 @@ const PrivacyPolicy = function () {
 			</p>
 			<p>
 				PubPub
-				<br />
-				℅ Knowledge Futures, Inc.
+				<br />℅ Knowledge Futures, Inc.
 				<br />
 				245 Main street
 				<br />

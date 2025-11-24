@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 const { JWT } = require('google-auth-library');
 const request = require('request');
 

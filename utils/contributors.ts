@@ -1,9 +1,10 @@
-import * as types from 'types';
-import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { joinOxford } from 'utils/strings';
+import type { Collection, CollectionAttribution, Pub, PubAttribution } from 'server/models';
+import type * as types from 'types';
+
 import { unique } from 'utils/arrays';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { Collection, CollectionAttribution, Pub, PubAttribution } from 'server/models';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { joinOxford } from 'utils/strings';
 
 const orderedContributors = (
 	maybeContributors:

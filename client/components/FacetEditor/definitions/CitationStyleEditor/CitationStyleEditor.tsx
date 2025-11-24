@@ -1,5 +1,5 @@
-import { CitationStyle, citationStyleKind, inlineCitationStyleKind } from 'facets';
-import { citationStyles, citationInlineStyles } from 'utils/citations';
+import { CitationStyle, type citationStyleKind, type inlineCitationStyleKind } from 'facets';
+import { citationInlineStyles, citationStyles } from 'utils/citations';
 
 import { createFacetKindEditor } from '../../createFacetKindEditor';
 import { dropdown } from '../../propTypeEditors';

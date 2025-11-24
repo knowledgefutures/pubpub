@@ -1,16 +1,19 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	BelongsTo,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
 	Index,
-	BelongsTo,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { SerializedModel } from 'types';
-import { Community, Collection, Pub } from '../../models';
+
+import { Collection, Community, Pub } from '../../models';
 
 @Table
 export class FacetBinding extends Model<

@@ -1,8 +1,12 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { wrap } from 'server/wrap';
 
 import { getPermissions } from './permissions';
 import { restorePubDraftToHistoryKey } from './queries';
+
+export const router = Router();
 
 const parseHistoryKey = (providedHistoryKey: any) => {
 	const historyKeyInt = parseInt(providedHistoryKey, 10);
@@ -22,7 +26,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.get(
+router.get(
 	'/api/pubHistory',
 	wrap(async (req, res) => {
 		const { pubId, historyKey, accessHash, userId } = getRequestIds(req);
@@ -40,7 +44,7 @@ app.get(
 	}),
 );
 
-app.post(
+router.post(
 	'/api/pubHistory/restore',
 	wrap(async (req, res) => {
 		const userId = req.user?.id;

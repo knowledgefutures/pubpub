@@ -1,14 +1,13 @@
-/* eslint-disable no-restricted-syntax */
-
-import { Op } from 'sequelize';
-import mailgun from 'mailgun.js';
+import type * as types from 'types';
 
 import * as Sentry from '@sentry/node';
-import { asyncMap } from 'utils/async';
+import mailgun from 'mailgun.js';
+import { Op } from 'sequelize';
+
 import { iterAllCommunities } from 'server/community/queries';
-import { Member, includeUserModel } from 'server/models';
+import { includeUserModel, Member } from 'server/models';
 import { renderDigestEmail } from 'server/utils/email';
-import * as types from 'types';
+import { asyncMap } from 'utils/async';
 
 const mg = mailgun.client({
 	username: 'api',
@@ -26,7 +25,7 @@ async function main() {
 	// For each (sensibly-sized) chunk of communities
 	for await (const communities of iterAllCommunities(10)) {
 		const tasks = communities.map((community) => {
-			// eslint-disable-next-line no-console
+			// biome-ignore lint/suspicious/noConsole: shhhhhh
 			console.log(`community ${community.subdomain}`);
 			// Load all community members who are subscribed to activity digest
 			// emails
@@ -43,7 +42,7 @@ async function main() {
 				async ({ user }) => {
 					try {
 						const email = (user as any).email;
-						// eslint-disable-next-line no-console
+						// biome-ignore lint/suspicious/noConsole: shhhhhh
 						console.log(`user ${user.id} ${email}`);
 						// Create an activity digest email
 						const scope = { communityId: community.id };
@@ -57,7 +56,7 @@ async function main() {
 							'h:Reply-To': 'hello@pubpub.org',
 						});
 					} catch (err) {
-						// eslint-disable-next-line no-console
+						// biome-ignore lint/suspicious/noConsole: shhhhhh
 						console.log(`sending email failed: ${err}`);
 						Sentry.captureException(err);
 					}

@@ -1,13 +1,13 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import type { Node } from 'prosemirror-model';
+import type { EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos } from 'client/components/Editor/utils';
-import { Node } from 'prosemirror-model';
+
 import { idsPluginKey } from '../../ids';
 import { createSuggestedEditsTransactionContext } from '../context';
+import { suggestedEditsPluginKey } from '../key';
 import { getSuggestedEditsState } from '../state';
 import { indicateAttributeChanges } from './attributes';
-
-import { suggestedEditsPluginKey } from '../key';
 import { indicateMarkChanges } from './marks';
 import { mapSelectionThroughTransaction } from './selection';
 import { indicateTextAndStructureChanges } from './textAndStructure';

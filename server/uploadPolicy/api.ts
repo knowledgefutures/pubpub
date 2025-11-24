@@ -1,5 +1,7 @@
-import { AppRouteImplementation } from '@ts-rest/express';
-import { contract } from 'utils/api/contract';
+import type { AppRouteImplementation } from '@ts-rest/express';
+
+import type { contract } from 'utils/api/contract';
+
 import { getUploadPolicy } from './queries';
 
 export const uploadPolicyRouteImplementation: AppRouteImplementation<

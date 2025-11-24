@@ -1,33 +1,32 @@
-import { stub, modelize, setup, teardown, determinize } from 'stubstub';
-import { plainDoc, fullDoc, imageDoc } from 'utils/storybook/data';
+import { vi } from 'vitest';
+
+import { determinize, modelize, setup, teardown } from 'stubstub';
+import { fullDoc, plainDoc } from 'utils/storybook/data';
+
 import { getPageSearchData, getPubSearchData } from '../searchUtils';
+
+const subDomain = crypto.randomUUID();
 
 const models = modelize`
     Community {
         title: "Test Community"
-        subdomain: "tc1"
+        subdomain: ${subDomain}
         Pub draftPub {
             title: "A Draft Pub"
-            slug: "a-draft-pub"
             description: "You probably cannot see me"
             avatar: "shh.png"
             PubAttribution {
-                User {
-                    slug: "test1"
-                }
+                User {}
             }
         }
         Pub releasedPub {
             title: "A Released Pub"
-            slug: "a-released-pub"
             description: "Hey look at me"
             avatar: "hello.png"
             PubAttribution {
                 isAuthor: false
                 order: 0.3
-                User {
-                    slug: "test3"
-                }
+                User {}
             }
             PubAttribution {
                 isAuthor: true
@@ -36,7 +35,6 @@ const models = modelize`
                     firstName: "First"
                     lastName: "Author"
                     fullName: "Second Author"
-                    slug: "test4"
                 }
             }
             PubAttribution {
@@ -46,7 +44,6 @@ const models = modelize`
                     firstName: "First"
                     lastName: "Author"
                     fullName: "First Author"
-                    slug: "test2"
                 }
             }
             Release {
@@ -66,43 +63,40 @@ const models = modelize`
         }
         Page testPage {
             title: "I am a test page"
-            slug: "test-page"
             description: "You can put text or Pubs on me"
+            slug: "test-page"
             avatar: "page.png"
         }
     }
 `;
 
-let firebaseStub:
-	| {
-			stubs: {
-				[k: string]: any;
-			};
-			restore: () => void;
-	  }
-	| undefined;
+// this needs to be hoisted, you cannot mocke that imagedoc thing otherwise
+// @ts-expect-error - this is  fine, vitest can deal with it
+const { getPubDraftDoc } = await vi.hoisted(async () => {
+	const imageDoc = await import('utils/storybook/data').then((module) => module.imageDoc);
+	return {
+		getPubDraftDoc: vi.fn().mockResolvedValue({ doc: imageDoc }),
+	};
+});
 
 setup(beforeAll, async () => {
 	await models.resolve();
 
-	firebaseStub = stub('server/utils/firebaseAdmin', {
-		getPubDraftDoc: async () => {
-			return { doc: imageDoc };
-		},
-	});
+	vi.mock('server/utils/firebaseAdmin', () => ({
+		getPubDraftDoc,
+	}));
 });
 
 teardown(afterAll, () => {
-	firebaseStub?.restore();
+	vi.clearAllMocks();
+	vi.resetAllMocks();
 });
 
 const determinizePubData = determinize([
 	'avatar',
 	'byline',
-	'communityDomain',
 	'communityTitle',
 	'description',
-	'slug',
 	'title',
 	'content',
 	'isPublic',
@@ -110,7 +104,6 @@ const determinizePubData = determinize([
 
 const determinizePageData = determinize([
 	'avatar',
-	'communityDomain',
 	'communityTitle',
 	'description',
 	'slug',

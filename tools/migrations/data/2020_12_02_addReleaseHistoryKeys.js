@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import Slowdance from 'slowdance';
 
 import { Pub, Release } from 'server/models';

@@ -1,6 +1,6 @@
-import { MemberPermission, PageContext } from 'types';
-import { PubPubIconName } from 'client/utils/icons';
-import { DashboardMode } from 'utils/dashboard';
+import type { PubPubIconName } from 'client/utils/icons';
+import type { MemberPermission, PageContext } from 'types';
+import type { DashboardMode } from 'utils/dashboard';
 
 export type ReadablePageContext = Pick<PageContext, 'scopeData' | 'locationData' | 'featureFlags'>;
 

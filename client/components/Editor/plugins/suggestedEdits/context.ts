@@ -1,6 +1,6 @@
-import { Transaction } from 'prosemirror-state';
+import type { Transaction } from 'prosemirror-state';
 
-import { SuggestedEditsPluginState, SuggestedEditsTransactionContext } from './types';
+import type { SuggestedEditsPluginState, SuggestedEditsTransactionContext } from './types';
 
 export const createSuggestedEditsTransactionContext = (
 	pluginState: SuggestedEditsPluginState,

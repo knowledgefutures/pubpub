@@ -1,18 +1,19 @@
+import type { PubPageData } from 'types';
+
 import React, { useState } from 'react';
-import { Popover } from 'components/Popover';
 
-import { usePageContext } from 'utils/hooks';
-import { PubPageData } from 'types';
-import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
 import { DialogLauncher, SubscriptionButton } from 'components';
+import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
+import { Popover } from 'components/Popover';
 import { usePubContext } from 'containers/Pub/pubHooks';
+import { usePageContext } from 'utils/hooks';
 
-import SortList from './SortList';
-import FilterMenu from './FilterMenu';
-import DiscussionsReleaseDialog from './DiscussionsReleaseDialog';
-import PubDiscussions from '../../PubDiscussions/PubDiscussions';
-import PubBottomSection, { SectionBullets, AccentedIconButton } from '../PubBottomSection';
 import { filterAndSortDiscussions } from '../../PubDiscussions/discussionUtils';
+import PubDiscussions from '../../PubDiscussions/PubDiscussions';
+import PubBottomSection, { AccentedIconButton, SectionBullets } from '../PubBottomSection';
+import DiscussionsReleaseDialog from './DiscussionsReleaseDialog';
+import FilterMenu from './FilterMenu';
+import SortList from './SortList';
 
 type Props = {
 	pubData: PubPageData;
@@ -45,7 +46,6 @@ const DiscussionsSection = (props: Props) => {
 
 	const renderCenterItems = () => <SectionBullets>{nonClosedDiscussions.length}</SectionBullets>;
 
-	// eslint-disable-next-line react/prop-types
 	const renderIconItems = ({ isExpanded, iconColor }) => {
 		if (isExpanded) {
 			return (
@@ -89,7 +89,7 @@ const DiscussionsSection = (props: Props) => {
 										filteredLabels.indexOf(labelId) > -1
 											? filteredLabels.filter((id) => {
 													return id !== labelId;
-											  })
+												})
 											: [...filteredLabels, labelId];
 									setFilteredLabels(newFilteredLabels);
 								}}

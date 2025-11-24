@@ -1,10 +1,10 @@
+import type { IconName } from 'components';
+import type { DefinitelyHas } from 'types';
+
+import type { EditorChangeObject } from '../Editor';
+import type { CommandSpec } from '../Editor/commands/types';
+
 import React from 'react';
-
-import { DefinitelyHas } from 'types';
-import { IconName } from 'components';
-
-import { EditorChangeObject } from '../Editor';
-import { CommandSpec } from '../Editor/commands/types';
 
 export enum FormattingBarButtonPopoverCondition {
 	Always,

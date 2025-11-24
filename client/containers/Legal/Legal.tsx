@@ -1,17 +1,19 @@
+import type { Integration, UserNotificationPreferences } from 'types';
+
 import React, { useState } from 'react';
+
 import { Menu, MenuItem } from '@blueprintjs/core';
 
-import { Integration, UserNotificationPreferences } from 'types';
-import { usePageContext } from 'utils/hooks';
-import { GridWrapper } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
+import { GridWrapper } from 'components';
+import { usePageContext } from 'utils/hooks';
 
+import AUP from './AUP';
+import PrivacyPolicy from './PrivacyPolicy';
 import PrivacySettings from './PrivacySettings';
 import Terms from './Terms';
-import PrivacyPolicy from './PrivacyPolicy';
-import AUP from './AUP';
 
-require('./legal.scss');
+import './legal.scss';
 
 type Props = {
 	integrations: Integration[];

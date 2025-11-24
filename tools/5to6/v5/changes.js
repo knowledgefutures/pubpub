@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax */
+
 const uuid = require('uuid');
 const { Step, ReplaceStep } = require('prosemirror-transform');
 const { Slice } = require('prosemirror-model');

@@ -1,6 +1,5 @@
-import { Diff } from '../util';
-
-import { InsertableActivityItemBase } from './base';
+import type { Diff } from '../util';
+import type { InsertableActivityItemBase } from './base';
 
 type CollectionActivityItemBase = InsertableActivityItemBase & {
 	collectionId: string;

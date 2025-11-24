@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
+
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import classNames from 'classnames';
 
-import { Avatar, Icon } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Avatar, Icon } from 'components';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
 
 import CreateCollectionDialog from './CreateCollectionDialog';
 
-require('./breadcrumbs.scss');
+import './breadcrumbs.scss';
 
 type Props = {
 	className?: string;
@@ -91,7 +92,7 @@ const Breadcrumbs = (props: Props) => {
 				href: activePub
 					? `/pub/${activePub.slug}${
 							activeCollection ? `?collectionSlug=${activeCollection.slug}` : ''
-					  }`
+						}`
 					: undefined,
 			},
 		],

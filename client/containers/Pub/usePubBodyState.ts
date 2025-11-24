@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
-import { DiscussionAnchor, DocJson } from 'types';
-import { usePageContext } from 'utils/hooks';
+import type { DiscussionAnchor, DocJson } from 'types';
 
-import { PubContextType } from './PubContextProvider';
+import type { PubContextType } from './PubContextProvider';
+
+import { useMemo } from 'react';
+
+import { usePageContext } from 'utils/hooks';
 
 type Options = Pick<PubContextType, 'pubData' | 'submissionState' | 'collabData' | 'historyData'>;
 

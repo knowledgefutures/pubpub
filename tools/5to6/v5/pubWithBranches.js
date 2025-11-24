@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax */
+
 class PubWithBranches {
 	constructor(pub, draftBranch, branchByNameMap, versionToBranchPointerMap) {
 		this.pub = pub;

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, no-loop-func */
+
 const { uncompressStateJSON } = require('prosemirror-compress-pubpub');
 
 const { warn } = require('../problems');

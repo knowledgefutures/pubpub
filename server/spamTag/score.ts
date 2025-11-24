@@ -1,5 +1,5 @@
-import * as types from 'types';
-import { Community, SpamTag } from 'server/models';
+import type { Community, SpamTag } from 'server/models';
+import type * as types from 'types';
 
 import { communitySpamPhrases } from './phrases';
 

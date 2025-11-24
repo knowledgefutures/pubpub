@@ -9,7 +9,6 @@ npm-debug.log
 config.js
 migrate
 dist
-.vscode
 workers/tasks/export/styles/printDocument.css
 pubpub-postgres-test/
 pubpub-localdb/

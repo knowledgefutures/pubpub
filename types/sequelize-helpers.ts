@@ -1,7 +1,5 @@
-/* eslint-disable-line */
-import { Model } from 'sequelize';
-// eslint-disable-next-line import/no-unresolved
-import { Fn, Col, Literal } from 'sequelize/types/utils';
+import type { Model } from 'sequelize';
+import type { Col, Fn, Literal } from 'sequelize/types/utils';
 
 /**
  * Retrieve what the `update` method of a Sequelize model expects as its first argument, but then
@@ -14,9 +12,9 @@ export type UpdateParams<
 	[K in keyof U]: U[K] extends Fn | Col | Literal | Model | Model[] | undefined
 		? never
 		: U[K] extends Col | Fn | Literal | undefined | infer T
-		  ? // this weirdness is bc `any extends Date` is boolean, so the result will be `string | null | undefined | T`
-		    (T extends Date | null ? true : false) extends true
+			? // this weirdness is bc `any extends Date` is boolean, so the result will be `string | null | undefined | T`
+				(T extends Date | null ? true : false) extends true
 				? string | null | undefined
 				: T
-		  : never;
+			: never;
 };

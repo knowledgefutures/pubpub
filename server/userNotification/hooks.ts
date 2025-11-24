@@ -1,4 +1,6 @@
-import * as types from 'types';
+import type { ActivityRenderContext } from 'client/utils/activity/types';
+import type * as types from 'types';
+
 import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
@@ -11,10 +13,9 @@ import {
 	UserNotificationPreferences,
 } from 'server/models';
 import { defer } from 'server/utils/deferred';
-import * as urls from 'utils/canonicalUrls';
 import { discussionTitle } from 'utils/activity/titles/discussion';
-import { ActivityRenderContext } from 'client/utils/activity/types';
 import { expect } from 'utils/assert';
+import * as urls from 'utils/canonicalUrls';
 
 export const mg = mailgun.client({
 	username: 'api',

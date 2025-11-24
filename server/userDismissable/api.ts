@@ -1,8 +1,12 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
+import { wrap } from 'server/wrap';
 
 import { dismissUserDismissable } from './queries';
 
-app.post(
+export const router = Router();
+
+router.post(
 	'/api/userDismissable',
 	wrap(async (req, res) => {
 		const { user, body } = req;

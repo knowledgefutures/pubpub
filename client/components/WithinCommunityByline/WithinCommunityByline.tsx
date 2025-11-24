@@ -1,9 +1,11 @@
+import type { AttributionWithUser } from 'types';
+
 import React from 'react';
 
-import Byline, { BylineProps } from 'components/Byline/Byline';
-import { AttributionWithUser } from 'types';
+import { Icon, Tooltip } from '@blueprintjs/core';
+
+import Byline, { type BylineProps } from 'components/Byline/Byline';
 import { usePageContext } from 'utils/hooks';
-import { Tooltip, Icon } from '@blueprintjs/core';
 
 // Review Note; I bet there's a better way to do this?
 type Props = Omit<BylineProps, 'contributors'> & {
@@ -40,7 +42,7 @@ const WithinCommunityByline = (props: Props) => {
 							<Icon iconSize={12} icon="sort-alphabetical" className="byline-icon" />
 						}
 					/>
-			  ))
+				))
 			: bylinePrefix;
 	return <Byline {...props} bylinePrefix={bylinePrefix} contributors={sortedContributors} />;
 };

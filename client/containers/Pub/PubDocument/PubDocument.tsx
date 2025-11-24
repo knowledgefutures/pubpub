@@ -1,14 +1,16 @@
 import React, { useRef } from 'react';
 
-import { usePageContext } from 'utils/hooks';
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { PubHistoryViewer } from 'components';
 import {
-	PubEdgeListing,
 	Filter as PubEdgeFilter,
+	PubEdgeListing,
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
-import { useFacetsQuery } from 'client/utils/useFacets';
+import { usePageContext } from 'utils/hooks';
 
+import { getAllPubContributors } from '../../../../utils/contributors';
+import ContributorsListCondensed from '../../../components/ContributorsListCondensed/ContributorsListCondensed';
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
 import { usePubHrefs } from '../usePubHrefs';
@@ -21,10 +23,8 @@ import PubInlineMenu from './PubInlineMenu';
 import PubInlineSuggestedEdits from './PubInlineSuggestedEdits';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
-import ContributorsListCondensed from '../../../components/ContributorsListCondensed/ContributorsListCondensed';
-import { getAllPubContributors } from '../../../../utils/contributors';
 
-require('./pubDocument.scss');
+import './pubDocument.scss';
 
 const PubDocument = () => {
 	const {

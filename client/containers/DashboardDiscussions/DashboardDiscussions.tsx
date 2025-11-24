@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { usePageContext } from 'utils/hooks';
 
-require('./dashboardDiscussions.scss');
+import './dashboardDiscussions.scss';
 
 type Props = {
 	discussionsData: any;

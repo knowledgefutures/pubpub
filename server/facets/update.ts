@@ -1,11 +1,11 @@
 import {
-	Facet,
-	FacetInstance,
 	ALL_FACET_DEFINITIONS,
+	type Facet,
+	type FacetInstance,
+	type FacetName,
+	type Facets,
 	parsePartialFacetInstance,
-	SingleScopeId,
-	FacetName,
-	Facets,
+	type SingleScopeId,
 } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
 

@@ -1,5 +1,6 @@
-import { Prettify } from 'types';
-import { z, ZodRawShape, ZodTypeAny } from 'zod';
+import type { Prettify } from 'types';
+
+import { type ZodRawShape, type ZodTypeAny, z } from 'zod';
 
 const plainAndBooleanAndArrayFilter = <Z extends ZodTypeAny>(schema: Z) => {
 	const plainOrBooleanOrArray = z.union([schema, z.boolean(), z.array(schema)]);
@@ -57,7 +58,7 @@ const stringFilter = <Z extends z.ZodString>(schema: Z, strict?: boolean) =>
 						}),
 					]),
 				]),
-		  ).optional();
+			).optional();
 
 const enumFilter = <Z extends z.ZodEnum<any>>(schema: Z) => plainAndBooleanAndArrayFilter(schema);
 
@@ -125,24 +126,24 @@ export type FilterType<
 	? U extends Array<infer X>
 		? Array<FilterType<z.ZodType<X, any, any>>>
 		: U extends string
-		  ? string extends U
+			? string extends U
 				? Kind extends 'Date'
 					? DateFilter
 					: Kind extends 'UUID'
-					  ? string | string[] | boolean
-					  : // @ts-expect-error FIXME: Typescript doesn't understand
-					    StringFilter<T>
+						? string | string[] | boolean
+						: // @ts-expect-error FIXME: Typescript doesn't understand
+							StringFilter<T>
 				: EnumFilter<T>
-		  : U extends number
-		    ? // @ts-expect-error FIXME: Typescript doesn't understand
-		      NumberFilter<T>
-		    : U extends Date
-		      ? DateFilter
-		      : U extends boolean
-		        ? boolean
-		        : U extends object
-		          ? ObjectFilter<U>
-		          : never
+			: U extends number
+				? // @ts-expect-error FIXME: Typescript doesn't understand
+					NumberFilter<T>
+				: U extends Date
+					? DateFilter
+					: U extends boolean
+						? boolean
+						: U extends object
+							? ObjectFilter<U>
+							: never
 	: never;
 
 export type EnumFilter<T> = T extends z.ZodType<infer U, any, any>
@@ -155,8 +156,8 @@ export type ObjectFilter<T extends Record<string, any>> = Prettify<{
 	[K in keyof T]?: K extends 'id' | `${string}Id`
 		? FilterType<z.ZodType<T[K], any, any>, 'UUID'>
 		: K extends `${string}At`
-		  ? FilterType<z.ZodType<T[K], any, any>, 'Date'>
-		  : FilterType<z.ZodType<T[K], any, any>>;
+			? FilterType<z.ZodType<T[K], any, any>, 'Date'>
+			: FilterType<z.ZodType<T[K], any, any>>;
 }>;
 
 type FilterT<T> = z.ZodType<FilterType<T>>;

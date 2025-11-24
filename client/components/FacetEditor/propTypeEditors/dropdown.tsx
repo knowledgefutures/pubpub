@@ -1,9 +1,10 @@
+import type { primitives } from 'facets';
+
+import type { PropTypeEditorComponent, PropTypeEditorProps } from '../types';
+
 import React, { useMemo } from 'react';
 
-import { primitives } from 'facets';
-import { MenuSelect, MenuSelectItem } from 'components/Menu';
-
-import { PropTypeEditorProps, PropTypeEditorComponent } from '../types';
+import { MenuSelect, type MenuSelectItem } from 'components/Menu';
 
 type ChoicePropType = ReturnType<typeof primitives.choice>;
 type ChoiceValue<PropType extends ChoicePropType> = PropType['extension']['values'][number];

@@ -1,9 +1,10 @@
+import type { Page } from 'types';
+
 import * as React from 'react';
+
 import { Button, Classes, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
-
-import { Page } from 'types';
 
 type Props = {
 	selectedPageId: null | string;

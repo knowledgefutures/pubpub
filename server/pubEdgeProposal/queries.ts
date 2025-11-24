@@ -1,13 +1,13 @@
-import { Op } from 'sequelize';
 import cheerio from 'cheerio';
-import fetch, { Response } from 'node-fetch';
+import fetch, { type Response } from 'node-fetch';
+import { Op } from 'sequelize';
 
-import { parseUrl } from 'utils/urls';
-import { assignNotNull } from 'utils/objects';
 import { Community, Pub } from 'server/models';
 import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
 import { expect } from 'utils/assert';
+import { assignNotNull } from 'utils/objects';
+import { parseUrl } from 'utils/urls';
 
 const ensureFullUrlForExternalPublication = (externalPublication, responseUrl: string) => {
 	const { origin } = expect(parseUrl(responseUrl));
@@ -64,7 +64,7 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
 	return externalPublication
 		? {
 				externalPublication,
-		  }
+			}
 		: null;
 };
 
@@ -84,7 +84,7 @@ export const createExternalPublicationFromMicrodata = ($: cheerio.Root) => {
 				image: parsed.image ? parsed.image.url : null,
 				publicationDate: parsed.datePublished ? new Date(parsed.datePublished) : null,
 			};
-		} catch (error) {
+		} catch (_error) {
 			return {};
 		}
 	}

@@ -1,5 +1,7 @@
+import type { AppRouter } from '@ts-rest/core';
+
 import { z } from 'zod';
-import { AppRouter } from '@ts-rest/core';
+
 import { uploadSchema } from '../schemas/upload';
 
 export const uploadRouter = {

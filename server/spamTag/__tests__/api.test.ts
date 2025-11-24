@@ -1,6 +1,6 @@
-import { setup, login, modelize, teardown } from 'stubstub';
-
 import { SpamTag } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
+
 import { addSpamTagToCommunity } from '../queries';
 
 let spamTag;

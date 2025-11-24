@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import classNames from 'classnames';
-import { Button, Classes, InputGroup } from '@blueprintjs/core';
+import type { FilterTerm, NotificationsState } from './types';
 
-import { FilterTerm, NotificationsState } from './types';
-import { useNotificationsContext } from './userNotificationsContext';
+import React, { useState } from 'react';
+
+import { Button, Classes, InputGroup } from '@blueprintjs/core';
+import classNames from 'classnames';
+
 import PubNotifications from './PubNotifications';
 import UserNotificationPreferences from './UserNotificationPreferences';
+import { useNotificationsContext } from './userNotificationsContext';
 
 type Props = {
 	state: NotificationsState;

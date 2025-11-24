@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import type { ViewportSize } from 'types';
 
-import { ViewportSize } from 'types';
+import { useEffect, useState } from 'react';
 
 type Options = {
 	withEarlyMeasurement?: boolean;

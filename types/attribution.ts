@@ -1,10 +1,10 @@
-import {
-	PubAttribution as PubAttributionModel,
+import type {
 	CollectionAttribution as CollectionAttributionModel,
+	PubAttribution as PubAttributionModel,
 } from 'server/models';
-import { SerializedModel } from './serializedModel';
 
-import { DefinitelyHas } from './util';
+import type { SerializedModel } from './serializedModel';
+import type { DefinitelyHas } from './util';
 
 export type PubAttribution = SerializedModel<PubAttributionModel>;
 

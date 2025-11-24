@@ -1,11 +1,12 @@
+import type { License } from 'facets';
+
+import type { FacetPropEditorProps } from '../../types';
+
 import React, { useMemo } from 'react';
 
-import { License } from 'facets';
-import { licenseDetailsByKind } from 'utils/licenses';
+import { MenuSelect, type MenuSelectItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
-import { MenuSelect, MenuSelectItem } from 'components/Menu';
-
-import { FacetPropEditorProps } from '../../types';
+import { licenseDetailsByKind } from 'utils/licenses';
 
 type Props = FacetPropEditorProps<typeof License, 'kind', false>;
 

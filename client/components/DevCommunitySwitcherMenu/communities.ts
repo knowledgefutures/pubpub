@@ -1,4 +1,4 @@
-import { IconName } from '../Icon/Icon';
+import type { IconName } from '../Icon/Icon';
 
 type CommunityOption = {
 	title: string;
@@ -6,7 +6,6 @@ type CommunityOption = {
 	icon?: IconName;
 };
 
-// eslint-disable-next-line import/no-mutable-exports
 let communities: CommunityOption[] = [];
 
 // Don't compile these into the prod build

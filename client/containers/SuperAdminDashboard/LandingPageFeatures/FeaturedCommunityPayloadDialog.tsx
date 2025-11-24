@@ -1,11 +1,13 @@
+import type { LandingPageCommunityFeature } from 'types';
+
 import React, { useCallback, useState } from 'react';
-import { Classes, Button, Dialog, Radio, RadioGroup } from '@blueprintjs/core';
 
-import { LandingPageCommunityFeature } from 'types';
-import { InputField, MinimalEditor, ColorInput, ImageUpload } from 'components';
+import { Button, Classes, Dialog, Radio, RadioGroup } from '@blueprintjs/core';
+
 import { apiFetch } from 'client/utils/apiFetch';
+import { ColorInput, ImageUpload, InputField, MinimalEditor } from 'components';
 
-require('./featuredCommunityPayloadDialog.scss');
+import './featuredCommunityPayloadDialog.scss';
 
 type Props = {
 	isOpen: boolean;

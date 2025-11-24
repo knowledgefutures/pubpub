@@ -1,14 +1,16 @@
-import passport from 'passport';
+import type { AppRouteImplementation } from '@ts-rest/express';
+
+import type * as types from 'types';
+import type { contract } from 'utils/api/contract';
+
 import crypto from 'crypto';
+import passport from 'passport';
 import { promisify } from 'util';
 
-import { assert } from 'utils/assert';
-import * as types from 'types';
 import { User } from 'server/models';
-import { isDuqDuq, isProd } from 'utils/environment';
-import { contract } from 'utils/api/contract';
-import { AppRouteImplementation } from '@ts-rest/express';
+import { assert } from 'utils/assert';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
+import { isDuqDuq, isProd } from 'utils/environment';
 
 type SetPasswordData = { hash: string; salt: string };
 type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields];

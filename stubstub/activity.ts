@@ -1,9 +1,11 @@
 /* global expect */
+
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
 
 import { ActivityItem } from 'server/models';
 import { finishDeferredTasks } from 'server/utils/deferred';
-import * as types from 'types';
 
 type ExpectCreatedActivityItemResult<Result> = {
 	toMatchResultingObject: (

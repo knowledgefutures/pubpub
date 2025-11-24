@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
 
+import { isDangerousSpamScore } from 'server/spamTag/score';
 import { isProd } from 'utils/environment';
 import { getSuperAdminTabUrl } from 'utils/superAdmin';
-import { isDangerousSpamScore } from 'server/spamTag/score';
 
 const defaultBody = { username: 'PubPub', unfurl_links: true };
 

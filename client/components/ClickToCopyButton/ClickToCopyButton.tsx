@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Tooltip, Button, Position } from '@blueprintjs/core';
+
+import { Button, Position, Tooltip } from '@blueprintjs/core';
 import { useCopyToClipboard } from 'react-use';
 
 type ClickHandler = () => unknown;

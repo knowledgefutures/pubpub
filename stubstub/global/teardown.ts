@@ -1,6 +1,6 @@
 // (this global is defined next door in setup.js)
 
-import { ChildProcessWithoutNullStreams } from 'child_process';
+import type { ChildProcessWithoutNullStreams } from 'child_process';
 
 declare namespace global {
 	let testDbServerProcess: ChildProcessWithoutNullStreams | undefined;

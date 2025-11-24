@@ -1,9 +1,12 @@
-import { z } from 'zod';
+import type { PubAttribution } from 'server/models';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { PubAttribution } from 'server/models';
-import * as types from 'types';
+import { z } from 'zod';
+
 import { DEFAULT_ROLES } from 'types/attribution';
 import { ORCID_ID_OR_URL_PATTERN, ORCID_PATTERN } from 'utils/orcid';
+
 import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);

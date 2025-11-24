@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
-import fs from 'fs';
-import chalk from 'chalk';
+import type * as types from 'types';
 
-import * as types from 'types';
-import { Collection, CollectionPub, Community, Pub } from 'server/models';
+import chalk from 'chalk';
+import fs from 'fs';
+
 import { createCollectionPub } from 'server/collectionPub/queries';
+import { Collection, CollectionPub, Community, Pub } from 'server/models';
 
 import { promptOkay } from './utils/prompt';
 

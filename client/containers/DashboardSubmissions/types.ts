@@ -1,3 +1,3 @@
-import { DefinitelyHas, Pub } from 'types';
+import type { DefinitelyHas, Pub } from 'types';
 
 export type PubWithSubmission = DefinitelyHas<Pub, 'submission'>;

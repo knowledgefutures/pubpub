@@ -1,6 +1,7 @@
-import { LandingPageFeature as LandingPageFeatureModel } from 'server/models';
-import { DefinitelyHas, DocJson } from 'types';
-import { SerializedModel } from './serializedModel';
+import type { LandingPageFeature as LandingPageFeatureModel } from 'server/models';
+import type { DefinitelyHas, DocJson } from 'types';
+
+import type { SerializedModel } from './serializedModel';
 
 export type LandingPageFeature = SerializedModel<LandingPageFeatureModel>;
 
@@ -22,8 +23,8 @@ export type ValidLandingPageCommunityFeature = LandingPageCommunityFeature & {
 export type LandingPageFeatureOfKind<Kind extends LandingPageFeatureKind> = Kind extends 'pub'
 	? LandingPagePubFeature
 	: Kind extends 'community'
-	  ? LandingPageCommunityFeature
-	  : never;
+		? LandingPageCommunityFeature
+		: never;
 
 export type LandingPageFeatures<Validated extends boolean = true> = {
 	pub: LandingPagePubFeature[];

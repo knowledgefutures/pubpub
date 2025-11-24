@@ -1,8 +1,10 @@
+import type { z } from 'zod';
+
+import type { layoutBlockSchema } from 'utils/api/schemas/layout';
+
 import { Page } from 'server/models';
 import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
-import { layoutBlockSchema } from 'utils/api/schemas/layout';
 import { pageSchema } from 'utils/api/schemas/page';
-import { z } from 'zod';
 
 const models = modelize`
 	Community community {

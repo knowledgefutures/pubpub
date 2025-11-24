@@ -1,10 +1,12 @@
+import type { IconName } from '../Icon/Icon';
+
 import React, { useContext } from 'react';
+
 import classNames from 'classnames';
 
 import { Icon } from 'components';
 
 import { TimelineContext } from './util';
-import { IconName } from '../Icon/Icon';
 
 type OwnProps = {
 	accentColor?: string;

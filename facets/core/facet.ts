@@ -1,10 +1,10 @@
-import {
-	FacetProp,
+import type {
 	CascadedTypeOfFacetProp,
+	FacetProp,
 	NullableTypeOfFacetProp,
 	TypeOfFacetProp,
 } from './prop';
-import { FacetPropType } from './propType';
+import type { FacetPropType } from './propType';
 
 export type FacetProps = Record<string, FacetProp<FacetPropType, any>>;
 

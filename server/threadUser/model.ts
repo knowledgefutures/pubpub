@@ -1,17 +1,20 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
-	Column,
-	DataType,
-	PrimaryKey,
-	Default,
-	IsLowercase,
-	IsEmail,
 	AllowNull,
 	BelongsTo,
+	Column,
+	DataType,
+	Default,
+	IsEmail,
+	IsLowercase,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
+
 import { User } from '../models';
 
 @Table

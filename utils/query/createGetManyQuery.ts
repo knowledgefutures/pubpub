@@ -1,6 +1,8 @@
-import { z } from 'zod';
 // import * as types from 'types';
-import { OptionalKeys } from 'types';
+import type { OptionalKeys } from 'types';
+
+import { z } from 'zod';
+
 import { generateFilterForModelSchema } from './filter';
 
 type OptionalKeysNoCreatedAtUpdatedAt<T> = Exclude<OptionalKeys<T>, 'createdAt' | 'updatedAt'>;

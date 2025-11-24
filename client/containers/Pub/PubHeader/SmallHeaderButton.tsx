@@ -1,10 +1,11 @@
 import React from 'react';
+
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
 import { Icon } from 'components';
 
-require('./smallHeaderButton.scss');
+import './smallHeaderButton.scss';
 
 export type Props = {
 	className?: string;

@@ -1,9 +1,11 @@
+import type { Pub as BarePub, InboundEdge, OutboundEdge, PubEdge } from 'types';
+
 import { useState } from 'react';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
-import { apiFetch } from 'client/utils/apiFetch';
-import { Pub as BarePub, InboundEdge, OutboundEdge, PubEdge } from 'types';
+
 import { usePubContext } from '../Pub/pubHooks';
 
 type Pub = BarePub & {

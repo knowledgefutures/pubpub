@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { usePageContext } from 'utils/hooks';
 import { setLocalHighlight } from 'components/Editor';
+import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from './pubHooks';
 

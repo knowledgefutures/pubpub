@@ -1,7 +1,8 @@
-import { ActivityItem } from 'types';
+import type { ActivityItem } from 'types';
+
+import type { ActivityItemRenderer, ActivityRenderContext, RenderedActivityItem } from './types';
 
 import { activityItemRenderers } from './renderers';
-import { ActivityItemRenderer, ActivityRenderContext, RenderedActivityItem } from './types';
 
 export const renderActivityItem = (
 	item: ActivityItem,

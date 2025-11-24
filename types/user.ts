@@ -1,5 +1,6 @@
-import { User as UserModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { User as UserModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 type UserType = SerializedModel<UserModel> & {
 	isAdminOfThisCommunity?: boolean;

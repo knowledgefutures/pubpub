@@ -1,5 +1,7 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
+
 import ContributorCondensed from './ContributorCondensed';
 
 const propTypes = {

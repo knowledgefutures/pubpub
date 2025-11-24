@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
-import { AccentStyle, Footer } from 'components';
 import { createSocialNavItems } from 'client/utils/navigation';
+import { AccentStyle, Footer } from 'components';
 import { communityData } from 'utils/storybook/data';
 
 const wrapperStyle = { margin: '1em 0em' };

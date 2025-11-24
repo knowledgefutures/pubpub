@@ -1,6 +1,7 @@
+import type { LayoutBlockCollectionsPages } from 'types/layout';
+
 import React from 'react';
 
-import { LayoutBlockCollectionsPages } from 'types/layout';
 import PagePreview from 'components/PagePreview/PagePreview';
 
 export type BlockItem = {
@@ -57,7 +58,7 @@ const LayoutPagesCollections = (props: Props) => {
 									? {
 											justifyContent: content.justify,
 											gridTemplateColumns: `repeat(${gridTemplateColumnsCssFill}, 175px)`,
-									  }
+										}
 									: {}
 							}
 						>

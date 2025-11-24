@@ -1,8 +1,10 @@
-import { EditorState, Transaction } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
+import type { EditorState, Transaction } from 'prosemirror-state';
+
+import type { Meta, PluginState } from './types';
+
+import { Decoration, type DecorationSet } from 'prosemirror-view';
 
 import { pastePluginKey } from './key';
-import { Meta, PluginState } from './types';
 import { createPlaceholderWidgetElement } from './widget';
 
 type PlaceholderDecoration = Decoration;

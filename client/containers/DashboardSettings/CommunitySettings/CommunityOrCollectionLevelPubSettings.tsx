@@ -1,6 +1,7 @@
+import type { FacetName } from 'facets';
+
 import React from 'react';
 
-import { FacetName } from 'facets';
 import { FacetEditor } from 'components';
 
 const facetsInOrder: FacetName[] = [

@@ -1,17 +1,20 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { InsertableActivityItem, SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
-	Column,
-	DataType,
-	PrimaryKey,
-	Default,
-	Index,
 	AllowNull,
 	BelongsTo,
+	Column,
+	DataType,
+	Default,
+	Index,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { InsertableActivityItem, SerializedModel } from 'types';
-import { ActivityItem, UserSubscription, User } from '../models';
+
+import { ActivityItem, User, UserSubscription } from '../models';
 
 @Table
 export class UserNotification extends Model<

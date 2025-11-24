@@ -1,9 +1,9 @@
-import { modelize, setup, teardown } from 'stubstub';
+import type { DocJson } from 'types';
 
 import { UserSubscription } from 'server/models';
-
-import { DocJson } from 'types';
 import { finishDeferredTasks } from 'server/utils/deferred';
+import { modelize, setup, teardown } from 'stubstub';
+
 import { createThreadComment } from '../queries';
 
 const models = modelize`

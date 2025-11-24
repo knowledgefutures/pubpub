@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { Text } from '@blueprintjs/core';
 import classNames from 'classnames';
 
-require('./lengthIndicator.scss');
+import './lengthIndicator.scss';
 
 export type LengthIndicatorProps = {
 	length: number;

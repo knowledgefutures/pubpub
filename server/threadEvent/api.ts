@@ -1,7 +1,9 @@
-import app from 'server/server';
+import { Router } from 'express';
 
 import { getPermissions } from './permissions';
-import { createThreadEvent, updateThreadEvent, destroyThreadEvent } from './queries';
+import { createThreadEvent, destroyThreadEvent, updateThreadEvent } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -14,7 +16,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/threadEvents', (req, res) => {
+router.post('/api/threadEvents', (req, res) => {
 	const requestIds = getRequestIds(req);
 	getPermissions(requestIds)
 		.then((permissions) => {
@@ -32,7 +34,7 @@ app.post('/api/threadEvents', (req, res) => {
 		});
 });
 
-app.put('/api/threadEvents', (req, res) => {
+router.put('/api/threadEvents', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.update) {
@@ -49,7 +51,7 @@ app.put('/api/threadEvents', (req, res) => {
 		});
 });
 
-app.delete('/api/threadEvents', (req, res) => {
+router.delete('/api/threadEvents', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.destroy) {

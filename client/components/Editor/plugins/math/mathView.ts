@@ -1,5 +1,6 @@
-import { Fragment, Node } from 'prosemirror-model';
-import { NodeViewConstructor, NodeView } from 'prosemirror-view';
+import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
+
+import { Fragment, type Node } from 'prosemirror-model';
 
 type MathNodeViewConstructor = (...args: Parameters<NodeViewConstructor>) => MathNodeView;
 

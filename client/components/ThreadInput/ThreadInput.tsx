@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 
-import { Avatar } from 'components';
-import Editor, { getText, getJSON, EditorChangeObject } from 'components/Editor';
-import { FormattingBar, buttons } from 'components/FormattingBar';
-import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Avatar } from 'components';
+import Editor, { type EditorChangeObject, getJSON, getText } from 'components/Editor';
+import { buttons, FormattingBar } from 'components/FormattingBar';
+import { usePageContext } from 'utils/hooks';
 
-require('./threadInput.scss');
+import './threadInput.scss';
 
 type OwnProps = {
 	parentId: string;

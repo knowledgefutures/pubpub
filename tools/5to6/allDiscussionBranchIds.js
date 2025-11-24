@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 require('./setup');
 const { Discussion } = require('../../server/models');
 

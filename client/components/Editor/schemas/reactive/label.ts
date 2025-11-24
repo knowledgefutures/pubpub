@@ -1,5 +1,6 @@
+import type { Node } from 'prosemirror-model';
+
 import { useDocumentState } from '@pubpub/prosemirror-reactive';
-import { Node } from 'prosemirror-model';
 
 import { getEnabledNodeLabelConfiguration, getNodeLabelText } from '../../utils';
 

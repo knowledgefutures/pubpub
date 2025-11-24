@@ -1,8 +1,10 @@
-import app from 'server/server';
+import { Router } from 'express';
 
 import { subscribeToMailchimp } from './queries';
 
-app.post('/api/subscribe', (req, res) => {
+export const router = Router();
+
+router.post('/api/subscribe', (req, res) => {
 	return subscribeToMailchimp(req.body)
 		.then(() => {
 			return res.status(200).json(true);

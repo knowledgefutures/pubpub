@@ -1,41 +1,47 @@
-import React, { useState, useMemo } from 'react';
-import classNames from 'classnames';
-import { AnchorButton, NonIdealState } from '@blueprintjs/core';
-import { DragDropContext, DraggableProvidedDragHandleProps, DropResult } from 'react-beautiful-dnd';
-import Color from 'color';
-
-import { Banner, DashboardFrame, DragDropListing, DragHandle } from 'components';
-import { useManyPubs } from 'client/utils/useManyPubs';
-import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
-import { indexByProperty } from 'utils/arrays';
-import {
+import type {
 	Collection,
 	CollectionPub,
-	PubWithCollections,
-	Maybe,
 	DefinitelyHas,
-	UserScopeVisit,
+	Maybe,
 	Pub,
+	PubWithCollections,
+	UserScopeVisit,
 } from 'types';
+
+import React, { useMemo, useState } from 'react';
+
+import { AnchorButton, NonIdealState } from '@blueprintjs/core';
+import classNames from 'classnames';
+import Color from 'color';
+import {
+	DragDropContext,
+	type DraggableProvidedDragHandleProps,
+	type DropResult,
+} from 'react-beautiful-dnd';
+
+import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { useManyPubs } from 'client/utils/useManyPubs';
+import { Banner, DashboardFrame, DragDropListing, DragHandle } from 'components';
+import { indexByProperty } from 'utils/arrays';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
 
 import {
 	OverviewFrame,
 	OverviewSearchGroup,
 	OverviewSection,
+	type PubsOverviewSearchFilter,
+	type QuickAction,
 	QuickActions,
-	QuickAction,
 	ScopeSummaryList,
-	PubsOverviewSearchFilter,
 } from '../helpers';
-import { PubOverviewRow, LoadMorePubsRow, SpecialRow } from '../overviewRows';
-import { useCollectionPubs, useCollectionState } from './collectionState';
+import { LoadMorePubsRow, PubOverviewRow, SpecialRow } from '../overviewRows';
 import CollectionControls from './CollectionControls';
+import { useCollectionPubs, useCollectionState } from './collectionState';
 import PubMenu from './PubMenu';
 
-require('./dashboardCollectionOverview.scss');
+import './dashboardCollectionOverview.scss';
 
 type Props = {
 	overviewData: {

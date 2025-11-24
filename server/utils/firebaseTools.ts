@@ -1,8 +1,10 @@
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
 
-import { createFirebaseChange, buildSchema } from 'client/components/Editor';
-import { Node, Fragment, Slice } from 'prosemirror-model';
+import { Fragment, Node, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
+
+import { buildSchema, createFirebaseChange } from 'client/components/Editor';
+
 import { getPubDraftDoc, getPubDraftRef } from './firebaseAdmin';
 
 type Reference = Awaited<ReturnType<typeof getPubDraftRef>>;

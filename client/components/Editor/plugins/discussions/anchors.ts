@@ -1,6 +1,7 @@
-import { DiscussionAnchor } from 'types';
+import type { DiscussionAnchor } from 'types';
 
-import { Discussions } from './types';
+import type { Discussions } from './types';
+
 import { isEmptySelection } from './util';
 
 export const getDiscussionsFromAnchors = (anchors: DiscussionAnchor[]): Discussions => {

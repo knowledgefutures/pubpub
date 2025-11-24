@@ -1,7 +1,7 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+import type { DOMOutputSpec } from 'prosemirror-model';
+
+import { useDeferredNode, useDocumentState } from '@pubpub/prosemirror-reactive';
 import classNames from 'classnames';
-import { DOMOutputSpec } from 'prosemirror-model';
-import { useDocumentState, useDeferredNode } from '@pubpub/prosemirror-reactive';
 
 import { buildLabel, getEnabledNodeLabelConfiguration } from '../utils';
 
@@ -23,6 +23,7 @@ export default {
 				const { nodeLabels } = useDocumentState();
 
 				if (targetId) {
+					// biome-ignore lint/correctness/useHookAtTopLevel: shhhhhh
 					return useDeferredNode(targetId, (target) => {
 						if (!target) {
 							return null;

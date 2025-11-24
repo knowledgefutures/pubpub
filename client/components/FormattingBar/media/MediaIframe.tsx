@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { InputGroup, Button, Intent, NonIdealState } from '@blueprintjs/core';
+
+import { Button, InputGroup, Intent, NonIdealState } from '@blueprintjs/core';
 import { isHttpsUri } from 'valid-url';
 
 import { getIframeSrc } from 'client/utils/editor';

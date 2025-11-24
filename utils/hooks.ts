@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
-import throttle from 'lodash.throttle';
+import type * as types from 'types';
 
-import * as types from 'types';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+
+import throttle from 'lodash.throttle';
 
 export const PageContext = React.createContext<types.PageContext>({} as types.PageContext);
 

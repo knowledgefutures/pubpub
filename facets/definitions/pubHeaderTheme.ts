@@ -1,4 +1,4 @@
-import { prop, facet, string, choice } from '../core';
+import { choice, facet, prop, string } from '../core';
 
 const textStylePropType = choice(['dark', 'light', 'black-blocks', 'white-blocks']);
 

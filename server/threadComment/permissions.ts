@@ -1,4 +1,4 @@
-import { Pub, Thread, ThreadComment, Discussion, ReviewNew, Visibility } from 'server/models';
+import { Discussion, Pub, ReviewNew, Thread, ThreadComment, Visibility } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
 

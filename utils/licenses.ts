@@ -1,10 +1,11 @@
-import { FacetValue, License } from 'facets';
-import * as types from 'types';
-import { LicenseDetails, LicenseKind, RenderedLicense } from 'types/license';
+import type { FacetValue, License } from 'facets';
+import type { CollectionPub, Community, Pub } from 'server/models';
+import type * as types from 'types';
+import type { LicenseDetails, LicenseKind, RenderedLicense } from 'types/license';
+
+import { assert } from 'utils/assert';
 import { getPublisherString } from 'utils/community';
 import { getPubCopyrightYear } from 'utils/pub/copyright';
-import { assert } from 'utils/assert';
-import { CollectionPub, Community, Pub } from 'server/models';
 
 export const licenseDetailsByKind: { [L in LicenseKind]: LicenseDetails<L> } = {
 	'cc-by': {

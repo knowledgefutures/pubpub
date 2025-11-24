@@ -1,15 +1,18 @@
+import type { Callback, PageContext } from 'types';
+
 import React, { useState } from 'react';
+
+import { AnchorButton, Button } from '@blueprintjs/core';
 import classNames from 'classnames';
 import { useEffectOnce } from 'react-use';
-import { AnchorButton, Button } from '@blueprintjs/core';
 
-import { shouldShowTosUpdate, markTosUpdateSeen } from 'client/utils/legal/tosUpdate';
 import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdprConsent';
-import { Callback, PageContext } from 'types';
+import { markTosUpdateSeen, shouldShowTosUpdate } from 'client/utils/legal/tosUpdate';
 import { usePageContext } from 'utils/hooks';
+
 import { dismissUserDismissable } from '../../utils/userDismissable';
 
-require('./legalBanner.scss');
+import './legalBanner.scss';
 
 type Banner = {
 	title: React.ReactNode;
@@ -31,7 +34,7 @@ const banners: Banner[] = [
 				</p>
 			);
 		},
-		// eslint-disable-next-line react/prop-types
+
 		buttons: (props, next) => {
 			return (
 				<>
@@ -73,7 +76,7 @@ const banners: Banner[] = [
 				</p>
 			);
 		},
-		// eslint-disable-next-line react/prop-types
+
 		buttons: ({ loginData, setGdprConsent }, next) => {
 			const closeWithConsent = (doesConsent) => {
 				updateGdprConsent(loginData, doesConsent, setGdprConsent);
@@ -164,8 +167,7 @@ const LegalBanner = () => {
 				{allBannersToShow.map((banner, index) => {
 					return (
 						<div
-							// eslint-disable-next-line react/no-array-index-key
-							key={index}
+							key={`${banner.title}-${index}`}
 							className={classNames(
 								'step',
 								banners.indexOf(banner) === bannerIndex && 'current',

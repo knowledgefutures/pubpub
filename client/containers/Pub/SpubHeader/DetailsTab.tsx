@@ -1,14 +1,16 @@
+import type { DefinitelyHas, DocJson, Pub, PubPageData, Submission } from 'types';
+import type { ValidatedSubmissionFields } from 'utils/submission/validate';
+
 import React from 'react';
+
 import { InputGroup } from '@blueprintjs/core';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { PubPageData, Pub, DocJson, DefinitelyHas, Submission } from 'types';
 import { DownloadChooser } from 'components';
-import { ValidatedSubmissionFields } from 'utils/submission/validate';
 
-import SpubHeaderTab from './SpubHeaderTab';
-import SpubHeaderField from './SpubHeaderField';
 import AbstractEditor from './AbstractEditor';
+import SpubHeaderField from './SpubHeaderField';
+import SpubHeaderTab from './SpubHeaderTab';
 
 type Props = {
 	pub: Pub;

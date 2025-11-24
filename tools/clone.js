@@ -123,7 +123,7 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 		draftId: draft.id,
 	});
 	await cloneScopeSummary(existingPub, newPub);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log('Cloning', newPub.title);
 	const discussionIdMap = await cloneManyModels(
 		Discussion,
@@ -270,7 +270,7 @@ const getUpdatedCommunityNavigation = ({ items, pageIdMap, collectionIdMap }) =>
 };
 
 const updateCommunityContent = async ({ community, pageIdMap, collectionIdMap }) => {
-	// eslint-disable-next-line no-param-reassign
+	
 	community.navigation = getUpdatedCommunityNavigation({
 		items: community.navigation,
 		pageIdMap,
@@ -281,7 +281,7 @@ const updateCommunityContent = async ({ community, pageIdMap, collectionIdMap })
 		pageIdMap,
 		collectionIdMap,
 	});
-	// eslint-disable-next-line no-param-reassign
+	
 	community.defaultPubCollections = community.defaultPubCollections.map(
 		(collectionId) => collectionIdMap[collectionId],
 	);

@@ -1,7 +1,8 @@
-import {
+import type {
 	Collection,
-	InitialData,
+	DashboardMenuState,
 	InitialCommunityData,
+	InitialData,
 	InitialNotificationsData,
 	LocationData,
 	LoginData,
@@ -9,9 +10,9 @@ import {
 	Page,
 	PatchFn,
 	ScopeData,
-	DashboardMenuState,
 } from 'types';
-import { NoteManager } from '../client/utils/notes';
+
+import type { NoteManager } from '../client/utils/notes';
 
 export type PageContext = {
 	scopeData: ScopeData;

@@ -1,12 +1,15 @@
+import { Router } from 'express';
 import xmlbuilder from 'xmlbuilder';
 
 import { Release } from 'server/models';
-import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 import { parentToSupplementNeedsDoiError } from 'utils/crossref/createDeposit';
 
 import { getPermissions } from './permissions';
 import { generateDoi, getDoiData, setDoiData } from './queries';
+
+export const router = Router();
 
 const assertUserAuthorized = async (target, requestIds) => {
 	const permissions = await getPermissions(requestIds);
@@ -66,7 +69,7 @@ const previewOrDepositDoi = async (user, body, options = { deposit: false }) => 
 	return depositJson;
 };
 
-app.post(
+router.post(
 	'/api/doi',
 	wrap(async (req, res) => {
 		try {
@@ -85,7 +88,7 @@ app.post(
 	}),
 );
 
-app.get(
+router.get(
 	'/api/doiPreview',
 	wrap(async (req, res) => {
 		try {
@@ -107,7 +110,7 @@ app.get(
 	}),
 );
 
-app.get(
+router.get(
 	'/api/generateDoi',
 	wrap(async (req, res) => {
 		const user = req.user || {};

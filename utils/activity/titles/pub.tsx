@@ -1,16 +1,17 @@
-import React from 'react';
-
-import {
-	PubActivityItem,
+import type { TitleRenderer } from 'client/utils/activity/types';
+import type {
 	CollectionPubCreatedActivityItem,
 	CollectionPubRemovedActivityItem,
-	MemberActivityItem,
-	SubmissionActivityItem,
 	FacetsActivityItem,
+	MemberActivityItem,
+	PubActivityItem,
+	SubmissionActivityItem,
 } from 'types';
+
+import React from 'react';
+
 import { PubTitle } from 'components';
 import { getDashUrl } from 'utils/dashboard';
-import { TitleRenderer } from 'client/utils/activity/types';
 
 import { getPubFromContext } from './util';
 

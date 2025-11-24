@@ -1,9 +1,6 @@
-import sinon from 'sinon';
-import { setup, teardown, login, modelize } from 'stubstub';
+import { vi } from 'vitest';
 
-import * as firebaseAdmin from 'server/utils/firebaseAdmin';
-
-let getPubDraftDocStub;
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community community {
@@ -32,12 +29,20 @@ setup(beforeAll, async () => {
 
 teardown(afterAll);
 
+const { getPubDraftDocStub } = vi.hoisted(() => {
+	return {
+		getPubDraftDocStub: vi.fn(),
+	};
+});
+
 beforeEach(() => {
-	getPubDraftDocStub = sinon.stub(firebaseAdmin, 'getPubDraftDoc');
+	vi.mock('server/utils/firebaseAdmin', () => ({
+		getPubDraftDoc: getPubDraftDocStub,
+	}));
 });
 
 afterEach(() => {
-	getPubDraftDocStub.restore();
+	vi.clearAllMocks();
 });
 
 const makeHistoryQuery = ({ historyKey, provideAccessHash = false }) => {
@@ -57,7 +62,7 @@ it('allows anyone to view the history at the latest Release key', async () => {
 		.get('/api/pubHistory')
 		.query(makeHistoryQuery({ historyKey: 10 }))
 		.expect(200);
-	expect(getPubDraftDocStub.called).toEqual(true);
+	expect(getPubDraftDocStub).toHaveBeenCalled();
 });
 
 it('forbids guests from viewing the history of the draft', async () => {
@@ -67,7 +72,7 @@ it('forbids guests from viewing the history of the draft', async () => {
 		.get('/api/pubHistory')
 		.query(makeHistoryQuery({ historyKey: 5 }))
 		.expect(403);
-	expect(getPubDraftDocStub.called).toEqual(false);
+	expect(getPubDraftDocStub).not.toHaveBeenCalled();
 });
 
 it('lets guest view the history of the draft with an access hash', async () => {
@@ -77,7 +82,7 @@ it('lets guest view the history of the draft with an access hash', async () => {
 		.get('/api/pubHistory')
 		.query(makeHistoryQuery({ historyKey: 5, provideAccessHash: true }))
 		.expect(200);
-	expect(getPubDraftDocStub.called).toEqual(true);
+	expect(getPubDraftDocStub).toHaveBeenCalled();
 });
 
 it('lets members view the history of the draft', async () => {
@@ -87,5 +92,5 @@ it('lets members view the history of the draft', async () => {
 		.get('/api/pubHistory')
 		.query(makeHistoryQuery({ historyKey: 5 }))
 		.expect(200);
-	expect(getPubDraftDocStub.called).toEqual(true);
+	expect(getPubDraftDocStub).toHaveBeenCalled();
 });

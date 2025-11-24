@@ -1,9 +1,10 @@
 import React from 'react';
-import * as Sentry from '@sentry/react';
 import { hydrate } from 'react-dom';
-import { FocusStyleManager } from '@blueprintjs/core';
 
-import { setEnvironment, setAppCommit } from 'utils/environment';
+import { FocusStyleManager } from '@blueprintjs/core';
+import * as Sentry from '@sentry/react';
+
+import { setAppCommit, setEnvironment } from 'utils/environment';
 
 import { getClientInitialData } from './initialData';
 
@@ -34,7 +35,9 @@ export const hydrateWrapper = (Component) => {
 		const viewData = JSON.parse(document.getElementById('view-data').getAttribute('data-json'));
 		const chunkName = JSON.parse(
 			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-			document.getElementById('chunk-name').getAttribute('data-json'),
+			document
+				.getElementById('chunk-name')
+				.getAttribute('data-json'),
 		);
 		if (!isLocalEnv(window)) {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'sentryIsActive' does not exist on type '... Remove this comment to see the full error message

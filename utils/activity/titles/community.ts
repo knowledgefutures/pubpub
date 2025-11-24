@@ -1,12 +1,14 @@
-import {
+import type {
 	CommunityCreatedActivityItem,
 	CommunityUpdatedActivityItem,
 	FacetsActivityItem,
 	MemberActivityItem,
 } from 'types';
+
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
 import { communityUrl } from 'utils/canonicalUrls';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getCommunityFromContext } from './util';
 
 type AcceptedItem =

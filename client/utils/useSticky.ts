@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import stickybits, { StickyBits } from 'stickybits';
+
+import stickybits, { type StickyBits } from 'stickybits';
 
 type Callback = () => unknown;
 
@@ -46,7 +47,7 @@ export const useSticky = (options: Options) => {
 			return () => {
 				try {
 					stickyInstanceRef.current!.cleanup();
-				} catch (e) {
+				} catch (_e) {
 					// Whatever
 				}
 			};

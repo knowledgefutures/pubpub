@@ -1,14 +1,17 @@
+import type { WorkerTask } from 'server/models';
+import type { Community } from 'types';
+
 import React, { useMemo, useState } from 'react';
+
 import { AnchorButton, Button, Callout } from '@blueprintjs/core';
 import stripIndent from 'strip-indent';
 
-import { Community } from 'types';
-import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
 import { SettingsSection } from 'components';
-import type { WorkerTask } from 'server/models';
 import { isDataExportEnabled } from 'utils/analytics/featureFlags';
-import { ArchiveTask, ExportCommunityDataButton } from './ExportCommunityDataButton';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
+
+import { type ArchiveTask, ExportCommunityDataButton } from './ExportCommunityDataButton';
 
 const getEmails = (communityData: Community) => {
 	const exportEmailBody = stripIndent(`

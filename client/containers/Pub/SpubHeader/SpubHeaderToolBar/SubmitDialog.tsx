@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Callout, Button, Classes, Dialog } from '@blueprintjs/core';
+import type { DefinitelyHas, Submission, SubmissionStatus } from 'types';
 
-import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
+import React, { useState } from 'react';
+
+import { Button, Callout, Classes, Dialog } from '@blueprintjs/core';
+
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
 

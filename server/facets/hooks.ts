@@ -1,4 +1,5 @@
-import { FacetDefinition } from 'facets';
+import type { FacetDefinition } from 'facets';
+
 import { createFacetInstanceUpdatedActivityItem } from 'server/activityItem/queries';
 import { createActivityHooks } from 'server/utils/activityHooks';
 

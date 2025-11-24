@@ -1,25 +1,27 @@
-import { history } from 'prosemirror-history';
-import { gapCursor } from 'prosemirror-gapcursor';
+import type { Schema } from 'prosemirror-model';
 
-import { Schema } from 'prosemirror-model';
+import type { PluginLoader, PluginsOptions } from '../types';
+
+import { gapCursor } from 'prosemirror-gapcursor';
+import { history } from 'prosemirror-history';
+
+import buildCode from './code';
 import buildCollaborative from './collaborative';
 import buildDiscussions from './discussions';
 import buildDomEvents from './domEvents';
-import buildIds from './ids';
 import buildMathTranslations from './equationsToMath';
 import buildHeaderIds from './headerIds';
+import buildIds from './ids';
 import buildInputRules from './inputRules';
 import buildKeymap from './keymap';
 import buildLocalHighlights from './localHighlights';
 import buildMath from './math';
 import buildOnChange from './onChange';
-import buildPlaceholder from './placeholder';
 import buildPaste from './paste';
+import buildPlaceholder from './placeholder';
 import buildReactive from './reactive';
-import buildTable from './table';
-import buildCode from './code';
 import buildReferences from './references';
-import { PluginLoader, PluginsOptions } from '../types';
+import buildTable from './table';
 
 const buildGapCursor = () => {
 	return gapCursor();

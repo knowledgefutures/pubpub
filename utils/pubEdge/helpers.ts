@@ -1,10 +1,11 @@
-import * as types from 'types';
-import { formatDate } from 'utils/dates';
-import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { getAllPubContributors } from 'utils/contributors';
+import type { Community, Pub } from 'server/models';
+import type * as types from 'types';
 
-import { Community, Pub } from 'server/models';
+import { pubShortUrl, pubUrl } from 'utils/canonicalUrls';
+import { getAllPubContributors } from 'utils/contributors';
+import { formatDate } from 'utils/dates';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+
 import { RelationType } from './relations';
 
 export const getHostnameForUrl = (url: string) => {

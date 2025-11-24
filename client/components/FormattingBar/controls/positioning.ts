@@ -1,8 +1,7 @@
+import type { EditorChangeObject } from '../../Editor';
+import type { ControlsConfiguration, GetBoundsFn } from '../types';
+
 import React from 'react';
-
-import { EditorChangeObject } from '../../Editor';
-
-import { GetBoundsFn, ControlsConfiguration } from '../types';
 
 const createFloatingPositionGetter =
 	(getBounds: GetBoundsFn) =>

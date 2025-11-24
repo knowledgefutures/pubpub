@@ -1,8 +1,9 @@
-import { GetState, SetState } from 'zustand';
+import type { GetState, SetState } from 'zustand';
 
-import { FacetsState } from '../types';
-import { updateFacet } from './updateFacet';
+import type { FacetsState } from '../types';
+
 import { persistFacets } from './persistFacets';
+import { updateFacet } from './updateFacet';
 
 type ActionsArgs = [GetState<FacetsState>, SetState<FacetsState>, ...any[]];
 type Action = (...args: ActionsArgs) => void | Promise<void>;

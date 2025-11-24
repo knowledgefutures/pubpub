@@ -1,11 +1,11 @@
-/* eslint-disable pubpub-rules/no-user-model */
-import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
+import { QueryTypes } from 'sequelize';
 
 import { sequelize } from 'server/models';
-import { uniqueCommunitiesFromMembersQuery } from 'utils/caching/uniqueCommunitiesFromMembersQuery';
-import { QueryTypes } from 'sequelize';
+import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
 import { getPPLic } from 'utils/caching/getHashedUserId';
+import { uniqueCommunitiesFromMembersQuery } from 'utils/caching/uniqueCommunitiesFromMembersQuery';
+
 import { User } from './model';
 
 const getUniqueHostnamesForUserId = async (userId: string) => {

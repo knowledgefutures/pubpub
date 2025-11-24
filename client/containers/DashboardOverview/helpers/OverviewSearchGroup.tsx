@@ -1,13 +1,14 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import classNames from 'classnames';
+import React, { useCallback, useMemo, useState } from 'react';
+
 import { Tab, Tabs } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-import { getDefaultOverviewSearchFilters, OverviewSearchFilter } from './filters';
+import { getDefaultOverviewSearchFilters, type OverviewSearchFilter } from './filters';
 
-require('./overviewSearchGroup.scss');
+import './overviewSearchGroup.scss';
 
 type SearchTermCallback = (q: string) => unknown;
 

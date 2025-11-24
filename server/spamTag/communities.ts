@@ -1,6 +1,7 @@
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
 
-import * as types from 'types';
 import { Community, SpamTag } from 'server/models';
 
 const orderableFields = {
@@ -13,7 +14,7 @@ const getWhereQueryPartForUrl = (searchTerm: string) => {
 	let url: URL;
 	try {
 		url = new URL(searchTerm);
-	} catch (err: unknown) {
+	} catch (_err: unknown) {
 		return [];
 	}
 	if (url.hostname.endsWith('.pubpub.org')) {

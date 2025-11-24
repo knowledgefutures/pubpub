@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import stripIndent from 'strip-indent';
 import mailgun from 'mailgun.js';
 
@@ -88,7 +88,7 @@ const main = async () => {
 				// limit: 500,
 				// offset: 0,
 				// where: { email: { [Op.notIn]: alreadySent } },
-		  }
+			}
 		: { where: { email: 'team@pubpub.org' } };
 	const users = await User.findAll(query);
 	// Uncomment the below to see the list of users you'll send to

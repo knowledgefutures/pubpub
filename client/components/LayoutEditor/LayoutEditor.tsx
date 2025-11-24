@@ -1,22 +1,24 @@
+import type { Collection, Community, DefinitelyHas, Pub } from 'types';
+import type { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
+
 import React, { useEffect } from 'react';
+
 import { Button, Card, Classes, Tooltip } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
-import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
-import { Pub, Community, Collection, DefinitelyHas } from 'types';
-
 import { Popover } from 'components';
-import { useLayout } from './useLayout';
-import { useLayoutPubs } from './useLayoutPubs';
-import LayoutEditorInsert from './LayoutEditorInsert';
-import LayoutEditorPubs from './LayoutEditorPubs';
-import LayoutEditorPagesCollections from './LayoutEditorPagesCollections';
-import LayoutEditorText from './LayoutEditorText';
-import LayoutEditorHtml from './LayoutEditorHtml';
+
 import LayoutEditorBanner from './LayoutEditorBanner';
 import LayoutEditorCollectionHeader from './LayoutEditorCollectionHeader';
+import LayoutEditorHtml from './LayoutEditorHtml';
+import LayoutEditorInsert from './LayoutEditorInsert';
+import LayoutEditorPagesCollections from './LayoutEditorPagesCollections';
+import LayoutEditorPubs from './LayoutEditorPubs';
+import LayoutEditorText from './LayoutEditorText';
+import { useLayout } from './useLayout';
+import { useLayoutPubs } from './useLayoutPubs';
 
-require('./layoutEditor.scss');
+import './layoutEditor.scss';
 
 type Props = {
 	allowDuplicatePubs: boolean;

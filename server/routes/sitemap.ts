@@ -1,15 +1,20 @@
+import type { Community } from 'types';
+
+import { Router } from 'express';
 import { SitemapAndIndexStream, SitemapStream } from 'sitemap';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { createGzip } from 'zlib';
 
-import { isProd } from 'utils/environment';
 import { Page, Pub, Release } from 'server/models';
-import app, { wrap } from 'server/server';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
-import { communityUrl, pubUrl, pageUrl } from 'utils/canonicalUrls';
 import { createPubPubS3Client } from 'server/utils/s3';
+import { wrap } from 'server/wrap';
+import { communityUrl, pageUrl, pubUrl } from 'utils/canonicalUrls';
+import { isProd } from 'utils/environment';
+
+export const router = Router();
 
 const s3 = createPubPubS3Client({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -29,9 +34,10 @@ const uploadFromStream = (key) => {
 	return pass;
 };
 
-// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-const getSitemapKey = (community, { filename, index = 'index' } = {}) =>
-	`${keyPrefix}/${community.id}/${filename || `sitemap-${index}.xml`}.gz`;
+const getSitemapKey = (
+	community: Community,
+	{ filename, index = 'index' }: { filename?: string; index?: string } = {},
+) => `${keyPrefix}/${community.id}/${filename || `sitemap-${index}.xml`}.gz`;
 
 const shouldGenerateSitemapIndex = async (community) => {
 	const sitemapKey = getSitemapKey(community);
@@ -119,7 +125,7 @@ const getSitemapIndex = async (community, targetFilename) => {
 	return s3.downloadFile(sitemapKey);
 };
 
-app.get(
+router.get(
 	'/sitemap.xml',
 	wrap(async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
@@ -136,7 +142,7 @@ app.get(
 	}),
 );
 
-app.get(
+router.get(
 	'/sitemap*',
 	wrap(async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {

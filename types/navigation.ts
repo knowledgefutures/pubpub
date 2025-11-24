@@ -1,8 +1,9 @@
-import { DashboardMode } from 'utils/dashboard';
-import { Collection } from './collection';
-import { Community } from './community';
-import { Page } from './page';
-import { IconName } from '../client/components/Icon/Icon';
+import type { DashboardMode } from 'utils/dashboard';
+
+import type { IconName } from '../client/components/Icon/Icon';
+import type { Collection } from './collection';
+import type { Community } from './community';
+import type { Page } from './page';
 
 export type NavBuilderCommunity = Pick<
 	Community,

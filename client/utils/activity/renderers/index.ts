@@ -1,6 +1,5 @@
-import { ActivityItemRenderers } from '../types';
+import type { ActivityItemRenderers } from '../types';
 
-import { renderCommunityCreated, renderCommunityUpdated } from './community';
 import {
 	renderCollectionCreated,
 	renderCollectionPubCreated,
@@ -8,23 +7,23 @@ import {
 	renderCollectionRemoved,
 	renderCollectionUpdated,
 } from './collection';
-import { renderPageCreated, renderPageUpdated, renderPageRemoved } from './page';
+import { renderCommunityCreated, renderCommunityUpdated } from './community';
+import { renderFacetInstanceUpdated } from './facet';
+import { renderMemberCreated, renderMemberRemoved, renderMemberUpdated } from './member';
+import { renderPageCreated, renderPageRemoved, renderPageUpdated } from './page';
 import {
 	renderPubCreated,
-	renderPubRemoved,
-	renderPubUpdated,
-	renderPubReleased,
+	renderPubDiscussionCommentAdded,
 	renderPubEdgeCreated,
 	renderPubEdgeRemoved,
-	renderPubDiscussionCommentAdded,
-	renderPubReviewCreated,
+	renderPubReleased,
+	renderPubRemoved,
 	renderPubReviewCommentAdded,
+	renderPubReviewCreated,
 	renderPubReviewUpdated,
+	renderPubUpdated,
 } from './pub';
-import { renderMemberCreated, renderMemberRemoved, renderMemberUpdated } from './member';
-
 import { renderSubmissionUpdated } from './submission';
-import { renderFacetInstanceUpdated } from './facet';
 
 export const activityItemRenderers: ActivityItemRenderers = {
 	'community-created': renderCommunityCreated,

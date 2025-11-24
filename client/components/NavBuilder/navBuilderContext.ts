@@ -1,7 +1,7 @@
-import React from 'react';
+import type { Collection, Page } from 'types';
+import type { CommunityNavigationEntry } from 'types/navigation';
 
-import { Collection, Page } from 'types';
-import { CommunityNavigationEntry } from 'types/navigation';
+import React from 'react';
 
 type NavBuilderContextType = {
 	pages: Page[];

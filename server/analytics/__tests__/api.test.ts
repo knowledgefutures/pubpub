@@ -1,9 +1,11 @@
+import { vi } from 'vitest';
+
 import { login, setup, teardown } from 'stubstub';
 import {
+	analyticsEventSchema,
 	type basePageViewSchema,
 	type PageViewPayload,
-	sharedEventPayloadSchema,
-	analyticsEventSchema,
+	type sharedEventPayloadSchema,
 } from 'utils/api/schemas/analytics';
 
 const baseTestPayload = {
@@ -72,7 +74,7 @@ const makeTestOtherPageViewPayload = (options?: Partial<OtherPageView>) => {
 
 setup(beforeAll, async () => {
 	// mock fetch, we don't actually want to send api calls
-	jest.spyOn(global, 'fetch').mockImplementation(
+	vi.spyOn(global, 'fetch').mockImplementation(
 		() =>
 			Promise.resolve({
 				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
@@ -84,7 +86,7 @@ setup(beforeAll, async () => {
 });
 
 teardown(afterAll, () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 });
 
 describe('analytics schema', () => {

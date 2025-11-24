@@ -1,6 +1,11 @@
+import type {
+	PageCreatedActivityItem,
+	PageRemovedActivityItem,
+	PageUpdatedActivityItem,
+} from 'types';
+
 import React from 'react';
 
-import { PageCreatedActivityItem, PageUpdatedActivityItem, PageRemovedActivityItem } from 'types';
 import { pageTitle } from 'utils/activity/titles';
 
 import { itemRenderer } from './itemRenderer';
@@ -72,7 +77,7 @@ export const renderPageUpdated = itemRenderer<PageUpdatedActivityItem, BaseTitle
 					{actor} made the following changes to {page}:
 					<ul>
 						{changes.map((change, index) => (
-							// eslint-disable-next-line react/no-array-index-key
+							// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
 							<li key={index}>{change('the Page')}</li>
 						))}
 					</ul>

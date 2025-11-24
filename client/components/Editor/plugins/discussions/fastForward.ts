@@ -1,12 +1,13 @@
-import { Node } from 'prosemirror-model';
-import { Step } from 'prosemirror-transform';
-import firebase from 'firebase';
+import type firebase from 'firebase';
+import type { Node } from 'prosemirror-model';
+import type { Step } from 'prosemirror-transform';
+
+import type { DiscussionInfo, Discussions, NullableDiscussions } from './types';
 
 import { flattenOnce } from 'utils/arrays';
-import { getStepsInChangeRange } from '../../utils';
 
+import { getStepsInChangeRange } from '../../utils';
 import { mapDiscussionThroughSteps } from './util';
-import { DiscussionInfo, Discussions, NullableDiscussions } from './types';
 
 type Reference = firebase.database.Reference;
 

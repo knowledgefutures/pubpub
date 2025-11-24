@@ -1,7 +1,7 @@
 import amqplib from 'amqplib';
 
-import { TaskPriority, taskQueueName } from 'utils/workers';
 import { createWorkerTask } from 'server/workerTask/queries';
+import { TaskPriority, taskQueueName } from 'utils/workers';
 
 let openChannelPromise;
 

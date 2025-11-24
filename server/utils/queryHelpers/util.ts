@@ -1,10 +1,10 @@
 import {
+	Commenter,
+	includeUserModel,
 	Thread,
 	ThreadComment,
 	ThreadEvent,
 	Visibility,
-	includeUserModel,
-	Commenter,
 } from 'server/models';
 
 export const stripFalsyIdsFromQuery = (whereQueryObject) => {

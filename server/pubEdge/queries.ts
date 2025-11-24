@@ -1,11 +1,13 @@
-import { ExternalPublication, Pub, PubEdge } from 'server/models';
-import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
+import type { CreationAttributes } from 'sequelize';
+
+import type * as types from 'types';
+import type { RelationTypeName } from 'utils/pubEdge/relations';
+
 import { createExternalPublication } from 'server/externalPublication/queries';
-import { findRankInRankedList } from 'utils/rank';
+import { type ExternalPublication, type Pub, PubEdge } from 'server/models';
+import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { expect } from 'utils/assert';
-import * as types from 'types';
-import { RelationTypeName } from 'utils/pubEdge/relations';
-import { CreationAttributes } from 'sequelize';
+import { findRankInRankedList } from 'utils/rank';
 
 const findRankForNewPubEdge = async (pubId: string, moveToTop: boolean) => {
 	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId } });

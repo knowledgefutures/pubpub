@@ -1,9 +1,9 @@
+import type { JSON } from 'types';
+
+import type { FacetDefinition } from './facet';
+import type { FacetPropType } from './propType';
+
 import zodToJsonSchema from 'zod-to-json-schema';
-
-import { JSON } from 'types';
-
-import { FacetDefinition } from './facet';
-import { FacetPropType } from './propType';
 
 type CanonicalizedProp = JSON & {
 	postgresType: string;

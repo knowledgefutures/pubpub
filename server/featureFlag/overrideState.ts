@@ -1,4 +1,4 @@
-import { FeatureFlagOverrideState } from 'types';
+import type { FeatureFlagOverrideState } from 'types';
 
 type CreateWhereQuery = (id: string) => Record<string, any>;
 

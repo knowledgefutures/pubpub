@@ -1,15 +1,19 @@
+import type { User } from 'types';
+
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { generateMetabaseToken } from 'server/utils/metabase';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { generateMetabaseToken } from 'server/utils/metabase';
-import { User } from 'types';
 
-app.get('/admin', (req, res, next) => {
+export const router = Router();
+
+router.get('/admin', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {
 		return next();
 	}

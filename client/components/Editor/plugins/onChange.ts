@@ -1,9 +1,11 @@
-import { Plugin, NodeSelection, PluginKey } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { isInTable } from 'prosemirror-tables';
-import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
+import type { EditorView } from 'prosemirror-view';
 
-import { PluginsOptions } from '../types';
+import type { PluginsOptions } from '../types';
+
+import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state';
+import { isInTable } from 'prosemirror-tables';
+
 import { collabDocPluginKey } from './collaborative';
 import { domEventsPluginKey } from './domEvents';
 
@@ -52,7 +54,6 @@ const getActiveLink = (editorView) => {
 		return open.marksAcross(close) || [];
 	};
 
-	/* eslint-disable-next-line no-nested-ternary */
 	const foundMarks = empty
 		? getMarks($from, $to).length
 			? getMarks($from, $to)

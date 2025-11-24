@@ -1,7 +1,7 @@
-import { Page } from 'server/models';
+import type { InitialData } from 'types';
 
+import { Page } from 'server/models';
 import { enrichLayoutBlocksWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
-import { InitialData } from 'types';
 
 export default async ({ query, initialData }: { query: any; initialData: InitialData }) => {
 	const pageData = await Page.findOne({

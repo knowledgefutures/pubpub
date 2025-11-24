@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+
 import { AnchorButton, Classes } from '@blueprintjs/core';
 
-import Overlay from 'components/Overlay/Overlay';
-import ImageCropper from 'components/ImageCropper/ImageCropper';
-import Icon from 'components/Icon/Icon';
 import { s3Upload } from 'client/utils/upload';
+import Icon from 'components/Icon/Icon';
+import ImageCropper from 'components/ImageCropper/ImageCropper';
+import Overlay from 'components/Overlay/Overlay';
 
-require('./imageUpload.scss');
+import './imageUpload.scss';
 
 const noopImageHandler = (s: any) => {
 	void s;
@@ -166,7 +167,7 @@ class ImageUpload extends Component<
 		return (
 			<div className={`image-upload-component ${Classes.FORM_GROUP}`}>
 				{/* This label's target is properly nested, but rendered by renderInput() */}
-				{/* eslint-disable-next-line jsx-a11y/label-has-for */}
+
 				<label htmlFor={`input-${this.props.htmlFor}`}>
 					{this.props.label}
 					{this.props.isRequired && (

@@ -1,10 +1,13 @@
-import React from 'react';
-import { Button } from '@blueprintjs/core';
-import { MenuDisclosureProps } from 'reakit/Menu';
+import type { MenuDisclosureProps } from 'reakit/Menu';
 
-import { LoginData } from 'types';
-import { Avatar, Menu, MenuItem, MobileAware, MobileAwareRenderProps } from 'components';
+import type { LoginData } from 'types';
+
+import React from 'react';
+
+import { Button } from '@blueprintjs/core';
+
 import { apiFetch } from 'client/utils/apiFetch';
+import { Avatar, Menu, MenuItem, MobileAware, type MobileAwareRenderProps } from 'components';
 
 type Props = {
 	loginData: LoginData;

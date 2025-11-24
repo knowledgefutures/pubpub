@@ -1,8 +1,9 @@
-import { Pub } from 'types';
-import { LayoutBlock, LayoutRenderContext, PubSortOrder } from 'types/layout';
-import { sortByRank } from 'utils/rank';
+import type { Pub } from 'types';
+import type { LayoutBlock, LayoutRenderContext, PubSortOrder } from 'types/layout';
+
 import { indexByProperty } from 'utils/arrays';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { sortByRank } from 'utils/rank';
 
 type PubQuery = {
 	collectionIds: string[];

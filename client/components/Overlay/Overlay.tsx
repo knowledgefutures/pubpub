@@ -1,8 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Overlay as BlueprintOverlay, Classes } from '@blueprintjs/core';
 
-require('./overlay.scss');
+import { Overlay as BlueprintOverlay, Classes } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
+
+import './overlay.scss';
 
 const propTypes = {
 	isOpen: PropTypes.bool,

@@ -1,5 +1,6 @@
-import { MightHave } from 'types/util';
-import { InsertableActivityItemBase } from './base';
+import type { MightHave } from 'types/util';
+
+import type { InsertableActivityItemBase } from './base';
 
 export type ThreadActivityItemBase = InsertableActivityItemBase & {
 	payload: {

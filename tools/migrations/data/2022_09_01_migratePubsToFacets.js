@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Pub } from 'server/models';
 import { updateFacetsForScope } from 'server/facets';
 

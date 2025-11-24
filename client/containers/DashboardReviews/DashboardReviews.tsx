@@ -1,12 +1,15 @@
+import type { DefinitelyHas, Pub, Reviewer } from 'types';
+
 import React from 'react';
+
 import { Menu, MenuItem, NonIdealState, Tag } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
-import { DashboardFrame } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
-import { Pub, DefinitelyHas, Reviewer } from 'types';
 
-require('./dashboardReviews.scss');
+import { DashboardFrame } from 'components';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
+
+import './dashboardReviews.scss';
 
 type Props = {
 	pubsWithReviews: DefinitelyHas<Pub, 'reviews'>[];
@@ -20,7 +23,7 @@ const DashboardReviews = (props: Props) => {
 		return reviewers
 			? reviewers.map((reviewer) => {
 					return <span key={reviewer.id}>{reviewer.name}</span>;
-			  })
+				})
 			: '';
 	};
 	return (

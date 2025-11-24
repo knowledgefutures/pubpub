@@ -1,9 +1,10 @@
+import type { primitives } from 'facets';
+
+import type { PropTypeEditorProps } from '../types';
+
 import React from 'react';
+
 import { InputGroup } from '@blueprintjs/core';
-
-import { primitives } from 'facets';
-
-import { PropTypeEditorProps } from '../types';
 
 type Props = PropTypeEditorProps<typeof primitives.string>;
 

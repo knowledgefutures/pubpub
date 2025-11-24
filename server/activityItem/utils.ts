@@ -1,7 +1,8 @@
-import * as types from 'types';
+import type { CreationAttributes } from 'sequelize';
+
+import type * as types from 'types';
 
 import { ActivityItem } from 'server/models';
-import { CreationAttributes } from 'sequelize';
 
 export const createActivityItem = <M extends ActivityItem>(ai: CreationAttributes<M>) =>
 	ActivityItem.create(ai);

@@ -1,21 +1,23 @@
+import type { CollectionPub as BareCollectionPub, Collection, Pub } from 'types';
+
 import React, { useMemo } from 'react';
+
+import { Button, Divider, Tooltip } from '@blueprintjs/core';
 import classNames from 'classnames';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Divider, Button, Tooltip } from '@blueprintjs/core';
+import { DragDropContext, type DropResult } from 'react-beautiful-dnd';
 import { Button as RKButton } from 'reakit/Button';
 
-import { Collection, CollectionPub as BareCollectionPub, Pub } from 'types';
-import { DragDropListing, Icon, QueryListDropdown, PrimaryCollectionExplanation } from 'components';
-import { findRankInRankedList, sortByRank } from 'utils/rank';
-import { getIconForCollectionKind } from 'utils/collections/schemas';
+import * as api from 'client/utils/collections/api';
+import { DragDropListing, Icon, PrimaryCollectionExplanation, QueryListDropdown } from 'components';
 import { getUserManagedCollections } from 'utils/collections/permissions';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
-import * as api from 'client/utils/collections/api';
+import { getIconForCollectionKind } from 'utils/collections/schemas';
 import { getDashUrl } from 'utils/dashboard';
+import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { findRankInRankedList, sortByRank } from 'utils/rank';
 
-require('./pubCollectionsListing.scss');
+import './pubCollectionsListing.scss';
 
 type CollectionPub = BareCollectionPub & { collection: Collection };
 type Props = {
@@ -69,7 +71,7 @@ const PubCollectionsListing = (props: Props) => {
 						title: maybeCollection.tagTitleToCreate,
 						communityId: communityData.id,
 						isPublic: true,
-				  })
+					})
 				: maybeCollection;
 		const newCollectionPub = await pendingPromise(
 			api.addCollectionPub({
@@ -235,11 +237,11 @@ const PubCollectionsListing = (props: Props) => {
 				createNewItemRenderer: renderNewItem,
 				searchPlaceholder: 'Search for Collections (or create a Tag)',
 				emptyListPlaceholder: '',
-		  }
+			}
 		: {
 				emptyListPlaceholder: 'No Collections match this search.',
 				searchPlaceholder: 'Search for Collections',
-		  };
+			};
 	const renderQueryList = (triggerButton) => {
 		if (canAddCollections.length > 0) {
 			return (

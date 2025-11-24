@@ -1,6 +1,7 @@
 import type { z } from 'zod';
-import { Prettify } from 'types';
-import { type analyticsSettingsSchema } from 'utils/api/schemas/analyticsSettings';
+
+import type { Prettify } from 'types';
+import type { analyticsSettingsSchema } from 'utils/api/schemas/analyticsSettings';
 
 export type AnalyticsSettings = z.infer<typeof analyticsSettingsSchema>;
 

@@ -1,12 +1,12 @@
-import { ThreadComment } from 'server/models';
-import { defer } from 'server/utils/deferred';
-import { getParentModelForThread } from 'server/thread/queries';
 import {
 	createPubDiscussionCommentAddedActivityItem,
 	createPubReviewCommentAddedActivityItem,
 } from 'server/activityItem/queries';
-import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { ThreadComment } from 'server/models';
+import { getParentModelForThread } from 'server/thread/queries';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
+import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { defer } from 'server/utils/deferred';
 
 const createActivityItem = async (threadComment: ThreadComment) => {
 	const parent = await getParentModelForThread(threadComment.threadId);

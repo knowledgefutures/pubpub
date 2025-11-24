@@ -1,11 +1,13 @@
+import type * as types from 'types';
+
 import React, { useEffect, useState } from 'react';
+
 import { AnchorButton, Button, Card, Switch } from '@blueprintjs/core';
 
-import * as types from 'types';
-import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { getGdprConsentElection, updateGdprConsent } from 'client/utils/legal/gdprConsent';
 import UserNotificationPreferences from 'components/UserNotifications/UserNotificationPreferences';
+import { usePageContext } from 'utils/hooks';
 
 type PrivacySettingsProps = {
 	integrations: types.Integration[];

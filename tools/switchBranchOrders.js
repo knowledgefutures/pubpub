@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Pub, Branch } from '../server/models';
 
 const fixPubBranchOrders = async (pub) => {

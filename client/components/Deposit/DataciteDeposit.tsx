@@ -1,14 +1,16 @@
-import { Callout } from '@blueprintjs/core';
+import type { Collection, Pub } from 'types';
+
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { assert, expect } from 'utils/assert';
-import { apiFetch } from 'client/utils/apiFetch';
-import { Collection, Pub } from 'types';
+import { Callout } from '@blueprintjs/core';
 
-import { DataciteDepositPreview, DepositNode } from './DataciteDepositPreview';
+import { apiFetch } from 'client/utils/apiFetch';
+import { assert, expect } from 'utils/assert';
+
+import { DataciteDepositPreview, type DepositNode } from './DataciteDepositPreview';
+import ReviewDepositCallout from './ReviewDepositCallout';
 import SubmitDepositButton from './SubmitDepositButton';
 import { SubmitDepositStatus } from './SubmitDepositStatus';
-import ReviewDepositCallout from './ReviewDepositCallout';
 
 import './dataciteDeposit.scss';
 

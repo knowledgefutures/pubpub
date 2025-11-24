@@ -1,11 +1,14 @@
+import type { ActivityAssociations } from 'types';
+
+import type { DedupedActivityItems } from './Digest';
+
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { ActivityAssociations } from 'types';
 import { Icon } from 'components';
 
 import { ActivityBundleRow } from './ActivityBundleRow';
-import { DedupedActivityItems } from './Digest';
 
 const MAX_TITLE_CHARS = 65;
 

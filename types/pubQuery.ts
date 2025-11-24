@@ -1,4 +1,4 @@
-import { SubmissionStatus } from 'types';
+import type { SubmissionStatus } from 'types';
 
 export type PubsQueryOrderingField =
 	| 'collectionRank'

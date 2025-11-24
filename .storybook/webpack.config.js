@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+
 const { resolve } = require('path');
 const autoprefixer = require('autoprefixer');
 const crypto = require('crypto');

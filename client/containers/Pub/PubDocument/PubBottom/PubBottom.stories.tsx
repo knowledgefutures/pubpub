@@ -1,9 +1,11 @@
+import type { PubPageData } from 'types';
+
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
-import { discussionsData } from 'utils/storybook/data';
 import PubBottom from 'containers/Pub/PubDocument/PubBottom/PubBottom';
-import { PubPageData } from 'types';
+import { discussionsData } from 'utils/storybook/data';
 
 const citations = [
 	{

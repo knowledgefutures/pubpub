@@ -1,47 +1,46 @@
-import React, { ReactNode } from 'react';
-import { Provider as RKProvider } from 'reakit';
+import React, { type ReactNode } from 'react';
+
 import classNames from 'classnames';
+import { Provider as RKProvider } from 'reakit';
 import { AnalyticsProvider } from 'use-analytics';
 
-import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
-import { useLazyLoadedAnalyticsInstance } from 'utils/analytics/useLazyLoadedAnalyticsInstance';
-
 import {
-	Header,
-	LegalBanner,
-	AccentStyle,
-	NavBar,
-	SkipLink,
-	Footer,
-	MobileAware,
-	FacetsStateProvider,
-} from 'components';
-import { PageContext } from 'utils/hooks';
-import { hydrateWrapper } from 'client/utils/hydrateWrapper';
-import {
+	CollapsibleHeader,
+	CollapsibleHeaderBPC,
+	collapsibleHeaderData,
+	collapsibleHeaderDataBPC,
+	MinimalFooter,
 	MinimalHeader,
+	minimalFooterData,
 	minimalHeaderData,
 	TwoColumnFooter,
 	twoColumnFooterData,
-	MinimalFooter,
-	minimalFooterData,
-	CollapsibleHeader,
-	collapsibleHeaderData,
-	CollapsibleHeaderBPC,
-	collapsibleHeaderDataBPC,
 } from 'client/layouts';
+import { hydrateWrapper } from 'client/utils/hydrateWrapper';
+import {
+	AccentStyle,
+	FacetsStateProvider,
+	Footer,
+	Header,
+	LegalBanner,
+	MobileAware,
+	NavBar,
+	SkipLink,
+} from 'components';
+import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
+import { useLazyLoadedAnalyticsInstance } from 'utils/analytics/useLazyLoadedAnalyticsInstance';
 import { usePageOnce } from 'utils/analytics/usePageOnce';
+import { PageContext } from 'utils/hooks';
 
-import SideMenu from './SideMenu';
-import Breadcrumbs from './Breadcrumbs';
 import BottomMenu from './BottomMenu';
-import SpamBanner from './SpamBanner';
-
+import Breadcrumbs from './Breadcrumbs';
 import getPaths from './paths';
+import SideMenu from './SideMenu';
+import SpamBanner from './SpamBanner';
 import { usePageState } from './usePageState';
 
-require('../../styles/base.scss');
-require('./app.scss');
+import '../../styles/base.scss';
+import './app.scss';
 
 type Props = {
 	chunkName: string;

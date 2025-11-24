@@ -1,9 +1,10 @@
+import type * as types from 'types';
+import type { MemberPermission } from 'types';
+
 import { Op } from 'sequelize';
 
-import * as types from 'types';
 import { CollectionPub, Member } from 'server/models';
 import { getMemberDataById } from 'server/utils/queryHelpers';
-import { MemberPermission } from 'types';
 import { expect } from 'utils/assert';
 
 const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }: any) => {

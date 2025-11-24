@@ -1,5 +1,6 @@
-import { getScope, getMemberDataById } from 'server/utils/queryHelpers';
-import { MemberPermission } from 'types';
+import type { MemberPermission } from 'types';
+
+import { getMemberDataById, getScope } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
 
 const getMemberPermission = async (scopeData, memberId?: string) => {

@@ -1,8 +1,9 @@
-import { EditorState } from 'prosemirror-state';
-import { splitBlock } from 'prosemirror-commands';
-import pick from 'lodash.pick';
+import type { EditorState } from 'prosemirror-state';
 
-import { Dispatch } from './types';
+import type { Dispatch } from './types';
+
+import pick from 'lodash.pick';
+import { splitBlock } from 'prosemirror-commands';
 
 export const splitBlockPreservingAttrs = (attrs: string[]) => {
 	return (state: EditorState, dispatch?: Dispatch) => {

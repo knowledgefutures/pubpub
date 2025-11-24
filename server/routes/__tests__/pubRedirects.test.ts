@@ -1,4 +1,4 @@
-import { setup, teardown, stubFirebaseAdmin, login, modelize } from 'stubstub';
+import { login, modelize, setup, stubFirebaseAdmin, teardown } from 'stubstub';
 
 const models = modelize`
 	Community community {

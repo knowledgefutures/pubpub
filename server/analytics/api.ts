@@ -1,11 +1,12 @@
 /** This should all be moved to an AWS lambda */
 
-import { getCountryForTimezone } from 'countries-and-timezones';
+import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
+
 import { initServer } from '@ts-rest/express';
+import { getCountryForTimezone } from 'countries-and-timezones';
 import express from 'express';
 
 import { contract } from 'utils/api/contract';
-import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
 
 const s = initServer();
 

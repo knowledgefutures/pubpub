@@ -1,6 +1,6 @@
+import { CollectionAttribution, CollectionPub, includeUserModel } from 'server/models';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { generateRanks, sortByRank } from 'utils/rank';
-import { CollectionAttribution, CollectionPub, includeUserModel } from 'server/models';
 
 export const getCollectionAttributions = (collectionId: string) =>
 	CollectionAttribution.findAll({

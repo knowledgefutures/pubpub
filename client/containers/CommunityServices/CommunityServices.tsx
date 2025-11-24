@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+
 import { Button, InputGroup, Intent, Tag, TextArea } from '@blueprintjs/core';
 
-import { GridWrapper } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
+import { GridWrapper } from 'components';
 
 import ServiceOption from './ServiceOption';
 
-require('./communityServices.scss');
+import './communityServices.scss';
 
 const CommunityServices = () => {
 	const services = [

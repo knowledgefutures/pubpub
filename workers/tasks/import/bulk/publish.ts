@@ -1,9 +1,9 @@
-import { asyncMap } from 'utils/async';
 import { Collection } from 'server/models';
 import { createRelease } from 'server/release/queries';
 import { summarizeCollection, summarizeCommunity } from 'server/scopeSummary';
+import { asyncMap } from 'utils/async';
 
-import { printImportPlan, getCreatedItemsFromPlan } from './plan';
+import { getCreatedItemsFromPlan, printImportPlan } from './plan';
 import { promptOkay } from './prompt';
 
 export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createExports }) => {

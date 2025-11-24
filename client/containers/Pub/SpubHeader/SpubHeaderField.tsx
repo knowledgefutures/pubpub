@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
+
 import { Tooltip } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { Icon } from 'components';
 
-require('./spubHeaderField.scss');
+import './spubHeaderField.scss';
 
 type Props = {
 	asLabel?: boolean;

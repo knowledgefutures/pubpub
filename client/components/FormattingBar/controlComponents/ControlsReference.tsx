@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import type { EditorChangeObjectWithNode } from '../types';
+
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import classNames from 'classnames';
 
 import { ReferencesDropdown } from 'components';
 import {
 	getCurrentNodeLabels,
 	getReferenceableNodes,
-	NodeReference,
+	type NodeReference,
 } from 'components/Editor/utils/references';
 import { usePubContext } from 'containers/Pub/pubHooks';
-
 import { getDashUrl } from 'utils/dashboard';
-import { EditorChangeObjectWithNode } from '../types';
 
-require('./controlsReference.scss');
+import './controlsReference.scss';
 
 export type ControlsReferenceProps = {
 	editorChangeObject: EditorChangeObjectWithNode;
@@ -33,7 +34,7 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 	const nodeLabels = getCurrentNodeLabels(view.state);
 	const nodeReferences = useMemo(
 		() => (nodeLabels ? getReferenceableNodes(view.state, nodeLabels) : []),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[view.state, nodeLabels],
 	);
 

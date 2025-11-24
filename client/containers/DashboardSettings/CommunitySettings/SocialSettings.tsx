@@ -1,9 +1,11 @@
+import type { Callback, Community } from 'types';
+
 import React from 'react';
 
-import { ImageUpload, InputField, SettingsSection } from 'components';
-import { Callback, Community } from 'types';
 import { Button, Classes, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
+
+import { ImageUpload, InputField, SettingsSection } from 'components';
 
 import LabelWithInfo from '../LabelWithInfo';
 

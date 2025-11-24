@@ -1,12 +1,16 @@
+import type { EditorChangeObject } from 'components/Editor';
+import type { SuggestedEditsUser } from 'types';
+
+import type { FormattingBarButtonData } from './types';
+
 import React from 'react';
-import { Tooltip, Button } from '@blueprintjs/core';
+
+import { Button, Tooltip } from '@blueprintjs/core';
+
+import { useRefMap } from 'client/utils/useRefMap';
 import { Icon } from 'components';
 
-import { SuggestedEditsUser } from 'types';
-import { EditorChangeObject } from 'components/Editor';
-import { useRefMap } from 'client/utils/useRefMap';
-import { FormattingBarButtonData } from './types';
-import { suggestedEditsReject, suggestedEditsAccept } from './buttons';
+import { suggestedEditsAccept, suggestedEditsReject } from './buttons';
 import { useCommandStates } from './hooks/useCommandStates';
 
 type Props = {

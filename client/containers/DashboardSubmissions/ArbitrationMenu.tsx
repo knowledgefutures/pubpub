@@ -1,15 +1,17 @@
+import type { DefinitelyHas, DocJson, Pub, SubmissionStatus } from 'types';
+
 import React from 'react';
+
 import { AnchorButton, Button, Tooltip } from '@blueprintjs/core';
 
-import { DefinitelyHas, Pub, SubmissionStatus, DocJson } from 'types';
-import { ConfirmDialog, DialogLauncher, PubReleaseDialog } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
+import { ConfirmDialog, DialogLauncher, PubReleaseDialog } from 'components';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
 import VerdictDialog from './VerdictDialog';
 
-require('./arbitrationMenu.scss');
+import './arbitrationMenu.scss';
 
 type Props = {
 	pub: DefinitelyHas<Pub, 'submission'>;

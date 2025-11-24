@@ -1,13 +1,15 @@
-import React from 'react';
-import classNames from 'classnames';
-import { AnchorButton, Classes, Intent } from '@blueprintjs/core';
+import type { CommunityHeroButton } from 'types';
 
-import { CommunityHeroButton } from 'types';
-import { GridWrapper, GlobalControls } from 'components';
+import React from 'react';
+
+import { AnchorButton, Classes, Intent } from '@blueprintjs/core';
+import classNames from 'classnames';
+
+import { GlobalControls, GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getResizedUrl } from 'utils/images';
 
-require('./header.scss');
+import './header.scss';
 
 type OwnProps = {
 	previewContext?: any;

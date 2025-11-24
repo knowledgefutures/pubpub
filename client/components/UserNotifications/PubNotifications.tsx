@@ -1,14 +1,16 @@
+import type { FilterTerm, PubNotificationsState } from './types';
+
 import React, { useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 import classNames from 'classnames';
 
+import { PubHeaderBackground, SubscriptionButton } from 'components';
 import { communityUrl, pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
-import { PubHeaderBackground, SubscriptionButton } from 'components';
 
-import ThreadNotifications from './ThreadNotifications';
-import { FilterTerm, PubNotificationsState } from './types';
 import { pubStateMatchesTerm, threadStateMatchesTerm } from './filter';
+import ThreadNotifications from './ThreadNotifications';
 import { useNotificationsContext } from './userNotificationsContext';
 
 type Props = {

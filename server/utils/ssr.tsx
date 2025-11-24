@@ -1,7 +1,10 @@
+import type { Attribution, Collection, InitialData } from 'types';
+
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
-import { Collection, InitialData, Attribution } from 'types';
+import ReactDOMServer from 'react-dom/server';
+
 import { isProd } from 'utils/environment';
 
 export const renderToNodeStream = (res, reactElement) => {
@@ -98,19 +101,19 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 			<meta
 				key="t2"
 				property="og:title"
-				content={useCollectionTitle ? collection.title ?? undefined : title}
+				content={useCollectionTitle ? (collection.title ?? undefined) : title}
 			/>,
 			<meta key="t3" name="twitter:title" content={titleWithContext} />,
 			<meta key="t4" name="twitter:image:alt" content={titleWithContext} />,
 			<meta
 				key="t5"
 				name="citation_title"
-				content={useCollectionTitle ? collection.title ?? undefined : title}
+				content={useCollectionTitle ? (collection.title ?? undefined) : title}
 			/>,
 			<meta
 				key="t6"
 				name="dc.title"
-				content={useCollectionTitle ? collection.title ?? undefined : title}
+				content={useCollectionTitle ? (collection.title ?? undefined) : title}
 			/>,
 		];
 	}
@@ -360,9 +363,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 	if (notes) {
 		const citationNoteTags = notes.map((note, i) => {
-			// https://github.com/yannickcr/eslint-plugin-react/issues/1123
-			// eslint-disable-next-line react/no-array-index-key
-			return <meta key={`n${i}`} name="citation_reference" content={note} />;
+			return <meta key={`n${i}-${note}`} name="citation_reference" content={note} />;
 		});
 		outputComponents = [...outputComponents, citationNoteTags];
 	}

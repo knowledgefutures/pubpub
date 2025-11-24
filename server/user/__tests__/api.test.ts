@@ -1,11 +1,12 @@
-import { setup, login, modelize, teardown } from 'stubstub';
-
 import { User } from 'server/models';
+import { login, modelize, setup, teardown } from 'stubstub';
+
+const tonyEmail = `${crypto.randomUUID()}@gmail.com`;
 
 const models = modelize`
     User user {}
     Signup signup {
-        email: "tonywalnuts@gmail.com"
+        email: ${tonyEmail}
         hash: "hash"
         completed: false
         count: 1

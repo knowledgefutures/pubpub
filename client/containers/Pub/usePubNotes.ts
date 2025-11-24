@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { getNotesByKindFromDoc } from 'components/Editor/utils';
-import { renderNotesForListing } from '../../../utils/notes';
 
+import { renderNotesForListing } from '../../../utils/notes';
 import { usePubContext } from './pubHooks';
 
 export const usePubNotes = () => {

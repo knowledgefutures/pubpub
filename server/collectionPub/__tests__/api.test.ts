@@ -1,5 +1,6 @@
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 import { CollectionPub } from 'server/models';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
+
 import { createCollectionPub } from '../queries';
 
 type CreateCollectionPubOptions = Parameters<typeof createCollectionPub>[0];

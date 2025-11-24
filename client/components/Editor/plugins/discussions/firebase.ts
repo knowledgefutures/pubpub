@@ -1,13 +1,14 @@
-import { uncompressSelectionJSON, compressSelectionJSON } from 'prosemirror-compress-pubpub';
-import firebase from 'firebase';
+import type firebase from 'firebase';
 
-import {
-	DiscussionInfo,
+import type {
 	CompressedDiscussionInfo,
-	DiscussionsHandler,
+	DiscussionInfo,
 	Discussions,
+	DiscussionsHandler,
 	RemoteDiscussions,
 } from './types';
+
+import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
 
 type Reference = firebase.database.Reference;
 type DataSnapshot = firebase.database.DataSnapshot;

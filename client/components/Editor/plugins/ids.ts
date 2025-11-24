@@ -1,7 +1,8 @@
-import { Node } from 'prosemirror-model';
-import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { Step, ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
+import type { Node } from 'prosemirror-model';
+import type { ReplaceAroundStep, ReplaceStep, Step } from 'prosemirror-transform';
+import type { EditorView } from 'prosemirror-view';
+
+import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
 import { generateHash } from '../utils';
 

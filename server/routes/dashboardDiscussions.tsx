@@ -1,14 +1,17 @@
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
-import { NotFoundError, handleErrors } from 'server/utils/errors';
+import { handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+
+export const router = Router();
 // import { getDiscussions } from 'server/utils/queryHelpers';
 
-app.get(
+router.get(
 	[
 		'/dash/discussions',
 		'/dash/collection/:collectionSlug/discussions',

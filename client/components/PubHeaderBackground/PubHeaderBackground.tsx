@@ -1,10 +1,12 @@
+import type { FacetValue, PubHeaderTheme } from 'facets';
+
 import React from 'react';
+
 import classNames from 'classnames';
 
 import { calculateBackgroundColor } from 'utils/colors';
-import { FacetValue, PubHeaderTheme } from 'facets';
 
-require('./pubHeaderBackground.scss');
+import './pubHeaderBackground.scss';
 
 type Props = {
 	children?: React.ReactNode;

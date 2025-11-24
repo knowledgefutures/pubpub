@@ -1,12 +1,13 @@
-import React from 'react';
-
-import {
+import type {
 	CollectionCreatedActivityItem,
-	CollectionUpdatedActivityItem,
-	CollectionRemovedActivityItem,
 	CollectionPubCreatedActivityItem,
 	CollectionPubRemovedActivityItem,
+	CollectionRemovedActivityItem,
+	CollectionUpdatedActivityItem,
 } from 'types';
+
+import React from 'react';
+
 import { collectionTitle, pubTitle } from 'utils/activity/titles';
 
 import { itemRenderer } from './itemRenderer';

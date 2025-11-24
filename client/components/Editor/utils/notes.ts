@@ -1,7 +1,8 @@
-import { Node } from 'prosemirror-model';
-import striptags from 'striptags';
+import type { Node } from 'prosemirror-model';
 
-import { Note } from 'utils/notes';
+import type { Note } from 'utils/notes';
+
+import striptags from 'striptags';
 
 export type CitationFingerprintFunction = (node: Node) => string;
 

@@ -1,15 +1,16 @@
-import { Schema } from 'prosemirror-model';
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import type { Schema } from 'prosemirror-model';
 
+import type { PluginsOptions } from '../..';
+import type { SuggestedEditsPluginState } from './types';
+
+import { type EditorState, Plugin, type Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
-import { PluginsOptions } from '../..';
 
-import { SuggestedEditsPluginState } from './types';
-import { getInitialPluginState } from './state';
 import { appendTransaction } from './appendTransaction';
 import { suggestedEditsPluginKey } from './key';
 import { getSuggestionRanges } from './ranges';
 import { getResolvableRangeForSelection } from './resolve';
+import { getInitialPluginState } from './state';
 
 export default (schema: Schema, options: PluginsOptions) => {
 	const { collaborativeOptions } = options;

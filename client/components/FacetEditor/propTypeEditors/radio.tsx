@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
-import { RadioGroup, Radio } from '@blueprintjs/core';
+import type { FacetPropType, TypeOfFacetPropType } from 'facets';
 
-import { FacetPropType, TypeOfFacetPropType } from 'facets';
-import { PropTypeEditorProps } from '../types';
+import type { PropTypeEditorProps } from '../types';
+
+import React, { useCallback } from 'react';
+
+import { Radio, RadioGroup } from '@blueprintjs/core';
 
 type RadioItem<T> = {
 	value: T;

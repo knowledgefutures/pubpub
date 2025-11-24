@@ -1,6 +1,9 @@
 import type { AnalyticsInstance } from 'analytics';
+
+import type { AnalyticsSettings, LocationData } from 'types';
+
 import { useEffect, useState } from 'react';
-import { AnalyticsSettings, LocationData } from 'types';
+
 import { createAnalyticsInstance, createInitialAnalyticsInstance } from './createAnalyticsInstance';
 import { ignoredPaths } from './ignoredPaths';
 

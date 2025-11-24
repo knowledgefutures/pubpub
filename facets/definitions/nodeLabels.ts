@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { propType, prop, facet } from '../core';
+import { facet, prop, propType } from '../core';
 
 const nodeLabel = propType({
 	name: 'nodeLabel',

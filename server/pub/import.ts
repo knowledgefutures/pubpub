@@ -1,33 +1,29 @@
-import multer from 'multer';
-import mime from 'mime-types';
-import { Express } from 'express';
+import type { Express } from 'express';
 
-import * as types from 'types';
-
-import { BadRequestError, NotFoundError } from 'server/utils/errors';
-
-import { getTmpDirectoryPath } from 'workers/tasks/import/tmpDirectory';
-import { importFiles } from 'workers/tasks/import/import';
-
-import { BaseSourceFile } from 'utils/api/schemas/import';
-import {
-	ProposedMetadata,
+import type * as types from 'types';
+import type { BaseSourceFile } from 'utils/api/schemas/import';
+import type {
 	ImportCreatePubParams,
-	MetadataOptions,
 	ImportMethod,
+	MetadataOptions,
+	ProposedMetadata,
 } from 'utils/api/schemas/pub';
-import { uploadAndConvertImages } from 'utils/import/uploadAndConvertImages';
-import { omitKeys } from 'utils/objects';
+
+import mime from 'mime-types';
+import multer from 'multer';
 
 import { labelFiles } from 'client/containers/Pub/PubDocument/PubFileImport/formats';
-
 import { createPubAttribution } from 'server/pubAttribution/queries';
+import { BadRequestError, NotFoundError } from 'server/utils/errors';
 import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
-
-import { managerUpdatableFields } from './permissions';
-import { updatePub, createPub } from './queries';
+import { uploadAndConvertImages } from 'utils/import/uploadAndConvertImages';
+import { omitKeys } from 'utils/objects';
+import { importFiles } from 'workers/tasks/import/import';
+import { getTmpDirectoryPath } from 'workers/tasks/import/tmpDirectory';
 
 import { Pub } from './model';
+import { managerUpdatableFields } from './permissions';
+import { createPub, updatePub } from './queries';
 
 /**
  * We need to dynamically create the middleware in order to set a different temporary directory for
@@ -116,7 +112,7 @@ async function addAttributionsToPub({
 						? { userId: mostLikelyUserId }
 						: {
 								name,
-						  }),
+							}),
 				});
 
 				return pubAttribution as types.PubAttribution;

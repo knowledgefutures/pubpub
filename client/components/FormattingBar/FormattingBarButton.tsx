@@ -1,10 +1,10 @@
 import React from 'react';
+
+import { Classes, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import { Classes, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
-
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 
 export type FormattingItem = {
 	ariaTitle?: string;

@@ -1,16 +1,18 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+import type { InsertableActivityItem } from 'types/activity';
+
 import {
-	Model,
-	Table,
+	AllowNull,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	AllowNull,
 	Index,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { type InsertableActivityItem } from 'types/activity';
 
 @Table
 export class ActivityItem<T extends InsertableActivityItem = InsertableActivityItem> extends Model<

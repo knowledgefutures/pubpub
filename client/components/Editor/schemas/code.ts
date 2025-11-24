@@ -1,7 +1,8 @@
-import { DOMOutputSpec, Node, NodeSpec } from 'prosemirror-model';
-import { highlightTree } from '@lezer/highlight';
-import { defaultHighlightStyle } from '@codemirror/language';
 import type { Tree } from '@lezer/common';
+import type { DOMOutputSpec, Node, NodeSpec } from 'prosemirror-model';
+
+import { defaultHighlightStyle } from '@codemirror/language';
+import { highlightTree } from '@lezer/highlight';
 
 import { parsers } from '../plugins/code';
 
@@ -68,7 +69,7 @@ const codeSchema: { [key: string]: NodeSpec } = {
 						'pre',
 						{ ...(node.attrs.id && { id: node.attrs.id }) },
 						['code', 0],
-				  ] as DOMOutputSpec),
+					] as DOMOutputSpec),
 	},
 };
 

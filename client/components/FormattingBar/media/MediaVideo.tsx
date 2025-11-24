@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+
 import { Spinner } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
 
-import Icon from 'components/Icon/Icon';
 import { s3Upload } from 'client/utils/upload';
+import Icon from 'components/Icon/Icon';
 
 type Props = {
 	onInsert: (...args: any[]) => any;

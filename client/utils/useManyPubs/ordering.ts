@@ -1,7 +1,8 @@
-import { Pub, PubsQueryOrderingField, PubsQueryOrdering } from 'types';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
+import type { Pub, PubsQueryOrdering, PubsQueryOrderingField } from 'types';
 
-import { OrderingValue, OrderByFn } from './types';
+import type { OrderByFn, OrderingValue } from './types';
+
+import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 const valueOrderedBelowAnyDate = 'a'; // Since any date starts with a number
 

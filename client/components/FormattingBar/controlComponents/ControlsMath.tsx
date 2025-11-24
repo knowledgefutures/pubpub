@@ -1,11 +1,11 @@
-/* eslint-disable react/no-danger */
+import type { EditorChangeObjectWithNode } from '../types';
+
 import React from 'react';
 
-import { FormattingBar, FormattingBarButtonData } from 'components/FormattingBar';
 import { mathToggleKind, mathToggleLabel } from 'components/Editor/commands';
-import { EditorChangeObjectWithNode } from '../types';
+import { FormattingBar, type FormattingBarButtonData } from 'components/FormattingBar';
 
-require('./controls.scss');
+import './controls.scss';
 
 type Props = {
 	editorChangeObject: EditorChangeObjectWithNode;
@@ -22,11 +22,11 @@ const ControlsMath = (props: Props) => {
 			? {
 					icon: 'eye-open',
 					label: 'Show',
-			  }
+				}
 			: {
 					icon: 'eye-off',
 					label: 'Hide',
-			  };
+				};
 
 	const swapMathTypeButton: FormattingBarButtonData = {
 		key: 'change-math-node-type',

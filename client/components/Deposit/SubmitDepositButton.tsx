@@ -1,6 +1,8 @@
-import { Button } from '@blueprintjs/core';
+import type { DepositRecord } from 'types';
+
 import React from 'react';
-import { DepositRecord } from 'types';
+
+import { Button } from '@blueprintjs/core';
 
 import InputField from '../InputField/InputField';
 import { SubmitDepositStatus } from './SubmitDepositStatus';

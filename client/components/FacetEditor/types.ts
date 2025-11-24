@@ -1,6 +1,4 @@
-import React from 'react';
-
-import {
+import type {
 	CascadedFacetType,
 	FacetCascadeResult,
 	FacetDefinition,
@@ -10,6 +8,8 @@ import {
 	FacetSourceScope,
 	PossiblyNullableTypeOfFacetPropType,
 } from 'facets';
+
+import React from 'react';
 
 type RenderFn<Props> = (props: Props) => React.ReactElement;
 

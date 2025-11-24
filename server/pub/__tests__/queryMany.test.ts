@@ -1,5 +1,6 @@
-import { setup, modelize, teardown } from 'stubstub';
-import { Pub, PubsQuery, PubsQueryOrdering } from 'types';
+import type { Pub, PubsQuery, PubsQueryOrdering } from 'types';
+
+import { modelize, setup, teardown } from 'stubstub';
 
 import { queryPubIds } from '../queryMany';
 

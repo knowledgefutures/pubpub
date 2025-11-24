@@ -1,5 +1,6 @@
+import type { CitationInlineStyleKind } from './citations';
+
 import { unique } from './arrays';
-import { CitationInlineStyleKind } from './citations';
 
 export type Note = {
 	id: string;

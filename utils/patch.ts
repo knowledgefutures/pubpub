@@ -1,4 +1,4 @@
-import { PatchFnArg } from 'types';
+import type { PatchFnArg } from 'types';
 
 export function patch<T extends Record<string, any>>(object: T, patchFnOrObject: PatchFnArg<T>) {
 	if (typeof patchFnOrObject === 'function') {

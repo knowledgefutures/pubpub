@@ -1,5 +1,7 @@
-import { contract } from 'utils/api/contract';
-import { AppRouteImplementation } from '@ts-rest/express';
+import type { AppRouteImplementation } from '@ts-rest/express';
+
+import type { contract } from 'utils/api/contract';
+
 import { createImport } from './queries';
 
 export const importRouteImplementation: AppRouteImplementation<

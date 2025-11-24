@@ -1,10 +1,11 @@
+import type { RenderedActivityItem } from 'client/utils/activity/types';
+
 import React from 'react';
 
-import { formatDate } from 'utils/dates';
 import { Icon } from 'components';
-import { RenderedActivityItem } from 'client/utils/activity/types';
+import { formatDate } from 'utils/dates';
 
-require('./activityItemRow.scss');
+import './activityItemRow.scss';
 
 type Props = {
 	item: RenderedActivityItem;

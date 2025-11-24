@@ -1,9 +1,8 @@
-import { Review } from '../review';
-import { Diff } from '../util';
-
-import { InsertableActivityItemBase } from './base';
-import { DiscussionActivityItemBase } from './discussion';
-import { MightHaveThreadCommentItemBase, ThreadActivityItemBase } from './thread';
+import type { Review } from '../review';
+import type { Diff } from '../util';
+import type { InsertableActivityItemBase } from './base';
+import type { DiscussionActivityItemBase } from './discussion';
+import type { MightHaveThreadCommentItemBase, ThreadActivityItemBase } from './thread';
 
 type PubActivityItemBase = InsertableActivityItemBase & {
 	pubId: string;

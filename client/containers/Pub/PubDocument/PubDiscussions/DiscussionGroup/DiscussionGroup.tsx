@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classNames from 'classnames';
-import DiscussionNav from './DiscussionNav';
-import Discussion from '../Discussion';
 
-require('./discussionGroup.scss');
+import Discussion from '../Discussion';
+import DiscussionNav from './DiscussionNav';
+
+import './discussionGroup.scss';
 
 type Props = {
 	pubData: any;

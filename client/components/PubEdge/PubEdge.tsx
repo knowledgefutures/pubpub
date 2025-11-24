@@ -1,16 +1,18 @@
+import type { AttributionWithUser } from 'types';
+
 import React, { useCallback, useEffect, useState } from 'react';
+
 import classNames from 'classnames';
 
 import { Byline } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getHostnameForUrl, getValuesFromPubEdge } from 'utils/pubEdge';
 
-import { AttributionWithUser } from 'types';
-import PubEdgeLayout from './PubEdgeLayout';
-import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
 import WithinCommunityByline from '../WithinCommunityByline/WithinCommunityByline';
+import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
+import PubEdgeLayout from './PubEdgeLayout';
 
-require('./pubEdge.scss');
+import './pubEdge.scss';
 
 export type PubEdgeProps = {
 	accentColor?: string;

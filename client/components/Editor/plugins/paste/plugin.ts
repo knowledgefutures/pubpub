@@ -1,13 +1,14 @@
-import { NodeType, Schema } from 'prosemirror-model';
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import type { NodeType, Schema } from 'prosemirror-model';
+
+import type { PluginsOptions } from '../../types';
+import type { PluginState } from './types';
+
+import { type EditorState, Plugin, type Transaction } from 'prosemirror-state';
 import { DecorationSet } from 'prosemirror-view';
 
-import { PluginsOptions } from '../../types';
-
-import { getNextDecorationsForTransaction, getFinishedUploadFromTransaction } from './decorations';
-import { createPasteHandler, createDropHandler } from './handlers';
+import { getFinishedUploadFromTransaction, getNextDecorationsForTransaction } from './decorations';
+import { createDropHandler, createPasteHandler } from './handlers';
 import { pastePluginKey } from './key';
-import { PluginState } from './types';
 import { defaultMediaUploadHandler } from './upload';
 
 export default (schema: Schema, options: PluginsOptions) => {

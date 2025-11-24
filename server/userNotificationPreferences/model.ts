@@ -1,16 +1,17 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel, UserNotificationMarkReadTrigger } from 'types';
+
 import {
-	Model,
-	Table,
+	AllowNull,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
 	Index,
-	AllowNull,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { UserNotificationMarkReadTrigger } from 'types';
 
 @Table
 export class UserNotificationPreferences extends Model<

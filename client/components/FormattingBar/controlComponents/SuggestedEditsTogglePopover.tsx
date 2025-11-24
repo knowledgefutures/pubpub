@@ -2,7 +2,7 @@ import React from 'react';
 
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 
-require('./suggestedEditsTogglePopover.scss');
+import './suggestedEditsTogglePopover.scss';
 
 export const SuggestedEditsTogglePopover = () => {
 	const { inPub } = usePubContext();

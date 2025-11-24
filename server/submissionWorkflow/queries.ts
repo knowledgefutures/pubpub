@@ -1,6 +1,7 @@
+import type * as types from 'types';
+import type { OmitSequelizeProvidedFields } from 'types/util';
+
 import { SubmissionWorkflow } from 'server/models';
-import { OmitSequelizeProvidedFields } from 'types/util';
-import * as types from 'types';
 
 type CreateFields = OmitSequelizeProvidedFields<types.SubmissionWorkflow>;
 type UpdateFields = Partial<CreateFields>;

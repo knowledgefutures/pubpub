@@ -1,11 +1,13 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import type { RenderedNote } from 'utils/notes';
+
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+
 import classNames from 'classnames';
 
 import { Icon, PubNoteContent } from 'components';
-import { RenderedNote } from 'utils/notes';
 
-require('./notes.scss');
+import './notes.scss';
 
 const scrollToNode = (node) => {
 	if (node) {
@@ -18,7 +20,7 @@ const scrollToNode = (node) => {
 
 const findLastElementChild = (node) => {
 	let child = node;
-	// eslint-disable-next-line no-constant-condition
+
 	while (true) {
 		const { lastElementChild, lastChild } = child;
 		if (lastElementChild && lastElementChild === lastChild) {

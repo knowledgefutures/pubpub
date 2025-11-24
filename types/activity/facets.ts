@@ -1,5 +1,5 @@
-import { Diff } from '../util';
-import { InsertableActivityItemBase } from './base';
+import type { Diff } from '../util';
+import type { InsertableActivityItemBase } from './base';
 
 export type FacetInstanceUpdatedActivityItem = InsertableActivityItemBase & {
 	kind: 'facet-instance-updated';

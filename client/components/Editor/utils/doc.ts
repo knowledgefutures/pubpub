@@ -1,6 +1,6 @@
-import { DOMParser, Node, Schema } from 'prosemirror-model';
+import type { DocJson } from 'types';
 
-import { DocJson } from 'types';
+import { DOMParser, Node, type Schema } from 'prosemirror-model';
 
 import { editorSchema } from './schema';
 

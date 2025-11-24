@@ -1,6 +1,5 @@
-/* eslint-disable global-require */
-
 import passportLocalSequelize from 'passport-local-sequelize';
+
 import { createSequelizeModelsFromFacetDefinitions } from './facets/create';
 import { sequelize } from './sequelize';
 
@@ -37,9 +36,9 @@ import { Page } from './page/model';
 import { Pub } from './pub/model';
 import { PubAttribution } from './pubAttribution/model';
 import { PubEdge } from './pubEdge/model';
+import { PublicPermissions } from './publicPermissions/model';
 import { PubManager } from './pubManager/model';
 import { PubVersion } from './pubVersion/model';
-import { PublicPermissions } from './publicPermissions/model';
 import { Release } from './release/model';
 import { ReviewNew } from './review/model';
 import { ReviewEvent } from './reviewEvent/model';
@@ -147,7 +146,7 @@ export const includeUserModel = (() => {
 	return (options) => {
 		const { attributes: providedAttributes = [], ...restOptions } = options;
 		const attributes = [...new Set([...attributesPublicUser, ...providedAttributes])];
-		// eslint-disable-next-line pubpub-rules/no-user-model
+
 		return {
 			model: User,
 			attributes,

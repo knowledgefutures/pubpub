@@ -1,9 +1,14 @@
-import app, { wrap } from 'server/server';
+import type { ActivityFilter, ScopeId } from 'types';
+
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
 import { getScope } from 'server/utils/queryHelpers';
-import { ActivityFilter, ScopeId } from 'types';
+import { wrap } from 'server/wrap';
 
 import { fetchActivityItems } from './fetch';
+
+export const router = Router();
 
 const unwrapRequest = (req) => {
 	const { body, user } = req;
@@ -17,7 +22,7 @@ const unwrapRequest = (req) => {
 	};
 };
 
-app.post(
+export const activityItemRouter = Router().post(
 	'/api/activityItems',
 	wrap(async (req, res) => {
 		const { scope, offset, limit, userId, filters } = unwrapRequest(req);

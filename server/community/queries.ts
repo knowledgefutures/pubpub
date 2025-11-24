@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop */
+import type * as types from 'types';
 
 import uuidv4 from 'uuid/v4';
 
@@ -18,7 +18,6 @@ import { subscribeUser } from 'server/utils/mailchimp';
 import { updateCommunityData } from 'server/utils/search';
 import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { addWorkerTask } from 'server/utils/workers';
-import * as types from 'types';
 import { isProd } from 'utils/environment';
 import { generateHash } from 'utils/hashes';
 import { slugifyString } from 'utils/strings';
@@ -230,6 +229,7 @@ export const isUserAffiliatedWithCommunity = async (userId: string, communityId:
 export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {
 	let offset = 0;
 	while (true) {
+		// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 		const communities = await Community.findAll({
 			limit,
 			offset,

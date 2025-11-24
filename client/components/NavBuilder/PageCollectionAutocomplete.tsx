@@ -1,12 +1,12 @@
-/* eslint-disable react/no-unused-prop-types */
 import React, { Component } from 'react';
+
 import { Classes, MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
 import Icon from 'components/Icon/Icon';
 
-require('./pageAutocomplete.scss');
+import './pageAutocomplete.scss';
 
 type Item = {
 	id: string;

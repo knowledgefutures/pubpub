@@ -3,10 +3,10 @@
 /* This is additionally helpful because it allows heroku one-off */
 /* dynos to be run: `heroku run --size=performance-l "npm run tools <command>"` */
 
-/* eslint-disable global-require */
+
 if (process.env.NODE_ENV !== 'production') {
 	// FIXME: Weird eslint issue where either with or without the extension is an error
-	// eslint-disable-next-line import/extensions
+	
 	require('../config.js');
 } else {
 	const Sentry = require('@sentry/node');
@@ -64,7 +64,7 @@ const commandFiles = {
 
 const activeCommandFile = commandFiles[command];
 if (activeCommandFile) {
-	/* eslint-disable-next-line import/no-dynamic-require */
+	
 	require(activeCommandFile);
 } else {
 	console.warn(`Invalid command: "${command}"`);

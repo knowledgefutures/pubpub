@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
+
 import { Classes, Menu, MenuItem } from '@blueprintjs/core';
 
 import { Icon } from 'components';
 
-import MediaImage from './MediaImage';
-import MediaVideo from './MediaVideo';
 import MediaAudio from './MediaAudio';
-import MediaFile from './MediaFile';
-import MediaIframe from './MediaIframe';
-import MediaYoutube from './MediaYoutube';
 import MediaCodepen from './MediaCodepen';
-import MediaVimeo from './MediaVimeo';
-import MediaSoundcloud from './MediaSoundcloud';
+import MediaFile from './MediaFile';
 import MediaGithub from './MediaGithub';
+import MediaIframe from './MediaIframe';
+import MediaImage from './MediaImage';
+import MediaSoundcloud from './MediaSoundcloud';
 import MediaTwitter from './MediaTwitter';
+import MediaVideo from './MediaVideo';
+import MediaVimeo from './MediaVimeo';
+import MediaYoutube from './MediaYoutube';
 
-require('./media.scss');
+import './media.scss';
 
 type Props = {
 	onInsert: (type: string, attrs: Record<string, any>) => unknown;

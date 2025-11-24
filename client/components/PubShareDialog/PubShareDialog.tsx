@@ -1,21 +1,23 @@
+import type { PubPageData } from 'types';
+
 import React from 'react';
+
 import { Button, Classes, ControlGroup, Dialog, Divider, InputGroup } from '@blueprintjs/core';
 
+import { useMembersState } from 'client/utils/members/useMembers';
 import {
 	ClickToCopyButton,
-	UserAutocomplete,
-	MemberRow,
 	InheritedMembersBlock,
+	MemberRow,
 	MenuConfigProvider,
 	PendingChangesProvider,
+	UserAutocomplete,
 } from 'components';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { useMembersState } from 'client/utils/members/useMembers';
-import { pubUrl } from 'utils/canonicalUrls';
 import { usePubContext } from 'containers/Pub/pubHooks';
-import { PubPageData } from 'types';
+import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
 
-require('./pubShareDialog.scss');
+import './pubShareDialog.scss';
 
 type SharedProps = {
 	pubData: PubPageData;

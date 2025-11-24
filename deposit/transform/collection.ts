@@ -1,10 +1,17 @@
-import * as types from 'types';
+import type { Collection, Community } from 'server/models';
+import type * as types from 'types';
+
+import type {
+	Resource,
+	ResourceContribution,
+	ResourceContributorRole,
+	ResourceKind,
+} from '../resource';
+
 import { fetchFacetsForScope } from 'server/facets';
+import { expect } from 'utils/assert';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { licenseDetailsByKind } from 'utils/licenses';
-import { expect } from 'utils/assert';
-import { Collection, Community } from 'server/models';
-import { ResourceKind, ResourceContribution, ResourceContributorRole, Resource } from '../resource';
 
 const attributionRoleToResourceContributorRole: Record<string, ResourceContributorRole> = {
 	'Writing – Review & Editing': 'Editor',

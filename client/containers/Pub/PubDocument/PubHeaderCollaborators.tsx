@@ -1,8 +1,10 @@
+import type { PubCollabState } from '../usePubCollabState';
+
 import React from 'react';
+
 import { Classes, Tooltip } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-import { PubCollabState } from '../usePubCollabState';
 
 type Props = {
 	collabData: PubCollabState;

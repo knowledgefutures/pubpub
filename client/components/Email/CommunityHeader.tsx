@@ -1,9 +1,11 @@
+import type { Community } from 'types';
+
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { Community } from 'types';
-import { getResizedUrl } from 'utils/images';
 import { formatDate } from 'utils/dates';
+import { getResizedUrl } from 'utils/images';
 
 import { Section } from './Section';
 import { BaseTableStyle } from './shared';
@@ -61,13 +63,13 @@ export const CommunityHeader = (props: Props) => {
 	const backgroundColor = props.community.heroBackgroundColor
 		? props.community.heroBackgroundColor
 		: props.community.headerColorType === 'light'
-		  ? accentColorLight
-		  : accentColorDark;
+			? accentColorLight
+			: accentColorDark;
 	const headerColor = props.community.heroTextColor
 		? props.community.heroTextColor
 		: props.community.headerColorType === 'light'
-		  ? accentColorDark
-		  : accentColorLight;
+			? accentColorDark
+			: accentColorLight;
 
 	return (
 		<Section color={headerColor} backgroundColor={backgroundColor} logo={logo} alignment="left">

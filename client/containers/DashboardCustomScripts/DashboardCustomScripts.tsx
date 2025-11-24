@@ -1,14 +1,17 @@
+import type { CustomScripts } from 'types';
+
+import type { EditorComponentType } from './types';
+
 import React, { useEffect, useState } from 'react';
-import { Callout, Spinner, Tabs, Tab } from '@blueprintjs/core';
 
-import { usePageContext } from 'utils/hooks';
+import { Callout, Spinner, Tab, Tabs } from '@blueprintjs/core';
+
 import { DashboardFrame } from 'components';
-import { CustomScripts } from 'types';
+import { usePageContext } from 'utils/hooks';
 
-import { EditorComponentType } from './types';
 import CustomScriptPanel from './CustomScriptPanel';
 
-require('./dashboardCustomScripts.scss');
+import './dashboardCustomScripts.scss';
 
 type Props = {
 	customScripts: CustomScripts;

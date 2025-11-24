@@ -1,6 +1,8 @@
-import { Request, Response, Router } from 'express';
+import type { InfoObject, OpenAPIObject } from 'openapi3-ts/oas31';
+
 import { generateOpenApi } from '@ts-rest/open-api';
-import { InfoObject, OpenAPIObject } from 'openapi3-ts/oas31';
+import { type Request, type Response, Router } from 'express';
+
 import { contract } from './contract';
 
 type OpenAPIOptions = Omit<OpenAPIObject, 'paths' | 'openapi'> & {

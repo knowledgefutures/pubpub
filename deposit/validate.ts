@@ -1,5 +1,6 @@
+import type { Resource } from './resource';
+
 import { assert, exists } from 'utils/assert';
-import { Resource } from './resource';
 
 const ERR_PRIMARY_PARENT_RESOURCE_HAS_NO_DOI = 'Primary parent resource has no DOI';
 

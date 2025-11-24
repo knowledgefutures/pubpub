@@ -1,11 +1,12 @@
-import { EditorChangeObject } from 'components/Editor';
+import type { EditorChangeObject } from 'components/Editor';
 
-import {
+import type {
 	ControlsConfiguration,
 	FormattingBarButtonData,
 	FormattingBarButtonDataControls,
 	ResolvedControlsConfiguration,
 } from '../types';
+
 import { positionNearSelection } from './positioning';
 
 const getControlsPosition = (

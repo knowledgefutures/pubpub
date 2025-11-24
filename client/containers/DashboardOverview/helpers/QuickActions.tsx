@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 
-require('./quickActions.scss');
+import './quickActions.scss';
 
 export type QuickAction = {
 	icon: IconName;

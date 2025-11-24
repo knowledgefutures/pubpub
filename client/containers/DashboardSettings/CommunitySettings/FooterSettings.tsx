@@ -1,10 +1,12 @@
+import type { Callback, Community, PageContext } from 'types';
+
 import React from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { ImageUpload, InputField, SettingsSection, NavBuilder, Footer } from 'components';
-import { Callback, Community, PageContext } from 'types';
-import { communityUrl } from 'utils/canonicalUrls';
 import { defaultFooterLinks } from 'client/utils/navigation';
+import { Footer, ImageUpload, InputField, NavBuilder, SettingsSection } from 'components';
+import { communityUrl } from 'utils/canonicalUrls';
 
 type Props = {
 	communityData: Community;

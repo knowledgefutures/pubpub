@@ -1,10 +1,12 @@
+import type { CascadedFacetType, PubHeaderTheme } from 'facets';
+import type { Community } from 'types';
+
 import React from 'react';
+
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
 import { PubHeaderBackground } from 'components';
-import { CascadedFacetType, PubHeaderTheme } from 'facets';
-import { Community } from 'types';
 
 type Props = {
 	className?: string;

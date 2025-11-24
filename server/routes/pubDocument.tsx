@@ -1,35 +1,40 @@
+import type { Request, RequestHandler, Response } from 'express';
+
+import type { CustomScripts, InitialData, PubEdge } from 'types';
+
 import React from 'react';
+
+import { Router } from 'express';
 import slowDown from 'express-slow-down';
 
-import { getPubPageContextTitle } from 'utils/pubPageTitle';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { pubUrl } from 'utils/canonicalUrls';
-import { getPdfDownloadUrl, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
 import { chooseCollectionForPub } from 'client/utils/collections';
-import Html from 'server/Html';
-import app from 'server/server';
-import { handleErrors, NotFoundError, ForbiddenError } from 'server/utils/errors';
-import { getInitialData } from 'server/utils/initData';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
-import { hostIsValid } from 'server/utils/routes';
-import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
+import Html from 'server/Html';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
+import { findUserSubscription } from 'server/userSubscription/shared/queries';
+import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
 import {
-	getPubForRequest,
 	getMembers,
+	getPub,
 	getPubCitations,
 	getPubEdges,
 	getPubFirebaseDraft,
 	getPubFirebaseToken,
+	getPubForRequest,
 	getPubRelease,
-	getPub,
 } from 'server/utils/queryHelpers';
-import { createUserScopeVisit } from 'server/userScopeVisit/queries';
-import { CustomScripts, InitialData, PubEdge } from 'types';
-import { findUserSubscription } from 'server/userSubscription/shared/queries';
-import type { RequestHandler, Response, Request } from 'express';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
+import { pubUrl } from 'utils/canonicalUrls';
 import { getNextCollectionPub } from 'utils/collections/getNextCollectionPub';
+import { getPrimaryCollection } from 'utils/collections/primary';
+import { getGoogleScholarNotes, getPdfDownloadUrl, getTextAbstract } from 'utils/pub/metadata';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { getPubPageContextTitle } from 'utils/pubPageTitle';
+
+export const router = Router();
 
 const getInitialDataForPub = (req: Request) => getInitialData(req, { includeFacets: true });
 
@@ -165,7 +170,7 @@ const speedLimiter: RequestHandler =
 				delayAfter: 60, // allow 60 requests per minute, then...
 				delayMs: 100, // 60th request has a 100ms delay, 7th has a 200ms delay, 8th gets 300ms, etc.
 				maxDelayMs: 20000, // max time of request delay will be 20secs
-		  });
+			});
 
 const checkHistoryKey = (key) => {
 	const hasHistoryKey = key !== undefined;
@@ -231,7 +236,7 @@ const setSurrogateKeysHeadersForPubEdges = async (
 	res.setHeader('Surrogate-Key', hostnames.join(' '));
 };
 
-app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, next) => {
+router.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}
@@ -262,7 +267,7 @@ app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, n
 	}
 });
 
-app.get('/pub/:pubSlug/release-id/:releaseId', speedLimiter, async (req, res, next) => {
+router.get('/pub/:pubSlug/release-id/:releaseId', speedLimiter, async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}
@@ -281,7 +286,7 @@ app.get('/pub/:pubSlug/release-id/:releaseId', speedLimiter, async (req, res, ne
 	}
 });
 
-app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
+router.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
 		return next();
 	}
@@ -307,7 +312,7 @@ app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
 	}
 });
 
-app.get(
+router.get(
 	['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'],
 	speedLimiter,
 	async (req, res, next) => {

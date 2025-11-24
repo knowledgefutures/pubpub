@@ -1,21 +1,23 @@
-import React, { useContext, useState, useCallback } from 'react';
-import { useBeforeUnload } from 'react-use';
+import type { CollaborativeEditorStatus, EditorChangeObject } from 'client/components/Editor';
+
+import React, { useCallback, useContext, useState } from 'react';
+
 import * as Sentry from '@sentry/react';
+import { useBeforeUnload } from 'react-use';
 import { useDebouncedCallback } from 'use-debounce/lib';
 
+import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
+import buildSuggestedEdits from 'client/components/Editor/plugins/suggestedEdits';
+import { useFacetsQuery } from 'client/utils/useFacets';
 import { Editor } from 'components';
 import discussionSchema from 'components/Editor/schemas/discussion';
-import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
-import { EditorChangeObject, CollaborativeEditorStatus } from 'client/components/Editor';
-
-import { useFacetsQuery } from 'client/utils/useFacets';
-import buildSuggestedEdits from 'client/components/Editor/plugins/suggestedEdits';
 import { usePageContext } from 'utils/hooks';
-import { usePubContext } from '../pubHooks';
+
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
+import { usePubContext } from '../pubHooks';
 import PubErrorAlert from './PubErrorAlert';
 
-require('./pubBody.scss');
+import './pubBody.scss';
 
 type Props = {
 	editorWrapperRef: React.Ref<HTMLDivElement>;

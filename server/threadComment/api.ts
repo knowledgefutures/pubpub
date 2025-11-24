@@ -1,8 +1,12 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 
 import { getPermissions } from './permissions';
 import { createThreadComment, updateThreadComment } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -18,7 +22,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post(
+router.post(
 	'/api/threadComment',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
@@ -33,7 +37,7 @@ app.post(
 	}),
 );
 
-app.put(
+router.put(
 	'/api/threadComment',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);

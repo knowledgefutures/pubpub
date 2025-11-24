@@ -3,10 +3,12 @@
  * your own button) -- it renders a `renderButton` prop with an `open` callback that can be attached
  * to a Button onClick handler, or anything else.
  */
-import React, { useCallback, useState } from 'react';
-import { Button, Callout, Classes, Dialog, Intent } from '@blueprintjs/core';
 
-import { Callback } from 'types';
+import type { Callback } from 'types';
+
+import React, { useCallback, useState } from 'react';
+
+import { Button, Callout, Classes, Dialog, type Intent } from '@blueprintjs/core';
 
 type Props = {
 	cancelLabel?: React.ReactNode;

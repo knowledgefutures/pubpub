@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const { Pub, Branch, BranchPermission, Discussion } = require('../../../server/models');
@@ -18,7 +18,7 @@ const firebaseApp =
 					databaseURL: process.env.V6_FIREBASE_URL,
 				},
 				'firebase-pub-new',
-		  );
+			);
 const database = firebaseApp.database();
 const editorSchema = buildSchema({ ...discussionSchema }, {});
 

@@ -1,7 +1,9 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
-import { Menu, MenuItem, MenuItemDivider, MenuButton } from 'components/Menu';
+
 import { Button } from '@blueprintjs/core';
+import { storiesOf } from '@storybook/react';
+
+import { Menu, MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
 
 const items = (
 	<React.Fragment>
@@ -13,7 +15,6 @@ const items = (
 			<MenuItem text="what's in here">
 				<MenuItem
 					text="i wonder if you can click me"
-					// eslint-disable-next-line no-alert
 					onClick={() => alert('You found it!')}
 				/>
 			</MenuItem>

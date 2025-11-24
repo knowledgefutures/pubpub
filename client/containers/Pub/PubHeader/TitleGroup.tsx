@@ -1,13 +1,14 @@
+import type { PatchFn, Pub, PubPageData } from 'types';
+
 import React, { useCallback } from 'react';
 
-import { PubByline, DialogLauncher, PubAttributionDialog, TitleEditor } from 'components';
+import { DialogLauncher, PubAttributionDialog, PubByline, TitleEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDateString } from 'utils/pub/pubDates';
-import { PatchFn, Pub, PubPageData } from 'types';
 
+import { usePubContext } from '../pubHooks';
 import BylineEditButton from './BylineEditButton';
 import EditableHeaderText from './EditableHeaderText';
-import { usePubContext } from '../pubHooks';
 
 type Props = {
 	pubData: PubPageData;

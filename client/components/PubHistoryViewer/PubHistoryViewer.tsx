@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import classNames from 'classnames';
+import type { Pub, PubHistoryState } from 'types';
+
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import {
 	AnchorButton,
 	Button,
@@ -11,18 +13,18 @@ import {
 	Spinner,
 	Tooltip,
 } from '@blueprintjs/core';
+import classNames from 'classnames';
 
-import { ClickToCopyButton } from 'components';
-import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
-import { formatDate } from 'utils/dates';
+import { ClickToCopyButton } from 'components';
 import { pubUrl } from 'utils/canonicalUrls';
-import { Pub, PubHistoryState } from 'types';
+import { formatDate } from 'utils/dates';
+import { usePageContext } from 'utils/hooks';
 
-import { renderTimeLabelForDate } from './utils';
 import RestoreHistoryDialog from './RestoreHistoryDialog';
+import { renderTimeLabelForDate } from './utils';
 
-require('./pubHistoryViewer.scss');
+import './pubHistoryViewer.scss';
 
 type Props = {
 	pubData: Pub;

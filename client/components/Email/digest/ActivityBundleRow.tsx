@@ -1,11 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
-import pick from 'lodash.pick';
+import type { ActivityRenderContext } from 'client/utils/activity/types';
+import type { ActivityAssociations, ActivityItem } from 'types';
 
-import TimeAgo from 'components/TimeAgo/TimeAgo';
-import { ActivityRenderContext } from 'client/utils/activity/types';
-import { ActivityItem, ActivityAssociations } from 'types';
+import React from 'react';
+
+import pick from 'lodash.pick';
+import styled from 'styled-components';
+
 import { renderActivityItem } from 'client/utils/activity';
+import TimeAgo from 'components/TimeAgo/TimeAgo';
 
 import { BaseTableStyle } from '../shared';
 

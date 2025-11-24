@@ -1,8 +1,9 @@
 import React from 'react';
-import { usePageContext } from 'utils/hooks';
-import { Icon, IconName, MenuButton, ScopeDropdown } from 'components';
 
-require('./scopePicker.scss');
+import { Icon, type IconName, MenuButton, ScopeDropdown } from 'components';
+import { usePageContext } from 'utils/hooks';
+
+import './scopePicker.scss';
 
 type Props = {
 	isMobile?: boolean;

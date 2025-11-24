@@ -1,5 +1,6 @@
-import { DocJson, Pub } from 'types';
-import { EditorChangeObject, getJSON } from 'client/components/Editor';
+import type { DocJson, Pub } from 'types';
+
+import { type EditorChangeObject, getJSON } from 'client/components/Editor';
 
 // The "formatted download" is the file that the pub manager can upload themselves to represent the
 // pub. It's stored in pub.downloads, but it's treated as a kind of special case.

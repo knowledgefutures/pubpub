@@ -1,7 +1,7 @@
 import { exec as execWithCallback, spawn } from 'child_process';
 import fs from 'fs-extra';
-import path from 'path';
 import hasbin from 'hasbin';
+import path from 'path';
 
 const requiredBinaries = ['createdb', 'dropuser', 'dropdb', 'pg_ctl', 'psql'];
 

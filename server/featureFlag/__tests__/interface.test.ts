@@ -1,12 +1,13 @@
+import { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
 import { modelize, setup, teardown } from 'stubstub';
 
-import { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
+import { createFeatureFlag, destroyFeatureFlag, getFeatureFlag } from '../interface';
 
-import { createFeatureFlag, getFeatureFlag, destroyFeatureFlag } from '../interface';
+const fleetsName = `fleets-${crypto.randomUUID().split('-').pop()}`;
 
 const models = modelize`
     FeatureFlag fleets {
-        name: "fleets"
+        name: ${fleetsName}
     }
     Community c1 {}
     User u1 {}
@@ -32,7 +33,7 @@ describe('feature flags devshell interface', () => {
 
 	it('sets and retrieves an enabledUsersFraction', async () => {
 		const { fleets } = models;
-		const flag = await getFeatureFlag('fleets');
+		const flag = await getFeatureFlag(fleetsName);
 		await flag.setEnabledUsersFraction(0.25);
 		expect(await fleets.reload()).toMatchObject({ enabledUsersFraction: 0.25 });
 		expect(await flag.getEnabledUsersFraction()).toEqual(0.25);
@@ -40,7 +41,7 @@ describe('feature flags devshell interface', () => {
 
 	it('sets and retrieves an enabledCommunitiesFraction', async () => {
 		const { fleets } = models;
-		const flag = await getFeatureFlag('fleets');
+		const flag = await getFeatureFlag(fleetsName);
 		await flag.setEnabledCommunitiesFraction(0.55);
 		expect(await fleets.reload()).toMatchObject({ enabledCommunitiesFraction: 0.55 });
 		expect(await flag.getEnabledCommunitiesFraction()).toEqual(0.55);
@@ -48,7 +49,7 @@ describe('feature flags devshell interface', () => {
 
 	it('adds and removes an override for a Community', async () => {
 		const { c1, fleets } = models;
-		const flag = await getFeatureFlag('fleets');
+		const flag = await getFeatureFlag(fleetsName);
 		await flag.setCommunityOverride(c1.subdomain, 'off');
 		expect(
 			await FeatureFlagCommunity.findOne({
@@ -66,7 +67,7 @@ describe('feature flags devshell interface', () => {
 
 	it('adds and removes an override for a User', async () => {
 		const { u1, fleets } = models;
-		const flag = await getFeatureFlag('fleets');
+		const flag = await getFeatureFlag(fleetsName);
 		await flag.setUserOverride(u1.slug, 'on');
 		expect(
 			await FeatureFlagUser.findOne({

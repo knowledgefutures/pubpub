@@ -1,14 +1,15 @@
-import { Decoration, DecorationSet } from 'prosemirror-view';
-
-import { flattenOnce } from 'utils/arrays';
-
-import { isEmptySelection, getRangeFromSelection } from './util';
-import {
+import type {
+	DiscussionDecoration,
 	DiscussionInfo,
 	Discussions,
 	DiscussionsUpdateResult,
-	DiscussionDecoration,
 } from './types';
+
+import { Decoration, type DecorationSet } from 'prosemirror-view';
+
+import { flattenOnce } from 'utils/arrays';
+
+import { getRangeFromSelection, isEmptySelection } from './util';
 
 const createInlineDecoration = (
 	discussionId: string,

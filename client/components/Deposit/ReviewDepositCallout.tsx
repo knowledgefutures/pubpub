@@ -1,5 +1,6 @@
-import { Callout } from '@blueprintjs/core';
 import React from 'react';
+
+import { Callout } from '@blueprintjs/core';
 
 type Props = {
 	depositTargetServiceName: string;

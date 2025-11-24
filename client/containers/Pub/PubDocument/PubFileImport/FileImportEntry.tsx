@@ -1,18 +1,21 @@
-import React from 'react';
-import {
-	Icon,
-	ProgressBar,
-	Tag,
-	Button,
-	Popover,
-	Menu,
-	MenuItem,
-	Classes,
-} from '@blueprintjs/core';
-
 import type { BaseSourceFile } from 'utils/api/schemas/import';
 
+import React from 'react';
+
+import {
+	Button,
+	Classes,
+	Icon,
+	Menu,
+	MenuItem,
+	Popover,
+	ProgressBar,
+	Tag,
+} from '@blueprintjs/core';
+
 import { getPotentialLabelsForFile } from './formats';
+
+import './fileImportEntry.scss';
 
 type Props = {
 	// file: {
@@ -26,8 +29,6 @@ type Props = {
 	onLabelFile: (...args: any[]) => any;
 	onDelete: (...args: any[]) => any;
 };
-
-require('./fileImportEntry.scss');
 
 const FileImportEntry = (props: Props) => {
 	const { file, onDelete, onLabelFile } = props;
@@ -99,7 +100,7 @@ const FileImportEntry = (props: Props) => {
 	return (
 		<div className="file-import-entry">
 			<div className="file-title" title={clientPath}>
-				<span className="start" aria-label={clientPath}>
+				<span className="start">
 					<span aria-hidden="true">{displayTitleStart}</span>
 				</span>
 				<span className="end" aria-hidden="true">

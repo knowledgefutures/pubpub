@@ -1,4 +1,4 @@
-import { facet, prop, choice } from '../core';
+import { choice, facet, prop } from '../core';
 
 export const citationStyleKind = choice([
 	'acm-siggraph',

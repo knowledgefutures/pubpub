@@ -1,10 +1,10 @@
-import { modelize, login, setup, teardown } from 'stubstub';
+import type { DocJson } from 'types';
 
 import { UserSubscription } from 'server/models';
-import { updateVisibility } from 'server/visibility/queries';
 import { createThreadComment } from 'server/threadComment/queries';
-import { DocJson } from 'types';
 import { finishDeferredTasks } from 'server/utils/deferred';
+import { updateVisibility } from 'server/visibility/queries';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community {

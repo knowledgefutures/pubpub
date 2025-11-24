@@ -1,7 +1,7 @@
-import { Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
 
-import { CodeBlockSettings } from './types';
+import type { CodeBlockSettings } from './types';
 
 export const defaultCreateSelect = (
 	settings: CodeBlockSettings,

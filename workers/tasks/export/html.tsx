@@ -1,18 +1,19 @@
-/* eslint-disable no-underscore-dangle, react/no-array-index-key, react/prop-types, global-require */
-import path from 'path';
-import fs from 'fs';
+import type { DocJson } from 'types';
+
+import type { NotesData, PubMetadata } from './types';
+
 import React from 'react';
+
+import fs from 'fs';
+import path from 'path';
 import ReactDOMServer from 'react-dom/server';
 
-import { DocJson } from 'types';
-import { renderStatic, editorSchema } from 'components/Editor';
+import { editorSchema, renderStatic } from 'components/Editor';
 import { intersperse, unique } from 'utils/arrays';
-import { getDedupedAffliations, digestCitation, getAffiliations } from './util';
+
 import { renderNotesForListing } from '../../../utils/notes';
-
-import { NotesData, PubMetadata } from './types';
-
 import SimpleNotesList from './SimpleNotesList';
+import { digestCitation, getAffiliations, getDedupedAffliations } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
@@ -226,11 +227,13 @@ const renderFrontMatter = (metadata: PubMetadata) => {
 							} = attr;
 							const affs = getAffiliations(attr);
 							return (
-								<span className="name" key={index}>
+								// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
+								<span className="name" key={`name-${fullName}-${index}`}>
 									{fullName}
 									{affs?.length > 0 &&
 										affs.map((affiliation, affIndex) => (
-											<sup key={affIndex}>
+											// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
+											<sup key={`affiliation-${affiliation}-${affIndex}`}>
 												{1 + affiliations.indexOf(affiliation)}
 												{affs.length > 1 &&
 													affIndex < affs.length - 1 &&
@@ -244,7 +247,8 @@ const renderFrontMatter = (metadata: PubMetadata) => {
 					{affiliations.length > 0 && (
 						<h5>
 							{affiliations.map((aff, index) => (
-								<span className="affiliation" key={index}>
+								// biome-ignore lint/suspicious/noArrayIndexKey: shhhhhh
+								<span className="affiliation" key={`affiliation-${aff}-${index}`}>
 									<sup>{index + 1}</sup>
 									{aff}
 									{index < affiliations.length - 1 && ', '}
@@ -312,9 +316,9 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 			<head>
 				<title>{title}</title>
 				<meta charSet="utf-8" />
-				{/* eslint-disable-next-line react/no-danger */}
+
 				<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
-				{/* eslint-disable-next-line react/no-danger */}
+
 				<script dangerouslySetInnerHTML={{ __html: loadCjkFontsScript }} />
 			</head>
 			<body>

@@ -1,10 +1,11 @@
-import { ModelCtor } from 'sequelize-typescript';
+import type { ModelCtor } from 'sequelize-typescript';
+
 import {
-	CollectionPub,
-	Pub,
-	Member,
-	includeUserModel,
 	CollectionAttribution,
+	CollectionPub,
+	includeUserModel,
+	Member,
+	Pub,
 	PubAttribution,
 } from 'server/models';
 

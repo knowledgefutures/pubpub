@@ -1,13 +1,14 @@
-import { Attrs, Mark, Slice } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import type { EditorState } from 'prosemirror-state';
 
-import { Dispatch } from '../../commands';
+import type { Dispatch } from '../../commands';
+import type { SuggestionMarkAttrs, SuggestionNodeAttrs } from './types';
 
-import { getSuggestionMarkTypeFromSchema } from './operations';
+import { type Attrs, Mark, Slice } from 'prosemirror-model';
+
 import { suggestedEditsPluginKey } from './key';
-import { getSuggestedEditsState } from './state';
-import { SuggestionMarkAttrs, SuggestionNodeAttrs } from './types';
+import { getSuggestionMarkTypeFromSchema } from './operations';
 import { suggestionNodeAttributes } from './schema';
+import { getSuggestedEditsState } from './state';
 
 export const getResolvableRangeForSelection = (
 	state: EditorState,
@@ -46,7 +47,7 @@ export const acceptSuggestions = (state: EditorState, from: number, to: number) 
 	const { tr, doc } = state;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });
 	const suggestionMarkType = getSuggestionMarkTypeFromSchema(doc.type.schema);
-	// eslint-disable-next-line consistent-return
+
 	doc.nodesBetween(from, to, (node, oldPos) => {
 		const { attrs, marks, nodeSize } = node;
 		const pos = tr.mapping.map(oldPos);
@@ -81,7 +82,7 @@ export const rejectSuggestions = (state: EditorState, from: number, to: number) 
 	const { schema } = doc.type;
 	tr.setMeta(suggestedEditsPluginKey, { resolving: true });
 	const suggestionMarkType = getSuggestionMarkTypeFromSchema(schema);
-	// eslint-disable-next-line consistent-return
+
 	doc.nodesBetween(from, to, (node, oldPos) => {
 		const { attrs, marks, nodeSize } = node;
 		const pos = tr.mapping.map(oldPos);

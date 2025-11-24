@@ -1,8 +1,10 @@
+import type { Callback, Community, PageContext } from 'types';
+
 import React from 'react';
-import { ButtonGroup, Button, Switch, Checkbox } from '@blueprintjs/core';
+
+import { Button, ButtonGroup, Checkbox, Switch } from '@blueprintjs/core';
 
 import { ColorInput, Header, ImageUpload, InputField, SettingsSection } from 'components';
-import { Callback, Community, PageContext } from 'types';
 
 import LabelWithInfo from '../LabelWithInfo';
 import SettingsRow from '../SettingsRow';

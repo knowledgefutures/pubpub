@@ -21,7 +21,7 @@ module.exports = (startServer, watchablePathsRelative) => {
 		sockets: [],
 	};
 
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(
 		`Server is watching these paths for hot reloading: ${watchablePathsRelative.join(', ')}`,
 	);
@@ -35,7 +35,7 @@ module.exports = (startServer, watchablePathsRelative) => {
 		});
 		state.sockets = [];
 		state.server.close(() => {
-			// eslint-disable-next-line no-console
+			// biome-ignore lint/suspicious/noConsole: shhhhhh
 			state.server = startServer();
 		});
 	}, 250);

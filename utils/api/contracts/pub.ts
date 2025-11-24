@@ -1,11 +1,14 @@
 import type { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+
+import type { Metadata } from '../utils/metadataType';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
 
 import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
 import { createGetQueryOptions } from 'utils/query/createGetQuery';
 
-import { resourceSchema } from '../schemas/resource';
+import { sourceFileSchema } from '../schemas/import';
 import {
 	base,
 	baseWithImport,
@@ -16,16 +19,15 @@ import {
 	optionalPubCreateParamSchema,
 	pandocOutputSchema,
 	pubCreateSchema,
-	pubUpdateSchema,
 	pubSchema,
+	pubUpdateSchema,
 	pubWithRelationsSchema,
 	resourceASTSchema,
 	sanitizedPubSchema,
 	toPubImportOutput,
 } from '../schemas/pub';
 import { docJsonSchema } from '../schemas/release';
-import { sourceFileSchema } from '../schemas/import';
-import { Metadata } from '../utils/metadataType';
+import { resourceSchema } from '../schemas/resource';
 
 extendZodWithOpenApi(z);
 

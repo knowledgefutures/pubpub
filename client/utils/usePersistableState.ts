@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+
 import { useBeforeUnload } from 'react-use';
 import useStateRef from 'react-usestateref';
 
@@ -62,7 +63,7 @@ export const usePersistableState = <T extends Record<string, any>>(
 			}
 		},
 		// React Hook useCallback has a missing dependency: 'T'. Either include it or remove the dependency array.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[persist, persistedStateRef, setUnpersistedState],
 	);
 
@@ -74,7 +75,7 @@ export const usePersistableState = <T extends Record<string, any>>(
 			});
 		},
 		// React Hook useCallback has a missing dependency: 'T'. Either include it or remove the dependency array.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[setPersistedState],
 	);
 

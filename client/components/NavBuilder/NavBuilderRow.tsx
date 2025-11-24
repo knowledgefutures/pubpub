@@ -1,14 +1,16 @@
+import type { CommunityNavigationEntry } from 'types/navigation';
+
 import React, { useContext } from 'react';
-import classNames from 'classnames';
+
 import { Button, InputGroup } from '@blueprintjs/core';
+import classNames from 'classnames';
 
-import { Icon, IconName } from 'components';
-import { getSchemaForKind } from 'utils/collections/schemas';
 import { isCommunityNavigationMenu } from 'client/utils/navigation';
-import { CommunityNavigationEntry } from 'types/navigation';
+import { Icon, type IconName } from 'components';
+import { getSchemaForKind } from 'utils/collections/schemas';
 
-import PageCollectionAutocomplete from './PageCollectionAutocomplete';
 import { NavBuilderContext } from './navBuilderContext';
+import PageCollectionAutocomplete from './PageCollectionAutocomplete';
 
 type Props = {
 	dropdownId: string;

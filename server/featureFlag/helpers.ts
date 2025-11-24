@@ -1,7 +1,8 @@
+import type { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
+import type * as types from 'types';
+
 import { expect } from 'utils/assert';
-import * as types from 'types';
 import { getPsuedorandomFractionForUuid } from 'utils/psuedorandom';
-import { FeatureFlag, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
 
 type FeatureFlagOverride = FeatureFlagUser | FeatureFlagCommunity;
 

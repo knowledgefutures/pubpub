@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button } from 'reakit/Button';
+
 import { Spinner } from '@blueprintjs/core';
+import { Button } from 'reakit/Button';
 
 import { Icon } from 'components';
 
 import SpecialRow from './SpecialRow';
 
-require('./loadMorePubsRow.scss');
+import './loadMorePubsRow.scss';
 
 type Props = {
 	isLoading: boolean;

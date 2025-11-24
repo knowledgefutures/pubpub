@@ -1,8 +1,8 @@
-/* eslint-disable react/no-danger */
 import React from 'react';
-import PropTypes from 'prop-types';
-import Color from 'color';
+
 import { Classes } from '@blueprintjs/core';
+import Color from 'color';
+import PropTypes from 'prop-types';
 
 const {
 	BUTTON,

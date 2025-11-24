@@ -1,6 +1,6 @@
-import { z } from 'zod';
-
 import type { Prettify } from 'types/util';
+
+import { z } from 'zod';
 
 export const baseSchema = z.object({
 	type: z.enum(['page', 'track']),

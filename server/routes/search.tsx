@@ -1,13 +1,17 @@
-import React from 'react';
-import algoliasearch from 'algoliasearch';
+import type { InitialData } from 'types';
 
+import React from 'react';
+
+import algoliasearch from 'algoliasearch';
+import { Router } from 'express';
+
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCustomScriptsForCommunity } from 'server/customScript/queries';
-import { InitialData } from 'types';
+
+export const router = Router();
 
 const client = algoliasearch(process.env.ALGOLIA_ID!, process.env.ALGOLIA_KEY!);
 const searchId = process.env.ALGOLIA_ID!;
@@ -52,7 +56,7 @@ const createFilter = (
 	return maybeLimitedToCommunity;
 };
 
-app.get('/search', async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);

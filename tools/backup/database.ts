@@ -1,7 +1,8 @@
-import fs from 'fs';
-import { exec } from 'child_process';
+import type { BackupFile } from './types';
 
-import { BackupFile } from './types';
+import { exec } from 'child_process';
+import fs from 'fs';
+
 import { getTmpFileForExtension } from './util';
 
 export const getDatabaseBackupFiles = async (): Promise<BackupFile[]> =>

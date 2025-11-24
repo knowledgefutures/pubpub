@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import uuid from 'uuid/v4';
 
 import { Pub, Draft, Branch } from 'server/models';

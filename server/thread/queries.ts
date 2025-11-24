@@ -1,5 +1,6 @@
-import * as types from 'types';
-import { Discussion, Pub, ReviewNew, Visibility, Thread } from 'server/models';
+import type * as types from 'types';
+
+import { Discussion, Pub, ReviewNew, Thread, Visibility } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
 
 type FilterUsersOptions = {

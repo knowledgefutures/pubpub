@@ -1,11 +1,12 @@
-import { InitialData, PubGetOptions } from 'types';
-import { Pub } from 'server/models';
-import { fetchFacetsForScope } from 'server/facets';
+import type * as types from 'types';
+import type { InitialData, PubGetOptions } from 'types';
 
+import { fetchFacetsForScope } from 'server/facets';
+import { Pub } from 'server/models';
 import { expect } from 'utils/assert';
-import * as types from 'types';
-import sanitizePub from './pubSanitize';
+
 import buildPubOptions from './pubOptions';
+import sanitizePub from './pubSanitize';
 
 type GetPubWhere = { slug: string; communityId: string } | { id: string };
 

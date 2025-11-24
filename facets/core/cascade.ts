@@ -1,14 +1,15 @@
-import type { FacetProp, NullableTypeOfFacetProp } from './prop';
 import type {
+	FacetCascadeResult,
 	FacetDefinition,
-	FacetValue,
+	FacetInstanceStack,
 	FacetPropCascadeResult,
-	WithFacetSource,
+	FacetValue,
 	PropCascadeContribution,
 	PropCascadeResult,
-	FacetCascadeResult,
-	FacetInstanceStack,
+	WithFacetSource,
 } from './facet';
+import type { FacetProp, NullableTypeOfFacetProp } from './prop';
+
 import { FacetCascadeNotImplError } from './errors';
 import { mapFacet } from './map';
 

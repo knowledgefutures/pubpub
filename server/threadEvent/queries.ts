@@ -1,6 +1,8 @@
-import { ThreadEvent, attributesPublicUser } from 'server/models';
-import * as types from 'types';
-import { ThreadEventPermissions } from './permissions';
+import type * as types from 'types';
+
+import type { ThreadEventPermissions } from './permissions';
+
+import { attributesPublicUser, ThreadEvent } from 'server/models';
 
 export const createThreadEvent = async (
 	inputValues: {

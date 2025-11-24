@@ -1,8 +1,9 @@
+import type { Callback, Community, Pub } from 'types';
+
 import React from 'react';
 
-import { Community, Pub, Callback } from 'types';
-import { usePendingChanges } from 'utils/hooks';
 import { AttributionEditor } from 'components';
+import { usePendingChanges } from 'utils/hooks';
 
 export type Props = {
 	canEdit: boolean;

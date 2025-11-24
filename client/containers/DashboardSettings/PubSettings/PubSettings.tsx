@@ -1,30 +1,32 @@
+import type { DepositTarget, Pub, PubWithCollections } from 'types';
+
 import React, { useState } from 'react';
+
 import { Button, Classes } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
+import { useFacetsQuery } from 'client/utils/useFacets';
+import { usePersistableState } from 'client/utils/usePersistableState';
 import {
 	DatePicker,
+	Deposit,
 	DownloadChooser,
-	SettingsSection,
+	FacetEditor,
 	ImageUpload,
 	InputField,
 	PubAttributionEditor,
 	PubCollectionsListing,
-	FacetEditor,
+	SettingsSection,
 	TitleEditor,
-	Deposit,
 } from 'components';
-import { DepositTarget, Pub, PubWithCollections } from 'types';
-import { apiFetch } from 'client/utils/apiFetch';
-import { slugifyString } from 'utils/strings';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
-import { usePersistableState } from 'client/utils/usePersistableState';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { slugifyString } from 'utils/strings';
 
-import { useFacetsQuery } from 'client/utils/useFacets';
+import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import LabelWithInfo from '../LabelWithInfo';
 import DeletePub from './DeletePub';
-import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {
@@ -70,8 +72,8 @@ const PubSettings = (props: Props) => {
 	const slugError = !pubData.slug
 		? 'Required'
 		: error?.slugStatus === 'used'
-		  ? 'This URL is not available because it is in use by another Pub.'
-		  : null;
+			? 'This URL is not available because it is in use by another Pub.'
+			: null;
 
 	const renderDetails = () => {
 		return (

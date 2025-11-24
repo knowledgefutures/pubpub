@@ -1,13 +1,15 @@
+import type * as types from 'types';
+
+import React from 'react';
+
 import { minify } from 'html-minifier';
 import juice from 'juice';
 import flow from 'lodash.flow';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
-import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
-import * as types from 'types';
 import { Digest } from 'components/Email';
 import { globals, reset } from 'components/Email/styles';
 import { fetchActivityItems } from 'server/activityItem/fetch';
@@ -66,10 +68,10 @@ const getAffectedObjectIcon = (item: types.ActivityItem) =>
 	item.pubId
 		? 'pubDoc'
 		: item.collectionId
-		  ? 'collection'
-		  : 'page' in item.payload && item.payload.page.id
-		    ? 'page-layout'
-		    : 'office';
+			? 'collection'
+			: 'page' in item.payload && item.payload.page.id
+				? 'page-layout'
+				: 'office';
 
 const groupByObjectId =
 	(associations: types.ActivityAssociations) =>

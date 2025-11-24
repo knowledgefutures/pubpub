@@ -1,6 +1,9 @@
-import { Model, Table, Column, DataType, PrimaryKey, Default, HasOne } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
 import type { SerializedModel } from 'types';
+
+import { Column, DataType, Default, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
+
 import { ZoteroIntegration } from '../models';
 
 @Table({

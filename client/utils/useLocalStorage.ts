@@ -1,10 +1,11 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
+
 import { useBeforeUnload } from 'react-use';
 import { useDebounce } from 'use-debounce';
 
 import { ClientOnlyContext } from 'components';
 
-import { getCommunityLocalStorage, LocalStorable } from './localStorage';
+import { getCommunityLocalStorage, type LocalStorable } from './localStorage';
 
 type Options<T extends LocalStorable> = {
 	communityId: string;
@@ -40,7 +41,7 @@ export const useLocalStorage = <T extends LocalStorable>(options: Options<T>) =>
 				(parent, entry) => parent.getChild(entry),
 				getCommunityLocalStorage(communityId, featureName),
 			),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[communityId, featureName, ...path],
 	);
 

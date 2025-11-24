@@ -1,8 +1,10 @@
-import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import type { CollectionAttributionCreationParams, UpdateParams } from 'types';
+
+import type { Permissions } from './permissions';
+
 import { CollectionAttribution, includeUserModel } from 'server/models';
 import { expect } from 'utils/assert';
-import { CollectionAttributionCreationParams, UpdateParams } from 'types';
-import { Permissions } from './permissions';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 export const getCollectionAttributions = (collectionId: string) =>
 	CollectionAttribution.findAll({ where: { id: collectionId } });

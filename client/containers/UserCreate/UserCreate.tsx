@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import SHA3 from 'crypto-js/sha3';
-import encHex from 'crypto-js/enc-hex';
-import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
 
-import { GridWrapper, InputField, ImageUpload, Icon } from 'components';
+import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
+import encHex from 'crypto-js/enc-hex';
+import SHA3 from 'crypto-js/sha3';
+
 import { apiFetch } from 'client/utils/apiFetch';
 import { gdprCookiePersistsSignup, getGdprConsentElection } from 'client/utils/legal/gdprConsent';
+import { GridWrapper, Icon, ImageUpload, InputField } from 'components';
 
-require('./userCreate.scss');
+import './userCreate.scss';
 
 type Props = {
 	signupData: any;

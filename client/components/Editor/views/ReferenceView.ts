@@ -1,5 +1,5 @@
-import { Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
 
 export default class ReferenceView {
 	view: EditorView;

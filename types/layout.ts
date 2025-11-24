@@ -1,4 +1,4 @@
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
 
 export const bannerButtonTypes = ['create-pub', 'signup', 'link', 'none'] as const;
 type BannerButtonType = (typeof bannerButtonTypes)[number];

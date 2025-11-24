@@ -1,11 +1,12 @@
+import type { Facet } from 'facets';
+
+import type { FacetPropEditorProps } from '../../types';
+
 import React from 'react';
 
-import { Facet } from 'facets';
 import { ImageUpload } from 'components';
 
-import { FacetPropEditorProps } from '../../types';
-
-require('./backgroundColorPicker.scss');
+import './backgroundColorPicker.scss';
 
 type Props = FacetPropEditorProps<Facet<'PubHeaderTheme'>, 'backgroundColor'>;
 

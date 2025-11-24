@@ -1,7 +1,6 @@
-/* eslint-disable no-restricted-syntax */
 import path from 'path';
 
-import { generateAssetKeyForFile, uploadFileToAssetStore, getUrlForAssetKey } from './assetStore';
+import { generateAssetKeyForFile, getUrlForAssetKey, uploadFileToAssetStore } from './assetStore';
 
 type MissingImageWarning = {
 	type: 'missingImage';

@@ -1,15 +1,18 @@
-/* eslint-disable import/first, import/order */
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
 import CreateSequelizeStore from 'connect-session-sequelize';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { ErrorRequestHandler, RequestHandler } from 'express';
+import express, { type ErrorRequestHandler, Router } from 'express';
 import enforce from 'express-sslify';
 import fs from 'fs';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
+
+const app = express();
+
+const appRouter = Router();
 
 import { getAppCommit, isProd, isQubQub, setAppCommit, setEnvironment } from 'utils/environment';
 
@@ -26,39 +29,20 @@ if (isQubQub() && !process.env.HEROKU_SLUG_COMMIT) {
 	setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 }
 
-import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
-import 'server/utils/serverModuleOverwrite';
+import { errorMiddleware, HTTPStatusError } from 'server/utils/errors';
+
+if (process.env.NODE_ENV !== 'test') {
+	require('server/utils/serverModuleOverwrite');
+}
+
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
+
 import { User } from './models';
 import { sequelize } from './sequelize';
 import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
-
-type Wrap = <
-	P = any,
-	ResBody = any,
-	ReqBody = any,
-	ReqQuery = any,
-	Locals extends Record<string, any> = Record<string, any>,
->(
-	handler: RequestHandler<P, ResBody, ReqBody, ReqQuery, Locals>,
-) => RequestHandler<P, ResBody, ReqBody, ReqQuery, Locals>;
-
-// Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
-// return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
-export const wrap: Wrap =
-	(routeHandlerFn) =>
-	async (...args) => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const [req, res, next] = args;
-		try {
-			return await routeHandlerFn(...args);
-		} catch (err) {
-			return next(err);
-		}
-	};
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (!(err instanceof Error)) {
@@ -72,26 +56,20 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	// Log the error if we're testing. Normally this is handled in the error middleware, but
 	// that isn't active while handling individual requests in a test environment.
 	if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
-		// eslint-disable-next-line no-console
+		// biome-ignore lint/suspicious/noConsole: shhhhhh
 		console.log('Got an error in an API route while testing:', err);
 	}
 	return next(err);
 };
 
-/* ---------------------- */
-/* Initialize express app */
-/* ---------------------- */
-const app = express();
+import { createExpressEndpoints, RequestValidationError } from '@ts-rest/express';
 
-export default app;
-
-import { RequestValidationError, createExpressEndpoints } from '@ts-rest/express';
 import { contract } from 'utils/api/contract';
 import { server } from 'utils/api/server';
 
 // just hardcoded blocking, very bad, but we really need it
 // set process.env.BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
-app.use(blocklistMiddleware);
+appRouter.use(blocklistMiddleware);
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({
@@ -106,24 +84,25 @@ if (process.env.NODE_ENV === 'production') {
 		],
 	});
 	// The Sentry request handler must be the first middleware on the app
-	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
-	app.use(Sentry.Handlers.tracingHandler());
-	app.use(enforce.HTTPS({ trustProtoHeader: true }));
+	appRouter.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
+	appRouter.use(Sentry.Handlers.tracingHandler());
+	appRouter.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
-app.use(deduplicateSlash());
-app.use(noSlash());
-app.use(compression());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(cookieParser());
+appRouter.use(deduplicateSlash());
+appRouter.use(noSlash());
+appRouter.use(compression());
+appRouter.use(express.json({ limit: '50mb' }));
+appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
+appRouter.use(cookieParser());
 
 /* --------------------- */
 /* Configure app session */
 /* --------------------- */
 import session from 'express-session';
+import { fromZodError } from 'zod-validation-error';
+
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
-import { fromZodError } from 'zod-validation-error';
 
 import { abortStorage } from './abort';
 import { authTokenMiddleware } from './authToken/authTokenMiddleware';
@@ -131,7 +110,7 @@ import { bearerStrategy } from './authToken/strategy';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
-app.use(
+appRouter.use(
 	session({
 		secret: 'sessionsecret',
 		resave: false,
@@ -150,7 +129,7 @@ app.use(
 	}),
 );
 
-app.use((req, res, next) => {
+appRouter.use((req, res, next) => {
 	/* If on *.pubpub.org domain, set cookie to be accessible across */
 	/* all subdomains to maintain login. Especially important when */
 	/* creating communities. */
@@ -164,8 +143,8 @@ app.use((req, res, next) => {
 /* ------------------- */
 /* Configure app login */
 /* ------------------- */
-app.use(passport.initialize());
-app.use(passport.session());
+appRouter.use(passport.initialize());
+appRouter.use(passport.session());
 passport.use(User.createStrategy());
 passport.use('zotero', zoteroAuthStrategy());
 passport.use('bearer', bearerStrategy());
@@ -175,11 +154,14 @@ passport.deserializeUser(User.deserializeUser());
 /* ---------------- */
 /* Server Endpoints */
 /* ---------------- */
-app.use('/dist', [cors(), express.static(path.join(process.cwd(), 'dist/client'))]);
-app.use('/static', express.static(path.join(process.cwd(), 'static')));
-app.use('/service-worker.js', express.static(path.join(process.cwd(), 'static/service-worker.js')));
-app.use('/favicon.png', express.static(path.join(process.cwd(), 'static/favicon.png')));
-app.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.png')));
+appRouter.use('/dist', [cors(), express.static(path.join(process.cwd(), 'dist/client'))]);
+appRouter.use('/static', express.static(path.join(process.cwd(), 'static')));
+appRouter.use(
+	'/service-worker.js',
+	express.static(path.join(process.cwd(), 'static/service-worker.js')),
+);
+appRouter.use('/favicon.png', express.static(path.join(process.cwd(), 'static/favicon.png')));
+appRouter.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.png')));
 
 // extremely graceful iknow
 process.on('uncaughtException', (err) => {
@@ -196,7 +178,7 @@ const TIMEOUT_MS = process.env.REQUEST_TIMEOUT_MS
 	? parseInt(process.env.REQUEST_TIMEOUT_MS, 10)
 	: 30_000;
 
-app.use((req, res, next) => {
+appRouter.use((req, res, next) => {
 	// don't abort requests in test environment
 	if (process.env.NODE_ENV === 'test') {
 		return next();
@@ -228,7 +210,7 @@ app.use((req, res, next) => {
 /* -------------------- */
 /* Set Hostname for Dev */
 /* -------------------- */
-app.use((req, res, next) => {
+appRouter.use((req, res, next) => {
 	if (req.headers.communityhostname) {
 		// @ts-expect-error
 		req.headers.host = req.headers.communityhostname;
@@ -252,17 +234,19 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use(authTokenMiddleware);
+appRouter.use(authTokenMiddleware);
 
 /** Set up purge middleware before api routes are initialized and after hostname is set */
-app.use(purgeMiddleware(schedulePurge));
+appRouter.use(purgeMiddleware(schedulePurge));
+
+const { customScript: _, ...contractWithoutCustomScript } = contract;
 
 /* ------------------------- */
 /* Create ts-rest api routes */
 /* ------------------------- */
-createExpressEndpoints(contract, server, app, {
+createExpressEndpoints(contractWithoutCustomScript, server, appRouter, {
 	logInitialization: false,
-	// eslint-disable-next-line consistent-return
+
 	requestValidationErrorHandler: (err, req, res, next) => {
 		if (!(err instanceof RequestValidationError)) {
 			next(err);
@@ -289,18 +273,22 @@ createExpressEndpoints(contract, server, app, {
 /* ------------- */
 /* Import Routes */
 /* ------------- */
-require('./apiRoutes');
-require('./routes');
+import { apiRouter } from './apiRoutes';
+import { rootRouter } from './routes';
 
+appRouter.use(apiRouter);
+appRouter.use(rootRouter);
 /* ------------- */
 /* Error Handlers */
 /* ------------- */
 if (process.env.NODE_ENV === 'production') {
 	// The Sentry error handler must be before any other error middleware
-	app.use(Sentry.Handlers.errorHandler());
+	appRouter.use(Sentry.Handlers.errorHandler());
 }
-app.use(errorHandler);
-app.use(errorMiddleware);
+appRouter.use(errorHandler);
+appRouter.use(errorMiddleware);
+
+app.use(appRouter);
 
 /* ------------ */
 /* Start Server */
@@ -323,3 +311,5 @@ export const startServer = () => {
 		},
 	);
 };
+
+export { app as __appImmutableListenOnly };

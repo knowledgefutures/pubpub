@@ -1,13 +1,15 @@
-import type { TsRestRequest } from '@ts-rest/express';
 import type { AppRouteQuery, ServerInferRequest } from '@ts-rest/core';
+import type { TsRestRequest } from '@ts-rest/express';
+import type { Request, Response } from 'express';
 import type { ModelCtor } from 'sequelize-typescript';
+
 import { z } from 'zod';
 
-import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { NotFoundError } from 'server/utils/errors';
-import type { Express, Response } from 'express-serve-static-core';
+import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
+
 import { createIncludes } from './include';
-import { CustomScopeInput, createCustomWhereClause } from './queryMany';
+import { type CustomScopeInput, createCustomWhereClause } from './queryMany';
 
 const isUUID = (slugOrId: string) => z.string().uuid().safeParse(slugOrId).success;
 
@@ -20,7 +22,7 @@ export const queryOne =
 		},
 	) =>
 	async <T extends AppRouteQuery>(
-		input: ServerInferRequest<T, Express['request']['headers']> & {
+		input: ServerInferRequest<T, Request['headers']> & {
 			req: TsRestRequest<T>;
 			res: Response;
 		},
@@ -50,7 +52,7 @@ export const queryOne =
 					(includeItem) =>
 						(attributes as string[]).includes(includeItem) &&
 						!includes.some((customIncludeItem) => customIncludeItem.as === includeItem),
-			  )
+				)
 			: include;
 
 		const defaultIncludes = createIncludes(model, filteredInclude);

@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* biome-ignore-all lint/correctness/noUnusedVariables: shhhhhh */
 // @ts-nocheck
-import { Attributes, Model } from 'sequelize';
-import type * as Types from '../../types';
+
 import type * as Models from '../../server/models';
+import type * as Types from '../../types';
+
+import { type Attributes, Model } from 'sequelize';
 
 type ActivityItem1 = Types.ActivityItem;
 type ActivityItem2 = Attributes<Models.ActivityItem>;

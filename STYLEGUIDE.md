@@ -19,7 +19,7 @@ import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 import localFunc from './siblingFile';
 import getThing from './thing';
 
-require('./style.scss');
+import './style.scss';
 
 /* Keep propTypes and defaultProps above the component declaration */
 const propTypes = {
@@ -68,9 +68,9 @@ This repo uses three main utilities folders:
 
 There can be a bit of craft in deciding where a certain utility file goes, so it's nice to be clear about the tradeoffs:
 
--   **`/utils`**: These are expected to be called on both the server and client. They are likely to be bundled and sent to the client, so file size should be a consideration.
--   **`/client/utils`**: These are expected to only be called on the client. They _can_ be called from the server, but doing so may be bad practice. If your function uses `apiFetch()`, `window` or `document` it likely belongs here.
--   **`/server/utils`**: These are expected to only be called on the server. They should not be bundled and sent to the client (they may rely on config var values) - and as such _must_ not be called by the client.
+- **`/utils`**: These are expected to be called on both the server and client. They are likely to be bundled and sent to the client, so file size should be a consideration.
+- **`/client/utils`**: These are expected to only be called on the client. They _can_ be called from the server, but doing so may be bad practice. If your function uses `apiFetch()`, `window` or `document` it likely belongs here.
+- **`/server/utils`**: These are expected to only be called on the server. They should not be bundled and sent to the client (they may rely on config var values) - and as such _must_ not be called by the client.
 
 Do not use `utils/index.js` files. Separate utils files and be specific in calling them. This can help prevent cyclic dependencies and makes navigating to the right file simpler. For example:
 

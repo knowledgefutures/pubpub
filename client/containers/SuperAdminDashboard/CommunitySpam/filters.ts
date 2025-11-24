@@ -1,5 +1,6 @@
-import { OverviewSearchFilter } from 'client/containers/DashboardOverview/helpers/filters';
-import { SpamCommunityQuery } from 'types';
+import type { OverviewSearchFilter } from 'client/containers/DashboardOverview/helpers/filters';
+import type { SpamCommunityQuery } from 'types';
+
 import { indexById } from 'utils/arrays';
 
 export type SpamCommunitiesFilter = OverviewSearchFilter<

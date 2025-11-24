@@ -1,21 +1,23 @@
-import { Op } from 'sequelize';
-import firebase from 'firebase';
+import type firebase from 'firebase';
 
-import { Release, Doc, Discussion, DiscussionAnchor } from 'server/models';
-import { sequelize } from 'server/sequelize';
-import { getPubDraftDoc, getPubDraftRef } from 'server/utils/firebaseAdmin';
-import { createLatestPubExports } from 'server/export/queries';
-import { createDoc } from 'server/doc/queries';
-import { setPubSearchData } from 'server/utils/search';
-import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
-import { Maybe, Release as ReleaseType, DefinitelyHas, DocJson } from 'types';
-import { getStepsInChangeRange, editorSchema } from 'components/Editor';
-import { defer } from 'server/utils/deferred';
+import type { DefinitelyHas, DocJson, Maybe, Release as ReleaseType } from 'types';
+
+import { Op } from 'sequelize';
+
+import { editorSchema, getStepsInChangeRange } from 'components/Editor';
 import { createPubReleasedActivityItem } from 'server/activityItem/queries';
+import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
+import { createDoc } from 'server/doc/queries';
+import { createLatestPubExports } from 'server/export/queries';
+import { Discussion, DiscussionAnchor, Doc, Release } from 'server/models';
+import { sequelize } from 'server/sequelize';
+import { defer } from 'server/utils/deferred';
+import { getPubDraftDoc, getPubDraftRef } from 'server/utils/firebaseAdmin';
+import { setPubSearchData } from 'server/utils/search';
 
 type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';
 export class ReleaseQueryError extends Error {
-	// eslint-disable-next-line no-useless-constructor
+	// biome-ignore lint/complexity/noUselessConstructor: shhhhhh
 	constructor(reason: ReleaseErrorReason) {
 		super(reason);
 	}

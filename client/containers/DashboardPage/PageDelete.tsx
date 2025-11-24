@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
+
 import { Button, Classes } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import { InputField } from 'components';
 import { usePendingChanges } from 'utils/hooks';
-import { apiFetch } from 'client/utils/apiFetch';
 
 type Props = {
 	isForbidden: boolean;

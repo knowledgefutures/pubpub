@@ -1,7 +1,7 @@
-import { formatDate, getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
+import type { Pub } from 'server/models';
+import type * as types from 'types';
 
-import * as types from 'types';
-import { Pub } from 'server/models';
+import { formatDate, getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
 
 export const getPubLatestReleasedDate = (pub: types.Pub | Pub) => {
 	if (!pub.releases || pub.releases?.length === 0) {

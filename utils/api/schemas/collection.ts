@@ -1,15 +1,18 @@
-import * as types from 'types';
-import { z } from 'zod';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { collectionKinds, readNextPreviewSizes } from 'types/collection';
 import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
-import { layoutBlockSchema } from './layout';
-import { pageSchema } from './page';
-import { collectionPubSchema } from './collectionPub';
-import { collectionAttributionSchema } from './collectionAttribution';
-import { memberSchema } from './member';
-import { communitySchema } from './community';
+
 import { baseSchema } from '../utils/baseSchema';
+import { collectionAttributionSchema } from './collectionAttribution';
+import { collectionPubSchema } from './collectionPub';
+import { communitySchema } from './community';
+import { layoutBlockSchema } from './layout';
+import { memberSchema } from './member';
+import { pageSchema } from './page';
 
 extendZodWithOpenApi(z);
 

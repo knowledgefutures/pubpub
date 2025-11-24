@@ -1,12 +1,13 @@
 import React from 'react';
 
+import { type EditorChangeObject, getCurrentNodeLabels } from '../Editor';
 import {
-	codeBlockToggle,
 	alignTextCenter,
 	alignTextLeft,
 	alignTextRight,
 	blockquoteToggle,
 	bulletListToggle,
+	codeBlockToggle,
 	codeToggle,
 	emToggle,
 	heading1Toggle,
@@ -24,24 +25,23 @@ import {
 	rejectSuggestedEditSpec,
 	toggleSuggestedEditsSpec,
 } from '../Editor/plugins/suggestedEdits';
-import { getCurrentNodeLabels, EditorChangeObject } from '../Editor';
 import {
-	ControlsMath,
 	ControlsFootnoteCitation,
 	ControlsLink,
+	ControlsMath,
+	ControlsMedia,
 	ControlsReference,
 	ControlsReferencePopover,
-	ControlsMedia,
 	ControlsTable,
 } from './controlComponents';
+import { SuggestedEditsTogglePopover } from './controlComponents/SuggestedEditsTogglePopover';
+import { positionNearLink, positionNearSelection } from './controls/positioning';
 import MediaButton from './FormattingBarMediaButton';
-import { positionNearSelection, positionNearLink } from './controls/positioning';
 import {
-	FormattingBarButtonData,
-	FormattingBarButtonDataControls,
+	type FormattingBarButtonData,
+	type FormattingBarButtonDataControls,
 	FormattingBarButtonPopoverCondition,
 } from './types';
-import { SuggestedEditsTogglePopover } from './controlComponents/SuggestedEditsTogglePopover';
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;

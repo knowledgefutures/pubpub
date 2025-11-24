@@ -1,4 +1,5 @@
-import { SingleScopeId } from 'facets';
+import type { SingleScopeId } from 'facets';
+
 import { getScope } from 'server/utils/queryHelpers';
 
 export const canUserUpdateFacetsForScope = async (scopeId: SingleScopeId, userId: string) => {

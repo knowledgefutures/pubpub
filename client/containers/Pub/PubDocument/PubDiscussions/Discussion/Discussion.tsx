@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import classNames from 'classnames';
-import { Button } from '@blueprintjs/core';
+import type { PubPageData, PubPageDiscussion } from 'types';
 
-import { Icon } from 'components';
+import React, { useEffect, useState } from 'react';
+
+import { Button } from '@blueprintjs/core';
+import classNames from 'classnames';
+
 import { apiFetch } from 'client/utils/apiFetch';
+import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-import { PubPageData, PubPageDiscussion } from 'types';
 import { discussionMatchesSearchTerm } from '../discussionUtils';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
-import ManageTools, { SortType } from './ManageTools';
+import ManageTools, { type SortType } from './ManageTools';
 import ThreadComment from './ThreadComment';
 
-require('./discussion.scss');
+import './discussion.scss';
 
 type PubPageThreadComment = PubPageDiscussion['thread']['comments'][number];
 

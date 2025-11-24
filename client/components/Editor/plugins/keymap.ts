@@ -1,30 +1,30 @@
+import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
 import {
 	baseKeymap,
-	wrapIn,
-	setBlockType,
 	chainCommands,
-	toggleMark,
-	exitCode,
-	joinUp,
-	joinDown,
-	lift,
-	selectParentNode,
-	newlineInCode,
 	createParagraphNear,
-	liftEmptyBlock,
-	joinBackward,
-	selectNodeBackward,
 	deleteSelection,
+	exitCode,
+	joinBackward,
+	joinDown,
+	joinUp,
+	lift,
+	liftEmptyBlock,
+	newlineInCode,
+	selectNodeBackward,
+	selectParentNode,
+	setBlockType,
+	toggleMark,
+	wrapIn,
 } from 'prosemirror-commands';
-import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
-import { undo, redo } from 'prosemirror-history';
+import { redo, undo } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
+import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
+import { type EditorState, TextSelection } from 'prosemirror-state';
 
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { type Dispatch, splitBlockPreservingAttrs } from '../commands';
 import { codeBlockArrowHandlers } from './code';
-import { Dispatch, splitBlockPreservingAttrs } from '../commands';
 import { EMAIL_OR_URI_REGEX, linkRuleHandler } from './inputRules';
 
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;

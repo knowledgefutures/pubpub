@@ -1,9 +1,10 @@
+import type { DocJson } from 'types';
+
 import React from 'react';
 
 import { MinimalEditor } from 'components';
-import { DocJson } from 'types';
 
-require('./workflowTextEditor.scss');
+import './workflowTextEditor.scss';
 
 type Props = {
 	initialContent: DocJson;

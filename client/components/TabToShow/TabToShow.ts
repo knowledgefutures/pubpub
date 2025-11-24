@@ -1,8 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
-require('./tab-to-show.scss');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
+import './tab-to-show.scss';
 
 const propTypes = {
 	children: PropTypes.node.isRequired,

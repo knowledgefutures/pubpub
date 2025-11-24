@@ -1,22 +1,23 @@
+import type { Collection, Pub, UserScopeVisit } from 'types';
+
 import React, { useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
 import { DashboardFrame, MobileAware } from 'components';
-import { Collection, Pub, UserScopeVisit } from 'types';
-
-import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import CreateCollectionDialog from '../../App/Breadcrumbs/CreateCollectionDialog';
+import { usePageContext } from 'utils/hooks';
 
-import CommunityItems from './CommunityItems';
+import CreateCollectionDialog from '../../App/Breadcrumbs/CreateCollectionDialog';
 import {
 	OverviewFrame,
 	OverviewSection,
-	ScopeSummaryList,
-	RecentVisitList,
+	type QuickAction,
 	QuickActions,
-	QuickAction,
+	RecentVisitList,
+	ScopeSummaryList,
 } from '../helpers';
+import CommunityItems from './CommunityItems';
 
 type Props = {
 	overviewData: {

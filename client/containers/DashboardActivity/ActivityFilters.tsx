@@ -1,11 +1,13 @@
+import type { ActivityFilter, ScopeId } from 'types';
+
 import React from 'react';
+
 import classNames from 'classnames';
 import { Checkbox } from 'reakit/Checkbox';
 
-import { ActivityFilter, ScopeId } from 'types';
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 
-require('./activityFilters.scss');
+import './activityFilters.scss';
 
 type Props = {
 	activeFilters: ActivityFilter[];

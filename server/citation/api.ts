@@ -1,14 +1,16 @@
+import type { ZoteroStyleKind } from 'types';
+import type { CitationStyleKind } from 'utils/citations';
+
+import { Router } from 'express';
 import zoteroClient from 'zotero-api-client';
 
-import app, { wrap } from 'server/server';
-import { CitationStyleKind } from 'utils/citations';
-
-import { ZoteroStyleKind } from 'types';
-
+import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 import { expect } from 'utils/assert';
-import { ForbiddenError, BadRequestError, NotFoundError } from 'server/utils/errors';
 
-import { ZoteroIntegration, IntegrationDataOAuth1 } from '../models';
+import { IntegrationDataOAuth1, ZoteroIntegration } from '../models';
+
+export const router = Router();
 
 // mapping our citation style keys to zotero's keys
 const zoteroStyleKindMap: Record<CitationStyleKind, ZoteroStyleKind> = {
@@ -29,7 +31,7 @@ const zoteroStyleKindMap: Record<CitationStyleKind, ZoteroStyleKind> = {
 
 // the parameters which can be passed to the get() method
 // can be found at https://www.zotero.org/support/dev/web_api/v3/basics
-app.get(
+router.get(
 	'/api/citations/zotero',
 	wrap(async (req, res) => {
 		const userId = req.user?.id;
@@ -50,13 +52,13 @@ app.get(
 		});
 
 		if (!zoteroIntegration) {
-			throw new NotFoundError(Error('No zotero integration found'));
+			throw new NotFoundError(new Error('No zotero integration found'));
 		}
 
 		const { integrationDataOAuth1 } = zoteroIntegration;
 
 		if (!integrationDataOAuth1) {
-			throw new ForbiddenError(Error('Zotero not authenticated'));
+			throw new ForbiddenError(new Error('Zotero not authenticated'));
 		}
 
 		const zoteroId = parseInt(expect(zoteroIntegration.zoteroUserId), 10);

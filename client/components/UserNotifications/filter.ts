@@ -1,5 +1,6 @@
+import type { FilterTerm, PubNotificationsState, ThreadNotificationsState } from './types';
+
 import { expect } from 'utils/assert';
-import { FilterTerm, PubNotificationsState, ThreadNotificationsState } from './types';
 
 const match = (needle: string, haystack: string) => {
 	return haystack.toLowerCase().includes(needle.toLowerCase().trim());

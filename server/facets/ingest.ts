@@ -1,7 +1,12 @@
-import { Sequelize, DataTypes } from 'sequelize';
-import { FacetBinding } from './models/facetBinding';
+import { DataTypes, type Sequelize } from 'sequelize';
 
-import { ALL_FACET_DEFINITIONS, FacetName, FacetProp, FacetProps } from '../../facets';
+import {
+	ALL_FACET_DEFINITIONS,
+	type FacetName,
+	type FacetProp,
+	type FacetProps,
+} from '../../facets';
+import { FacetBinding } from './models/facetBinding';
 
 type Column = {
 	type: (typeof DataTypes)[keyof typeof DataTypes];

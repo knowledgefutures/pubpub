@@ -1,10 +1,11 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-require('./dashboardFrame.scss');
+import './dashboardFrame.scss';
 
 type Props = {
 	children: React.ReactNode;

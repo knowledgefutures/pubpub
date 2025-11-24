@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FacetPropType, propType } from './propType';
+import { type FacetPropType, propType } from './propType';
 
 export const string = propType({
 	name: 'string',

@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import type { AnalyticsInstance } from 'analytics';
+
+import type { InitialData, Page, PubPageData } from 'types';
 import type { PageViewPayload } from 'utils/api/schemas/analytics';
-// eslint-disable-next-line import/no-unresolved
-import { AnalyticsInstance } from 'analytics';
-import { InitialData, Page, PubPageData } from 'types';
-import { expect } from 'utils/assert';
+
+import { useEffect, useState } from 'react';
+
 import { chooseCollectionForPub } from 'client/utils/collections';
+import { expect } from 'utils/assert';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { getThirdPartyPluginsObjectWithGdprConsent } from './thirdPartyPlugins';
+
 import { shouldPathBeIgnored } from './ignoredPaths';
+import { getThirdPartyPluginsObjectWithGdprConsent } from './thirdPartyPlugins';
 
 const determinePayload = (
 	props:
@@ -220,6 +223,5 @@ export const usePageOnce = (
 		 * The only change we need to track is whether the custom analytics get loaded afterwards or
 		 * not
 		 */
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pluginLength]);
 };

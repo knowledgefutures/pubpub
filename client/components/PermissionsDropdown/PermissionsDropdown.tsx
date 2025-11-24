@@ -1,6 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Menu, MenuItem } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
+
 import { DropdownButton } from 'components';
 
 const propTypes = {

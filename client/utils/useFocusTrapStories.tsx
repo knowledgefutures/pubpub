@@ -1,5 +1,5 @@
-/* eslint-disable react/button-has-type */
 import React, { useState } from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
@@ -13,11 +13,11 @@ const FocusTrapTest = () => {
 	return (
 		<div ref={focusTrap.ref}>
 			<div>
-				<button>One</button>
-				<button>Two</button>
-				<button>Three</button>
-				<button>Four</button>
-				<button>I declare a thumb war</button>
+				<button type="button">One</button>
+				<button type="button">Two</button>
+				<button type="button">Three</button>
+				<button type="button">Four</button>
+				<button type="button">I declare a thumb war</button>
 			</div>
 			{clickOutside && <div>Clicked outside at: {clickOutside}</div>}
 		</div>

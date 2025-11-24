@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react';
-
-import {
+import type { ActivityRenderContext, RenderedActivityItem } from 'client/utils/activity/types';
+import type {
 	ActivityAssociations,
 	ActivityFilter,
 	ActivityItem,
@@ -8,9 +7,12 @@ import {
 	IdIndex,
 	Maybe,
 } from 'types';
-import { ActivityRenderContext, RenderedActivityItem } from 'client/utils/activity/types';
+
+import { useMemo, useState } from 'react';
+
 import { renderActivityItem } from 'client/utils/activity';
 import { apiFetch } from 'client/utils/apiFetch';
+
 import { createActivityAssociations } from '../../../utils/activity';
 
 type PartialActivityRenderContext = Omit<ActivityRenderContext, 'associations'>;

@@ -1,13 +1,10 @@
-import React, { useRef } from 'react';
-import classNames from 'classnames';
-import { MarkSpec, NodeSpec } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
+import type { MarkSpec, NodeSpec } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
 
-import { NoteManager } from 'client/utils/notes';
-import { DocJson, Maybe } from 'types';
-import { usePageContext } from 'utils/hooks';
+import type { NoteManager } from 'client/utils/notes';
+import type { DocJson, Maybe } from 'types';
 
-import {
+import type {
 	CollaborativeOptions,
 	DiscussionsOptions,
 	EditorChangeObject,
@@ -15,13 +12,20 @@ import {
 	OnEditFn,
 	PluginLoader,
 } from './types';
-import { getEmptyDoc, NodeReference } from './utils';
-import { useSuggestions } from './hooks/useSuggestions';
-import { useInitialValues } from './hooks/useInitialValues';
-import { useEditorView } from './hooks/useEditorView';
-import ReferenceFinder from './ReferenceFinder';
 
-require('./styles/base.scss');
+import React, { useRef } from 'react';
+
+import classNames from 'classnames';
+
+import { usePageContext } from 'utils/hooks';
+
+import { useEditorView } from './hooks/useEditorView';
+import { useInitialValues } from './hooks/useInitialValues';
+import { useSuggestions } from './hooks/useSuggestions';
+import ReferenceFinder from './ReferenceFinder';
+import { getEmptyDoc, type NodeReference } from './utils';
+
+import './styles/base.scss';
 
 type Props = {
 	noteManager?: NoteManager;

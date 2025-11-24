@@ -1,11 +1,11 @@
-import { Schema } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import type { Schema } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
 
-import { Dispatch } from '../../commands';
-import { getSuggestionMarkTypeFromSchema } from './operations';
+import type { Dispatch } from '../../commands';
+import type { SuggestedEditsPluginState } from './types';
 
 import { suggestedEditsPluginKey } from './key';
-import { SuggestedEditsPluginState } from './types';
+import { getSuggestionMarkTypeFromSchema } from './operations';
 
 export const getInitialPluginState = (
 	schema: Schema,

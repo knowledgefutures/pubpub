@@ -1,7 +1,6 @@
-import { Submission } from '../submission';
-import { Diff } from '../util';
-
-import { InsertableActivityItemBase } from './base';
+import type { Submission } from '../submission';
+import type { Diff } from '../util';
+import type { InsertableActivityItemBase } from './base';
 
 type SubmissionActivityItemBase = InsertableActivityItemBase & {
 	pubId: string;

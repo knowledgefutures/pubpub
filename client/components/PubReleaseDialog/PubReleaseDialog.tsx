@@ -1,5 +1,9 @@
+import type { EditorState, Transaction } from 'prosemirror-state';
+
+import type { DocJson, Pub, Release } from 'types';
+
 import React, { useState } from 'react';
-import TimeAgo from 'react-timeago';
+
 import {
 	AnchorButton,
 	Button,
@@ -10,23 +14,21 @@ import {
 	Icon,
 	InputGroup,
 } from '@blueprintjs/core';
-import { EditorState, Transaction } from 'prosemirror-state';
+import TimeAgo from 'react-timeago';
 
-import { pubUrl } from 'utils/canonicalUrls';
-import { formatDate, timeAgoBaseProps } from 'utils/dates';
-import { usePageContext } from 'utils/hooks';
-
+import { usePubContext } from 'client/containers/Pub/pubHooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
-import { Release, Pub, DocJson } from 'types';
-import { usePubContext } from 'client/containers/Pub/pubHooks';
+import { hasSuggestions } from 'components/Editor/plugins/suggestedEdits/operations';
 import {
 	acceptSuggestions,
 	rejectSuggestions,
 } from 'components/Editor/plugins/suggestedEdits/resolve';
-import { hasSuggestions } from 'components/Editor/plugins/suggestedEdits/operations';
+import { pubUrl } from 'utils/canonicalUrls';
+import { formatDate, timeAgoBaseProps } from 'utils/dates';
+import { usePageContext } from 'utils/hooks';
 
-require('./pubReleaseDialog.scss');
+import './pubReleaseDialog.scss';
 
 type Props = {
 	historyKey?: number;

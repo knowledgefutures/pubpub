@@ -1,8 +1,10 @@
+import type { AttributionWithUser } from 'types';
+
 import React, { useState } from 'react';
+
 import { Checkbox, Classes, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
-import { AttributionWithUser } from 'types';
 import { ORCID_ID_OR_URL_PATTERN } from 'utils/orcid';
 
 import { getFilteredRoles } from './roles';

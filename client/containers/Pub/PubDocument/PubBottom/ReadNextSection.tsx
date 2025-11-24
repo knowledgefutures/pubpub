@@ -1,10 +1,11 @@
+import type { CollectionPub, DefinitelyHas, Pub } from 'types';
+
 import React from 'react';
 
-import { CollectionPub, DefinitelyHas, Pub } from 'types';
+import { chooseCollectionForPub, createReadingParamUrl } from 'client/utils/collections';
+import { PubTitle } from 'components';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
-import { PubTitle } from 'components';
-import { chooseCollectionForPub, createReadingParamUrl } from 'client/utils/collections';
 
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 

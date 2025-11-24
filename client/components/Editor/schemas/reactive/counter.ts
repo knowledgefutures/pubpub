@@ -1,4 +1,5 @@
-import { Node } from 'prosemirror-model';
+import type { Node } from 'prosemirror-model';
+
 import { useDocumentState, useTransactionState } from '@pubpub/prosemirror-reactive';
 
 import { getEnabledNodeLabelConfiguration } from '../../utils';
@@ -29,6 +30,7 @@ export const counter = (options: CounterOptions = {}) => {
 			}
 		}
 
+		// biome-ignore lint/correctness/useHookAtTopLevel: shhhhhh
 		const counterState = useTransactionState(['counter', resolvedCounterType], {
 			countsMap: {},
 			maxCount: 0,

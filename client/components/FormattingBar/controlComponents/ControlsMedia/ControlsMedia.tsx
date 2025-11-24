@@ -1,19 +1,22 @@
+import type { NodeLabelMap, ReferenceableNodeType } from 'components/Editor/types';
+
+import type { EditorChangeObjectWithNode } from '../../types';
+
 import React, { useCallback } from 'react';
+
 import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
 import classNames from 'classnames';
 
 import { SimpleEditor, SliderInput } from 'components';
-import { NodeLabelMap, ReferenceableNodeType } from 'components/Editor/types';
 import { getCurrentNodeLabels, isResizeableFormat } from 'components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
-import AlignmentControl from './AlignmentControl';
-import UrlControl from './UrlControl';
-import SourceControls from './SourceControls';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
-import { EditorChangeObjectWithNode } from '../../types';
+import AlignmentControl from './AlignmentControl';
+import SourceControls from './SourceControls';
+import UrlControl from './UrlControl';
 
-require('./controlsMedia.scss');
+import './controlsMedia.scss';
 
 type Props = {
 	pendingAttrs: any;

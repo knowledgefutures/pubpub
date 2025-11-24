@@ -1,19 +1,21 @@
-import firebase from 'firebase';
+import type firebase from 'firebase';
+import type { Schema } from 'prosemirror-model';
+
+import type { DocJson, PubDraftInfo } from 'types';
+
 import firebaseAdmin from 'firebase-admin';
-import { Schema } from 'prosemirror-model';
-import { Step, Transform } from 'prosemirror-transform';
+import { type Step, Transform } from 'prosemirror-transform';
 
 import {
 	editorSchema,
 	getFirebaseDoc,
-	getLatestKeyAndTimestamp,
 	getFirstKeyAndTimestamp,
+	getLatestKeyAndTimestamp,
 } from 'components/Editor';
-import { Pub, Draft } from 'server/models';
-import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
-import { storeCheckpoint, createFirebaseChange } from 'components/Editor/utils';
-import { DocJson, PubDraftInfo } from 'types';
+import { createFirebaseChange, storeCheckpoint } from 'components/Editor/utils';
+import { Draft, Pub } from 'server/models';
 import { expect } from 'utils/assert';
+import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -28,7 +30,7 @@ const getFirebaseApp = () => {
 	const serviceAccount = JSON.parse(
 		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 as string, 'base64').toString(),
 	);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(`Firebase App will use: ${getFirebaseConfig().databaseURL}`);
 	return firebaseAdmin.initializeApp(
 		{

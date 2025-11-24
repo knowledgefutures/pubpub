@@ -1,10 +1,11 @@
+import type {
+	MemberCreatedActivityItem,
+	MemberRemovedActivityItem,
+	MemberUpdatedActivityItem,
+} from 'types';
+
 import React from 'react';
 
-import {
-	MemberCreatedActivityItem,
-	MemberUpdatedActivityItem,
-	MemberRemovedActivityItem,
-} from 'types';
 import { memberTitle, scopeTitle } from 'utils/activity/titles';
 
 import { itemRenderer } from './itemRenderer';

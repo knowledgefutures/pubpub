@@ -1,4 +1,5 @@
-import * as types from 'types';
+import type * as types from 'types';
+
 import { getMembersForScope } from 'server/member/queries';
 import { Discussion, ReviewNew, Visibility, VisibilityUser } from 'server/models';
 import { expect } from 'utils/assert';

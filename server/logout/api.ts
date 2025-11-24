@@ -1,6 +1,8 @@
+import type { AppRouteImplementation } from '@ts-rest/express';
+
+import type { contract } from 'utils/api/contract';
+
 import { isDuqDuq, isProd } from 'utils/environment';
-import { AppRouteImplementation } from '@ts-rest/express';
-import { contract } from 'utils/api/contract';
 
 export const logoutRouteImplementation: AppRouteImplementation<
 	typeof contract.auth.logout

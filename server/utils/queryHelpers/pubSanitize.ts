@@ -1,5 +1,6 @@
+import type { Discussion, SanitizedPubData } from 'types';
+
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { Discussion, SanitizedPubData } from 'types';
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeReviews from './reviewsSanitize';
@@ -47,7 +48,7 @@ export default (
 	const filteredCollectionPubs = pubData.collectionPubs
 		? pubData.collectionPubs.filter((item) => {
 				return visibleCollectionIds.includes(item.collectionId);
-		  })
+			})
 		: [];
 	const hasCollectionMemberAccess = filteredCollectionPubs.reduce((prev, currCp) => {
 		const currCollection = initialData.communityData.collections.find((cl) => {

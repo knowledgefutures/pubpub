@@ -1,9 +1,9 @@
-import path from 'path';
-import { ensureDir } from 'fs-extra';
-import tmp from 'tmp-promise';
-import mime from 'mime-types';
+import type { BaseSourceFile } from 'utils/api/schemas/import';
 
-import { BaseSourceFile } from 'utils/api/schemas/import';
+import { ensureDir } from 'fs-extra';
+import mime from 'mime-types';
+import path from 'path';
+import tmp from 'tmp-promise';
 
 import { uploadFileToAssetStore } from 'workers/tasks/import/assetStore';
 import { convertFileTypeIfNecessary } from 'workers/tasks/import/images';

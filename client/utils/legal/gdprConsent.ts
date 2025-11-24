@@ -1,9 +1,10 @@
-import Cookies from 'js-cookie';
 import type { InitialCommunityData, InitialData, LoginData } from 'types';
 
-import { canUseCustomAnalyticsProvider, noCookieBanner } from 'utils/analytics/featureFlags';
-import { apiFetch } from '../apiFetch';
+import Cookies from 'js-cookie';
 
+import { canUseCustomAnalyticsProvider, noCookieBanner } from 'utils/analytics/featureFlags';
+
+import { apiFetch } from '../apiFetch';
 import { getCookieOptions } from './cookieOptions';
 
 const cookieKey = 'gdpr-consent';

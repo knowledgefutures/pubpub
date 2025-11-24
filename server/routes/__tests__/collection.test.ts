@@ -1,4 +1,4 @@
-import { setup, teardown, login, modelize } from 'stubstub';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community community {
@@ -56,25 +56,19 @@ describe('/collection', () => {
 		} = models;
 		const host = getHost(community);
 
-		await (
-			await login()
-		)
+		await (await login())
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()
 			.expect(404);
 
-		await (
-			await login(communityManager)
-		)
+		await (await login(communityManager))
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()
 			.expect(200);
 
-		await (
-			await login(collectionViewer)
-		)
+		await (await login(collectionViewer))
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()

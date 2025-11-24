@@ -1,10 +1,11 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
-import { getResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
+import { getResizedUrl } from 'utils/images';
 
-require('./avatar.scss');
+import './avatar.scss';
 
 type Props = {
 	width: number;

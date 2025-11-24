@@ -1,18 +1,14 @@
-import RSS from 'rss';
-import dateFormat from 'dateformat';
-import { Op, QueryTypes } from 'sequelize';
+import type * as types from 'types';
 
-import { communityUrl as getCommunityUrl, pubUrl } from 'utils/canonicalUrls';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { getAllPubContributors, getContributorName } from 'utils/contributors';
-import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';
-import { sortByPrimaryStatus } from 'utils/collections/primary';
+import dateFormat from 'dateformat';
+import RSS from 'rss';
+import { Op, QueryTypes } from 'sequelize';
 
 import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
-	Community,
+	type Community,
 	Export,
 	includeUserModel,
 	Pub,
@@ -21,7 +17,11 @@ import {
 	Release,
 } from 'server/models';
 import { sequelize } from 'server/sequelize';
-import * as types from 'types';
+import { communityUrl as getCommunityUrl, pubUrl } from 'utils/canonicalUrls';
+import { sortByPrimaryStatus } from 'utils/collections/primary';
+import { getAllPubContributors, getContributorName } from 'utils/contributors';
+import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 const pubsIdsQuery = `
 	WITH query_values (required_slugs, forbidden_slugs, published_before, published_after) AS (

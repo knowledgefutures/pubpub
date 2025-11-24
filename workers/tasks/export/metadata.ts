@@ -1,28 +1,28 @@
+import type * as types from 'types';
+
+import type { PubMetadata } from './types';
+
 import dateFormat from 'dateformat';
 
-import * as types from 'types';
-import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { renderJournalCitation } from 'utils/citations';
-import { getUrlForPub } from 'utils/pubEdge';
+import { fetchFacetsForScope } from 'server/facets';
 import {
 	Collection,
+	CollectionAttribution,
 	CollectionPub,
 	Community,
+	includeUserModel,
 	Pub,
 	PubAttribution,
 	Release,
-	CollectionAttribution,
-	includeUserModel,
 } from 'server/models';
-
-import { renderLicenseForPub } from 'utils/licenses';
-import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
-import { getAllPubContributors } from 'utils/contributors';
-import { fetchFacetsForScope } from 'server/facets';
-
 import { expect } from 'utils/assert';
-import { PubMetadata } from './types';
+import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
+import { renderJournalCitation } from 'utils/citations';
+import { getPrimaryCollection } from 'utils/collections/primary';
+import { getAllPubContributors } from 'utils/contributors';
+import { renderLicenseForPub } from 'utils/licenses';
+import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
+import { getUrlForPub } from 'utils/pubEdge';
 
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[] | CollectionPub[]) => {
 	const primaryCollection = getPrimaryCollection(collectionPubs);

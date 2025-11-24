@@ -1,5 +1,6 @@
-import passport from 'passport';
 import type { RequestHandler } from 'express';
+
+import passport from 'passport';
 
 export const authTokenMiddleware: RequestHandler = async (req, res, next) => {
 	/** You are only allowed to access API routes with token */

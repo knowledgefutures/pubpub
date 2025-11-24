@@ -1,18 +1,19 @@
-import { Op } from 'sequelize';
-
-import * as types from 'types';
-import {
-	ActivityAssociations,
+import type * as types from 'types';
+import type {
 	ActivityAssociationIds,
-	ActivityItemsFetchResult,
+	ActivityAssociations,
 	ActivityFilter,
-	WithId,
+	ActivityItemsFetchResult,
 	IdIndex,
 	ScopeId,
+	WithId,
 } from 'types';
+
+import { Op } from 'sequelize';
+
 import {
-	attributesPublicUser,
 	ActivityItem,
+	attributesPublicUser,
 	Collection,
 	CollectionPub,
 	Community,
@@ -30,6 +31,7 @@ import {
 } from 'server/models';
 import { indexById } from 'utils/arrays';
 import { expect } from 'utils/assert';
+
 import { createActivityAssociationSets } from '../../utils/activity';
 
 type PromiseRecord<T extends { [k: string]: any }> = {

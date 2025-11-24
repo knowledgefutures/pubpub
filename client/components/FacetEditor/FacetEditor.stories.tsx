@@ -1,13 +1,14 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import {
-	createFacetInstance,
-	cascade,
-	NodeLabels,
-	PubHeaderTheme,
 	CitationStyle,
+	cascade,
+	createFacetInstance,
+	NodeLabels,
 	PubEdgeDisplay,
+	PubHeaderTheme,
 } from 'facets';
 import { communityData, pubData } from 'utils/storybook/data';
 

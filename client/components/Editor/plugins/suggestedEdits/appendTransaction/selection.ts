@@ -1,5 +1,6 @@
-import { Step } from 'prosemirror-transform';
-import { Selection, TextSelection, Transaction } from 'prosemirror-state';
+import type { Step } from 'prosemirror-transform';
+
+import { type Selection, TextSelection, type Transaction } from 'prosemirror-state';
 
 export const getNewSelectionForTransaction = (
 	newTransaction: Transaction,

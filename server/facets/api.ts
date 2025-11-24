@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-import { BadRequestError, ForbiddenError } from 'server/utils/errors';
-import { getScopeId } from 'facets';
-
 import { initServer } from '@ts-rest/express';
+
+import { getScopeId } from 'facets';
+import { BadRequestError, ForbiddenError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
+
 import { canUserUpdateFacetsForScope } from './permissions';
 import { updateFacetsForScope } from './update';
 
@@ -19,7 +19,7 @@ export const facetsServer = s.router(contract.facets, {
 		}
 		try {
 			await updateFacetsForScope(scopeId, facets, req.user?.id);
-		} catch (err) {
+		} catch (_err) {
 			throw new BadRequestError();
 		}
 		return { status: 200, body: {} };

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Popover, Position, Tooltip, Menu, MenuItem } from '@blueprintjs/core';
+
+import { Button, Menu, MenuItem, Popover, Position, Tooltip } from '@blueprintjs/core';
+
 import { Icon } from 'components';
 
-require('./labelSelect.scss');
+import './labelSelect.scss';
 
 type Props = {
 	availableLabels: any[];

@@ -1,7 +1,8 @@
 import type { Writeable } from 'types';
 
-import { ALL_FACET_DEFINITIONS, Facets } from '../definitions';
-import type { FacetDefinition, FacetCascadeResult } from '../core';
+import type { FacetCascadeResult, FacetDefinition } from '../core';
+
+import { ALL_FACET_DEFINITIONS, type Facets } from '../definitions';
 
 const skipIterationSymbol = Symbol('skip');
 type SkipIterationSymbol = typeof skipIterationSymbol;

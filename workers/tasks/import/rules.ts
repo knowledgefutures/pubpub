@@ -1,5 +1,5 @@
+import { pandocUtils, RuleSet, transformers, transformUtils } from '@pubpub/prosemirror-pandoc';
 import md5 from 'crypto-js/md5';
-import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
 import { editorSchema } from 'components/Editor';
 import { renderToKatexString } from 'utils/katex';

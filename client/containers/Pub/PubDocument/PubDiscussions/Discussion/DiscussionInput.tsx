@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { AnchorButton, Button, Intent, InputGroup } from '@blueprintjs/core';
+import React, { useCallback, useEffect, useState } from 'react';
 
+import { AnchorButton, Button, InputGroup, Intent } from '@blueprintjs/core';
+
+import { apiFetch } from 'client/utils/apiFetch';
+import { Avatar } from 'components';
 import Editor, {
+	convertLocalHighlightToDiscussion,
+	getJSON,
+	getLocalHighlightText,
 	getText,
 	getTopLevelImages,
-	getJSON,
 	removeLocalHighlight,
-	convertLocalHighlightToDiscussion,
-	getLocalHighlightText,
 } from 'components/Editor';
-import { Avatar } from 'components';
-import { FormattingBar, buttons } from 'components/FormattingBar';
-import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'client/utils/apiFetch';
+import { buttons, FormattingBar } from 'components/FormattingBar';
 import { usePubContext } from 'containers/Pub/pubHooks';
+import { usePageContext } from 'utils/hooks';
 
 type OwnProps = {
 	discussionData: any;

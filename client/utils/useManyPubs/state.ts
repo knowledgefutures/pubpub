@@ -1,6 +1,7 @@
-import { Pub } from 'types';
+import type { Pub } from 'types';
 
-import { QueryState, KeyedPubsQuery } from './types';
+import type { KeyedPubsQuery, QueryState } from './types';
+
 import { getOrderingValuesByPubId, getPubsInOrder } from './ordering';
 
 export const initialQueryState: QueryState = {

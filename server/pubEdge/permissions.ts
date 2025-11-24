@@ -1,5 +1,5 @@
-import { getScope } from 'server/utils/queryHelpers';
 import { PubEdge } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
 
 export const canManagePubEdges = (scope) => scope.activePermissions.canManage;

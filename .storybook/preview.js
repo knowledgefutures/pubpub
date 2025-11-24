@@ -23,7 +23,7 @@ const pageContext = {
 FocusStyleManager.onlyShowFocusOnTabs();
 
 /* Require default styles as done in Html.js */
-require('styles/base.scss');
+import 'styles/base.scss';
 
 addDecorator((storyFn) => {
 	return (

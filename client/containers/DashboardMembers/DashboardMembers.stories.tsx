@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import DashboardMembers from 'containers/DashboardMembers/DashboardMembers';
-import { locationData, loginData, communityData } from 'utils/storybook/data';
+import { communityData, locationData, loginData } from 'utils/storybook/data';
 
 const membersData = {
 	members: [

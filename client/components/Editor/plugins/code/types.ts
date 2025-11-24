@@ -1,13 +1,14 @@
-import { EditorState, Transaction } from 'prosemirror-state';
-import { Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
-import { Extension } from '@codemirror/state';
-import { LanguageSupport, LRLanguage } from '@codemirror/language';
-import { LRParser } from '@lezer/lr';
-import { MarkdownParser } from '@lezer/markdown';
-import { sql } from '@codemirror/lang-sql';
+import type { LanguageSupport, LRLanguage } from '@codemirror/language';
+import type { Extension } from '@codemirror/state';
+import type { LRParser } from '@lezer/lr';
+import type { MarkdownParser } from '@lezer/markdown';
+import type { Node } from 'prosemirror-model';
+import type { EditorState, Transaction } from 'prosemirror-state';
+import type { EditorView } from 'prosemirror-view';
 
-import { CodeBlockLanguages } from './languages';
+import type { CodeBlockLanguages } from './languages';
+
+import { sql } from '@codemirror/lang-sql';
 
 type LanguageName = (typeof CodeBlockLanguages)[number];
 

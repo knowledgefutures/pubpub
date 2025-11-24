@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Doc } from 'server/models';
 import { getBranchDoc } from 'server/utils/firebaseAdmin';
 

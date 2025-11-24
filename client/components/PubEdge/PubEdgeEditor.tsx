@@ -1,15 +1,17 @@
+import type { ExternalPublication } from 'types';
+
 import React, { useEffect, useState } from 'react';
+
 import { EditableText, TagInput } from '@blueprintjs/core';
 import { Button as RKButton } from 'reakit/Button';
 
 import { DatePicker } from 'components';
 import { getHostnameForUrl } from 'utils/pubEdge';
-import { ExternalPublication } from 'types';
 
-import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
+import PubEdgeLayout from './PubEdgeLayout';
 
-require('./pubEdge.scss');
+import './pubEdge.scss';
 
 export type PubEdgeEditorProps = {
 	externalPublication: ExternalPublication;

@@ -1,6 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
 import { spawn as spawnChildProcess } from 'child_process';
+import fs from 'fs-extra';
+import path from 'path';
 
 export const extensionFor = (filePath) => filePath.split('.').pop().toLowerCase();
 

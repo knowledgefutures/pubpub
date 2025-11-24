@@ -1,8 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Classes } from '@blueprintjs/core';
 
-require('./userNav.scss');
+import { Classes } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
+
+import './userNav.scss';
 
 const propTypes = {
 	userSlug: PropTypes.string,

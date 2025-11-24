@@ -1,7 +1,7 @@
 import { keymap } from 'prosemirror-keymap';
 import { DOMSerializer } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
-import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
+import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
 
 import { TableView } from '../views';
 

@@ -1,27 +1,27 @@
+import type { ActivityAssociations, ActivityAssociationType } from 'types';
+
+import { ActivityItem } from 'server/models';
+import { finishDeferredTasks } from 'server/utils/deferred';
 import { modelize, setup, teardown } from 'stubstub';
 
-import { ActivityAssociations, ActivityAssociationType } from 'types';
-import { ActivityItem } from 'server/models';
-
-import { finishDeferredTasks } from 'server/utils/deferred';
 import { fetchActivityItems } from '../fetch';
 import {
-	createMemberCreatedActivityItem,
-	createMemberUpdatedActivityItem,
-	createMemberRemovedActivityItem,
 	createCollectionActivityItem,
 	createCollectionPubActivityItem,
 	createCollectionUpdatedActivityItem,
-	createPubReviewCreatedActivityItem,
-	createPubReviewCommentAddedActivityItem,
-	createPubReviewUpdatedActivityItem,
 	createCommunityCreatedActivityItem,
 	createCommunityUpdatedActivityItem,
+	createMemberCreatedActivityItem,
+	createMemberRemovedActivityItem,
+	createMemberUpdatedActivityItem,
 	createPubActivityItem,
-	createPubUpdatedActivityItem,
-	createPubReleasedActivityItem,
-	createPubEdgeActivityItem,
 	createPubDiscussionCommentAddedActivityItem,
+	createPubEdgeActivityItem,
+	createPubReleasedActivityItem,
+	createPubReviewCommentAddedActivityItem,
+	createPubReviewCreatedActivityItem,
+	createPubReviewUpdatedActivityItem,
+	createPubUpdatedActivityItem,
 } from '../queries';
 
 const models = modelize`
@@ -503,6 +503,8 @@ describe('fetchActivityItems', () => {
 			releaseRequestComment,
 			releaseDenialComment,
 		} = models;
+
+		const t = new Date();
 		await createPubReviewCreatedActivityItem(review.id);
 		await createPubReviewCommentAddedActivityItem(review.id, releaseDenialComment.id);
 		await createPubReviewUpdatedActivityItem(actor.id, review.id, {
@@ -511,6 +513,7 @@ describe('fetchActivityItems', () => {
 		});
 		const { activityItems, associations } = await fetchActivityItems({
 			scope: { communityId: community.id, pubId: pub.id },
+			since: t.toISOString(),
 		});
 
 		const [commentAddedItem, createdItem, updatedItem] = activityItems.sort((a, b) =>

@@ -1,18 +1,19 @@
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
 
-import * as types from 'types';
 import {
-	UserNotification,
-	UserSubscription,
-	UserNotificationPreferences,
-	ActivityItem,
+	type ActivityItem,
 	User,
+	UserNotification,
+	UserNotificationPreferences,
+	UserSubscription,
 } from 'server/models';
-import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
+import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { expect } from 'utils/assert';
-import { getPPLic } from 'utils/caching/getHashedUserId';
 import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
+import { getPPLic } from 'utils/caching/getHashedUserId';
 
 type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
 	item: types.ActivityItemOfKind<Kind>,

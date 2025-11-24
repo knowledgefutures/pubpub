@@ -1,13 +1,13 @@
-import * as types from 'types';
+import { getEmptyDoc } from 'client/components/Editor';
 import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { defer } from 'server/utils/deferred';
 import { getPub } from 'server/utils/queryHelpers';
-import { getEmptyDoc } from 'client/components/Editor';
-
+import * as types from 'types';
 import { expect } from 'utils/assert';
-import { sendSubmissionEmail } from './emails';
+
 import { appendAbstractToPubDraft } from './abstract';
+import { sendSubmissionEmail } from './emails';
 
 const updateToStatuses = [...types.managerStatuses, ...types.submitterStatuses] as const;
 
@@ -97,6 +97,7 @@ export const updateSubmission = async (options: UpdateOptions, actorId: string) 
 
 	defer(async () => {
 		if (!skipEmail) {
+			console.log('sending email');
 			await sendSubmissionEmail({
 				previousStatus,
 				submission: (await getSubmissionById(id))!,

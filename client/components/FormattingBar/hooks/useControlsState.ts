@@ -1,13 +1,15 @@
+import type { CommandState, CommandStates } from 'client/components/Editor/commands/types';
+
+import type { ControlsConfiguration, FormattingBarButtonData } from '../types';
+
 import { useEffect, useMemo, useState } from 'react';
 
-import { EditorChangeObject, insertNodeIntoEditor } from 'components/Editor';
+import { type EditorChangeObject, insertNodeIntoEditor } from 'components/Editor';
 
-import { CommandState, CommandStates } from 'client/components/Editor/commands/types';
-import { FormattingBarButtonData, ControlsConfiguration } from '../types';
 import { resolveControlsConfiguration } from '../controls';
 import { deepMap } from '../utils';
-import { useInteractionCount } from './useInteractionCount';
 import { useCommandStates } from './useCommandStates';
+import { useInteractionCount } from './useInteractionCount';
 
 type Options = {
 	buttons: FormattingBarButtonData[][];
@@ -134,7 +136,6 @@ export const useControlsState = (options: Options) => {
 			(button) => button.controls && button.controls.trigger(editorChangeObject),
 		);
 		setOpenedButton(openableIndicatedButton || null);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [effectKey, indicatedButtonsString]);
 
 	useEffect(() => {

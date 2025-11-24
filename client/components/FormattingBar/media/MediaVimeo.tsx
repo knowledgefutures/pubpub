@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { InputGroup, Button, Intent, NonIdealState } from '@blueprintjs/core';
+
+import { Button, InputGroup, Intent, NonIdealState } from '@blueprintjs/core';
 import { isHttpsUri } from 'valid-url';
 
-import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'client/utils/apiFetch';
-import { getIframeSrc, getEmbedType } from 'client/utils/editor';
+import { getEmbedType, getIframeSrc } from 'client/utils/editor';
+import Icon from 'components/Icon/Icon';
 
 type Props = {
 	onInsert: (...args: any[]) => any;

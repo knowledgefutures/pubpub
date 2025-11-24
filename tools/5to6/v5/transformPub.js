@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-restricted-syntax */
+
 const uuid = require('uuid');
 
 const { docToString, jsonToDoc } = require('../util/docUtils');
@@ -148,7 +148,7 @@ const mapVersionsToChangeIndices = (versions, intermediateDocStates, draftBranch
 					matchWithinChange.doc,
 					draftBranchId,
 				);
-				// eslint-disable-next-line no-param-reassign
+				
 				intermediateDocStates = splitResult.nextStates;
 				versionIndexMap.set(version, splitResult.newlyCreatedState.index);
 				warn(`Split state at ${splitResult.newlyCreatedState.index} into two new states`);
@@ -174,7 +174,7 @@ const mapVersionsToChangeIndices = (versions, intermediateDocStates, draftBranch
 		warn(
 			`creating ReplaceStep at index ${nextState.index} to accomodate orphan version ${version.id}`,
 		);
-		// eslint-disable-next-line no-param-reassign
+		
 		intermediateDocStates = [...intermediateDocStates, nextState];
 	});
 	return { versionIndexMap: versionIndexMap, intermediateDocStates: intermediateDocStates };

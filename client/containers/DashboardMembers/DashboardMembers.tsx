@@ -1,17 +1,18 @@
 import React from 'react';
-import { ControlGroup, Button, Intent } from '@blueprintjs/core';
 
+import { Button, ControlGroup, Intent } from '@blueprintjs/core';
+
+import { useMembersState } from 'client/utils/members/useMembers';
 import {
 	DashboardFrame,
+	InheritedMembersBlock,
+	MemberRow,
 	SettingsSection,
 	UserAutocomplete,
-	MemberRow,
-	InheritedMembersBlock,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { useMembersState } from 'client/utils/members/useMembers';
 
-require('./dashboardMembers.scss');
+import './dashboardMembers.scss';
 
 type Props = {
 	membersData: any;

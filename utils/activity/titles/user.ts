@@ -1,7 +1,13 @@
-import { InsertableActivityItem, MemberActivityItem } from 'types';
+import type { InsertableActivityItem, MemberActivityItem } from 'types';
+
+import type {
+	ActivityRenderContext,
+	Title,
+	TitleRenderer,
+} from '../../../client/utils/activity/types';
+
 import { naivePluralize } from 'utils/strings';
 
-import { ActivityRenderContext, Title, TitleRenderer } from '../../../client/utils/activity/types';
 import { getUserFromContext } from './util';
 
 const getUserTitleFromUserIdAndContext = (

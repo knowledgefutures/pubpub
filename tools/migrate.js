@@ -1,6 +1,6 @@
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-/* eslint-disable no-console */
+
+
+
 import fs from 'fs-extra';
 import path from 'path';
 import { Sequelize } from 'sequelize';

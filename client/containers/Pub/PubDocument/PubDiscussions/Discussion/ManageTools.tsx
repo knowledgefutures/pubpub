@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { Icon, ConfirmDialog } from 'components';
+import { ConfirmDialog, Icon } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
-import LabelSelect from './LabelSelect';
 import DiscussionReanchor from './DiscussionReanchor';
+import LabelSelect from './LabelSelect';
 
 const sortLabels = {
 	chronological: 'Sort chronologically',

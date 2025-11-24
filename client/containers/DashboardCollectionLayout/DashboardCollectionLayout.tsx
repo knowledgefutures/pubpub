@@ -1,22 +1,24 @@
-import React, { useState, useCallback } from 'react';
-import { useBeforeUnload, useUpdateEffect } from 'react-use';
-import { Button, ButtonGroup, RadioGroup, Radio, Switch } from '@blueprintjs/core';
+import type { Collection, Pub } from 'types';
+import type { LayoutPubsByBlock } from 'utils/layout';
 
+import React, { useCallback, useState } from 'react';
+
+import { Button, ButtonGroup, Radio, RadioGroup, Switch } from '@blueprintjs/core';
+import { useBeforeUnload, useUpdateEffect } from 'react-use';
+
+import * as api from 'client/utils/collections/api';
+import { usePersistableState } from 'client/utils/usePersistableState';
 import {
 	DashboardFrame,
-	SettingsSection,
+	ImageUpload,
+	InputField,
 	LayoutEditor,
 	LinkedPageSelect,
-	InputField,
-	ImageUpload,
+	SettingsSection,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { Collection, Pub } from 'types';
-import { LayoutPubsByBlock } from 'utils/layout';
-import { usePersistableState } from 'client/utils/usePersistableState';
-import * as api from 'client/utils/collections/api';
 
-require('./dashboardCollectionLayout.scss');
+import './dashboardCollectionLayout.scss';
 
 type Props = {
 	collection: Collection;

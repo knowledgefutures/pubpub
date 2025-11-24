@@ -1,7 +1,13 @@
+import type { EditorChangeObject } from 'components/Editor';
+
+import type { CommandDefinition } from '../Editor/commands/types';
+
 import React from 'react';
+
 import { Button } from '@blueprintjs/core';
 
 import {
+	codeBlockToggle,
 	heading1Toggle,
 	heading2Toggle,
 	heading3Toggle,
@@ -9,14 +15,11 @@ import {
 	heading5Toggle,
 	heading6Toggle,
 	paragraphToggle,
-	codeBlockToggle,
 } from 'components/Editor/commands';
-import { EditorChangeObject } from 'components/Editor';
 
-import CommandMenu, { CommandMenuDisclosureProps } from './CommandMenu';
-import { CommandDefinition } from '../Editor/commands/types';
+import CommandMenu, { type CommandMenuDisclosureProps } from './CommandMenu';
 
-require('./blockTypeSelector.scss');
+import './blockTypeSelector.scss';
 
 type Props = {
 	isSmall: boolean;

@@ -1,56 +1,76 @@
+import { Router } from 'express';
+
 import { isProd } from 'utils/environment';
 
-require('./activityItem/api');
-require('./citation/api');
-require('./collectionAttribution/api');
-require('./collection/api');
-require('./collectionPub/api');
-require('./community/api');
-require('./communityServices/api');
-require('./customScript/api');
-require('./discussion/api');
-require('./doi/api');
-require('./editor/api');
-require('./export/api');
-require('./facets/api');
-require('./import/api');
-require('./integrationDataOAuth1/api');
-require('./landingPageFeature/api');
-require('./layout/api');
-require('./logout/api');
-require('./login/api');
-require('./member/api');
-require('./openSearch/api');
-require('./page/api');
-require('./passwordReset/api');
-require('./pub/api');
-require('./pubAttribution/api');
-require('./pubEdge/api');
-require('./pubEdgeProposal/api');
-require('./pubHistory/api');
-require('./release/api');
-require('./review/api');
-require('./reviewer/api');
-require('./rss/api');
-require('./search/api');
-require('./signup/api');
-require('./spamTag/api');
-require('./subscribe/api');
-require('./submissionWorkflow/api');
-require('./submission/api');
-require('./threadComment/api');
-require('./uploadPolicy/api');
-require('./user/api');
-require('./userDismissable/api');
-require('./userNotification/api');
-require('./userNotificationPreferences/api');
-require('./userSubscription/api');
-require('./workerTask/api');
-require('./zoteroIntegration/api');
+import { activityItemRouter } from './activityItem/api';
+import { router as apiDocsRouter } from './apiDocs/api';
+import { router as citationRouter } from './citation/api';
+import { router as communityServicesRouter } from './communityServices/api';
+import { router as customScriptRouter } from './customScript/api';
+import { router as devApiRouter } from './dev/api';
+import { router as discussionRouter } from './discussion/api';
+import { router as doiRouter } from './doi/api';
+import { router as editorRouter } from './editor/api';
+import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
+import { router as landingPageFeatureRouter } from './landingPageFeature/api';
+import { router as layoutRouter } from './layout/api';
+import { router as openSearchRouter } from './openSearch/api';
+import { router as passwordResetRouter } from './passwordReset/api';
+import { router as pubEdgeProposalRouter } from './pubEdgeProposal/api';
+import { router as pubHistoryRouter } from './pubHistory/api';
+import { router as reviewRouter } from './review/api';
+import { router as reviewerRouter } from './reviewer/api';
+import { router as rssRouter } from './rss/api';
+import { router as searchRouter } from './search/api';
+import { router as signupRouter } from './signup/api';
+import { router as spamTagRouter } from './spamTag/api';
+import { router as submissionRouter } from './submission/api';
+import { router as submissionWorkflowRouter } from './submissionWorkflow/api';
+import { router as subscribeRouter } from './subscribe/api';
+import { router as threadCommentRouter } from './threadComment/api';
+import { router as userRouter } from './user/api';
+import { router as userDismissableRouter } from './userDismissable/api';
+import { router as userNotificationRouter } from './userNotification/api';
+import { router as userNotificationPreferencesRouter } from './userNotificationPreferences/api';
+import { userSubscriptionRouter } from './userSubscription/api';
+import { router as zoteroIntegrationRouter } from './zoteroIntegration/api';
 
-require('./apiDocs/api');
+const apiRouter = Router()
+	.use(activityItemRouter)
+	.use(citationRouter)
+	.use(communityServicesRouter)
+	.use(customScriptRouter)
+	.use(discussionRouter)
+	.use(doiRouter)
+	.use(editorRouter)
+	.use(integrationDataOAuth1Router)
+	.use(landingPageFeatureRouter)
+	.use(layoutRouter)
+	.use(openSearchRouter)
+	.use(passwordResetRouter)
+	.use(pubEdgeProposalRouter)
+	.use(pubHistoryRouter)
+	.use(reviewRouter)
+	.use(reviewerRouter)
+	.use(rssRouter)
+	.use(searchRouter)
+	.use(signupRouter)
+	.use(spamTagRouter)
+	.use(subscribeRouter)
+	.use(submissionWorkflowRouter)
+	.use(submissionRouter)
+	.use(threadCommentRouter)
+	.use(userRouter)
+	.use(userDismissableRouter)
+	.use(userNotificationRouter)
+	.use(userNotificationPreferencesRouter)
+	.use(userSubscriptionRouter)
+	.use(zoteroIntegrationRouter)
+	.use(apiDocsRouter);
 
-if (!isProd()) {
-	// eslint-disable-next-line global-require
-	require('./dev/api');
+if (!isProd() && process.env.NODE_ENV !== 'test') {
+	apiRouter.use(devApiRouter);
 }
+
+// make it a module
+export { apiRouter };

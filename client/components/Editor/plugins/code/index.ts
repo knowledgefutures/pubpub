@@ -1,16 +1,18 @@
-import { Plugin, PluginKey } from 'prosemirror-state';
-import { undo, redo } from 'prosemirror-history';
-import { EditorView } from 'prosemirror-view';
-import { Node } from 'prosemirror-model';
-import { Classes } from '@blueprintjs/core';
+import type { Node } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
 
-import { CodeBlockSettings, LanguageLoaders } from './types';
+import type { CodeBlockSettings, LanguageLoaders } from './types';
+
+import { Classes } from '@blueprintjs/core';
+import { redo, undo } from 'prosemirror-history';
+import { Plugin, PluginKey } from 'prosemirror-state';
+
 import { codeMirrorBlockNodeView } from './codeMirrorBlockNodeView';
-import { codeBlockArrowHandlers } from './utils';
-import { CodeBlockLanguages } from './languages';
 import { defaultSettings } from './defaults';
 import languageLoaders from './languageLoaders';
+import { CodeBlockLanguages } from './languages';
 import parsers from './parsers';
+import { codeBlockArrowHandlers } from './utils';
 
 export const codeMirrorBlockKey = new PluginKey('codemirror-block');
 

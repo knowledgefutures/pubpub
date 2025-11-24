@@ -1,5 +1,6 @@
+import type { LayoutBlock } from './layout';
+
 import { generateHash } from './hashes';
-import { LayoutBlock } from './layout';
 
 export const generatePageBackground = (pageTitle: string) => {
 	const gradients = ['#b33939', '#cd6133', '#474787', '#227093', '#218c74'];

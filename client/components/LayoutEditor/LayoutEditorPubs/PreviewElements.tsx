@@ -1,7 +1,8 @@
-import React from 'react';
-import { Card, Checkbox } from '@blueprintjs/core';
+import type { LayoutBlockPubs } from 'utils/layout';
 
-import { LayoutBlockPubs } from 'utils/layout';
+import React from 'react';
+
+import { Card, Checkbox } from '@blueprintjs/core';
 
 type Content = LayoutBlockPubs['content'];
 

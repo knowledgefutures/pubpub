@@ -1,7 +1,9 @@
+import type { SpamStatus } from 'types';
+
 import React, { useCallback, useState } from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { SpamStatus } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 
 type Props = {

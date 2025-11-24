@@ -1,9 +1,11 @@
-import { PubEdgeCreatedActivityItem, PubEdgeRemovedActivityItem } from 'types';
+import type { PubEdgeCreatedActivityItem, PubEdgeRemovedActivityItem } from 'types';
+
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
 import { pubShortUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
 import { relationTypeDefinitions } from 'utils/pubEdge';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getPubEdgeFromContext, getPubFromContext } from './util';
 
 type AcceptedItem = PubEdgeCreatedActivityItem | PubEdgeRemovedActivityItem;

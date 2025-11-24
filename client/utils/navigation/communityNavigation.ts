@@ -1,5 +1,6 @@
-import { IconName } from 'components';
-import * as types from 'types';
+import type { IconName } from 'components';
+import type * as types from 'types';
+
 import { expect } from 'utils/assert';
 
 export const isCommunityNavigationMenu = (

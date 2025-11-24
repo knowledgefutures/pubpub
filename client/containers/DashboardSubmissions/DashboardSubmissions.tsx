@@ -1,15 +1,17 @@
+import type { SubmissionWorkflow } from 'types';
+
+import type { PubWithSubmission } from './types';
+
 import React, { useState } from 'react';
 
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { SubmissionWorkflow } from 'types';
 
-import SubmissionItems from './SubmissionItems';
 import AcceptSubmissionsToggle from './AcceptSubmissionsToggle';
+import SubmissionItems from './SubmissionItems';
 import SubmissionWorkflowButton from './SubmissionWorkflowButton';
-import { PubWithSubmission } from './types';
 
-require('./dashboardSubmissions.scss');
+import './dashboardSubmissions.scss';
 
 type Props = {
 	initialPubs: PubWithSubmission[];

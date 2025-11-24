@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Callout, Button, Dialog, Classes, Checkbox } from '@blueprintjs/core';
+import type { DocJson, SubmissionStatus } from 'types';
 
-import { SubmissionStatus, DocJson } from 'types';
-import { Icon } from 'components';
+import React, { useState } from 'react';
+
+import { Button, Callout, Checkbox, Classes, Dialog } from '@blueprintjs/core';
+
 import { getEmptyDoc } from 'client/components/Editor/utils/doc';
+import { Icon } from 'components';
 
 import WorkflowTextEditor from '../DashboardSubmissionWorkflow/WorkflowTextEditor';
 
-require('./verdictDialog.scss');
+import './verdictDialog.scss';
 
 type Props = {
 	isOpen: boolean;

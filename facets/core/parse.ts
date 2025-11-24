@@ -1,4 +1,5 @@
-import { FacetDefinition, FacetInstance } from './facet';
+import type { FacetDefinition, FacetInstance } from './facet';
+
 import { FacetParseError } from './errors';
 
 type ParseResult<

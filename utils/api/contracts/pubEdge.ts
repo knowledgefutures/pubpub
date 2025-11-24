@@ -1,8 +1,10 @@
 import type { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { pubEdgeCreateSchema, pubEdgeSchema, pubEdgeUpdateSchema } from '../schemas/pubEdge';
+import { z } from 'zod';
+
 import { sanitizedPubSchema } from '../schemas/pub';
+import { pubEdgeCreateSchema, pubEdgeSchema, pubEdgeUpdateSchema } from '../schemas/pubEdge';
 
 extendZodWithOpenApi(z);
 

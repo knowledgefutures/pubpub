@@ -1,5 +1,7 @@
+import type { SlugStatus } from 'types';
+
 import React, { useState } from 'react';
-import classNames from 'classnames';
+
 import {
 	Button,
 	Callout,
@@ -9,17 +11,17 @@ import {
 	InputGroup,
 	Overlay,
 } from '@blueprintjs/core';
-import { RadioGroup, Radio, useRadioState } from 'reakit/Radio';
+import classNames from 'classnames';
+import { Radio, RadioGroup, useRadioState } from 'reakit/Radio';
 
-import { Icon } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
-import { getSchemaForKind } from 'utils/collections/schemas';
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSlugError } from 'client/utils/slug';
-import { SlugStatus } from 'types';
+import { Icon } from 'components';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
 
-require('./createCollectionDialog.scss');
+import './createCollectionDialog.scss';
 
 type Props = {
 	isOpen: boolean;

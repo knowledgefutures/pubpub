@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Button } from '@blueprintjs/core';
 
-import { DashboardFrame, FacetEditor } from 'components';
 import { useFacetsState } from 'client/utils/useFacets';
+import { DashboardFrame, FacetEditor } from 'components';
 
-require('./dashboardFacets.scss');
+import './dashboardFacets.scss';
 
 const DashboardFacets = () => {
 	const {

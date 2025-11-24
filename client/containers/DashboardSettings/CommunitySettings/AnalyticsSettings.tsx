@@ -1,8 +1,10 @@
+import type { Callback, Community } from 'types';
+
 import React, { useMemo, useState } from 'react';
 
-import { DropdownButton, InputField, SettingsSection } from 'components';
 import { Button, Classes, Menu, MenuItem } from '@blueprintjs/core';
-import { Callback, Community } from 'types';
+
+import { DropdownButton, InputField, SettingsSection } from 'components';
 
 type Props = {
 	communityData: Community;

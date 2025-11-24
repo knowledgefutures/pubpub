@@ -1,6 +1,7 @@
-import * as types from 'types';
-import { z } from 'zod';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 

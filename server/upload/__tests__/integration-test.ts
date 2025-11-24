@@ -1,8 +1,7 @@
-import { login, modelize, setup, teardown } from 'stubstub';
-// this file is not under tsconfig.test.json, so it doesn't get the types, so we import them manually
-import { describe, expect, it, beforeEach, beforeAll, afterAll } from '@jest/globals';
-import path from 'path';
 import fs from 'fs/promises';
+import path from 'path';
+
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community community {
@@ -17,7 +16,7 @@ const models = modelize`
     }`;
 
 // we require config.js here in order to get proper AWS_ACCESS_ID env vars
-// eslint-disable-next-line global-require, import/extensions
+
 require('../../../config');
 
 setup(beforeAll, async () => {

@@ -1,9 +1,14 @@
-import { EditorView } from 'prosemirror-view';
+import type { EditorView } from 'prosemirror-view';
 
-import { MediaUploadHandler, MediaUploadInstance } from '../../types';
+import type { MediaUploadHandler, MediaUploadInstance } from '../../types';
+import type {
+	UploadFailureMeta,
+	UploadFinishMeta,
+	UploadProgressMeta,
+	UploadStartMeta,
+} from './types';
 
 import { pastePluginKey } from './key';
-import { UploadStartMeta, UploadFinishMeta, UploadFailureMeta, UploadProgressMeta } from './types';
 import { dataUriToFile } from './util';
 
 const dispatchUploadStart = (view: EditorView, id: string, position: number) => {

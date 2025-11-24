@@ -1,4 +1,5 @@
 import Cookie from 'js-cookie';
+
 import { getCookieOptions } from './cookieOptions';
 
 const cookieKey = 'tos-update';

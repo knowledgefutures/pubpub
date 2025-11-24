@@ -1,6 +1,6 @@
-import React from 'react';
+import type { createFacetsStateStore } from './store';
 
-import { createFacetsStateStore } from './store';
+import React from 'react';
 
 type Context = ReturnType<typeof createFacetsStateStore>;
 

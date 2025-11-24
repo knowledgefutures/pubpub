@@ -1,8 +1,18 @@
-/* eslint-disable no-console */
-/* eslint-disable no-await-in-loop */
+import type { CascadedFacetsForScopes } from 'facets';
+import type { DocJson } from 'types';
 
 import React from 'react';
 
+import archiver from 'archiver';
+import { performance } from 'perf_hooks';
+import ReactDOMServer from 'react-dom/server';
+import { Op } from 'sequelize';
+import { PassThrough, Readable, Transform } from 'stream';
+
+import { renderStatic } from 'client/components/Editor/utils/renderStatic';
+import { editorSchema } from 'client/components/Editor/utils/schema';
+import { CollectionPub } from 'server/collectionPub/model';
+import { fetchFacetsForScopeIds } from 'server/facets';
 import {
 	Collection,
 	CollectionAttribution,
@@ -17,25 +27,16 @@ import {
 	ScopeSummary,
 	sequelize,
 } from 'server/models';
-
-import archiver from 'archiver';
-import { renderStatic } from 'client/components/Editor/utils/renderStatic';
-import { editorSchema } from 'client/components/Editor/utils/schema';
-import { performance } from 'perf_hooks';
-import ReactDOMServer from 'react-dom/server';
-import { Op } from 'sequelize';
-import { CollectionPub } from 'server/collectionPub/model';
-import { fetchFacetsForScopeIds } from 'server/facets';
 import { getDatabaseRef, getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { assetsClient } from 'server/utils/s3';
 import { updateWorkerTask } from 'server/workerTask/queries';
-import { PassThrough, Readable, Transform } from 'stream';
-import { DocJson } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
 import { getTextAbstract } from 'utils/pub/metadata';
-import type { CascadedFacetsForScopes } from 'facets';
+
+// for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
+import { renderNotesForListing } from '../../utils/notes';
 import { createSiteDownloaderTransform, generateAssetUrl } from './archive/siteDownloaderTransform';
 import {
 	addHrefsToNotes,
@@ -45,8 +46,6 @@ import {
 } from './export/html';
 import { getNotesData } from './export/notes';
 import SimpleNotesList from './export/SimpleNotesList';
-// for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
-import { renderNotesForListing } from '../../utils/notes';
 
 // progress tracking utilities
 class ProgressTracker {
@@ -302,7 +301,6 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 
 			console.log(`Has more: ${hasMore}. Offset: ${offset}. Limit: ${pubs.length}`);
 
-			// eslint-disable-next-line no-restricted-syntax
 			for (const pub of pubsWithDraftsAndFacets) {
 				this.push(pub);
 			}
@@ -331,7 +329,7 @@ const createDevTools = () => {
 
 	return {
 		getMemoryStats,
-		// eslint-disable-next-line no-undef
+
 		createMemoryTracker: (stream: NodeJS.ReadableStream, batchSize = 100) => {
 			let maxHeapUsed = 0;
 			let dataCount = 0;
@@ -634,7 +632,7 @@ export const archiveTask = async ({
 	devTools.getMemoryStats();
 
 	// get community data + all pubs first
-	// eslint-disable-next-line prefer-const
+
 	let [communityData, pubs] = await Promise.all([
 		getCommunityData(communityId),
 		getPubs(communityId),

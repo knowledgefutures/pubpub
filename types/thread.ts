@@ -1,11 +1,12 @@
-import {
-	ThreadEvent as ThreadEventModel,
+import type {
 	ThreadComment as ThreadCommentModel,
+	ThreadEvent as ThreadEventModel,
 	Thread as ThreadModel,
 } from 'server/models';
-import { SerializedModel } from './serializedModel';
-import { Discussion } from './discussion';
-import { Review } from './review';
+
+import type { Discussion } from './discussion';
+import type { Review } from './review';
+import type { SerializedModel } from './serializedModel';
 
 export type Commenter = {
 	id: string;

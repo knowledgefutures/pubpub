@@ -1,18 +1,19 @@
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
 
-import * as types from 'types';
+import { fetchAssociationsForActivityItems } from 'server/activityItem/fetch';
+import { fetchFacetsForScopeIds } from 'server/facets';
 import {
 	ActivityItem,
 	UserNotification,
-	UserNotificationPreferences,
+	type UserNotificationPreferences,
 	UserSubscription,
 } from 'server/models';
-import { fetchAssociationsForActivityItems } from 'server/activityItem/fetch';
 import {
 	getOrCreateUserNotificationPreferences,
 	updateUserNotificationPreferences,
 } from 'server/userNotificationPreferences/queries';
-import { fetchFacetsForScopeIds } from 'server/facets';
 
 type FetchOptions = {
 	userId: string;

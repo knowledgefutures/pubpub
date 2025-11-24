@@ -1,12 +1,12 @@
+import { Fragment, type Node as ProsemirrorNode } from 'prosemirror-model';
 import { tableNodes } from 'prosemirror-tables';
-import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
 
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
 
+import { buildLabel } from '../utils/references';
 import { counter } from './reactive/counter';
 import { label } from './reactive/label';
-import { buildLabel } from '../utils/references';
 
 const pmTableNodes = tableNodes({
 	tableGroup: 'block',
@@ -19,7 +19,6 @@ const pmTableNodes = tableNodes({
 			},
 			setDOMAttr: (value /* , attrs */) => {
 				if (value) {
-					/* eslint-disable-next-line no-param-reassign */
 					// TODO(ian): figure out what we want to do here
 					// attrs.style = `background-color: ${value}; ${attrs.style || ''}`;
 				}

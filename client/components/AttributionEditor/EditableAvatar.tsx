@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
+
 import { Button, Spinner } from '@blueprintjs/core';
+import classNames from 'classnames';
 import { Button as RKButton } from 'reakit/Button';
 
-import { Avatar, ImageUpload, Icon } from 'components';
+import { Avatar, Icon, ImageUpload } from 'components';
 
-require('./editableAvatar.scss');
+import './editableAvatar.scss';
 
 type Props = {
 	attribution: {
@@ -36,7 +37,6 @@ const EditableAvatar = (props: Props) => {
 		onUpdateAvatar(image);
 	};
 
-	// eslint-disable-next-line react/prop-types
 	const renderControls = ({ selectImage, clearImage }) => {
 		return (
 			<>

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Op } from 'sequelize';
 import { Pub, Discussion, includeUserModel } from '../../server/models';
 

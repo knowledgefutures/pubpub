@@ -1,10 +1,12 @@
+import type { Collection } from 'types';
+
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
+
 import { Button } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { Icon } from 'components';
 import { getDashUrl } from 'utils/dashboard';
-import { Collection } from 'types';
 import { usePageContext } from 'utils/hooks';
 
 import { iconSize } from './constants';
@@ -16,7 +18,7 @@ import {
 } from './labels';
 import OverviewRowSkeleton from './OverviewRowSkeleton';
 
-require('./collectionOverviewRow.scss');
+import './collectionOverviewRow.scss';
 
 type Props = {
 	className?: string;

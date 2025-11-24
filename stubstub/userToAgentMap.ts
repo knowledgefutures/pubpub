@@ -1,8 +1,10 @@
-import supertest from 'supertest';
-import { UserWithPrivateFieldsAndHashedPassword } from 'types';
-
 import type { Server } from 'http';
-import app from '../server/server';
+
+import type { UserWithPrivateFieldsAndHashedPassword } from 'types';
+
+import supertest from 'supertest';
+
+import { __appImmutableListenOnly } from '../server/server';
 
 const userToAgentMap = new Map();
 
@@ -11,7 +13,7 @@ let server: Server | null = null;
 export const login = async (
 	user?: UserWithPrivateFieldsAndHashedPassword,
 ): Promise<supertest.SuperAgentTest> => {
-	server ??= app.listen();
+	server ??= __appImmutableListenOnly.listen();
 
 	if (!user) {
 		const loggedOutAgent = supertest.agent(server);

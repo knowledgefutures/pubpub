@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4';
 
-import { getPubDraftRef, getDatabaseRef, editFirebaseDraftByRef } from 'server/utils/firebaseAdmin';
+import { editFirebaseDraftByRef, getDatabaseRef, getPubDraftRef } from 'server/utils/firebaseAdmin';
 
 const stubstubClientId = 'stubstub-firebase';
 

@@ -1,17 +1,19 @@
-import { Node } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { Mapping, Step } from 'prosemirror-transform';
+import type { Node } from 'prosemirror-model';
+import type { EditorState, Transaction } from 'prosemirror-state';
+
+import type {
+	DiscussionSelection,
+	Discussions,
+	DiscussionsFastForwardFn,
+	DiscussionsUpdateResult,
+	NullableDiscussions,
+	RemoteDiscussions,
+} from './types';
+
+import { Mapping, type Step } from 'prosemirror-transform';
 
 import { createHistoryState } from './historyState';
 import { mapDiscussionThroughSteps, removeDiscussionsById } from './util';
-import {
-	Discussions,
-	DiscussionSelection,
-	NullableDiscussions,
-	DiscussionsUpdateResult,
-	RemoteDiscussions,
-	DiscussionsFastForwardFn,
-} from './types';
 
 type Options = {
 	initialDiscussions: Discussions;

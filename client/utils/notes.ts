@@ -1,4 +1,5 @@
 import { NoteManagerCore } from 'utils/notesCore';
+
 import { apiFetch } from './apiFetch';
 
 const isClient = typeof window !== 'undefined';
@@ -12,7 +13,7 @@ const renderStructuredValues = (structuredValues, citationStyleKind, inlineStyle
 					inlineStyleKind,
 					citationStyleKind,
 				}),
-		  })
+			})
 		: Promise.resolve([]);
 
 export class NoteManager extends NoteManagerCore {

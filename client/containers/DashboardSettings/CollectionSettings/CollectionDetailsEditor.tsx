@@ -1,14 +1,17 @@
 /** Dashboard collection tab pane that holds some miscellaneous options for collections */
+
+import type { Collection, Community, SlugStatus } from 'types';
+
 import React, { useState } from 'react';
-import { Checkbox, FormGroup, Button, MenuItem } from '@blueprintjs/core';
+
+import { Button, Checkbox, FormGroup, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 
-import { getSchemaForKind } from 'utils/collections/schemas';
-import { Collection, Community, SlugStatus } from 'types';
-import { slugifyString } from 'utils/strings';
+import { getSlugError } from 'client/utils/slug';
 import { ConfirmDialog, InputField } from 'components';
 import { collectionUrl } from 'utils/canonicalUrls';
-import { getSlugError } from 'client/utils/slug';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { slugifyString } from 'utils/strings';
 
 type Props = {
 	collection: Collection;

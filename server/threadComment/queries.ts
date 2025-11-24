@@ -1,6 +1,8 @@
-import { ThreadComment, includeUserModel, Commenter } from 'server/models';
-import * as types from 'types';
+import type * as types from 'types';
+
+import { Commenter, includeUserModel, ThreadComment } from 'server/models';
 import { expect } from 'utils/assert';
+
 import { createCommenter } from '../commenter/queries';
 
 const findThreadCommentWithUser = async (id: string) => {

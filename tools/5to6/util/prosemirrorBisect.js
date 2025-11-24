@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, no-continue */
+
 
 function* generateBisections(searchSize) {
 	let i = 1;

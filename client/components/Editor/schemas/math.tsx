@@ -1,8 +1,8 @@
-import { DOMOutputSpec, Node } from 'prosemirror-model';
+import type { DOMOutputSpec, Node } from 'prosemirror-model';
 
 import { renderToKatexString } from 'utils/katex';
-import { ReferenceableNodeType } from '../types';
 
+import { ReferenceableNodeType } from '../types';
 import { counter } from './reactive/counter';
 
 // don't change this object; necessary for prosmirror-math package

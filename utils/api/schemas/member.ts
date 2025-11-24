@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { baseSchema } from '../utils/baseSchema';
 
 extendZodWithOpenApi(z);

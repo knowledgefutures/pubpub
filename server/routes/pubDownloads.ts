@@ -1,17 +1,20 @@
+import { Router } from 'express';
 import fetch from 'node-fetch';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
 
-import app, { wrap } from 'server/server';
-import { ForbiddenError, NotFoundError, handleErrors } from 'server/utils/errors';
+import { createPubExportsForLatestRelease } from 'server/export/queries';
+import { defer } from 'server/utils/deferred';
+import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getPubForRequest } from 'server/utils/queryHelpers';
-import { getBestDownloadUrl } from 'utils/pub/downloads';
-import { defer } from 'server/utils/deferred';
-import { createPubExportsForLatestRelease } from 'server/export/queries';
 import { hostIsValid } from 'server/utils/routes';
+import { wrap } from 'server/wrap';
+import { getBestDownloadUrl } from 'utils/pub/downloads';
 
-app.get(
+export const router = Router();
+
+router.get(
 	['/pub/:pubSlug/download', '/pub/:pubSlug/download/:format'],
 	wrap(async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {

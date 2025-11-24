@@ -1,8 +1,9 @@
+import type { FacetsStore } from './types';
+
 import { create } from 'zustand';
 
 import { bindActionsToStore } from './actions';
-import { createInitialState, CreateStateOptions } from './state';
-import { FacetsStore } from './types';
+import { type CreateStateOptions, createInitialState } from './state';
 
 export function createFacetsStateStore(options: CreateStateOptions) {
 	const initialState = createInitialState(options);

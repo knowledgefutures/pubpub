@@ -1,9 +1,10 @@
+import type * as types from 'types';
+
 import { promisify } from 'util';
 
-import * as types from 'types';
 import { User } from 'server/models';
-import { generateHash } from 'utils/hashes';
 import { sendPasswordResetEmail } from 'server/utils/email';
+import { generateHash } from 'utils/hashes';
 
 type CreatePasswordResetInputValues = {
 	email: string;

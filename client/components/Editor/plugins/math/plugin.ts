@@ -1,5 +1,5 @@
-import { Plugin } from 'prosemirror-state';
 import { mathPlugin } from '@benrbray/prosemirror-math';
+import { Plugin } from 'prosemirror-state';
 
 import { mathViewOverrideWithCount } from './mathView';
 

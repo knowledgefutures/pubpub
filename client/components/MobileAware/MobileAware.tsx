@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useViewport } from 'client/utils/useViewport';
 
-require('./mobileAware.scss');
+import './mobileAware.scss';
 
 export type RenderProps = { ref?: React.Ref<any>; className: string };
 type Renderable = null | React.ReactElement | ((props: RenderProps) => React.ReactElement);

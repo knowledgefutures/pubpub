@@ -1,10 +1,11 @@
-import { LandingPageCommunityFeature, ValidLandingPageCommunityFeature } from 'types';
+import type { LandingPageCommunityFeature, ValidLandingPageCommunityFeature } from 'types';
+
 import {
 	isAlwaysValid,
 	isNonEmptyDocJson,
 	isNonEmptyString,
 	isTruthyAnd,
-	RecordValidator,
+	type RecordValidator,
 	validate,
 } from 'utils/validate';
 

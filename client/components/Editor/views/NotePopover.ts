@@ -1,12 +1,13 @@
-import { DOMSerializer, Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
+import type { EditorView } from 'prosemirror-view';
+
+import { Classes } from '@blueprintjs/core';
 import { createPopper } from '@popperjs/core';
 import linkifyHtml from 'linkify-html';
-import { Classes } from '@blueprintjs/core';
+import { DOMSerializer, type Node } from 'prosemirror-model';
 
 import { rectContainsPoint, rectUnion } from 'utils/geom';
 
-require('./notePopover.scss');
+import './notePopover.scss';
 
 const normalizePopoverString = (string: string) => string.split('\n').join('');
 

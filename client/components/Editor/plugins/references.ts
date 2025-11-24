@@ -1,16 +1,19 @@
-import { Schema } from 'prosemirror-model';
-import { Plugin, PluginKey } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { suggest, Suggester } from 'prosemirror-suggest';
+import type { Schema } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
 
-import SuggestionManager from 'client/utils/suggestions/suggestionManager';
+import type SuggestionManager from 'client/utils/suggestions/suggestionManager';
+
+import type { NodeLabelMap } from '../types';
+
+import { Plugin, PluginKey } from 'prosemirror-state';
+import { type Suggester, suggest } from 'prosemirror-suggest';
+
 import {
-	getReferenceableNodes,
 	buildLabel,
-	NodeReference,
 	getNodeLabelText,
+	getReferenceableNodes,
+	type NodeReference,
 } from 'components/Editor/utils';
-import { NodeLabelMap } from '../types';
 
 type ReferencesPluginProps = {
 	nodeLabels: NodeLabelMap;

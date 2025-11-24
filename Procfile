@@ -1,2 +1,2 @@
-web: npm run api-prod
-worker: npm run workers-prod
+web: pnpm run api-prod
+worker: pnpm run workers-prod

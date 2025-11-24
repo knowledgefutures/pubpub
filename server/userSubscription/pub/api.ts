@@ -1,7 +1,12 @@
-import app, { wrap } from 'server/server';
-import { UserSubscriptionStatus } from 'types';
+import type { UserSubscriptionStatus } from 'types';
+
+import { Router } from 'express';
+
+import { wrap } from 'server/wrap';
 
 import { setUserSubscriptionStatus } from '../shared/queries';
+
+export const router = Router();
 
 const unwrapRequest = (req: any) => {
 	return {
@@ -11,7 +16,7 @@ const unwrapRequest = (req: any) => {
 	};
 };
 
-app.put(
+router.put(
 	'/api/pubs/subscriptions',
 	wrap(async (req, res) => {
 		const { pubId, userId, status } = unwrapRequest(req);

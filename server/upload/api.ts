@@ -1,15 +1,16 @@
 import type { AppRouteOptions } from '@ts-rest/express';
 
-import { contract } from 'utils/api/contract';
-import { generateHash } from 'utils/hashes';
-import uuid from 'uuid';
+import type { contract } from 'utils/api/contract';
 
-import { createPubPubS3Client } from 'server/utils/s3';
 import bb from 'busboy';
 import mime from 'mime-types';
+import uuid from 'uuid';
+
 import { BadRequestError } from 'server/utils/errors';
+import { createPubPubS3Client } from 'server/utils/s3';
 import { mimeTypeSchema } from 'utils/api/schemas/upload';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
+import { generateHash } from 'utils/hashes';
 
 export const generateFileNameForUpload = (file: string) => {
 	const folderName = generateHash(8);
@@ -28,7 +29,6 @@ if (
 	process.env.INTEGRATION_TESTING &&
 	(!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY)
 ) {
-	// eslint-disable-next-line global-require, import/extensions
 	require('../../config');
 }
 
@@ -61,7 +61,7 @@ const generateFileNameFromMimeType = (mimeType: string): string =>
 const validateMimeType = (mimeType: string): void => {
 	try {
 		mimeTypeSchema.parse(mimeType);
-	} catch (err: any) {
+	} catch (_err: any) {
 		throw new Error(`Invalid mime type: ${mimeType}`);
 	}
 };

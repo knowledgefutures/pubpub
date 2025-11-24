@@ -1,4 +1,4 @@
-import { SlugStatus } from 'types';
+import type { SlugStatus } from 'types';
 
 export const getSlugError = (slug: string, slugStatus: SlugStatus) => {
 	if (!slug) {

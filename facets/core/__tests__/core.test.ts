@@ -3,14 +3,14 @@ import {
 	cascade,
 	createEmptyFacetInstance,
 	createFacetInstance,
-	facet,
 	FacetsError,
+	facet,
 	License,
 	mapFacet,
+	PubHeaderTheme,
 	parseFacetInstance,
 	parsePartialFacetInstance,
 	prop,
-	PubHeaderTheme,
 	string,
 } from 'facets';
 

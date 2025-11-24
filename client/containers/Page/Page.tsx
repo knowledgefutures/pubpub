@@ -1,8 +1,9 @@
+import type { Pub } from 'types';
+import type { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
+
 import React from 'react';
 
 import { Layout } from 'components';
-import { Pub } from 'types';
-import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
 
 type Props = {
 	pageData: {

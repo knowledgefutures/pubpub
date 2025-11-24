@@ -1,3 +1,5 @@
+import type { BackupFile } from './types';
+
 import * as Sentry from '@sentry/node';
 import prettyBytes from 'pretty-bytes';
 
@@ -8,7 +10,6 @@ import { getDatabaseBackupFiles } from './database';
 import { encryptFile } from './encrypt';
 import { getFirebaseBackupFiles } from './firebase';
 import { uploadFileToS3 } from './s3';
-import { BackupFile } from './types';
 import { formatDate } from './util';
 
 const postToSlackAboutSuccess = async (files: BackupFile[]) => {

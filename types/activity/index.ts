@@ -1,23 +1,22 @@
-import { ActivityItem as ActivityItemModel } from 'server/models';
+import type { ActivityItem as ActivityItemModel } from 'server/models';
 
-import { ScopeId } from '../scope';
+import type { ScopeId } from '../scope';
+import type { SerializedModel } from '../serializedModel';
+import type { ActivityAssociations } from './associations';
+import type { CollectionActivityItem } from './collection';
+import type { CommunityActivityItem } from './community';
+import type { FacetsActivityItem } from './facets';
+import type { MemberActivityItem } from './member';
+import type { PageActivityItem } from './page';
+import type { PubActivityItem } from './pub';
+import type { SubmissionActivityItem } from './submission';
 
-import { CommunityActivityItem } from './community';
-import { CollectionActivityItem } from './collection';
-import { FacetsActivityItem } from './facets';
-import { PageActivityItem } from './page';
-import { PubActivityItem } from './pub';
-import { MemberActivityItem } from './member';
-import { ActivityAssociations } from './associations';
-import { SubmissionActivityItem } from './submission';
-import { SerializedModel } from '../serializedModel';
-
-export type * from './community';
 export type * from './collection';
+export type * from './community';
 export type * from './facets';
+export type * from './member';
 export type * from './page';
 export type * from './pub';
-export type * from './member';
 export type * from './submission';
 
 export type InsertableActivityItem =
@@ -41,10 +40,10 @@ export type ActivityItemOfKind<Kind extends ActivityItemKind> = ActivityItem<
 
 export {
 	type ActivityAssociationIds,
+	type ActivityAssociationModels,
 	type ActivityAssociations,
 	type ActivityAssociationType,
 	activityAssociationTypes,
-	type ActivityAssociationModels,
 } from './associations';
 
 export type ActivityItemsFetchResult = {
@@ -57,4 +56,4 @@ export type ActivityItemsRenderContext = ActivityItemsFetchResult & {
 	scope: ScopeId;
 };
 
-export { type ActivityFilter } from './filters';
+export type { ActivityFilter } from './filters';

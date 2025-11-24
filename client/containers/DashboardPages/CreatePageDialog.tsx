@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
-import { Button, Classes, Dialog } from '@blueprintjs/core';
-import { SlugStatus } from 'types';
+import type { SlugStatus } from 'types';
 
-import InputField from 'components/InputField/InputField';
-import { slugifyString } from 'utils/strings';
-import { getDashUrl } from 'utils/dashboard';
+import React, { Component } from 'react';
+
+import { Button, Classes, Dialog } from '@blueprintjs/core';
+
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSlugError } from 'client/utils/slug';
+import InputField from 'components/InputField/InputField';
+import { getDashUrl } from 'utils/dashboard';
+import { slugifyString } from 'utils/strings';
 
-require('./createPageDialog.scss');
+import './createPageDialog.scss';
 
 type Props = {
 	communityData: any;

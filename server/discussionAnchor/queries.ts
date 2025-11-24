@@ -1,11 +1,12 @@
-import { Step } from 'prosemirror-transform';
+import type { Step } from 'prosemirror-transform';
 
-import { DiscussionAnchor } from 'server/models';
-import { DiscussionAnchor as DiscussionAnchorType } from 'types';
+import type { DiscussionAnchor as DiscussionAnchorType } from 'types';
+
 import {
-	DiscussionSelection,
+	type DiscussionSelection,
 	mapDiscussionSelectionThroughSteps,
 } from 'components/Editor/plugins/discussions';
+import { DiscussionAnchor } from 'server/models';
 
 /**
  * Persists a new anchor for an existing one based on changes to a Prosemirror document.

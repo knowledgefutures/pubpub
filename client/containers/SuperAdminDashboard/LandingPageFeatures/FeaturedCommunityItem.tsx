@@ -1,7 +1,9 @@
+import type { LandingPageCommunityFeature } from 'types';
+
 import React, { useMemo } from 'react';
+
 import { Button, Icon, Tag, Tooltip } from '@blueprintjs/core';
 
-import { LandingPageCommunityFeature } from 'types';
 import { DialogLauncher } from 'components';
 import { communityUrl } from 'utils/canonicalUrls';
 import { validateCommunityLandingPageFeature } from 'utils/landingPage/validate';

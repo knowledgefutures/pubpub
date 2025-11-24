@@ -1,4 +1,4 @@
-import { DecorationSet } from 'prosemirror-view';
+import type { DecorationSet } from 'prosemirror-view';
 
 export type UploadStartMeta = { type: 'uploadStart'; id: string; position: number };
 export type UploadFinishMeta = { type: 'uploadFinish'; id: string; src: string };

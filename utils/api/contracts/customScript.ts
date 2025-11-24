@@ -1,8 +1,11 @@
 import type { AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+
+import type { Metadata } from '../utils/metadataType';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { createCustomScriptSchema, customScriptSchema } from '../schemas/customScript';
-import { Metadata } from '../utils/metadataType';
 
 extendZodWithOpenApi(z);
 

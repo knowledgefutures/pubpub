@@ -1,9 +1,10 @@
 import React from 'react';
+
 import { Button } from 'reakit/Button';
 
 import { Icon } from 'components';
 
-require('./expandButton.scss');
+import './expandButton.scss';
 
 type Props = {
 	accentColor: string;

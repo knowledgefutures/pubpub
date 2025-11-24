@@ -1,12 +1,14 @@
-import { useCallback, useEffect } from 'react';
-import firebase from 'firebase';
+import type firebase from 'firebase';
 
-import { LoginData, Maybe, PubPageData } from 'types';
-import { getRandomColor } from 'utils/colors';
-import { usePageContext } from 'utils/hooks';
-import { EditorChangeObject } from 'components/Editor';
+import type { EditorChangeObject } from 'components/Editor';
+import type { LoginData, Maybe, PubPageData } from 'types';
+
+import { useCallback, useEffect } from 'react';
+
 import { initFirebase } from 'client/utils/firebaseClient';
 import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
+import { getRandomColor } from 'utils/colors';
+import { usePageContext } from 'utils/hooks';
 
 type CollabUser = {
 	id: null | string;

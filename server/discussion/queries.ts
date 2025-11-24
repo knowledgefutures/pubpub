@@ -1,21 +1,22 @@
-/* eslint-disable no-restricted-syntax */ import { ForbiddenError } from 'server/utils/errors';
+import type { DocJson, VisibilityAccess } from 'types';
+
+import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 import {
 	Commenter,
 	Discussion,
 	DiscussionAnchor,
+	includeUserModel,
+	Pub,
 	Thread,
 	ThreadComment,
 	ThreadEvent,
-	Pub,
 	Visibility,
-	includeUserModel,
 } from 'server/models';
-import { VisibilityAccess, DocJson } from 'types';
-import { getReadableDateInYear } from 'utils/dates';
-import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
-import { createThreadComment } from 'server/threadComment/queries';
 import { createThread } from 'server/thread/queries';
+import { createThreadComment } from 'server/threadComment/queries';
+import { ForbiddenError } from 'server/utils/errors';
 import { expect } from 'utils/assert';
+import { getReadableDateInYear } from 'utils/dates';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({

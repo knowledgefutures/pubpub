@@ -1,10 +1,15 @@
+import type { EditorState } from 'prosemirror-state';
+import type { EditorView } from 'prosemirror-view';
+
+import type {
+	CommandMenuEntry,
+	CommandSpec,
+	CommandStates,
+} from 'components/Editor/commands/types';
+
 import { useMemo } from 'react';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
 
 import { mapObject } from 'utils/objects';
-
-import { CommandSpec, CommandMenuEntry, CommandStates } from 'components/Editor/commands/types';
 
 type CommandStateGetter = ReturnType<CommandSpec>;
 
@@ -48,7 +53,6 @@ export const useCommandStates = (options: Options) => {
 			return getStateGetters(commands, view);
 		}
 		return {};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [view]);
 
 	const commandStates = useMemo(

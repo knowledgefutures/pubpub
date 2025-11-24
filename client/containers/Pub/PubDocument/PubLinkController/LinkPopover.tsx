@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
+
 import { createPopper } from '@popperjs/core';
 
-import { ClickToCopyButton } from 'components';
 import { getLowestAncestorWithId } from 'client/utils/dom';
-import { usePageContext } from 'utils/hooks';
-import { pubUrl } from 'utils/canonicalUrls';
+import { ClickToCopyButton } from 'components';
 import { expect } from 'utils/assert';
+import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../../pubHooks';
 

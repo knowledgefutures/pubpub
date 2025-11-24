@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import type { Maybe } from 'types';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { Classes } from '@blueprintjs/core';
-import { Maybe } from 'types';
 
 type EventHandler<E extends Event> = (evt: E) => unknown;
 
@@ -68,7 +70,7 @@ export const useFocusTrap = ({
 			ignoreFocusChanges.current = true;
 			try {
 				node.focus();
-			} catch (e) {
+			} catch (_e) {
 				// ignore error
 			}
 			ignoreFocusChanges.current = false;

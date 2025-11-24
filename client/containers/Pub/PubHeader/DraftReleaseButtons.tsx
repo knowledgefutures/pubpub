@@ -1,18 +1,20 @@
+import type { PatchFn, PubPageData } from 'types';
+
 import React from 'react';
+
 import TimeAgo from 'react-timeago';
 
 import { DialogLauncher, PubReleaseDialog, PubReleaseReviewDialog } from 'components';
-import { PatchFn, PubPageData } from 'types';
 import { Menu, MenuItem } from 'components/Menu';
+import { expect } from 'utils/assert';
 import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
-import { expect } from 'utils/assert';
 
 import { usePubContext } from '../pubHooks';
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 
-require('./draftReleaseButtons.scss');
+import './draftReleaseButtons.scss';
 
 export type DraftReleaseButtonsProps = {
 	pubData: PubPageData;

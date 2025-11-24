@@ -1,14 +1,16 @@
-import { UserSubscription, UserNotificationPreferences, PatchFn } from 'types';
+import type { PatchFn, UserNotificationPreferences, UserSubscription } from 'types';
+
+import type {
+	NotificationsState,
+	PubLocation,
+	PubNotificationsState,
+	ThreadLocation,
+	ThreadNotificationsState,
+} from './types';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { flattenOnce } from 'utils/arrays';
-import {
-	PubLocation,
-	ThreadLocation,
-	ThreadNotificationsState,
-	NotificationsState,
-	PubNotificationsState,
-} from './types';
+
 import { updatePub, updateThread } from './state';
 
 type SetNotificationsState = PatchFn<NotificationsState>;

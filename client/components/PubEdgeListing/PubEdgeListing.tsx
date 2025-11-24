@@ -1,17 +1,19 @@
+import type { PubPageData } from 'types';
+
 import React, { useCallback, useEffect, useState } from 'react';
-import classNames from 'classnames';
+
 import { NonIdealState } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { unique } from 'utils/arrays';
 import { getDisplayedPubForPubEdge } from 'utils/pubEdge';
-import { PubPageData } from 'types';
 
-import { Filter, Mode, allFilters } from './constants';
+import { allFilters, Filter, Mode } from './constants';
 import PubEdgeListingCard from './PubEdgeListingCard';
-import PubEdgeListingCounter from './PubEdgeListingCounter';
 import PubEdgeListingControls from './PubEdgeListingControls';
+import PubEdgeListingCounter from './PubEdgeListingCounter';
 
-require('./pubEdgeListing.scss');
+import './pubEdgeListing.scss';
 
 type Props = {
 	accentColor: string;
@@ -214,7 +216,7 @@ const PubEdgeListing = (props: Props) => {
 						>
 							{isolated && controls}
 						</PubEdgeListingCard>
-				  )
+					)
 				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling, parentPub }) => (
 						<PubEdgeListingCard
 							pubEdgeDescriptionIsVisible={pubEdgeDescriptionIsVisible}
@@ -226,7 +228,7 @@ const PubEdgeListing = (props: Props) => {
 							isInboundEdge={isInboundEdge}
 							inPubBody
 						/>
-				  ));
+					));
 
 		return !isolated && (!activeEdgeInContext || filteredPubEdgesInContext.length === 0) ? (
 			<NonIdealState title="No Results" icon="search" />

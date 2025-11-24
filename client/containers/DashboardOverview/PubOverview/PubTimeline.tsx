@@ -1,14 +1,15 @@
-/* eslint-disable react/no-danger */
+import type { SanitizedPubData } from 'types';
+
 import React from 'react';
+
 import { AnchorButton, Button, Classes, Popover } from '@blueprintjs/core';
 
-import { Icon, Timeline, TimelineItem, TimelineCondenser } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { formatDate } from 'utils/dates';
+import { Icon, Timeline, TimelineCondenser, TimelineItem } from 'components';
 import { pubUrl } from 'utils/canonicalUrls';
-import { SanitizedPubData } from 'types';
+import { formatDate } from 'utils/dates';
+import { usePageContext } from 'utils/hooks';
 
-require('./pubTimeline.scss');
+import './pubTimeline.scss';
 
 type Props = {
 	pubData: SanitizedPubData;

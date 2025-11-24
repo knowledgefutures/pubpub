@@ -1,36 +1,42 @@
+import type {
+	CascadedFacetsByKind,
+	CascadedFacetsForScopes,
+	FacetBindings,
+	FacetInstancesByBindingId,
+	FacetInstancesByKind,
+} from 'facets/types/fetch';
+import type * as types from 'types';
+
 import { Op } from 'sequelize';
 
-import * as types from 'types';
-import { FacetBinding } from 'server/models';
-import { flattenOnce, pruneFalsyValues } from 'utils/arrays';
 import {
 	ALL_FACET_NAMES,
 	cascade,
 	createByScopeKind,
-	FacetCascadeResult,
-	FacetDefinition,
-	FacetInstanceStack,
-	FacetName,
-	FacetSourceScope,
+	type FacetCascadeResult,
+	type FacetDefinition,
+	type FacetInstanceStack,
+	type FacetName,
+	type FacetSourceScope,
 	getBindingKeyForScopeKind,
 	getSourceScope,
 	mapByScopeKind,
 	mapFacetDefinitions,
 	mapFacetDefinitionsToCascadedInstances,
-	ScopeKind,
-	SingleScopeId,
+	type ScopeKind,
+	type SingleScopeId,
 } from 'facets';
-import {
-	CascadedFacetsByKind,
-	FacetBindings,
-	FacetInstancesByBindingId,
-	CascadedFacetsForScopes,
-	FacetInstancesByKind,
-} from 'facets/types/fetch';
+import { FacetBinding } from 'server/models';
+import { flattenOnce, pruneFalsyValues } from 'utils/arrays';
 import { mapObject } from 'utils/objects';
 
-import { ResolvedScopeIds, resolveScopeIds, ScopeIdsByKind, ScopeStack } from './resolveScopeIds';
 import { loadFacetInstancesForBindingIds } from './load';
+import {
+	type ResolvedScopeIds,
+	resolveScopeIds,
+	type ScopeIdsByKind,
+	type ScopeStack,
+} from './resolveScopeIds';
 
 const cascadeSingleFacetForScopeStack = <Def extends FacetDefinition>(
 	scopeStack: ScopeStack,

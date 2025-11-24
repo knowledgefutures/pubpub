@@ -1,15 +1,16 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { DocJson, SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	AllowNull,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	AllowNull,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { DocJson } from 'types';
 
 @Table
 export class Doc extends Model<InferAttributes<Doc>, InferCreationAttributes<Doc>> {

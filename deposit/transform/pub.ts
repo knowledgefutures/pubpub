@@ -1,20 +1,6 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable @typescript-eslint/no-use-before-define */
+import type * as types from 'types';
 
-import { Node } from 'prosemirror-model';
-import { buildSchema } from 'client/components/Editor/utils/schema';
-import { getPrimaryParentPubEdge, sanitizePubEdges } from 'deposit/utils';
-import { fetchFacetsForScope } from 'server/facets';
-import { Doc } from 'server/models';
-import * as types from 'types';
-import { exists, expect } from 'utils/assert';
-import { pubUrl } from 'utils/canonicalUrls';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { licenseDetailsByKind } from 'utils/licenses';
-import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
-import { getWordAndCharacterCountsFromDoc } from 'utils/pub/metadata';
-import { sortByRank } from 'utils/rank';
-import {
+import type {
 	AnyResource,
 	PartialResource,
 	Resource,
@@ -24,6 +10,21 @@ import {
 	ResourceRelation,
 	ResourceRelationship,
 } from '../resource';
+
+import { Node } from 'prosemirror-model';
+
+import { buildSchema } from 'client/components/Editor/utils/schema';
+import { getPrimaryParentPubEdge, sanitizePubEdges } from 'deposit/utils';
+import { fetchFacetsForScope } from 'server/facets';
+import { Doc } from 'server/models';
+import { exists, expect } from 'utils/assert';
+import { pubUrl } from 'utils/canonicalUrls';
+import { getPrimaryCollection } from 'utils/collections/primary';
+import { licenseDetailsByKind } from 'utils/licenses';
+import { getWordAndCharacterCountsFromDoc } from 'utils/pub/metadata';
+import { RelationType, type relationTypeDefinitions } from 'utils/pubEdge';
+import { sortByRank } from 'utils/rank';
+
 import { transformCollectionToResource } from './collection';
 
 const schema = buildSchema();
@@ -142,7 +143,7 @@ async function transformEdgeToResourceRelationship(
 			: await transformPubToPartialResource(
 					expect(inbound ? pubEdge.pub : pubEdge.targetPub),
 					community,
-			  ),
+				),
 		relation: derivePubEdgeRelation(pubEdge),
 	};
 }

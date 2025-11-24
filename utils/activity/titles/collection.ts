@@ -1,12 +1,14 @@
-import {
+import type {
 	CollectionActivityItem,
 	FacetsActivityItem,
 	MemberActivityItem,
 	SubmissionActivityItem,
 } from 'types';
+
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
 import { getDashUrl } from 'utils/dashboard';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getCollectionFromContext } from './util';
 
 type AcceptedItem =

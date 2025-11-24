@@ -1,10 +1,12 @@
-import { z } from 'zod';
-import * as types from 'types';
+import type { Page } from 'server/models';
+import type * as types from 'types';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { Page } from 'server/models';
-import { layoutBlockSchema } from './layout';
-import { communitySchema } from './community';
+import { z } from 'zod';
+
 import { baseSchema } from '../utils/baseSchema';
+import { communitySchema } from './community';
+import { layoutBlockSchema } from './layout';
 
 extendZodWithOpenApi(z);
 

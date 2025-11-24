@@ -1,7 +1,7 @@
-import { MarkType, Slice } from 'prosemirror-model';
-import { Transaction } from 'prosemirror-state';
+import type { MarkType, Slice } from 'prosemirror-model';
+import type { Transaction } from 'prosemirror-state';
 
-import { suggestionNodeAttributes } from './schema';
+import type { suggestionNodeAttributes } from './schema';
 
 export type SuggestionKind = 'addition' | 'modification' | 'removal';
 

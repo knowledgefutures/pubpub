@@ -1,5 +1,5 @@
-import request from 'request-promise';
 import md5 from 'crypto-js/md5';
+import request from 'request-promise';
 
 const key = process.env.MAILCHIMP_API_KEY;
 

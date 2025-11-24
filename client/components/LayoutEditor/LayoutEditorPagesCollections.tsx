@@ -1,20 +1,22 @@
+import type { CollectionsPagesJustifyType } from 'types/layout';
+
 import React, { useCallback, useMemo } from 'react';
+
 import { Button, FormGroup } from '@blueprintjs/core';
 
 import {
 	InputField,
-	Popover,
-	OrderPicker,
-	PubMenuItem,
 	MenuSelect,
-	MenuSelectItems,
+	type MenuSelectItems,
+	OrderPicker,
+	Popover,
+	PubMenuItem,
 } from 'components';
 import LayoutPagesCollections, {
-	Content,
-	BlockItem,
-	PageOrCollection,
+	type BlockItem,
+	type Content,
+	type PageOrCollection,
 } from 'components/Layout/LayoutPagesCollections';
-import { CollectionsPagesJustifyType } from 'types/layout';
 
 type Props = {
 	onChange: (index: number, block: Content) => any;

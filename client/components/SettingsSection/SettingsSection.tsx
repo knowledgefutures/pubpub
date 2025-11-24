@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+
 import classNames from 'classnames';
 
 import { slugifyString } from 'utils/strings';
 
-require('./settingsSection.scss');
+import './settingsSection.scss';
 
 type Props = {
 	className?: string;

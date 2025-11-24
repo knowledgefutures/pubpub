@@ -1,7 +1,9 @@
-import { Pub, PubEdge } from 'types';
+import type { Pub, PubEdge } from 'types';
+
+import type { AnyResource, Resource } from './resource';
+
 import { RelationType } from 'utils/pubEdge';
 import { findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
-import { AnyResource, Resource } from './resource';
 
 function filterForMutuallyApprovedEdges(pubEdges: PubEdge[]) {
 	let i = 0;
@@ -36,7 +38,7 @@ export function getPrimaryParentPubEdge(pub: Pub) {
 
 export function sanitizePubEdges<T extends Pub>(pub: T, includeRelationships: boolean): T {
 	// @ts-ignore
-	// eslint-disable-next-line no-undef
+
 	pub = structuredClone(pub);
 	if (pub.inboundEdges && pub.outboundEdges) {
 		// Remove unapproved PubEdges for RelationTypes that require bidirectional

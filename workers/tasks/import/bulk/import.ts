@@ -2,8 +2,8 @@ import { Community } from 'server/models';
 import 'server/hooks';
 
 import { buildImportPlan, printImportPlan } from './plan';
-import { resolveImportPlan } from './resolve';
 import { promptOkay } from './prompt';
+import { resolveImportPlan } from './resolve';
 
 const getCommunity = async (subdomain) => {
 	if (!subdomain) {
@@ -27,7 +27,7 @@ export const runBulkImportFromDirectory = async ({
 	const community = await getCommunity(communitySubdomain);
 	printImportPlan(plan);
 	if (dryRun) {
-		// eslint-disable-next-line no-console
+		// biome-ignore lint/suspicious/noConsole: shhhhhh
 		console.log('Dry run. Exiting.');
 		return null;
 	}

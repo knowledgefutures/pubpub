@@ -1,4 +1,4 @@
-import { FormattingBarButtonData, FormattingBarButtonPopoverCondition } from './types';
+import { type FormattingBarButtonData, FormattingBarButtonPopoverCondition } from './types';
 
 export const getButtonPopoverComponent = (button: FormattingBarButtonData, isDisabled: boolean) =>
 	button.popover &&

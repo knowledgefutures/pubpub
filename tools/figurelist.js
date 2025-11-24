@@ -67,7 +67,7 @@ const main = async () => {
 	const entries = entriesByPub.reduce((a, b) => [...a, ...b]);
 	const htmlString = entries.map(getHtmlEntry).join('\n\n');
 	fs.writeFileSync(file, htmlString);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log('done');
 };
 

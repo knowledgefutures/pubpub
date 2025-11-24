@@ -1,36 +1,36 @@
-import striptags from 'striptags';
-import unescape from 'lodash.unescape';
 import type { Attributes } from 'sequelize';
 
-import * as types from 'types';
-import {
-	Collection,
-	Community,
-	Pub,
-	PubAttribution,
-	Member,
-	CollectionAttribution,
-	includeUserModel,
-} from 'server/models';
-import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
+import type * as types from 'types';
+import type { ImportBody } from 'utils/api/schemas/import';
+import type { PubPut } from 'utils/api/schemas/pub';
+
+import type { PubUpdateableFields } from './permissions';
+
+import unescape from 'lodash.unescape';
+import striptags from 'striptags';
+
+import { pingTask } from 'client/utils/pingTask';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { createDraft } from 'server/draft/queries';
 import { createImport } from 'server/import/queries';
-import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
-
-import { slugifyString } from 'utils/strings';
-import { generateHash } from 'utils/hashes';
-import { getReadableDateInYear } from 'utils/dates';
-import { asyncForEach } from 'utils/async';
-import { buildPubOptions } from 'server/utils/queryHelpers';
-import { expect } from 'utils/assert';
-import type { PubPut } from 'utils/api/schemas/pub';
-
-import { pingTask } from 'client/utils/pingTask';
-import type { ImportBody } from 'utils/api/schemas/import';
-
+import {
+	Collection,
+	CollectionAttribution,
+	Community,
+	includeUserModel,
+	Member,
+	Pub,
+	PubAttribution,
+} from 'server/models';
 import { PubPubError } from 'server/utils/errors';
-import type { PubUpdateableFields } from './permissions';
+import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
+import { buildPubOptions } from 'server/utils/queryHelpers';
+import { deletePubSearchData, setPubSearchData } from 'server/utils/search';
+import { expect } from 'utils/assert';
+import { asyncForEach } from 'utils/async';
+import { getReadableDateInYear } from 'utils/dates';
+import { generateHash } from 'utils/hashes';
+import { slugifyString } from 'utils/strings';
 
 export const createPub = async (
 	{
@@ -153,39 +153,42 @@ export const updatePub = async (
 	updatePermissions: PubUpdateableFields,
 	actorId?: string | null,
 ) => {
-	const actualFilteredValues = Object.entries(inputValues).reduce((acc, [key, value]) => {
-		if (!updatePermissions?.some((k) => key === k)) {
+	const actualFilteredValues = Object.entries(inputValues).reduce(
+		(acc, [key, value]) => {
+			if (!updatePermissions?.some((k) => key === k)) {
+				return acc;
+			}
+
+			acc[key] = value;
+
+			if (key === 'slug' && value) {
+				acc.slug = slugifyString(value);
+			}
+
+			if (key === 'title' && value && !inputValues.htmlTitle) {
+				acc.htmlTitle = value;
+			}
+
+			if (key === 'htmlTitle' && value) {
+				acc.title = unescape(striptags(value));
+			}
+
+			if (key === 'description' && value && !inputValues.htmlDescription) {
+				acc.htmlDescription = value;
+			}
+
+			if (key === 'htmlDescription' && value) {
+				acc.description = unescape(striptags(value));
+			}
+
+			if (key === 'customPublishedAt' && value) {
+				acc.customPublishedAt = new Date(value);
+			}
+
 			return acc;
-		}
-
-		acc[key] = value;
-
-		if (key === 'slug' && value) {
-			acc.slug = slugifyString(value);
-		}
-
-		if (key === 'title' && value && !inputValues.htmlTitle) {
-			acc.htmlTitle = value;
-		}
-
-		if (key === 'htmlTitle' && value) {
-			acc.title = unescape(striptags(value));
-		}
-
-		if (key === 'description' && value && !inputValues.htmlDescription) {
-			acc.htmlDescription = value;
-		}
-
-		if (key === 'htmlDescription' && value) {
-			acc.description = unescape(striptags(value));
-		}
-
-		if (key === 'customPublishedAt' && value) {
-			acc.customPublishedAt = new Date(value);
-		}
-
-		return acc;
-	}, {} as Attributes<Pub>);
+		},
+		{} as Attributes<Pub>,
+	);
 
 	try {
 		await Pub.update(actualFilteredValues, {

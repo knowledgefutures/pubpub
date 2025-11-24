@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import SHA3 from 'crypto-js/sha3';
-import encHex from 'crypto-js/enc-hex';
-import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
 
-import { GridWrapper, InputField } from 'components';
+import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
+import encHex from 'crypto-js/enc-hex';
+import SHA3 from 'crypto-js/sha3';
+
 import { apiFetch } from 'client/utils/apiFetch';
+import { GridWrapper, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-require('./passwordReset.scss');
+import './passwordReset.scss';
 
 type Props = {
 	passwordResetData: any;

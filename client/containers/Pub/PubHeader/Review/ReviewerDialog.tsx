@@ -1,8 +1,10 @@
-import React from 'react';
-import { AnchorButton, Callout, Classes, Dialog, InputGroup } from '@blueprintjs/core';
-import { PubPageData } from 'types';
+import type { PubPageData } from 'types';
 
-require('./reviewerDialog.scss');
+import React from 'react';
+
+import { AnchorButton, Callout, Classes, Dialog, InputGroup } from '@blueprintjs/core';
+
+import './reviewerDialog.scss';
 
 type Props = {
 	isOpen: boolean;

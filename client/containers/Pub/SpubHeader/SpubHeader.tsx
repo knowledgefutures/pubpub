@@ -1,21 +1,22 @@
+import type { DocJson, Pub, PubPageData } from 'types';
+
 import React, { useMemo, useRef, useState } from 'react';
 
-import { DocJson, Pub, PubPageData } from 'types';
-import { PendingChangesProvider } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { useSticky } from 'client/utils/useSticky';
+import { PendingChangesProvider } from 'components';
 import { usePendingChanges } from 'utils/hooks';
 import { createSubmissionValidator, validateSubmission } from 'utils/submission/validate';
 
-import { usePubContext } from '../pubHooks';
 import PubHeader from '../PubHeader';
 import PubHeaderSticky from '../PubHeader/PubHeaderSticky';
-import InstructionsTab from './InstructionsTab';
-import DetailsTab from './DetailsTab';
+import { usePubContext } from '../pubHooks';
 import ContributorsTab from './ContributorsTab';
+import DetailsTab from './DetailsTab';
+import InstructionsTab from './InstructionsTab';
 import SpubHeaderToolBar from './SpubHeaderToolBar';
 
-require('./spubHeader.scss');
+import './spubHeader.scss';
 
 export type SpubHeaderTab = 'instructions' | 'details' | 'contributors' | 'preview';
 

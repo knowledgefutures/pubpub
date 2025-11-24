@@ -1,20 +1,21 @@
-import { ForbiddenError } from 'server/utils/errors';
+import { initServer } from '@ts-rest/express';
 
+import { ForbiddenError } from 'server/utils/errors';
+import { contract } from 'utils/api/contract';
 import { expect } from 'utils/assert';
 import { createGetRequestIds } from 'utils/getRequestIds';
-import { contract } from 'utils/api/contract';
-import { initServer } from '@ts-rest/express';
 import { queryMany } from 'utils/query/queryMany';
 import { queryOne } from 'utils/query/queryOne';
+
+import { Pub } from '../pub/model';
+import { PubAttribution } from './model';
 import { getPermissions } from './permissions';
 import {
 	createPubAttribution,
-	updatePubAttribution,
 	destroyPubAttribution,
 	getPubAttributions,
+	updatePubAttribution,
 } from './queries';
-import { PubAttribution } from './model';
-import { Pub } from '../pub/model';
 
 const getRequestIds = createGetRequestIds<{
 	communityId?: string;

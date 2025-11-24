@@ -1,5 +1,6 @@
+import type { IconName } from 'components/Icon/Icon';
+
 import { collectionUrl } from 'utils/canonicalUrls';
-import { IconName } from 'components/Icon/Icon';
 
 type ContextHint = {
 	value: string;

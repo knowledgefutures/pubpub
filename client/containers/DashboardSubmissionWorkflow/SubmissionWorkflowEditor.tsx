@@ -1,31 +1,33 @@
+import type { Collection } from 'types';
+
 import React, { useEffect, useState } from 'react';
+
 import { Button, Checkbox, FormGroup, InputGroup, Label, TagInput } from '@blueprintjs/core';
 
-import { Collection } from 'types';
 import { LayoutSubmissionBannerSkeleton } from 'client/components/Layout';
-import { usePageContext } from 'utils/hooks';
-import { withValue } from 'utils/fp';
 import { collectionUrl } from 'utils/canonicalUrls';
+import { withValue } from 'utils/fp';
+import { usePageContext } from 'utils/hooks';
 import {
-	RecordValidator,
-	isValidEmailList,
+	isAlwaysValid,
 	isNonEmptyDocJson,
 	isNonEmptyString,
-	isAlwaysValid,
+	isValidEmailList,
+	type RecordValidator,
 	validate,
 } from 'utils/validate';
 
-import WorkflowTextEditor from './WorkflowTextEditor';
 import EmailPreview from './EmailPreview';
 import SubmissionWorkflowStepPicker from './SubmissionWorkflowStepPicker';
 import {
-	EditableSubmissionWorkflow,
-	SubmissionWorkflowConfigStep,
-	submissionWorkflowConfigSteps,
+	type EditableSubmissionWorkflow,
+	type SubmissionWorkflowConfigStep,
 	submissionWorkflowConfigStepLabels,
+	submissionWorkflowConfigSteps,
 } from './types';
+import WorkflowTextEditor from './WorkflowTextEditor';
 
-require('./submissionWorkflowEditor.scss');
+import './submissionWorkflowEditor.scss';
 
 type Props = {
 	collection: Collection;

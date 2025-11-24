@@ -1,9 +1,10 @@
+import type { BackupFile } from './types';
+
 import fs from 'fs';
 
 import { createPubPubS3Client } from 'server/utils/s3';
 
 import { backupsS3Bucket } from './constants';
-import { BackupFile } from './types';
 
 const getS3Instance = () => {
 	const accessKeyId = process.env.AWS_BACKUP_ACCESS_KEY_ID;

@@ -1,10 +1,10 @@
-/* eslint-disable global-require, no-console, import/extensions  */
+
 import { aes256Encrypt, aes256Decrypt } from '../utils/crypto';
 
 // usage: npm run tools encrypt -- --text=text_to_encrypt
 try {
 	// FIXME: Weird eslint issue where either with or without the extension is an error
-	// eslint-disable-next-line import/extensions
+	
 	require('../config.js');
 } catch {
 	console.log('Using environment for AES_ENCRYPTION_KEY');

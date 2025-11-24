@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Classes } from '@blueprintjs/core';
 
-require('./landing.scss');
+import './landing.scss';
 
 const Landing = () => {
 	return (

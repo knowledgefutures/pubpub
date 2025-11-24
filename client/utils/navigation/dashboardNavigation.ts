@@ -1,15 +1,20 @@
-import {
+import type {
 	ActiveDashboardMode,
 	DashboardMenuState,
 	LocationData,
 	RenderedDashboardMenuItem,
 } from 'types';
-import { DashboardMode, getDashUrl } from 'utils/dashboard';
-import { checkMemberPermission } from 'utils/permissions';
+
 import { pubPubIcons } from 'client/utils/icons';
 import { assert } from 'utils/assert';
+import { type DashboardMode, getDashUrl } from 'utils/dashboard';
+import { checkMemberPermission } from 'utils/permissions';
 
-import { menuItemsByScopeType, MenuItem, ReadablePageContext } from './dashboardMenuItems';
+import {
+	type MenuItem,
+	menuItemsByScopeType,
+	type ReadablePageContext,
+} from './dashboardMenuItems';
 
 const inferDashboardModeFromPath = (path: string): DashboardMode => {
 	const [_nothing, _dash, ...rest] = path.split('/');

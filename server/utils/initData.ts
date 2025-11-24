@@ -1,15 +1,16 @@
+import type * as types from 'types';
+
 import queryString from 'query-string';
 
-import * as types from 'types';
-import { isProd, isDuqDuq, isQubQub, getAppCommit, shouldForceBasePubPub } from 'utils/environment';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
-import { UserNotification } from 'server/models';
-
-import { getDismissedUserDismissables } from 'server/userDismissable/queries';
 import { isUserMemberOfScope } from 'server/member/queries';
+import { UserNotification } from 'server/models';
 import { isUserSuperAdmin } from 'server/user/queries';
-import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
+import { getDismissedUserDismissables } from 'server/userDismissable/queries';
+import { getAppCommit, isDuqDuq, isProd, isQubQub, shouldForceBasePubPub } from 'utils/environment';
+
 import { PubPubError } from './errors';
+import { getCommunity, getScope, sanitizeCommunity } from './queryHelpers';
 
 const getNotificationData = async (
 	userId: null | string,
@@ -143,7 +144,6 @@ export const getInitialData = async (
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}
 	if (req.headers.localhost) {
-		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
 

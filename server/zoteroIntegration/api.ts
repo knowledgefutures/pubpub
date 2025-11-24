@@ -1,9 +1,13 @@
-import app, { wrap } from 'server/server';
+import { Router } from 'express';
+
 import { ForbiddenError } from 'server/utils/errors';
+import { wrap } from 'server/wrap';
 
 import { getZoteroIntegration } from './queries';
 
-app.get(
+export const router = Router();
+
+router.get(
 	'/api/zoteroIntegration',
 	wrap((req, res) => {
 		if (!req.user?.id) {

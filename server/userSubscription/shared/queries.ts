@@ -1,5 +1,6 @@
+import type * as types from 'types';
+
 import { UserSubscription } from 'server/models';
-import * as types from 'types';
 
 type SetStatusOptions = types.UniqueUserSubscriptionQuery & {
 	id?: never;

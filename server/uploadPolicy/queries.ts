@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+
 import { expect } from 'utils/assert';
 
 export const getUploadPolicy = ({ contentType }: { contentType: string }) => {

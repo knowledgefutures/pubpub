@@ -1,4 +1,5 @@
-import * as types from 'types';
+import type * as types from 'types';
+
 import { z } from 'zod';
 
 import { nonRelationFields } from './createGetManyQuery';

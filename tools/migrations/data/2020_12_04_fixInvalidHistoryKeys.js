@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { Op } from 'sequelize';
 
 import { Branch, Release } from 'server/models';

@@ -1,4 +1,7 @@
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types/serializedModel';
+
 import {
 	AllowNull,
 	BelongsTo,
@@ -10,7 +13,7 @@ import {
 	Table,
 	Unique,
 } from 'sequelize-typescript';
-import type { SerializedModel } from 'types/serializedModel';
+
 import { Community, User } from '../models';
 
 @Table

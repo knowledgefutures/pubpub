@@ -1,5 +1,6 @@
-import { SubmissionWorkflow as SubmissionWorkflowModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { SubmissionWorkflow as SubmissionWorkflowModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 // import { Collection, DocJson } from 'types';
 
 export type SubmissionWorkflow = SerializedModel<SubmissionWorkflowModel>;

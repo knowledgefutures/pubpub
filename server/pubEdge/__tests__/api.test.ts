@@ -1,7 +1,6 @@
-import { setup, login, modelize, expectCreatedActivityItem, teardown } from 'stubstub';
-
-import { createPubEdge } from 'server/pubEdge/queries';
 import { ExternalPublication, PubEdge } from 'server/models';
+import { createPubEdge } from 'server/pubEdge/queries';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community {
@@ -203,16 +202,10 @@ it('lets a Pub manager destroy a PubEdge', async () => {
 		pubIsParent: true,
 	});
 	const anotherPubAgent = await login(anotherPubManager);
-	await anotherPubAgent
-		.delete('/api/pubEdges')
-		.send({ pubEdgeId: existingEdge?.id })
-		.expect(403);
+	await anotherPubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge?.id }).expect(403);
 	const sourcePubAgent = await login(sourcePubManager);
 	await expectCreatedActivityItem(
-		sourcePubAgent
-			.delete('/api/pubEdges')
-			.send({ pubEdgeId: existingEdge?.id })
-			.expect(200),
+		sourcePubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge?.id }).expect(200),
 	).toMatchObject({
 		kind: 'pub-edge-removed',
 		actorId: sourcePubManager.id,

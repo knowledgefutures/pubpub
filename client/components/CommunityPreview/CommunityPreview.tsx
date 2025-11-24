@@ -1,8 +1,10 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
+
 import { getResizedUrl } from 'utils/images';
 
-require('./communityPreview.scss');
+import './communityPreview.scss';
 
 const propTypes = {
 	title: PropTypes.string,

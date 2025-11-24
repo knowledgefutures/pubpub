@@ -1,4 +1,5 @@
 import { Signup } from 'server/models';
+
 import { isUserSuperAdmin } from './queries';
 
 export const updatePermissions = [

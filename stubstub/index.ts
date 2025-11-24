@@ -1,7 +1,7 @@
-export { setup, teardown } from './prepare';
-export { login } from './userToAgentMap';
-export { stubModule as stub, stubOut, stubFirebaseAdmin } from './stub';
-export { modelize } from './modelize/modelize';
-export { determinize } from './determinize';
-export { editPub, editFirebaseDraft } from './firebase';
 export { expectCreatedActivityItem } from './activity';
+export { determinize } from './determinize';
+export { editFirebaseDraft, editPub } from './firebase';
+export { modelize } from './modelize/modelize';
+export { setup, teardown } from './prepare';
+export { stubFirebaseAdmin, stubModule as stub, stubOut } from './stub';
+export { login } from './userToAgentMap';

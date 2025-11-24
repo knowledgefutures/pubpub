@@ -1,12 +1,14 @@
+import type * as types from 'types';
+import type { UserNotificationMarkReadTrigger } from 'types';
+
 import React from 'react';
+
+import { Button, Classes, FormGroup, Switch } from '@blueprintjs/core';
 import classNames from 'classnames';
-import { Classes, FormGroup, Switch, Button } from '@blueprintjs/core';
 
-import * as types from 'types';
 import { MenuSelect } from 'components';
-import { UserNotificationMarkReadTrigger } from 'types';
 
-require('./userNotificationPreferences.scss');
+import './userNotificationPreferences.scss';
 
 type Props = {
 	preferences: types.UserNotificationPreferences;

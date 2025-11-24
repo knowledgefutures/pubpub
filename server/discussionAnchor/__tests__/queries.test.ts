@@ -1,9 +1,9 @@
-import { modelize, setup, teardown } from 'stubstub';
-
-import { buildSchema } from 'components/Editor';
 import { Fragment, Node, Slice } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
+
+import { buildSchema } from 'components/Editor';
+import { modelize, setup, teardown } from 'stubstub';
 
 import { createDiscussionAnchor, createUpdatedDiscussionAnchorForNewSteps } from '../queries';
 

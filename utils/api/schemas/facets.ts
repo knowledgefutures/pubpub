@@ -1,14 +1,16 @@
-import { ZodRawShape, z } from 'zod';
+import type { UpdateFacetsQuery } from 'server/facets';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { type ZodRawShape, z } from 'zod';
+
 import {
 	ALL_FACET_DEFINITIONS,
-	FacetDefinition,
-	FacetName,
-	FacetProp,
-	FacetPropType,
-	FacetSourceScope,
+	type FacetDefinition,
+	type FacetName,
+	type FacetProp,
+	type FacetPropType,
+	type FacetSourceScope,
 } from 'facets';
-import { UpdateFacetsQuery } from 'server/facets';
 
 extendZodWithOpenApi(z);
 

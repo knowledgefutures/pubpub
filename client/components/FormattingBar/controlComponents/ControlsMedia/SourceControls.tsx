@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import type { Node } from 'prosemirror-model';
+
+import React, { useRef, useState } from 'react';
+
 import { AnchorButton, InputGroup } from '@blueprintjs/core';
-import { Node } from 'prosemirror-model';
 import uuid from 'uuid';
 
-import { Icon } from 'components';
 import { s3Upload } from 'client/utils/upload';
+import { Icon } from 'components';
 
 type Props = {
 	updateNode: (attrs: Node['attrs']) => unknown;

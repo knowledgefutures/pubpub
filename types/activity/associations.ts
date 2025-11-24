@@ -1,18 +1,18 @@
-import {
-	IdIndex,
-	CollectionPub,
+import type {
 	Collection,
+	CollectionPub,
 	Community,
 	Discussion,
 	ExternalPublication,
+	IdIndex,
 	Page,
-	PubEdge,
 	Pub,
+	PubEdge,
 	Release,
 	Review,
 	Submission,
-	ThreadComment,
 	Thread,
+	ThreadComment,
 	User,
 } from 'types';
 

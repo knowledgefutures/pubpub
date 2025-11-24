@@ -1,9 +1,11 @@
-import React, { useState, useRef, useMemo } from 'react';
+import type { Pub } from 'types';
+
+import React, { useMemo, useRef, useState } from 'react';
+
 import { useDebounce } from 'use-debounce';
 
-import { OrderPicker, PubMenuItem } from 'components';
-import { Pub } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
+import { OrderPicker, PubMenuItem } from 'components';
 import { indexByProperty, unique } from 'utils/arrays';
 
 type Props = {

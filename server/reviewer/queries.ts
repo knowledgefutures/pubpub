@@ -1,5 +1,6 @@
+import type { Reviewer as ReviewerFields } from 'types';
+
 import { Reviewer } from 'server/models';
-import { Reviewer as ReviewerFields } from 'types';
 
 export const createReviewer = ({ id, name }: Pick<ReviewerFields, 'id' | 'name'>) => {
 	return Reviewer.create(

@@ -1,8 +1,7 @@
 import uuid from 'uuid';
 
-import { setup, login, modelize, expectCreatedActivityItem, teardown } from 'stubstub';
-
 import { Discussion, Thread, ThreadComment } from 'server/models';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const alreadyAppliedManagedLabel = {
 	title: 'I have already been applied',

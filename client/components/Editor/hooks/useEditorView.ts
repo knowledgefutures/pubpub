@@ -1,16 +1,20 @@
+import type { Node, Schema } from 'prosemirror-model';
+
+import type { OnEditFn, PluginLoader, PluginsOptions } from '../types';
+
 import React, { useEffect, useRef } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import { Node, Schema } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+
 import { keydownHandler } from 'prosemirror-keymap';
+import { EditorState, type Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { isDevelopment } from 'utils/environment';
-import nodeViews from '../views';
+
 import { getPlugins } from '../plugins';
 import { collabDocPluginKey } from '../plugins/collaborative';
 import { immediatelyDispatchOnChange } from '../plugins/onChange';
-import { OnEditFn, PluginLoader, PluginsOptions } from '../types';
+import nodeViews from '../views';
 
 type EditorViewOptions = {
 	customPlugins: Record<string, null | PluginLoader>;
@@ -126,7 +130,6 @@ export const useEditorView = (options: EditorViewOptions) => {
 		if (viewRef.current === null) {
 			viewRef.current = createEditorView(options);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {

@@ -1,4 +1,5 @@
-import { Config } from './types';
+import type { Config } from './types';
+
 import { createPostgresHelper } from './postgres';
 
 export const createAndRunPostgresDatabase = async (config: Config) => {

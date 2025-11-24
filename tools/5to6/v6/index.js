@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 const { storage } = require('../setup');
 const getPipedPubIds = require('../util/getPipedPubIds');
 

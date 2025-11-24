@@ -1,6 +1,6 @@
 import React from 'react';
 
-require('./settingsRow.scss');
+import './settingsRow.scss';
 
 type Props = {
 	children: React.ReactNode;

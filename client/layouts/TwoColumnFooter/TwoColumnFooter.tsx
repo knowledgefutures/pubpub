@@ -1,6 +1,6 @@
 import React from 'react';
 
-require('./twoColumnFooter.scss');
+import './twoColumnFooter.scss';
 
 type SmallPrint = {
 	key: string;

@@ -1,11 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
 
 import { usePageContext } from 'utils/hooks';
 
-require('./colorInput.scss');
+import './colorInput.scss';
 
 const propTypes = {
 	value: PropTypes.string.isRequired,
@@ -40,7 +41,7 @@ const ColorInput = function (props) {
 				communityData.accentColorLight,
 				'black',
 				'white',
-		  ]
+			]
 		: presetColors;
 	return (
 		<div className="color-input-component">

@@ -1,18 +1,20 @@
-import { findRank } from 'utils/rank';
+import type * as types from 'types';
+
+import type { CollectionPubQueryInput } from './schemas';
+
 import {
 	Collection,
+	CollectionAttribution,
 	CollectionPub,
+	includeUserModel,
 	Member,
 	Pub,
 	PubAttribution,
 	Release,
-	includeUserModel,
-	CollectionAttribution,
 } from 'server/models';
-import * as types from 'types';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { expect } from 'utils/assert';
-import { CollectionPubQueryInput } from './schemas';
+import { findRank } from 'utils/rank';
 
 export const getPubsInCollection = async ({
 	collectionId,

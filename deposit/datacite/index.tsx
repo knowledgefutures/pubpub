@@ -1,22 +1,24 @@
 /** @jsx x */
 /** @jsxFrag null */
-/* eslint-disable react/no-unknown-property */
+
+import type { DepositTarget } from 'types';
+
 import { x } from '@pubpub/deposit-utils/datacite';
+
 import {
 	getIdentifier,
 	getIdentifierValue,
 	isInterWorkRelationship,
 	isIntraWorkRelationship,
-	Resource,
-	ResourceContribution,
-	ResourceContributorRole,
-	ResourceDescriptor,
-	ResourceKind,
-	ResourceRelation,
-	ResourceRelationship,
-	ResourceSummaryKind,
+	type Resource,
+	type ResourceContribution,
+	type ResourceContributorRole,
+	type ResourceDescriptor,
+	type ResourceKind,
+	type ResourceRelation,
+	type ResourceRelationship,
+	type ResourceSummaryKind,
 } from 'deposit/resource';
-import { DepositTarget } from 'types';
 import { exists, expect } from 'utils/assert';
 import { aes256Decrypt } from 'utils/crypto';
 import { ORCID_PATTERN } from 'utils/orcid';

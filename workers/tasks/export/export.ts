@@ -1,19 +1,20 @@
-import { getExportFormatDetails } from 'utils/export/formats';
-import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
-import { Maybe } from 'types';
+import type { Maybe } from 'types';
 
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { expect } from 'utils/assert';
+import { getExportFormatDetails } from 'utils/export/formats';
+
 import { renderStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
 import { getNotesData } from './notes';
 import { exportWithPaged } from './paged';
 import { exportWithPandoc } from './pandoc';
 import {
+	assignFileToExportById,
 	getExportById,
 	getTmpFileForExtension,
 	uploadDocument,
 	writeToFile,
-	assignFileToExportById,
 } from './util';
 
 export const exportTask = async ({ exportId }: { exportId: string }) => {

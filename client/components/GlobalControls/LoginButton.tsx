@@ -1,5 +1,6 @@
+import type { LocationData } from 'types';
+
 import React from 'react';
-import { LocationData } from 'types';
 
 import GlobalControlsButton from './GlobalControlsButton';
 

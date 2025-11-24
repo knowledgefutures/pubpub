@@ -1,5 +1,6 @@
 import type { BaseSourceFile } from 'utils/api/schemas/import';
-import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
+
+import { bibliographyFormats, extensionToPandocFormat } from 'utils/import/formats';
 
 export const exclusiveFileLabels = ['document', 'bibliography'];
 

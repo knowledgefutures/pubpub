@@ -1,10 +1,10 @@
 import fs from 'fs';
 
+import { assetsClient } from 'server/utils/s3';
 import { isProd } from 'utils/environment';
 import { generateHash } from 'utils/hashes';
-import { assetsClient } from 'server/utils/s3';
-
 import { sleep } from 'utils/promises';
+
 import { extensionFor } from './util';
 
 export const getUrlForAssetKey = (assetKey: string) => `https://assets.pubpub.org/${assetKey}`;
@@ -20,12 +20,13 @@ export const generateAssetKeyForFile = (filePath: string) => {
 const blockForAssetFile = (assetKey: string) =>
 	new Promise<void>(async (resolve, reject) => {
 		for (let i = 0; i < 5; i++) {
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
+			// biome-ignore lint/performance/noAwaitInLoops: <explanation>
 			const exists = await assetsClient.checkIfFileExists(assetKey);
 			if (exists) {
 				return resolve();
 			}
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
 			await sleep(1000);
 		}
 		return reject();

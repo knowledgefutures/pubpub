@@ -1,16 +1,19 @@
 import React from 'react';
 
-import Html from 'server/Html';
-import app from 'server/server';
-import { handleErrors, ForbiddenError } from 'server/utils/errors';
-import { getInitialData } from 'server/utils/initData';
-import { hostIsValid } from 'server/utils/routes';
-import { generateCitationHtml } from 'server/utils/citations';
-import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPubForRequest } from 'server/utils/queryHelpers';
-import { createUserScopeVisit } from 'server/userScopeVisit/queries';
+import { Router } from 'express';
 
-app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, next) => {
+import Html from 'server/Html';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
+import { generateCitationHtml } from 'server/utils/citations';
+import { ForbiddenError, handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { getPubForRequest } from 'server/utils/queryHelpers';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+
+export const router = Router();
+
+router.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			return next();

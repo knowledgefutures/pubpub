@@ -24,7 +24,7 @@ export default ({
 					journal_volume: {
 						volume,
 					},
-			  }
+				}
 			: {}),
 		issue,
 		...doiData(doi, timestamp, url, contentVersion),

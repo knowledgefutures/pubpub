@@ -1,5 +1,6 @@
-import { ReviewNew as ReviewNewModel, Reviewer as ReviewerModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { Reviewer as ReviewerModel, ReviewNew as ReviewNewModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export type Review = SerializedModel<ReviewNewModel>;
 

@@ -26,12 +26,12 @@ const removeBranchContents = async (branchRef) => {
 				const changeSnap = await changeRef.once('value');
 				const val = changeSnap.val();
 				if (val) {
-					// eslint-disable-next-line no-console
+					// biome-ignore lint/suspicious/noConsole: shhhhhh
 					console.log(`Removing change at ${index}`);
 					await changeRef.remove();
 					await removeChangeAtIndex(index + 1);
 				} else {
-					// eslint-disable-next-line no-console
+					// biome-ignore lint/suspicious/noConsole: shhhhhh
 					console.log(`No change at key ${index}, terminating`);
 					resolve();
 				}
@@ -70,7 +70,7 @@ const main = async () => {
 		yesIsDefault: false,
 	});
 	await writeToBranchRef(branchRef, document, branch.id);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log('It is Finished');
 };
 

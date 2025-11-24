@@ -1,15 +1,17 @@
+import type { Pub as BasePub, Collection } from 'types';
+
 import React from 'react';
-import classNames from 'classnames';
+
 import { AnchorButton } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { PubByline, PubTitle } from 'components';
-import { Collection, Pub as BasePub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
+import { getTypicalPubLabels, type IconLabelPair, renderLabelPairs } from './labels';
 import OverviewRowSkeleton from './OverviewRowSkeleton';
-import { IconLabelPair, renderLabelPairs, getTypicalPubLabels } from './labels';
 
 type Props = {
 	leftIconElement?: React.ReactNode;

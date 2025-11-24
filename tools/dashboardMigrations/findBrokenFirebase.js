@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
+
 import { Branch } from '../../server/models';
 
 const firebaseAdmin = require('firebase-admin');
 // FIXME: Weird eslint issue where either with or without the extension is an error
-// eslint-disable-next-line import/extensions
+
 require('../../config');
 
 const serviceAccount = JSON.parse(
@@ -18,7 +18,7 @@ const firebaseApp =
 					databaseURL: 'https://pubpub-v6-prod.firebaseio.com',
 				},
 				'firebase-pub-new',
-		  );
+			);
 const database = firebaseApp.database();
 // TODO: There are a set of pubs (e.g. designandscience) that have changes written on their merge branch.
 // As such, there is not an associated Merge of PubVersion object. We will need to go through firebase,
@@ -117,7 +117,7 @@ export default async () => {
 		const changesRef = database.ref(
 			`pub-${publicBranches[i].pubId}/branch-${publicBranches[i].id}/changes`,
 		);
-		/* eslint-disable-next-line no-await-in-loop */
+		/* biome-ignore lint/performance/noAwaitInLoops: shhhhhh */
 		const data = await changesRef.once('value');
 		const val = data.val();
 		if (val) {

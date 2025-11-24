@@ -1,5 +1,6 @@
-import { Collection, Community, Page, Member, ScopeSummary, SpamTag } from 'server/models';
-import { Community as CommunityType, DefinitelyHas } from 'types';
+import type { Community as CommunityType, DefinitelyHas } from 'types';
+
+import { Collection, Community, Member, Page, ScopeSummary, SpamTag } from 'server/models';
 
 export default async (locationData, whereQuery) => {
 	return Community.findOne({

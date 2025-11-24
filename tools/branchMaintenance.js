@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { asyncMap } from 'utils/async';
 import { Community, Pub } from 'server/models';
 
@@ -41,7 +41,7 @@ const communityMaintenance = async (subdomain) => {
 			{ concurrency },
 		);
 	} else {
-		// eslint-disable-next-line no-console
+		// biome-ignore lint/suspicious/noConsole: shhhhhh
 		console.log(`Could not find Community by subdomain {communitySubdomain}`);
 	}
 };

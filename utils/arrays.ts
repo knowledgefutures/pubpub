@@ -1,4 +1,4 @@
-import { IdIndex, Maybe, WithId } from 'types';
+import type { IdIndex, Maybe, WithId } from 'types';
 
 export const intersperse = <P, Q>(
 	arr: P[],

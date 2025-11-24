@@ -1,5 +1,6 @@
-import { UserSubscription as UserSubscriptionModel } from 'server/models';
-import { SerializedModel } from './serializedModel';
+import type { UserSubscription as UserSubscriptionModel } from 'server/models';
+
+import type { SerializedModel } from './serializedModel';
 
 export type UserSubscriptionTarget = { pubId: string } | { threadId: string };
 

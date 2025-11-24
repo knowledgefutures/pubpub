@@ -1,6 +1,7 @@
+import type { CommunityCreatedActivityItem, CommunityUpdatedActivityItem } from 'types';
+
 import React from 'react';
 
-import { CommunityCreatedActivityItem, CommunityUpdatedActivityItem } from 'types';
 import { communityTitle } from 'utils/activity/titles';
 
 import { itemRenderer } from './itemRenderer';

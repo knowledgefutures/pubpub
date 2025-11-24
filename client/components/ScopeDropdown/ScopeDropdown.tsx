@@ -1,17 +1,19 @@
+import type { Collection, Pub } from 'types';
+
 import React, { useMemo } from 'react';
+
+import { Tooltip } from '@blueprintjs/core';
 import classNames from 'classnames';
 
-import { getDashUrl, DashboardMode } from 'utils/dashboard';
-import { usePageContext } from 'utils/hooks';
-import { Avatar, Icon, IconName, MenuItem } from 'components';
-import { getPrimaryCollectionPub } from 'utils/collections/primary';
-import { sortByRank } from 'utils/rank';
-import { Collection, Pub } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
-import { Tooltip } from '@blueprintjs/core';
+import { Avatar, Icon, type IconName, MenuItem } from 'components';
 import { expect } from 'utils/assert';
+import { getPrimaryCollectionPub } from 'utils/collections/primary';
+import { type DashboardMode, getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
+import { sortByRank } from 'utils/rank';
 
-require('./scopeDropdown.scss');
+import './scopeDropdown.scss';
 
 type Scope = {
 	type: string;
@@ -207,8 +209,10 @@ const ScopeDropdown = (props: Props) => {
 											)}
 										<a
 											href={`/${
-												(scope.slugs?.pubSlug &&
-													`pub/${scope.slugs.pubSlug}`) ||
+												(
+													scope.slugs?.pubSlug &&
+														`pub/${scope.slugs.pubSlug}`
+												) ||
 												scope.slugs?.collectionSlug ||
 												''
 											}`}

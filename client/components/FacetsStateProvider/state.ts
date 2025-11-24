@@ -1,12 +1,14 @@
+import type { ScopeId } from 'types';
+
+import type { FacetState, FacetsState } from './types';
+
 import {
-	FacetCascadeResult,
-	FacetDefinition,
-	FacetSourceScope,
-	CascadedFacetsByKind,
+	type CascadedFacetsByKind,
+	type FacetCascadeResult,
+	type FacetDefinition,
+	type FacetSourceScope,
 	mapFacetDefinitions,
 } from 'facets';
-import { ScopeId } from 'types';
-import { FacetsState, FacetState } from './types';
 
 export type CreateStateOptions = {
 	currentScope: FacetSourceScope | ScopeId;

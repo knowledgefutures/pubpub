@@ -1,18 +1,17 @@
 import { initServer } from '@ts-rest/express';
 
-import { ForbiddenError } from 'server/utils/errors';
-import { Pub } from 'server/pub/model';
 import { Collection } from 'server/collection/model';
 import { Community } from 'server/community/model';
-
-import { createGetRequestIds } from 'utils/getRequestIds';
+import { Pub } from 'server/pub/model';
+import { ForbiddenError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
-import { queryOne } from 'utils/query/queryOne';
+import { createGetRequestIds } from 'utils/getRequestIds';
 import { queryMany } from 'utils/query/queryMany';
+import { queryOne } from 'utils/query/queryOne';
 
-import { getPermissions } from './permissions';
-import { createMember, updateMember, destroyMember } from './queries';
 import { Member } from './model';
+import { getPermissions } from './permissions';
+import { createMember, destroyMember, updateMember } from './queries';
 
 const getRequestIds = createGetRequestIds<{
 	communityId?: string;

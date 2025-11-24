@@ -1,6 +1,6 @@
-import { Project, ObjectLiteralExpression, ts, SyntaxKind } from 'ts-morph';
 import { execSync } from 'child_process';
 import { argv } from 'process';
+import { type ObjectLiteralExpression, Project, SyntaxKind, ts } from 'ts-morph';
 
 const ifLine = (arg: string | undefined | boolean, templ = arg, noNewline = false) =>
 	arg ? ` * ${templ}${noNewline ? '' : '\n *'}` : '';

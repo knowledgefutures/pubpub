@@ -1,25 +1,28 @@
-import path from 'path';
-import fs from 'fs';
-import YAML from 'yaml';
-import { FileResult } from 'tmp-promise';
-import { spawnSync } from 'child_process';
-import { fromProsemirror, emitPandocJson } from '@pubpub/prosemirror-pandoc';
-import dateFormat from 'dateformat';
+import type { FileResult } from 'tmp-promise';
 
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
+import type { PandocTarget } from 'utils/export/formats';
+
+import type { NotesData, PandocFlag, PubMetadata } from './types';
+
+import { emitPandocJson, fromProsemirror } from '@pubpub/prosemirror-pandoc';
+import { spawnSync } from 'child_process';
+import dateFormat from 'dateformat';
+import fs from 'fs';
+import path from 'path';
+import YAML from 'yaml';
+
 import { editorSchema, getReactedDocFromJson } from 'components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
-import { PandocTarget } from 'utils/export/formats';
 
 import { rules } from '../import/rules';
-import { getAffiliations, getDedupedAffliations, getTmpFileForExtension } from './util';
-import { NotesData, PubMetadata, PandocFlag } from './types';
-import { runTransforms } from './transforms';
 import {
 	getPandocNotesById,
-	PandocNotes,
 	modifyJatsContentToIncludeUnstructuredNotes,
+	type PandocNotes,
 } from './notes';
+import { runTransforms } from './transforms';
+import { getAffiliations, getDedupedAffliations, getTmpFileForExtension } from './util';
 
 const formatToTemplateExtension = {
 	epub: 'epub3',

@@ -1,10 +1,12 @@
+import type { MinimalUser } from 'types';
+
 import React from 'react';
+
 import classNames from 'classnames';
 
-import { MinimalUser } from 'types';
 import Avatar from '../Avatar/Avatar';
 
-require('./avatars.scss');
+import './avatars.scss';
 
 type Props = {
 	users: MinimalUser[];

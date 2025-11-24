@@ -1,15 +1,16 @@
-import { FeatureFlagOverrideState } from 'types';
-import { setFeatureFlagOverrideForCommunity } from 'server/featureFlagCommunity/queries';
-import { setFeatureFlagOverrideForUser } from 'server/featureFlagUser/queries';
+import type { FeatureFlagOverrideState } from 'types';
+
 import {
 	createFeatureFlag as createRawFeatureFlag,
 	destroyFeatureFlag as destroyRawFeatureFlag,
 	getFeatureFlagById,
 	getFeatureFlagByName,
-	setFeatureFlagEnabledUsersFraction,
 	setFeatureFlagEnabledCommunitiesFraction,
+	setFeatureFlagEnabledUsersFraction,
 } from 'server/featureFlag/queries';
-import { User, Community, FeatureFlagCommunity, FeatureFlagUser } from 'server/models';
+import { setFeatureFlagOverrideForCommunity } from 'server/featureFlagCommunity/queries';
+import { setFeatureFlagOverrideForUser } from 'server/featureFlagUser/queries';
+import { Community, FeatureFlagCommunity, FeatureFlagUser, User } from 'server/models';
 import { expect } from 'utils/assert';
 
 type OverrideValues =

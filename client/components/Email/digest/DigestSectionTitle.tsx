@@ -1,7 +1,8 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { Icon, IconName } from 'components';
+import { Icon, type IconName } from 'components';
 
 type StyleProps = {
 	accentColorDark?: string;

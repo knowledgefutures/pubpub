@@ -1,9 +1,9 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
+
 import { Button, Icon } from '@blueprintjs/core';
+import { storiesOf } from '@storybook/react';
 
 import { renderLabelPairs } from './labels';
-
 import OverviewRowSkeleton from './OverviewRowSkeleton';
 
 const iconLabelPairs = renderLabelPairs([

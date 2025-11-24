@@ -1,24 +1,26 @@
+import type { Collection, Pub } from 'types';
+
 import React from 'react';
+
 import classNames from 'classnames';
 
-import { Collection, Pub } from 'types';
+import { usePageContext } from 'utils/hooks';
 import {
-	LayoutBlock,
-	LayoutOptions,
-	LayoutPubsByBlock,
+	type LayoutBlock,
+	type LayoutOptions,
+	type LayoutPubsByBlock,
 	resolveLayoutPubsByBlock,
 } from 'utils/layout';
-import { usePageContext } from 'utils/hooks';
 
-import LayoutPubs from './LayoutPubs';
-import LayoutHtml from './LayoutHtml';
 import LayoutBanner from './LayoutBanner';
-import LayoutText from './LayoutText';
-import LayoutPagesCollections from './LayoutPagesCollections';
 import LayoutCollectionHeader from './LayoutCollectionHeader';
+import LayoutHtml from './LayoutHtml';
+import LayoutPagesCollections from './LayoutPagesCollections';
+import LayoutPubs from './LayoutPubs';
 import LayoutSubmissionBanner from './LayoutSubmissionBanner';
+import LayoutText from './LayoutText';
 
-require('./layout.scss');
+import './layout.scss';
 
 type Props = LayoutOptions & {
 	blocks: LayoutBlock[];

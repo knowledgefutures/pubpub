@@ -1,25 +1,27 @@
+import type { WorkerTask } from 'server/models';
+import type { Community, PageContext } from 'types';
+
 import React, { useMemo } from 'react';
+
 import pick from 'lodash.pick';
 
-import { Community, PageContext } from 'types';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
-import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
+import { canUseCustomAnalyticsProvider } from 'utils/analytics/featureFlags';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
 
-import type { WorkerTask } from 'server/models';
-import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
-import CommunityAdminSettings from './CommunityAdminSettings';
-import PublicNewPubs from './PublicNewPubsSettings';
-import BasicSettings from './BasicSettings';
-import NavSettings from './NavSettings';
-import HeaderSettings from './HeaderSettings';
-import FooterSettings from './FooterSettings';
-import HomepageBannerSettings from './HomepageBannerSettings';
-import SocialSettings from './SocialSettings';
-import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
+import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import AnalyticsSettings from './AnalyticsSettings';
+import BasicSettings from './BasicSettings';
+import CommunityAdminSettings from './CommunityAdminSettings';
+import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
+import FooterSettings from './FooterSettings';
+import HeaderSettings from './HeaderSettings';
+import HomepageBannerSettings from './HomepageBannerSettings';
+import NavSettings from './NavSettings';
+import PublicNewPubs from './PublicNewPubsSettings';
+import SocialSettings from './SocialSettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -170,7 +172,7 @@ const CommunitySettings = (props: Props) => {
 							/>,
 						],
 					} as const,
-			  ]
+				]
 			: ([] as Subtab[])),
 	].filter((x): x is Subtab => Boolean(x)) satisfies Subtab[];
 

@@ -1,9 +1,9 @@
+import type { SuperAdminTabKind } from 'utils/superAdmin';
+
 import React from 'react';
 
-import { SuperAdminTabKind } from 'utils/superAdmin';
-
-import LandingPageFeatures from './LandingPageFeatures';
 import CommunitySpam from './CommunitySpam';
+import LandingPageFeatures from './LandingPageFeatures';
 
 type SuperAdminTab = {
 	title: string;

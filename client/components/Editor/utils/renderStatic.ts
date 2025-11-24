@@ -10,13 +10,15 @@
  *    https://prosemirror.net/docs/ref/version/0.18.0.html#model.DOMOutputSpec)
  * 2. Turn the output spec into React elements.
  */
-import React from 'react';
-import css from 'css';
-import camelCaseCss from 'camelcase-css';
-import { Node } from 'prosemirror-model';
-import { getReactedDoc } from '@pubpub/prosemirror-reactive';
 
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
+
+import React from 'react';
+
+import { getReactedDoc } from '@pubpub/prosemirror-reactive';
+import camelCaseCss from 'camelcase-css';
+import css from 'css';
+import { Node } from 'prosemirror-model';
 
 import { getCodeHighlightStyles } from './codeHighlightStyle';
 

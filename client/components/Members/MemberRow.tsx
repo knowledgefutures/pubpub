@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import dateFormat from 'dateformat';
+
 import { Button, Classes, Tag } from '@blueprintjs/core';
+import dateFormat from 'dateformat';
 
 import { Avatar } from 'components';
 import { MenuButton } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
+import MemberPermissionPicker from './MemberPermissionPicker';
 import { permissionValues } from './permissionValues';
 import SelfDestructiveActionDialog from './SelfDestructiveActionDialog';
-import MemberPermissionPicker from './MemberPermissionPicker';
 
-require('./memberRow.scss');
+import './memberRow.scss';
 
 type OwnProps = {
 	memberData: any;

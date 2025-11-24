@@ -1,29 +1,30 @@
+import type { Page, Pub, SlugStatus } from 'types';
+import type { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
+
 import React, { useCallback } from 'react';
+
 import { AnchorButton, Button, Classes, Switch } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
-import { communityUrl } from 'utils/canonicalUrls';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
-import { slugifyString } from 'utils/strings';
-import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSlugError } from 'client/utils/slug';
-
+import { usePersistableState } from 'client/utils/usePersistableState';
 import {
+	ClickToCopyButton,
 	DashboardFrame,
 	ImageUpload,
 	InputField,
-	SettingsSection,
-	ClickToCopyButton,
 	LayoutEditor,
+	SettingsSection,
 } from 'components';
-import { Page, Pub, SlugStatus } from 'types';
-import { usePersistableState } from 'client/utils/usePersistableState';
+import { communityUrl } from 'utils/canonicalUrls';
+import { getDashUrl } from 'utils/dashboard';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { slugifyString } from 'utils/strings';
 
 import PageDelete from './PageDelete';
 
-require('./dashboardPage.scss');
+import './dashboardPage.scss';
 
 type Props = {
 	pageData: Page & { layoutPubsByBlock: LayoutPubsByBlock<Pub> };

@@ -1,15 +1,16 @@
-import { Includeable } from 'sequelize';
+import type { Includeable } from 'sequelize';
+
+import type { PubEdgeIncludesOptions } from 'types';
+
 import {
-	Community,
 	CollectionPub,
+	Community,
 	ExternalPublication,
 	includeUserModel,
 	Pub,
 	PubAttribution,
 	Release,
 } from 'server/models';
-
-import { PubEdgeIncludesOptions } from 'types';
 
 export const getOptionsForIncludedPub = ({ includeCommunity }: { includeCommunity?: boolean }) => {
 	return [
@@ -47,7 +48,7 @@ export const getPubEdgeIncludes = ({
 							includeCommunity: includeCommunityForPubs,
 						}),
 					},
-			  ]
+				]
 			: []),
 		...(includePub
 			? [
@@ -58,7 +59,7 @@ export const getPubEdgeIncludes = ({
 							includeCommunity: includeCommunityForPubs,
 						}),
 					},
-			  ]
+				]
 			: []),
 		{
 			model: ExternalPublication,

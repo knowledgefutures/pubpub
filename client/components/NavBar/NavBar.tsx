@@ -1,19 +1,19 @@
 import React from 'react';
+
+import { Icon as BlueprintIcon, Classes } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
-import { Classes, Icon as BlueprintIcon } from '@blueprintjs/core';
 
 import {
-	NavbarItem,
-	getNavItemsForCommunityNavigation,
 	createSocialNavItems,
+	getNavItemsForCommunityNavigation,
 	isNavbarMenu,
+	type NavbarItem,
 } from 'client/utils/navigation';
-import { usePageContext } from 'utils/hooks';
-
 import { GridWrapper, Icon } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
+import { usePageContext } from 'utils/hooks';
 
-require('./navBar.scss');
+import './navBar.scss';
 
 const propTypes = {
 	previewContext: PropTypes.object,
@@ -37,7 +37,6 @@ const NavBar = function (props) {
 		if (!isNavbarMenu(subitem)) {
 			return (
 				<MenuItem
-					// eslint-disable-next-line react/no-array-index-key
 					key={index}
 					href={subitem.href}
 					icon={

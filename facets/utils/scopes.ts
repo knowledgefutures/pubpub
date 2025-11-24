@@ -1,5 +1,6 @@
-import { FacetSourceScope, FacetsError } from '../core';
-import { ScopeKind, ByScopeKind, SingleScopeId, BindingKey } from '../types';
+import type { BindingKey, ByScopeKind, ScopeKind, SingleScopeId } from '../types';
+
+import { type FacetSourceScope, FacetsError } from '../core';
 
 export const createByScopeKind = <T>(instantiate: () => T): ByScopeKind<T> => {
 	return {

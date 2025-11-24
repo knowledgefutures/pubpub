@@ -1,7 +1,9 @@
-import { MarkType } from 'prosemirror-model';
+import type { MarkType } from 'prosemirror-model';
+
+import type { ToggleOptions } from './types';
+
 import { toggleMark as pmToggleMark } from 'prosemirror-commands';
 
-import { ToggleOptions } from './types';
 import { createTypeToggle } from './util';
 
 const markIsActive = (options: ToggleOptions<MarkType>) => {

@@ -1,7 +1,8 @@
+import type { InitialData, SanitizedPubData } from 'types';
+
 import { Collection, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
 import { getUserScopeVisits } from 'server/userScopeVisit/queries';
-import { InitialData, SanitizedPubData } from 'types';
 
 import sanitizeCollection from './collectionSanitize';
 

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import dateFormat from 'dateformat';
-import { Button } from '@blueprintjs/core';
 
+import { Button } from '@blueprintjs/core';
+import dateFormat from 'dateformat';
+
+import { apiFetch } from 'client/utils/apiFetch';
 import { FileUploadButton } from 'components';
 import { getFormattedDownload } from 'containers/Pub/PubHeader/headerUtils';
-import { apiFetch } from 'client/utils/apiFetch';
 
-require('./downloadChooser.scss');
+import './downloadChooser.scss';
 
 type Props = {
 	pubData: {
@@ -45,7 +46,7 @@ const DownloadChooser = (props: Props) => {
 						url: fileUrl,
 						createdAt: new Date(),
 					},
-			  ]
+				]
 			: [];
 		try {
 			setIsRemoving(true);

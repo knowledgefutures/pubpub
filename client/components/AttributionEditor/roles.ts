@@ -1,7 +1,7 @@
 import fuzzysearch from 'fuzzysearch';
+
 import { DEFAULT_ROLES } from 'types';
 
-// eslint-disable-next-line import/prefer-default-export
 export const getFilteredRoles = (query, existingRoles) => {
 	const addNewRoleOption = DEFAULT_ROLES.reduce((prev, curr) => {
 		if (curr.toLowerCase() === query.toLowerCase()) {

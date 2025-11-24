@@ -1,9 +1,10 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
 
 import { Avatar, Icon } from 'components';
 
-require('./contributor.scss');
+import './contributor.scss';
 
 const propTypes = {
 	attribution: PropTypes.object.isRequired,

@@ -1,8 +1,8 @@
-/* eslint-disable react/no-danger */
 import React, { useMemo } from 'react';
+
 import linkifyHtml from 'linkify-html';
 
-require('./pubNoteContent.scss');
+import './pubNoteContent.scss';
 
 type Props = {
 	structured?: string;

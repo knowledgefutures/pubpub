@@ -1,12 +1,12 @@
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import type { EditorState } from 'prosemirror-state';
+import type { EditorView } from 'prosemirror-view';
 
-import {
-	CommandStateBuilder,
-	SchemaType,
-	CreateToggleOptions,
-	ToggleOptions,
+import type {
 	CommandSpec,
+	CommandStateBuilder,
+	CreateToggleOptions,
+	SchemaType,
+	ToggleOptions,
 } from './types';
 
 export const createCommandSpec = (builder: CommandStateBuilder): CommandSpec => {

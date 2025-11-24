@@ -1,8 +1,9 @@
-import { EditorState, Selection } from 'prosemirror-state';
-import { Node, Slice } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
+import type { EditorView } from 'prosemirror-view';
 
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
+
+import { Node, Slice } from 'prosemirror-model';
+import { type EditorState, Selection } from 'prosemirror-state';
 
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';

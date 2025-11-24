@@ -1,13 +1,15 @@
-import React from 'react';
-import classNames from 'classnames';
-
-import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
-import { EditorChangeObject } from 'components/Editor';
-import {
+import type { EditorChangeObject } from 'components/Editor';
+import type {
 	CommandDefinition,
 	CommandMenuEntry,
 	CommandStates,
 } from 'components/Editor/commands/types';
+
+import React from 'react';
+
+import classNames from 'classnames';
+
+import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 
 import { useCommandStates } from './hooks/useCommandStates';
 
@@ -83,8 +85,7 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 		>
 			{commands.map((section, index) => {
 				return (
-					// eslint-disable-next-line react/no-array-index-key
-					<React.Fragment key={index}>
+					<React.Fragment key={`${section.join('-')}-${index}`}>
 						{index > 0 && <MenuItemDivider />}
 						{section.map(renderMenuItemForCommandEntry)}
 					</React.Fragment>

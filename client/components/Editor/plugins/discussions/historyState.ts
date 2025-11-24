@@ -1,5 +1,5 @@
-import { Node } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
+import type { Node } from 'prosemirror-model';
+import type { EditorState, Transaction } from 'prosemirror-state';
 
 import { collabDocPluginKey } from '../collaborative';
 

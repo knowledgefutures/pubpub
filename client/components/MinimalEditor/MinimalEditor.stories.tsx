@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
+
 import { MinimalEditor } from 'components';
 import { fullDoc } from 'utils/storybook/data';
 

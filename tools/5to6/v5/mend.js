@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax */
+
 const { storage } = require('../setup');
 const { getChangesForPub } = require('./changes');
 const reconstructDocument = require('./reconstructDocument');
@@ -76,7 +76,7 @@ const mend = (pubId) => {
 					// nope
 				}
 			}
-			// eslint-disable-next-line no-console
+			// biome-ignore lint/suspicious/noConsole: shhhhhh
 			console.log(successfullyInvertedDocument);
 		}
 	}

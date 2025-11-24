@@ -1,3 +1,4 @@
+// biome-ignore-all
 import chalk from 'chalk';
 
 import { isProd } from 'utils/environment';

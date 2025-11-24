@@ -1,10 +1,11 @@
-import * as types from 'types';
+import type * as types from 'types';
+
 import { Collection, CollectionPub, Pub } from 'server/models';
 import { bucketBy, indexById } from 'utils/arrays';
-import { getPrimaryCollection } from 'utils/collections/primary';
 import { assert } from 'utils/assert';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
-import { ScopeKind, ByScopeKind, createByScopeKind } from '../../facets';
+import { type ByScopeKind, createByScopeKind, type ScopeKind } from '../../facets';
 
 export type ScopeStack = {
 	kind: ScopeKind;

@@ -1,11 +1,7 @@
-import { Node, Mark, Schema, Attrs, MarkType } from 'prosemirror-model';
-import uuid from 'uuid/v4';
+import type { Attrs, Mark, MarkType, Node, Schema } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
 
-import { withValue } from 'utils/fp';
-
-import { EditorState } from 'prosemirror-state';
-import { suggestionNodeAttributes } from './schema';
-import {
+import type {
 	SuggestedEditsTransactionContext,
 	SuggestionAttrsPerTransaction,
 	SuggestionBaseAttrs,
@@ -14,6 +10,12 @@ import {
 	SuggestionNodeAttrs,
 	SuggestionUniqueAttrs,
 } from './types';
+
+import uuid from 'uuid/v4';
+
+import { withValue } from 'utils/fp';
+
+import { suggestionNodeAttributes } from './schema';
 import { getSuggestedEditsState } from './state';
 
 const createSuggestionUniqueAttrs = (): SuggestionUniqueAttrs => {
@@ -41,7 +43,7 @@ const findJoinableSuggestionMarkForRange = (
 		return (
 			mark.type === suggestionMark &&
 			mark.attrs.suggestionKind === suggestionKind &&
-			// eslint-disable-next-line eqeqeq
+			// biome-ignore lint/suspicious/noDoubleEquals: eqeq
 			mark.attrs.suggestionUserId == suggestionUserId &&
 			suggestionTimestamp - mark.attrs.suggestionTimestamp < 1000 * 60 * withinMinutes
 		);

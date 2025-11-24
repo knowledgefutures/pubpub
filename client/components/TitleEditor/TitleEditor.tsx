@@ -1,16 +1,18 @@
-import React, { ClipboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { type ClipboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+
 import classNames from 'classnames';
 import { useBeforeUnload } from 'react-use';
 
 import { ClientOnly } from 'components';
+
 import {
-	trimDocumentFragment,
+	isChildOf,
 	parseDom,
 	sanitizeDocumentFragment,
-	isChildOf,
+	trimDocumentFragment,
 } from './titleEditorFunctions';
 
-require('./titleEditor.scss');
+import './titleEditor.scss';
 
 type Props = {
 	isReadOnly?: boolean;
@@ -153,7 +155,6 @@ export default function TitleEditor(props: Props) {
 			// We need to set contentEditable={true} during SSR, otherwise
 			// the hydrated editor will be unedtiable.
 			contentEditable={!isReadOnly}
-			// eslint-disable-next-line react/no-danger
 			dangerouslySetInnerHTML={{ __html: initialValue ?? '' }}
 		/>
 	);
@@ -162,7 +163,7 @@ export default function TitleEditor(props: Props) {
 		serverOrReadonlyView
 	) : (
 		<ClientOnly fallback={serverOrReadonlyView}>
-			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+			{/* biome-ignore lint/a11y: shhhhhh */}
 			<div
 				{...sharedProps}
 				contentEditable={true}

@@ -1,6 +1,7 @@
-import { Node } from 'prosemirror-model';
-import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import type { Node } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
+
+import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
 type Replacement = {
 	pos: number;
@@ -24,8 +25,8 @@ const getEquationTranslationTransactionForState = (editorState: EditorState) => 
 			node.type.name === 'equation'
 				? mathInlineType
 				: node.type.name === 'block_equation'
-				  ? mathDisplayType
-				  : null;
+					? mathDisplayType
+					: null;
 		if (replacementNodeType) {
 			// There are some equation nodes floating around out there with node.attrs.value = ''
 			// But Prosemirror does not permit text nodes containing the empty string.

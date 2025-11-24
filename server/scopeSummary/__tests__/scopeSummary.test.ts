@@ -1,15 +1,14 @@
-import { setup, teardown, modelize } from 'stubstub';
-
-import { Pub, Collection, Community, ScopeSummary } from 'server/models';
-
-import { createPub } from 'server/pub/queries';
-import { createDiscussion } from 'server/discussion/queries';
-import { createReview } from 'server/review/queries';
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
+import { createDiscussion } from 'server/discussion/queries';
+import { Collection, Community, Pub, ScopeSummary } from 'server/models';
+import { createPub } from 'server/pub/queries';
+import { createReview } from 'server/review/queries';
+import { modelize, setup, teardown } from 'stubstub';
 import { expect as assertExpect } from 'utils/assert';
-import { summarizePub, summarizeCollection, summarizeCommunity } from '../queries';
+
+import { summarizeCollection, summarizeCommunity, summarizePub } from '../queries';
 
 const models = modelize`
     User chattyUser {}

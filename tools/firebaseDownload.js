@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import fs from 'fs-extra';
 
 import { getBranchDoc, getPubRef } from 'server/utils/firebaseAdmin';

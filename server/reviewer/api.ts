@@ -1,6 +1,11 @@
-import app, { wrap } from 'server/server';
-import { createReviewer } from './queries';
+import { Router } from 'express';
+
+import { wrap } from 'server/wrap';
+
 import { getPermissions } from './permissions';
+import { createReviewer } from './queries';
+
+export const router = Router();
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -11,7 +16,7 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post(
+router.post(
 	'/api/reviewer',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);

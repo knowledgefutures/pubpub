@@ -1,4 +1,4 @@
-import { FacetDefinition } from './facet';
+import type { FacetDefinition } from './facet';
 
 export class FacetsError extends Error {
 	constructor(message: string) {

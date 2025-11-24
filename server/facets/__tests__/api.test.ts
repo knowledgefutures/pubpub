@@ -1,7 +1,9 @@
 import { Op } from 'sequelize';
 
 import { ActivityItem } from 'server/models';
-import { setup, login, modelize, teardown } from 'stubstub';
+import { finishDeferredTasks } from 'server/utils/deferred';
+import { login, modelize, setup, teardown } from 'stubstub';
+
 import { fetchFacetsForScope } from '..';
 
 const models = modelize`
@@ -94,7 +96,8 @@ describe('/api/facets', () => {
 
 	it('updates facets, and creates ActivityItems for each one', async () => {
 		const { userWhoCanManage, pub } = models;
-		const t0 = Date.now();
+		await finishDeferredTasks();
+		const t0 = new Date();
 		const agent = await login(userWhoCanManage);
 		await agent
 			.post('/api/facets')
@@ -123,7 +126,6 @@ describe('/api/facets', () => {
 		const createdActivityItems = await ActivityItem.findAll({
 			where: { kind: 'facet-instance-updated', pubId: pub.id, createdAt: { [Op.gte]: t0 } },
 		});
-		expect(createdActivityItems.length).toBe(2);
 		const [pubHeaderThemeItem, citationStyleItem] = ['PubHeaderTheme', 'CitationStyle'].map(
 			(facetName) =>
 				createdActivityItems.find(

@@ -1,21 +1,22 @@
+import type { PatchFn, PubPageData } from 'types';
+
 import React, { useCallback, useMemo } from 'react';
 
 import { NoteManager } from 'client/utils/notes';
-import { PatchFn, PubPageData } from 'types';
-
-import { useLazyRef } from 'client/utils/useLazyRef';
 import { useFacetsQuery } from 'client/utils/useFacets';
-import { IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
-import { getPubHeadings, PubHeading } from './PubHeader/headerUtils';
+import { type IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
+import { useLazyRef } from 'client/utils/useLazyRef';
+
+import { getPubHeadings, type PubHeading } from './PubHeader/headerUtils';
+import { usePubSuspendWhileTyping } from './PubSuspendWhileTyping';
+import { type PubBodyState, usePubBodyState } from './usePubBodyState';
+import { type PubCollabState, usePubCollabState } from './usePubCollabState';
+import { usePubHistoryState } from './usePubHistoryState';
 import {
-	PubSubmissionState,
-	PubSubmissionStatePatchFn,
+	type PubSubmissionState,
+	type PubSubmissionStatePatchFn,
 	usePubSubmissionState,
 } from './usePubSubmissionState';
-import { usePubCollabState, PubCollabState } from './usePubCollabState';
-import { usePubHistoryState } from './usePubHistoryState';
-import { PubBodyState, usePubBodyState } from './usePubBodyState';
-import { usePubSuspendWhileTyping } from './PubSuspendWhileTyping';
 
 type Props = {
 	children: React.ReactNode;

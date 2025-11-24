@@ -1,12 +1,14 @@
-import React, { useState, useRef } from 'react';
+import type { Pub } from 'types';
+
+import React, { useRef, useState } from 'react';
+
 import { Button, ButtonGroup } from '@blueprintjs/core';
 
-import { Pub } from 'types';
 import { ClickToCopyButton } from 'components';
 
 import CitationsModal from './CitationsModal';
 
-require('./citationsPreview.scss');
+import './citationsPreview.scss';
 
 type OwnProps = {
 	pubData: Pub;
@@ -30,7 +32,6 @@ const CitationsPreview = (props: Props) => {
 				className="citation-body"
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 				ref={copyableCitationRef}
-				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'citationData' does not exist on type 'pu... Remove this comment to see the full error message
 					__html: pubData.citationData.pub.default,

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 require('../../server/config');
 const bigJson = require('big-json');
 const storage = require('./storage');

@@ -1,7 +1,9 @@
-// eslint-disable-next-line import/no-unresolved
+import type { ChildProcessWithoutNullStreams } from 'child_process';
+
+import type { Prettify } from 'types';
+
 import { isMainThread, parentPort, workerData } from 'worker_threads';
 
-import { Prettify } from 'types';
 import { archiveTask } from './tasks/archive';
 import { exportTask } from './tasks/export';
 import { importTask } from './tasks/import';
@@ -43,7 +45,7 @@ export type TaskResult<T extends TaskType> = Prettify<Awaited<ReturnType<(typeof
 
 const main = async <T extends TaskType>(taskData: TaskData<T>) => {
 	const { type, input, id } = taskData;
-	const subprocesses = [];
+	const subprocesses: ChildProcessWithoutNullStreams[] = [];
 	const taskFn = taskMap[type];
 
 	if (typeof taskFn !== 'function') {
@@ -52,12 +54,12 @@ const main = async <T extends TaskType>(taskData: TaskData<T>) => {
 
 	parentPort?.on('message', (message) => {
 		if (message === 'yield') {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'kill' does not exist on type 'never'.
-			subprocesses.forEach((ps) => ps.kill());
+			subprocesses.forEach((ps) => {
+				ps.kill();
+			});
 		}
 	});
 
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 	const collectSubprocess = (ps) => subprocesses.push(ps);
 	const newInput =
 		typeof input === 'object' && input !== null && !Array.isArray(input)

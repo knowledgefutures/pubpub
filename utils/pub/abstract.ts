@@ -1,4 +1,4 @@
-import { DocJson } from 'types';
+import type { DocJson } from 'types';
 
 export const getAbstractDocFromPubDoc = (doc: DocJson): null | DocJson => {
 	const {

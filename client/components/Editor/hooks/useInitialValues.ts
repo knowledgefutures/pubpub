@@ -1,11 +1,14 @@
-import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
+import type { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
+
+import type { NoteManager } from 'client/utils/notes';
+import type { DocJson } from 'types';
+
+import type { NodeLabelMap } from '../types';
+
 import { useRef } from 'react';
+
 import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
-import { NoteManager } from 'client/utils/notes';
-import { DocJson } from 'types';
-
-import { NodeLabelMap } from '../types';
 import { buildSchema, renderStatic } from '../utils';
 
 type InitialValues = {

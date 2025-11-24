@@ -1,11 +1,12 @@
+import type { Callback, Community } from 'types';
+
 import React from 'react';
 
-import { InputField, SettingsSection, ImageUpload, ColorInput } from 'components';
-import { Callback, Community } from 'types';
+import { ColorInput, ImageUpload, InputField, SettingsSection } from 'components';
 import { slugifyString } from 'utils/strings';
 
-import SettingsRow from '../SettingsRow';
 import LabelWithInfo from '../LabelWithInfo';
+import SettingsRow from '../SettingsRow';
 
 type Props = {
 	communityData: Community;

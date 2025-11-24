@@ -1,10 +1,13 @@
-import { type AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+import type { AppRouter } from '@ts-rest/core';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+
 import { collectionPubQuerySchema } from 'server/collectionPub/schemas';
+
 import {
-	createCollectionPubSchema,
 	collectionPubSchema,
+	createCollectionPubSchema,
 	updateCollectionPubSchema,
 } from '../schemas/collectionPub';
 import { pubSchema } from '../schemas/pub';

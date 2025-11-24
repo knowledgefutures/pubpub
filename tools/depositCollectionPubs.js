@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import { asyncMap } from 'utils/async';
 import { Community, Collection, CollectionPub, Pub, Release } from 'server/models';
 import { setDoiData } from 'server/doi/queries';

@@ -1,8 +1,10 @@
+import type { LayoutBlockSubmissionBanner } from 'utils/layout';
+
 import React from 'react';
+
 import { AnchorButton } from '@blueprintjs/core';
 
 import { Editor, GridWrapper } from 'components';
-import { LayoutBlockSubmissionBanner } from 'utils/layout';
 import { usePageContext } from 'utils/hooks';
 
 import LayoutSubmissionBannerSkeleton from './LayoutSubmissionBannerSkeleton';

@@ -1,10 +1,11 @@
-import { Node } from 'prosemirror-model';
-import { Step } from 'prosemirror-transform';
+import type firebase from 'firebase';
+import type { Node } from 'prosemirror-model';
+import type { Step } from 'prosemirror-transform';
+
+import type { CompressedChange, CompressedKeyable } from '../types';
+
 import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub';
 import uuid from 'uuid';
-import firebase from 'firebase';
-
-import { CompressedChange, CompressedKeyable } from '../types';
 
 export const firebaseTimestamp = { '.sv': 'timestamp' };
 

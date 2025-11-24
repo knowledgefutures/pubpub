@@ -1,10 +1,12 @@
+import type { NodeLabelMap } from './types';
+
 import React, { useMemo } from 'react';
+
 import { Classes, Menu, MenuItem } from '@blueprintjs/core';
 
-import { buildLabel, getNodeLabelText, NodeReference } from './utils';
-import { NodeLabelMap } from './types';
+import { buildLabel, getNodeLabelText, type NodeReference } from './utils';
 
-require('./referenceFinder.scss');
+import './referenceFinder.scss';
 
 export type ReferenceFinderProps = {
 	nodeLabels: NodeLabelMap;
@@ -26,7 +28,7 @@ const ReferenceFinder = (props: ReferenceFinderProps) => {
 					active={reference === activeReference}
 				/>
 			)),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 		[references, activeReference],
 	);
 

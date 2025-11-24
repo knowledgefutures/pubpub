@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { Button, Icon, Tooltip, Divider } from '@blueprintjs/core';
+import type { Collection, CollectionPub, PubWithCollections } from 'types';
 
-import { usePageContext } from 'utils/hooks';
-import { getSchemaForKind } from 'utils/collections/schemas';
+import React, { useState } from 'react';
+
+import { Button, Divider, Icon, Tooltip } from '@blueprintjs/core';
+
 import { PopoverButton, PrimaryCollectionExplanation } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { Collection, CollectionPub, PubWithCollections } from 'types';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { usePageContext } from 'utils/hooks';
 
 type Props = {
 	collection: Collection;
@@ -31,10 +33,10 @@ const derivePrimaryCollection = (
 	const collectionPubsPool =
 		collectionPubs.length > 0
 			? // Make sure to look at the most recent version of this CollectionPub
-			  collectionPubs.map((cp) => (cp.id === collectionPub.id ? linkedCollectionPub : cp))
+				collectionPubs.map((cp) => (cp.id === collectionPub.id ? linkedCollectionPub : cp))
 			: // In truth there must be at least one CollectionPub (this one) even if it's not
-			  // referenced in collectionPub.pub yet -- possibly it was recently created.
-			  [linkedCollectionPub];
+				// referenced in collectionPub.pub yet -- possibly it was recently created.
+				[linkedCollectionPub];
 	return getPrimaryCollection(collectionPubsPool);
 };
 

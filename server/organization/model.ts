@@ -1,19 +1,22 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
+	AllowNull,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	AllowNull,
+	HasMany,
+	Is,
 	IsLowercase,
 	Length,
-	Is,
+	Model,
+	PrimaryKey,
+	Table,
 	Unique,
-	HasMany,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
+
 import { Community } from '../models';
 
 @Table

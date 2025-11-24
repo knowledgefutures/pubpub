@@ -1,4 +1,4 @@
-import {
+import type {
 	FacetCascadeResult,
 	FacetDefinition,
 	FacetInstance,
@@ -6,7 +6,7 @@ import {
 	Facets,
 } from 'facets';
 
-import { bindActionsToStore } from './actions';
+import type { bindActionsToStore } from './actions';
 
 export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 	facetDefinition: Def;

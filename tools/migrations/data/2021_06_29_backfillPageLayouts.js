@@ -7,6 +7,6 @@ export const up = async () => {
 		{ layout: defaultLayout },
 		{ where: { layout: null } },
 	);
-	// eslint-disable-next-line no-console
+	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(`Updated ${numAffectedRows} Pages`);
 };

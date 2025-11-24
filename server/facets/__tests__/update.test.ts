@@ -1,7 +1,8 @@
-import { setup, modelize, expectCreatedActivityItem, teardown } from 'stubstub';
-
 import { FacetsError } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
+import { finishDeferredTasks } from 'server/utils/deferred';
+import { expectCreatedActivityItem, modelize, setup, teardown } from 'stubstub';
+
 import { updateFacetsForScope } from '..';
 
 const models = modelize`
@@ -120,11 +121,12 @@ describe('updateFacetsForScope', () => {
 			},
 		});
 		// Should be firing a License.afterUpdate() hook
-		const updated = await updateFacetsForScope(
+		const updated = updateFacetsForScope(
 			{ pubId: activityItemTestPub.id },
 			{ License: { kind: 'cc-0' } },
 		);
-		await expectCreatedActivityItem(Promise.resolve(updated)).toMatchObject({
+		await finishDeferredTasks();
+		await expectCreatedActivityItem(updated).toMatchObject({
 			kind: 'facet-instance-updated',
 			payload: {
 				facetName: 'License',

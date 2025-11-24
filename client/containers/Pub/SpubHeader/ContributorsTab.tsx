@@ -1,14 +1,15 @@
+import type { Callback, Pub } from 'types';
+
 import React from 'react';
 
 import { PubAttributionEditor } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { Callback, Pub } from 'types';
-
 import { expect } from 'utils/assert';
+import { usePageContext } from 'utils/hooks';
+
 import SpubHeaderField from './SpubHeaderField';
 import SpubHeaderTab from './SpubHeaderTab';
 
-require('./contributorsTab.scss');
+import './contributorsTab.scss';
 
 type Props = {
 	pubData: Pub;

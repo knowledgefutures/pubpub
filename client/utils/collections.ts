@@ -1,5 +1,6 @@
-import { apiFetch } from 'client/utils/apiFetch';
 import { useState } from 'react';
+
+import { apiFetch } from 'client/utils/apiFetch';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { usePageContext } from 'utils/hooks';
 
@@ -46,7 +47,7 @@ export const createReadingParamUrl = (url, collectionId) => {
 		const urlObject = new URL(url);
 		urlObject.searchParams.append(readingCollectionParam, collectionId.split('-')[0]);
 		return urlObject.toString();
-	} catch (err) {
+	} catch (_err) {
 		// on e.g. qubqub we don't know the actual origin, so we can't construct a URL object
 		return `${url}?${readingCollectionParam}=${collectionId.split('-')[0]}`;
 	}

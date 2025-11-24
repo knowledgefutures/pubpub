@@ -1,7 +1,8 @@
-import { EditorState, Command, NodeSelection } from 'prosemirror-state';
+import type { Command, EditorState, NodeSelection } from 'prosemirror-state';
+
+import type { Dispatch } from './types';
 
 import { createCommandSpec } from './util';
-import { Dispatch } from './types';
 
 const toggleKind: Command = (state: EditorState, dispatch?: Dispatch) => {
 	const { node } = state.selection as NodeSelection;

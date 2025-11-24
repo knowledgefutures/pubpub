@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+
 const Sequelize = require('sequelize');
 const passportLocalSequelize = require('passport-local-sequelize');
 

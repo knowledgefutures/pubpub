@@ -1,15 +1,19 @@
+import type * as types from 'types';
+
 import React from 'react';
 
+import { Router } from 'express';
+
 import Html from 'server/Html';
-import app from 'server/server';
-import { ForbiddenError, NotFoundError, handleErrors } from 'server/utils/errors';
+import { SubmissionWorkflow } from 'server/models';
+import { getManyPubs } from 'server/pub/queryMany';
+import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getManyPubs } from 'server/pub/queryMany';
-import * as types from 'types';
-import { SubmissionWorkflow } from 'server/models';
 import { getDashUrl } from 'utils/dashboard';
+
+export const router = Router();
 
 const getInitialPubs = async (
 	collectionId: string,
@@ -39,7 +43,7 @@ const getSubmissionWorkflow = async (collectionId: string) => {
 	return null;
 };
 
-app.get(
+router.get(
 	[
 		'/dash/collection/:collectionSlug/submissions',
 		'/dash/collection/:collectionSlug/submissions/:subMode',

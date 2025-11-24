@@ -1,4 +1,4 @@
-import { SubmissionWorkflow } from 'types';
+import type { SubmissionWorkflow } from 'types';
 
 export const submissionWorkflowConfigSteps = [
 	'instructions-requirements',

@@ -1,3 +1,7 @@
+import type * as types from 'types';
+
+import { type CreationAttributes, Op } from 'sequelize';
+
 import {
 	Collection,
 	CollectionPub,
@@ -7,11 +11,9 @@ import {
 	ReviewNew,
 	ScopeSummary,
 } from 'server/models';
-import { CreationAttributes, Op } from 'sequelize';
-import * as types from 'types';
+import { expect } from 'utils/assert';
 import { asyncMap } from 'utils/async';
 import { addScopeSummaries } from 'utils/scopeSummaries';
-import { expect } from 'utils/assert';
 
 const createScopeSummary = (summary: CreationAttributes<ScopeSummary>) =>
 	ScopeSummary.create(summary);

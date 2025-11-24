@@ -1,16 +1,20 @@
+import type { Request, Response } from 'express';
+
 import React from 'react';
 
+import { Router } from 'express';
+
+import { isUserAffiliatedWithCommunity } from 'server/community/queries';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
-import app from 'server/server';
-import type { Request, Response } from 'express';
-import { getUser } from 'server/utils/queryHelpers';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { getUser } from 'server/utils/queryHelpers';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCustomScriptsForCommunity } from 'server/customScript/queries';
-import { isUserAffiliatedWithCommunity } from 'server/community/queries';
 import { expect } from 'utils/assert';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
+
+export const router = Router();
 
 /**
  * Get the Fastly surroagate keys for a user.
@@ -50,7 +54,7 @@ const setSurrogateKeys = (
 	res.setHeader('Surrogate-Key', surrogateKeys);
 };
 
-app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
+router.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const customScripts = !initialData.locationData.isBasePubPub

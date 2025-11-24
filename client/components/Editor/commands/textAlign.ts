@@ -1,7 +1,8 @@
-import { Node } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import type { Node } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
 
-import { Dispatch } from './types';
+import type { Dispatch } from './types';
+
 import { cacheForEditorState, createCommandSpec } from './util';
 
 type AlignmentType = 'left' | 'center' | 'right';

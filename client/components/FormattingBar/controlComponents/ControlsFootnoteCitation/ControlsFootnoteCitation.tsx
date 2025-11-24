@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import type { ZoteroCSLJSON } from 'types';
+
+import React, { useEffect, useState } from 'react';
+
 import { useDebounce } from 'use-debounce';
 
-import { SimpleEditor, PubNoteContent } from 'components';
+import { PubNoteContent, SimpleEditor } from 'components';
 import { getCitationInlineLabel } from 'components/Editor/utils/citation';
 import { usePubContext } from 'containers/Pub/pubHooks';
-import { ZoteroCSLJSON } from 'types';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import CitationBuilder from './CitationBuilder';
 import InlineLabelEditor from './InlineLabelEditor';
 
-require('../controls.scss');
+import '../controls.scss';
 
 type Props = {
 	onClose: (...args: any[]) => any;

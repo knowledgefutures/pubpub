@@ -1,13 +1,15 @@
+import type * as types from 'types';
+import type { CollectionLayout } from 'utils/layout';
+
+import type { collectionUpdatePremission } from './permissions';
+
 import { Collection, CollectionAttribution, Community, includeUserModel } from 'server/models';
-import { slugIsAvailable, findAcceptableSlug } from 'server/utils/slugs';
-import { normalizeMetadataToKind } from 'utils/collections/metadata';
-import { slugifyString } from 'utils/strings';
-import { generateHash } from 'utils/hashes';
 import { PubPubError } from 'server/utils/errors';
-import * as types from 'types';
-import { CollectionLayout } from 'utils/layout';
+import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { expect } from 'utils/assert';
-import { collectionUpdatePremission } from './permissions';
+import { normalizeMetadataToKind } from 'utils/collections/metadata';
+import { generateHash } from 'utils/hashes';
+import { slugifyString } from 'utils/strings';
 
 export const generateDefaultCollectionLayout = (): CollectionLayout => {
 	return {

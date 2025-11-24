@@ -1,21 +1,24 @@
+import type { Collection } from 'types';
+import type { LayoutBlockCollectionHeader } from 'types/layout';
+
 import React from 'react';
+
 import { Button } from 'reakit/Button';
 
-import { GridWrapper, ContributorAvatars, Icon, ClickToCopyButton } from 'components';
-import { Collection } from 'types';
-import { LayoutBlockCollectionHeader } from 'types/layout';
-import { getAllCollectionContributors } from 'utils/contributors';
+import { ClickToCopyButton, ContributorAvatars, GridWrapper, Icon } from 'components';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
-import { getSchemaForKind } from 'utils/collections/schemas';
-import { capitalize } from 'utils/strings';
-import { formatDate } from 'utils/dates';
 import {
-	getOrderedCollectionMetadataFields,
 	formattedMetadata,
+	getOrderedCollectionMetadataFields,
 } from 'utils/collections/getMetadata';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { getAllCollectionContributors } from 'utils/contributors';
+import { formatDate } from 'utils/dates';
+import { capitalize } from 'utils/strings';
+
 import WithinCommunityByline from '../WithinCommunityByline/WithinCommunityByline';
 
-require('./layoutCollectionHeader.scss');
+import './layoutCollectionHeader.scss';
 
 type Props = {
 	collection: Collection;

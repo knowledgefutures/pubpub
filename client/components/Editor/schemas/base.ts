@@ -1,4 +1,4 @@
-import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
+import type { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 export const baseNodes: { [key: string]: NodeSpec } = {
 	doc: {

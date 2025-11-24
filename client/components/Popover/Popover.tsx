@@ -1,9 +1,10 @@
 import React from 'react';
+
 import {
-	usePopoverState,
+	type PopoverInitialState,
 	Popover as RkPopover,
 	PopoverDisclosure as RkPopoverDisclosure,
-	PopoverInitialState,
+	usePopoverState,
 } from 'reakit';
 
 import { adaptDisclosureElementForBlueprintButton } from './blueprintAdapter';

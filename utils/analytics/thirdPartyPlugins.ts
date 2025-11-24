@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
-import { AnalyticsPlugin } from 'analytics';
-import { AnalyticsSettings, AnalyticsType } from 'types/analyticsSettings';
+import type { AnalyticsPlugin } from 'analytics';
+
+import type { AnalyticsSettings, AnalyticsType } from 'types/analyticsSettings';
 
 export type ThirdPartyPluginsShape = {
 	[K in AnalyticsType]?: {

@@ -1,18 +1,19 @@
+import type { PubEdge } from 'types';
+import type { RelationTypeName } from 'utils/pubEdge/relations';
+
 import React from 'react';
+
 import { Button, Callout } from '@blueprintjs/core';
 import classNames from 'classnames';
 
-import { relationTypeDefinitions, createCandidateEdge, stripMarkupFromString } from 'utils/pubEdge';
-import { RelationTypeName } from 'utils/pubEdge/relations';
-import { assert } from 'utils/assert';
-
-import { PubEdge } from 'types';
 import { PubEdgeEditor, PubEdgeListingCard } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
+import { assert } from 'utils/assert';
+import { createCandidateEdge, relationTypeDefinitions, stripMarkupFromString } from 'utils/pubEdge';
 
 import NewEdgeInput from './NewEdgeInput';
 
-require('./newEdgeEditor.scss');
+import './newEdgeEditor.scss';
 
 type Props = {
 	onCancel: () => unknown;

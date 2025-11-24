@@ -1,4 +1,4 @@
-import { CollapsibleHeaderProps } from './CollapsibleHeader';
+import type { CollapsibleHeaderProps } from './CollapsibleHeader';
 
 export default {
 	logo: {

@@ -1,9 +1,7 @@
-import sinon from 'sinon';
+import { vi } from 'vitest';
 
-import { setup, teardown, login, modelize } from 'stubstub';
 import { CrossrefDepositRecord } from 'server/models';
-
-import * as submit from '../submit';
+import { login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
 	Community community {
@@ -35,14 +33,22 @@ const models = modelize`
 	User guest {}
 `;
 
-let doiStub;
+const { submitDoiData } = vi.hoisted(() => {
+	return {
+		submitDoiData: vi.fn(),
+	};
+});
 
 beforeEach(() => {
-	doiStub = sinon.stub(submit, 'submitDoiData').returns(Promise.resolve());
+	vi.mock('server/doi/submit', () => ({
+		submitDoiData,
+	}));
 });
 
 afterEach(() => {
-	doiStub.restore();
+	// doiStub.restore();
+	vi.clearAllMocks();
+	vi.resetAllMocks();
 });
 
 setup(beforeAll, async () => {
@@ -110,7 +116,7 @@ it('lets community admins create a DOI for pubs in their community', async () =>
 
 	expect(dois.pub).toEqual(expectedPubDoi);
 	// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
-	expect(depositRecord?.depositJson?.deposit).toEqual(doiStub.getCall(1).args[0]);
+	expect(depositRecord?.depositJson?.deposit).toEqual(submitDoiData.mock.lastCall?.[0]);
 });
 
 it('lets community admins preview a DOI for pubs in their community', async () => {
@@ -151,7 +157,7 @@ it('lets community admins create a DOI for collections in their community', asyn
 
 	expect(dois.collection).toEqual(expectedCollectionDoi);
 	// @ts-expect-error FIXME: Property 'deposit' does not exist on type 'object'.
-	expect(depositRecord?.depositJson?.deposit).toEqual(doiStub.getCall(1).args[0]);
+	expect(depositRecord?.depositJson?.deposit).toEqual(submitDoiData.mock.lastCall?.[0]);
 });
 
 it('lets community admins preview a DOI for collections in their community', async () => {

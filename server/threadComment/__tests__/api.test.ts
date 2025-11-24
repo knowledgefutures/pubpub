@@ -1,4 +1,4 @@
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
+import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
     Community community {

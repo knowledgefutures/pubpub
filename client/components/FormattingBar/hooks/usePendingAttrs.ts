@@ -1,8 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import { usePrevious } from 'react-use';
-import { Node } from 'prosemirror-model';
+import type { Node } from 'prosemirror-model';
 
-import { EditorChangeObject, updateNodeAttrsById } from 'client/components/Editor';
+import { useCallback, useEffect, useState } from 'react';
+
+import { usePrevious } from 'react-use';
+
+import { type EditorChangeObject, updateNodeAttrsById } from 'client/components/Editor';
 
 type Attrs = Node['attrs'];
 type AttrsById = Record<string, null | Attrs>;

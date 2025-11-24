@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 import uuid from 'uuid';
 import Sequelize from 'sequelize';
 

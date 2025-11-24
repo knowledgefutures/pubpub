@@ -1,9 +1,11 @@
-import { Node, NodeType } from 'prosemirror-model';
-import { NodeSelection } from 'prosemirror-state';
+import type { Node, NodeType } from 'prosemirror-model';
+import type { NodeSelection } from 'prosemirror-state';
+
+import type { Attrs, ToggleCommandFn, ToggleOptions } from './types';
+
 import { lift, setBlockType, wrapIn } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 
-import { Attrs, ToggleOptions, ToggleCommandFn } from './types';
 import { createTypeToggle } from './util';
 
 const nodeMatchesTypeAndAttrs = (node: Node, type: NodeType, attrs?: Attrs) => {

@@ -1,16 +1,19 @@
+import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+
+import type { SerializedModel } from 'types';
+
 import {
-	Model,
-	Table,
 	Column,
 	DataType,
-	PrimaryKey,
 	Default,
-	Index,
 	HasMany,
+	Index,
+	Model,
+	PrimaryKey,
+	Table,
 } from 'sequelize-typescript';
-import type { InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import type { SerializedModel } from 'types';
-import { FeatureFlagUser, FeatureFlagCommunity } from '../models';
+
+import { FeatureFlagCommunity, FeatureFlagUser } from '../models';
 
 @Table
 export class FeatureFlag extends Model<

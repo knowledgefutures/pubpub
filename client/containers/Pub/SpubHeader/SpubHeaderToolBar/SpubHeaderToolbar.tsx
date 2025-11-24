@@ -1,17 +1,20 @@
-import React, { useState, useMemo } from 'react';
-import { Tab, Tabs, Icon, IconName, Button, Tooltip } from '@blueprintjs/core';
+import type { DefinitelyHas, Submission } from 'types';
+import type { ValidatedSubmissionFields } from 'utils/submission/validate';
+
+import type { SpubHeaderTab } from '../SpubHeader';
+
+import React, { useMemo, useState } from 'react';
+
+import { Button, Icon, type IconName, Tab, Tabs, Tooltip } from '@blueprintjs/core';
 import Color from 'color';
 
 import { GridWrapper } from 'components';
-import { Submission, DefinitelyHas } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { ValidatedSubmissionFields } from 'utils/submission/validate';
-
 import { capitalize } from 'utils/strings';
-import SubmitDialog from './SubmitDialog';
-import { SpubHeaderTab } from '../SpubHeader';
 
-require('./spubHeaderToolbar.scss');
+import SubmitDialog from './SubmitDialog';
+
+import './spubHeaderToolbar.scss';
 
 const renderTabTitle = (icon: IconName, title: string) => (
 	<>

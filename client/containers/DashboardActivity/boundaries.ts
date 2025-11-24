@@ -1,6 +1,6 @@
-import dateFormat from 'dateformat';
+import type { RenderedActivityItem } from 'client/utils/activity/types';
 
-import { RenderedActivityItem } from 'client/utils/activity/types';
+import dateFormat from 'dateformat';
 
 type Boundary = {
 	definition: number;

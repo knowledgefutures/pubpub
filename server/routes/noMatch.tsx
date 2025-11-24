@@ -1,13 +1,16 @@
 import React from 'react';
 
+import { Router } from 'express';
+
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
-import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 
-app.get('/*', async (req, res, next) => {
+export const router = Router();
+
+router.get('/*', async (req, res, next) => {
 	try {
 		res.status(404);
 		const initialData = await getInitialData(req);

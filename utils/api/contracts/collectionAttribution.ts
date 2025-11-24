@@ -1,8 +1,15 @@
-import { type AppRouter } from '@ts-rest/core';
-import { z } from 'zod';
+import type { AppRouter } from '@ts-rest/core';
+
+import type { Metadata } from '../utils/metadataType';
+
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { createGetQueryOptions } from 'utils/query/createGetQuery';
+import { z } from 'zod';
+
 import { createGetManyQueryOptions } from 'utils/query/createGetManyQuery';
+import { createGetQueryOptions } from 'utils/query/createGetQuery';
+
+import { updateAttributionSchema } from '../schemas/attribution';
+import { collectionSchema } from '../schemas/collection';
 import {
 	batchCollectionAttributionCreationSchema,
 	collectionAttributionCreationSchema,
@@ -10,10 +17,7 @@ import {
 	collectionAttributionSchema,
 	collectionAttributionUpdateSchema,
 } from '../schemas/collectionAttribution';
-import { updateAttributionSchema } from '../schemas/attribution';
-import { collectionSchema } from '../schemas/collection';
 import { userSchema } from '../schemas/user';
-import { Metadata } from '../utils/metadataType';
 
 extendZodWithOpenApi(z);
 

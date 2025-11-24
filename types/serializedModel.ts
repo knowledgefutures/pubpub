@@ -1,5 +1,5 @@
-import { Attributes, CreationAttributes } from 'sequelize';
-import { Model } from 'sequelize-typescript';
+import type { Attributes, CreationAttributes } from 'sequelize';
+import type { Model } from 'sequelize-typescript';
 
 export type SerializedModel<
 	T extends Model,
@@ -13,10 +13,10 @@ export type SerializedModel<
 			? SerializedModel<M, C>[] | undefined
 			: SerializedModel<NonNullable<S[P]>, C> | undefined
 		: S[P] extends Date | null
-		  ? S[P] extends Date
+			? S[P] extends Date
 				? string
 				: string | null
-		  : S[P];
+			: S[P];
 };
 
 export type RecursiveCreationAttributes<T extends Model> = SerializedModel<T, true>;

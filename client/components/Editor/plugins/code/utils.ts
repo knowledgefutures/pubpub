@@ -1,12 +1,14 @@
 // From prosemirror guide
-import { TextSelection, Selection, EditorState, Transaction } from 'prosemirror-state';
-import { EditorView as PMEditorView } from 'prosemirror-view';
-import { Node, Fragment } from 'prosemirror-model';
-import { EditorView } from '@codemirror/view';
-import { setBlockType } from 'prosemirror-commands';
-import { Compartment } from '@codemirror/state';
 
-import { CodeBlockSettings } from './types';
+import type { Compartment } from '@codemirror/state';
+import type { EditorView } from '@codemirror/view';
+import type { EditorView as PMEditorView } from 'prosemirror-view';
+
+import type { CodeBlockSettings } from './types';
+
+import { setBlockType } from 'prosemirror-commands';
+import { Fragment, type Node } from 'prosemirror-model';
+import { type EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 
 export function computeChange(oldVal: string, newVal: string) {
 	if (oldVal === newVal) return null;

@@ -1,4 +1,4 @@
-import { ZoteroIntegration } from 'types';
+import type { ZoteroIntegration } from 'types';
 
 export type Integration = ZoteroIntegration & {
 	name: string;

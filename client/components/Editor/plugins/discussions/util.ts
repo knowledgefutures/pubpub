@@ -1,6 +1,6 @@
-import { Step } from 'prosemirror-transform';
+import type { Step } from 'prosemirror-transform';
 
-import { Discussions, DiscussionInfo, DiscussionSelection, Range } from './types';
+import type { DiscussionInfo, DiscussionSelection, Discussions, Range } from './types';
 
 export const isEmptySelection = (selection: null | DiscussionSelection) => {
 	if (selection) {

@@ -24,7 +24,6 @@ export const createCachePurgeDebouncer = (
 		throttleTime: 250,
 	},
 ) => {
-	// eslint-disable-next-line no-undef
 	const purgeRequests = new Map<string, { timer: NodeJS.Timeout; resolver: () => void }>();
 	let lastExecutionTime = 0;
 

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+
 import { Button, Classes } from '@blueprintjs/core';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import { InputField } from 'components';
 import { getDashUrl } from 'utils/dashboard';
-import { apiFetch } from 'client/utils/apiFetch';
 
 type Props = {
 	communityData: any;

@@ -1,5 +1,4 @@
-import { renderActivityItem } from 'client/utils/activity';
-import {
+import type {
 	ActivityItem,
 	PatchFnArg,
 	Pub,
@@ -7,16 +6,18 @@ import {
 	Thread,
 	UserNotificationWithActivityItem,
 } from 'types';
-import { bucketBy, flattenOnce, splitArrayOn } from 'utils/arrays';
 
-import {
-	NotificationsState,
-	PubNotificationsState,
-	ThreadNotificationsState,
-	PubLocation,
-	ThreadLocation,
+import type {
 	NotificationsInitializer,
+	NotificationsState,
+	PubLocation,
+	PubNotificationsState,
+	ThreadLocation,
+	ThreadNotificationsState,
 } from './types';
+
+import { renderActivityItem } from 'client/utils/activity';
+import { bucketBy, flattenOnce, splitArrayOn } from 'utils/arrays';
 
 const resolvePatch = <T>(currentState: T, patchFnArg: PatchFnArg<T>) => {
 	if (typeof patchFnArg === 'function') {

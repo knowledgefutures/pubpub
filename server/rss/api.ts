@@ -1,9 +1,13 @@
-import app from 'server/server';
-import { getInitialData } from 'server/utils/initData';
+import { Router } from 'express';
+
 import { handleErrors, NotFoundError } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+
 import { getCommunityRss } from './queries';
 
-app.get('/rss.xml', async (req, res, next) => {
+export const router = Router();
+
+router.get('/rss.xml', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.communityData?.id) {

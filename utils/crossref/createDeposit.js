@@ -38,9 +38,9 @@ const renderBody = (context) => {
 				parentDoi:
 					pub.id === pubEdge.targetPubId
 						? // inbound edge, use parent pub doi
-						  pubEdge.pub.doi
+							pubEdge.pub.doi
 						: // outbound edge, use target pub doi
-						  pubEdge.targetPub.doi,
+							pubEdge.targetPub.doi,
 			});
 		}
 
@@ -64,7 +64,7 @@ const renderBody = (context) => {
 const removeEmptyKeys = (obj) => {
 	Object.keys(obj).forEach((key) => {
 		if (obj[key] && typeof obj[key] === 'object') removeEmptyKeys(obj[key]);
-		// eslint-disable-next-line no-param-reassign
+		
 		else if (obj[key] === undefined) delete obj[key];
 	});
 	return obj;

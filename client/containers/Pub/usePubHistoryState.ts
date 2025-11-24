@@ -1,11 +1,14 @@
-import { useCallback, useEffect } from 'react';
-import queryString from 'query-string';
-import { EditorView } from 'prosemirror-view';
+import type { EditorView } from 'prosemirror-view';
 
-import { PubHistoryState, PubPageData, PubDraftInfo, DocJson } from 'types';
-import { usePageContext } from 'utils/hooks';
+import type { DocJson, PubDraftInfo, PubHistoryState, PubPageData } from 'types';
+
+import { useCallback, useEffect } from 'react';
+
+import queryString from 'query-string';
+
 import { apiFetch } from 'client/utils/apiFetch';
 import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
+import { usePageContext } from 'utils/hooks';
 
 type Options = {
 	pubData: PubPageData;

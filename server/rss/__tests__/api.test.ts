@@ -1,4 +1,4 @@
-import { setup, login, teardown } from 'stubstub';
+import { login, setup, teardown } from 'stubstub';
 
 import { models } from './data';
 

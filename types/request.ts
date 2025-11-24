@@ -1,16 +1,15 @@
-import {
+import type { CascadedFacetsByKind } from 'facets';
+import type {
 	Collection,
 	Community,
 	DefinitelyHas,
+	Integration,
 	Member,
 	MemberPermission,
 	Pub,
 	ScopeId,
-	Integration,
 } from 'types';
-import { CascadedFacetsByKind } from 'facets';
-
-import { UserDismissableKey } from 'utils/userDismissable';
+import type { UserDismissableKey } from 'utils/userDismissable';
 
 export type LoginData = {
 	id: string | null;

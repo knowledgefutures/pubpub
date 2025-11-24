@@ -1,5 +1,5 @@
-import { Collection } from 'server/models';
-import { InitialData } from 'types';
+import type { Collection } from 'server/models';
+import type { InitialData } from 'types';
 
 export default (collection: Collection, initialData: InitialData) => {
 	/* Collections are included in all communityData in initialData */

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Classes, Icon, IconName } from '@blueprintjs/core';
 
-require('./nonIdealState.scss');
+import { Classes, Icon, type IconName } from '@blueprintjs/core';
+
+import './nonIdealState.scss';
 
 type Props = {
 	title?: string;

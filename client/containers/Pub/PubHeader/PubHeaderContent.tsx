@@ -1,10 +1,11 @@
+import type { PubPageData } from 'types';
+
 import React from 'react';
 
-import { ClickToCopyButton } from 'components';
-import { getPubPublishedDateString } from 'utils/pub/pubDates';
-import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-import { PubPageData } from 'types';
+import { ClickToCopyButton } from 'components';
+import { usePageContext } from 'utils/hooks';
+import { getPubPublishedDateString } from 'utils/pub/pubDates';
 
 import { usePubContext } from '../pubHooks';
 import CollectionsBar from './collections/CollectionsBar';

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
 import { Icon } from 'components';
@@ -6,7 +7,7 @@ import { usePageContext } from 'utils/hooks';
 
 import ScopePicker from './ScopePicker';
 
-require('./sideMenu.scss');
+import './sideMenu.scss';
 
 type Props = {
 	className?: string;

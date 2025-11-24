@@ -1,11 +1,14 @@
+import type { SocialItem } from 'client/utils/navigation';
+
 import React from 'react';
+
+import { Classes } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
+
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
-import { Classes } from '@blueprintjs/core';
-import { SocialItem } from 'client/utils/navigation';
 
-require('./userHeader.scss');
+import './userHeader.scss';
 
 const propTypes = {
 	userData: PropTypes.object.isRequired,

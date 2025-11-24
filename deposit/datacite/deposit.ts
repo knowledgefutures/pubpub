@@ -1,10 +1,13 @@
+import type { Resource } from 'deposit/resource';
+import type { Collection, Pub } from 'server/models';
+import type { DefinitelyHas } from 'types';
+
 import { renderXml } from '@pubpub/deposit-utils/datacite';
-import { Resource } from 'deposit/resource';
+
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { persistCrossrefDepositRecord, persistDoiData } from 'server/doi/queries';
-import { DefinitelyHas } from 'types';
 import { expect } from 'utils/assert';
-import { Collection, Pub } from 'server/models';
+
 import {
 	createDataciteDoiWithMetadata,
 	createDeposit,

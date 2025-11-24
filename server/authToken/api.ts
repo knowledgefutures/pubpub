@@ -1,7 +1,9 @@
 import { initServer } from '@ts-rest/express';
+
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
+
 import { AuthToken } from './model';
 
 const s = initServer();

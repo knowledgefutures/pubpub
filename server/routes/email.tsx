@@ -1,17 +1,20 @@
 import React from 'react';
+
+import { Router } from 'express';
+import { minify } from 'html-minifier';
+import juice from 'juice';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
-import juice from 'juice';
-import { minify } from 'html-minifier';
 
-import { isProd } from 'utils/environment';
-import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
-import { hostIsValid } from 'server/utils/routes';
-import { getDigestData } from 'server/utils/email/digest';
-import { getInitialData } from 'server/utils/initData';
-import { reset, globals } from 'components/Email/styles';
 import { Digest } from 'components/Email';
+import { globals, reset } from 'components/Email/styles';
+import { getDigestData } from 'server/utils/email/digest';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { hostIsValid } from 'server/utils/routes';
+import { isProd } from 'utils/environment';
+
+export const router = Router();
 
 const inlineStylesWithMarkup = (emailMarkup: React.ReactNode, extraStyles: string) => {
 	const stylesheet = new ServerStyleSheet();
@@ -55,7 +58,7 @@ const templates = {
 	},
 };
 
-app.get('/email/:templateSlug', async (req, res, next) => {
+router.get('/email/:templateSlug', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req, { isDashboard: true });
 		const {

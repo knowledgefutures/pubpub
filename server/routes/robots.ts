@@ -1,10 +1,13 @@
+import { Router } from 'express';
 import stripIndent from 'strip-indent';
 
-import app, { wrap } from 'server/server';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
+import { wrap } from 'server/wrap';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isProd } from 'utils/environment';
+
+export const router = Router();
 
 const buildRobotsFile = (community) => {
 	if (!isProd()) {
@@ -27,7 +30,7 @@ const buildRobotsFile = (community) => {
 	`).trim();
 };
 
-app.get(
+router.get(
 	'/robots.txt',
 	wrap(async (req, res) => {
 		let communityData;

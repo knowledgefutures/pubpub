@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
-import { Header, AccentStyle } from 'components';
+import { AccentStyle, Header } from 'components';
 import { locationData, loginData } from 'utils/storybook/data';
 
 const wrapperStyle = { margin: '2em 1em', border: '1px solid #CCC' };

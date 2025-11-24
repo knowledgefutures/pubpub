@@ -1,10 +1,10 @@
-/* eslint-disable jsx-a11y/label-has-for */
 import React from 'react';
-import { Classes } from '@blueprintjs/core';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
-require('./inputField.scss');
+import { Classes } from '@blueprintjs/core';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
+import './inputField.scss';
 
 const propTypes = {
 	autocomplete: PropTypes.string,

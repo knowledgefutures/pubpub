@@ -1,17 +1,18 @@
-import React from 'react';
+import type { ActivityItem, InsertableActivityItem } from 'types';
 
-import { ActivityItem, InsertableActivityItem } from 'types';
-import { communityUrl } from 'utils/canonicalUrls';
-import { isExternalUrl } from 'utils/urls';
-import { actorTitle } from 'utils/activity/titles';
-
-import {
-	ActivityItemRenderOptions,
+import type {
 	ActivityItemRenderer,
+	ActivityItemRenderOptions,
+	ActivityRenderContext,
 	Title,
 	TitleRenderer,
-	ActivityRenderContext,
 } from '../types';
+
+import React from 'react';
+
+import { actorTitle } from 'utils/activity/titles';
+import { communityUrl } from 'utils/canonicalUrls';
+import { isExternalUrl } from 'utils/urls';
 
 const renderTitleToReact = (title: Title, context: ActivityRenderContext) => {
 	const { title: titleNode, href, prefix, suffix } = title;
@@ -22,7 +23,7 @@ const renderTitleToReact = (title: Title, context: ActivityRenderContext) => {
 			? `${communityUrl(Object.values(context.associations.community)[0])}/${href.replace(
 					/^\//,
 					'',
-			  )}`
+				)}`
 			: href);
 
 	const inner = communityHref ? (

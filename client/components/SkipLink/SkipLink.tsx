@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TabToShow } from 'components';
 
-require('./skipLink.scss');
+import './skipLink.scss';
 
 type Props = {
 	children: React.ReactNode;

@@ -1,9 +1,11 @@
+import type { PubWithCollections } from 'types';
+
 import React, { useState } from 'react';
+
 import { useDebounce } from 'use-debounce';
 
-import { PubMenuItem, QueryListDropdown } from 'components';
-import { PubWithCollections } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
+import { PubMenuItem, QueryListDropdown } from 'components';
 
 import { LoadMorePubsRow } from '../overviewRows';
 

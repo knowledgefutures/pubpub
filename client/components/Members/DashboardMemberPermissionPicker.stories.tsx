@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { storiesOf } from '@storybook/react';
 
 import MemberPermissionPicker from 'components/Members/MemberPermissionPicker';
+
 // import { locationData, loginData, communityData } from 'utils/storybook/data';
 
 const style = { padding: '2em' };

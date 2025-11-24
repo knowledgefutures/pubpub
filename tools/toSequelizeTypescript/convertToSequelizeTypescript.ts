@@ -1,7 +1,4 @@
-/* eslint-disable consistent-return */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
+/** biome-ignore-all lint/performance/noAwaitInLoops: shhhhhh */
 import { lstat, readdir, readFile, writeFile } from 'fs/promises';
 import * as path from 'path';
 import vm from 'vm';

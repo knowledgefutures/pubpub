@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 const { freshProblemContext, getProblemContext, error } = require('../problems');
 const { createHashMatcher } = require('../util/hash');
 

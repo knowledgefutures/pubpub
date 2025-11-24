@@ -1,11 +1,13 @@
-import {
+import type {
 	PubReviewCommentAddedActivityItem,
 	PubReviewCreatedActivityItem,
 	PubReviewUpdatedActivityItem,
 } from 'types';
+
+import type { TitleRenderer } from '../../../client/utils/activity/types';
+
 import { getDashUrl } from 'utils/dashboard';
 
-import { TitleRenderer } from '../../../client/utils/activity/types';
 import { getPubFromContext, getReviewFromContext } from './util';
 
 type AcceptedItem =
@@ -23,7 +25,7 @@ export const reviewTitle: TitleRenderer<AcceptedItem> = (item, context) => {
 					pubSlug: pubFromContext.slug,
 					mode: 'reviews',
 					subMode: String(reviewFromContext.number),
-			  })
+				})
 			: null;
 
 	const title = reviewFromContext?.title || item.payload.review.title;

@@ -1,11 +1,13 @@
+import type { UserSubscriptionStatus } from 'types';
+
 import React from 'react';
-import { Classes, IconName } from '@blueprintjs/core';
 
-import { Menu, MenuButton, MenuItem } from 'components';
-import { UserSubscriptionStatus } from 'types';
+import { Classes, type IconName } from '@blueprintjs/core';
+
+import { Menu, type MenuButton, MenuItem } from 'components';
+
 import { adaptDisclosureElementForBlueprintButton } from '../Popover/blueprintAdapter';
-
-import { useSubscriptionState, SubscriptionStateOptions } from './useSubscriptionState';
+import { type SubscriptionStateOptions, useSubscriptionState } from './useSubscriptionState';
 
 type Props = SubscriptionStateOptions &
 	Pick<React.ComponentProps<typeof MenuButton>, 'buttonProps'> & {

@@ -1,12 +1,12 @@
-import { CreationAttributes, Op } from 'sequelize';
+import { type CreationAttributes, Op } from 'sequelize';
 import { promisify } from 'util';
 
-import { User, Signup } from 'server/models';
-import { slugifyString } from 'utils/strings';
+import { Signup, User } from 'server/models';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { updateUserData } from 'server/utils/search';
-import { ORCID_PATTERN } from 'utils/orcid';
 import { expect } from 'utils/assert';
+import { ORCID_PATTERN } from 'utils/orcid';
+import { slugifyString } from 'utils/strings';
 
 type InputValues = CreationAttributes<User> & {
 	subscribed?: boolean;

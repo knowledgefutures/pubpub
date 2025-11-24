@@ -1,6 +1,6 @@
-import { PubAttribution, includeUserModel } from 'server/models';
-import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { includeUserModel, PubAttribution } from 'server/models';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
+import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 import { createPurgeHooks } from 'utils/caching/createPurgeHooks';
 
 PubAttribution.afterCreate(async (attribution) => {

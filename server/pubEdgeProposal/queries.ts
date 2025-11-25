@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import cheerio  from 'cheerio';
 import fetch, { type Response } from 'node-fetch';
 import { Op } from 'sequelize';
 
@@ -68,7 +68,7 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
 		: null;
 };
 
-export const createExternalPublicationFromMicrodata = ($: typeof cheerio) => {
+export const createExternalPublicationFromMicrodata = ($: ReturnType<typeof cheerio.load> ) => {
 	const script = $('script[type="application/ld+json"]').get(0);
 
 	if (script) {

@@ -68,7 +68,7 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
 		: null;
 };
 
-export const createExternalPublicationFromMicrodata = ($: cheerio.Root) => {
+export const createExternalPublicationFromMicrodata = ($: typeof cheerio) => {
 	const script = $('script[type="application/ld+json"]').get(0);
 
 	if (script) {

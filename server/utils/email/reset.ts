@@ -1,7 +1,7 @@
 import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
-const mg = mailgun.client({
+export const mg = mailgun.client({
 	username: 'api',
 	key: process.env.MAILGUN_API_KEY!,
 });
@@ -46,6 +46,25 @@ export const sendPasswordResetEmail = ({ toEmail, resetUrl }) => {
 			We've received a password reset request. Follow the link below to reset your password.
 
 			${resetUrl}
+
+			Sincerely,
+			PubPub Support
+		`),
+		'h:Reply-To': 'hello@pubpub.org',
+	});
+};
+
+export const sendEmailChangeEmail = ({ toEmail, changeUrl }) => {
+	return mg.messages.create('mg.pubpub.org', {
+		from: 'PubPub Team <hello@mg.pubpub.org>',
+		to: [toEmail],
+		subject: 'Confirm Email Change · PubPub',
+		text: stripIndent(`
+			We've received a request to change your email address to this email. Follow the link below to confirm this change.
+
+			${changeUrl}
+
+			If you did not request this change, please ignore this email.
 
 			Sincerely,
 			PubPub Support

@@ -77,7 +77,7 @@ const UserMenu = (props: Props) => {
 					</React.Fragment>
 				}
 			/>
-			<MenuItem href="/legal/settings" text="Privacy settings" />
+			<MenuItem href="/legal/settings" text="Privacy &amp; Account Settings" />
 			<MenuItem onClick={handleLogout} text="Logout" />
 		</Menu>
 	);

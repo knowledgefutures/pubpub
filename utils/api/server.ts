@@ -17,6 +17,7 @@ import { pubEdgeServer } from 'server/pubEdge/api';
 import { releaseServer } from 'server/release/api';
 import { uploadRouteImplementation } from 'server/upload/api';
 import { uploadPolicyRouteImplementation } from 'server/uploadPolicy/api';
+import { accountServer } from 'server/user/account';
 import { workerTaskServer } from 'server/workerTask/api';
 
 import { contract } from './contract';
@@ -27,6 +28,7 @@ const s = initServer();
 const { customScript: _, ...contractWithScriptsAndCommunity } = contract;
 
 export const server = s.router(contractWithScriptsAndCommunity, {
+	account: accountServer,
 	analytics: analyticsServer,
 	auth: {
 		login: loginRouteImplementation,

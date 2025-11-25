@@ -22,6 +22,7 @@ import {
 	DashboardSettings,
 	DashboardSubmissions,
 	DashboardSubmissionWorkflow,
+	EmailChange,
 	Explore,
 	Landing,
 	Legal,
@@ -161,6 +162,11 @@ export default (viewData, locationData, chunkName) => {
 		},
 		PasswordReset: {
 			ActiveComponent: PasswordReset,
+			hideNav: true,
+			hideFooter: true,
+		},
+		EmailChange: {
+			ActiveComponent: EmailChange,
 			hideNav: true,
 			hideFooter: true,
 		},

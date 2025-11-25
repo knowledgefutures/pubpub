@@ -6,11 +6,13 @@ import { AnchorButton, Button, Card, Switch } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { getGdprConsentElection, updateGdprConsent } from 'client/utils/legal/gdprConsent';
+import AccountSecuritySettings from 'components/AccountSecuritySettings';
 import UserNotificationPreferences from 'components/UserNotifications/UserNotificationPreferences';
 import { usePageContext } from 'utils/hooks';
 
 type PrivacySettingsProps = {
 	integrations: types.Integration[];
+	userEmail: string;
 	isLoggedIn: boolean;
 	userNotificationPreferences?: types.UserNotificationPreferences;
 	onUpdateUserNotificationPreferences: (
@@ -159,6 +161,7 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 							/>
 						</Card>
 					)}
+					<AccountSecuritySettings userEmail={props.userEmail} />
 					<Card>
 						<h5>Account deletion</h5>
 						<p>

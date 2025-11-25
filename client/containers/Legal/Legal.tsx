@@ -18,6 +18,7 @@ import './legal.scss';
 type Props = {
 	integrations: Integration[];
 	userNotificationPreferences?: UserNotificationPreferences;
+	userEmail: string;
 };
 
 const Legal = (props: Props) => {
@@ -68,7 +69,7 @@ const Legal = (props: Props) => {
 							/>
 							<MenuItem
 								key="settings"
-								text="Privacy settings"
+								text="Privacy &amp; Account"
 								active={tab === 'settings'}
 								href="/legal/settings"
 							/>
@@ -82,6 +83,7 @@ const Legal = (props: Props) => {
 							<PrivacySettings
 								isLoggedIn={!!loginData.id}
 								integrations={props.integrations}
+								userEmail={props.userEmail}
 								userNotificationPreferences={userNotificationPreferences}
 								onUpdateUserNotificationPreferences={
 									updateUserNotificationPreferences

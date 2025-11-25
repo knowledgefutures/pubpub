@@ -2,6 +2,7 @@ import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { type AppRouter, initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
+import { type AccountRouter, accountRouter } from './contracts/account';
 import { type AnalyticsRouter, analyticsRouter } from './contracts/analytics';
 import { type AuthRouter, authRouter } from './contracts/auth';
 import { type AuthTokenRouter, authTokenRouter } from './contracts/authToken';
@@ -28,6 +29,8 @@ extendZodWithOpenApi(z);
 const c = initContract();
 
 export const router = {
+	/** Methods for dealing with user account settings */
+	account: accountRouter as AccountRouter,
 	/** Methods for dealing with authentication */
 	auth: authRouter as AuthRouter,
 	/** @internal */

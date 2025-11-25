@@ -23,6 +23,7 @@ export { default as DashboardReviews } from './DashboardReviews/DashboardReviews
 export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';
 export { default as DashboardSubmissions } from './DashboardSubmissions/DashboardSubmissions';
 export { default as DashboardSubmissionWorkflow } from './DashboardSubmissionWorkflow/DashboardSubmissionWorkflow';
+export { default as EmailChange } from './EmailChange/EmailChange';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
 export { default as Legal } from './Legal/Legal';

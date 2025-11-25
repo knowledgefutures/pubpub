@@ -6,6 +6,9 @@ import { sequelize } from './sequelize';
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 
+/* Import and create all models. */
+/* Also import them to make them available to other modules */
+
 import { ActivityItem } from './activityItem/model';
 import { AuthToken } from './authToken/model';
 import { Collection } from './collection/model';
@@ -21,6 +24,7 @@ import { Discussion } from './discussion/model';
 import { DiscussionAnchor } from './discussionAnchor/model';
 import { Doc } from './doc/model';
 import { Draft } from './draft/model';
+import { EmailChangeToken } from './emailChangeToken/model';
 import { Export } from './export/model';
 import { ExternalPublication } from './externalPublication/model';
 import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding';
@@ -78,6 +82,7 @@ sequelize.addModels([
 	DiscussionAnchor,
 	Doc,
 	Draft,
+	EmailChangeToken,
 	Export,
 	ExternalPublication,
 	FacetBindingModel,
@@ -169,6 +174,7 @@ export {
 	DepositTarget,
 	Discussion,
 	DiscussionAnchor,
+	EmailChangeToken,
 	Doc,
 	Draft,
 	Export,

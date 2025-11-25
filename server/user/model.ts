@@ -46,8 +46,9 @@ class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C
 	declare authenticate: <M extends Model>(
 		this: M,
 		password: string,
-		cb: ((err: any, user?: boolean, info?: any) => void) &
-			((err: any, user?: M, info?: any) => void),
+		cb:
+			| ((err: any, user?: boolean, info?: any) => void)
+			| ((err: any, user?: M, info?: any) => void),
 	) => void;
 
 	declare static authenticate: <M extends Model>(
@@ -55,8 +56,9 @@ class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C
 	) => (
 		username: string,
 		password: string,
-		cb: ((err: any, user?: boolean, info?: any) => void) &
-			((err: any, user?: M, info?: any) => void),
+		cb:
+			| ((err: any, user?: boolean, info?: any) => void)
+			| ((err: any, user?: M, info?: any) => void),
 	) => void;
 
 	declare static serializeUser: <M extends Model>(

@@ -11,11 +11,11 @@ import { PassThrough, Readable, Transform } from 'stream';
 
 import { renderStatic } from 'client/components/Editor/utils/renderStatic';
 import { editorSchema } from 'client/components/Editor/utils/schema';
-import { CollectionPub } from 'server/collectionPub/model';
 import { fetchFacetsForScopeIds } from 'server/facets';
 import {
 	Collection,
 	CollectionAttribution,
+	CollectionPub,
 	Community,
 	CustomScript,
 	Draft,

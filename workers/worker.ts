@@ -1,3 +1,7 @@
+// this _needs_ to happen first, otherwise there's a chance of creating a bad circular import
+// when directly importing models (`import { X } from 'server/X/model'`)
+import 'server/models';
+
 import type { ChildProcessWithoutNullStreams } from 'child_process';
 
 import type { Prettify } from 'types';

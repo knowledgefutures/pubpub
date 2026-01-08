@@ -76,7 +76,6 @@ const App = (props: Props) => {
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property '__pubpub_pageContextProps__' does not ex... Remove this comment to see the full error message
 		window.__pubpub_pageContextProps__ = pageContextProps;
 	}
 

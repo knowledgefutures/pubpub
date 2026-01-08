@@ -41,13 +41,6 @@ const basePubPubFooterLinks = [
 
 const baseSocialItems = [
 	{
-		id: 'si-1',
-		icon: 'twitter',
-		title: 'Twitter',
-		value: 'pubpub',
-		url: 'https://twitter.com/pubpub',
-	},
-	{
 		id: 'si-2',
 		icon: 'github',
 		title: 'Github',
@@ -123,11 +116,6 @@ const Footer = (props: Props) => {
 								</a>
 								<ul className="social-list">
 									<li>
-										<a href="https://twitter.com/pubpub" aria-label="Twitter">
-											<Icon icon="twitter" />
-										</a>
-									</li>
-									<li>
 										<a
 											href="mailto:hello@pubpub.org?subject=Contact"
 											aria-label="Contact via email"
@@ -149,11 +137,11 @@ const Footer = (props: Props) => {
 								<li>
 									<a href="https://github.com/pubpub/pubpub/discussions">Forum</a>
 								</li>
-								<li>
+								{/* <li>
 									<a href="https://www.knowledgefutures.org/pubpub/">
 										Learn about the new PubPub Platform
 									</a>
-								</li>
+								</li> */}
 							</ul>
 
 							<form onSubmit={handleEmailSubmit}>
@@ -283,8 +271,13 @@ const Footer = (props: Props) => {
 					)}
 					{isBasePubPub && (
 						<React.Fragment>
-							A project of the
-							<img className="logo" src="/static/kfgMini.svg" alt="KFG logo" />
+							A project of
+							<span className="sr-only">Knowledge Futures</span>
+							<img
+								className="logo"
+								src="/static/kfMini.svg"
+								alt="Knowledge Futures logo"
+							/>
 						</React.Fragment>
 					)}
 				</a>

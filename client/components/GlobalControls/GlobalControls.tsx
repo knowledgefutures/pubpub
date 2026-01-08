@@ -99,10 +99,10 @@ const GlobalControls = (props: Props) => {
 		if (isBasePubPub) {
 			return (
 				<>
-					<GlobalControlsButton
+					{/* <GlobalControlsButton
 						href="https://www.knowledgefutures.org/pubpub/"
 						mobileOrDesktop={{ text: 'PubPub Platform (new!)' }}
-					/>
+					/> */}
 					{renderSearch()}
 				</>
 			);

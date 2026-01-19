@@ -48,6 +48,7 @@ export const findPub = (pubId) =>
 		where: { id: pubId },
 		...buildPubOptions({
 			getEdgesOptions: {
+				includeTargetPub: true,
 				// Include Pub for both inbound and outbound pub connections
 				// since we do a lot of downstream processing with pubEdges.
 				includePub: true,
@@ -154,6 +155,24 @@ export const setDoiData = async (
 		reviewType,
 		reviewRecommendation,
 	};
+
+	const ids = { collectionId, pubId };
+
+	// peer reviews in crossref require a rel:program with isReviewOf relation,
+	// so we cannot do the two-phase deposit (disconnect then connect) that we
+	// use for other content types. for peer reviews, just submit once.
+	if (reviewType) {
+		const timestamp = new Date().getTime();
+		const depositJson = await getDoiData(depositParams, doiTarget, timestamp);
+		const { deposit, dois } = depositJson;
+		await submitDoiData(deposit, timestamp, communityId);
+		await Promise.all([
+			persistDoiData(ids, dois),
+			persistCrossrefDepositRecord(ids, depositJson),
+		]);
+		return { deposit, dois };
+	}
+
 	// Crossref requires us to first delete any existing relationships (by
 	// submitting a deposit without them), and then submit a deposit with the
 	// updated relationships. The second deposit must have a newer timestamp.
@@ -175,7 +194,6 @@ export const setDoiData = async (
 	const { deposit: depositConnected, dois } = depositJson;
 	// (4) Submit the connected deposit.
 	await submitDoiData(depositConnected, timestampConnected, communityId);
-	const ids = { collectionId, pubId };
 	// (5) Store the DOIs and Crossref deposit record.
 	await Promise.all([persistDoiData(ids, dois), persistCrossrefDepositRecord(ids, depositJson)]);
 	return { deposit: depositConnected, dois };

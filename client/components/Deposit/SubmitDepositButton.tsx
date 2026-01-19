@@ -36,7 +36,7 @@ const getButtonText = (status: SubmitDepositStatus, depositRecord?: DepositRecor
 
 export default function SubmitDepositButton(props: Props) {
 	return (
-		<InputField error={props.error && 'There was an error depositing the work.'}>
+		<InputField error={props.error}>
 			<Button
 				disabled={props.disabled || !props.onClick}
 				text={getButtonText(props.status, props.depositRecord)}

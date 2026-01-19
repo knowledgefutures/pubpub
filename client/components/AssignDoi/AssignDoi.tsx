@@ -263,10 +263,13 @@ function AssignDoi(props: Props) {
 					payload: preview,
 				});
 			} catch (err) {
-				if (err instanceof Error) {
-					dispatch({ type: AssignDoiActionType.Error, payload: err.message });
-					onError(err);
-				}
+				const errorMessage =
+					err instanceof Error
+						? err.message
+						: ((err as { error?: string })?.error ??
+							'There was an error generating the preview.');
+				dispatch({ type: AssignDoiActionType.Error, payload: errorMessage });
+				onError(err instanceof Error ? err : new Error(errorMessage));
 			}
 		},
 		[requestBody, onPreview, onError],
@@ -288,10 +291,13 @@ function AssignDoi(props: Props) {
 
 			onDeposit(response.dois[target]);
 		} catch (err) {
-			if (err instanceof Error) {
-				dispatch({ type: AssignDoiActionType.Error, payload: err.message });
-				onError(err);
-			}
+			const errorMessage =
+				err instanceof Error
+					? err.message
+					: ((err as { error?: string })?.error ??
+						'There was an error depositing the work.');
+			dispatch({ type: AssignDoiActionType.Error, payload: errorMessage });
+			onError(err instanceof Error ? err : new Error(errorMessage));
 		}
 	};
 

@@ -104,7 +104,6 @@ export const createPubEdgeProposalFromArbitraryUrl = async (url: string) => {
 	if (!response.ok) {
 		return null;
 	}
-
 	const $ = cheerio.load(await response.text());
 	const externalPublicationFromSelectors = runQueries($, pubEdgeQueries);
 	const externalPublicationFromMicrodata = createExternalPublicationFromMicrodata($);

@@ -1,4 +1,5 @@
 import type { DepositTarget } from 'types';
+import type { RelationTypeName } from 'utils/pubEdge/relations';
 
 import React, { Component } from 'react';
 
@@ -17,6 +18,22 @@ import {
 } from 'utils/pubEdge/relations';
 
 import './doi.scss';
+
+type RelationshipIssue = {
+	type:
+		| 'internal_not_deposited'
+		| 'external_doi_not_in_crossref'
+		| 'external_doi_not_crossref_registrar'
+		| 'external_url_no_doi_found';
+	edgeId: string;
+	targetTitle: string;
+	targetDoi?: string;
+	targetUrl?: string;
+	relationType: RelationTypeName;
+	targetPubId?: string;
+	targetPubSlug?: string;
+	targetCommunitySubdomain?: string;
+};
 
 type Props = {
 	canIssueDoi: boolean;
@@ -47,12 +64,38 @@ class Doi extends Component<Props, State> {
 			generating: false,
 			success: false,
 			updating: false,
+			validationIssues: [] as RelationshipIssue[],
+			validationLoading: false,
 		};
 
 		this.handleDeposit = this.handleDeposit.bind(this);
 		this.handleUpdateDoiClick = this.handleUpdateDoiClick.bind(this);
 		this.handleGenerateDoiClick = this.handleGenerateDoiClick.bind(this);
 		this.handleDeleteDoiClick = this.handleDeleteDoiClick.bind(this);
+	}
+
+	componentDidMount() {
+		this.fetchValidationIssues();
+	}
+
+	async fetchValidationIssues() {
+		const { communityData, pubData } = this.props;
+
+		this.setState({ validationLoading: true });
+
+		try {
+			const params = new URLSearchParams({
+				communityId: communityData.id,
+				pubId: pubData.id,
+			});
+			const response = await apiFetch(`/api/doi/validate?${params.toString()}`);
+			this.setState({
+				validationIssues: response.issues,
+				validationLoading: false,
+			});
+		} catch (_err) {
+			this.setState({ validationLoading: false });
+		}
 	}
 
 	getDoiPrefix() {
@@ -340,6 +383,76 @@ class Doi extends Component<Props, State> {
 		);
 	}
 
+	renderValidationWarnings() {
+		const { validationIssues } = this.state;
+
+		if (!validationIssues || validationIssues.length === 0) {
+			return null;
+		}
+
+		return (
+			<>
+				{validationIssues.map((issue: RelationshipIssue) => {
+					const relationDef = relationTypeDefinitions[issue.relationType];
+
+					if (issue.type === 'internal_not_deposited') {
+						const pubUrl = issue.targetCommunitySubdomain
+							? `https://${issue.targetCommunitySubdomain}.pubpub.org/dash/pub/${issue.targetPubSlug}/settings`
+							: `/dash/pub/${issue.targetPubSlug}/settings`;
+						return (
+							<Callout key={issue.edgeId} intent="danger">
+								This Pub has a {relationDef?.name || issue.relationType}{' '}
+								relationship to <strong>{issue.targetTitle}</strong>, which has not
+								been deposited to Crossref yet. You must{' '}
+								<a href={pubUrl} target="_blank" rel="noopener noreferrer">
+									deposit that Pub first
+								</a>{' '}
+								before this deposit can succeed.
+							</Callout>
+						);
+					}
+
+					if (issue.type === 'external_doi_not_crossref_registrar') {
+						return (
+							<Callout key={issue.edgeId} intent="danger">
+								The DOI <strong>{issue.targetDoi}</strong> for &quot;
+								{issue.targetTitle}&quot; is not a Crossref DOI. Peer reviews can
+								only link to DOIs registered with Crossref.
+							</Callout>
+						);
+					}
+
+					if (issue.type === 'external_doi_not_in_crossref') {
+						return (
+							<Callout key={issue.edgeId} intent="danger">
+								The DOI <strong>{issue.targetDoi}</strong> for &quot;
+								{issue.targetTitle}&quot; was not found in Crossref. Please verify
+								the DOI is correct.
+							</Callout>
+						);
+					}
+
+					if (issue.type === 'external_url_no_doi_found') {
+						return (
+							<Callout key={issue.edgeId} intent="danger">
+								Could not find a DOI for &quot;{issue.targetTitle}&quot;. Please add
+								a DOI manually to the connection in the Connections tab.
+							</Callout>
+						);
+					}
+
+					return null;
+				})}
+			</>
+		);
+	}
+
+	hasBlockingValidationIssues() {
+		const { validationIssues } = this.state;
+		// all issue types are now blocking
+		return validationIssues?.length > 0;
+	}
+
 	renderCrossrefDeposit() {
 		const { pubData } = this.props;
 		const { justSetDoi } = this.state;
@@ -379,6 +492,7 @@ class Doi extends Component<Props, State> {
 						releases.
 					</Callout>
 				)}
+				{this.renderValidationWarnings()}
 				<AssignDoi
 					communityData={this.props.communityData}
 					// @ts-expect-error ts-migrate(2322) FIXME: Type '(doi: any) => void' is not assignable to typ... Remove this comment to see the full error message
@@ -388,7 +502,8 @@ class Doi extends Component<Props, State> {
 					disabled={
 						this.disabledDueToParentWithoutDoi() ||
 						this.disabledDueToNoReleases() ||
-						this.disabledDueToUnmanagedPrefix()
+						this.disabledDueToUnmanagedPrefix() ||
+						this.hasBlockingValidationIssues()
 					}
 				/>
 			</FormGroup>

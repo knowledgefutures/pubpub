@@ -156,6 +156,9 @@ passport.deserializeUser(User.deserializeUser());
 /* ---------------- */
 appRouter.use('/dist', [cors(), express.static(path.join(process.cwd(), 'dist/client'))]);
 appRouter.use('/static', express.static(path.join(process.cwd(), 'static')));
+appRouter.use('/static', (req, res) => {
+	res.status(404).sendFile(path.join(process.cwd(), 'static/404.html'));
+});
 appRouter.use(
 	'/service-worker.js',
 	express.static(path.join(process.cwd(), 'static/service-worker.js')),

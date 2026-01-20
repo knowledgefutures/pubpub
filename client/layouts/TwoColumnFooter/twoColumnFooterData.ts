@@ -9,7 +9,7 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		imageUrl: 'https://assets.pubpub.org/umtgzgk9/carbon-neutral-org-11747831320464.svg',
 	},
 	copyright: {
-		date: '2023',
+		date: '2026',
 		attribution: 'eLife Sciences Publications Ltd.',
 		url: 'https://creativecommons.org/licenses/by/4.0/',
 		type: 'Creative Commons Attribution license',

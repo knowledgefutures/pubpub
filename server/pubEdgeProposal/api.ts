@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { wrap } from 'server/wrap';
-import { extractDoiFromOrgUrl, isDoi } from 'utils/crossref/parseDoi';
+import { extractDoiFromUrl, isDoi } from 'utils/crossref/parseDoi';
 import { parseUrl } from 'utils/urls';
 
 import {
@@ -27,7 +27,7 @@ router.get(
 				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ targetPub: any; }' is not assignable to ty... Remove this comment to see the full error message
 				edge = { targetPub: pub };
 			} else {
-				const doi = await extractDoiFromOrgUrl(url);
+				const doi = extractDoiFromUrl(url);
 
 				if (doi) {
 					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ externalPublication: { avatar: null; contr... Remove this comment to see the full error message

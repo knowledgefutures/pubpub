@@ -357,6 +357,8 @@ function AssignDoi(props: Props) {
 		priorPubDoi.current = pubData.doi;
 	}, [pubData.doi, status, fetchPreview]);
 
+	console.log('status', status, disabled, handleButtonClick);
+
 	return (
 		<div className="assign-doi-component">
 			{(status === SubmitDepositStatus.Previewed ||
@@ -432,7 +434,7 @@ function AssignDoi(props: Props) {
 				<AssignDoiPreview crossrefDepositRecord={crossrefDepositRecord} />
 			)}
 			<SubmitDepositButton
-				disabled={disabled}
+				disabled={status === SubmitDepositStatus.Previewed ? disabled : false}
 				onClick={handleButtonClick}
 				status={status}
 				depositRecord={pubData.crossrefDepositRecord}

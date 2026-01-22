@@ -25,7 +25,7 @@ type SuggestedItem =
 			externalPublication?: ExternalPublication;
 	  }
 	| { indeterminate: true }
-	| { createNewFromUrl: string };
+	| { createNewFromUrl: string; doi?: string };
 
 const suggestPopoverProps = {
 	wrapperTagName: 'div',
@@ -73,10 +73,15 @@ const NewEdgeInput = (props: Props) => {
 			apiFetch
 				.get(`/api/pubEdgeProposal?object=${encodeURIComponent(throttledQueryValue)}`)
 				.then((res) => {
-					if (res) {
+					const {
+						externalPublication: { doi, ...restPublication },
+						...rest
+					} = res ?? {};
+
+					if (Object.keys(rest).length > 0 || Object.keys(restPublication).length > 0) {
 						setProposedItem(res);
 					} else {
-						setProposedItem({ createNewFromUrl: throttledQueryValue });
+						setProposedItem({ createNewFromUrl: throttledQueryValue, doi });
 					}
 				});
 		} else {

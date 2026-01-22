@@ -1,4 +1,4 @@
-import type { PubEdge } from 'types';
+import type { ExternalPublication, Pub, PubEdge } from 'types';
 import type { RelationTypeName } from 'utils/pubEdge/relations';
 
 import React from 'react';
@@ -45,8 +45,13 @@ const NewEdgeEditor = (props: Props) => {
 		relationTypeDefinitions[pubEdge.relationType] &&
 		relationTypeDefinitions[pubEdge.relationType].name;
 
-	const handleSelectItem = (item) => {
-		const { targetPub, externalPublication, createNewFromUrl } = item;
+	const handleSelectItem = (item: {
+		targetPub?: Pub;
+		externalPublication?: ExternalPublication;
+		createNewFromUrl?: string;
+		doi?: string;
+	}) => {
+		const { targetPub, externalPublication, createNewFromUrl, doi } = item;
 		if (targetPub) {
 			onChange(createCandidateEdge({ targetPub, targetPubId: targetPub.id }));
 		} else if (externalPublication) {
@@ -63,6 +68,7 @@ const NewEdgeEditor = (props: Props) => {
 				createCandidateEdge({
 					externalPublication: {
 						url: createNewFromUrl,
+						doi,
 						contributors: [],
 					},
 				}),

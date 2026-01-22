@@ -6,7 +6,9 @@ import fetch from 'node-fetch';
 import { type ExternalPublication, type Pub, PubEdge } from 'server/models';
 import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
+import { extractDoiFromUrl } from 'utils/crossref/parseDoi';
 import { assignNotNull } from 'utils/objects';
+import { parseUrl } from 'utils/urls';
 
 export type RelationshipIssue = {
 	type:
@@ -53,7 +55,8 @@ const checkDoiRegistrar = async (doi: string): Promise<'crossref' | 'other' | 'u
 
 const checkDoiExistsInCrossref = async (doi: string): Promise<boolean> => {
 	try {
-		const response = await fetch(`https://api.crossref.org/works/${doi}`);
+		// mailto for polite pool
+		const response = await fetch(`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`);
 		return response.ok;
 	} catch {
 		return false;
@@ -79,7 +82,7 @@ const createExternalPublicationFromMicrodata = ($: ReturnType<typeof cheerio.loa
 	}
 };
 
-const extractDoiFromUrl = async (url: string): Promise<string | null> => {
+const extractDoiFromWebPage = async (url: string): Promise<string | null> => {
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -118,7 +121,6 @@ const checkEdgeForIssues = async (
 		return null;
 	}
 
-	// strict validation only applies to reviews/rejoinders
 	const isReview = isReviewRelationType(edge.relationType);
 	if (!isReview) {
 		return null;
@@ -142,29 +144,30 @@ const checkEdgeForIssues = async (
 		};
 	}
 
-	// external publication
 	const { externalPublication } = target;
 
+	const doi = externalPublication.doi ?? extractDoiFromUrl(parseUrl(externalPublication.url));
+
 	// for reviews, we need to verify the DOI exists in Crossref
-	if (externalPublication.doi) {
-		const registrar = await checkDoiRegistrar(externalPublication.doi);
+	if (doi) {
+		const registrar = await checkDoiRegistrar(doi);
 		if (registrar === 'other') {
 			return {
 				type: 'external_doi_not_crossref_registrar',
 				edgeId: edge.id,
 				targetTitle: externalPublication.title,
-				targetDoi: externalPublication.doi,
+				targetDoi: doi,
 				relationType: edge.relationType,
 			};
 		}
 
-		const existsInCrossref = await checkDoiExistsInCrossref(externalPublication.doi);
+		const existsInCrossref = await checkDoiExistsInCrossref(doi);
 		if (!existsInCrossref) {
 			return {
 				type: 'external_doi_not_in_crossref',
 				edgeId: edge.id,
 				targetTitle: externalPublication.title,
-				targetDoi: externalPublication.doi,
+				targetDoi: doi,
 				relationType: edge.relationType,
 			};
 		}
@@ -174,7 +177,7 @@ const checkEdgeForIssues = async (
 
 	// no DOI set, try to find one from the URL
 	if (externalPublication.url) {
-		const foundDoi = await extractDoiFromUrl(externalPublication.url);
+		const foundDoi = await extractDoiFromWebPage(externalPublication.url);
 		if (foundDoi) {
 			const registrar = await checkDoiRegistrar(foundDoi);
 			if (registrar === 'other') {

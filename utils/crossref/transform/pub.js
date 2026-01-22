@@ -1,6 +1,8 @@
 import { pubUrl } from 'utils/canonicalUrls';
+import { extractDoiFromUrl } from 'utils/crossref/parseDoi';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { relationTypeDefinitions } from 'utils/pubEdge/relations';
+import { parseUrl } from 'utils/urls';
 
 import transformAttributions from './attributions';
 
@@ -14,8 +16,20 @@ function getIdentifierData(pubEdge, isInboundEdge) {
 	if (externalPublication) {
 		const { doi, url } = externalPublication;
 
-		identifier = doi || url;
-		identifierType = doi ? 'doi' : 'uri';
+		if (doi) {
+			identifier = doi;
+			identifierType = 'doi';
+		} else {
+			// try to extract DOI from URL (handles highwire-style URLs like /content/{doi}v1)
+			const extractedDoi = url ? extractDoiFromUrl(parseUrl(url)) : null;
+			if (extractedDoi) {
+				identifier = extractedDoi;
+				identifierType = 'doi';
+			} else {
+				identifier = url;
+				identifierType = 'uri';
+			}
+		}
 	} else {
 		const { doi, community } = targetPub;
 

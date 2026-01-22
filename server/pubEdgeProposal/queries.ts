@@ -6,6 +6,7 @@ import { Community, Pub } from 'server/models';
 import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
 import { expect } from 'utils/assert';
+import { extractDoiFromUrl } from 'utils/crossref/parseDoi';
 import { assignNotNull } from 'utils/objects';
 import { parseUrl } from 'utils/urls';
 
@@ -21,7 +22,7 @@ const ensureFullUrlForExternalPublication = (externalPublication, responseUrl: s
 };
 
 export const createExternalPublicationFromCrossrefDoi = async (doi) => {
-	const response = await fetch(`https://api.crossref.org/works/${doi}`);
+	const response = await fetch(`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`);
 
 	if (!response.ok) {
 		return null;
@@ -65,7 +66,11 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi: string) => {
 		? {
 				externalPublication,
 			}
-		: null;
+		: {
+				externalPublication: {
+					doi,
+				},
+			};
 };
 
 export const createExternalPublicationFromMicrodata = ($: ReturnType<typeof cheerio.load>) => {
@@ -97,11 +102,23 @@ export const createPubEdgeProposalFromArbitraryUrl = async (url: string) => {
 
 	try {
 		response = await fetch(url);
-	} catch {
+	} catch (e) {
+		console.error('error fetching url', e);
 		return null;
 	}
 
 	if (!response.ok) {
+		// mayyyybe we can still get the DOI from here
+		// if we get to this point, it makes no sense to fetch the doi again, this is just to set the doi param of the edge
+		const doi = extractDoiFromUrl(parseUrl(url));
+		if (doi) {
+			return {
+				externalPublication: {
+					doi,
+				},
+			};
+		}
+
 		return null;
 	}
 	const $ = cheerio.load(await response.text());

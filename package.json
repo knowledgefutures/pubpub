@@ -105,7 +105,7 @@
 		"@types/styled-components": "^5.1.12",
 		"@types/website-scraper": "^1.2.10",
 		"algoliasearch": "^4.2.0",
-		"amqplib": "^0.5.3",
+		"amqplib": "^0.10.9",
 		"archiver": "^7.0.1",
 		"big-json": "^2.0.2",
 		"body-parser": "^1.19.0",

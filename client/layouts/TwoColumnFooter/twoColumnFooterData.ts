@@ -47,16 +47,16 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		},
 	],
 	iconLinks: [
-    {
-     	url: 'https://bsky.app/profile/did:plc:4irghgzlsjk6ugrekoqyl7km',
-     	ariaLabel: 'Bluesky',
-     	pathProps: {
-    		d: iconPaths.bluesky,
-    		fill: '#000000',
-    		fillRule: 'nonzero',
-     	},
-    },
-    {
+		{
+			url: 'https://bsky.app/profile/did:plc:4irghgzlsjk6ugrekoqyl7km',
+			ariaLabel: 'Bluesky',
+			pathProps: {
+				d: iconPaths.bluesky,
+				fill: '#000000',
+				fillRule: 'nonzero',
+			},
+		},
+		{
 			url: 'https://www.linkedin.com/company/elife-sciences-publications-ltd',
 			ariaLabel: 'LinkedIn',
 			pathProps: {

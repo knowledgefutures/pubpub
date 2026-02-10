@@ -47,6 +47,25 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		},
 	],
 	iconLinks: [
+    {
+     	url: 'https://bsky.app/profile/did:plc:4irghgzlsjk6ugrekoqyl7km',
+     	ariaLabel: 'Bluesky',
+     	pathProps: {
+    		d: iconPaths.bluesky,
+    		fill: '#000000',
+    		fillRule: 'nonzero',
+     	},
+    },
+    {
+			url: 'https://www.linkedin.com/company/elife-sciences-publications-ltd',
+			ariaLabel: 'LinkedIn',
+			pathProps: {
+				d: iconPaths.linkedin,
+				id: 'Path_2520',
+				fill: '#212121',
+				fillRule: 'nonzero',
+			},
+		},
 		{
 			url: 'https://twitter.com/elife',
 			ariaLabel: 'Twitter',
@@ -58,12 +77,13 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 			},
 		},
 		{
-			url: 'https://www.facebook.com/elifesciences',
-			ariaLabel: 'Facebook',
+			url: 'https://fediscience.org/@eLife',
+			ariaLabel: 'Mastodon',
 			pathProps: {
-				d: iconPaths.facebook,
-				id: 'Fill-1',
-				fill: '#0A0B09',
+				d: iconPaths.mastodon,
+				id: 'Combined-Shape',
+				fill: '#212121', // or 000000?
+				fillRule: 'nonzero',
 			},
 		},
 		{
@@ -86,23 +106,21 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 			},
 		},
 		{
-			url: 'https://www.linkedin.com/company/elife-sciences-publications-ltd',
-			ariaLabel: 'LinkedIn',
+			url: 'https://www.threads.com/@elifesciences',
+			ariaLabel: 'Threads',
 			pathProps: {
-				d: iconPaths.linkedin,
-				id: 'Path_2520',
-				fill: '#212121',
+				d: iconPaths.threads,
+				fill: '#000000',
 				fillRule: 'nonzero',
 			},
 		},
 		{
-			url: 'https://fediscience.org/@eLife',
-			ariaLabel: 'Mastodon',
+			url: 'https://www.facebook.com/elifesciences',
+			ariaLabel: 'Facebook',
 			pathProps: {
-				d: iconPaths.mastodon,
-				id: 'Combined-Shape',
-				fill: '#212121', // or 000000?
-				fillRule: 'nonzero',
+				d: iconPaths.facebook,
+				id: 'Fill-1',
+				fill: '#0A0B09',
 			},
 		},
 	],

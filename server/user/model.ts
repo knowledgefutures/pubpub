@@ -11,6 +11,7 @@ import type { SerializedModel } from 'types';
 
 import {
 	AllowNull,
+	BelongsTo,
 	Column,
 	DataType,
 	Default,
@@ -29,6 +30,7 @@ import {
 import {
 	Discussion,
 	PubAttribution,
+	SpamTag,
 	UserNotificationPreferences,
 	ZoteroIntegration,
 } from '../models';
@@ -235,6 +237,12 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	@Default(false)
 	@Column(DataType.BOOLEAN)
 	declare isSuperAdmin: CreationOptional<boolean>;
+
+	@Column(DataType.UUID)
+	declare spamTagId: string | null;
+
+	@BelongsTo(() => SpamTag, { as: 'spamTag', foreignKey: 'spamTagId' })
+	declare spamTag?: SpamTag;
 
 	@HasMany(() => PubAttribution, {
 		onDelete: 'CASCADE',

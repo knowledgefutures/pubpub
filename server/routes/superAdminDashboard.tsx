@@ -5,9 +5,11 @@ import React from 'react';
 import { Router } from 'express';
 
 import { filtersById as spamFiltersById } from 'client/containers/SuperAdminDashboard/CommunitySpam/filters';
+import { filtersById as spamUsersFiltersById } from 'client/containers/SuperAdminDashboard/UserSpam/filters';
 import Html from 'server/Html';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communities';
+import { queryUsersForSpamManagement } from 'server/spamTag/users';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -34,6 +36,20 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 				searchTerm,
 				...query!,
 			}),
+		};
+	}
+	if (tabKind === 'spamUsers') {
+		const searchTerm = locationData.query.q ?? null;
+		const { query } = spamUsersFiltersById[searchTerm ? 'recent' : 'unreviewed'];
+		const users = await queryUsersForSpamManagement({
+			limit: 50,
+			searchTerm,
+			...query!,
+		});
+		console.log('users', users);
+		return {
+			searchTerm,
+			users,
 		};
 	}
 	return {};

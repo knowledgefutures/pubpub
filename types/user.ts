@@ -39,6 +39,8 @@ export type User = Pick<
 export type UserWithPrivateFields = Pick<
 	UserType,
 	| keyof User
+	| 'spamTag'
+	| 'createdAt'
 	| 'isSuperAdmin'
 	| 'passwordDigest'
 	| 'hash'

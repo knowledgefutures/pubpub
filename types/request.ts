@@ -38,6 +38,7 @@ export type LocationData = {
 	isQubQub: boolean;
 	isDashboard: boolean;
 	appCommit: string;
+	turnstileSiteKey?: string;
 };
 
 export type ScopeData = {

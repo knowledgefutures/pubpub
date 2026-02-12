@@ -28,3 +28,21 @@ export type SpamCommunityQuery = {
 	searchTerm?: string;
 	ordering: SpamCommunityQueryOrdering;
 };
+
+export type SpamUserQueryOrderingField =
+	| 'user-created-at'
+	| 'spam-score'
+	| 'spam-status-updated-at';
+
+export type SpamUserQueryOrdering = {
+	direction: 'ASC' | 'DESC';
+	field: SpamUserQueryOrderingField;
+};
+
+export type SpamUserQuery = {
+	status: SpamStatus[];
+	offset?: number;
+	limit?: number;
+	searchTerm?: string;
+	ordering: SpamUserQueryOrdering;
+};

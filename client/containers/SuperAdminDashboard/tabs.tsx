@@ -4,6 +4,7 @@ import React from 'react';
 
 import CommunitySpam from './CommunitySpam';
 import LandingPageFeatures from './LandingPageFeatures';
+import UserSpam from './UserSpam';
 
 type SuperAdminTab = {
 	title: string;
@@ -18,5 +19,9 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	spam: {
 		title: 'Spam Communities',
 		component: CommunitySpam,
+	},
+	spamUsers: {
+		title: 'Spam Users',
+		component: UserSpam,
 	},
 };

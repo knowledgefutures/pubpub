@@ -6,8 +6,11 @@ import bb from 'busboy';
 import mime from 'mime-types';
 import uuid from 'uuid';
 
+import { isSuspiciousUploadKey } from 'server/spamTag/uploadScamKeywords';
+import { addSpamTagToUser } from 'server/spamTag/userQueries';
 import { BadRequestError } from 'server/utils/errors';
 import { createPubPubS3Client } from 'server/utils/s3';
+import { postToSlackAboutSuspiciousUpload } from 'server/utils/slack';
 import { mimeTypeSchema } from 'utils/api/schemas/upload';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { generateHash } from 'utils/hashes';
@@ -135,6 +138,28 @@ export const uploadRouteImplementation: AppRouteOptions<typeof contract.upload.f
 							},
 						});
 
+						const user = req.user as
+							| { id: string; email?: string; fullName?: string }
+							| undefined;
+						if (
+							user &&
+							(isSuspiciousUploadKey(possiblyDerivedFilename) ||
+								isSuspiciousUploadKey(key))
+						) {
+							addSpamTagToUser(user.id)
+								.then(() =>
+									postToSlackAboutSuspiciousUpload(
+										user.id,
+										user.email ?? '',
+										user.fullName ?? 'Unknown',
+										key,
+									),
+								)
+								.catch(() => {
+									// do not fail the upload if spam tagging or slack fails
+								});
+						}
+
 						resolve({ url: `https://assets.pubpub.org/${key}`, size, key });
 					} catch (err: any) {
 						reject(err);
@@ -146,7 +171,6 @@ export const uploadRouteImplementation: AppRouteOptions<typeof contract.upload.f
 		req.pipe(busboy);
 		try {
 			const bod = await result;
-
 			return {
 				status: 201,
 				body: bod,

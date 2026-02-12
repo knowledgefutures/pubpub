@@ -75,6 +75,9 @@ export const s3Upload = (file: File, onProgress, onFinish, index?: number) => {
 		formData.append('policy', policy);
 		formData.append('signature', signature);
 		formData.append('Content-Type', fileType);
+		if (fileType === 'text/html') {
+			formData.append('Content-Disposition', 'attachment; filename="' + file.name + '"');
+		}
 		formData.append('success_action_status', '200');
 		formData.append('file', file);
 		const sendFile = new XMLHttpRequest();
@@ -93,6 +96,11 @@ export const s3Upload = (file: File, onProgress, onFinish, index?: number) => {
 	}
 	const getPolicy = new XMLHttpRequest();
 	getPolicy.addEventListener('load', beginUpload);
-	getPolicy.open('GET', `/api/uploadPolicy?contentType=${encodeURIComponent(file.type)}`);
+	const policyParams = new URLSearchParams({
+		contentType: file.type,
+	});
+	if (file.name) policyParams.set('filename', file.name);
+	policyParams.set('key', fileName);
+	getPolicy.open('GET', `/api/uploadPolicy?${policyParams.toString()}`);
 	getPolicy.send();
 };

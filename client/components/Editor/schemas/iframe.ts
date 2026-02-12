@@ -46,6 +46,13 @@ export default {
 		],
 		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
 			const figcaptionId = `${node.attrs.id}-figure-caption`;
+			const url = node.attrs.url;
+			const isHtmlAsset = /^https?:\/\/[^/]*assets\.pubpub\.org\/.+(\.html?)$/i.test(url);
+			const src = isHtmlAsset
+				? url.includes('?')
+					? `${url}&embed=1`
+					: `${url}?embed=1`
+				: url;
 			return [
 				'figure',
 				{
@@ -59,7 +66,7 @@ export default {
 					'iframe',
 					{
 						alt: node.attrs.caption,
-						src: node.attrs.url,
+						src,
 						height: node.attrs.height,
 						'aria-describedby': figcaptionId,
 						allowfullscreen: 'true',

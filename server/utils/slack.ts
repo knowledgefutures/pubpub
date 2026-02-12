@@ -62,3 +62,35 @@ export const postToSlackAboutNewCommunity = async (
 		});
 	}
 };
+
+export const postToSlackAboutSuspiciousUpload = async (
+	userId: string,
+	userEmail: string,
+	userName: string,
+	key: string,
+) => {
+	if (isProd()) {
+		const spamUsersUrl = `https://pubpub.org${getSuperAdminTabUrl('spamUsers')}?q=${encodeURIComponent(userEmail)}`;
+		await postToSlack({
+			icon_emoji: ':warning:',
+			attachments: [
+				{
+					fallback: `Suspicious upload by ${userName} (${userEmail}): ${key}`,
+					pretext: 'Suspicious upload detected (scam keywords in filename)',
+					color: 'warning',
+					fields: [
+						{ title: 'User', value: `${userName} (${userEmail})` },
+						{ title: 'Object key', value: key },
+					],
+					actions: [
+						{
+							type: 'button',
+							text: 'View in Spam Users Dashboard',
+							url: spamUsersUrl,
+						},
+					],
+				},
+			],
+		});
+	}
+};

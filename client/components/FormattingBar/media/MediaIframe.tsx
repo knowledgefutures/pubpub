@@ -30,6 +30,20 @@ class MediaIframe extends Component<Props, State> {
 
 	render() {
 		const isValid = isHttpsUri(this.state.url);
+
+		const isAssets = this.state.url.includes('assets.pubpub.org');
+		const isAssetsHtml = isAssets && this.state.url.endsWith('.html');
+		let src = this.state.url;
+		if (isAssetsHtml) {
+			try {
+				const url = new URL(this.state.url);
+				url.searchParams.set('embed', '1');
+				src = url.toString();
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
 		return (
 			<div className="formatting-bar_media-component-content">
 				<InputGroup
@@ -54,12 +68,7 @@ class MediaIframe extends Component<Props, State> {
 				/>
 				{isValid && (
 					<div className="preview-wrapper">
-						<iframe
-							frameBorder="none"
-							src={this.state.url}
-							title="URL preview"
-							allowFullScreen
-						/>
+						<iframe frameBorder="none" src={src} title="URL preview" allowFullScreen />
 					</div>
 				)}
 				{!isValid && (

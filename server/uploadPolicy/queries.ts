@@ -2,7 +2,13 @@ import crypto from 'crypto';
 
 import { expect } from 'utils/assert';
 
-export const getUploadPolicy = ({ contentType }: { contentType: string }) => {
+type GetUploadPolicyParams = {
+	contentType: string;
+	filename?: string;
+	key?: string;
+};
+
+export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
 	const awsAccessKeyId = expect(process.env.AWS_ACCESS_KEY_ID);
@@ -17,6 +23,9 @@ export const getUploadPolicy = ({ contentType }: { contentType: string }) => {
 			{ acl },
 			{ success_action_status: '200' },
 			['starts-with', '$Content-Type', contentType],
+			...(contentType === 'text/html'
+				? [['starts-with', '$Content-Disposition', 'attachment; filename="']]
+				: []),
 		],
 	};
 

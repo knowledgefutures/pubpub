@@ -56,6 +56,8 @@ export const uploadRouter = {
 		description: 'Get upload policy. Used for doing manual uploads.',
 		query: z.object({
 			contentType: z.string(),
+			filename: z.string().optional(),
+			key: z.string().optional(),
 		}),
 		responses: {
 			200: z.object({

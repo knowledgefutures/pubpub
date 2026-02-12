@@ -36,6 +36,10 @@ export const authRouter = {
 				description: `Successfully authenticated.\n The sesion ID is returned in a cookie named \`connect.sid\` and should be included in all subsequent requests.`,
 			}),
 			401: z.literal('Login attempt failed').openapi({}),
+			403: z.string().openapi({
+				description:
+					'Account restricted (e.g. marked as spam). Message is shown to the user.',
+			}),
 			500: z.string().openapi({}),
 		},
 	},

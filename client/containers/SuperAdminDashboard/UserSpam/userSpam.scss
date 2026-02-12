@@ -1,0 +1,20 @@
+.user-spam-component {
+	.add-user-row {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		margin-top: 10px;
+		width: 100%;
+		max-width: 400px;
+	}
+	.add-user-error {
+		margin-top: 6px;
+		color: var(--pt-intent-danger);
+	}
+	.users {
+		margin-top: 10px;
+		> :not(:last-child) {
+			margin-bottom: 5px;
+		}
+	}
+}

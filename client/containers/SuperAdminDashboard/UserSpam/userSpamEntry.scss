@@ -1,0 +1,53 @@
+.user-spam-entry-component {
+	border-radius: 2px;
+	border: 1px solid #eee;
+	padding: 10px;
+
+	& > *:not(:last-child) {
+		margin-bottom: 6px;
+	}
+
+	.title {
+		font-size: 16px;
+		font-weight: 500;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		align-items: baseline;
+
+		.name {
+			font-weight: 600;
+		}
+		.email {
+			color: #666;
+			font-size: 14px;
+		}
+		.slug {
+			color: #888;
+			font-size: 14px;
+		}
+	}
+
+	.fields-report {
+		details > summary {
+			user-select: none;
+		}
+		pre {
+			background: #eee;
+			padding: 5px;
+		}
+	}
+
+	.details {
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		> .tags {
+			display: flex;
+			flex-wrap: wrap;
+			& > *:not(:last-child) {
+				margin-right: 4px;
+			}
+		}
+	}
+}

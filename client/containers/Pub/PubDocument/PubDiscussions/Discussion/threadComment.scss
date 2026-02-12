@@ -8,6 +8,21 @@
 		margin-bottom: 1em;
 		border-bottom: 1px solid #f0f0f7;
 	}
+	&.is-spam {
+		.discussion-body-wrapper {
+			opacity: 0.85;
+		}
+	}
+	.thread-comment-spam-banner {
+		width: 100%;
+		margin-bottom: 0.5em;
+		padding: 0.4em 0.6em;
+		font-size: 12px;
+		background: #fcf3cd;
+		color: #856404;
+		border-radius: 2px;
+		border-left: 3px solid #ffc107;
+	}
 	&.is-preview {
 		.content-wrapper {
 			margin-bottom: 0;

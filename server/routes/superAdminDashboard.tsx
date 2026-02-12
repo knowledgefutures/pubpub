@@ -40,13 +40,12 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
-		const { query } = spamUsersFiltersById[searchTerm ? 'recent' : 'unreviewed'];
+		const { query } = spamUsersFiltersById['all'];
 		const users = await queryUsersForSpamManagement({
 			limit: 50,
 			searchTerm,
 			...query!,
 		});
-		console.log('users', users);
 		return {
 			searchTerm,
 			users,

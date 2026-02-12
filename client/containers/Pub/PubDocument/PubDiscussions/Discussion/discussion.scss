@@ -10,6 +10,18 @@ $bp: vendor.$bp-namespace;
 	padding: 1em 0em;
 	font-size: 14px;
 	text-align: left;
+	&.is-author-spam {
+		opacity: 0.9;
+	}
+	.discussion-spam-banner {
+		margin-bottom: 0.75em;
+		padding: 0.4em 0.6em;
+		font-size: 12px;
+		background: #fcf3cd;
+		color: #856404;
+		border-radius: 2px;
+		border-left: 3px solid #ffc107;
+	}
 	.collapse-button {
 		position: absolute;
 		top: 0;

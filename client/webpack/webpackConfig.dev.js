@@ -20,7 +20,7 @@ module.exports = {
 		main: resolve(__dirname, `../containers/App/App.tsx`),
 	},
 	resolve: {
-		extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss'],
+		extensions: ['.mjs', '.cjs', '.js', '.jsx', '.ts', '.tsx', '.scss'],
 		modules: [resolve(__dirname, '../'), 'node_modules'],
 		alias: {
 			client: resolve(__dirname, '../../client'),
@@ -56,9 +56,15 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.mjs$/,
-				include: /node_modules/,
+				test: /\.(mjs|cjs)$/,
+				// this module includes nullish coalescing and optional chaining, which are not supported by webpack 4
+				include: /node_modules\/@marsidev\/react-turnstile/,
 				type: 'javascript/auto',
+				loader: 'esbuild-loader',
+				/** @type {import('esbuild-loader').LoaderOptions} */
+				options: {
+					target: 'es6'
+				},
 			},
 			{
 				test: /\.((c|m)?js|jsx|ts|tsx)$/,

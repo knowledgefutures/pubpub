@@ -49,8 +49,9 @@ export type PubDocInfo = {
 };
 
 export type PubPageDiscussion = DefinitelyHas<Discussion, 'anchors'> & {
+	isAuthorSpam?: boolean;
 	thread: Thread & {
-		comments: DefinitelyHas<ThreadComment, 'author'>[];
+		comments: (DefinitelyHas<ThreadComment, 'author'> & { isAuthorSpam?: boolean })[];
 	};
 };
 

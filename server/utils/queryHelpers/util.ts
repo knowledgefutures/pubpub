@@ -1,6 +1,7 @@
 import {
 	Commenter,
 	includeUserModel,
+	SpamTag,
 	Thread,
 	ThreadComment,
 	ThreadEvent,
@@ -50,7 +51,12 @@ export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, l
 	});
 };
 
-export const baseAuthor = [includeUserModel({ as: 'author' })];
+const authorWithSpamTag = () => ({
+	...includeUserModel({ as: 'author' }),
+	include: [{ model: SpamTag, as: 'spamTag' }],
+});
+
+export const baseAuthor = [authorWithSpamTag()];
 export const baseThread = [
 	{
 		model: Thread,
@@ -59,10 +65,7 @@ export const baseThread = [
 			{
 				model: ThreadComment,
 				as: 'comments',
-				include: [
-					includeUserModel({ as: 'author' }),
-					{ model: Commenter, as: 'commenter' },
-				],
+				include: [authorWithSpamTag(), { model: Commenter, as: 'commenter' }],
 			},
 			{
 				model: ThreadEvent,

@@ -47,13 +47,9 @@ export const useSpamUsers = (options: UseSpamUsersOptions) => {
 		loadMoreUsers();
 	}, [setOffset, loadMoreUsers, filter]);
 
-	const prependUser = useCallback((user: SpamUser) => {
-		setUsers((current) => {
-			const seen = new Set(current.map((u) => u.id));
-			if (seen.has(user.id)) return current;
-			return [user, ...current];
-		});
+	const updateUser = useCallback((userId: string, patch: Partial<SpamUser>) => {
+		setUsers((current) => current.map((u) => (u.id === userId ? { ...u, ...patch } : u)));
 	}, []);
 
-	return { users, isLoading, loadMoreUsers, mayLoadMoreUsers, prependUser };
+	return { users, isLoading, loadMoreUsers, mayLoadMoreUsers, updateUser };
 };

@@ -39,10 +39,17 @@ export type SpamUserQueryOrdering = {
 	field: SpamUserQueryOrderingField;
 };
 
+export type SpamUserAffiliation = {
+	communitySubdomains: string[];
+	pubCount: number;
+	discussionCount: number;
+};
+
 export type SpamUserQuery = {
-	status: SpamStatus[];
+	status?: SpamStatus[] | null;
 	offset?: number;
 	limit?: number;
 	searchTerm?: string;
 	ordering: SpamUserQueryOrdering;
+	includeAffiliation?: boolean;
 };

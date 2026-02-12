@@ -86,8 +86,15 @@ const ThreadComment = (props: Props) => {
 		);
 	};
 	const commenterName = discussionData.commenter?.name ?? threadCommentData.commenter?.name;
+	const isAuthorSpam = !!threadCommentData.isAuthorSpam;
 	return (
-		<div className={classNames('thread-comment-component', isPreview && 'is-preview')}>
+		<div
+			className={classNames(
+				'thread-comment-component',
+				isPreview && 'is-preview',
+				isAuthorSpam && 'is-spam',
+			)}
+		>
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}
@@ -150,6 +157,12 @@ const ThreadComment = (props: Props) => {
 						)}
 					</span>
 				</div>
+				{!isPreview && isAuthorSpam && (
+					<div className="thread-comment-spam-banner">
+						This user has been banned. Only you and other admins of this community can
+						see this comment. You can safely remove it.
+					</div>
+				)}
 				{!isPreview && (
 					<div
 						className={classNames({

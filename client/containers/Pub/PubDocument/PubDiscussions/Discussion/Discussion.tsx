@@ -58,6 +58,7 @@ const Discussion = (props: Props) => {
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
 	const showManageTools = canAdmin || (isDiscussionAuthor && !discussionData.isClosed);
 	const discussionId = discussionData.id;
+	const isAuthorSpam = !!discussionData.isAuthorSpam;
 
 	useEffect(() => {
 		if (isPreviewExpandedByHash(discussionId)) {
@@ -195,6 +196,7 @@ const Discussion = (props: Props) => {
 				previewExpanded && 'expanded-preview',
 				showManageTools && 'has-manage-tools',
 				emphasized && 'emphasized',
+				isAuthorSpam && 'is-author-spam',
 			)}
 			onClick={() => {
 				setEmphasized(false);
@@ -219,6 +221,12 @@ const Discussion = (props: Props) => {
 				/>
 			)}
 			<LabelList pubData={pubData} discussionData={discussionData} />
+			{!isPreview && isAuthorSpam && (
+				<div className="discussion-spam-banner">
+					This user has been banned. Only you and other admins of this community can see
+					this discussion. You can safely remove it.
+				</div>
+			)}
 			{!isPreview && (
 				<>
 					{showManageTools && (

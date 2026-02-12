@@ -8,6 +8,7 @@ import passport from 'passport';
 import { promisify } from 'util';
 
 import { User } from 'server/models';
+import { getSpamTagForUser } from 'server/spamTag/userQueries';
 import { assert } from 'utils/assert';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { isDuqDuq, isProd } from 'utils/environment';
@@ -116,6 +117,10 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 			return updatedUserData[1][0];
 		})
 		.then(async (user) => {
+			const spamTag = await getSpamTagForUser(user.id);
+			if (spamTag?.status === 'confirmed-spam') {
+				throw new Error('ACCOUNT_RESTRICTED');
+			}
 			const logIn = promisify(req.logIn.bind(req));
 			await logIn(user);
 			const hashedUserId = getHashedUserId(user);
@@ -133,6 +138,12 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 			} as const;
 		})
 		.catch((err) => {
+			if (err.message === 'ACCOUNT_RESTRICTED') {
+				return {
+					status: 403,
+					body: 'Your account has been restricted. If you believe this is an error, please contact hello@pubpub.org.',
+				} as const;
+			}
 			const unaunthenticatedValues = ['Invalid password', 'Invalid email'];
 			if (unaunthenticatedValues.includes(err.message)) {
 				return { status: 401, body: 'Login attempt failed' } as const;

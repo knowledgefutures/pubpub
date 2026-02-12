@@ -10,6 +10,7 @@ type Props = {
 	userId: string;
 	status: SpamStatus;
 	onStatusChanged: (status: SpamStatus) => unknown;
+	label?: string;
 };
 
 const propsForStatuses: Record<SpamStatus, Partial<React.ComponentProps<typeof Button>>> = {
@@ -29,7 +30,7 @@ const propsForStatuses: Record<SpamStatus, Partial<React.ComponentProps<typeof B
 };
 
 const MarkSpamStatusButton = (props: Props) => {
-	const { status, userId, onStatusChanged } = props;
+	const { status, userId, onStatusChanged, label } = props;
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleClick = useCallback(async () => {
@@ -40,7 +41,13 @@ const MarkSpamStatusButton = (props: Props) => {
 	}, [status, userId, onStatusChanged]);
 
 	return (
-		<Button minimal loading={isLoading} onClick={handleClick} {...propsForStatuses[status]} />
+		<Button
+			minimal
+			loading={isLoading}
+			onClick={handleClick}
+			{...propsForStatuses[status]}
+			children={label ?? propsForStatuses[status]?.children}
+		/>
 	);
 };
 

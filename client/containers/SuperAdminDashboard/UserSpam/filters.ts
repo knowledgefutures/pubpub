@@ -7,19 +7,19 @@ export type SpamUsersFilter = OverviewSearchFilter<Pick<SpamUserQuery, 'status' 
 
 export const filters: SpamUsersFilter[] = [
 	{
+		title: 'All',
+		id: 'all',
+		query: {
+			ordering: { field: 'user-created-at', direction: 'DESC' },
+			status: null,
+		},
+	},
+	{
 		title: 'Unreviewed',
 		id: 'unreviewed',
 		query: {
 			ordering: { field: 'spam-score', direction: 'DESC' },
 			status: ['unreviewed'],
-		},
-	},
-	{
-		title: 'Recently created',
-		id: 'recent',
-		query: {
-			ordering: { field: 'user-created-at', direction: 'DESC' },
-			status: ['unreviewed', 'confirmed-not-spam', 'confirmed-spam'],
 		},
 	},
 	{

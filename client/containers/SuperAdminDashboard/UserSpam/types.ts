@@ -1,3 +1,6 @@
-import type { DefinitelyHas, UserWithPrivateFields } from 'types';
+import type { SpamTag, UserWithPrivateFields } from 'types';
 
-export type SpamUser = DefinitelyHas<UserWithPrivateFields, 'spamTag'>;
+export type SpamUser = UserWithPrivateFields & {
+	spamTag: SpamTag | null;
+	affiliation?: { communitySubdomains: string[]; pubCount: number; discussionCount: number };
+};

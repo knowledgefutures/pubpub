@@ -1,6 +1,6 @@
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
-import type { SerializedModel } from 'types';
+import type { DiscussionCreationAccess, SerializedModel } from 'types';
 
 import {
 	BelongsTo,
@@ -31,6 +31,10 @@ export class PublicPermissions extends Model<
 
 	@Column(DataType.BOOLEAN)
 	declare canCreateDiscussions: boolean | null;
+
+	@Default('public')
+	@Column(DataType.ENUM('public', 'contributors', 'members', 'disabled'))
+	declare discussionCreationAccess: CreationOptional<DiscussionCreationAccess>;
 
 	@Column(DataType.BOOLEAN)
 	declare canViewDraft: boolean | null;

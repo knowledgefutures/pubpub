@@ -1,5 +1,5 @@
 import type { WorkerTask } from 'server/models';
-import type { Community } from 'types';
+import type { Community, DiscussionCreationAccess } from 'types';
 
 import React, { useMemo, useState } from 'react';
 
@@ -11,6 +11,7 @@ import { isDataExportEnabled } from 'utils/analytics/featureFlags';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
+import DiscussionsSection from './DiscussionsSection';
 import { type ArchiveTask, ExportCommunityDataButton } from './ExportCommunityDataButton';
 
 const getEmails = (communityData: Community) => {
@@ -38,6 +39,10 @@ type Props = {
 	settingsData: {
 		archives?: WorkerTask[];
 	};
+	communityData?: Community & { discussionCreationAccess?: DiscussionCreationAccess };
+	updateCommunityData?: (
+		update: Partial<Community> & { discussionCreationAccess?: DiscussionCreationAccess },
+	) => void;
 };
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -155,18 +160,12 @@ const ExportAndDeleteSettings = (props: Props) => {
 				</Callout>
 			</SettingsSection>
 			{canExportData && <ExportDataSection settingsData={props.settingsData} />}
-			{/* <SettingsSection title="Data Export">
-				<p>
-					You can request an export of the data associated with your Community on PubPub
-					using the button below.
-				</p>
-				<AnchorButton
-					target="_blank"
-					href={`mailto:privacy@pubpub.org?subject=Community+data+export+request&body=${exportEmailBody.trim()}`}
-				>
-					Request data export
-				</AnchorButton>
-			</SettingsSection> */}
+
+			<DiscussionsSection
+				communityData={props.communityData}
+				updateCommunityData={props.updateCommunityData}
+			/>
+
 			<SettingsSection title="Community Deletion">
 				<p>
 					You can request that we completely delete your PubPub Community using the button

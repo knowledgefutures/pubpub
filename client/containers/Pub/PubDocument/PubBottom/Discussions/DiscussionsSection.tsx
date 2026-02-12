@@ -36,7 +36,7 @@ const DiscussionsSection = (props: Props) => {
 		updatePubData,
 		collabData: { editorChangeObject },
 	} = usePubContext();
-	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
+	const { canManage, canCreateDiscussions } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
 	const [sortMode, setSortMode] = useState('newestThread');
@@ -182,9 +182,7 @@ const DiscussionsSection = (props: Props) => {
 					pubData={pubData}
 					filterDiscussions={createDiscussionFilter(searchTerm)}
 					searchTerm={searchTerm}
-					showBottomInput={
-						(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
-					}
+					showBottomInput={canCreateDiscussions && !isSearching && !isBrowsingArchive}
 				/>
 			)}
 		</PubBottomSection>

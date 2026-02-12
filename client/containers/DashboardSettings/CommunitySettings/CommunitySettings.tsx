@@ -102,7 +102,11 @@ const CommunitySettings = (props: Props) => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				<CommunityAdminSettings {...props} />,
+				<CommunityAdminSettings
+					{...props}
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
 			],
 		},
 		{

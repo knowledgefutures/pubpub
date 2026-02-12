@@ -2,6 +2,7 @@ import { initServer } from '@ts-rest/express';
 import { Op } from 'sequelize';
 
 import { WorkerTask } from 'server/models';
+import { updateDiscussionCreationAccess } from 'server/publicPermissions/queries';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { addWorkerTask } from 'server/utils/workers';
 import { getWorkerTask } from 'server/workerTask/queries';
@@ -164,6 +165,16 @@ export const communityServer = s.router(contract.community, {
 			throw new ForbiddenError();
 		}
 		const updatedValues = await updateCommunity(req.body, permissions.update, req.user.id);
+		if (
+			body.discussionCreationAccess !== undefined &&
+			requestIds.communityId &&
+			permissions.update
+		) {
+			await updateDiscussionCreationAccess({
+				communityId: requestIds.communityId,
+				discussionCreationAccess: body.discussionCreationAccess,
+			});
+		}
 		return {
 			body: updatedValues,
 			status: 200,

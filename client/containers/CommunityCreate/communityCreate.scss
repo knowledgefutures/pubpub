@@ -10,7 +10,7 @@ $bp: vendor.$bp-namespace;
 	background-image: url('/static/loginbg.png');
 	min-height: calc(100vh - 56px);
 
-	.container.small .col-12 {
+	.container .col-12 {
 		padding: 2em;
 		background: white;
 		border-radius: 2px;
@@ -30,5 +30,40 @@ $bp: vendor.$bp-namespace;
 		width: 50px;
 		height: 20px;
 		border-radius: 2px;
+	}
+
+	.community-created-layout {
+		display: flex;
+		gap: 40px;
+		align-items: flex-start;
+
+		@media (max-width: 768px) {
+			flex-direction: column;
+		}
+	}
+
+	.community-created-text {
+		flex: 1;
+
+		h1 {
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+
+		p {
+			font-size: 1.1em;
+			line-height: 1.6;
+			color: #5c7080;
+			margin-bottom: 16px;
+		}
+
+		.continue-button {
+			margin-top: 16px;
+		}
+	}
+
+	.community-created-donate {
+		flex: 1;
+		min-width: 0;
 	}
 }

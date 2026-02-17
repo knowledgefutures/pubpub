@@ -24,12 +24,14 @@ import {
 	FacetBinding,
 	Member,
 	Release,
+	SpamTag,
 	SubmissionWorkflow,
 	User,
 	UserSubscription,
 } from 'server/models';
 import { createPage } from 'server/page/queries';
 import { createPub } from 'server/pub/queries';
+import { finishDeferredTasks } from 'server/utils/deferred';
 
 type WithOptionalBase<
 	T extends Record<string, any>,
@@ -135,15 +137,35 @@ export const builders = {
 			subdomain: unique,
 			...restArgs,
 		};
+		let community: Community;
 		if (createFullCommunity) {
 			const admin = await builders.User();
-			// @ts-expect-error FIXME: createCommunity only returns `subdomain`, but this leads to errors in modelize. Maybe let it return the whole community?
-			return createCommunity({ ...sharedArgs }, admin, false) as Community;
+			community = (await createCommunity({ ...sharedArgs }, admin, false)) as Community;
+		} else {
+			community = await Community.create({
+				navigation: [],
+				...sharedArgs,
+			});
 		}
-		return Community.create({
-			navigation: [],
-			...sharedArgs,
-		});
+		// the afterCreate hook defers SpamTag creation with status 'unreviewed'.
+		// approve all test communities by default so the visibility check in initData
+		// doesn't block access in tests that aren't specifically testing spam behavior.
+		await finishDeferredTasks();
+		if (community.spamTagId) {
+			await SpamTag.update(
+				{ status: 'confirmed-not-spam' },
+				{ where: { id: community.spamTagId } },
+			);
+		} else {
+			const refreshed = await Community.findByPk(community.id);
+			if (refreshed?.spamTagId) {
+				await SpamTag.update(
+					{ status: 'confirmed-not-spam' },
+					{ where: { id: refreshed.spamTagId } },
+				);
+			}
+		}
+		return community;
 	},
 
 	Pub: async (args: { createPubCreator?: boolean } & WithOptional<PubType>) => {

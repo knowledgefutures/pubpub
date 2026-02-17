@@ -118,7 +118,7 @@ export const getInitialData = async (
 			: { domain: hostname };
 	const communityData = await getCommunity(locationData, whereQuery);
 
-	if (communityData.spamTag?.status === 'confirmed-spam') {
+	if (communityData.spamTag && communityData.spamTag.status !== 'confirmed-not-spam') {
 		const [isMemberOfCommunity, isSuperadmin] = await Promise.all([
 			isUserMemberOfScope({
 				userId: loginData.id,

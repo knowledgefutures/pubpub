@@ -7,7 +7,7 @@ import { canSelectCommunityForDevelopment } from 'utils/environment';
 
 export const router = Router();
 
-const setSubdomain = async (subdomain: string | null) => {
+export const setSubdomain = async (subdomain: string | null) => {
 	process.env.FORCE_BASE_PUBPUB = subdomain === null ? 'true' : '';
 	if (subdomain) {
 		const exists = await Community.findOne({ where: { subdomain } });

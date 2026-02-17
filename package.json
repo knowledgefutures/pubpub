@@ -24,6 +24,7 @@
 		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' '!**/__tests__' ../dist/server/workers/ --cwd=workers/ --parents",
 		"prod": "pnpm run build-prod && pnpm run api-prod",
 		"lint": "biome check --max-diagnostics=10000 --diagnostic-level=error && pnpm run check",
+		"lint:fix": "biome check --max-diagnostics=10000 --diagnostic-level=error --write",
 		"check": "tsc --noEmit",
 		"install-git-hooks": "rm -f ./.git/hooks/* && cp ./.githooks/* ./.git/hooks && chmod +x ./.git/hooks/*",
 		"continue": "concurrently --kill-others \"pnpm run api-dev\" \"pnpm run build-dev\"",

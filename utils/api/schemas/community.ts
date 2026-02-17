@@ -118,8 +118,6 @@ export const communityCreateSchema = communitySchema
 		heroLogo: true,
 		heroTitle: true,
 		description: true,
-		accentColorLight: true,
-		accentColorDark: true,
 	});
 
 export const communityUpdateSchema = communitySchema

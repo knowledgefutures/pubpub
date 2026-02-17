@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
 
@@ -8,6 +8,68 @@ import { usePageContext } from 'utils/hooks';
 import { slugifyString } from 'utils/strings';
 
 import './communityCreate.scss';
+
+const mountDonorboxWidget = (container: HTMLDivElement) => {
+	const script = document.createElement('script');
+	script.type = 'module';
+	script.src = 'https://donorbox.org/widgets.js';
+	script.async = true;
+
+	const widget = document.createElement('dbox-widget');
+	widget.setAttribute('campaign', 'pubpub-sustainability-fund');
+	widget.setAttribute('type', 'donation_form');
+	widget.setAttribute('enable-auto-scroll', 'true');
+
+	container.appendChild(script);
+	container.appendChild(widget);
+};
+
+const CommunityCreatedView = ({ subdomain }: { subdomain: string }) => {
+	const donorboxRef = useRef<HTMLDivElement>(null);
+	const communityUrl = `https://${subdomain}.pubpub.org`;
+
+	useEffect(() => {
+		if (donorboxRef.current) {
+			mountDonorboxWidget(donorboxRef.current);
+		}
+	}, []);
+
+	return (
+		<div className="community-created-layout">
+			<div className="community-created-text">
+				<h1>Community Created!</h1>
+				<p>
+					Your community has been successfully created and is now awaiting approval for
+					compliance with our <a href="/legal/terms">Terms of Service</a> and{' '}
+					<a href="/legal/aup">Acceptable Use Policy</a>. We strive to review all new
+					communities within five business days. During this time, all features remain
+					available, but only logged-in Members will be able to view the community.
+				</p>
+				<h2>Your Support Keeps PubPub Free and Open</h2>
+				<p>
+					PubPub is stewarded by a nonprofit organization,{' '}
+					<a
+						href="https://knowledgefutures.org"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Knowledge Futures
+					</a>
+					, and kept free and open through support from communities like yours. If this
+					platform helps your work, please consider making a donation to help sustain and
+					improve it for everyone.
+				</p>
+				<a
+					href={communityUrl}
+					className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} ${Classes.LARGE} continue-button`}
+				>
+					Continue to your community
+				</a>
+			</div>
+			<div className="community-created-donate" ref={donorboxRef} />
+		</div>
+	);
+};
 
 const CommunityCreate = () => {
 	const { loginData } = usePageContext();
@@ -20,6 +82,7 @@ const CommunityCreate = () => {
 	const [acceptTerms, setAcceptTerms] = useState(false);
 	const [createIsLoading, setCreateIsLoading] = useState(false);
 	const [createError, setCreateError] = useState<string | undefined>(undefined);
+	const [isCreated, setIsCreated] = useState(false);
 
 	const onCreateSubmit = (evt) => {
 		evt.preventDefault();
@@ -40,8 +103,7 @@ const CommunityCreate = () => {
 			.then(() => {
 				setCreateIsLoading(false);
 				setCreateError(undefined);
-
-				window.location.href = `https://${subdomain}.pubpub.org`;
+				setIsCreated(true);
 			})
 			.catch((err) => {
 				setCreateIsLoading(false);
@@ -66,7 +128,7 @@ const CommunityCreate = () => {
 
 	return (
 		<div id="community-create-container">
-			<GridWrapper containerClassName="small">
+			<GridWrapper containerClassName={isCreated ? undefined : 'small'}>
 				{!loginData.id && (
 					<NonIdealState
 						title="To create your community, create an account or login."
@@ -79,22 +141,17 @@ const CommunityCreate = () => {
 						}
 					/>
 				)}
-				{loginData.id && (
+				{loginData.id && isCreated && <CommunityCreatedView subdomain={subdomain} />}
+				{loginData.id && !isCreated && (
 					<div>
 						<h1>Create Community</h1>
 						<p>
-							PubPub is evolving, and we are currently only allowing new community
-							creation for existing users with an explicit short-term need. Learn more
-							by reading our announcement. If you are an existing user who needs to
-							create a community, please{' '}
-							<a
-								href="mailto:partnerships@knowledgefutures.org?mailto=PubPub%20Legacy%20Community"
-								target="_blank"
-								rel="noreferrer"
-							>
-								get in touch
-							</a>
-							.
+							New communities are currently subject to approval for compliance with
+							our <a href="/legal/terms">Terms of Service</a> and{' '}
+							<a href="/legal/aup">Acceptable Use Policy</a>. We strive to moderate
+							all new communities within five business days. During this time, all
+							features and functionality are available, but only logged in Members
+							will be able to view the community.
 						</p>
 						<form onSubmit={onCreateSubmit}>
 							<InputField

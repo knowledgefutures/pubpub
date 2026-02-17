@@ -131,7 +131,10 @@ const App = (props: Props) => {
 				>
 					<RKProvider>
 						<div id="app" className={classNames({ dashboard: isDashboard })}>
-							{communityData.spamTag?.status === 'confirmed-spam' && <SpamBanner />}
+							{communityData.spamTag &&
+								communityData.spamTag.status !== 'confirmed-not-spam' && (
+									<SpamBanner status={communityData.spamTag.status} />
+								)}
 							<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 							{(locationData.isDuqDuq || locationData.isQubQub) && (
 								<div className="duqduq-warning">Development Environment</div>

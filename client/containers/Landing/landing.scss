@@ -399,6 +399,7 @@ $leftColumnWidth: 20%;
 		/*** END Communities ***/
 		/*** START Create ***/
 		#create {
+			@include dark(true);
 			position: relative;
 			z-index: 1;
 			&:before {
@@ -414,6 +415,13 @@ $leftColumnWidth: 20%;
 				background-position: 80% 7em;
 				background-repeat: no-repeat;
 			}
+			.buttons {
+				a {
+					background-color: $textColorLight;
+					color: $textColorDark !important;
+				}
+			}
+
 			.container {
 				h4 {
 					font-size: 2em;

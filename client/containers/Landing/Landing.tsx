@@ -188,12 +188,12 @@ const Landing = () => {
 								knowledge communities.
 							</p>
 							<h2>Create knowledge. Share it with audiences who care.</h2>
-							{/* <div className="buttons">
+							<div className="buttons">
 								<a href="/community/create" className="custom-button black">
 									Create your community
 								</a>
 							</div>
-							<div className="buttons">
+							{/* <div className="buttons">
 								<a href="/pricing" className="custom-button">
 									Support PubPub
 								</a>
@@ -335,7 +335,7 @@ const Landing = () => {
 				</div>
 				{/* END Communities Block */}
 				{/* BEGIN Create Block */}
-				{/* <div id="create">
+				<div id="create">
 					<div className="container restricted-width">
 						<div>
 							<h3>Create</h3>
@@ -353,21 +353,22 @@ const Landing = () => {
 							</p>
 						</div>
 					</div>
-				</div> */}
+				</div>
 				{/* END Create Block */}
+
 				{/* BEGIN Pitch Block */}
-				<div id="pitch">
+				{/* <div id="pitch">
 					<div className="container restricted-width reverse">
 						<div>
 							{/* <p>
 								PubPub empowers knowledge communities to define their own community
 								engagement models and manage their publishing workflows. Use PubPub
 								to more closely align knowledge sharing with community building.
-							</p> */}
+							</p>
 						</div>
 					</div>
-				</div>
-				{/* END Create Block */}
+				</div> */}
+				{/* END Pitch Block */}
 			</div>
 			{/* END Main content */}
 		</div>

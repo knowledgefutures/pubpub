@@ -1,6 +1,7 @@
 import { initServer } from '@ts-rest/express';
 import { Op } from 'sequelize';
 
+import { setSubdomain } from 'server/dev/api';
 import { WorkerTask } from 'server/models';
 import { updateDiscussionCreationAccess } from 'server/publicPermissions/queries';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
@@ -8,10 +9,12 @@ import { addWorkerTask } from 'server/utils/workers';
 import { getWorkerTask } from 'server/workerTask/queries';
 import { contract } from 'utils/api/contract';
 import { expect } from 'utils/assert';
+import { communityUrl } from 'utils/canonicalUrls';
 import {
 	ensureUserIsCommunityAdmin,
 	findCommunityByHostname,
 } from 'utils/ensureUserIsCommunityAdmin';
+import { isProd } from 'utils/environment';
 import { createGetRequestIds } from 'utils/getRequestIds';
 
 import { getPermissions } from './permissions';
@@ -137,13 +140,24 @@ export const communityServer = s.router(contract.community, {
 		};
 	},
 	create: async ({ req }) => {
-		if (!req.user || !req.user?.dataValues.isSuperAdmin) {
+		if (!req.user) {
 			throw new ForbiddenError();
 		}
 		try {
 			const newCommunity = await createCommunity(req.body, req.user);
+
+			if (!isProd()) {
+				await setSubdomain(newCommunity.subdomain);
+				return {
+					body: `http://localhost:9876`,
+					status: 201,
+				};
+			}
+
+			const baseUrl = communityUrl(newCommunity);
+
 			return {
-				body: `https://${newCommunity.subdomain}.pubpub.org`,
+				body: baseUrl,
 				status: 201,
 			};
 		} catch (e) {

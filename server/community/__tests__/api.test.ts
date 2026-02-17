@@ -1,7 +1,8 @@
 import uuid from 'uuid';
 import { vi } from 'vitest';
 
-import { Community } from 'server/models';
+import { Community, SpamTag } from 'server/models';
+import { finishDeferredTasks } from 'server/utils/deferred';
 import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
@@ -24,12 +25,14 @@ const models = modelize`
 	}
 `;
 
-const { subscribeUser, postToSlackAboutNewCommunity } = vi.hoisted(() => {
-	return {
-		subscribeUser: vi.fn(),
-		postToSlackAboutNewCommunity: vi.fn(),
-	};
-});
+const { subscribeUser, postToSlackAboutNewCommunity, sendCommunityAwaitingApprovalEmail } =
+	vi.hoisted(() => {
+		return {
+			subscribeUser: vi.fn(),
+			postToSlackAboutNewCommunity: vi.fn(),
+			sendCommunityAwaitingApprovalEmail: vi.fn(),
+		};
+	});
 
 setup(beforeAll, async () => {
 	vi.mock('server/utils/mailchimp', () => ({
@@ -37,6 +40,9 @@ setup(beforeAll, async () => {
 	}));
 	vi.mock('server/utils/slack', () => ({
 		postToSlackAboutNewCommunity,
+	}));
+	vi.mock('server/utils/email/communitySpam', () => ({
+		sendCommunityAwaitingApprovalEmail,
 	}));
 
 	await models.resolve();
@@ -82,6 +88,8 @@ describe('/api/communities', () => {
 					subdomain,
 					title: 'Burn Book',
 					description: "Get in loser we're testing our code",
+					accentColorLight: '#FFFFFF',
+					accentColorDark: '#2D2E2F',
 				})
 				.expect(201),
 		).toMatchResultingObject((response) => ({
@@ -89,22 +97,28 @@ describe('/api/communities', () => {
 			communityId: response.body.id,
 			actorId: superAdmin.id,
 		}));
-		expect(url).toEqual(`https://${subdomain}.pubpub.org`);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
 		expect(newCommunity?.title).toEqual('Burn Book');
+		// in non-prod, the handler returns the local dev URL
+		expect(url).toEqual('http://localhost:9876');
 	});
 
-	it('does not create a community if you are not a superAdmin', async () => {
+	it('creates a community if you are a regular logged-in user', async () => {
 		const { willNotCreateCommunity } = models;
 		const agent = await login(willNotCreateCommunity);
+		const subdomain = 'regular-user-' + uuid.v4();
 		await agent
 			.post('/api/communities')
 			.send({
-				subdomain: 'notSuperAdmin',
-				title: 'Journal of Forgetting To Log In First',
-				description: 'oops, I forgot',
+				subdomain,
+				title: 'Journal of Regular Users',
+				description: 'anyone can create a community',
+				accentColorLight: '#FFFFFF',
+				accentColorDark: '#2D2E2F',
 			})
-			.expect(403);
+			.expect(201);
+		const newCommunity = await Community.findOne({ where: { subdomain } });
+		expect(newCommunity?.title).toEqual('Journal of Regular Users');
 	});
 
 	it('does not create a community if you are logged out', async () => {
@@ -114,6 +128,8 @@ describe('/api/communities', () => {
 				subdomain: 'notloggedin',
 				title: 'Journal of Forgetting To Log In First',
 				description: 'oops, I forgot',
+				accentColorLight: '#FFFFFF',
+				accentColorDark: '#2D2E2F',
 			})
 			.expect(403);
 	});
@@ -155,6 +171,39 @@ describe('/api/communities', () => {
 		const communityNow = await Community.findOne({ where: { id: existingCommunity.id } });
 		expect(communityNow?.title).toEqual('Journal of Trying To Lose Three Pounds');
 		expect(communityNow?.isFeatured).not.toBeTruthy();
+	});
+
+	it('blocks non-members from accessing an unreviewed community', async () => {
+		const { willNotCreateCommunity } = models;
+		const creator = await login(willNotCreateCommunity);
+		const subdomain = 'unreviewed-test-' + uuid.v4();
+
+		await creator
+			.post('/api/communities')
+			.send({
+				subdomain,
+				title: 'Unreviewed Community',
+				description: 'Testing unreviewed visibility',
+				accentColorLight: '#FFFFFF',
+				accentColorDark: '#2D2E2F',
+			})
+			.expect(201);
+		await finishDeferredTasks();
+
+		const newCommunity = await Community.findOne({
+			where: { subdomain },
+			include: [{ model: SpamTag, as: 'spamTag' }],
+		});
+		expect(newCommunity?.spamTag?.status).toEqual('unreviewed');
+
+		const host = `${subdomain}.pubpub.org`;
+
+		// unauthenticated users cannot access the community
+		const anonAgent = await login();
+		await anonAgent.get('/').set('Host', host).expect(404);
+
+		// the creating member (auto-added as admin) can still access it
+		await creator.get('/').set('Host', host).expect(200);
 	});
 });
 

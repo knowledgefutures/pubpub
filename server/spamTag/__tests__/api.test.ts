@@ -1,7 +1,19 @@
+import { vi } from 'vitest';
+
 import { SpamTag } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
 
 import { addSpamTagToCommunity } from '../queries';
+
+const {
+	sendCommunityApprovedEmail,
+	sendCommunityRejectedAsSpamEmail,
+	postToSlackAboutCommunityStatusChange,
+} = vi.hoisted(() => ({
+	sendCommunityApprovedEmail: vi.fn(),
+	sendCommunityRejectedAsSpamEmail: vi.fn(),
+	postToSlackAboutCommunityStatusChange: vi.fn(),
+}));
 
 let spamTag;
 
@@ -18,6 +30,14 @@ const models = modelize`
 `;
 
 setup(beforeAll, async () => {
+	vi.mock('server/utils/email/communitySpam', () => ({
+		sendCommunityApprovedEmail,
+		sendCommunityRejectedAsSpamEmail,
+	}));
+	vi.mock('server/utils/slack', () => ({
+		postToSlackAboutCommunityStatusChange,
+	}));
+
 	await models.resolve();
 	spamTag = await addSpamTagToCommunity(models.community.id);
 	await spamTag.update({ status: 'confirmed-spam' });

@@ -2,6 +2,11 @@ import type * as types from 'types';
 import type { SpamStatus } from 'types';
 
 import { Community, SpamTag } from 'server/models';
+import {
+	sendCommunityApprovedEmail,
+	sendCommunityRejectedAsSpamEmail,
+} from 'server/utils/email/communitySpam';
+import { postToSlackAboutCommunityStatusChange } from 'server/utils/slack';
 import { expect } from 'utils/assert';
 
 import { getSuspectedCommunitySpamVerdict } from './score';
@@ -49,12 +54,48 @@ export const getSpamTagForCommunity = async (communityId: string) => {
 	return spamTag ?? null;
 };
 
+const getCommunityContext = async (communityId: string) => {
+	const community = await Community.findByPk(communityId, {
+		attributes: ['title', 'subdomain'],
+	});
+	if (!community) {
+		return null;
+	}
+	return {
+		communityId,
+		communityTitle: community.title,
+		communitySubdomain: community.subdomain,
+		communityUrl: `https://${community.subdomain}.pubpub.org`,
+	};
+};
+
 export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommunityOptions) => {
 	const { communityId, status } = options;
 	const spamTag = await getSpamTagForCommunity(communityId);
-	if (spamTag) {
-		await spamTag.update({ status, statusUpdatedAt: new Date() });
-	} else {
+	if (!spamTag) {
 		throw new Error('Community is missing a SpamTag');
 	}
+	const previousStatus = spamTag.status;
+	await spamTag.update({ status, statusUpdatedAt: new Date() });
+
+	if (status === previousStatus) {
+		return;
+	}
+	if (status === 'unreviewed') {
+		return;
+	}
+	const ctx = await getCommunityContext(communityId);
+	if (!ctx) {
+		return;
+	}
+	if (status === 'confirmed-not-spam') {
+		await sendCommunityApprovedEmail(ctx);
+	} else if (status === 'confirmed-spam') {
+		await sendCommunityRejectedAsSpamEmail(ctx);
+	}
+	await postToSlackAboutCommunityStatusChange({
+		title: ctx.communityTitle,
+		subdomain: ctx.communitySubdomain,
+		status,
+	});
 };

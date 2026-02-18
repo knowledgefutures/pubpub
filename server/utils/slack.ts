@@ -1,3 +1,5 @@
+import type { SpamStatus } from 'types';
+
 import fetch from 'node-fetch';
 
 import { isDangerousSpamScore } from 'server/spamTag/score';
@@ -108,7 +110,7 @@ const buildNewCommunityBlocks = (
 type CommunityStatusSlackOptions = {
 	title: string;
 	subdomain: string;
-	status: 'confirmed-not-spam' | 'confirmed-spam';
+	status: SpamStatus;
 };
 
 export const postToSlackAboutCommunityStatusChange = async (opts: CommunityStatusSlackOptions) => {
@@ -121,10 +123,9 @@ export const postToSlackAboutCommunityStatusChange = async (opts: CommunityStatu
 	const url = `https://${subdomain}.${baseUrl}`;
 	const spamDashUrl = `https://${baseUrl}${getSuperAdminTabUrl('spam')}?q=${subdomain}`;
 
-	const isApproved = status === 'confirmed-not-spam';
-	const emoji = isApproved ? ':white_check_mark:' : ':no_entry:';
-	const verb = isApproved ? 'approved' : 'rejected';
-	const color = isApproved ? '#5cb85c' : '#d9534f';
+	const emoji = status === 'confirmed-not-spam' ? ':white_check_mark:' : ':no_entry:';
+	const verb = status === 'confirmed-not-spam' ? 'approved' : 'rejected';
+	const color = status === 'confirmed-not-spam' ? '#5cb85c' : '#d9534f';
 	const notificationText = `Community ${verb}: ${title}`;
 
 	await postToSlack({

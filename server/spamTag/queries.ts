@@ -81,7 +81,7 @@ export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommuni
 	if (status === previousStatus) {
 		return;
 	}
-	if (status === 'unreviewed') {
+	if (previousStatus && status === 'unreviewed') {
 		return;
 	}
 	const ctx = await getCommunityContext(communityId);

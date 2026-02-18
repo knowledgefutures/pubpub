@@ -9,6 +9,8 @@ import { slugifyString } from 'utils/strings';
 
 import './communityCreate.scss';
 
+import { communityUrl } from 'utils/canonicalUrls';
+
 const mountDonorboxWidget = (container: HTMLDivElement) => {
 	const script = document.createElement('script');
 	script.type = 'module';
@@ -26,7 +28,7 @@ const mountDonorboxWidget = (container: HTMLDivElement) => {
 
 const CommunityCreatedView = ({ subdomain }: { subdomain: string }) => {
 	const donorboxRef = useRef<HTMLDivElement>(null);
-	const communityUrl = `https://${subdomain}.pubpub.org`;
+	const url = communityUrl({ subdomain });
 
 	useEffect(() => {
 		if (donorboxRef.current) {
@@ -60,7 +62,7 @@ const CommunityCreatedView = ({ subdomain }: { subdomain: string }) => {
 					improve it for everyone.
 				</p>
 				<a
-					href={communityUrl}
+					href={url}
 					className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} ${Classes.LARGE} continue-button`}
 				>
 					Continue to your community

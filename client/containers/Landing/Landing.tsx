@@ -188,11 +188,12 @@ const Landing = () => {
 								knowledge communities.
 							</p>
 							<h2>Create knowledge. Share it with audiences who care.</h2>
-							<div className="buttons">
+							{/* enable soon */}
+							{/* <div className="buttons">
 								<a href="/community/create" className="custom-button black">
 									Create your community
 								</a>
-							</div>
+							</div> */}
 							{/* <div className="buttons">
 								<a href="/pricing" className="custom-button">
 									Support PubPub
@@ -337,7 +338,7 @@ const Landing = () => {
 				{/* BEGIN Create Block */}
 				<div id="create">
 					<div className="container restricted-width">
-						<div>
+						{/* <div>
 							<h3>Create</h3>
 						</div>
 						<div>
@@ -351,7 +352,7 @@ const Landing = () => {
 								* A community can be your individual space to create content, or you
 								can invite others to collaborate with you!
 							</p>
-						</div>
+						</div> */}
 					</div>
 				</div>
 				{/* END Create Block */}

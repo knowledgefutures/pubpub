@@ -27,7 +27,7 @@ const LandingPageFeatures = (props: Props) => {
 					<a href={pubUrl(community, pub)}>{pub.title}</a>
 				</div>
 				<div className="community">
-					in <a href={communityUrl(community)}>{expect(community).title}</a>
+					in <a href={communityUrl(expect(community))}>{expect(community).title}</a>
 				</div>
 			</div>
 		);

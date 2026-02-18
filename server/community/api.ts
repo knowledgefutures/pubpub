@@ -14,7 +14,7 @@ import {
 	ensureUserIsCommunityAdmin,
 	findCommunityByHostname,
 } from 'utils/ensureUserIsCommunityAdmin';
-import { isProd } from 'utils/environment';
+import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 import { createGetRequestIds } from 'utils/getRequestIds';
 
 import { getPermissions } from './permissions';
@@ -146,7 +146,7 @@ export const communityServer = s.router(contract.community, {
 		try {
 			const newCommunity = await createCommunity(req.body, req.user);
 
-			if (!isProd()) {
+			if (isDevelopment()) {
 				await setSubdomain(newCommunity.subdomain);
 				return {
 					body: `http://localhost:9876`,

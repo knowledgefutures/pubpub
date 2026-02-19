@@ -21,7 +21,7 @@ services:
                 condition: any
 
     app:
-        image: ghcr.io/knowledgefutures/v6b:${IMAGE_TAG}
+        image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
         env_file: [.env]
         environment:
             NODE_ENV: production
@@ -55,7 +55,7 @@ services:
                 condition: on-failure
 
     worker:
-        image: ghcr.io/knowledgefutures/v6b:${IMAGE_TAG}
+        image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
         env_file: [.env]
         environment:
             NODE_ENV: production

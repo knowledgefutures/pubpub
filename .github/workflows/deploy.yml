@@ -168,7 +168,7 @@ jobs:
                     echo "IMAGE_TAG in shell: [$IMAGE_TAG]"
                     
                     # For some reason, not pulling explicitly makes the docker stack deploy throw an error that it can't find the package.
-                    sudo docker pull ghcr.io/knowledgefutures/v6b:"$IMAGE_TAG"
+                    sudo docker pull ghcr.io/knowledgefutures/pubpub:"$IMAGE_TAG"
 
                     # deploy/update stack
                     sudo env IMAGE_TAG="$IMAGE_TAG" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub

@@ -77,7 +77,8 @@ export const pubUrl = (community, pub, options = {}) => {
 
 	// Include the community in the URL if the absolute flag is set to true.
 	const skipCommunity = isArchiving() || (absolute ? false : community === null || isQubQub());
-	const baseCommunityUrl = skipCommunity ? '' : communityUrl(community);
+	
+	const baseCommunityUrl = skipCommunity || !community ? '' : communityUrl(community);
 
 	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
 

@@ -1,5 +1,5 @@
 version: "3.9"
-name: pubpub_v6b_dev
+name: pubpub_v6_dev
 
 services:
     app:

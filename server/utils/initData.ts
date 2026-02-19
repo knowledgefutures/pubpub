@@ -46,21 +46,6 @@ export const getInitialData = async (
 	if (hostname === 'localhost') {
 		hostname = 'demo.duqduq.org';
 	}
-	if (hostname === 'v6b.underlay.org' || hostname === 'v6bb.underlay.org') {
-		hostname = 'cursor.pubpub.org';
-	}
-	if (hostname === 'v6b.pubpub.org' || hostname === 'v6bb.pubpub.org') {
-		hostname = 'mit-serc.pubpub.org';
-	}
-	if (hostname === 'v6b.priorartarchive.org') {
-		hostname = 'stanford-jblp.pubpub.org';
-	}
-	if (hostname === 'cftest.trialanderror.org') {
-		hostname = 'jrn.pubpub.org';
-	}
-	if (hostname === 'cftest.priorartarchive.org') {
-		hostname = 'revisions.pubpub.org';
-	}
 
 	const { isDashboard = false, includeFacets = isDashboard } = options;
 	/* Gather user data */

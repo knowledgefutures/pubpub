@@ -16,6 +16,7 @@ export type RelationshipIssue = {
 		| 'external_doi_not_in_crossref'
 		| 'external_doi_not_crossref_registrar'
 		| 'external_url_no_doi_found';
+	message: string;
 	edgeId: string;
 	targetTitle: string;
 	targetDoi?: string;
@@ -37,6 +38,11 @@ const REVIEW_RELATION_TYPES: RelationTypeName[] = ['review', 'rejoinder'];
 const isReviewRelationType = (relationType: RelationTypeName) =>
 	REVIEW_RELATION_TYPES.includes(relationType);
 
+const isTestEnvironment = () => {
+	const submissionUrl = process.env.DOI_SUBMISSION_URL || '';
+	return submissionUrl.includes('test') || submissionUrl.includes('sandbox');
+};
+
 const checkDoiRegistrar = async (doi: string): Promise<'crossref' | 'other' | 'unknown'> => {
 	try {
 		const response = await fetch(`https://doi.org/ra/${doi}`);
@@ -53,9 +59,22 @@ const checkDoiRegistrar = async (doi: string): Promise<'crossref' | 'other' | 'u
 	}
 };
 
+// useTestApi: for internal dois, use the test api in test environment
 const checkDoiExistsInCrossref = async (doi: string): Promise<boolean> => {
 	try {
-		// mailto for polite pool
+		if (isTestEnvironment()) {
+			const response = await fetch(
+				`https://test.crossref.org/search/doi?usr=dev@pubpub.org&doi=${encodeURIComponent(doi)}`,
+			);
+			if (!response.ok) {
+				return false;
+			}
+			const xml = await response.text();
+			console.log('response for test api', doi, xml);
+
+			return xml.includes('status="resolved"');
+		}
+
 		const response = await fetch(`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`);
 		return response.ok;
 	} catch {
@@ -121,22 +140,23 @@ const checkEdgeForIssues = async (
 		return null;
 	}
 
-	const isReview = isReviewRelationType(edge.relationType);
-	if (!isReview) {
-		return null;
-	}
-
 	if (target.type === 'internal') {
 		const { pub } = target;
-		if (pub.crossrefDepositRecordId) {
+		if (!pub.doi) {
+			return null;
+		}
+
+		const existsInCrossref = await checkDoiExistsInCrossref(pub.doi);
+		if (existsInCrossref) {
 			return null;
 		}
 
 		return {
 			type: 'internal_not_deposited',
+			message: `"${pub.title}" has DOI ${pub.doi} assigned but it does not exist in Crossref. Deposit "${pub.title}" first, or disconnect it and deposit this Pub first.`,
 			edgeId: edge.id,
 			targetTitle: pub.title,
-			targetDoi: pub.doi ?? undefined,
+			targetDoi: pub.doi,
 			relationType: edge.relationType,
 			targetPubId: pub.id,
 			targetPubSlug: pub.slug,
@@ -144,16 +164,21 @@ const checkEdgeForIssues = async (
 		};
 	}
 
-	const { externalPublication } = target;
+	// strict doi validation only for reviews
+	const isReview = isReviewRelationType(edge.relationType);
+	if (!isReview) {
+		return null;
+	}
 
+	const { externalPublication } = target;
 	const doi = externalPublication.doi ?? extractDoiFromUrl(parseUrl(externalPublication.url));
 
-	// for reviews, we need to verify the DOI exists in Crossref
 	if (doi) {
 		const registrar = await checkDoiRegistrar(doi);
 		if (registrar === 'other') {
 			return {
 				type: 'external_doi_not_crossref_registrar',
+				message: `DOI ${doi} for "${externalPublication.title}" is not a Crossref DOI. Peer reviews can only link to Crossref DOIs.`,
 				edgeId: edge.id,
 				targetTitle: externalPublication.title,
 				targetDoi: doi,
@@ -165,6 +190,7 @@ const checkEdgeForIssues = async (
 		if (!existsInCrossref) {
 			return {
 				type: 'external_doi_not_in_crossref',
+				message: `DOI ${doi} for "${externalPublication.title}" was not found in Crossref.`,
 				edgeId: edge.id,
 				targetTitle: externalPublication.title,
 				targetDoi: doi,
@@ -175,7 +201,6 @@ const checkEdgeForIssues = async (
 		return null;
 	}
 
-	// no DOI set, try to find one from the URL
 	if (externalPublication.url) {
 		const foundDoi = await extractDoiFromWebPage(externalPublication.url);
 		if (foundDoi) {
@@ -183,6 +208,7 @@ const checkEdgeForIssues = async (
 			if (registrar === 'other') {
 				return {
 					type: 'external_doi_not_crossref_registrar',
+					message: `DOI ${foundDoi} for "${externalPublication.title}" is not a Crossref DOI. Peer reviews can only link to Crossref DOIs.`,
 					edgeId: edge.id,
 					targetTitle: externalPublication.title,
 					targetDoi: foundDoi,
@@ -195,6 +221,7 @@ const checkEdgeForIssues = async (
 			if (!existsInCrossref) {
 				return {
 					type: 'external_doi_not_in_crossref',
+					message: `DOI ${foundDoi} for "${externalPublication.title}" was not found in Crossref.`,
 					edgeId: edge.id,
 					targetTitle: externalPublication.title,
 					targetDoi: foundDoi,
@@ -206,9 +233,9 @@ const checkEdgeForIssues = async (
 			return null;
 		}
 
-		// could not find DOI from URL
 		return {
 			type: 'external_url_no_doi_found',
+			message: `Could not find a DOI for "${externalPublication.title}". Please add a DOI manually to the connection.`,
 			edgeId: edge.id,
 			targetTitle: externalPublication.title,
 			targetUrl: externalPublication.url,

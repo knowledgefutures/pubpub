@@ -357,8 +357,6 @@ function AssignDoi(props: Props) {
 		priorPubDoi.current = pubData.doi;
 	}, [pubData.doi, status, fetchPreview]);
 
-	console.log('status', status, disabled, handleButtonClick);
-
 	return (
 		<div className="assign-doi-component">
 			{(status === SubmitDepositStatus.Previewed ||

@@ -3,7 +3,7 @@ import type { RelationTypeName } from 'utils/pubEdge/relations';
 
 import React, { Component } from 'react';
 
-import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
+import { Button, Callout, Collapse, FormGroup, InputGroup } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { AssignDoi } from 'components';
@@ -19,12 +19,17 @@ import {
 
 import './doi.scss';
 
+import { pubData } from 'utils/storybook/data';
+
+import { WhyAmISeeingThis } from './WhyAmISeeingThis';
+
 type RelationshipIssue = {
 	type:
 		| 'internal_not_deposited'
 		| 'external_doi_not_in_crossref'
 		| 'external_doi_not_crossref_registrar'
 		| 'external_url_no_doi_found';
+	message: string;
 	edgeId: string;
 	targetTitle: string;
 	targetDoi?: string;
@@ -393,21 +398,24 @@ class Doi extends Component<Props, State> {
 		return (
 			<>
 				{validationIssues.map((issue: RelationshipIssue) => {
-					const relationDef = relationTypeDefinitions[issue.relationType];
-
 					if (issue.type === 'internal_not_deposited') {
 						const pubUrl = issue.targetCommunitySubdomain
 							? `https://${issue.targetCommunitySubdomain}.pubpub.org/dash/pub/${issue.targetPubSlug}/settings`
 							: `/dash/pub/${issue.targetPubSlug}/settings`;
 						return (
 							<Callout key={issue.edgeId} intent="danger">
-								This Pub has a {relationDef?.name || issue.relationType}{' '}
-								relationship to <strong>{issue.targetTitle}</strong>, which has not
-								been deposited to Crossref yet. You must{' '}
+								<strong>
+									<a href={pubUrl} target="_blank" rel="noopener noreferrer">
+										{issue.targetTitle}
+									</a>
+								</strong>{' '}
+								has DOI {issue.targetDoi} assigned but it does not exist in
+								Crossref. Deposit{' '}
 								<a href={pubUrl} target="_blank" rel="noopener noreferrer">
-									deposit that Pub first
+									{issue.targetTitle}
 								</a>{' '}
-								before this deposit can succeed.
+								first, or disconnect it and deposit this Pub first.
+								<WhyAmISeeingThis>{issue.message}</WhyAmISeeingThis>
 							</Callout>
 						);
 					}
@@ -415,9 +423,12 @@ class Doi extends Component<Props, State> {
 					if (issue.type === 'external_doi_not_crossref_registrar') {
 						return (
 							<Callout key={issue.edgeId} intent="danger">
-								The DOI <strong>{issue.targetDoi}</strong> for &quot;
-								{issue.targetTitle}&quot; is not a Crossref DOI. Peer reviews can
-								only link to DOIs registered with Crossref.
+								{issue.message}
+								<WhyAmISeeingThis>
+									Peer reviews deposited to Crossref must link to Crossref DOIs.
+									Mark the Connection as something other than
+									&quot;isReviewOf&quot; to deposit this Pub.
+								</WhyAmISeeingThis>
 							</Callout>
 						);
 					}
@@ -425,9 +436,12 @@ class Doi extends Component<Props, State> {
 					if (issue.type === 'external_doi_not_in_crossref') {
 						return (
 							<Callout key={issue.edgeId} intent="danger">
-								The DOI <strong>{issue.targetDoi}</strong> for &quot;
-								{issue.targetTitle}&quot; was not found in Crossref. Please verify
-								the DOI is correct.
+								{issue.message} Please verify the DOI is correct, or manually add a
+								DOI to the connection in the{' '}
+								<a href={`/dash/pub/${pubData.slug}/connections`}>
+									Connections tab
+								</a>
+								.
 							</Callout>
 						);
 					}
@@ -435,8 +449,11 @@ class Doi extends Component<Props, State> {
 					if (issue.type === 'external_url_no_doi_found') {
 						return (
 							<Callout key={issue.edgeId} intent="danger">
-								Could not find a DOI for &quot;{issue.targetTitle}&quot;. Please add
-								a DOI manually to the connection in the Connections tab.
+								{issue.message} Go to the{' '}
+								<a href={`/dash/pub/${pubData.slug}/connections`}>
+									Connections tab
+								</a>{' '}
+								to add a DOI.
 							</Callout>
 						);
 					}

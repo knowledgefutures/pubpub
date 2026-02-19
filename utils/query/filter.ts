@@ -119,36 +119,35 @@ export const generateFilterSchema = <Z extends z.ZodType<any>>(baseSchema: Z) =>
 	return z.any();
 };
 
-export type FilterType<
-	T,
-	Kind extends 'UUID' | 'Date' | undefined = undefined,
-> = T extends z.ZodType<infer U, any, any>
-	? U extends Array<infer X>
-		? Array<FilterType<z.ZodType<X, any, any>>>
-		: U extends string
-			? string extends U
-				? Kind extends 'Date'
-					? DateFilter
-					: Kind extends 'UUID'
-						? string | string[] | boolean
-						: // @ts-expect-error FIXME: Typescript doesn't understand
-							StringFilter<T>
-				: EnumFilter<T>
-			: U extends number
-				? // @ts-expect-error FIXME: Typescript doesn't understand
-					NumberFilter<T>
-				: U extends Date
-					? DateFilter
-					: U extends boolean
-						? boolean
-						: U extends object
-							? ObjectFilter<U>
-							: never
-	: never;
+export type FilterType<T, Kind extends 'UUID' | 'Date' | undefined = undefined> =
+	T extends z.ZodType<infer U, any, any>
+		? U extends Array<infer X>
+			? Array<FilterType<z.ZodType<X, any, any>>>
+			: U extends string
+				? string extends U
+					? Kind extends 'Date'
+						? DateFilter
+						: Kind extends 'UUID'
+							? string | string[] | boolean
+							: // @ts-expect-error FIXME: Typescript doesn't understand
+								StringFilter<T>
+					: EnumFilter<T>
+				: U extends number
+					? // @ts-expect-error FIXME: Typescript doesn't understand
+						NumberFilter<T>
+					: U extends Date
+						? DateFilter
+						: U extends boolean
+							? boolean
+							: U extends object
+								? ObjectFilter<U>
+								: never
+		: never;
 
-export type EnumFilter<T> = T extends z.ZodType<infer U, any, any>
-	? U | Array<T extends z.ZodType<infer Y, any, any> ? Y : never>
-	: never;
+export type EnumFilter<T> =
+	T extends z.ZodType<infer U, any, any>
+		? U | Array<T extends z.ZodType<infer Y, any, any> ? Y : never>
+		: never;
 export type StringFilter<T extends z.ZodString> = z.infer<ReturnType<typeof stringFilter<T>>>;
 export type NumberFilter<T extends z.ZodType<number>> = z.infer<ReturnType<typeof numberFilter<T>>>;
 export type DateFilter = z.infer<ReturnType<typeof dateFilter>>;

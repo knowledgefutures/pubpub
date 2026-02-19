@@ -34,6 +34,9 @@ export const apiFetch = ((path, opts) => {
 	}).then((response) => {
 		if (!response.ok) {
 			return response.json().then((err) => {
+				if (response.status === 423 && err?.error === 'readOnly') {
+					window.dispatchEvent(new CustomEvent('pubpub:readOnly'));
+				}
 				throw err;
 			});
 		}

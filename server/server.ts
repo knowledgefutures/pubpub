@@ -102,6 +102,7 @@ import session from 'express-session';
 import { fromZodError } from 'zod-validation-error';
 
 import { purgeMiddleware } from 'utils/caching/purgeMiddleware';
+import { readOnlyMiddleware } from 'utils/caching/readOnlyMiddleware';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
 import { abortStorage } from './abort';
@@ -241,6 +242,8 @@ appRouter.use(authTokenMiddleware);
 
 /** Set up purge middleware before api routes are initialized and after hostname is set */
 appRouter.use(purgeMiddleware(schedulePurge));
+
+appRouter.use(readOnlyMiddleware());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;
 

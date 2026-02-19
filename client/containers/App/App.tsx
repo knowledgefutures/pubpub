@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Provider as RKProvider } from 'reakit';
 import { AnalyticsProvider } from 'use-analytics';
 
+import { ReadOnlyNotice } from 'client/components/ReadOnlyNotice';
 import {
 	CollapsibleHeader,
 	CollapsibleHeaderBPC,
@@ -162,6 +163,7 @@ const App = (props: Props) => {
 							{showFooter && footer}
 						</div>
 					</RKProvider>
+					<ReadOnlyNotice />
 				</FacetsStateProvider>
 			</AnalyticsProvider>
 		</PageContext.Provider>

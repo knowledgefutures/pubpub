@@ -20,4 +20,4 @@ export const releaseSchema = z.object({
 	docId: z.string().uuid(),
 	historyKey: z.number().int().min(-1),
 	historyKeyMissing: z.boolean(),
-}) satisfies z.ZodType<types.Release>;
+}) satisfies z.ZodType<Omit<types.Release, 'createdAt'>>;

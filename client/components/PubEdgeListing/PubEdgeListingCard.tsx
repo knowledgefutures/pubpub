@@ -18,6 +18,7 @@ export type PubEdgeListingCardProps = {
 	isInboundEdge: boolean;
 	parentPub?: {
 		title?: string;
+		slug: string;
 	};
 	pubEdgeDescriptionIsVisible: boolean;
 	pubEdge: any;

@@ -1,0 +1,86 @@
+version: "3.9"
+name: pubpub_v6b_prod
+
+services:
+    app:
+        image: pubpub:test-build
+        env_file:
+            - .env.dev
+        environment:
+            NODE_ENV: production
+            PUBPUB_PRODUCTION: "true"
+            PUBPUB_LOCAL_COMMUNITY: "demo"
+            PORT: 3000
+            DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
+            CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            DISABLE_SSL_REDIRECT: "true"
+        depends_on:
+            - db
+            - rabbitmq
+        ports:
+            - "${WEB_PORT:-9876}:3000"
+        networks: [appnet]
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - >
+                    node -e "require('http')
+                    .get('http://127.0.0.1:3000/api/health', r => process.exit(r.statusCode < 400 ? 0 : 1))
+                    .on('error', () => process.exit(1));"
+            interval: 10s
+            timeout: 3s
+            retries: 6
+            start_period: 60s
+
+    worker:
+        image: pubpub:test-build
+        env_file:
+            - .env.dev
+        environment:
+            NODE_ENV: production
+            CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            CLOUDAMQP_APIKEY: ""
+        command: ["pnpm", "run", "workers-prod"]
+        depends_on:
+            - db
+            - rabbitmq
+        networks: [appnet]
+
+    rabbitmq:
+        image: rabbitmq:3.13-alpine
+        environment:
+            RABBITMQ_DEFAULT_USER: appuser
+            RABBITMQ_DEFAULT_PASS: apppassword
+            RABBITMQ_DEFAULT_VHOST: appvhost
+        volumes:
+            - rabbitmqdata:/var/lib/rabbitmq
+        networks: [appnet]
+        ports:
+            - "${RABBITMQ_PORT:-5672}:5672"
+
+    db:
+        image: postgres:16
+        shm_size: "2g"
+        restart: always
+        environment:
+            - POSTGRES_USER=appuser
+            - POSTGRES_PASSWORD=apppassword
+            - POSTGRES_DB=appdb
+        command: >
+            -c shared_buffers=2GB
+            -c effective_cache_size=6GB
+            -c work_mem=16MB
+            -c maintenance_work_mem=512MB
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+        ports:
+            - "${DB_PORT:-5439}:5432"
+        networks: [appnet]
+
+networks:
+    appnet:
+        driver: bridge
+
+volumes:
+    # pgdata:
+    rabbitmqdata:

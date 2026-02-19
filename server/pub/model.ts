@@ -37,7 +37,15 @@ import {
 	Submission,
 } from '../models';
 
-@Table
+@Table({
+	indexes: [
+		{
+			name: 'pubs_community_slug_idx',
+			unique: true,
+			fields: ['communityId', 'slug'],
+		},
+	],
+})
 export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
 	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
 

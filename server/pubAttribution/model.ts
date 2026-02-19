@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -58,6 +59,7 @@ export class PubAttribution extends Model<
 	declare userId: string | null;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare pubId: string;
 

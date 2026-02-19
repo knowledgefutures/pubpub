@@ -24,6 +24,7 @@ import {
 	getPubForRequest,
 	getPubRelease,
 } from 'server/utils/queryHelpers';
+import { createLogger } from 'server/utils/queryHelpers/communityGet';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
@@ -92,6 +93,7 @@ type EnrichedPubOptions = {
 };
 
 const getEnrichedPubData = async (options: EnrichedPubOptions) => {
+	const { log, end } = createLogger('getEnrichedPubData');
 	const {
 		pubSlug,
 		initialData,
@@ -99,17 +101,21 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		releaseNumber = null,
 		includeCommunityForPubs,
 	} = options;
-	const pubData = await getPubForRequest({
-		slug: pubSlug,
-		initialData,
-		releaseNumber,
-		getSubmissions: true,
-		getDraft: true,
-		getDiscussions: true,
-		getEdgesOptions: {
-			includeCommunityForPubs,
-		},
-	});
+
+	const pubData = await log(
+		'getPubForRequest',
+		getPubForRequest({
+			slug: pubSlug,
+			initialData,
+			releaseNumber,
+			getSubmissions: true,
+			getDraft: true,
+			getDiscussions: true,
+			getEdgesOptions: {
+				includeCommunityForPubs,
+			},
+		}),
+	);
 
 	if (!pubData) {
 		throw new ForbiddenError();
@@ -119,11 +125,15 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 
 	const getDocInfo = async () => {
 		if (isRelease) {
-			return getPubRelease(pubData, releaseNumber);
+			const result = await log('getPubRelease', getPubRelease(pubData, releaseNumber));
+			return result;
 		}
+
+		const draft = await log('getPubFirebaseDraft', getPubFirebaseDraft(pubData, historyKey));
+		const token = await log('getPubFirebaseToken', getPubFirebaseToken(pubData, initialData));
 		return {
-			...(await getPubFirebaseDraft(pubData, historyKey)),
-			...(await getPubFirebaseToken(pubData, initialData)),
+			...draft,
+			...token,
 		};
 	};
 
@@ -131,21 +141,30 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		collectionPub.collectionId.startsWith(initialData.locationData.query.readingCollection),
 	);
 
+	console.time('Promise.all: docInfo, edges, subscription, nextCollectionPub');
 	const [docInfo, edges, subscription, nextCollectionPub] = await Promise.all([
-		getDocInfo(),
-		getPubEdges(pubData, initialData),
+		log('getDocInfo', getDocInfo()),
+		log('getPubEdges', getPubEdges(pubData, initialData)),
 		initialData.loginData.id
-			? findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id })
+			? await log(
+					'findUserSubscription',
+					findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id }),
+				)
 			: null,
-		currentCollectionPub ? getNextCollectionPub(currentCollectionPub) : null,
+		currentCollectionPub
+			? await log('getNextCollectionPub', getNextCollectionPub(currentCollectionPub))
+			: null,
 	]);
 
-	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
+	const citations = await log(
+		'getPubCitations',
+		getPubCitations(pubData, initialData, docInfo.initialDoc),
+	);
 
 	const { access } = initialData.locationData.query;
 	const isAVisitingCommenter = !!access && access === pubData.commentHash;
 	const isReviewingPub = !!access && access === pubData.reviewHash;
-
+	end();
 	return {
 		subscription: subscription?.toJSON() ?? null,
 		...pubData,
@@ -242,26 +261,39 @@ router.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res
 	}
 	try {
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
+		const { log, end } = createLogger('pubDocument:');
 
-		const initialData = await getInitialDataForPub(req);
+		const initialData = await log('getInitData', getInitialDataForPub(req));
+
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
 			throw new NotFoundError();
 		}
 
 		const [pubData, customScripts] = await Promise.all([
-			getEnrichedPubData({
-				pubSlug,
-				releaseNumber,
-				initialData,
-				includeCommunityForPubs: true,
-			}),
-			getCustomScriptsForCommunity(initialData.communityData.id),
+			log(
+				'getEnriched',
+				getEnrichedPubData({
+					pubSlug,
+					releaseNumber,
+					initialData,
+					includeCommunityForPubs: true,
+				}),
+			),
+			log('getCustomScripts', getCustomScriptsForCommunity(initialData.communityData.id)),
 		]);
 
-		await setSurrogateKeysHeadersForPubEdges(req, res, pubData, initialData);
+		await log(
+			'setSurrogateKeys',
+			setSurrogateKeysHeadersForPubEdges(req, res, pubData, initialData),
+		);
 
-		return renderPubDocument(res, pubData, initialData, customScripts);
+		const result = log(
+			'renderPubDocument',
+			renderPubDocument(res, pubData, initialData, customScripts),
+		);
+		end();
+		return result;
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

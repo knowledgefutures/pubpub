@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -36,6 +37,7 @@ export class Export extends Model<InferAttributes<Export>, InferCreationAttribut
 	declare historyKey: number;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare pubId: string;
 

@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -35,10 +36,12 @@ export class ThreadComment extends Model<
 	declare content: DocJson | null;
 
 	@Column(DataType.UUID)
+	@Index
 	declare userId: string | null;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
+	@Index
 	declare threadId: string;
 
 	@Column(DataType.UUID)

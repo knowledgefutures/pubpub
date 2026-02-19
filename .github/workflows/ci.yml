@@ -1,0 +1,125 @@
+name: CI
+
+run-name: >-
+    ${{
+      github.event_name == 'push' &&
+      format('CI: {0}', github.event.head_commit.message) ||
+      format('CI: {0}', github.sha)
+    }}
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    DATABASE_URL: postgres://testuser:testpwd@localhost:5432/pubpub-testdb
+    DATABASE_READ_REPLICA_1_URL: postgres://testuser:testpwd@localhost:5432/pubpub-testdb
+    DATABASE_READ_REPLICA_2_URL: postgres://testuser:testpwd@localhost:5432/pubpub-testdb
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_USER: testuser
+                    POSTGRES_PASSWORD: testpwd
+                    POSTGRES_DB: pubpub-testdb
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Install system dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y --no-install-recommends \
+                      postgresql-client \
+                      xsltproc \
+                      poppler-utils \
+                      imagemagick \
+                      libxml2 \
+                      libxml2-utils
+
+            - name: Install pandoc
+              run: |
+                  curl -L -o /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb
+                  sudo dpkg -i /tmp/pandoc.deb
+
+            - name: Set up Java (for Firebase emulators)
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: 17
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  run_install: false
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: pnpm
+
+            - name: Validate setup
+              run: |
+                  echo "=== Validating all dependencies ==="
+
+                  echo "Node.js version:"
+                  node --version
+
+                  echo "pnpm version:"
+                  pnpm --version
+
+                  echo "Java version:"
+                  java -version 2>&1 | head -1
+
+                  echo "Checking required binaries..."
+                  for bin in pandoc xsltproc pdftoppm convert xmllint; do
+                      if command -v "$bin" &> /dev/null; then
+                          echo "  $bin: $(which $bin)"
+                      else
+                          echo "  ERROR: $bin not found"
+                          exit 1
+                      fi
+                  done
+
+                  echo "Checking PostgreSQL connection..."
+                  pg_isready -h localhost -p 5432 -U testuser || exit 1
+
+                  echo "Checking Firebase CLI..."
+                  which firebase || echo "Firebase CLI will be installed"
+
+                  echo "=== All validations passed ==="
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Install Firebase CLI
+              run: npm install -g firebase-tools@10
+
+            - name: Verify Firebase CLI
+              run: firebase --version
+
+            - name: Build client
+              run: pnpm run build-prod
+            - name: Run tests
+              run: pnpm run test

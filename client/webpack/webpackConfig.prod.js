@@ -105,9 +105,7 @@ module.exports = {
 	plugins: [
 		// new BundleAnalyzerPlugin(),
 		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production'),
-			},
+			'process.env.NODE_ENV': JSON.stringify('production'),
 		}),
 		new MiniCssExtractPlugin({
 			filename: '[name].[contenthash].css',
@@ -132,7 +130,7 @@ module.exports = {
 							name: process.env.SOURCE_VERSION,
 						},
 					}),
-				]),
+			  ]),
 	],
 	optimization: {
 		minimizer: [

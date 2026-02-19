@@ -9,6 +9,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -61,6 +62,7 @@ export class Page extends Model<InferAttributes<Page>, InferCreationAttributes<P
 	declare layoutAllowsDuplicatePubs: CreationOptional<boolean>;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare communityId: string;
 

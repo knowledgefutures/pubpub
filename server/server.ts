@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node';
-import compression from 'compression';
+// import compression from 'compression';
 import CreateSequelizeStore from 'connect-session-sequelize';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -86,11 +86,13 @@ if (process.env.NODE_ENV === 'production') {
 	// The Sentry request handler must be the first middleware on the app
 	appRouter.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
 	appRouter.use(Sentry.Handlers.tracingHandler());
-	appRouter.use(enforce.HTTPS({ trustProtoHeader: true }));
+	if (process.env.DISABLE_SSL_REDIRECT !== 'true') {
+		appRouter.use(enforce.HTTPS({ trustProtoHeader: true }));
+	}
 }
 appRouter.use(deduplicateSlash());
 appRouter.use(noSlash());
-appRouter.use(compression());
+// appRouter.use(compression());
 appRouter.use(express.json({ limit: '50mb' }));
 appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
 appRouter.use(cookieParser());
@@ -110,6 +112,10 @@ import { authTokenMiddleware } from './authToken/authTokenMiddleware';
 import { bearerStrategy } from './authToken/strategy';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
+
+appRouter.use('/api/health', (req, res) => {
+	res.status(200).json({ status: 'ok' });
+});
 
 appRouter.use(
 	session({
@@ -224,6 +230,7 @@ appRouter.use((req, res, next) => {
 		req.hostname.includes('localhost') ||
 		req.hostname.includes('127.0.0.1')
 	) {
+		console.log('SETTING LOCALHOST');
 		req.headers.localhost = req.headers.host;
 		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
 			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
@@ -231,10 +238,12 @@ appRouter.use((req, res, next) => {
 		} else {
 			req.headers.host = 'demo.pubpub.org';
 		}
+		console.log('SETTING HOST', req.headers.host);
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
 	}
+	console.log('HOST', req.headers.host);
 	next();
 });
 
@@ -282,6 +291,17 @@ createExpressEndpoints(contractWithoutCustomScript, server, appRouter, {
 import { apiRouter } from './apiRoutes';
 import { rootRouter } from './routes';
 
+appRouter.use((req, res, next) => {
+	console.log('==================');
+	console.log('==================');
+	const now = process.hrtime.bigint();
+	res.on('finish', () =>
+		console.log(
+			`${req.method} ${req.path} – ${Number((process.hrtime.bigint() - now) / BigInt(1_000_000))}ms`,
+		),
+	);
+	next();
+});
 appRouter.use(apiRouter);
 appRouter.use(rootRouter);
 /* ------------- */

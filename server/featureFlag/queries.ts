@@ -82,8 +82,8 @@ export const getFeatureFlagForUserAndCommunity = async (
 ) => {
 	const featureFlag = expect(await getFeatureFlagByName(flagName, true));
 	const [featureFlagUsers, featureFlagCommunities] = await Promise.all([
-		userId ? FeatureFlagUser.findAll({ where: { userId } }) : [],
-		communityId ? FeatureFlagCommunity.findAll({ where: { communityId } }) : [],
+		userId ? FeatureFlagUser.findAll({ where: { userId }, raw: true }) : [],
+		communityId ? FeatureFlagCommunity.findAll({ where: { communityId }, raw: true }) : [],
 	]);
 	return isFeatureFlagEnabledForUserInCommunity({
 		userId,

@@ -1,0 +1,7 @@
+creation_rules:
+  - path_regex: \.env(\.dev)?(\.enc)?$
+    age:
+      - age1wravpjmed26772xfjhawmnsnc4933htapg6y5xseqml0jdv8z9hqemzhcr
+      - age1vhftscteyrwphx0jpp0yl60xxrjs77jq05mkzv88js7ckc926vcqepp2cj
+      - age1slx6e48k7fre0ddyu7dtm2wwcqaywn5ke2mkngym3rpazxwvvuyq9qjknk
+

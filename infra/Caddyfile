@@ -1,0 +1,16 @@
+{
+    admin :2019
+    debug
+}
+
+:80 {
+	respond "OK" 200
+}
+
+:443 {
+	tls internal {
+		on_demand
+	}
+	encode zstd gzip
+	reverse_proxy pubpub_app:3000
+}

@@ -1,0 +1,181 @@
+name: Deploy pubpub
+
+run-name: >-
+    ${{
+      github.event_name == 'workflow_run' && format('Deploy dev: {0}', github.event.workflow_run.head_commit.message) ||
+      github.event_name == 'release' && format('Deploy prod: {0}', github.event.release.tag_name) ||
+      format('Deploy dev: {0}', github.sha)
+    }}
+
+concurrency:
+    group: >-
+        deploy-${{
+          github.event_name == 'release' && format('release-{0}', github.event.release.tag_name) ||
+          github.event_name == 'workflow_run' && format('ci-{0}', github.event.workflow_run.head_branch) ||
+          github.ref
+        }}
+    cancel-in-progress: true
+
+on:
+    workflow_run:
+        workflows: [CI]
+        types: [completed]
+        branches: [main]
+    workflow_dispatch:
+        inputs:
+            skip_ci_check:
+                description: Deploy even if CI failed
+                required: false
+                default: false
+                type: boolean
+    release:
+        types: [published]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        if: |
+            github.event_name == 'workflow_dispatch' ||
+            github.event_name == 'release' ||
+            (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+            - name: Set deployment vars
+              id: vars
+              run: |
+                  if [[ "${{ github.event_name }}" == "release" ]]; then
+                    echo "image_tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+                    echo "host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_OUTPUT
+                    echo "swarm_addr=${{ secrets.SWARM_ADDR_PROD }}" >> $GITHUB_OUTPUT
+                    echo "env_file=.env.enc" >> $GITHUB_OUTPUT
+                  else
+                    echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+                    echo "host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_OUTPUT
+                    echo "swarm_addr=${{ secrets.SWARM_ADDR_DEV }}" >> $GITHUB_OUTPUT
+                    echo "env_file=.env.dev.enc" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Log in to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  # This secret.GITHUB_TOKEN is generated automatically per workflow
+                  # run from the permissions block above
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Extract metadata (tags, labels)
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: ghcr.io/${{ github.repository }}
+
+            - name: Build and push
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  push: true
+                  provenance: false
+                  sbom: false
+                  tags: |
+                      ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.image_tag }}
+                      ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+
+            - name: Start SSH agent
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+            - name: Add known hosts
+              run: |
+                  mkdir -p ~/.ssh
+                  ssh-keyscan -H "${{ steps.vars.outputs.host }}" >> ~/.ssh/known_hosts
+
+            - name: Deploy over SSH
+              env:
+                  SSH_USER: ${{ secrets.SSH_USER }}
+                  SSH_HOST: ${{ steps.vars.outputs.host }}
+                  REPO: ${{ github.repository }}
+                  BRANCH: ${{ github.ref_name }}
+                  GHCR_USER: ${{ secrets.GHCR_USER }}
+                  GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+                  IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
+                  SWARM_ADDR: ${{ steps.vars.outputs.swarm_addr }}
+                  ENV_FILE: ${{ steps.vars.outputs.env_file }}
+
+              run: |
+                  ssh "${SSH_USER}@${SSH_HOST}" \
+                    "env GHCR_USER='${GHCR_USER}' GHCR_TOKEN='${GHCR_TOKEN}' IMAGE_TAG='${IMAGE_TAG}' SWARM_ADDR='${SWARM_ADDR}' ENV_FILE='${ENV_FILE}' bash -s -- '${REPO}' '${BRANCH}'" <<'EOS'
+                    set -euo pipefail
+
+                    REPO="${1:?missing repo}"
+                    BRANCH="${2:-main}"
+
+                    : "${IMAGE_TAG:?missing IMAGE_TAG}"
+                    DEPLOY_REF="$IMAGE_TAG"
+
+                    : "${GHCR_USER:?missing GHCR_USER}"
+                    : "${GHCR_TOKEN:?missing GHCR_TOKEN}"
+
+                    REPO_NAME="${REPO##*/}"
+                    APP_DIR="/srv/${REPO_NAME}"
+                    REPO_SSH="git@github.com:${REPO}.git"
+
+                    if [[ -z "$REPO_NAME" || -z "$APP_DIR" ]]; then
+                      echo "Bad derived paths: REPO='$REPO' REPO_NAME='$REPO_NAME' APP_DIR='$APP_DIR'"
+                      exit 1
+                    fi
+
+                    ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+                    chmod 600 ~/.ssh/known_hosts
+
+                     if [[ ! -d "${APP_DIR}/.git" ]]; then
+                      sudo mkdir -p "${APP_DIR}"
+                      sudo chown -R "$USER:$USER" "${APP_DIR}"
+                      git clone --branch "${BRANCH}" "${REPO_SSH}" "${APP_DIR}"
+                    fi
+
+                    cd "${APP_DIR}"
+                    git fetch --prune --tags origin
+                    git checkout --detach "${DEPLOY_REF}"
+
+                    cd infra
+                    umask 077
+
+                    : "${ENV_FILE:?missing ENV_FILE}"
+                    sops -d --input-type dotenv --output-type dotenv "$ENV_FILE" > .env
+
+                    # one-time / idempotent
+                    if ! sudo docker info --format '{{.Swarm.LocalNodeState}}' | grep -qx active; then
+                      : "${SWARM_ADDR:?missing SWARM_ADDR}"
+                      sudo docker swarm init --advertise-addr "$SWARM_ADDR"
+                    fi
+
+                    echo "$GHCR_TOKEN" | sudo docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+                    echo "IMAGE_TAG in shell: [$IMAGE_TAG]"
+                    
+                    # For some reason, not pulling explicitly makes the docker stack deploy throw an error that it can't find the package.
+                    sudo docker pull ghcr.io/knowledgefutures/v6b:"$IMAGE_TAG"
+
+                    # deploy/update stack
+                    sudo env IMAGE_TAG="$IMAGE_TAG" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub
+
+                    # optional: show progress
+                    sudo docker stack services pubpub
+
+                    # optional cleanup
+                    sudo docker image prune -f
+                  EOS

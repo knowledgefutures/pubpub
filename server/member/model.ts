@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -40,13 +41,16 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 	@Column(DataType.UUID)
 	declare userId: string;
 
+	@Index
 	@Column(DataType.UUID)
 	declare pubId: string | null;
 
 	@Column(DataType.UUID)
+	@Index
 	declare collectionId: string | null;
 
 	@Column(DataType.UUID)
+	@Index
 	declare communityId: string | null;
 
 	@Column(DataType.UUID)

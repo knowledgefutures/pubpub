@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -40,6 +41,7 @@ export class Submission extends Model<
 	declare submissionWorkflowId: string;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare pubId: string;
 

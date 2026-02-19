@@ -212,7 +212,11 @@ export const sanitizedPubSchema = pubSchema.merge(
 		releases: z.array(releaseSchema),
 		releaseNumber: z.number().nullable(),
 	}),
-) satisfies z.ZodType<types.SanitizedPubData, any, any>;
+) satisfies z.ZodType<
+	Omit<types.SanitizedPubData, 'releases'> & { releases: Omit<types.Release, 'createdAt'>[] },
+	any,
+	any
+>;
 
 export type PubPut = types.UpdateParams<Pub> & { pubId: string };
 

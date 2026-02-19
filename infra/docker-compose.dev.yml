@@ -1,0 +1,84 @@
+version: "3.9"
+name: pubpub_v6b_dev
+
+services:
+    app:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+            target: dev
+        env_file:
+            - .env.dev
+        environment:
+            NODE_ENV: development
+            PORT: 3000
+            DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
+            CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+        depends_on:
+            - db
+            - rabbitmq
+        ports:
+            - "${WEB_PORT:-9876}:3000"
+        networks: [appnet]
+        volumes:
+            - ..:/app
+            - /app/node_modules
+
+    worker:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+            target: dev
+        env_file:
+            - .env.dev
+        environment:
+            NODE_ENV: development
+            CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            CLOUDAMQP_APIKEY: ""
+        command: ["pnpm", "run", "workers-dev"]
+        depends_on:
+            - db
+            - rabbitmq
+        networks: [appnet]
+        volumes:
+            - ..:/app
+            - /app/node_modules
+
+    rabbitmq:
+        image: rabbitmq:3.13-alpine
+        environment:
+            RABBITMQ_DEFAULT_USER: appuser
+            RABBITMQ_DEFAULT_PASS: apppassword
+            RABBITMQ_DEFAULT_VHOST: appvhost
+        volumes:
+            - rabbitmqdata:/var/lib/rabbitmq
+        networks: [appnet]
+        ports:
+            - "${RABBITMQ_PORT:-5672}:5672"
+
+    db:
+        image: postgres:16
+        shm_size: "2g"
+        restart: always
+        environment:
+            - POSTGRES_USER=appuser
+            - POSTGRES_PASSWORD=apppassword
+            - POSTGRES_DB=appdb
+        command: >
+            -c shared_buffers=2GB
+            -c effective_cache_size=6GB
+            -c work_mem=16MB
+            -c maintenance_work_mem=512MB
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+        ports:
+            - "${DB_PORT:-5439}:5432"
+        networks: [appnet]
+
+networks:
+    appnet:
+        driver: bridge
+
+volumes:
+    # pgdata:
+    rabbitmqdata:

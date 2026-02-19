@@ -15,13 +15,17 @@ export const loadFacetInstancesForBindingIds = async <Def extends FacetDefinitio
 	const { name } = facetDefinition;
 	const FacetModel = facetModels[name];
 	if (FacetModel) {
-		const instances = await FacetModel.findAll({ where: { facetBindingId: facetBindingIds } });
+		const instances = await FacetModel.findAll({
+			where: { facetBindingId: facetBindingIds },
+			raw: true,
+		});
 		const instancesByBindingId: Record<string, any> = indexByProperty(
 			instances,
 			'facetBindingId',
 		);
 		return mapObject(instancesByBindingId, (instance) => {
-			const { valid } = parseFacetInstance(facetDefinition, instance.toJSON(), true);
+			// const { valid } = parseFacetInstance(facetDefinition, instance.toJSON(), true);
+			const { valid } = parseFacetInstance(facetDefinition, instance, true);
 			return valid;
 		});
 	}

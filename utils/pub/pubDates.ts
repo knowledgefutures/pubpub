@@ -18,19 +18,24 @@ export const getPubCreatedDate = (pub: types.Pub | Pub) => {
 	return pub.createdAt;
 };
 
-export const getPubPublishedDate = (pub: types.Pub | Pub, includeCustomPublishedAt = true) => {
+export const getPubPublishedDate = (
+	pub: { customPublishedAt?: Date | string | null; releases?: { createdAt?: string }[] },
+	includeCustomPublishedAt = true,
+) => {
 	if (pub.customPublishedAt && includeCustomPublishedAt) {
 		return getLocalDateMatchingUtcCalendarDate(pub.customPublishedAt);
 	}
 	const { releases } = pub;
 	if (releases && releases.length > 0) {
 		const [firstRelease] = releases;
-		return new Date(firstRelease.createdAt);
+		return new Date(firstRelease.createdAt || new Date());
 	}
 	return null;
 };
 
-export const getPubPublishedDateString = (pub: types.Pub): string | null => {
+export const getPubPublishedDateString = (
+	pub: Pick<types.Pub, 'customPublishedAt'> & { releases?: { createdAt?: string }[] },
+): string | null => {
 	const publishedDate = getPubPublishedDate(pub, true);
 	let publishedDateString = '';
 	if (publishedDate) publishedDateString = formatDate(publishedDate);

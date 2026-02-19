@@ -74,7 +74,10 @@ router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res,
 
 	try {
 		const { collectionSlug } = req.params;
+
 		const initialData = await getInitialData(req);
+		(req as any).initialData = initialData;
+
 		const {
 			communityData,
 			communityData: { id: communityId },
@@ -95,7 +98,6 @@ router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res,
 
 		if (collection && isCollectionAccessible) {
 			const { pageId, id: collectionId } = collection;
-
 			await enrichCollectionWithAttributions(collection);
 
 			if (pageId) {
@@ -116,7 +118,8 @@ router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res,
 
 				const customScripts = await getCustomScriptsForCommunity(communityData.id);
 				createUserScopeVisit({ userId, communityId, collectionId });
-				return renderToNodeStream(
+
+				const out = renderToNodeStream(
 					res,
 					<Html
 						chunkName="Collection"
@@ -134,6 +137,7 @@ router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res,
 						bodyClassPrefix="layout"
 					/>,
 				);
+				return out;
 			}
 
 			return res.redirect(`/search?q=${collection.title}`);
@@ -149,7 +153,6 @@ router.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res,
 				return res.redirect(`/${collectionByPartialId.slug}`);
 			}
 		}
-
 		return next();
 	} catch (err) {
 		return handleErrors(req, res, next)(err);

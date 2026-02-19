@@ -50,7 +50,7 @@ export const getPubRelease = async (
 		throw new Error('Release not found');
 	}
 	const { historyKey, docId } = release;
-	const doc = expect(await Doc.findOne({ where: { id: docId } }));
+	const doc = expect(await Doc.findOne({ where: { id: docId }, raw: true }));
 	return {
 		initialDoc: doc.content,
 		initialDocKey: historyKey,

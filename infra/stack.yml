@@ -1,0 +1,120 @@
+services:
+    proxy:
+        image: caddy:latest
+        ports:
+            - target: 80
+              published: 80
+              protocol: tcp
+              mode: host
+            - target: 443
+              published: 443
+              protocol: tcp
+              mode: host
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy_data:/data
+            - caddy_config:/config
+        networks: [appnet]
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+    app:
+        image: ghcr.io/knowledgefutures/v6b:${IMAGE_TAG}
+        env_file: [.env]
+        environment:
+            NODE_ENV: production
+            PORT: '3000'
+            # Reuse the existing env var name, but point it at the in-swarm broker:
+            CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
+        networks: [appnet]
+        depends_on: [db] # note: ignored by swarm, fix later?
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - >
+                    node -e "require('http')
+                    .get('http://127.0.0.1:3000/api/health', r => process.exit(r.statusCode < 400 ? 0 : 1))
+                    .on('error', () => process.exit(1));"
+            interval: 10s
+            timeout: 3s
+            retries: 6
+            start_period: 60s
+        deploy:
+            replicas: 4
+            update_config:
+                order: start-first
+                parallelism: 1
+                delay: 5s
+                failure_action: rollback
+            rollback_config:
+                order: stop-first
+                parallelism: 1
+            restart_policy:
+                condition: on-failure
+
+    worker:
+        image: ghcr.io/knowledgefutures/v6b:${IMAGE_TAG}
+        env_file: [.env]
+        environment:
+            NODE_ENV: production
+            CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
+            CLOUDAMQP_APIKEY: ''
+        command: ['pnpm', 'run', 'workers-prod']
+        networks: [appnet]
+        deploy:
+            replicas: 2
+            update_config:
+                order: start-first
+                parallelism: 1
+                delay: 5s
+                failure_action: rollback
+            restart_policy:
+                condition: on-failure
+
+    rabbitmq:
+        image: rabbitmq:3.13-alpine
+        environment:
+            RABBITMQ_DEFAULT_USER: appuser
+            RABBITMQ_DEFAULT_PASS: apppassword
+            RABBITMQ_DEFAULT_VHOST: appvhost
+        volumes:
+            - rabbitmqdata:/var/lib/rabbitmq
+        networks: [appnet]
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+    db:
+        image: postgres:16
+        tmpfs:
+            - /dev/shm:size=2147483648
+        environment:
+            POSTGRES_USER: appuser
+            POSTGRES_PASSWORD: apppassword
+            POSTGRES_DB: appdb
+        command: >
+            -c shared_buffers=2GB
+            -c effective_cache_size=6GB
+            -c work_mem=16MB
+            -c maintenance_work_mem=512MB
+            -c max_connections=500
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks: [appnet]
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    appnet:
+        driver: overlay
+
+volumes:
+    pgdata:
+    rabbitmqdata:
+    caddy_data:
+    caddy_config:

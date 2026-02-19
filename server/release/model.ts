@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -32,6 +33,8 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 	declare noteText: string | null;
 
 	@AllowNull(false)
+	@Index
+	@Index({ using: 'BTREE', name: 'releases_created_at_pub_id_idx' })
 	@Column(DataType.UUID)
 	declare pubId: string;
 
@@ -54,4 +57,9 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 
 	@BelongsTo(() => Doc, { as: 'doc', foreignKey: 'docId' })
 	declare doc?: Doc;
+
+	@Index({ using: 'BTREE', name: 'releases_created_at_pub_id_idx' })
+	@Default(DataType.NOW)
+	@Column(DataType.DATE)
+	declare createdAt: CreationOptional<any>;
 }

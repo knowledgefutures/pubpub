@@ -16,7 +16,6 @@ import SimpleNotesList from './SimpleNotesList';
 import { digestCitation, getAffiliations, getDedupedAffliations } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
-const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
 
 // This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:
 // https://fonts.adobe.com/my_fonts#web_projects-section
@@ -31,43 +30,21 @@ const loadCjkFontsScript = `
 })(document);
 `;
 
-const createCss = () => {
-	const entrypoint = path.join(__dirname, 'styles', 'printDocument.scss');
-	const cssPath = path.join(__dirname, 'styles', 'printDocument.css');
-	// HACK(ian): We use node-sass to build a CSS bundle that is used by our HTML/PDF exports.
-	// Unfortunately, the export task runs in a thread managed by the worker_threads API, which
-	// node-sass does not support (see https://github.com/sass/node-sass/issues/2746). So we will
-	// just generate the bundle once per Heroku deploy and save it to a file.
-	if (!fs.existsSync(cssPath)) {
-		const sass = require('sass');
-		const nodeModulesPath = path.join(process.env.PWD!, 'node_modules');
-		const clientPath = path.join(process.env.PWD!, 'client');
-		const entrypointContents = fs.readFileSync(entrypoint).toString();
-		const data = '$PUBPUB_EXPORT: true;\n' + entrypointContents;
-		const css = sass
-			.renderSync({
-				data,
-				includePaths: [nodeModulesPath, clientPath],
-				importer: (url) => {
-					if (url.startsWith('~')) {
-						return { file: path.join(nodeModulesPath, url.slice(1)) };
-					}
-					return null;
-				},
-			})
-			.css.toString()
-			// Find all things like url(fonts/KaTeX_whatever) and replace them with a version that
-			// is loaded from an external CDN.
-			.replace(
-				/url\((fonts\/KaTeX_(?:[A-z0-9\-_]*?).(?:[A-z0-9]+))\)/g,
-				(_, fontPath) => `url(${katexCdnPrefix + fontPath})`,
-			);
-		fs.writeFileSync(cssPath, css);
-	}
-	return fs.readFileSync(cssPath).toString();
-};
+let cachedCss: string | null = null;
 
-const staticCss = createCss();
+const getStaticCss = (): string => {
+	if (cachedCss) {
+		return cachedCss;
+	}
+	const cssPath = path.join(__dirname, 'styles', 'printDocument.css');
+	if (!fs.existsSync(cssPath)) {
+		throw new Error(
+			`Export CSS not found at ${cssPath}. Run 'pnpm run build:export-css' to generate it.`,
+		);
+	}
+	cachedCss = fs.readFileSync(cssPath).toString();
+	return cachedCss;
+};
 
 export const filterNonExportableNodes = (nodes) =>
 	nodes.filter((n) => !nonExportableNodeTypes.includes(n.type));
@@ -317,7 +294,7 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 				<title>{title}</title>
 				<meta charSet="utf-8" />
 
-				<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
+				<style type="text/css" dangerouslySetInnerHTML={{ __html: getStaticCss() }} />
 
 				<script dangerouslySetInnerHTML={{ __html: loadCjkFontsScript }} />
 			</head>

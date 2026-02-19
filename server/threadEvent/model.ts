@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -36,10 +37,12 @@ export class ThreadEvent extends Model<
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
+	@Index
 	declare userId: string;
 
 	@AllowNull(false)
 	@Column(DataType.UUID)
+	@Index
 	declare threadId: string;
 
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })

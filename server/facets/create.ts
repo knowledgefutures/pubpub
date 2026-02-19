@@ -47,7 +47,14 @@ export const createSequelizeModelsFromFacetDefinitions = (sequelize: Sequelize) 
 				id: (sequelize as any).idType,
 				facetBindingId: { type: DataTypes.UUID, allowNull: false },
 			},
-			{ tableName: name },
+			{
+				tableName: name,
+				indexes: [
+					{
+						fields: ['facetBindingId'],
+					},
+				],
+			},
 		) as any;
 		FacetModel.belongsTo(FacetBinding, {
 			foreignKey: 'facetBindingId',

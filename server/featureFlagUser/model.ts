@@ -7,6 +7,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -26,9 +27,11 @@ export class FeatureFlagUser extends Model<
 	@Column(DataType.UUID)
 	declare id: CreationOptional<string>;
 
+	@Index
 	@Column(DataType.UUID)
 	declare featureFlagId: string | null;
 
+	@Index
 	@Column(DataType.UUID)
 	declare userId: string | null;
 

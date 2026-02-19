@@ -2,7 +2,7 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import { Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DataType, Default, Index, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table
 export class CustomScript extends Model<
@@ -16,6 +16,7 @@ export class CustomScript extends Model<
 	@Column(DataType.UUID)
 	declare id: CreationOptional<string>;
 
+	@Index
 	@Column(DataType.UUID)
 	declare communityId: string | null;
 

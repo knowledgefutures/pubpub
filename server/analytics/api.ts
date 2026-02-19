@@ -14,7 +14,8 @@ const sendToStitch = async (
 	payload: AnalyticsEvent & { country: string | null; countryCode: string | null },
 ) => {
 	if (!process.env.STITCH_WEBHOOK_URL) {
-		throw new Error('Missing STITCH_WEBHOOK_URL');
+		// throw new Error('Missing STITCH_WEBHOOK_URL');
+		return null;
 	}
 
 	const response = await fetch(process.env.STITCH_WEBHOOK_URL, {

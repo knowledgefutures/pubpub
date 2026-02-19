@@ -46,7 +46,6 @@ router.get(['/', '/:slug'], async (req, res, next) => {
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title
 			: `${pageData.title} · ${initialData.communityData.title}`;
-
 		return renderToNodeStream(
 			res,
 			<Html

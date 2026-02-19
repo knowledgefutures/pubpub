@@ -145,35 +145,112 @@ const cloudAmqpUrl = process.env.CLOUDAMQP_URL;
 if (!cloudAmqpUrl) {
 	throw new Error('CLOUDAMQP_URL environment variable not set');
 }
-// Initialize the connection to the queue and set the processTask function to run on new messages
-amqplib
-	.connect(cloudAmqpUrl)
-	.then((conn) => {
-		process.once('SIGINT', () => {
-			conn.close();
-		});
-		return conn.createConfirmChannel().then((ch) => {
-			let ok: any = ch.assertQueue(taskQueueName, {
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+const isRetryableAmqpError = (err: any) => {
+	const msg = String(err?.message || '');
+	const code = err?.code;
+	return (
+		code === 'ECONNREFUSED' ||
+		code === 'ENOTFOUND' ||
+		code === 'EAI_AGAIN' ||
+		code === 'ETIMEDOUT' ||
+		msg.includes('ECONNREFUSED') ||
+		msg.includes('getaddrinfo') ||
+		msg.includes('Socket closed') ||
+		msg.includes('Handshake terminated') ||
+		msg.includes('Connection closing')
+	);
+};
+
+async function connectAndConsumeWithRetry({
+	cloudAmqpUrl,
+	deadlineMs = 30_000,
+}: {
+	cloudAmqpUrl: string;
+	deadlineMs?: number;
+}) {
+	const start = Date.now();
+	let attempt = 0;
+	let lastErr: any;
+
+	let conn: amqplib.Connection | null = null;
+
+	// Register SIGINT handler once
+	process.once('SIGINT', () => {
+		try {
+			conn?.close();
+		} catch {}
+		process.exit(0);
+	});
+
+	while (Date.now() - start < deadlineMs) {
+		attempt += 1;
+		try {
+			// biome-ignore lint/performance/noAwaitInLoops: we need to
+			conn = await amqplib.connect(cloudAmqpUrl);
+
+			conn.on('error', (err) => {
+				console.error('RabbitMQ connection error:', err);
+			});
+			conn.on('close', () => {
+				console.error('RabbitMQ connection closed');
+			});
+
+			const ch = await conn.createConfirmChannel();
+
+			await ch.assertQueue(taskQueueName, {
 				durable: true,
 				maxPriority: TaskPriority.Highest,
 			});
-			ok = ok.then(() => {
-				ch.prefetch(maxWorkerThreads);
-			});
-			ok = ok.then(() => {
-				ch.consume(taskQueueName, processTask(ch), { noAck: false });
-				console.log(
-					` ==> Sequelize Max Connections: ${
-						process.env.WORKER
-							? 2
-							: process.env.SEQUELIZE_MAX_CONNECTIONS
-								? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-								: 5
-					}`,
-				);
-				console.log(` [*] Waiting for messages on ${taskQueueName}. To exit press CTRL+C`);
-			});
-			return ok;
-		});
-	})
-	.catch(console.warn);
+
+			ch.prefetch(maxWorkerThreads);
+
+			await ch.consume(taskQueueName, processTask(ch), { noAck: false });
+
+			console.log(
+				` ==> Sequelize Max Connections: ${
+					process.env.WORKER
+						? 2
+						: process.env.SEQUELIZE_MAX_CONNECTIONS
+							? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
+							: 5
+				}`,
+			);
+			console.log(` [*] Waiting for messages on ${taskQueueName}. To exit press CTRL+C`);
+
+			return; // success; leave the retry loop
+		} catch (err: any) {
+			lastErr = err;
+			if (!isRetryableAmqpError(err)) throw err;
+
+			const base = Math.min(2000, 250 * 2 ** Math.min(attempt - 1, 6));
+			const jitter = Math.floor(Math.random() * 150);
+			const delay = base + jitter;
+
+			console.warn(
+				`RabbitMQ not ready (attempt ${attempt}); retrying in ${delay}ms...`,
+				err?.code || err?.message,
+			);
+
+			// best-effort cleanup
+			try {
+				await conn?.close();
+			} catch {}
+			conn = null;
+
+			await sleep(delay);
+		}
+	}
+
+	throw new Error(
+		`Failed to connect/consume within ${deadlineMs}ms. Last error: ${
+			lastErr?.message || lastErr
+		}`,
+	);
+}
+
+connectAndConsumeWithRetry({ cloudAmqpUrl }).catch((e) => {
+	console.error(e);
+	process.exit(1);
+});

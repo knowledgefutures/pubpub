@@ -9,6 +9,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -26,12 +27,15 @@ export class PubEdge extends Model<InferAttributes<PubEdge>, InferCreationAttrib
 	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
+	@Index({ name: 'pub_edges_pub_id_idx' })
 	@Column(DataType.UUID)
 	declare pubId: string;
 
 	@Column(DataType.UUID)
 	declare externalPublicationId: string | null;
 
+	@Index({ name: 'pub_edges_target_pub_id_idx' })
+	@Index({ name: 'pub_edges_target_pub_id_approved_idx' })
 	@Column(DataType.UUID)
 	declare targetPubId: string | null;
 
@@ -48,6 +52,7 @@ export class PubEdge extends Model<InferAttributes<PubEdge>, InferCreationAttrib
 	declare pubIsParent: boolean;
 
 	@AllowNull(false)
+	@Index({ name: 'pub_edges_target_pub_id_approved_idx' })
 	@Column(DataType.BOOLEAN)
 	declare approvedByTarget: boolean;
 

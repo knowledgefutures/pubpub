@@ -1,0 +1,47 @@
+node_modules
+config.js
+
+# infra files
+infra/
+
+# git
+.git
+.gitignore
+.gitattributes
+
+# documentation
+*.md
+LICENSE
+
+# editor and IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# testing
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+
+# env files
+.env
+.env.*
+
+# build artifacts
+*.tsbuildinfo
+
+# docker
+Dockerfile
+.dockerignore
+docker-compose*.yml

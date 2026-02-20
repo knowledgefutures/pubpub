@@ -181,22 +181,25 @@ jobs:
 
             # wait until rollout is complete and then clear cache
             wait_rollout() {
+              echo "Beginning wait for rollout..."
               svc="$1"
               timeout="${2:-600}"
               end=$((SECONDS+timeout))
 
               while (( SECONDS < end )); do
-                desired="$(sudo docker service inspect "$svc" --format '{{.Spec.Mode.Replicated.Replicas}}')"
-                running="$(sudo docker service ps "$svc" --filter desired-state=running --format '{{.CurrentState}}' | grep -c '^Running' || true)"
-                state="$(sudo docker service inspect "$svc" --format '{{if .UpdateStatus}}{{.UpdateStatus.State}}{{end}}')"
-
-                if [[ "$running" == "$desired" ]] && { [[ -z "$state" ]] || [[ "$state" == "completed" ]]; }; then
+                desired="$(sudo docker service inspect "$svc" --format '{{.Spec.Mode.Replicated.Replicas}}' 2>/dev/null || echo "")"
+                running="$(sudo docker service ps "$svc" --filter desired-state=running --format '{{.CurrentState}}' 2>/dev/null | grep -c '^Running' || true)"
+                state="$(sudo docker service inspect "$svc" --format '{{if .UpdateStatus}}{{.UpdateStatus.State}}{{end}}' 2>/dev/null || echo "")"
+                echo "  $svc: desired=$desired running=$running state=$state"
+              
+                if [[ -n "$desired" && "$running" == "$desired" ]] && { [[ -z "$state" ]] || [[ "$state" == "completed" ]]; }; then
+                  echo "  $svc rollout complete"
                   return 0
                 fi
-
+              
                 sleep 5
               done
-
+              
               echo "Rollout timeout for $svc"
               return 1
             }
@@ -205,6 +208,7 @@ jobs:
 
             if [[ -n "${CACHE_CLEAR_WEBHOOK_URL:-}" ]]; then  
               curl -fsS -X POST "$CACHE_CLEAR_WEBHOOK_URL"
+              echo "Sent POST to CACHE_CLEAR_WEBHOOK_URL"
             fi
 
           EOS

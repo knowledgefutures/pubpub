@@ -201,8 +201,9 @@ jobs:
               return 1
             }
 
-            if [[ -n "${CACHE_CLEAR_WEBHOOK_URL:-}" ]]; then
-              wait_rollout pubpub_app 600
+            wait_rollout pubpub_app 600
+
+            if [[ -n "${CACHE_CLEAR_WEBHOOK_URL:-}" ]]; then  
               curl -fsS -X POST "$CACHE_CLEAR_WEBHOOK_URL"
             fi
 

@@ -44,7 +44,7 @@ const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 		[onToggleOpen],
 	);
 	const iconLabelPairs = renderLabelPairs([
-		...getScopeSummaryLabels(collection.scopeSummary!, true),
+		...getScopeSummaryLabels(collection.scopeSummary ?? null, true),
 		getCollectionPublicStateLabel(collection),
 		getCollectionKindLabel(collection),
 	]);

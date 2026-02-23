@@ -16,7 +16,10 @@ export type IconLabelPair = {
 	iconClass?: string;
 };
 
-export const getScopeSummaryLabels = (summary: ScopeSummary, showPubs = false) => {
+export const getScopeSummaryLabels = (summary: ScopeSummary | null, showPubs = false) => {
+	if (!summary) {
+		return [];
+	}
 	const { discussions, reviews, pubs } = summary;
 	const labels: IconLabelPair[] = [];
 	if (showPubs) {

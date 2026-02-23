@@ -192,9 +192,11 @@ async function connectAndConsumeWithRetry({
 
 			conn.on('error', (err) => {
 				console.error('RabbitMQ connection error:', err);
+				process.exit(1);
 			});
 			conn.on('close', () => {
 				console.error('RabbitMQ connection closed');
+				process.exit(1);
 			});
 
 			const ch = await conn.createConfirmChannel();

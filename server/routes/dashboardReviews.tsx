@@ -53,7 +53,7 @@ router.get(
 					viewData={{ pubsWithReviews }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Reviews · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Reviews · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 						unlisted: true,
 					})}
 				/>,

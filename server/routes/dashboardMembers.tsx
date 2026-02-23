@@ -37,7 +37,7 @@ router.get(
 					viewData={{ membersData }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Members · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Members · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 						unlisted: true,
 					})}
 				/>,

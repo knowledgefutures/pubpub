@@ -92,7 +92,7 @@ router.get(
 						viewData={{ initialSubmissionWorkflow }}
 						headerComponents={generateMetaComponents({
 							initialData,
-							title: `Submission Workflow · ${initialData.scopeData.elements.activeTarget.title}`,
+							title: `Submission Workflow · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 							unlisted: true,
 						})}
 					/>,
@@ -112,7 +112,7 @@ router.get(
 						}}
 						headerComponents={generateMetaComponents({
 							initialData,
-							title: `Submissions · ${initialData.scopeData.elements.activeTarget.title}`,
+							title: `Submissions · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 							unlisted: true,
 						})}
 					/>,

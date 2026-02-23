@@ -45,7 +45,7 @@ router.get(
 					viewData={{ activityData }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Activity · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Activity · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 						unlisted: true,
 					})}
 				/>,

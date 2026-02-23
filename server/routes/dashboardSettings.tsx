@@ -77,7 +77,7 @@ router.get(
 					viewData={{ settingsData, subMode: req.params.subMode }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Settings · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Settings · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 						unlisted: true,
 					})}
 				/>,

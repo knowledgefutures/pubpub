@@ -43,7 +43,7 @@ router.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) 
 				viewData={{ reviewData: sanitizedReviewData }}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Review ${req.params.reviewNumber} · ${initialData.scopeData.elements.activeTarget?.title}`,
+					title: `Review ${req.params.reviewNumber} · ${initialData.scopeData.elements.activeTarget?.title ?? initialData.communityData.title}`,
 					unlisted: true,
 				})}
 			/>,

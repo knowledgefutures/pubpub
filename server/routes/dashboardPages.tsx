@@ -32,7 +32,7 @@ router.get(['/dash/pages'], async (req, res, next) => {
 				viewData={{}}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Pages · ${activeTarget.title}`,
+					title: `Pages · ${activeTarget.title ?? initialData.communityData.title}`,
 					unlisted: true,
 				})}
 			/>,

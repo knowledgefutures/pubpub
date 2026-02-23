@@ -40,7 +40,7 @@ router.get(
 					viewData={{ facets, scopeId: scope }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Facets · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Facets · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,
 						unlisted: true,
 					})}
 				/>,

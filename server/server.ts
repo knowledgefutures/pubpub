@@ -230,7 +230,6 @@ appRouter.use((req, res, next) => {
 		req.hostname.includes('localhost') ||
 		req.hostname.includes('127.0.0.1')
 	) {
-		console.log('SETTING LOCALHOST');
 		req.headers.localhost = req.headers.host;
 		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
 			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
@@ -238,12 +237,10 @@ appRouter.use((req, res, next) => {
 		} else {
 			req.headers.host = 'demo.pubpub.org';
 		}
-		console.log('SETTING HOST', req.headers.host);
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
 	}
-	console.log('HOST', req.headers.host);
 	next();
 });
 
@@ -256,6 +253,32 @@ appRouter.use(readOnlyMiddleware());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;
 
+appRouter.use((req, res, next) => {
+	const now = process.hrtime.bigint();
+
+	let isLogged = false;
+	function logger() {
+		if (isLogged) {
+			return;
+		}
+		const durationMs = Number((process.hrtime.bigint() - now) / BigInt(1_000_000));
+		const host = req.headers.host ?? 'unknown';
+		const userAgent = req.headers['user-agent'] ?? 'unknown';
+		const contentLength = res.get('content-length') ?? '-';
+		const userId = req.user?.id ?? 'anon';
+		const ip = req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? 'unknown';
+
+		console.log(
+			`${req.method} ${res.statusCode} ${req.path} ${durationMs}ms | host=${host} | user=${userId} | ip=${ip} | size=${contentLength} | ua=${userAgent} | origin=${req.headers.origin}`,
+		);
+		isLogged = true;
+	}
+
+	res.on('finish', logger);
+	res.on('close', logger);
+	res.on('error', logger);
+	next();
+});
 /* ------------------------- */
 /* Create ts-rest api routes */
 /* ------------------------- */
@@ -291,19 +314,9 @@ createExpressEndpoints(contractWithoutCustomScript, server, appRouter, {
 import { apiRouter } from './apiRoutes';
 import { rootRouter } from './routes';
 
-appRouter.use((req, res, next) => {
-	console.log('==================');
-	console.log('==================');
-	const now = process.hrtime.bigint();
-	res.on('finish', () =>
-		console.log(
-			`${req.method} ${req.path} – ${Number((process.hrtime.bigint() - now) / BigInt(1_000_000))}ms`,
-		),
-	);
-	next();
-});
 appRouter.use(apiRouter);
 appRouter.use(rootRouter);
+
 /* ------------- */
 /* Error Handlers */
 /* ------------- */

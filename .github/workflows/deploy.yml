@@ -58,7 +58,9 @@ jobs:
             echo "host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_OUTPUT
             echo "swarm_addr=${{ secrets.SWARM_ADDR_PROD }}" >> $GITHUB_OUTPUT
             echo "env_file=.env.enc" >> $GITHUB_OUTPUT
-            echo "cache_clear_webhook_url=${{ secrets.CACHE_CLEAR_WEBHOOK_URL }}" >> $GITHUB_OUTPUT
+            echo "cache_api_key=${{ secrets.CACHE_API_KEY }}" >> $GITHUB_OUTPUT
+            echo "cache_purge_all_url=${{ secrets.CACHE_PURGE_ALL_URL }}" >> $GITHUB_OUTPUT
+            echo "cache_purge_host_url=${{ secrets.CACHE_PURGE_HOST_URL }}" >> $GITHUB_OUTPUT
           else
             echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
             echo "host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_OUTPUT
@@ -115,11 +117,13 @@ jobs:
           IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
           SWARM_ADDR: ${{ steps.vars.outputs.swarm_addr }}
           ENV_FILE: ${{ steps.vars.outputs.env_file }}
-          CACHE_CLEAR_WEBHOOK_URL: ${{ steps.vars.outputs.cache_clear_webhook_url }}
+          CACHE_API_KEY: ${{ steps.vars.outputs.cache_api_key }}
+          CACHE_PURGE_ALL_URL: ${{ steps.vars.outputs.cache_purge_all_url }}
+          CACHE_PURGE_HOST_URL: ${{ steps.vars.outputs.cache_purge_host_url }}
 
         run: |
           ssh "${SSH_USER}@${SSH_HOST}" \
-            "env GHCR_USER='${GHCR_USER}' GHCR_TOKEN='${GHCR_TOKEN}' IMAGE_TAG='${IMAGE_TAG}' SWARM_ADDR='${SWARM_ADDR}' ENV_FILE='${ENV_FILE}' CACHE_CLEAR_WEBHOOK_URL='${CACHE_CLEAR_WEBHOOK_URL}' bash -s -- '${REPO}' '${BRANCH}'" <<'EOS'
+            "env GHCR_USER='${GHCR_USER}' GHCR_TOKEN='${GHCR_TOKEN}' IMAGE_TAG='${IMAGE_TAG}' SWARM_ADDR='${SWARM_ADDR}' ENV_FILE='${ENV_FILE}' CACHE_API_KEY='${CACHE_API_KEY}' CACHE_PURGE_ALL_URL='${CACHE_PURGE_ALL_URL}' CACHE_PURGE_HOST_URL='${CACHE_PURGE_HOST_URL}' bash -s -- '${REPO}' '${BRANCH}'" <<'EOS'
             set -euo pipefail
 
             REPO="${1:?missing repo}"
@@ -206,9 +210,21 @@ jobs:
 
             wait_rollout pubpub_app 600
 
-            if [[ -n "${CACHE_CLEAR_WEBHOOK_URL:-}" ]]; then  
-              curl -fsS -X POST "$CACHE_CLEAR_WEBHOOK_URL"
-              echo "Sent POST to CACHE_CLEAR_WEBHOOK_URL"
+            if [[ -n "${CACHE_API_KEY:-}" ]]; then
+              if [[ -n "${CACHE_PURGE_ALL_URL:-}" ]]; then
+                curl -fsS -X POST \
+                  -H "Fastly-Key: $CACHE_API_KEY" \
+                  -H "Fastly-Soft-Purge: 1" \
+                  "$CACHE_PURGE_ALL_URL"
+                echo "Cache: soft purged all"
+              fi
+
+              if [[ -n "${CACHE_PURGE_HOST_URL:-}" ]]; then
+                curl -fsS -X POST \
+                  -H "Fastly-Key: $CACHE_API_KEY" \
+                  "$CACHE_PURGE_HOST_URL"
+                echo "Cache: purged host"
+              fi
             fi
 
           EOS

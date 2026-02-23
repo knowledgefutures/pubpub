@@ -130,6 +130,9 @@ Thank you to these groups for providing their tools for free to PubPub's open so
 
 [![Browserstack-logo@2x](https://user-images.githubusercontent.com/1000455/64237395-318a4c80-cef4-11e9-8b78-98ed3ec58ce3.png)](https://www.browserstack.com/)
 
+[![Fastly-logo](https://github.com/user-attachments/assets/e5daf0da-373d-48b7-956a-5c2acbb7a798)](https://www.fastly.com/)
+
+
 ## Code of Conduct
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://github.com/knowledgefutures/general/blob/master/CODE_OF_CONDUCT.md)

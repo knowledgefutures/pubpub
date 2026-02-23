@@ -84,6 +84,11 @@ services:
         networks: [appnet]
         deploy:
             replicas: 1
+            resources:
+                limits:
+                    memory: 512M
+                reservations:
+                    memory: 256M
             restart_policy:
                 condition: any
 

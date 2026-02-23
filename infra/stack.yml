@@ -79,6 +79,8 @@ services:
             RABBITMQ_DEFAULT_USER: appuser
             RABBITMQ_DEFAULT_PASS: apppassword
             RABBITMQ_DEFAULT_VHOST: appvhost
+            RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: >-
+                -rabbit vm_memory_high_watermark {absolute,"350MB"}
         volumes:
             - rabbitmqdata:/var/lib/rabbitmq
         networks: [appnet]

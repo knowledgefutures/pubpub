@@ -29,9 +29,15 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		timezone: 'UTC',
 	});
 } else {
-	log(
-		'PUBPUB_PRODUCTION is not set — no jobs registered. Run tasks manually with: pnpm run tools-prod <task>',
-	);
+	const logNotSet = () => {
+		log(
+			'PUBPUB_PRODUCTION is not set — no jobs registered. Run tasks manually with: pnpm run tools-prod <task>',
+		);
+	};
+	logNotSet();
+	cron.schedule('0 0 * * *', logNotSet, {
+		timezone: 'UTC',
+	});
 }
 
 log('Scheduler started');

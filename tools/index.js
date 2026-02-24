@@ -33,6 +33,7 @@ const commandFiles = {
 	backfillCheckpoints: "./backfillCheckpoints",
 	backfillDepositTargets: "./backfillDepositTargets",
 	backup: "./backup/backup",
+	backupDb: "./backup-db",
 	branchMaintenance: "./branchMaintenance",
 	bulkimport: "../workers/tasks/import/bulk/cli",
 	checkpointBackfill: "./dashboardMigrations/backfillCheckpoints",

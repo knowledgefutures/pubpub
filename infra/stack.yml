@@ -115,7 +115,15 @@ services:
             replicas: 1
             restart_policy:
                 condition: any
-
+    cron:
+        image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
+        env_file: [.env]
+        command: ['pnpm', 'run', 'cron']
+        networks: [appnet]
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
 networks:
     appnet:
         driver: overlay

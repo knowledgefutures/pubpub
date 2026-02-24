@@ -407,6 +407,9 @@ importers:
       no-slash:
         specifier: ^1.2.15
         version: 1.2.15
+      node-cron:
+        specifier: ^4.2.1
+        version: 4.2.1
       node-fetch:
         specifier: ^2.6.7
         version: 2.7.0
@@ -596,6 +599,9 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@18.19.130)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
       unidecode:
         specifier: ^0.1.8
         version: 0.1.8
@@ -616,7 +622,7 @@ importers:
         version: 1.0.9
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2))
+        version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2))
       xmlbuilder:
         specifier: ^13.0.2
         version: 13.0.2
@@ -875,7 +881,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.10
-        version: 4.0.18(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2)
+        version: 4.0.18(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
       webpack:
         specifier: ^4.41.5
         version: 4.47.0(webpack-cli@3.3.12)
@@ -8445,6 +8451,10 @@ packages:
     resolution: {integrity: sha512-R8cjEILpXhwyEtQjWhUyEyPT5UPhcE/RiSrhSgwAp7R8IRD6n3iL7M4g8U+7Uc5QCc3oExyJ0EmxHlMHxpQXEA==}
     engines: {node: '>=6'}
 
+  node-cron@4.2.1:
+    resolution: {integrity: sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==}
+    engines: {node: '>=6.0.0'}
+
   node-dir@0.1.17:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
     engines: {node: '>= 0.10.5'}
@@ -10847,6 +10857,11 @@ packages:
     engines: {node: '>= 6'}
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
+
+  tsx@4.21.0:
+    resolution: {integrity: sha512-5C1sg4USs1lfG0GFb2RLXsdpXqBSEhAaA/0kPL01wxzpMqLILNxIxIOKiILz+cdg/pLnOUxFYOR5yhHU666wbw==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
@@ -16396,13 +16411,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.18(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2))':
+  '@vitest/mocker@4.0.18(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2))':
     dependencies:
       '@vitest/spy': 4.0.18
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2)
+      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
 
   '@vitest/pretty-format@4.0.18':
     dependencies:
@@ -21646,6 +21661,8 @@ snapshots:
     dependencies:
       url: 0.11.4
 
+  node-cron@4.2.1: {}
+
   node-dir@0.1.17:
     dependencies:
       minimatch: 3.1.2
@@ -24647,6 +24664,13 @@ snapshots:
       tslib: 1.14.1
       typescript: 5.9.3
 
+  tsx@4.21.0:
+    dependencies:
+      esbuild: 0.27.3
+      get-tsconfig: 4.13.6
+    optionalDependencies:
+      fsevents: 2.3.3
+
   tty-browserify@0.0.0: {}
 
   tunnel-agent@0.6.0:
@@ -25022,18 +25046,18 @@ snapshots:
       d3-time: 3.1.0
       d3-timer: 3.0.1
 
-  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2)):
+  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.9.3)
     optionalDependencies:
-      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2)
+      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2):
+  vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2):
     dependencies:
       esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
@@ -25046,12 +25070,13 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.67.0
       terser: 5.46.0
+      tsx: 4.21.0
       yaml: 1.10.2
 
-  vitest@4.0.18(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2):
+  vitest@4.0.18(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2):
     dependencies:
       '@vitest/expect': 4.0.18
-      '@vitest/mocker': 4.0.18(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2))
+      '@vitest/mocker': 4.0.18(vite@7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2))
       '@vitest/pretty-format': 4.0.18
       '@vitest/runner': 4.0.18
       '@vitest/snapshot': 4.0.18
@@ -25068,7 +25093,7 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(yaml@1.10.2)
+      vite: 7.3.1(@types/node@18.19.130)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 18.19.130

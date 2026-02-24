@@ -10,10 +10,12 @@ WORKDIR /app
 # Install system packages listed in Aptfile (ignore comments/blank lines)
 COPY Aptfile /tmp/Aptfile
 RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl ca-certificates gnupg \
+ && curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg \
+ && echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+ && apt-get update \
  && awk '!/^\s*#/ && !/^\s*$/' /tmp/Aptfile \
       | xargs -r apt-get install -y --no-install-recommends \
- # Install curl + certs for downloading pandoc
- && apt-get install -y --no-install-recommends curl ca-certificates \
  # Pick correct pandoc .deb for current architecture (amd64 / arm64)
  && ARCH="$(dpkg --print-architecture)" \
  && if [ "$ARCH" = "amd64" ]; then \
@@ -71,6 +73,7 @@ COPY --from=builder /app/init.js /app/init.js
 COPY --from=builder /app/client/components/Editor/styles /app/client/components/Editor/styles
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/static /app/static
+COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/pnpm-lock.yaml /app/pnpm-lock.yaml
 

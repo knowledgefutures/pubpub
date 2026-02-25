@@ -1,6 +1,7 @@
 services:
     proxy:
-        image: caddy:latest
+        image: caddy:2.11
+        env_file: [.env]
         ports:
             - target: 80
               published: 80
@@ -124,6 +125,34 @@ services:
             replicas: 1
             restart_policy:
                 condition: any
+    pgadmin:
+        image: dpage/pgadmin4:9.12
+        env_file: [.env]
+        environment:
+            PGADMIN_LISTEN_PORT: 5050
+            # Trust 1 proxy layer for each header
+            PGADMIN_CONFIG_PROXY_X_FOR_COUNT: "1"
+            PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
+            PGADMIN_CONFIG_PROXY_X_HOST_COUNT: "1"
+            PGADMIN_CONFIG_PROXY_X_PORT_COUNT: "1"
+            # Disable IP-based cookie protection (breaks behind cloudflare)
+            PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+            # Disable CSRF checks that break behind CF
+            PGADMIN_CONFIG_WTF_CSRF_ENABLED: "False"
+            PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT: "False"
+            PGADMIN_CONFIG_WTF_CSRF_SSL_STRICT: "False"
+        volumes:
+            - pgadmin_data:/var/lib/pgadmin
+        networks: [appnet]
+        deploy:
+            replicas: 1
+            resources:
+              limits:
+                memory: 512M
+              reservations:
+                memory: 128M
+            restart_policy:
+                condition: any
 networks:
     appnet:
         driver: overlay
@@ -133,3 +162,4 @@ volumes:
     rabbitmqdata:
     caddy_data:
     caddy_config:
+    pgadmin_data:

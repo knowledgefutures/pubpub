@@ -1,4 +1,5 @@
 import fs from 'fs';
+import readline from 'readline';
 
 import { findPub, setDoiData } from 'server/doi/queries';
 import { CrossrefDepositRecord, PubEdge } from 'server/models';
@@ -12,6 +13,7 @@ import {
 	checkDoiInCrossref,
 	createLogger,
 	getInputPath,
+	getRange,
 	waitForDoiResolution,
 	writeResults,
 } from './shared';
@@ -62,8 +64,30 @@ type ResultEntry = {
 };
 
 const dryRun = process.argv.includes('--dry-run');
+const interactive = process.argv.includes('--interactive');
 const logger = createLogger('fix-dois');
 const { log, warn, error: logErr } = logger;
+
+let rl: readline.Interface | null = null;
+
+const prompt = (question: string): Promise<string> => {
+	if (!rl) {
+		rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+	}
+	return new Promise((resolve) => rl!.question(question, resolve));
+};
+
+const promptChoice = async (question: string, choices: string[]): Promise<string> => {
+	const choiceStr = choices.join('/');
+	while (true) {
+		// biome-ignore lint/performance/noAwaitInLoops: interactive prompt loop
+		const answer = (await prompt(`${question} [${choiceStr}]: `)).trim().toLowerCase();
+		if (choices.includes(answer)) {
+			return answer;
+		}
+		log(`  please enter one of: ${choiceStr}`);
+	}
+};
 
 const extractReviewType = async (pub: any): Promise<string | null> => {
 	if (!pub.crossrefDepositRecordId) {
@@ -243,6 +267,18 @@ async function depositPub(
 	}
 }
 
+// returns 'retry' | 'skip' | 'continue'. in non-interactive mode always 'continue'.
+async function handleDoiResolutionFailure(doi: string, childTitle: string): Promise<string> {
+	if (!interactive) {
+		return 'continue';
+	}
+	warn(`  child DOI ${doi} ("${childTitle}") did not resolve within timeout.`);
+	log(
+		`  you can fix the issue externally and then retry, skip this cluster, or continue anyway.`,
+	);
+	return promptChoice('  action?', ['retry', 'skip', 'continue']);
+}
+
 async function processCluster(cluster: Cluster): Promise<ResultEntry[]> {
 	const { parent, children, edges } = cluster;
 	const results: ResultEntry[] = [];
@@ -348,16 +384,30 @@ async function processCluster(cluster: Cluster): Promise<ResultEntry[]> {
 		if (depositedChildren.length > 0) {
 			log(`  waiting for ${depositedChildren.length} child DOIs to resolve...`);
 			for (const child of depositedChildren) {
-				// biome-ignore lint/performance/noAwaitInLoops: sequential polling per doi
-				const resolved = await waitForDoiResolution(child.doi!, {
-					timeoutMs: 120_000,
-					intervalMs: 5_000,
-					logger,
-				});
-				if (!resolved) {
+				let resolved = false;
+				while (!resolved) {
+					// biome-ignore lint/performance/noAwaitInLoops: sequential polling per doi
+					resolved = await waitForDoiResolution(child.doi!, {
+						timeoutMs: 120_000,
+						intervalMs: 5_000,
+						logger,
+					});
+					if (resolved) {
+						break;
+					}
+					const action = await handleDoiResolutionFailure(child.doi!, child.title);
+					if (action === 'retry') {
+						log(`  retrying resolution check for ${child.doi}...`);
+						continue;
+					}
+					if (action === 'skip') {
+						throw new Error(`skipped by user: child DOI ${child.doi} did not resolve`);
+					}
+					// 'continue' -- just move on
 					warn(
 						`  child DOI ${child.doi} did not resolve within timeout, proceeding anyway`,
 					);
+					break;
 				}
 			}
 		}
@@ -403,18 +453,30 @@ async function processStandalone(pub: PubInfo): Promise<ResultEntry> {
 	};
 }
 
+function logProgress(phase: string, index: number, total: number, rangeOffset: number) {
+	const absolute = rangeOffset + index;
+	log(`[${phase} ${index + 1}/${total}, absolute index ${absolute}] `);
+}
+
 async function main() {
 	const inputPath = getInputPath();
 	const raw = fs.readFileSync(inputPath, 'utf-8');
 	const failures: FailureEntry[] = JSON.parse(raw);
 
-	log(`loaded ${failures.length} failure entries from ${inputPath}`);
-	if (dryRun) {
-		log('running in DRY-RUN mode -- no changes will be made');
-	}
-
+	const range = getRange();
+	const rangeOffset = range ? range[0] : 0;
 	const pubIds = applyRange(failures.map((f) => f.id));
-	log(`processing ${pubIds.length} pubs`);
+
+	log(`loaded ${failures.length} entries from ${inputPath}`);
+	log(
+		`processing ${pubIds.length} pubs (indices ${rangeOffset}-${rangeOffset + pubIds.length - 1})`,
+	);
+	if (dryRun) {
+		log('DRY-RUN mode -- no changes will be made');
+	}
+	if (interactive) {
+		log('INTERACTIVE mode -- will prompt on resolution failures');
+	}
 
 	const { clusters, standalone } = await discoverClusters(pubIds);
 
@@ -429,14 +491,18 @@ async function main() {
 	}
 
 	const results: ResultEntry[] = [];
+	let lastCompletedIndex = rangeOffset - 1;
 
-	for (const cluster of clusters) {
+	for (let i = 0; i < clusters.length; i++) {
+		const cluster = clusters[i];
+		logProgress('cluster', i, clusters.length, rangeOffset);
+		log(`  parent="${cluster.parent.title}"`);
 		try {
 			// biome-ignore lint/performance/noAwaitInLoops: clusters must be processed sequentially
 			const clusterResults = await processCluster(cluster);
 			results.push(...clusterResults);
 		} catch (e: any) {
-			logErr(`cluster "${cluster.parent.title}" failed unexpectedly: ${e.message}`);
+			logErr(`cluster "${cluster.parent.title}" failed: ${e.message}`);
 			results.push({
 				id: cluster.parent.id,
 				title: cluster.parent.title,
@@ -447,16 +513,31 @@ async function main() {
 				error: e.message,
 				cluster: cluster.parent.title,
 			});
+			for (const child of cluster.children) {
+				results.push({
+					id: child.id,
+					title: child.title,
+					doi: child.doi,
+					slug: child.slug,
+					role: 'child',
+					success: false,
+					error: e.message,
+					cluster: cluster.parent.title,
+				});
+			}
 		}
+		lastCompletedIndex = rangeOffset + i;
 	}
 
-	for (const pub of standalone) {
+	for (let i = 0; i < standalone.length; i++) {
+		const pub = standalone[i];
+		logProgress('standalone', i, standalone.length, rangeOffset + clusters.length);
 		try {
 			// biome-ignore lint/performance/noAwaitInLoops: sequential deposits to respect crossref rate limits
 			const result = await processStandalone(pub);
 			results.push(result);
 		} catch (e: any) {
-			logErr(`standalone "${pub.title}" failed unexpectedly: ${e.message}`);
+			logErr(`standalone "${pub.title}" failed: ${e.message}`);
 			results.push({
 				id: pub.id,
 				title: pub.title,
@@ -467,14 +548,20 @@ async function main() {
 				error: e.message,
 			});
 		}
+		lastCompletedIndex = rangeOffset + clusters.length + i;
 	}
 
 	const succeeded = results.filter((r) => r.success).length;
 	const failed = results.filter((r) => !r.success).length;
 	log(`\ndone. ${succeeded} succeeded, ${failed} failed.`);
+	log(
+		`last completed index: ${lastCompletedIndex} (resume with --range ${lastCompletedIndex + 1}-${rangeOffset + pubIds.length})`,
+	);
 
 	const outputPath = writeResults('results', results);
 	log(`results written to ${outputPath}`);
+
+	rl?.close();
 
 	if (failed > 0) {
 		process.exit(1);
@@ -485,5 +572,11 @@ async function main() {
 main().catch((e) => {
 	logErr(`fatal: ${e.message}`);
 	console.error(e);
+	const range = getRange();
+	const rangeOffset = range ? range[0] : 0;
+	logErr(
+		`script crashed. you were at range offset ${rangeOffset}. check results output for progress.`,
+	);
+	rl?.close();
 	process.exit(1);
 });

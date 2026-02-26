@@ -22,12 +22,21 @@ Outputs a `discovered-*.json` file that can be fed directly into the other two s
 
 ## fix broken DOIs
 
-Takes a JSON file of broken DOIs and re-deposits them, handling the supplement disconnect/reconnect dance:
+Takes a JSON file of broken DOIs and re-deposits them, handling the supplement disconnect/reconnect dance.
+Everything runs inside a transaction so if something fails mid-cluster, edges are never left disconnected.
 
 ```sh
 npm run tools fixDois -- --input tools/fix-dois/discovered-community-2e3983f5-1772120953981.json
 npm run tools fixDois -- --dry-run  # uses real-failurs.json, doesn't actually deposit anything
 npm run tools fixDois -- --range 0-5  # just the first 5 entries
+```
+
+Pass `--interactive` to pause when a child DOI fails to resolve and get a prompt to retry, skip, or continue.
+The script always prints the last completed index so you can resume with `--range`.
+
+```sh
+npm run tools fixDois -- --input discovered.json --interactive
+npm run tools fixDois -- --input discovered.json --range 12-50  # resume from index 12
 ```
 
 ## verify deposits

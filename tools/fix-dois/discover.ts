@@ -4,7 +4,7 @@ import { Community, Pub } from 'server/models';
 
 import {
 	applyRange,
-	type CrossrefCheckResult,
+	type CheckResult,
 	checkDoisInCrossref,
 	createLogger,
 	getArgValue,
@@ -84,7 +84,7 @@ async function main() {
 	const workingCount = { value: 0 };
 
 	for (const pub of pubs) {
-		const result = checkResults.get(pub) as CrossrefCheckResult;
+		const result = checkResults.get(pub) as CheckResult;
 		if (result.ok) {
 			workingCount.value++;
 			continue;

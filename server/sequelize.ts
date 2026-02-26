@@ -4,6 +4,7 @@ import type {
 } from 'sequelize/types/dialects/abstract/connection-manager';
 import type { Pool } from 'sequelize-pool';
 
+import { AsyncLocalStorage } from 'async_hooks';
 import { knex } from 'knex';
 import { ConnectionError, type ConnectionOptions, DataTypes, type PoolOptions } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
@@ -11,6 +12,34 @@ import { Sequelize } from 'sequelize-typescript';
 /* eslint-enable */
 import { abortStorage } from './abort';
 import { DatabaseRequestAbortedError } from './utils/errors';
+
+// cls-hooked-compatible namespace backed by AsyncLocalStorage.
+// when enabled via useCLS, sequelize automatically propagates
+// transactions to all queries inside sequelize.transaction().
+const clsStorage = new AsyncLocalStorage<Map<string, unknown>>();
+
+export const clsNamespace = {
+	get(key: string) {
+		return clsStorage.getStore()?.get(key);
+	},
+	set(key: string, value: unknown) {
+		clsStorage.getStore()?.set(key, value);
+		return value;
+	},
+	run(callback: (...args: any[]) => any) {
+		return clsStorage.run(new Map(), callback);
+	},
+	bind<T extends (...args: any[]) => any>(fn: T): T {
+		const store = clsStorage.getStore();
+		if (!store) {
+			return fn;
+		}
+		return ((...args: any[]) => clsStorage.run(store, () => fn(...args))) as T;
+	},
+};
+
+// biome-ignore lint/correctness/useHookAtTopLevel: not a react hook
+Sequelize.useCLS(clsNamespace as any);
 
 const database_url = process.env.DATABASE_URL;
 

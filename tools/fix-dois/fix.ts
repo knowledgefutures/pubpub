@@ -1,13 +1,20 @@
 import fs from 'fs';
-import path from 'path';
 
 import { findPub, setDoiData } from 'server/doi/queries';
 import { CrossrefDepositRecord, PubEdge } from 'server/models';
 import { createPubEdge, destroyPubEdge } from 'server/pubEdge/queries';
+import { withTransaction } from 'server/transactionContext';
 import { getDepositRecordReviewType } from 'utils/crossref/parseDeposit';
 import { findParentEdgeByRelationTypes, RelationType } from 'utils/pubEdge/relations';
 
-import { applyRange, checkDoiInCrossref, createLogger, getInputPath, writeResults } from './shared';
+import {
+	applyRange,
+	checkDoiInCrossref,
+	createLogger,
+	getInputPath,
+	waitForDoiResolution,
+	writeResults,
+} from './shared';
 
 type FailureEntry = {
 	working: boolean;
@@ -55,7 +62,8 @@ type ResultEntry = {
 };
 
 const dryRun = process.argv.includes('--dry-run');
-const { log, warn, error: logErr } = createLogger('fix-dois');
+const logger = createLogger('fix-dois');
+const { log, warn, error: logErr } = logger;
 
 const extractReviewType = async (pub: any): Promise<string | null> => {
 	if (!pub.crossrefDepositRecordId) {
@@ -284,7 +292,6 @@ async function processCluster(cluster: Cluster): Promise<ResultEntry[]> {
 		warn(`  parent "${parent.title}" has no review target DOI, proceeding anyway`);
 	}
 
-	// disconnect children
 	const edgeQueries = children.flatMap((child) => [
 		PubEdge.findAll({
 			where: { pubId: child.id, targetPubId: parent.id, relationType: 'supplement' },
@@ -297,33 +304,65 @@ async function processCluster(cluster: Cluster): Promise<ResultEntry[]> {
 	const edgeIdsToDestroy = edgeResults.flat().map((e) => e.id);
 
 	log(`  disconnecting ${edgeIdsToDestroy.length} supplement edges`);
-	if (!dryRun) {
+
+	if (dryRun) {
+		log(`  [dry-run] would destroy edges: ${edgeIdsToDestroy.join(', ')}`);
+		for (const child of children) {
+			results.push(makeResult(child, 'child', true));
+		}
+		log(`  [dry-run] would recreate edges`);
+		results.push(makeResult(parent, 'parent', true));
+		return results;
+	}
+
+	// everything inside withTransaction shares a single db transaction.
+	// if any step throws, the transaction rolls back and edges are never
+	// visibly deleted.
+	return withTransaction(async () => {
 		for (const edgeId of edgeIdsToDestroy) {
 			// biome-ignore lint/performance/noAwaitInLoops: sequential to avoid race conditions
 			await destroyPubEdge(edgeId);
 		}
-	} else {
-		log(`  [dry-run] would destroy edges: ${edgeIdsToDestroy.join(', ')}`);
-	}
 
-	// deposit each child individually (standalone, no supplement edge)
-	for (const child of children) {
-		// biome-ignore lint/performance/noAwaitInLoops: sequential deposits to respect crossref rate limits
-		const childOk = await depositPub(
-			child.id,
-			child.communityId,
-			child.reviewType,
-			`child "${child.title}" (${child.doi})`,
-		);
-		results.push(makeResult(child, 'child', childOk, childOk ? undefined : 'deposit failed'));
-		if (!childOk) {
-			warn(`  failed to deposit child "${child.title}", continuing with remaining children`);
+		for (const child of children) {
+			// biome-ignore lint/performance/noAwaitInLoops: sequential deposits to respect crossref rate limits
+			const childOk = await depositPub(
+				child.id,
+				child.communityId,
+				child.reviewType,
+				`child "${child.title}" (${child.doi})`,
+			);
+			results.push(
+				makeResult(child, 'child', childOk, childOk ? undefined : 'deposit failed'),
+			);
+			if (!childOk) {
+				warn(
+					`  failed to deposit child "${child.title}", continuing with remaining children`,
+				);
+			}
 		}
-	}
 
-	// reconnect children
-	log(`  reconnecting ${edges.length} supplement edges`);
-	if (!dryRun) {
+		const depositedChildren = children.filter(
+			(c) => c.doi && results.find((r) => r.id === c.id && r.success),
+		);
+		if (depositedChildren.length > 0) {
+			log(`  waiting for ${depositedChildren.length} child DOIs to resolve...`);
+			for (const child of depositedChildren) {
+				// biome-ignore lint/performance/noAwaitInLoops: sequential polling per doi
+				const resolved = await waitForDoiResolution(child.doi!, {
+					timeoutMs: 120_000,
+					intervalMs: 5_000,
+					logger,
+				});
+				if (!resolved) {
+					warn(
+						`  child DOI ${child.doi} did not resolve within timeout, proceeding anyway`,
+					);
+				}
+			}
+		}
+
+		log(`  reconnecting ${edges.length} supplement edges`);
 		for (const savedEdge of edges) {
 			// biome-ignore lint/performance/noAwaitInLoops: sequential to maintain edge ordering
 			await createPubEdge({
@@ -335,20 +374,19 @@ async function processCluster(cluster: Cluster): Promise<ResultEntry[]> {
 				moveToTop: false,
 			});
 		}
-	} else {
-		log(`  [dry-run] would recreate edges`);
-	}
 
-	// deposit parent (now with supplement relationships in place)
-	const parentOk = await depositPub(
-		parent.id,
-		parent.communityId,
-		parent.reviewType,
-		`parent "${parent.title}" (${parent.doi})`,
-	);
-	results.push(makeResult(parent, 'parent', parentOk, parentOk ? undefined : 'deposit failed'));
+		const parentOk = await depositPub(
+			parent.id,
+			parent.communityId,
+			parent.reviewType,
+			`parent "${parent.title}" (${parent.doi})`,
+		);
+		results.push(
+			makeResult(parent, 'parent', parentOk, parentOk ? undefined : 'deposit failed'),
+		);
 
-	return results;
+		return results;
+	});
 }
 
 async function processStandalone(pub: PubInfo): Promise<ResultEntry> {

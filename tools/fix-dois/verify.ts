@@ -3,8 +3,8 @@ import path from 'path';
 
 import {
 	applyRange,
-	type CrossrefCheckResult,
-	checkDoisInCrossref,
+	type CheckResult,
+	checkDoisResolve,
 	createLogger,
 	getInputPath,
 	writeResults,
@@ -25,7 +25,7 @@ type VerifyResult = {
 	doi: string | null;
 	title: string;
 	slug: string;
-	existsInCrossref: boolean | null;
+	resolves: boolean | null;
 	role?: string;
 	error?: string;
 };
@@ -60,7 +60,7 @@ async function main() {
 
 	log(`${toCheck.length} entries have DOIs to verify`);
 
-	const checkResults = await checkDoisInCrossref(
+	const checkResults = await checkDoisResolve(
 		toCheck,
 		(item) => item.doi,
 		(checked, total) => log(`  checked ${checked}/${total}`),
@@ -69,13 +69,13 @@ async function main() {
 	const results: VerifyResult[] = [];
 
 	for (const item of toCheck) {
-		const result = checkResults.get(item) as CrossrefCheckResult;
+		const result = checkResults.get(item) as CheckResult;
 		results.push({
 			id: item.id,
 			doi: item.doi,
 			title: item.title,
 			slug: item.slug,
-			existsInCrossref: result.ok,
+			resolves: result.ok,
 			role: item.role,
 			error: result.ok ? undefined : result.error,
 		});
@@ -87,25 +87,25 @@ async function main() {
 			doi: null,
 			title: e.title ?? e.pub ?? e.id,
 			slug: e.slug ?? '',
-			existsInCrossref: null,
+			resolves: null,
 			role: e.role,
 			error: 'no DOI to check',
 		});
 	}
 
-	const found = results.filter((r) => r.existsInCrossref === true).length;
-	const notFound = results.filter((r) => r.existsInCrossref === false).length;
-	const errored = results.filter((r) => r.existsInCrossref === null && r.doi).length;
+	const found = results.filter((r) => r.resolves === true).length;
+	const notFound = results.filter((r) => r.resolves === false).length;
+	const errored = results.filter((r) => r.resolves === null && r.doi).length;
 
 	log(`\nresults:`);
-	log(`  found in CrossRef: ${found}`);
-	log(`  NOT found in CrossRef: ${notFound}`);
+	log(`  resolves: ${found}`);
+	log(`  NOT resolving: ${notFound}`);
 	log(`  check failed: ${errored}`);
 	log(`  no DOI: ${noDoi.length}`);
 
 	if (notFound > 0) {
 		log(`\nmissing DOIs:`);
-		for (const r of results.filter((r) => r.existsInCrossref === false)) {
+		for (const r of results.filter((r) => r.resolves === false)) {
 			log(`  ${r.doi} - "${r.title}"`);
 		}
 	}

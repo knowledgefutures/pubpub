@@ -7,6 +7,10 @@ const CROSSREF_CONCURRENCY = 3;
 const CROSSREF_BATCH_DELAY_MS = 350;
 const CROSSREF_BACKOFF_MS = 10_000;
 
+// doi.org handle api is more lenient but still be polite
+const DOI_CONCURRENCY = 5;
+const DOI_BATCH_DELAY_MS = 200;
+
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function createLogger(prefix: string) {
@@ -59,9 +63,28 @@ export function writeResults(name: string, data: unknown): string {
 	return outputPath;
 }
 
-export type CrossrefCheckResult = { ok: boolean; error?: string };
+export type CheckResult = { ok: boolean; error?: string };
 
-async function singleDoiCheck(doi: string): Promise<CrossrefCheckResult> {
+// checks whether a doi resolves via the handle system (doi.org).
+// this is faster than crossref api and reflects registration status
+// more quickly after a deposit.
+async function singleDoiResolveCheck(doi: string): Promise<CheckResult> {
+	try {
+		const response = await fetch(`https://doi.org/api/handles/${doi}`);
+		if (!response.ok) {
+			return { ok: false, error: `HTTP ${response.status}` };
+		}
+		const data = (await response.json()) as { responseCode: number };
+		// responseCode 1 = success, 100 = handle not found
+		return data.responseCode === 1
+			? { ok: true }
+			: { ok: false, error: `handle responseCode ${data.responseCode}` };
+	} catch (e: any) {
+		return { ok: false, error: e.message };
+	}
+}
+
+async function singleCrossrefCheck(doi: string): Promise<CheckResult> {
 	try {
 		const response = await fetch(`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`);
 		if (response.status === 429) {
@@ -78,34 +101,70 @@ async function singleDoiCheck(doi: string): Promise<CrossrefCheckResult> {
 }
 
 export async function checkDoiInCrossref(doi: string): Promise<boolean> {
-	const result = await singleDoiCheck(doi);
+	const result = await singleCrossrefCheck(doi);
 	return result.ok;
 }
 
-export async function checkDoisInCrossref<T>(
+export async function checkDoiResolves(doi: string): Promise<boolean> {
+	const result = await singleDoiResolveCheck(doi);
+	return result.ok;
+}
+
+// polls doi.org until the doi resolves or we hit the timeout
+export async function waitForDoiResolution(
+	doi: string,
+	{
+		timeoutMs = 60_000,
+		intervalMs = 5_000,
+		logger,
+	}: {
+		timeoutMs?: number;
+		intervalMs?: number;
+		logger?: ReturnType<typeof createLogger>;
+	} = {},
+): Promise<boolean> {
+	const start = Date.now();
+	while (Date.now() - start < timeoutMs) {
+		// biome-ignore lint/performance/noAwaitInLoops: polling loop, inherently sequential
+		const resolves = await checkDoiResolves(doi);
+		if (resolves) {
+			return true;
+		}
+		logger?.log(
+			`  waiting for ${doi} to resolve (${Math.round((Date.now() - start) / 1000)}s elapsed)...`,
+		);
+		await sleep(intervalMs);
+	}
+	return false;
+}
+
+async function batchCheck<T>(
 	items: T[],
 	getDoi: (item: T) => string | null,
+	checkFn: (doi: string) => Promise<CheckResult>,
+	concurrency: number,
+	batchDelay: number,
 	onBatchDone?: (checked: number, total: number) => void,
-): Promise<Map<T, CrossrefCheckResult>> {
-	const results = new Map<T, CrossrefCheckResult>();
+): Promise<Map<T, CheckResult>> {
+	const results = new Map<T, CheckResult>();
 	const withDois = items.filter((item) => getDoi(item) !== null);
 
-	for (let i = 0; i < withDois.length; i += CROSSREF_CONCURRENCY) {
-		const batch = withDois.slice(i, i + CROSSREF_CONCURRENCY);
+	for (let i = 0; i < withDois.length; i += concurrency) {
+		const batch = withDois.slice(i, i + concurrency);
 		// biome-ignore lint/performance/noAwaitInLoops: intentional rate-limited batching
 		const batchResults = await Promise.all(
 			batch.map(async (item) => ({
 				item,
-				result: await singleDoiCheck(getDoi(item)!),
+				result: await checkFn(getDoi(item)!),
 			})),
 		);
 		for (const { item, result } of batchResults) {
 			results.set(item, result);
 		}
-		onBatchDone?.(Math.min(i + CROSSREF_CONCURRENCY, withDois.length), withDois.length);
+		onBatchDone?.(Math.min(i + concurrency, withDois.length), withDois.length);
 
-		if (i + CROSSREF_CONCURRENCY < withDois.length) {
-			await sleep(CROSSREF_BATCH_DELAY_MS);
+		if (i + concurrency < withDois.length) {
+			await sleep(batchDelay);
 		}
 	}
 
@@ -116,4 +175,34 @@ export async function checkDoisInCrossref<T>(
 	}
 
 	return results;
+}
+
+export async function checkDoisInCrossref<T>(
+	items: T[],
+	getDoi: (item: T) => string | null,
+	onBatchDone?: (checked: number, total: number) => void,
+): Promise<Map<T, CheckResult>> {
+	return batchCheck(
+		items,
+		getDoi,
+		singleCrossrefCheck,
+		CROSSREF_CONCURRENCY,
+		CROSSREF_BATCH_DELAY_MS,
+		onBatchDone,
+	);
+}
+
+export async function checkDoisResolve<T>(
+	items: T[],
+	getDoi: (item: T) => string | null,
+	onBatchDone?: (checked: number, total: number) => void,
+): Promise<Map<T, CheckResult>> {
+	return batchCheck(
+		items,
+		getDoi,
+		singleDoiResolveCheck,
+		DOI_CONCURRENCY,
+		DOI_BATCH_DELAY_MS,
+		onBatchDone,
+	);
 }

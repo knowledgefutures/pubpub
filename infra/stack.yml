@@ -111,7 +111,7 @@ services:
             -c max_connections=500
         volumes:
             - pgdata:/var/lib/postgresql/data
-        networks: [appnet]
+        networks: [appnet, dbaccess]
         deploy:
             replicas: 1
             restart_policy:
@@ -127,6 +127,8 @@ services:
                 condition: any
 networks:
     appnet:
+        driver: overlay
+    dbaccess:
         driver: overlay
         attachable: true
 

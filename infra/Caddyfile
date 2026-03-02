@@ -7,18 +7,6 @@
 	respond "OK" 200
 }
 
-{$PGADMIN_HOST} {
-    tls internal {
-        on_demand
-    }
-    encode gzip
-    reverse_proxy pgadmin:5050 {
-        header_up X-Forwarded-Proto https
-        header_up X-Forwarded-Host {host}
-        header_up X-Scheme https
-    }
-}
-
 :443 {
     tls internal {
         on_demand

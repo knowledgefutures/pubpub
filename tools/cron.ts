@@ -22,12 +22,19 @@ function run(name: string, script: string) {
 }
 
 if (process.env.PUBPUB_PRODUCTION === 'true') {
-	cron.schedule('0 */6 * * *', () => run('Backup DB', 'tools-prod backupDb'), {
+	cron.schedule('0 */12 * * *', () => run('Backup DB', 'tools-prod backupDb'), {
 		timezone: 'UTC',
 	}); // Every 6 hours
 	cron.schedule('0 5 * * *', () => run('Email Digest', 'tools-prod emailActivityDigest'), {
 		timezone: 'UTC',
 	});
+	cron.schedule(
+		'0 1 * * 0',
+		() => run('Firebase Cleanup', 'tools-prod cleanupFirebase --execute'),
+		{
+			timezone: 'UTC',
+		},
+	); // Weekly on Sunday at 1 AM UTC
 } else {
 	const logNotSet = () => {
 		log(

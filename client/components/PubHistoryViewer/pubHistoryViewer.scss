@@ -70,6 +70,15 @@ $bp: vendor.$bp-namespace;
 		}
 	}
 
+	.pruned-history-notice {
+		font-size: 12px;
+		color: #5c7080;
+		font-style: italic;
+		text-align: center;
+		margin-top: -30px;
+		margin-bottom: 10px;
+	}
+
 	ul.#{$bp}-menu {
 		position: relative;
 		overflow: auto;

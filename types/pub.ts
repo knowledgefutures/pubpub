@@ -80,6 +80,7 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 export type PubHistoryState = {
 	currentKey: number;
 	latestKey: number;
+	firstKey: number;
 	isViewingHistory: boolean;
 	loadedIntoHistory: boolean;
 	historyDocEditorKey: string;

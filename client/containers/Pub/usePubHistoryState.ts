@@ -42,8 +42,14 @@ export const usePubHistoryState = (options: Options) => {
 		const { historyData } = pubData;
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
 		const latestHistoryDoc = isViewingHistory ? initialDoc : null;
+		// Calculate firstKey from timestamps (excluding -1 which is the synthetic creation timestamp)
+		const timestampKeys = Object.keys(historyData.timestamps)
+			.map((k) => parseInt(k, 10))
+			.filter((k) => k >= 0);
+		const firstKey = timestampKeys.length > 0 ? Math.min(...timestampKeys) : 0;
 		return {
 			...historyData,
+			firstKey,
 			timestamps: {
 				[-1]: new Date(pubData.createdAt).valueOf(),
 				...historyData.timestamps,

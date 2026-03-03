@@ -227,15 +227,15 @@ const getLatestCheckpointKey = async (
 /**
  * Get the highest checkpoint key at or before a threshold
  */
-const getCheckpointKeyAtOrBefore = async (
-	draftRef: firebase.database.Reference,
-	threshold: number,
-): Promise<number | null> => {
-	const keys = await getCheckpointKeys(draftRef);
-	const validKeys = keys.filter((k) => k <= threshold);
-	if (validKeys.length === 0) return null;
-	return Math.max(...validKeys);
-};
+// const _getCheckpointKeyAtOrBefore = async (
+// 	draftRef: firebase.database.Reference,
+// 	threshold: number,
+// ): Promise<number | null> => {
+// 	const keys = await getCheckpointKeys(draftRef);
+// 	const validKeys = keys.filter((k) => k <= threshold);
+// 	if (validKeys.length === 0) return null;
+// 	return Math.max(...validKeys);
+// };
 
 /**
  * Get the latest release history key for a pub

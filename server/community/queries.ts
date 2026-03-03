@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import type * as types from 'types';
 import type { communityCreateSchema, communityUpdateSchema } from 'utils/api/schemas/community';
 
+import { Op, QueryTypes } from 'sequelize';
 import uuidv4 from 'uuid/v4';
 
 import {
@@ -16,6 +17,7 @@ import {
 	type User,
 	WorkerTask,
 } from 'server/models';
+import { sequelize } from 'server/sequelize';
 import { getSpamTagForCommunity } from 'server/spamTag/queries';
 import { defer } from 'server/utils/deferred';
 import { sendCommunityAwaitingApprovalEmail } from 'server/utils/email/communitySpam';
@@ -243,6 +245,54 @@ export const isUserAffiliatedWithCommunity = async (userId: string, communityId:
 
 	const isHere = counts.some((c) => c > 0);
 	return isHere;
+};
+
+export const isUserAffiliatedWithAnyCommunity = async (userId: string) => {
+	const result = await sequelize.query<{ isAffiliated: boolean }>(
+		`
+		SELECT EXISTS (
+			SELECT 1
+			FROM "Members" m
+			WHERE m."userId" = :userId
+				AND m."communityId" IS NOT NULL
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "Members" m
+			INNER JOIN "Pubs" p ON p."id" = m."pubId"
+			WHERE m."userId" = :userId
+				AND p."communityId" IS NOT NULL
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "Members" m
+			INNER JOIN "Collections" c ON c."id" = m."collectionId"
+			WHERE m."userId" = :userId
+				AND c."communityId" IS NOT NULL
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "PubAttributions" pa
+			INNER JOIN "Pubs" p ON p."id" = pa."pubId"
+			WHERE pa."userId" = :userId
+				AND p."communityId" IS NOT NULL
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "CollectionAttributions" ca
+			INNER JOIN "Collections" c ON c."id" = ca."collectionId"
+			WHERE ca."userId" = :userId
+				AND c."communityId" IS NOT NULL
+		) AS "isAffiliated";
+		`,
+		{
+			replacements: { userId },
+			type: QueryTypes.SELECT,
+			plain: true,
+		},
+	);
+
+	return Boolean(result?.isAffiliated);
 };
 
 export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {

@@ -32,7 +32,7 @@ import { QueryTypes } from 'sequelize';
 
 import { editorSchema, getFirebaseDoc } from 'components/Editor';
 import { createFastForwarder } from 'components/Editor/plugins/discussions/fastForward';
-import { Draft, Pub, Release } from 'server/models';
+import { Doc, Draft, Pub, Release } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { getDatabaseRef } from 'server/utils/firebaseAdmin';
 import { postToSlack } from 'server/utils/slack';
@@ -164,6 +164,7 @@ const runWithConcurrency = async <T>(
 interface CleanupStats {
 	draftsProcessed: number;
 	draftsSkipped: number;
+	draftsRepairedFromRelease: number;
 	orphanedDraftsFound: number;
 	orphanedDraftsDeleted: number;
 	orphanedFirebasePathsFound: number;
@@ -180,6 +181,7 @@ interface CleanupStats {
 const stats: CleanupStats = {
 	draftsProcessed: 0,
 	draftsSkipped: 0,
+	draftsRepairedFromRelease: 0,
 	orphanedDraftsFound: 0,
 	orphanedDraftsDeleted: 0,
 	orphanedFirebasePathsFound: 0,
@@ -271,6 +273,75 @@ const batchGetLatestReleaseKeys = async (pubIds: string[]): Promise<Map<string, 
 		}
 	}
 	return result;
+};
+
+/**
+ * Try to repair a corrupted draft by creating a checkpoint from a Release's doc
+ *
+ * When getFirebaseDoc fails with "Position X out of range", the draft's history
+ * is corrupted. But if there's a Release at or before the target key, we can
+ * use the Release's doc to create a checkpoint, making the draft recoverable.
+ *
+ * @returns true if repair was successful, false otherwise
+ */
+const tryRepairFromRelease = async (
+	pubId: string,
+	draftRef: firebase.database.Reference,
+	targetKey: number,
+	prefix: string = '',
+	localStats: CleanupStats = stats,
+): Promise<boolean> => {
+	// Find a release at or before the target key
+	const release = await Release.findOne({
+		where: { pubId },
+		include: [{ model: Doc, as: 'doc' }],
+		order: [['historyKey', 'DESC']],
+	});
+
+	if (!release) {
+		log(`${prefix}No releases found for repair`);
+		return false;
+	}
+
+	if (release.historyKey > targetKey) {
+		// The release is newer than where we need the checkpoint - we could use it
+		// but the doc state would be from a later point. This is still valid for
+		// pruning old data, but let's warn about it.
+		log(
+			`${prefix}Warning: Using release at key ${release.historyKey} (newer than target ${targetKey})`,
+		);
+	}
+
+	const docContent = release.doc?.content;
+	if (!docContent) {
+		log(`${prefix}Release ${release.id} has no doc content`);
+		return false;
+	}
+
+	// Create checkpoint at the release's historyKey using the release's doc
+	const historyKey = release.historyKey;
+	const compressedDoc = compressStateJSON({ doc: docContent }).d;
+	const timestamp = release.createdAt.getTime();
+
+	const checkpoint = {
+		d: compressedDoc,
+		k: historyKey,
+		t: timestamp,
+	};
+
+	log(`${prefix}Repairing: creating checkpoint at key ${historyKey} from release ${release.id}`);
+
+	if (!isDryRun) {
+		await draftRef.update({
+			[`checkpoints/${historyKey}`]: checkpoint,
+			checkpoint,
+			[`checkpointMap/${historyKey}`]: timestamp,
+		});
+		localStats.draftsRepairedFromRelease++;
+		localStats.checkpointsCreated++;
+	}
+
+	return true;
 };
 
 /**
@@ -504,13 +575,39 @@ const pruneDraft = async (
 			} catch (err) {
 				const error = err as Error & { code?: string };
 				const errorStr = `${error.code || ''} ${error.message || ''}`;
-				log(`  Error during checkpoint creation: ${errorStr}`);
-				if (errorStr.includes('WRITE_TOO_BIG') || errorStr.includes('write_too_big')) {
+				log(`${prefix}Error during checkpoint creation: ${errorStr}`);
+
+				// Check if this is a corrupted history error ("Position X out of range")
+				const isCorruptedHistory =
+					errorStr.includes('Position') && errorStr.includes('out of range');
+
+				if (isCorruptedHistory && pubId) {
+					// Try to repair by creating a checkpoint from a Release
+					log(`${prefix}Attempting repair from Release...`);
+					const repaired = await tryRepairFromRelease(
+						pubId,
+						draftRef,
+						pruneThreshold,
+						prefix,
+						localStats,
+					);
+					if (repaired) {
+						log(`${prefix}Repair successful, continuing with prune`);
+						// Don't return - continue with the rest of the prune operation
+					} else {
+						log(`${prefix}Repair failed, skipping prune for this draft`);
+						localStats.draftsSkipped++;
+						return;
+					}
+				} else if (
+					errorStr.includes('WRITE_TOO_BIG') ||
+					errorStr.includes('write_too_big')
+				) {
 					// Doc is too large to write as a single checkpoint.
 					// We can't safely prune without a checkpoint at the threshold,
 					// so skip pruning this draft entirely.
 					log(
-						`  Warning: Doc too large to create checkpoint at ${pruneThreshold}, skipping prune for this draft`,
+						`${prefix}Warning: Doc too large to create checkpoint at ${pruneThreshold}, skipping prune for this draft`,
 					);
 					localStats.draftsSkipped++;
 					return;
@@ -985,6 +1082,7 @@ const processAllDrafts = async (): Promise<void> => {
 	const createLocalStats = (): CleanupStats => ({
 		draftsProcessed: 0,
 		draftsSkipped: 0,
+		draftsRepairedFromRelease: 0,
 		orphanedDraftsFound: 0,
 		orphanedDraftsDeleted: 0,
 		orphanedFirebasePathsFound: 0,
@@ -1012,6 +1110,7 @@ const processAllDrafts = async (): Promise<void> => {
 	for (const ws of workerStats) {
 		stats.draftsProcessed += ws.draftsProcessed;
 		stats.draftsSkipped += ws.draftsSkipped;
+		stats.draftsRepairedFromRelease += ws.draftsRepairedFromRelease;
 		stats.discussionsUpdated += ws.discussionsUpdated;
 		stats.changesDeleted += ws.changesDeleted;
 		stats.mergesDeleted += ws.mergesDeleted;
@@ -1033,6 +1132,7 @@ const printSummary = () => {
 	log(`Mode: ${isDryRun ? 'DRY RUN (no data deleted)' : 'EXECUTE'}`);
 	log(`Drafts processed: ${stats.draftsProcessed}`);
 	log(`Drafts skipped (no checkpoint): ${stats.draftsSkipped}`);
+	log(`Drafts repaired from release: ${stats.draftsRepairedFromRelease}`);
 	log(`Orphaned drafts found (Postgres): ${stats.orphanedDraftsFound}`);
 	log(`Orphaned drafts deleted: ${stats.orphanedDraftsDeleted}`);
 	log(`Orphaned Firebase paths found: ${stats.orphanedFirebasePathsFound}`);
@@ -1052,6 +1152,9 @@ const _postSummaryToSlack = async () => {
 	const text = [
 		'*Firebase Cleanup Completed*',
 		`• Drafts processed: ${stats.draftsProcessed}`,
+		stats.draftsRepairedFromRelease > 0
+			? `• Drafts repaired from release: ${stats.draftsRepairedFromRelease}`
+			: '',
 		`• Orphaned drafts deleted: ${stats.orphanedDraftsDeleted}`,
 		`• Orphaned Firebase paths deleted: ${stats.orphanedFirebasePathsDeleted}`,
 		`• Discussions fast-forwarded: ${stats.discussionsUpdated}`,

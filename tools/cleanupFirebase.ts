@@ -555,9 +555,8 @@ const deleteOrphanedDraft = async (draft: Draft): Promise<void> => {
 	log(`  Deleting orphaned draft: ${id} (${firebasePath})`);
 
 	if (!isDryRun) {
-		// Delete from Firebase first
-		const draftRef = getDatabaseRef(firebasePath);
-		await draftRef.remove();
+		// Delete from Firebase first (using deleteFirebasePath to handle large drafts)
+		await deleteFirebasePath(firebasePath);
 
 		// Then delete from Postgres
 		await draft.destroy();

@@ -282,7 +282,7 @@ const batchGetLatestReleaseKeys = async (pubIds: string[]): Promise<Map<string, 
  * is corrupted. But if there's a Release at or before the target key, we can
  * use the Release's doc to create a checkpoint, making the draft recoverable.
  *
- * @returns true if repair was successful, false otherwise
+ * @returns the historyKey where checkpoint was created, or null if repair failed
  */
 const tryRepairFromRelease = async (
 	pubId: string,
@@ -290,7 +290,7 @@ const tryRepairFromRelease = async (
 	targetKey: number,
 	prefix: string = '',
 	localStats: CleanupStats = stats,
-): Promise<boolean> => {
+): Promise<number | null> => {
 	// Find a release at or before the target key
 	const release = await Release.findOne({
 		where: { pubId },
@@ -300,7 +300,7 @@ const tryRepairFromRelease = async (
 
 	if (!release) {
 		log(`${prefix}No releases found for repair`);
-		return false;
+		return null;
 	}
 
 	if (release.historyKey > targetKey) {
@@ -315,7 +315,7 @@ const tryRepairFromRelease = async (
 	const docContent = release.doc?.content;
 	if (!docContent) {
 		log(`${prefix}Release ${release.id} has no doc content`);
-		return false;
+		return null;
 	}
 
 	// Create checkpoint at the release's historyKey using the release's doc
@@ -341,7 +341,7 @@ const tryRepairFromRelease = async (
 		localStats.checkpointsCreated++;
 	}
 
-	return true;
+	return historyKey;
 };
 
 /**
@@ -584,16 +584,20 @@ const pruneDraft = async (
 				if (isCorruptedHistory && pubId) {
 					// Try to repair by creating a checkpoint from a Release
 					log(`${prefix}Attempting repair from Release...`);
-					const repaired = await tryRepairFromRelease(
+					const repairedAtKey = await tryRepairFromRelease(
 						pubId,
 						draftRef,
 						pruneThreshold,
 						prefix,
 						localStats,
 					);
-					if (repaired) {
-						log(`${prefix}Repair successful, continuing with prune`);
-						// Don't return - continue with the rest of the prune operation
+					if (repairedAtKey !== null) {
+						log(
+							`${prefix}Repair successful at key ${repairedAtKey}, continuing with prune`,
+						);
+						// Update pruneThreshold to the repaired checkpoint's key
+						// so subsequent operations (fast-forward, prune) work correctly
+						pruneThreshold = repairedAtKey;
 					} else {
 						log(`${prefix}Repair failed, skipping prune for this draft`);
 						localStats.draftsSkipped++;

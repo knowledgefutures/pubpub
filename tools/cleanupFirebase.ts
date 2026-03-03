@@ -577,9 +577,12 @@ const pruneDraft = async (
 				const errorStr = `${error.code || ''} ${error.message || ''}`;
 				log(`${prefix}Error during checkpoint creation: ${errorStr}`);
 
-				// Check if this is a corrupted history error ("Position X out of range")
+				// Check if this is a corrupted history error
+				// - "Position X out of range" = missing/corrupted steps
+				// - "Invalid content for node doc" = reconstructed doc is empty/malformed
 				const isCorruptedHistory =
-					errorStr.includes('Position') && errorStr.includes('out of range');
+					(errorStr.includes('Position') && errorStr.includes('out of range')) ||
+					errorStr.includes('Invalid content for node');
 
 				if (isCorruptedHistory && pubId) {
 					// Try to repair by creating a checkpoint from a Release
@@ -983,7 +986,7 @@ const processAllDrafts = async (): Promise<void> => {
 
 	// Use a streaming worker pool approach: workers pull work as they finish
 	// rather than waiting for entire batches to complete
-	const WORKER_COUNT = 15; // Reduced from 50 to prevent OOM
+	const WORKER_COUNT = 50;
 	let nextOffset = 0;
 	let allFetched = false;
 	const pubQueue: Pub[] = [];

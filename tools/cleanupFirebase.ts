@@ -359,6 +359,7 @@ const fastForwardDiscussions = async (
  * Count and optionally delete keys before a threshold in a Firebase child.
  * Uses shallow key listing to avoid loading content into memory.
  * Uses batch multi-path updates for much faster deletion.
+ * Falls back to individual deletes if batch update fails with WRITE_TOO_BIG.
  */
 const pruneKeysBefore = async (
 	parentRef: firebase.database.Reference,
@@ -393,8 +394,22 @@ const pruneKeysBefore = async (
 			for (const key of batch) {
 				updates[key] = null;
 			}
-			// biome-ignore lint/performance/noAwaitInLoops: batched processing requires sequential batches
-			await childRef.update(updates);
+			try {
+				// biome-ignore lint/performance/noAwaitInLoops: batched processing requires sequential batches
+				await childRef.update(updates);
+			} catch (error: any) {
+				const errorCode = error?.code || error?.message || String(error);
+				if (errorCode.includes('WRITE_TOO_BIG') || errorCode.includes('write_too_big')) {
+					// Fall back to individual deletes for this batch
+					verbose(`  Batch update too large, falling back to individual deletes`);
+					for (const key of batch) {
+						// biome-ignore lint/performance/noAwaitInLoops: sequential fallback for large items
+						await deleteFirebasePath(`${childPath}/${key}`);
+					}
+				} else {
+					throw error;
+				}
+			}
 		}
 		verbose(`  Deleted ${keysToDelete.length} ${childName} entries`);
 	}

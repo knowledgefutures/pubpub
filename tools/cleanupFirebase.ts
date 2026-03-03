@@ -462,11 +462,13 @@ const pruneDraft = async (
 
 	verbose(`${prefix}Safe prune threshold: ${pruneThreshold}`);
 
-	// Ensure there's a checkpoint at or before the prune threshold so we can reconstruct
-	// all retained history. If not, create one at the prune threshold.
-	const checkpointAtOrBefore = await getCheckpointKeyAtOrBefore(draftRef, pruneThreshold);
-	if (checkpointAtOrBefore === null) {
-		verbose(`${prefix}No checkpoint at or before ${pruneThreshold}, creating one...`);
+	// Ensure there's a checkpoint at EXACTLY the prune threshold.
+	// We must create one if it doesn't exist, even if there's an older checkpoint,
+	// because we'll delete all checkpoints before the threshold.
+	const checkpointKeys = await getCheckpointKeys(draftRef);
+	const hasCheckpointAtThreshold = checkpointKeys.includes(pruneThreshold);
+	if (!hasCheckpointAtThreshold) {
+		verbose(`${prefix}No checkpoint at ${pruneThreshold}, creating one...`);
 		if (!isDryRun) {
 			try {
 				const { doc } = await getFirebaseDoc(draftRef, editorSchema, pruneThreshold);
@@ -880,7 +882,7 @@ const processAllDrafts = async (): Promise<void> => {
 
 	// Use a streaming worker pool approach: workers pull work as they finish
 	// rather than waiting for entire batches to complete
-	const WORKER_COUNT = 50;
+	const WORKER_COUNT = 15; // Reduced from 50 to prevent OOM
 	let nextOffset = 0;
 	let allFetched = false;
 	const pubQueue: Pub[] = [];
@@ -964,6 +966,9 @@ const processAllDrafts = async (): Promise<void> => {
 				localStats.draftsProcessed++;
 				totalProcessed++;
 
+				// Clear from cache to prevent memory buildup
+				releaseKeyCache.delete(pub.id);
+
 				// Log progress every 500 processed (approximate due to concurrency)
 				if (totalProcessed % 500 === 0) {
 					log(`  Processed ~${totalProcessed}/${totalPubs} drafts...`);
@@ -971,6 +976,7 @@ const processAllDrafts = async (): Promise<void> => {
 			} catch (err) {
 				log(`  Error processing pub ${pub.id}: ${(err as Error).message}`);
 				localStats.errorsEncountered++;
+				releaseKeyCache.delete(pub.id);
 			}
 		}
 	};

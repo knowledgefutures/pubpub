@@ -11,7 +11,7 @@ import { updateSpamTagForCommunity } from './communityQueries';
 import { contextFromUser, notify } from './notifications';
 import { canManipulateSpamTags } from './permissions';
 import { getRecentDiscussionsForUser, queryUsersForSpamManagement } from './userDashboard';
-import { removeSpamTagFromUser, upsertSpamTag } from './userQueries';
+import { getSpamTagForUser, removeSpamTagFromUser, upsertSpamTag } from './userQueries';
 
 export const router = Router();
 
@@ -46,12 +46,16 @@ router.put(
 						],
 					}
 				: undefined;
+
+		const oldSpamTag = await getSpamTagForUser(userId);
+
 		const { spamTag, user } = await upsertSpamTag({ userId, status, fields });
 		const event = status === 'confirmed-spam' ? 'manual-ban' : 'spam-lifted';
 		await notify(
 			event,
 			contextFromUser(user, {
 				actorName,
+				previousStatus: oldSpamTag?.status ?? null,
 				spamFields: spamTag.fields as UserSpamTagFields,
 			}),
 		);

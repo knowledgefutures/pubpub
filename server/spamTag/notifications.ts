@@ -1,4 +1,4 @@
-import type { UserSpamTagFields } from 'types';
+import type { SpamStatus, UserSpamTagFields } from 'types';
 
 import {
 	sendBanDevEmail,
@@ -29,6 +29,7 @@ export type SpamNotificationContext = {
 	userAvatar?: string | null;
 	spamScore?: number | null;
 	spamFields?: UserSpamTagFields;
+	previousStatus?: SpamStatus | null;
 	actorName?: string;
 	uploadKey?: string;
 	communityId?: string;
@@ -72,15 +73,24 @@ const handlers: Record<SpamEvent, Handler[]> = {
 		(ctx) => sendBanDevEmail({ userEmail: ctx.userEmail, userName: ctx.userName }),
 	],
 	'spam-lifted': [
-		(ctx) =>
-			postToSlackAboutUserLifted({
-				userId: ctx.userId,
-				userName: ctx.userName,
-				userSlug: ctx.userSlug,
-				actorName: ctx.actorName,
-			}),
-		(ctx) => sendSpamLiftedEmail({ toEmail: ctx.userEmail, userName: ctx.userName }),
-		(ctx) => sendLiftDevEmail({ userEmail: ctx.userEmail, userName: ctx.userName }),
+		async (ctx) => {
+			if (!ctx.previousStatus || ctx.previousStatus === 'unreviewed') {
+				console.log(
+					'spam-lifted: not notifying manual marking of unreviewed user as not-spam',
+				);
+				return;
+			}
+			return Promise.all([
+				postToSlackAboutUserLifted({
+					userId: ctx.userId,
+					userName: ctx.userName,
+					userSlug: ctx.userSlug,
+					actorName: ctx.actorName,
+				}),
+				sendSpamLiftedEmail({ toEmail: ctx.userEmail, userName: ctx.userName }),
+				sendLiftDevEmail({ userEmail: ctx.userEmail, userName: ctx.userName }),
+			]);
+		},
 	],
 };
 

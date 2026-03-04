@@ -10,6 +10,7 @@ import {
 } from 'server/community/queries';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import Html from 'server/Html';
+import { getSpamTagForUser } from 'server/spamTag/userQueries';
 import { handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getUser } from 'server/utils/queryHelpers';
@@ -64,6 +65,15 @@ router.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 			? await getCustomScriptsForCommunity(initialData.communityData.id)
 			: undefined;
 		const userData = expect(await getUser(req.params.slug, initialData));
+		const isSuperAdmin = !!initialData.loginData?.isSuperAdmin;
+
+		if (!isSuperAdmin) {
+			const spamTag = await getSpamTagForUser(userData.id);
+			if (spamTag?.status === 'confirmed-spam') {
+				throw new Error('User Not Found');
+			}
+		}
+
 		const isNewishUser = Date.now() - Number(userData.createdAt.valueOf()) < 1000 * 86400 * 30;
 
 		if (!initialData.locationData.isBasePubPub) {

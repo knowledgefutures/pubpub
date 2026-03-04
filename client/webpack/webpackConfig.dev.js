@@ -56,9 +56,9 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(mjs|cjs)$/,
+				test: /\.(m|c)?js$/,
 				// this module includes nullish coalescing and optional chaining, which are not supported by webpack 4
-				include: /node_modules\/@marsidev\/react-turnstile/,
+				include: /node_modules\/@marsidev\/react-turnstile|node_modules\/(.pnpm\/)?altcha.*/,
 				type: 'javascript/auto',
 				loader: 'esbuild-loader',
 				/** @type {import('esbuild-loader').LoaderOptions} */

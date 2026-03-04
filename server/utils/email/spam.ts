@@ -1,13 +1,15 @@
 import stripIndent from 'strip-indent';
 
+import { getSuperAdminTabUrl } from 'utils/superAdmin';
+
 import { sendEmail } from './reset';
 
-const CC_DEV = ['dev@pubpub.org'];
+export const DEV_TEAM_EMAIL = 'dev@pubpub.org';
 
 export const sendSpamBanEmail = ({ toEmail, userName }: { toEmail: string; userName: string }) => {
 	return sendEmail({
 		to: [toEmail],
-		cc: CC_DEV,
+		bcc: [DEV_TEAM_EMAIL],
 		subject: 'PubPub account restriction',
 		text: stripIndent(`
 			Hello${userName ? ` ${userName}` : ''},
@@ -31,7 +33,7 @@ export const sendSpamLiftedEmail = ({
 }) => {
 	return sendEmail({
 		to: [toEmail],
-		cc: CC_DEV,
+		bcc: [DEV_TEAM_EMAIL],
 		subject: 'PubPub account restriction lifted',
 		text: stripIndent(`
 			Hello${userName ? ` ${userName}` : ''},
@@ -40,6 +42,27 @@ export const sendSpamLiftedEmail = ({
 
 			Sincerely,
 			PubPub Team
+		`),
+	});
+};
+
+export const sendNewSpamTagDevEmail = ({
+	userEmail,
+	userName,
+}: {
+	userEmail: string;
+	userName: string;
+}) => {
+	const reviewUrl = `https://pubpub.org${getSuperAdminTabUrl('spamUsers')}?q=${encodeURIComponent(userEmail)}`;
+	return sendEmail({
+		to: [DEV_TEAM_EMAIL],
+		subject: `New spam tag: ${userName} (${userEmail})`,
+		text: stripIndent(`
+			A new spam tag has been created for ${userName} (${userEmail}).
+
+			Review: ${reviewUrl}
+
+			-- PubPub Spam System
 		`),
 	});
 };

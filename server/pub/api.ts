@@ -10,9 +10,11 @@ import { prepareResource, submitResource } from 'deposit/datacite/deposit';
 import { transformPubToResource } from 'deposit/transform/pub';
 import { assertValidResource } from 'deposit/validate';
 import { generateDoi } from 'server/doi/queries';
-import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { verifyCaptchaPayload } from 'server/utils/captcha';
+import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
+import { handleHoneypotTriggered, isHoneypotFilled } from 'server/utils/honeypot';
 import { getInitialData } from 'server/utils/initData';
 import { contract } from 'utils/api/contract';
 import { indexByProperty } from 'utils/arrays';
@@ -106,11 +108,35 @@ export const pubServer = s.router(contract.pub, {
 			{ communityId: ids.communityId, collectionIds, ...createParams },
 			ids.userId,
 		);
-		const jsonedPub = newPub.toJSON();
-		return {
-			status: 201,
-			body: jsonedPub,
-		};
+		return { status: 201, body: newPub.toJSON() };
+	},
+	createFromForm: async ({ body, req }) => {
+		if (isHoneypotFilled(body)) {
+			if (req.user?.id)
+				await handleHoneypotTriggered(req.user.id, 'create-pub', body._honeypot as string, {
+					communityId: body.communityId as string | undefined,
+				});
+			throw new BadRequestError(new Error('Invalid submission.'));
+		}
+		if (!(await verifyCaptchaPayload(body.altcha))) {
+			throw new BadRequestError(new Error('Please complete the verification and try again.'));
+		}
+		const { altcha: _altcha, _honeypot, ...bodyStripped } = body;
+		const ids = getRequestIds(bodyStripped, req.user);
+		const { create, collectionIds } = await canCreatePub(ids);
+		if (!create) {
+			throw new ForbiddenError();
+		}
+		const createParams = omitKeys(bodyStripped, [
+			'communityId',
+			'collectionId',
+			'createPubToken',
+		]);
+		const newPub = await createPub(
+			{ communityId: ids.communityId, collectionIds, ...createParams },
+			ids.userId,
+		);
+		return { status: 201, body: newPub.toJSON() };
 	},
 	update: async ({ body, req }) => {
 		const { userId, pubId } = getRequestIds(body, req.user);

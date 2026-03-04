@@ -1,3 +1,5 @@
+import type { SpamUserQueryOrdering } from 'types';
+
 import type { SpamUsersFilter } from './filters';
 import type { SpamUser } from './types';
 
@@ -11,13 +13,15 @@ import { unique } from 'utils/arrays';
 
 type UseSpamUsersOptions = {
 	filter: SpamUsersFilter;
+	ordering: SpamUserQueryOrdering;
 	searchTerm: string;
 	initialUsers: SpamUser[];
 	limit: number;
+	communitySubdomain?: string;
 };
 
 export const useSpamUsers = (options: UseSpamUsersOptions) => {
-	const { searchTerm, filter, limit, initialUsers } = options;
+	const { searchTerm, filter, ordering, limit, initialUsers, communitySubdomain } = options;
 	const [_, setOffset, offsetRef] = useStateRef(initialUsers.length);
 	const [isLoading, setIsLoading] = useState(false);
 	const [mayLoadMoreUsers, setMayLoadMoreUsers] = useState(true);
@@ -28,18 +32,20 @@ export const useSpamUsers = (options: UseSpamUsersOptions) => {
 		setIsLoading(true);
 		setMayLoadMoreUsers(false);
 		setOffset((offset) => offset + limit);
-		const { status, ordering } = filter.query!;
+		const { status, spamTagPresence } = filter.query!;
 		const nextUsers = await apiFetch.post('/api/spamTags/queryUsersForSpam', {
 			limit,
 			searchTerm,
 			offset: currentOffset,
 			status,
 			ordering,
+			spamTagPresence,
+			communitySubdomain: communitySubdomain || undefined,
 		});
 		setIsLoading(false);
 		setTimeout(() => setMayLoadMoreUsers(nextUsers.length === limit), 0);
 		setUsers((currentUsers) => unique([...currentUsers, ...nextUsers], (u) => u.id));
-	}, [filter.query, limit, searchTerm, offsetRef, setOffset]);
+	}, [filter.query, limit, searchTerm, ordering, communitySubdomain, offsetRef, setOffset]);
 
 	useUpdateEffect(() => {
 		setOffset(0);

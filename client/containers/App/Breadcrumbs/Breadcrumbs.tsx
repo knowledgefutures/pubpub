@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import classNames from 'classnames';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { Avatar, Icon } from 'components';
+import { Altcha, Avatar, Honeypot, Icon } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
@@ -26,6 +26,7 @@ const Breadcrumbs = (props: Props) => {
 	const { mode, subMode } = dashboardMenu.activeMode!;
 	const [newPubIsLoading, setNewPubIsLoading] = useState(false);
 	const [newCollectionIsOpen, setNewCollectionIsOpen] = useState(false);
+	const createPubAltchaRef = useRef<import('components').AltchaRef>(null);
 
 	// console.log(locationData.path.split('/'), locationData.path.split('/').slice(-1))
 	// const modesWithSubmodes = ['discussions', 'reviews', 'pages'];
@@ -44,20 +45,24 @@ const Breadcrumbs = (props: Props) => {
 		avatar = activePub.avatar;
 	}
 
-	const handleCreatePub = () => {
+	const handleCreatePub = async (evt: React.FormEvent<HTMLFormElement>) => {
+		evt.preventDefault();
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('description') as string) ?? '';
 		setNewPubIsLoading(true);
-		return apiFetch
-			.post('/api/pubs', {
+		try {
+			const altchaPayload = await createPubAltchaRef.current?.verify();
+			if (!altchaPayload) return;
+			const newPub = await apiFetch.post('/api/pubs/fromForm', {
 				communityId: communityData.id,
 				collectionId: activeCollection && activeCollection.id,
-			})
-			.then((newPub) => {
-				window.location.href = `/pub/${newPub.slug}`;
-			})
-			.catch((err) => {
-				console.error(err);
-				setNewPubIsLoading(false);
+				altcha: altchaPayload,
+				_honeypot: honeypot,
 			});
+			window.location.href = `/pub/${newPub.slug}`;
+		} finally {
+			setNewPubIsLoading(false);
+		}
 	};
 
 	const actions = {
@@ -71,14 +76,14 @@ const Breadcrumbs = (props: Props) => {
 			},
 			{
 				text: 'Create Pub',
-				onClick: handleCreatePub,
+				// onClick: handleCreatePub,
 				minPermissions: 'manage',
 			},
 		],
 		collection: [
 			{
 				text: 'Create Pub',
-				onClick: handleCreatePub,
+				// onClick: handleCreatePub,
 				minPermissions: 'manage',
 			},
 			activeCollection && {
@@ -202,6 +207,25 @@ const Breadcrumbs = (props: Props) => {
 								disabled: action.text !== 'Create Pub' && newPubIsLoading,
 								outlined: true,
 							};
+							if (action.text === 'Create Pub') {
+								const { onClick: _, ...buttonProps } = buttonsProps;
+								return (
+									<form
+										key={action.text}
+										onSubmit={handleCreatePub}
+										style={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '10px',
+										}}
+									>
+										<Altcha ref={createPubAltchaRef} />
+										<Honeypot name="description" />
+										<Button {...buttonProps} type="submit" />
+									</form>
+								);
+							}
+
 							return buttonsProps.href ? (
 								<AnchorButton {...buttonsProps} />
 							) : (

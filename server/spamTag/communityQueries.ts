@@ -9,7 +9,7 @@ import {
 import { postToSlackAboutCommunityStatusChange } from 'server/utils/slack';
 import { expect } from 'utils/assert';
 
-import { getSuspectedCommunitySpamVerdict } from './score';
+import { getSuspectedCommunitySpamVerdict } from './communityScore';
 
 // Adding a spam tag doesn't imply that the Community _is_ spam, only that we have a score for it.
 export const addSpamTagToCommunity = async (communityId: string) => {

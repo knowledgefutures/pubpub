@@ -3,7 +3,7 @@ import {
 	createCommunityUpdatedActivityItem,
 } from 'server/activityItem/queries';
 import { Community } from 'server/models';
-import { addSpamTagToCommunity } from 'server/spamTag/queries';
+import { addSpamTagToCommunity } from 'server/spamTag/communityQueries';
 import { createActivityHooks } from 'server/utils/activityHooks';
 import { defer } from 'server/utils/deferred';
 

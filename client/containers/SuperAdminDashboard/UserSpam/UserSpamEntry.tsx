@@ -1,8 +1,8 @@
-import type { SpamStatus } from 'types';
+import type { SpamStatus, UserSpamTagFields } from 'types';
 
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Button, ButtonGroup, type Intent, Tag } from '@blueprintjs/core';
+import { Button, ButtonGroup, Collapse, type Intent, Spinner, Tag } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { formatDate } from 'utils/dates';
@@ -11,7 +11,7 @@ import MarkSpamStatusButton from './MarkSpamStatusButton';
 
 import './userSpamEntry.scss';
 
-import type { SpamUser } from './types';
+import type { RecentDiscussion, SpamUser } from './types';
 
 type Props = {
 	user: SpamUser;
@@ -24,6 +24,38 @@ const getIntentForSpamScore = (spamScore: number): Intent => {
 	return 'none';
 };
 
+const DiscussionItem = ({ discussion }: { discussion: RecentDiscussion }) => {
+	const url =
+		discussion.communitySubdomain && discussion.pubSlug
+			? `https://${discussion.communitySubdomain}.pubpub.org/pub/${discussion.pubSlug}`
+			: null;
+
+	return (
+		<div className="discussion-item">
+			<div className="discussion-header">
+				{url ? (
+					<a href={url} target="_blank" rel="noopener noreferrer">
+						{discussion.pubTitle || 'Untitled pub'}
+					</a>
+				) : (
+					<span>{discussion.pubTitle || 'Untitled pub'}</span>
+				)}
+				{discussion.communitySubdomain && (
+					<Tag minimal>{discussion.communitySubdomain}</Tag>
+				)}
+				<span className="discussion-date">{formatDate(discussion.createdAt)}</span>
+			</div>
+			{discussion.firstCommentText && (
+				<div className="discussion-preview">
+					{discussion.firstCommentText.length > 200
+						? `${discussion.firstCommentText.slice(0, 200)}...`
+						: discussion.firstCommentText}
+				</div>
+			)}
+		</div>
+	);
+};
+
 const UserSpamEntry = (props: Props) => {
 	const { user, onSpamTagRemoved } = props;
 	const { fullName, email, slug, createdAt, spamTag, affiliation } = user;
@@ -31,8 +63,31 @@ const UserSpamEntry = (props: Props) => {
 	const initialStatus = hasTag ? spamTag.status : null;
 	const [status, setUpdatedStatus] = useState<null | SpamStatus>(initialStatus);
 
-	const fields = hasTag ? (spamTag.fields ?? {}) : {};
+	const [discussionsOpen, setDiscussionsOpen] = useState(false);
+	const [recentDiscussions, setRecentDiscussions] = useState<RecentDiscussion[] | null>(null);
+	const [discussionsLoading, setDiscussionsLoading] = useState(false);
+
+	const fields = hasTag
+		? ((spamTag.fields ?? {}) as UserSpamTagFields)
+		: ({} as UserSpamTagFields);
 	const fieldsJsonString = useMemo(() => JSON.stringify(fields, null, 2), [fields]);
+
+	const handleToggleDiscussions = useCallback(async () => {
+		if (recentDiscussions) {
+			setDiscussionsOpen((prev) => !prev);
+			return;
+		}
+		setDiscussionsOpen(true);
+		setDiscussionsLoading(true);
+		try {
+			const result = await apiFetch.post('/api/spamTags/userRecentDiscussions', {
+				userId: user.id,
+			});
+			setRecentDiscussions(result);
+		} finally {
+			setDiscussionsLoading(false);
+		}
+	}, [user.id, recentDiscussions]);
 
 	const renderFieldsReport = () => {
 		if (Object.keys(fields).length === 0) return null;
@@ -196,6 +251,27 @@ const UserSpamEntry = (props: Props) => {
 		);
 	};
 
+	const renderHoneypotTriggers = () => {
+		const triggers = fields?.honeypotTriggers;
+		if (!triggers?.length) return null;
+		return (
+			<div className="honeypot-triggers">
+				<h3>Honeypot triggers</h3>
+				<ul>
+					{triggers.map((trigger, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: stable list
+						<li key={index}>
+							<Tag intent="danger" minimal>
+								{trigger.honeypot}
+							</Tag>{' '}
+							<code>{trigger.value}</code>
+						</li>
+					))}
+				</ul>
+			</div>
+		);
+	};
+
 	const renderAffiliation = () => {
 		if (!affiliation) return null;
 		const { communitySubdomains, pubCount, discussionCount } = affiliation;
@@ -239,6 +315,16 @@ const UserSpamEntry = (props: Props) => {
 		);
 	};
 
+	const renderRecentDiscussions = () => {
+		if (discussionsLoading) return <Spinner size={16} />;
+		if (!recentDiscussions || recentDiscussions.length === 0) {
+			return <div className="no-discussions">No discussions found</div>;
+		}
+		return recentDiscussions.map((d) => <DiscussionItem key={d.id} discussion={d} />);
+	};
+
+	const discussionCount = affiliation?.discussionCount ?? 0;
+
 	return (
 		<div className="user-spam-entry-component">
 			<div className="title">
@@ -251,6 +337,7 @@ const UserSpamEntry = (props: Props) => {
 			{renderFieldsReport()}
 			{renderSuspiciousFiles()}
 			{renderSuspiciousComments()}
+			{renderHoneypotTriggers()}
 			<div className="details">
 				<div className="tags">
 					{renderStatusTag()}
@@ -263,6 +350,20 @@ const UserSpamEntry = (props: Props) => {
 					{renderAffiliation()}
 				</div>
 				<div className="actions">{renderActions()}</div>
+			</div>
+			<div className="discussions-section">
+				<Button
+					minimal
+					small
+					icon={discussionsOpen ? 'chevron-up' : 'chevron-down'}
+					onClick={handleToggleDiscussions}
+				>
+					{discussionsOpen ? 'Hide' : 'Show'} discussions
+					{discussionCount > 0 ? ` (${discussionCount})` : ''}
+				</Button>
+				<Collapse isOpen={discussionsOpen}>
+					<div className="discussions-list">{renderRecentDiscussions()}</div>
+				</Collapse>
 			</div>
 		</div>
 	);

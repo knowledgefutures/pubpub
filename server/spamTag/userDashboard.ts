@@ -1,8 +1,18 @@
 import type * as types from 'types';
 
-import { Op } from 'sequelize';
+import { literal, Op } from 'sequelize';
 
-import { Community, Discussion, Member, Pub, PubAttribution, SpamTag, User } from 'server/models';
+import {
+	Community,
+	Discussion,
+	Member,
+	Pub,
+	PubAttribution,
+	SpamTag,
+	Thread,
+	ThreadComment,
+	User,
+} from 'server/models';
 
 const orderableFields = {
 	'user-created-at': ['createdAt'],
@@ -10,20 +20,50 @@ const orderableFields = {
 	'spam-score': [{ model: SpamTag, as: 'spamTag' }, 'spamScore'],
 } as const;
 
-const getUserWhereQuery = (searchTerm?: string | null) => {
+const getUserWhereQuery = (options: {
+	searchTerm?: string | null;
+	spamTagPresence?: types.SpamUserQuery['spamTagPresence'];
+	communitySubdomain?: string;
+}) => {
+	const { searchTerm, spamTagPresence, communitySubdomain } = options;
+	const conditions: Record<string, unknown>[] = [];
+
 	if (searchTerm) {
 		const normalizedQuery = `%${searchTerm.trim()}%`;
-		return {
-			where: {
-				[Op.or]: [
-					{ fullName: { [Op.iLike]: normalizedQuery } },
-					{ email: { [Op.iLike]: normalizedQuery } },
-					{ slug: { [Op.iLike]: normalizedQuery } },
-				],
-			},
-		};
+		conditions.push({
+			[Op.or]: [
+				{ fullName: { [Op.iLike]: normalizedQuery } },
+				{ email: { [Op.iLike]: normalizedQuery } },
+				{ slug: { [Op.iLike]: normalizedQuery } },
+			],
+		});
 	}
-	return {};
+
+	if (spamTagPresence === 'absent') {
+		conditions.push({ spamTagId: { [Op.is]: null } });
+	}
+
+	if (communitySubdomain) {
+		const escaped = User.sequelize!.escape(`%${communitySubdomain.trim()}%`);
+		conditions.push({
+			id: {
+				[Op.in]: literal(`(
+					SELECT "userId" FROM "Members"
+					INNER JOIN "Communities" ON "Communities"."id" = "Members"."communityId"
+					WHERE "Communities"."subdomain" ILIKE ${escaped}
+					UNION
+					SELECT "userId" FROM "Discussions"
+					INNER JOIN "Pubs" ON "Pubs"."id" = "Discussions"."pubId"
+					INNER JOIN "Communities" ON "Communities"."id" = "Pubs"."communityId"
+					WHERE "Communities"."subdomain" ILIKE ${escaped}
+				)`),
+			},
+		});
+	}
+
+	if (conditions.length === 0) return {};
+	if (conditions.length === 1) return { where: conditions[0] };
+	return { where: { [Op.and]: conditions } };
 };
 
 const getSpamTagStatusWhereQuery = (status: undefined | types.SpamStatus[] | null) => {
@@ -33,10 +73,19 @@ const getSpamTagStatusWhereQuery = (status: undefined | types.SpamStatus[] | nul
 	return {};
 };
 
-type OrderFields = (typeof orderableFields)[keyof typeof orderableFields];
-const getQueryOrdering = (ordering: types.SpamUserQueryOrdering) => {
+const getQueryOrdering = (ordering: types.SpamUserQueryOrdering): [any, string][] => {
 	const { field, direction } = ordering;
-	return [[...orderableFields[field], direction]] as [OrderFields[number], 'ASC' | 'DESC'][];
+	if (field === 'discussion-count') {
+		return [
+			[
+				literal(
+					'(SELECT COUNT(*) FROM "Discussions" WHERE "Discussions"."userId" = "User"."id")',
+				),
+				direction,
+			],
+		];
+	}
+	return [[...orderableFields[field as keyof typeof orderableFields], direction]] as any;
 };
 
 export type UserSpamManagementRow =
@@ -51,18 +100,28 @@ type SerializedSpamUserRow = Record<string, unknown> & {
 export const queryUsersForSpamManagement = async (
 	query: types.SpamUserQuery,
 ): Promise<SerializedSpamUserRow[]> => {
-	const { limit, offset, ordering, status, searchTerm, includeAffiliation } = query;
-	const includeAllUsers = !status || status.length === 0;
+	const {
+		limit,
+		offset,
+		ordering,
+		status,
+		searchTerm,
+		includeAffiliation,
+		spamTagPresence,
+		communitySubdomain,
+	} = query;
+	const hasStatusFilter = status && status.length > 0;
+	const spamTagRequired = spamTagPresence === 'present' || !!hasStatusFilter;
 	const include = [
 		{
 			model: SpamTag,
 			as: 'spamTag',
-			required: !includeAllUsers,
+			required: spamTagRequired,
 			...getSpamTagStatusWhereQuery(status),
 		},
 	];
 	const rows = (await User.findAll({
-		...getUserWhereQuery(searchTerm),
+		...getUserWhereQuery({ searchTerm, spamTagPresence, communitySubdomain }),
 		attributes: ['id', 'fullName', 'email', 'slug', 'createdAt'],
 		limit,
 		offset,
@@ -151,4 +210,50 @@ const getAffiliationForUserIds = async (
 		});
 	}
 	return map;
+};
+
+export const getRecentDiscussionsForUser = async (
+	userId: string,
+): Promise<types.RecentDiscussion[]> => {
+	const discussions = await Discussion.findAll({
+		where: { userId },
+		attributes: ['id', 'title', 'createdAt'],
+		order: [['createdAt', 'DESC']],
+		limit: 3,
+		include: [
+			{
+				model: Pub,
+				as: 'pub',
+				attributes: ['title', 'slug'],
+				include: [{ model: Community, as: 'community', attributes: ['subdomain'] }],
+			},
+			{
+				model: Thread,
+				as: 'thread',
+				attributes: ['id'],
+				include: [
+					{
+						model: ThreadComment,
+						as: 'comments',
+						attributes: ['text'],
+						limit: 1,
+						order: [['createdAt', 'ASC']],
+					},
+				],
+			},
+		],
+	});
+
+	return discussions.map((d) => {
+		const json = (d as any).toJSON();
+		return {
+			id: json.id,
+			title: json.title,
+			createdAt: json.createdAt,
+			pubTitle: json.pub?.title ?? null,
+			pubSlug: json.pub?.slug ?? null,
+			communitySubdomain: json.pub?.community?.subdomain ?? null,
+			firstCommentText: json.thread?.comments?.[0]?.text ?? null,
+		};
+	});
 };

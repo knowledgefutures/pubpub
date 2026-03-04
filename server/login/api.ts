@@ -9,6 +9,7 @@ import { promisify } from 'util';
 
 import { User } from 'server/models';
 import { getSpamTagForUser } from 'server/spamTag/userQueries';
+import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { assert } from 'utils/assert';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { isDuqDuq, isProd } from 'utils/environment';
@@ -18,10 +19,13 @@ type Step1Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPr
 type Step2Result = [types.UserWithPrivateFields, null] | [null, SetPasswordData];
 type Step3Result = [types.UserWithPrivateFields, null] | [null, types.UserWithPrivateFields[][]];
 
-export const loginRouteImplementation: AppRouteImplementation<typeof contract.auth.login> = async ({
-	req,
-	res,
-}) => {
+type LoginResult =
+	| { status: 201; body: 'success' }
+	| { status: 401; body: 'Login attempt failed' }
+	| { status: 403; body: string }
+	| { status: 500; body: string };
+
+const performLogin = (req: any, res: any): Promise<LoginResult> => {
 	const authenticate = new Promise<types.UserWithPrivateFields | null>((resolve, reject) => {
 		passport.authenticate('local', (authErr: Error, user: types.UserWithPrivateFields) => {
 			if (authErr) {
@@ -32,36 +36,24 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 	});
 	return authenticate
 		.then((user) => {
-			/* If authentication succeeded, we have a user */
 			if (user) {
 				return [user, null] as Step1Result;
 			}
-
-			/* If authentication did not succeed, we need to check if a legacy hash is valid */
 			const findUser = User.findOne({
 				where: { email: req.body.email },
 			});
-
 			return Promise.all([null, findUser]) as Promise<Step1Result>;
 		})
 		.then(([user, userData]) => {
 			if (user) {
 				return [user, null] as Step2Result;
 			}
-
-			/* If the login failed, and there is no
-			userData, then the email doesn't exist */
 			if (!userData) {
 				throw new Error('Invalid email');
 			}
-			/* If the login failed, but the email exists, and the
-			digest is already sha512, it's simply a wrong password */
 			if (userData.passwordDigest === 'sha512') {
 				throw new Error('Invalid password');
 			}
-
-			/* If the login failed, but the email exists, and the digest
-			is not sha512, we need to check for valid legacy hashes */
 			const pubpubSha1HashRaw = crypto.pbkdf2Sync(
 				req.body.password,
 				userData.salt,
@@ -88,8 +80,6 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 			if (!isLegacyValid) {
 				throw new Error('Invalid password');
 			}
-
-			/* If isLegacyValid, we need to update user to sha512 */
 			const setPassword = promisify((userData as any).setPassword.bind(userData));
 			return Promise.all([null, setPassword(req.body.password)]) as Promise<Step2Result>;
 		})
@@ -130,12 +120,9 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 				...(isDuqDuq() &&
 					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
-				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
+				maxAge: 30 * 24 * 60 * 60 * 1000,
 			});
-			return {
-				status: 201,
-				body: 'success',
-			} as const;
+			return { status: 201, body: 'success' } as const;
 		})
 		.catch((err) => {
 			if (err.message === 'ACCOUNT_RESTRICTED') {
@@ -150,4 +137,19 @@ export const loginRouteImplementation: AppRouteImplementation<typeof contract.au
 			}
 			return { status: 500, body: err.message } as const;
 		});
+};
+
+export const loginRouteImplementation: AppRouteImplementation<typeof contract.auth.login> = async ({
+	req,
+	res,
+}) => performLogin(req, res);
+
+export const loginFromFormRouteImplementation: AppRouteImplementation<
+	typeof contract.auth.loginFromForm
+> = async ({ req, res }) => {
+	const ok = await verifyCaptchaPayload(req.body.altcha);
+	if (!ok) {
+		return { status: 400, body: 'Please complete the verification and try again.' } as const;
+	}
+	return performLogin(req, res);
 };

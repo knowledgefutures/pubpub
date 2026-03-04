@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
 import encHex from 'crypto-js/enc-hex';
@@ -6,7 +6,7 @@ import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { gdprCookiePersistsSignup, getGdprConsentElection } from 'client/utils/legal/gdprConsent';
-import { GridWrapper, Icon, ImageUpload, InputField } from 'components';
+import { Altcha, GridWrapper, Honeypot, Icon, ImageUpload, InputField } from 'components';
 
 import './userCreate.scss';
 
@@ -16,8 +16,9 @@ type Props = {
 
 const UserCreate = (props: Props) => {
 	const { signupData } = props;
+	const altchaRef = useRef<import('components').AltchaRef>(null);
 	const [postUserIsLoading, setPostUserIsLoading] = useState(false);
-	const [postUserError, setPostUserError] = useState(undefined);
+	const [postUserError, setPostUserError] = useState<string | undefined>(undefined);
 	const [subscribed, setSubscribed] = useState(false);
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
@@ -39,16 +40,19 @@ const UserCreate = (props: Props) => {
 	const [showTwitter, setShowTwitter] = useState(false);
 	const [showFacebook, setShowFacebook] = useState(false);
 	const [showGoogleScholar, setShowGoogleScholar] = useState(false);
-	const [confirmPassword, setConfirmPasword] = useState('');
 	const [acceptTerms, setAcceptTerms] = useState(false);
-	const onCreateSubmit = (evt) => {
+
+	const onCreateSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();
+		if (!acceptTerms) return;
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('confirmPassword') as string) ?? '';
 		setPostUserIsLoading(true);
 		setPostUserError(undefined);
-		if (!acceptTerms) return false;
-		return apiFetch('/api/users', {
-			method: 'POST',
-			body: JSON.stringify({
+		try {
+			const altchaPayload = await altchaRef.current?.verify();
+			console.log('altchaPayload', altchaPayload);
+			const body = {
 				email: signupData.email,
 				hash: signupData.hash,
 				subscribed,
@@ -65,18 +69,20 @@ const UserCreate = (props: Props) => {
 				twitter,
 				facebook,
 				googleScholar,
-				confirmPassword,
+				_honeypot: honeypot,
+				altcha: altchaPayload,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
-			}),
-		})
-			.then(() => {
-				const cacheBreaker = Math.round(new Date().getTime() / 1000);
-				window.location.href = `/?breakCache=${cacheBreaker}`;
-			})
-			.catch((err) => {
-				setPostUserIsLoading(false);
-				setPostUserError(err);
+			};
+			await apiFetch('/api/users', {
+				method: 'POST',
+				body: JSON.stringify(body),
 			});
+			const cacheBreaker = Math.round(new Date().getTime() / 1000);
+			window.location.href = `/?breakCache=${cacheBreaker}`;
+		} catch (err) {
+			setPostUserIsLoading(false);
+			setPostUserError(err instanceof Error ? err.message : 'Error Creating User');
+		}
 	};
 	const onSubscribedChange = () => {
 		setSubscribed(!subscribed);
@@ -243,15 +249,7 @@ const UserCreate = (props: Props) => {
 							value={password}
 							onChange={onPasswordChange}
 						/>
-						<input
-							type="password"
-							name="confirmPassword"
-							className="confirm-password"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message
-							tabIndex="-1"
-							autoComplete="new-user-street-address"
-							onChange={(evt) => setConfirmPasword(evt.target.value)}
-						/>
+						<Honeypot name="confirmPassword" />
 						<ImageUpload
 							htmlFor="avatar-upload"
 							label="Avatar Image"
@@ -344,12 +342,12 @@ const UserCreate = (props: Props) => {
 								.
 							</Checkbox>
 						</InputField>
+						<Altcha ref={altchaRef} auto="onload" />
 						<InputField error={postUserError && 'Error Creating User'}>
 							<Button
 								name="create"
 								type="submit"
 								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
-								onClick={onCreateSubmit}
 								text="Create Account"
 								disabled={!firstName || !lastName || !password || !acceptTerms}
 								loading={postUserIsLoading}

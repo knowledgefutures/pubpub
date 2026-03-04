@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import { SpamTag } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
 
-import { addSpamTagToCommunity } from '../queries';
+import { addSpamTagToCommunity } from '../communityQueries';
 
 const {
 	sendCommunityApprovedEmail,

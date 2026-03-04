@@ -45,6 +45,30 @@ export const authRouter = {
 	},
 
 	/**
+	 * `POST /api/login/fromForm`
+	 *
+	 * Login from a browser form, with captcha verification
+	 */
+	loginFromForm: {
+		path: '/api/login/fromForm',
+		method: 'POST',
+		summary: 'Login from form',
+		description: 'Login from a browser form with captcha verification',
+		body: z.object({
+			email: z.string().email(),
+			password: z.string(),
+			altcha: z.string(),
+		}),
+		responses: {
+			201: z.literal('success'),
+			400: z.string(),
+			401: z.literal('Login attempt failed'),
+			403: z.string(),
+			500: z.string(),
+		},
+	},
+
+	/**
 	 * `GET /api/logout`
 	 *
 	 * Logout and clear authentication cookie

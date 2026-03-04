@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import type { AltchaRef } from 'components';
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AnchorButton, Button, InputGroup, Intent } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { Avatar } from 'components';
+import { Altcha, Avatar, Honeypot } from 'components';
 import Editor, {
 	convertLocalHighlightToDiscussion,
 	getJSON,
@@ -51,6 +53,7 @@ const DiscussionInput = (props: Props) => {
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
 	const [commenterName, setCommenterName] = useState('');
+	const altchaRef = useRef<AltchaRef>(null);
 	const isNewThread = !discussionData.number;
 	const inputView = changeObject?.view;
 
@@ -60,72 +63,92 @@ const DiscussionInput = (props: Props) => {
 		}
 	}, [isNewThread, inputView, didFocus, isPubBottomInput]);
 
-	const handlePostThreadComment = async () => {
+	const postThreadCommentBody = () => ({
+		accessHash: locationData.query.access,
+		parentId: discussionData.id,
+		threadId: discussionData.thread.id,
+		pubId: pubData.id,
+		communityId: communityData.id,
+		content: getJSON(changeObject?.view),
+		text: getText(changeObject?.view) || '',
+		commentAccessHash: pubData.commentHash,
+		commenterName,
+	});
+
+	const postDiscussionBody = () => {
+		const initAnchorData = getLocalHighlightText(pubView, discussionData.id);
+		return {
+			accessHash: locationData.query.access,
+			discussionId: discussionData.id,
+			pubId: pubData.id,
+			historyKey: historyData.currentKey,
+			communityId: communityData.id,
+			content: getJSON(changeObject?.view),
+			text: getText(changeObject?.view) || '',
+			initAnchorData,
+			visibilityAccess: pubData.isRelease ? 'public' : 'members',
+			commentAccessHash: pubData.commentHash,
+			commenterName,
+		};
+	};
+
+	const handlePostThreadComment = async (evt: React.FormEvent<HTMLFormElement>) => {
+		evt.preventDefault();
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('title') as string) ?? '';
 		setIsLoading(true);
-		const outputData = await apiFetch('/api/threadComment', {
-			method: 'POST',
-			body: JSON.stringify({
-				accessHash: locationData.query.access,
-				parentId: discussionData.id,
-				threadId: discussionData.thread.id,
-				pubId: pubData.id,
-				communityId: communityData.id,
-				content: getJSON(changeObject?.view),
-				text: getText(changeObject?.view) || '',
-				commentAccessHash: pubData.commentHash,
-				commenterName,
-			}),
-		});
-
-		updateLocalData('pub', {
-			discussions: pubData.discussions.map((disc) => {
-				if (disc.thread!.id === outputData.threadId) {
-					return {
-						...disc,
-						thread: {
-							...disc.thread,
-							comments: [...disc.thread!.comments, outputData],
-						},
-					};
-				}
-				return disc;
-			}),
-		});
-
-		if (isPubBottomInput) {
+		try {
+			const altchaPayload = await altchaRef.current?.verify();
+			const outputData = await apiFetch('/api/threadComment/fromForm', {
+				method: 'POST',
+				body: JSON.stringify({
+					...postThreadCommentBody(),
+					_honeypot: honeypot,
+					altcha: altchaPayload,
+				}),
+			});
+			updateLocalData('pub', {
+				discussions: pubData.discussions.map((disc) => {
+					if (disc.thread!.id === outputData.threadId) {
+						return {
+							...disc,
+							thread: {
+								...disc.thread,
+								comments: [...disc.thread!.comments, outputData],
+							},
+						};
+					}
+					return disc;
+				}),
+			});
+		} finally {
 			setIsLoading(false);
-			setEditorKey(Date.now());
+			if (isPubBottomInput) setEditorKey(Date.now());
 		}
 	};
 
-	const handlePostDiscussion = async () => {
+	const handlePostDiscussion = async (evt: React.FormEvent<HTMLFormElement>) => {
+		evt.preventDefault();
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('title') as string) ?? '';
 		setIsLoading(true);
-		const initAnchorData = getLocalHighlightText(pubView, discussionData.id);
-		const outputData = await apiFetch('/api/discussions', {
-			method: 'POST',
-			body: JSON.stringify({
-				accessHash: locationData.query.access,
-				discussionId: discussionData.id,
-				pubId: pubData.id,
-				historyKey: historyData.currentKey,
-				communityId: communityData.id,
-				content: getJSON(changeObject?.view),
-				text: getText(changeObject?.view) || '',
-				initAnchorData,
-				visibilityAccess: pubData.isRelease ? 'public' : 'members',
-				commentAccessHash: pubData.commentHash,
-				commenterName,
-			}),
-		});
-		updateLocalData('pub', {
-			discussions: [...pubData.discussions, outputData],
-		});
-
-		if (isPubBottomInput) {
+		try {
+			const altchaPayload = await altchaRef.current?.verify();
+			const outputData = await apiFetch('/api/discussions/fromForm', {
+				method: 'POST',
+				body: JSON.stringify({
+					...postDiscussionBody(),
+					_honeypot: honeypot,
+					altcha: altchaPayload,
+				}),
+			});
+			updateLocalData('pub', {
+				discussions: [...pubData.discussions, outputData],
+			});
+			if (!isPubBottomInput) convertLocalHighlightToDiscussion(pubView, outputData.id);
+		} finally {
 			setIsLoading(false);
-			setEditorKey(Date.now());
-		} else {
-			convertLocalHighlightToDiscussion(pubView, outputData.id);
+			if (isPubBottomInput) setEditorKey(Date.now());
 		}
 	};
 
@@ -142,12 +165,9 @@ const DiscussionInput = (props: Props) => {
 			evt.currentTarget.blur();
 		}
 	};
-	const handleInputChange = useCallback(
-		(e) => {
-			setCommenterName(e.target.value);
-		},
-		[setCommenterName],
-	);
+	const handleInputChange = useCallback((e) => {
+		setCommenterName(e.target.value);
+	}, []);
 	const renderUserNameInput = () => {
 		return (
 			!isUser &&
@@ -203,7 +223,11 @@ const DiscussionInput = (props: Props) => {
 				</>
 			)}
 			{canComment && (isNewThread || didFocus) && (
-				<div className="content-wrapper">
+				<form
+					onSubmit={isNewThread ? handlePostDiscussion : handlePostThreadComment}
+					className="content-wrapper"
+				>
+					<Honeypot name="title" />
 					<div className="discussion-body-wrapper editable">
 						<FormattingBar
 							editorChangeObject={changeObject}
@@ -219,29 +243,36 @@ const DiscussionInput = (props: Props) => {
 						/>
 						{renderUserNameInput()}
 					</div>
+
+					{/** we don't want to autorun the verification for new discussions, as that would always run verification on each page load
+					 * we do want to run verification on load for replies, as you need to open the specific discussion to reply to it, and otherwise
+					 * the processes doesn't work very smoothly (need to press "Post reply" twice, once to trigger verification, and once to actually submit the form)
+					 */}
+					<Altcha ref={altchaRef} auto={isNewThread ? 'onfocus' : 'onload'} />
 					<Button
 						className="discussion-primary-button"
 						intent={Intent.PRIMARY}
+						type="submit"
 						text={isNewThread ? 'Post Discussion' : 'Post Reply'}
 						loading={isLoading}
 						disabled={
 							!getText(changeObject?.view) &&
 							!getTopLevelImages(changeObject?.view).length
 						}
-						onClick={isNewThread ? handlePostDiscussion : handlePostThreadComment}
 						small={true}
 					/>
 					{isNewThread && !isPubBottomInput && (
 						<Button
 							className="discussion-cancel-button"
 							text="Cancel"
+							type="button"
 							small={true}
 							onClick={() => {
 								removeLocalHighlight(pubView, discussionData.id);
 							}}
 						/>
 					)}
-				</div>
+				</form>
 			)}
 		</div>
 	);

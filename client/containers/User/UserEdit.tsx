@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Callout, Intent } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { GridWrapper } from 'components';
+import { GridWrapper, Honeypot } from 'components';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import InputField from 'components/InputField/InputField';
 import { ORCID_PATTERN } from 'utils/orcid';
@@ -65,8 +65,10 @@ const UserEdit = (props: Props) => {
 		setAvatar(val);
 	};
 
-	const handleSaveDetails = (evt) => {
+	const handleSaveDetails = (evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('phone') as string) ?? '';
 		const newUserObject = {
 			userId: userData.id,
 			firstName,
@@ -85,11 +87,12 @@ const UserEdit = (props: Props) => {
 			mastodon,
 			bluesky,
 			googleScholar,
+			_honeypot: honeypot,
 		};
 
 		setPutUserIsLoading(true);
 		setPutUserError('');
-		return apiFetch('/api/users', {
+		return apiFetch('/api/users/fromForm', {
 			method: 'PUT',
 			body: JSON.stringify(newUserObject),
 		})
@@ -234,6 +237,7 @@ const UserEdit = (props: Props) => {
 			<GridWrapper containerClassName="narrow nav">
 				<h1>Edit User Details</h1>
 				<form onSubmit={handleSaveDetails}>
+					<Honeypot name="phone" />
 					<InputField
 						label="First Name"
 						isRequired={true}
@@ -310,7 +314,7 @@ const UserEdit = (props: Props) => {
 								type="submit"
 								intent={Intent.PRIMARY}
 								text="Save Details"
-								onClick={handleSaveDetails}
+								// onClick={handleSaveDetails}
 								disabled={!firstName || !lastName || !hasChanged || isOrcidInvalid}
 								loading={putUserIsLoading}
 							/>

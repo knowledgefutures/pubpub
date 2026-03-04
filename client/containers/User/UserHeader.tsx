@@ -1,12 +1,15 @@
 import type { SocialItem } from 'client/utils/navigation';
+import type { SpamStatus } from 'types';
 
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { Classes } from '@blueprintjs/core';
+import { Callout, Classes, Tag } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
+import SpamStatusMenu from 'components/SpamStatusMenu';
+import { usePageContext } from 'utils/hooks';
 
 import './userHeader.scss';
 
@@ -19,7 +22,25 @@ const defaultProps = {
 	isUser: false,
 };
 
+const spamStatusDisplay: Record<
+	SpamStatus,
+	{ label: string; intent: 'danger' | 'warning' | 'success' }
+> = {
+	'confirmed-spam': { label: 'Confirmed spam', intent: 'danger' },
+	unreviewed: { label: 'Unreviewed', intent: 'warning' },
+	'confirmed-not-spam': { label: 'Not spam', intent: 'success' },
+};
+
 const UserHeader = function (props) {
+	const { loginData } = usePageContext();
+	const isSuperAdmin = !!loginData.isSuperAdmin;
+	const spamTag = props.userData.spamTag;
+	const [spamStatus, setSpamStatus] = useState<SpamStatus | null>(spamTag?.status ?? null);
+
+	const handleSpamStatusChanged = useCallback((status: SpamStatus | null) => {
+		setSpamStatus(status);
+	}, []);
+
 	const links = [
 		{ value: props.userData.location, icon: 'map-marker' as const, url: '' },
 		{
@@ -96,9 +117,40 @@ const UserHeader = function (props) {
 				)}
 			</div>
 			<div className="details">
-				<h1>{props.userData.fullName}</h1>
+				<h1>
+					{props.userData.fullName}
+					{isSuperAdmin && spamStatus && (
+						<Tag
+							intent={spamStatusDisplay[spamStatus].intent}
+							minimal
+							style={{ marginLeft: 10, verticalAlign: 'middle', fontSize: 12 }}
+						>
+							{spamStatusDisplay[spamStatus].label}
+						</Tag>
+					)}
+				</h1>
 				{props.userData.title && <div className="title">{props.userData.title}</div>}
 				{props.userData.bio && <div className="bio">{props.userData.bio}</div>}
+				{isSuperAdmin && (
+					<Callout
+						intent={spamStatus === 'confirmed-spam' ? 'danger' : 'none'}
+						icon="shield"
+						style={{ marginTop: 12, marginBottom: 12 }}
+					>
+						<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+							<span style={{ fontWeight: 500 }}>
+								Spam status:{' '}
+								{spamStatus ? spamStatusDisplay[spamStatus].label : 'None'}
+							</span>
+							<SpamStatusMenu
+								userId={props.userData.id}
+								currentStatus={spamStatus}
+								onStatusChanged={handleSpamStatusChanged}
+								small={false}
+							/>
+						</div>
+					</Callout>
+				)}
 				<div className="links">
 					{links
 						.filter((link) => {

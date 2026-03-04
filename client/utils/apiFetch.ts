@@ -2,11 +2,11 @@
 type JSON = Record<string, any> | any[] | any;
 type ApiFetchFn = (path: string, opts?: RequestInit) => Promise<JSON>;
 
-type HttpMethodApiFetchWrapper = (
+type HttpMethodApiFetchWrapper = <T extends JSON = JSON>(
 	path: string,
 	body?: JSON | string,
 	opts?: RequestInit,
-) => Promise<JSON>;
+) => Promise<T>;
 
 const httpMethods = [
 	'get',
@@ -45,12 +45,12 @@ export const apiFetch = ((path, opts) => {
 }) as ApiFetch;
 
 const createMethodWrapper = (method: HttpMethod): HttpMethodApiFetchWrapper => {
-	return (path, body, opts) =>
+	return ((path, body, opts) =>
 		apiFetch(path, {
 			...opts,
 			method: method.toUpperCase(),
 			body: typeof body === 'string' ? body : JSON.stringify(body),
-		});
+		})) as HttpMethodApiFetchWrapper;
 };
 
 // Create apiFetch.get, apiFetch.post, etc.

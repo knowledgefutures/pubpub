@@ -12,6 +12,8 @@ services:
         environment:
             NODE_ENV: development
             PORT: 3000
+            # disable this
+            IS_DUQDUQ: ""
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
         depends_on:
@@ -39,6 +41,7 @@ services:
         depends_on:
             - db
             - rabbitmq
+            - app
         networks: [appnet]
         volumes:
             - ..:/app

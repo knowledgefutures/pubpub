@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 
-import { AnchorButton, Classes, Tooltip } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes, Tooltip } from '@blueprintjs/core';
 import Color from 'color';
 
 import { apiFetch } from 'client/utils/apiFetch';
+import { Altcha, Honeypot } from 'components';
 import { getResizedUrl } from 'utils/images';
 
 import './layoutBanner.scss';
@@ -34,6 +35,8 @@ const createPubFailureText =
 	'Error creating a new Pub. You may want to refresh the page and try again.';
 
 class LayoutBanner extends Component<Props, State> {
+	altchaRef = createRef<import('components').AltchaRef>();
+
 	constructor(props: Props) {
 		super(props);
 		this.state = {
@@ -43,16 +46,25 @@ class LayoutBanner extends Component<Props, State> {
 		this.createPub = this.createPub.bind(this);
 	}
 
-	createPub() {
+	createPub(evt: React.FormEvent<HTMLFormElement>) {
+		evt.preventDefault();
+		const formData = new FormData(evt.currentTarget);
+		const honeypot = (formData.get('description') as string) ?? '';
 		const { communityData, content } = this.props;
 		this.setState({ isLoading: true, buttonError: null });
-		return apiFetch('/api/pubs', {
-			method: 'POST',
-			body: JSON.stringify({
-				communityId: communityData.id,
-				createPubToken: content.createPubToken,
-			}),
-		})
+		this.altchaRef.current
+			?.verify()
+			.then((altchaPayload) =>
+				apiFetch('/api/pubs/fromForm', {
+					method: 'POST',
+					body: JSON.stringify({
+						communityId: communityData.id,
+						createPubToken: content.createPubToken,
+						altcha: altchaPayload,
+						_honeypot: honeypot,
+					}),
+				}),
+			)
 			.then((newPub) => {
 				window.location.href = `/pub/${newPub.slug}`;
 				this.setState({ isLoading: false });
@@ -85,18 +97,37 @@ class LayoutBanner extends Component<Props, State> {
 			buttonUrl = 'signup';
 		}
 
-		const onButtonClick =
-			(isLoggedIn && buttonType === 'create-pub' && this.createPub) || undefined;
+		// const onButtonClick =
+		// 	(isLoggedIn && buttonType === 'create-pub' && this.createPub) || undefined;
 
-		const button = (
-			<AnchorButton
-				className={Classes.LARGE}
-				onClick={onButtonClick}
-				loading={this.state.isLoading}
-				text={buttonText}
-				href={buttonUrl}
-			/>
-		);
+		let button: React.ReactNode;
+
+		if (isLoggedIn && buttonType === 'create-pub') {
+			button = (
+				<form
+					onSubmit={this.createPub}
+					style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+				>
+					<Altcha ref={this.altchaRef} />
+					<Honeypot name="description" />
+					<Button
+						type="submit"
+						className={Classes.LARGE}
+						text="Create Pub"
+						loading={this.state.isLoading}
+					/>
+				</form>
+			);
+		} else {
+			button = (
+				<AnchorButton
+					className={Classes.LARGE}
+					href={buttonUrl}
+					loading={this.state.isLoading}
+					text={buttonText}
+				/>
+			);
+		}
 
 		return buttonError ? (
 			<Tooltip content={buttonError} defaultIsOpen={true}>

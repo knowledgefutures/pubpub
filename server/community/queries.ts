@@ -18,7 +18,7 @@ import {
 	WorkerTask,
 } from 'server/models';
 import { sequelize } from 'server/sequelize';
-import { getSpamTagForCommunity } from 'server/spamTag/queries';
+import { getSpamTagForCommunity } from 'server/spamTag/communityQueries';
 import { defer } from 'server/utils/deferred';
 import { sendCommunityAwaitingApprovalEmail } from 'server/utils/email/communitySpam';
 import { subscribeUser } from 'server/utils/mailchimp';
@@ -86,8 +86,8 @@ export const createCommunity = async (
 			heroTitle: inputValues.heroLogo ? '' : inputValues.title,
 			hideHeaderLogo: true,
 			heroText: description,
-			accentColorLight: inputValues.accentColorLight,
-			accentColorDark: inputValues.accentColorDark,
+			accentColorLight: inputValues.accentColorLight ?? '#ffffff',
+			accentColorDark: inputValues.accentColorDark ?? '#000000',
 			navigation: [{ type: 'page', id: homePageId }],
 			hideCreatePubButton: true,
 		},

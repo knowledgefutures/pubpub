@@ -318,6 +318,23 @@ export const pubRouter = {
 		},
 	},
 	/**
+	 * `POST /api/pubs/fromForm`
+	 *
+	 * Create a Pub from the web form (requires captcha and honeypot verification).
+	 */
+	createFromForm: {
+		path: '/api/pubs/fromForm',
+		method: 'POST',
+		summary: 'Create a Pub from form',
+		description: 'Create a Pub with captcha and honeypot verification',
+		body: pubCreateSchema.and(
+			z.object({ altcha: z.string(), _honeypot: z.string().optional() }),
+		),
+		responses: {
+			201: pubSchema,
+		},
+	},
+	/**
 	 * `PUT /api/pubs`
 	 *
 	 * Update a Pub

@@ -12,6 +12,23 @@
 		.discussion-body-wrapper {
 			opacity: 0.85;
 		}
+		border-left: 3px solid #d9534f;
+		padding-left: 0.5em;
+		background: rgba(217, 83, 79, 0.03);
+	}
+	.spam-badge {
+		display: inline-block;
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		padding: 2px 5px;
+		margin-left: 4px;
+		background: #d9534f;
+		color: white;
+		border-radius: 2px;
+		vertical-align: middle;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 	.thread-comment-spam-banner {
 		width: 100%;

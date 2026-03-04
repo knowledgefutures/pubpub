@@ -12,6 +12,23 @@ $bp: vendor.$bp-namespace;
 	text-align: left;
 	&.is-author-spam {
 		opacity: 0.9;
+		border-left: 3px solid #d9534f;
+		padding-left: calc(1em - 3px);
+		background: rgba(217, 83, 79, 0.03);
+	}
+	.spam-badge {
+		display: inline-block;
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		padding: 2px 5px;
+		margin-left: 6px;
+		background: #d9534f;
+		color: white;
+		border-radius: 2px;
+		vertical-align: middle;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 	.discussion-spam-banner {
 		margin-bottom: 0.75em;

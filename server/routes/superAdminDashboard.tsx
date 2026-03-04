@@ -8,8 +8,8 @@ import { filtersById as spamFiltersById } from 'client/containers/SuperAdminDash
 import { filtersById as spamUsersFiltersById } from 'client/containers/SuperAdminDashboard/UserSpam/filters';
 import Html from 'server/Html';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { queryCommunitiesForSpamManagement } from 'server/spamTag/communities';
-import { queryUsersForSpamManagement } from 'server/spamTag/users';
+import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
+import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -40,10 +40,11 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
-		const { query } = spamUsersFiltersById['all'];
+		const { query } = spamUsersFiltersById.all;
 		const users = await queryUsersForSpamManagement({
 			limit: 50,
 			searchTerm,
+			includeAffiliation: true,
 			...query!,
 		});
 		return {

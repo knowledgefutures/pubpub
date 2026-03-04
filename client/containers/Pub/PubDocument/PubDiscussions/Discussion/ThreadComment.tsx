@@ -1,13 +1,13 @@
-import type { Callback } from 'types';
+import type { Callback, SpamStatus } from 'types';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Button, Intent } from '@blueprintjs/core';
 import classNames from 'classnames';
 import TimeAgo from 'react-timeago';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { Avatar, Icon } from 'components';
+import { Avatar, Icon, SpamStatusMenu } from 'components';
 import Editor, { type EditorChangeObject, getJSON, getText, viewIsEmpty } from 'components/Editor';
 import { buttons, FormattingBar } from 'components/FormattingBar';
 import { usePageContext } from 'utils/hooks';
@@ -31,7 +31,8 @@ const ThreadComment = (props: Props) => {
 		updateLocalData,
 		isPreview = false,
 	} = props;
-	const { loginData, communityData, locationData } = usePageContext();
+	const { loginData, communityData, locationData, scopeData } = usePageContext();
+	const { isSuperAdmin } = scopeData.activePermissions;
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState<null | EditorChangeObject>(null);
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -69,6 +70,31 @@ const ThreadComment = (props: Props) => {
 			});
 		});
 	};
+
+	const handleSpamStatusChanged = useCallback(
+		(status: SpamStatus | null) => {
+			const isNowSpam = status === 'confirmed-spam';
+			const targetUserId = threadCommentData.userId;
+			updateLocalData('pub', {
+				discussions: pubData.discussions.map((discussion) => ({
+					...discussion,
+					...(discussion.userId === targetUserId && {
+						isAuthorSpam: isNowSpam || undefined,
+					}),
+					thread: {
+						...discussion.thread,
+						comments: discussion.thread.comments.map((comment) => {
+							if (comment.userId === targetUserId) {
+								return { ...comment, isAuthorSpam: isNowSpam || undefined };
+							}
+							return comment;
+						}),
+					},
+				})),
+			});
+		},
+		[threadCommentData.userId, pubData.discussions, updateLocalData],
+	);
 
 	const isAuthor = loginData.id === threadCommentData.userId;
 	const renderText = (
@@ -114,6 +140,7 @@ const ThreadComment = (props: Props) => {
 						{threadCommentData.author
 							? threadCommentData.author.fullName
 							: (commenterName ?? 'anonymous')}
+						{isAuthorSpam && isPreview && <span className="spam-badge">Spam</span>}
 						{isPreview ? ': ' : ''}
 					</span>
 
@@ -153,6 +180,12 @@ const ThreadComment = (props: Props) => {
 								onClick={() => {
 									setIsEditing(!isEditing);
 								}}
+							/>
+						)}
+						{!isPreview && isSuperAdmin && threadCommentData.userId && (
+							<SpamStatusMenu
+								userId={threadCommentData.userId}
+								onStatusChanged={handleSpamStatusChanged}
 							/>
 						)}
 					</span>

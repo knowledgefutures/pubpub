@@ -1,5 +1,5 @@
 import { Community } from 'server/models';
-import { addSpamTagToCommunity } from 'server/spamTag/queries';
+import { addSpamTagToCommunity } from 'server/spamTag/communityQueries';
 
 import { forEachInstance } from '../util';
 

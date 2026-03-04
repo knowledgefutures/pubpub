@@ -1,10 +1,11 @@
-import { Pub, PubAttribution, User } from 'server/models';
+import { Pub, PubAttribution, SpamTag, User } from 'server/models';
 
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
 
 export default async (slug, initialData) => {
 	const sanitizedSlug = slug.toLowerCase();
+	const isSuperAdmin = !!initialData.loginData?.isSuperAdmin;
 	const userData = await User.findOne({
 		where: {
 			slug: sanitizedSlug,
@@ -30,6 +31,7 @@ export default async (slug, initialData) => {
 					},
 				],
 			},
+			...(isSuperAdmin ? [{ model: SpamTag, as: 'spamTag', required: false }] : []),
 		],
 	});
 

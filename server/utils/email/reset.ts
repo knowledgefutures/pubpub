@@ -14,6 +14,7 @@ type SendEmailOptions = {
 	replyTo?: string;
 	to: string[];
 	cc?: string[];
+	bcc?: string[];
 	subject: string;
 } & Body;
 
@@ -31,6 +32,7 @@ export const sendEmail = (options: SendEmailOptions) => {
 		subject,
 		...('replyTo' in options && { 'h:Reply-To': options.replyTo }),
 		...('cc' in options && { cc: options.cc }),
+		...('bcc' in options && { bcc: options.bcc }),
 		...body,
 	});
 };

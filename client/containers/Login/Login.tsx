@@ -1,3 +1,5 @@
+import type { AltchaRef } from 'components';
+
 import React, { useRef, useState } from 'react';
 
 import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
@@ -5,7 +7,7 @@ import encHex from 'crypto-js/enc-hex';
 import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { Avatar, GridWrapper, InputField } from 'components';
+import { Altcha, Avatar, GridWrapper, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
 
 import './login.scss';
@@ -16,6 +18,7 @@ const Login = () => {
 	const [logoutLoading, setLogoutLoading] = useState(false);
 	const emailRef = useRef(null);
 	const passwordRef = useRef(null);
+	const altchaRef = useRef<AltchaRef>(null);
 	const { locationData, loginData, communityData } = usePageContext();
 	const onLoginSubmit = (evt) => {
 		evt.preventDefault();
@@ -34,30 +37,38 @@ const Login = () => {
 		}
 		setLoginLoading(true);
 		setLoginError(undefined);
-		return apiFetch('/api/login', {
-			method: 'POST',
-			body: JSON.stringify({
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-				email: emailRef.current.value.toLowerCase(),
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-				password: SHA3(passwordRef.current.value).toString(encHex),
-			}),
-		})
-			.then(() => {
-				const cacheBreaker = Math.round(new Date().getTime() / 1000);
-				window.location.href = locationData.query.redirect
-					? `/${locationData.query.redirect.replace(
-							/^\/+/,
-							'',
-						)}?breakCache=${cacheBreaker}`
-					: `/?breakCache=${cacheBreaker}`;
-				// window.location.href =
-				// 	`/${trimStart(`${locationData.query.redirect}`, '/')}` || '/';
+		const doLogin = (altchaPayload: string) =>
+			apiFetch('/api/login/fromForm', {
+				method: 'POST',
+				body: JSON.stringify({
+					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+					email: emailRef.current.value.toLowerCase(),
+					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+					password: SHA3(passwordRef.current.value).toString(encHex),
+					altcha: altchaPayload,
+				}),
 			})
+				.then(() => {
+					const cacheBreaker = Math.round(new Date().getTime() / 1000);
+					window.location.href = locationData.query.redirect
+						? `/${locationData.query.redirect.replace(
+								/^\/+/,
+								'',
+							)}?breakCache=${cacheBreaker}`
+						: `/?breakCache=${cacheBreaker}`;
+				})
+				.catch(() => {
+					setLoginLoading(false);
+					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Invalid Email or Password"' is ... Remove this comment to see the full error message
+					setLoginError('Invalid Email or Password');
+				});
+		return altchaRef.current
+			?.verify()
+			.then(doLogin)
 			.catch(() => {
 				setLoginLoading(false);
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Invalid Email or Password"' is ... Remove this comment to see the full error message
-				setLoginError('Invalid Email or Password');
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Verification failed..."' is ... Remove this comment to see the full error message
+				setLoginError('Verification failed. Please try again.');
 			});
 	};
 	const onLogoutSubmit = () => {
@@ -93,12 +104,12 @@ const Login = () => {
 								helperText={<a href="/password-reset">Forgot Password</a>}
 								inputRef={passwordRef}
 							/>
+							<Altcha ref={altchaRef} auto="onload" />
 							<InputField error={loginError}>
 								<Button
 									name="login"
 									type="submit"
 									className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
-									onClick={onLoginSubmit}
 									text="Login"
 									loading={loginLoading}
 								/>

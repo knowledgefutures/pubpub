@@ -124,7 +124,7 @@ export const pubCreateSchema = optionalPubCreateParamSchema
 				collectionId: z.undefined(),
 			}),
 		]),
-	) satisfies z.ZodType<types.CanCreatePub>;
+	);
 
 export const getManyQuerySchema = z.object({
 	query: z

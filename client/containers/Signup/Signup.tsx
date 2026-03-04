@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import type { AltchaRef } from 'components';
+
+import React, { useRef, useState } from 'react';
 
 import { Button, Classes, NonIdealState } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { GridWrapper, InputField } from 'components';
+import { Altcha, GridWrapper, Honeypot, InputField } from 'components';
 import { usePageContext } from 'utils/hooks';
 
 import './signup.scss';
@@ -13,32 +15,64 @@ const Signup = () => {
 	const [email, setEmail] = useState('');
 	const [isSuccessful, setIsSuccessful] = useState(false);
 	const [postSignupIsLoading, setPostSignupIsLoading] = useState(false);
-	const [postSignupError, setPostSignupError] = useState(undefined);
-	const [confirmEmail, setConfirmEmail] = useState('');
-	const onSignupSubmit = (evt) => {
+	const [postSignupError, setPostSignupError] = useState<string | undefined>(undefined);
+	const altchaRef = useRef<AltchaRef>(null);
+
+	const onSignupSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+		evt.preventDefault();
+		// grab form data synchronously; currentTarget is nulled after the sync frame in react 16
+		const formData = new FormData(evt.currentTarget);
+		const confirmEmail = (formData.get('confirmEmail') as string | undefined) ?? '';
+		setPostSignupIsLoading(true);
+		setPostSignupError(undefined);
+		try {
+			const altchaPayload = await altchaRef.current?.verify();
+			if (!altchaPayload) {
+				throw new Error('Verification failed. Please try again.');
+			}
+			await apiFetch('/api/signup', {
+				method: 'POST',
+				body: JSON.stringify({
+					_honeypot: confirmEmail,
+					email: email.toLowerCase(),
+					communityId: communityData.id,
+					altcha: altchaPayload,
+				}),
+			});
+			setPostSignupIsLoading(false);
+			setIsSuccessful(true);
+		} catch (err) {
+			setPostSignupIsLoading(false);
+			setPostSignupError(
+				err instanceof Error ? err.message : 'Verification failed. Please try again.',
+			);
+		}
+	};
+	const handleResendEmail = async (evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();
 		setPostSignupIsLoading(true);
 		setPostSignupError(undefined);
-		return apiFetch('/api/signup', {
-			method: 'POST',
-			body: JSON.stringify({
-				email: email.toLowerCase(),
-				communityId: communityData.id,
-				confirmEmail,
-			}),
-		})
-			.then(() => {
-				setPostSignupIsLoading(false);
-				setIsSuccessful(true);
-			})
-			.catch((err) => {
-				setPostSignupIsLoading(false);
-				setPostSignupError(err);
+		try {
+			await apiFetch('/api/signup', {
+				method: 'POST',
+				body: JSON.stringify({
+					email: email.toLowerCase(),
+					communityId: communityData.id,
+					_honeypot: '',
+					altcha: '',
+				}),
 			});
+		} catch {
+			// resend is best-effort
+		} finally {
+			setPostSignupIsLoading(false);
+		}
 	};
+
 	const onEmailChange = (evt) => {
 		setEmail(evt.target.value);
 	};
+
 	return (
 		<div id="signup-container">
 			<GridWrapper containerClassName="small">
@@ -60,20 +94,12 @@ const Signup = () => {
 								onChange={onEmailChange}
 								error={postSignupError}
 							/>
-							<input
-								type="search"
-								className="confirm-email"
-								name="confirmEmail"
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message
-								tabIndex="-1"
-								autoComplete="new-user-street-address"
-								onChange={(evt) => setConfirmEmail(evt.target.value)}
-							/>
+							<Honeypot name="confirmEmail" />
+							<Altcha ref={altchaRef} auto="onload" />
 							<Button
 								name="signup"
 								type="submit"
 								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
-								onClick={onSignupSubmit}
 								text="Signup"
 								disabled={!email}
 								loading={postSignupIsLoading}
@@ -99,14 +125,17 @@ const Signup = () => {
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; description: Element; visua... Remove this comment to see the full error message
 						visual="tick-circle"
 						action={
-							<Button
-								name="resendEmail"
-								type="button"
-								className={Classes.BUTTON}
-								onClick={onSignupSubmit}
-								text="Resend Email"
-								loading={postSignupIsLoading}
-							/>
+							<form onSubmit={handleResendEmail}>
+								<Button
+									name="resendEmail"
+									disabled={!altchaRef.current?.value}
+									type="submit"
+									className={Classes.BUTTON}
+									text="Resend Email"
+									loading={!altchaRef.current?.value || postSignupIsLoading}
+								/>
+								<Altcha ref={altchaRef} auto="onload" />
+							</form>
 						}
 					/>
 				)}

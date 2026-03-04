@@ -11,10 +11,46 @@
 		margin-top: 6px;
 		color: var(--pt-intent-danger);
 	}
+	.controls-row {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+		margin-top: 8px;
+		padding: 6px 0;
+
+		.sort-control,
+		.community-filter {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 13px;
+			color: #555;
+		}
+
+		.community-filter input {
+			padding: 3px 8px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			font-size: 13px;
+			width: 160px;
+
+			&:focus {
+				outline: none;
+				border-color: #137cbd;
+				box-shadow: 0 0 0 1px #137cbd;
+			}
+		}
+	}
 	.users {
 		margin-top: 10px;
 		> :not(:last-child) {
 			margin-bottom: 5px;
 		}
+	}
+	.no-results {
+		text-align: center;
+		padding: 24px;
+		color: #888;
+		font-size: 14px;
 	}
 }

@@ -50,4 +50,50 @@
 			}
 		}
 	}
+
+	.discussions-section {
+		margin-top: 2px;
+
+		.discussions-list {
+			padding: 4px 0;
+		}
+
+		.discussion-item {
+			padding: 6px 10px;
+			border-left: 2px solid #ddd;
+			margin: 4px 0;
+
+			.discussion-header {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 13px;
+
+				a {
+					font-weight: 500;
+				}
+			}
+
+			.discussion-date {
+				color: #888;
+				font-size: 12px;
+			}
+
+			.discussion-preview {
+				font-size: 12px;
+				color: #555;
+				margin-top: 3px;
+				white-space: pre-wrap;
+				max-height: 60px;
+				overflow: hidden;
+			}
+		}
+
+		.no-discussions {
+			padding: 6px 10px;
+			color: #888;
+			font-size: 13px;
+			font-style: italic;
+		}
+	}
 }

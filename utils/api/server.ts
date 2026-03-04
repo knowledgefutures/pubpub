@@ -7,7 +7,7 @@ import { collectionAttributionServer } from 'server/collectionAttribution/api';
 import { collectionPubServer } from 'server/collectionPub/api';
 import { communityServer } from 'server/community/api';
 import { facetsServer } from 'server/facets/api';
-import { loginRouteImplementation } from 'server/login/api';
+import { loginFromFormRouteImplementation, loginRouteImplementation } from 'server/login/api';
 import { logoutRouteImplementation } from 'server/logout/api';
 import { memberServer } from 'server/member/api';
 import { pageServer } from 'server/page/api';
@@ -32,6 +32,7 @@ export const server = s.router(contractWithScriptsAndCommunity, {
 	analytics: analyticsServer,
 	auth: {
 		login: loginRouteImplementation,
+		loginFromForm: loginFromFormRouteImplementation,
 		logout: logoutRouteImplementation,
 	},
 	authToken: authTokenServer,

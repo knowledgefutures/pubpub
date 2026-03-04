@@ -2,9 +2,9 @@ import type { AppRouteImplementation } from '@ts-rest/express';
 
 import type { contract } from 'utils/api/contract';
 
+import { contextFromUser, notify } from 'server/spamTag/notifications';
 import { isSuspiciousUploadKey } from 'server/spamTag/uploadScamKeywords';
-import { addSpamTagToUser } from 'server/spamTag/userQueries';
-import { postToSlackAboutSuspiciousUpload } from 'server/utils/slack';
+import { upsertSpamTag } from 'server/spamTag/userQueries';
 
 import { getUploadPolicy } from './queries';
 
@@ -16,19 +16,18 @@ export const uploadPolicyRouteImplementation: AppRouteImplementation<
 	if (user && (query.filename || query.key)) {
 		const keyOrName = query.key ?? query.filename ?? '';
 		if (isSuspiciousUploadKey(keyOrName)) {
-			await addSpamTagToUser(user.id, {
-				suspiciousFiles: [`https://assets.pubpub.org/${keyOrName}`],
+			await upsertSpamTag({
+				userId: user.id,
+				fields: { suspiciousFiles: [`https://assets.pubpub.org/${keyOrName}`] },
 			})
-				.then(() =>
-					postToSlackAboutSuspiciousUpload(
-						user.id,
-						user.email ?? '',
-						user.fullName ?? 'Unknown',
-						keyOrName,
-					),
+				.then(({ user: u }) =>
+					notify('suspicious-upload', {
+						...contextFromUser(u),
+						uploadKey: keyOrName,
+					}),
 				)
 				.catch(() => {
-					// do not block policy response if spam tagging or slack fails
+					// best-effort, don't block the policy response
 				});
 		}
 	}

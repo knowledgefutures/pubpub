@@ -43,6 +43,7 @@ const MarkSpamStatusButton = (props: Props) => {
 	return (
 		<Button
 			minimal
+			small
 			loading={isLoading}
 			onClick={handleClick}
 			{...propsForStatuses[status]}

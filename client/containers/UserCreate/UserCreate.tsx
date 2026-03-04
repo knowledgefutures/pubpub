@@ -27,14 +27,12 @@ const UserCreate = (props: Props) => {
 	const [bio, setBio] = useState('');
 	const [avatar, setAvatar] = useState(undefined);
 	const [location, setLocation] = useState('');
-	const [website, setWebsite] = useState('');
 	const [orcid, setOrcid] = useState('');
 	const [github, setGithub] = useState('');
 	const [twitter, setTwitter] = useState('');
 	const [facebook, setFacebook] = useState('');
 	const [googleScholar, setGoogleScholar] = useState('');
 	const [showLocation, setShowLocation] = useState(false);
-	const [showWebsite, setShowWebsite] = useState(false);
 	const [showOrcid, setShowOrcid] = useState(false);
 	const [showGithub, setShowGithub] = useState(false);
 	const [showTwitter, setShowTwitter] = useState(false);
@@ -46,12 +44,12 @@ const UserCreate = (props: Props) => {
 		evt.preventDefault();
 		if (!acceptTerms) return;
 		const formData = new FormData(evt.currentTarget);
-		const honeypot = (formData.get('confirmPassword') as string) ?? '';
+		const confirmPwHoneypot = formData.get('confirmPassword') as string;
+		const websiteHoneypot = formData.get('website') as string;
 		setPostUserIsLoading(true);
 		setPostUserError(undefined);
 		try {
 			const altchaPayload = await altchaRef.current?.verify();
-			console.log('altchaPayload', altchaPayload);
 			const body = {
 				email: signupData.email,
 				hash: signupData.hash,
@@ -63,13 +61,14 @@ const UserCreate = (props: Props) => {
 				title,
 				bio,
 				location,
-				website,
+				// useful to check
+				website: websiteHoneypot,
 				orcid,
 				github,
 				twitter,
 				facebook,
 				googleScholar,
-				_honeypot: honeypot,
+				_honeypot: confirmPwHoneypot || websiteHoneypot,
 				altcha: altchaPayload,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			};
@@ -123,19 +122,6 @@ const UserCreate = (props: Props) => {
 			value: location,
 			onChange: (evt) => {
 				setLocation(evt.target.value);
-			},
-		},
-		{
-			label: 'Website',
-			showTextOnButton: true,
-			icon: <Icon icon="link" />,
-			action: () => {
-				setShowWebsite(true);
-			},
-			isVisible: showWebsite,
-			value: website,
-			onChange: (evt) => {
-				setWebsite(evt.target.value);
 			},
 		},
 		{
@@ -269,6 +255,7 @@ const UserCreate = (props: Props) => {
 							onChange={onBioChange}
 							helperText={`${bio.length}/280 characters`}
 						/>
+						<Honeypot name="website" />
 						{expandables
 							.filter((item) => {
 								return item.isVisible;

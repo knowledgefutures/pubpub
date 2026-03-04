@@ -51,7 +51,7 @@ const SpamStatusMenu = (props: Props) => {
 			aria-label="Spam actions"
 			buttonContent="Spam"
 			buttonProps={{
-				icon: <Icon icon="flag" iconSize={small ? 12 : 14} />,
+				icon: <Icon icon="shield" iconSize={small ? 12 : 14} />,
 				minimal: true,
 				small,
 				loading: isLoading,

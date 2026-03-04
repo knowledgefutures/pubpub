@@ -33,7 +33,9 @@ export type SpamUserQueryOrderingField =
 	| 'user-created-at'
 	| 'spam-score'
 	| 'spam-status-updated-at'
-	| 'discussion-count';
+	| 'discussion-count'
+	| 'last-activity'
+	| 'activity-count';
 
 export type SpamUserQueryOrdering = {
 	direction: 'ASC' | 'DESC';
@@ -55,6 +57,12 @@ export type SpamUserQuery = {
 	includeAffiliation?: boolean;
 	spamTagPresence?: 'any' | 'present' | 'absent';
 	communitySubdomain?: string;
+	createdAfter?: string;
+	createdBefore?: string;
+	activeAfter?: string;
+	activeBefore?: string;
+	minActivities?: number;
+	maxActivities?: number;
 };
 
 export type RecentDiscussion = {

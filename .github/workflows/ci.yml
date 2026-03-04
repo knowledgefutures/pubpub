@@ -114,7 +114,7 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Install Firebase CLI
-              run: npm install -g firebase-tools@10
+              run: pnpm install -g firebase-tools@10
 
             - name: Verify Firebase CLI
               run: firebase --version

@@ -13,5 +13,7 @@ router.get('/api/captcha/challenge', async (_req, res) => {
 		hmacKey,
 		maxNumber: MAX_NUMBER,
 	});
-	return res.json(challenge);
+	// never store this
+	res.setHeader('Cache-Control', 'no-store');
+	return res.status(200).json(challenge);
 });

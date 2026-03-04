@@ -6,11 +6,11 @@ import bb from 'busboy';
 import mime from 'mime-types';
 import uuid from 'uuid';
 
+import { contextFromUser, notify } from 'server/spamTag/notifications';
 import { isSuspiciousUploadKey } from 'server/spamTag/uploadScamKeywords';
-import { addSpamTagToUser } from 'server/spamTag/userQueries';
+import { upsertSpamTag } from 'server/spamTag/userQueries';
 import { BadRequestError } from 'server/utils/errors';
 import { createPubPubS3Client } from 'server/utils/s3';
-import { postToSlackAboutSuspiciousUpload } from 'server/utils/slack';
 import { mimeTypeSchema } from 'utils/api/schemas/upload';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { generateHash } from 'utils/hashes';
@@ -146,17 +146,15 @@ export const uploadRouteImplementation: AppRouteOptions<typeof contract.upload.f
 							(isSuspiciousUploadKey(possiblyDerivedFilename) ||
 								isSuspiciousUploadKey(key))
 						) {
-							addSpamTagToUser(user.id)
-								.then(() =>
-									postToSlackAboutSuspiciousUpload(
-										user.id,
-										user.email ?? '',
-										user.fullName ?? 'Unknown',
-										key,
-									),
+							upsertSpamTag({ userId: user.id })
+								.then(({ user: u }) =>
+									notify('suspicious-upload', {
+										...contextFromUser(u),
+										uploadKey: key,
+									}),
 								)
 								.catch(() => {
-									// do not fail the upload if spam tagging or slack fails
+									// best-effort, don't fail the upload
 								});
 						}
 

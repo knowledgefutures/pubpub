@@ -2,6 +2,7 @@
 	border-radius: 2px;
 	border: 1px solid #eee;
 	padding: 10px;
+	overflow: hidden;
 
 	& > *:not(:last-child) {
 		margin-bottom: 6px;
@@ -42,12 +43,19 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: end;
+		flex-wrap: wrap;
+		gap: 6px;
+
 		> .tags {
 			display: flex;
 			flex-wrap: wrap;
-			& > *:not(:last-child) {
-				margin-right: 4px;
-			}
+			gap: 4px;
+			min-width: 0;
+			flex: 1;
+		}
+
+		> .actions {
+			flex-shrink: 0;
 		}
 	}
 

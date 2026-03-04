@@ -35,14 +35,18 @@ router.post('/api/users', async (req, res) => {
 		if (!ok) {
 			return res.status(400).json('Please complete the verification and try again.');
 		}
-		const body = { ...req.body };
-		delete body.altcha;
-		delete body._honeypot;
+		const { altcha, _honeypot, website, ...body } = { ...req.body };
 		const newUser = await createUser(body);
 		if (isHoneypotFilled(req.body)) {
-			await handleHoneypotTriggered(newUser.id, 'create-user', req.body._honeypot, {
-				content: req.body.fullName ? `name: ${req.body.fullName}` : undefined,
-			});
+			await handleHoneypotTriggered(
+				newUser.id,
+				'create-user',
+				req.body.website ?? 'confirmPassword honeypot',
+				{
+					communitySubdomain: req.headers.host?.split('.')[0],
+					content: req.body.fullName ? `name: ${req.body.fullName}` : undefined,
+				},
+			);
 		}
 		passport.authenticate('local')(req, res, () => {
 			const hashedUserId = getHashedUserId(newUser);

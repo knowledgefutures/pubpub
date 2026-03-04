@@ -9,7 +9,6 @@ export const DEV_TEAM_EMAIL = 'dev@pubpub.org';
 export const sendSpamBanEmail = ({ toEmail, userName }: { toEmail: string; userName: string }) => {
 	return sendEmail({
 		to: [toEmail],
-		bcc: [DEV_TEAM_EMAIL],
 		subject: 'PubPub account restriction',
 		text: stripIndent(`
 			Hello${userName ? ` ${userName}` : ''},
@@ -33,7 +32,6 @@ export const sendSpamLiftedEmail = ({
 }) => {
 	return sendEmail({
 		to: [toEmail],
-		bcc: [DEV_TEAM_EMAIL],
 		subject: 'PubPub account restriction lifted',
 		text: stripIndent(`
 			Hello${userName ? ` ${userName}` : ''},
@@ -59,6 +57,48 @@ export const sendNewSpamTagDevEmail = ({
 		subject: `New spam tag: ${userName} (${userEmail})`,
 		text: stripIndent(`
 			A new spam tag has been created for ${userName} (${userEmail}).
+
+			Review: ${reviewUrl}
+
+			-- PubPub Spam System
+		`),
+	});
+};
+
+export const sendBanDevEmail = ({
+	userEmail,
+	userName,
+}: {
+	userEmail: string;
+	userName: string;
+}) => {
+	const reviewUrl = `https://pubpub.org${getSuperAdminTabUrl('spamUsers')}?q=${encodeURIComponent(userEmail)}`;
+	return sendEmail({
+		to: [DEV_TEAM_EMAIL],
+		subject: `User banned: ${userName} (${userEmail})`,
+		text: stripIndent(`
+			${userName} (${userEmail}) has been banned.
+
+			Review: ${reviewUrl}
+
+			-- PubPub Spam System
+		`),
+	});
+};
+
+export const sendLiftDevEmail = ({
+	userEmail,
+	userName,
+}: {
+	userEmail: string;
+	userName: string;
+}) => {
+	const reviewUrl = `https://pubpub.org${getSuperAdminTabUrl('spamUsers')}?q=${encodeURIComponent(userEmail)}`;
+	return sendEmail({
+		to: [DEV_TEAM_EMAIL],
+		subject: `Restriction lifted: ${userName} (${userEmail})`,
+		text: stripIndent(`
+			The restriction on ${userName} (${userEmail}) has been lifted.
 
 			Review: ${reviewUrl}
 

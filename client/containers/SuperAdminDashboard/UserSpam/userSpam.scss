@@ -19,7 +19,8 @@
 		padding: 6px 0;
 
 		.sort-control,
-		.community-filter {
+		.community-filter,
+		.activity-count-filter {
 			display: flex;
 			align-items: center;
 			gap: 6px;
@@ -40,7 +41,55 @@
 				box-shadow: 0 0 0 1px #137cbd;
 			}
 		}
+
+		.activity-count-filter input {
+			padding: 3px 8px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			font-size: 13px;
+			width: 70px;
+
+			&:focus {
+				outline: none;
+				border-color: #137cbd;
+				box-shadow: 0 0 0 1px #137cbd;
+			}
+		}
 	}
+	.date-filters-row {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		margin-top: 8px;
+		padding: 6px 0;
+
+		.date-filter-group {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 13px;
+			color: #555;
+
+			.date-filter-label {
+				min-width: 50px;
+				font-weight: 500;
+			}
+
+			input[type='date'] {
+				padding: 2px 6px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				font-size: 12px;
+
+				&:focus {
+					outline: none;
+					border-color: #137cbd;
+					box-shadow: 0 0 0 1px #137cbd;
+				}
+			}
+		}
+	}
+
 	.users {
 		margin-top: 10px;
 		> :not(:last-child) {

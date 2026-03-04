@@ -20,16 +20,36 @@ const orderableFields = {
 	'spam-score': [{ model: SpamTag, as: 'spamTag' }, 'spamScore'],
 } as const;
 
+// pub activity kinds tracked by the ActivityItems table
+const pubActivityKinds = `'pub-created','pub-updated','pub-removed','pub-release-created','pub-discussion-comment-added','pub-edge-created','pub-edge-removed','pub-review-created','pub-review-comment-added','pub-review-updated'`;
+
+const lastActivitySubquery = `COALESCE((
+	SELECT MAX("timestamp") FROM "ActivityItems"
+	WHERE "ActivityItems"."actorId" = "User"."id"
+	AND "ActivityItems"."kind" IN (${pubActivityKinds})
+), '1970-01-01'::timestamp)`;
+
+const activityCountSubquery = `(
+	SELECT COUNT(*) FROM "ActivityItems"
+	WHERE "ActivityItems"."actorId" = "User"."id"
+	AND "ActivityItems"."kind" IN (${pubActivityKinds})
+)`;
+
 const getUserWhereQuery = (options: {
 	searchTerm?: string | null;
 	spamTagPresence?: types.SpamUserQuery['spamTagPresence'];
 	communitySubdomain?: string;
+	createdAfter?: string;
+	createdBefore?: string;
+	activeAfter?: string;
+	activeBefore?: string;
+	minActivities?: number;
+	maxActivities?: number;
 }) => {
-	const { searchTerm, spamTagPresence, communitySubdomain } = options;
-	const conditions: Record<string, unknown>[] = [];
+	const conditions: any[] = [];
 
-	if (searchTerm) {
-		const normalizedQuery = `%${searchTerm.trim()}%`;
+	if (options.searchTerm) {
+		const normalizedQuery = `%${options.searchTerm.trim()}%`;
 		conditions.push({
 			[Op.or]: [
 				{ fullName: { [Op.iLike]: normalizedQuery } },
@@ -39,12 +59,12 @@ const getUserWhereQuery = (options: {
 		});
 	}
 
-	if (spamTagPresence === 'absent') {
+	if (options.spamTagPresence === 'absent') {
 		conditions.push({ spamTagId: { [Op.is]: null } });
 	}
 
-	if (communitySubdomain) {
-		const escaped = User.sequelize!.escape(`%${communitySubdomain.trim()}%`);
+	if (options.communitySubdomain) {
+		const escaped = User.sequelize!.escape(`%${options.communitySubdomain.trim()}%`);
 		conditions.push({
 			id: {
 				[Op.in]: literal(`(
@@ -59,6 +79,27 @@ const getUserWhereQuery = (options: {
 				)`),
 			},
 		});
+	}
+
+	if (options.createdAfter) {
+		conditions.push({ createdAt: { [Op.gte]: new Date(options.createdAfter) } });
+	}
+	if (options.createdBefore) {
+		conditions.push({ createdAt: { [Op.lte]: new Date(options.createdBefore) } });
+	}
+	if (options.activeAfter) {
+		const escaped = User.sequelize!.escape(options.activeAfter);
+		conditions.push(literal(`(${lastActivitySubquery}) >= ${escaped}::timestamp`));
+	}
+	if (options.activeBefore) {
+		const escaped = User.sequelize!.escape(options.activeBefore);
+		conditions.push(literal(`(${lastActivitySubquery}) <= ${escaped}::timestamp`));
+	}
+	if (options.minActivities != null) {
+		conditions.push(literal(`${activityCountSubquery} >= ${Number(options.minActivities)}`));
+	}
+	if (options.maxActivities != null) {
+		conditions.push(literal(`${activityCountSubquery} <= ${Number(options.maxActivities)}`));
 	}
 
 	if (conditions.length === 0) return {};
@@ -85,6 +126,12 @@ const getQueryOrdering = (ordering: types.SpamUserQueryOrdering): [any, string][
 			],
 		];
 	}
+	if (field === 'last-activity') {
+		return [[literal(`(${lastActivitySubquery})`), direction]];
+	}
+	if (field === 'activity-count') {
+		return [[literal(activityCountSubquery), direction]];
+	}
 	return [[...orderableFields[field as keyof typeof orderableFields], direction]] as any;
 };
 
@@ -109,6 +156,12 @@ export const queryUsersForSpamManagement = async (
 		includeAffiliation,
 		spamTagPresence,
 		communitySubdomain,
+		createdAfter,
+		createdBefore,
+		activeAfter,
+		activeBefore,
+		minActivities,
+		maxActivities,
 	} = query;
 	const hasStatusFilter = status && status.length > 0;
 	const spamTagRequired = spamTagPresence === 'present' || !!hasStatusFilter;
@@ -121,7 +174,17 @@ export const queryUsersForSpamManagement = async (
 		},
 	];
 	const rows = (await User.findAll({
-		...getUserWhereQuery({ searchTerm, spamTagPresence, communitySubdomain }),
+		...getUserWhereQuery({
+			searchTerm,
+			spamTagPresence,
+			communitySubdomain,
+			createdAfter,
+			createdBefore,
+			activeAfter,
+			activeBefore,
+			minActivities,
+			maxActivities,
+		}),
 		attributes: ['id', 'fullName', 'email', 'slug', 'createdAt'],
 		limit,
 		offset,
@@ -149,11 +212,13 @@ const getAffiliationForUserIds = async (
 ): Promise<Map<string, types.SpamUserAffiliation>> => {
 	const [members, attributions, discussions] = await Promise.all([
 		Member.findAll({
+			raw: true,
 			where: { userId: { [Op.in]: userIds } },
 			attributes: ['userId', 'communityId'],
 			include: [{ model: Community, as: 'community', attributes: ['subdomain'] }],
 		}),
 		PubAttribution.findAll({
+			raw: true,
 			where: { userId: { [Op.in]: userIds } },
 			attributes: ['userId'],
 			include: [
@@ -166,6 +231,7 @@ const getAffiliationForUserIds = async (
 			],
 		}),
 		Discussion.findAll({
+			raw: true,
 			where: { userId: { [Op.in]: userIds } },
 			attributes: ['userId', 'pubId'],
 			include: [
@@ -245,7 +311,7 @@ export const getRecentDiscussionsForUser = async (
 	});
 
 	return discussions.map((d) => {
-		const json = (d as any).toJSON();
+		const json = d.toJSON();
 		return {
 			id: json.id,
 			title: json.title,

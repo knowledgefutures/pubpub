@@ -1,7 +1,5 @@
 import type { SpamStatus, UserSpamTagFields } from 'types';
 
-import fetch from 'node-fetch';
-
 import { isDangerousSpamScore } from 'server/spamTag/communityScore';
 import { isProd } from 'utils/environment';
 import { getSuperAdminTabUrl } from 'utils/superAdmin';

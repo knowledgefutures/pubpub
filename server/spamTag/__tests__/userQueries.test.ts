@@ -1,12 +1,7 @@
 import { SpamTag } from 'server/models';
 import { modelize, setup, teardown } from 'stubstub';
 
-import {
-	addSpamTagToUser,
-	getSpamTagForUser,
-	removeSpamTagFromUser,
-	updateSpamTagForUser,
-} from '../userQueries';
+import { getSpamTagForUser, removeSpamTagFromUser, upsertSpamTag } from '../userQueries';
 
 const models = modelize`
 	User userA {}
@@ -17,19 +12,25 @@ const models = modelize`
 setup(beforeAll, models.resolve);
 teardown(afterAll);
 
-describe('addSpamTagToUser', () => {
+describe('upsertSpamTag', () => {
 	it('creates a spam tag for a user that has none', async () => {
 		const { userA } = models;
-		const tag = await addSpamTagToUser(userA.id);
-		expect(tag).toBeTruthy();
-		expect(tag.status).toBe('unreviewed');
-		expect(tag.spamScore).toBeGreaterThanOrEqual(0);
+		const { spamTag } = await upsertSpamTag({ userId: userA.id });
+		expect(spamTag).toBeTruthy();
+		expect(spamTag.status).toBe('unreviewed');
+		expect(spamTag.spamScore).toBeGreaterThanOrEqual(0);
+	});
+
+	it('returns the user alongside the spam tag', async () => {
+		const { userA } = models;
+		const { user } = await upsertSpamTag({ userId: userA.id });
+		expect(user.id).toBe(userA.id);
 	});
 
 	it('merges fields when a spam tag already exists', async () => {
 		const { userA } = models;
-		await addSpamTagToUser(userA.id, { suspiciousFiles: ['/file-a.html'] });
-		await addSpamTagToUser(userA.id, { suspiciousFiles: ['/file-b.html'] });
+		await upsertSpamTag({ userId: userA.id, fields: { suspiciousFiles: ['/file-a.html'] } });
+		await upsertSpamTag({ userId: userA.id, fields: { suspiciousFiles: ['/file-b.html'] } });
 		const tag = await getSpamTagForUser(userA.id);
 		expect(tag).toBeTruthy();
 		expect(tag!.fields.suspiciousFiles).toEqual(
@@ -39,11 +40,17 @@ describe('addSpamTagToUser', () => {
 
 	it('accumulates honeypot triggers', async () => {
 		const { userB } = models;
-		await addSpamTagToUser(userB.id, {
-			honeypotTriggers: [{ honeypot: 'create-community', value: 'bot-website.com' }],
+		await upsertSpamTag({
+			userId: userB.id,
+			fields: {
+				honeypotTriggers: [{ honeypot: 'create-community', value: 'bot-website.com' }],
+			},
 		});
-		await addSpamTagToUser(userB.id, {
-			honeypotTriggers: [{ honeypot: 'create-pub', value: 'spam-description' }],
+		await upsertSpamTag({
+			userId: userB.id,
+			fields: {
+				honeypotTriggers: [{ honeypot: 'create-pub', value: 'spam-description' }],
+			},
 		});
 		const tag = await getSpamTagForUser(userB.id);
 		expect(tag!.fields.honeypotTriggers).toHaveLength(2);
@@ -54,32 +61,24 @@ describe('addSpamTagToUser', () => {
 			]),
 		);
 	});
-});
 
-describe('updateSpamTagForUser', () => {
-	it('updates the status of an existing spam tag', async () => {
+	it('sets status in a single call', async () => {
 		const { userA } = models;
-		await updateSpamTagForUser({ userId: userA.id, status: 'confirmed-spam' });
+		await upsertSpamTag({ userId: userA.id, status: 'confirmed-spam' });
 		const tag = await getSpamTagForUser(userA.id);
 		expect(tag!.status).toBe('confirmed-spam');
 		expect(tag!.statusUpdatedAt).toBeTruthy();
 	});
 
-	it('throws when the user has no spam tag', async () => {
+	it('creates a tag with status in one step for a new user', async () => {
 		const { userC } = models;
-		await expect(
-			updateSpamTagForUser({ userId: userC.id, status: 'confirmed-spam' }),
-		).rejects.toThrow('User is missing a SpamTag');
+		const { spamTag } = await upsertSpamTag({ userId: userC.id, status: 'confirmed-spam' });
+		expect(spamTag.status).toBe('confirmed-spam');
+		expect(spamTag.statusUpdatedAt).toBeTruthy();
 	});
 });
 
 describe('getSpamTagForUser', () => {
-	it('returns null for a user with no spam tag', async () => {
-		const { userC } = models;
-		const tag = await getSpamTagForUser(userC.id);
-		expect(tag).toBeNull();
-	});
-
 	it('returns the spam tag for a user that has one', async () => {
 		const { userA } = models;
 		const tag = await getSpamTagForUser(userA.id);
@@ -101,7 +100,6 @@ describe('removeSpamTagFromUser', () => {
 	});
 
 	it('does nothing if the user has no spam tag', async () => {
-		const { userC } = models;
-		await expect(removeSpamTagFromUser(userC.id)).resolves.toBeUndefined();
+		await removeSpamTagFromUser(models.userB.id);
 	});
 });

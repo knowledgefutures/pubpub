@@ -1,7 +1,8 @@
 import type { HoneypotContext, HoneypotTrigger } from 'types';
 
 import { Community, Pub } from 'server/models';
-import { addSpamTagToUser, updateSpamTagForUser } from 'server/spamTag/userQueries';
+import { contextFromUser, notify } from 'server/spamTag/notifications';
+import { upsertSpamTag } from 'server/spamTag/userQueries';
 
 export const isHoneypotFilled = (input: Record<string, unknown>): boolean => {
 	const value = input._honeypot;
@@ -36,10 +37,14 @@ export const handleHoneypotTriggered = async (
 ): Promise<void> => {
 	if (!userId) return;
 	const resolved = await resolveHoneypotContext(context);
-	await addSpamTagToUser(userId, {
-		honeypotTriggers: [
-			{ honeypot, value, context: resolved, triggeredAt: new Date().toISOString() },
-		],
+	const { user } = await upsertSpamTag({
+		userId,
+		fields: {
+			honeypotTriggers: [
+				{ honeypot, value, context: resolved, triggeredAt: new Date().toISOString() },
+			],
+		},
+		status: 'confirmed-spam',
 	});
-	await updateSpamTagForUser({ userId, status: 'confirmed-spam' });
+	await notify('honeypot-ban', contextFromUser(user));
 };

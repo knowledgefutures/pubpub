@@ -16,6 +16,7 @@ import type { RecentDiscussion, SpamUser } from './types';
 type Props = {
 	user: SpamUser;
 	onSpamTagRemoved?: (userId: string) => void;
+	onStatusChanged?: (userId: string, status: SpamStatus) => void;
 };
 
 const getIntentForSpamScore = (spamScore: number): Intent => {
@@ -57,11 +58,19 @@ const DiscussionItem = ({ discussion }: { discussion: RecentDiscussion }) => {
 };
 
 const UserSpamEntry = (props: Props) => {
-	const { user, onSpamTagRemoved } = props;
+	const { user, onSpamTagRemoved, onStatusChanged: onStatusChangedProp } = props;
 	const { fullName, email, slug, createdAt, spamTag, affiliation } = user;
 	const hasTag = spamTag != null;
 	const initialStatus = hasTag ? spamTag.status : null;
 	const [status, setUpdatedStatus] = useState<null | SpamStatus>(initialStatus);
+
+	const handleStatusChanged = useCallback(
+		(newStatus: SpamStatus) => {
+			setUpdatedStatus(newStatus);
+			onStatusChangedProp?.(user.id, newStatus);
+		},
+		[user.id, onStatusChangedProp],
+	);
 
 	const [discussionsOpen, setDiscussionsOpen] = useState(false);
 	const [recentDiscussions, setRecentDiscussions] = useState<RecentDiscussion[] | null>(null);
@@ -143,17 +152,17 @@ const UserSpamEntry = (props: Props) => {
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="unreviewed"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="confirmed-not-spam"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="confirmed-spam"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
 				</ButtonGroup>
 			);
@@ -164,14 +173,20 @@ const UserSpamEntry = (props: Props) => {
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="confirmed-not-spam"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="confirmed-spam"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
-					<Button minimal icon="remove" loading={removeLoading} onClick={handleRemoveTag}>
+					<Button
+						minimal
+						small
+						icon="remove"
+						loading={removeLoading}
+						onClick={handleRemoveTag}
+					>
 						Remove spam tag
 					</Button>
 				</ButtonGroup>
@@ -183,15 +198,21 @@ const UserSpamEntry = (props: Props) => {
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="confirmed-not-spam"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 						label="Mark as not spam"
 					/>
 					<MarkSpamStatusButton
 						userId={user.id}
 						status="unreviewed"
-						onStatusChanged={setUpdatedStatus}
+						onStatusChanged={handleStatusChanged}
 					/>
-					<Button minimal icon="remove" loading={removeLoading} onClick={handleRemoveTag}>
+					<Button
+						minimal
+						small
+						icon="remove"
+						loading={removeLoading}
+						onClick={handleRemoveTag}
+					>
 						Remove spam tag
 					</Button>
 				</ButtonGroup>
@@ -202,15 +223,15 @@ const UserSpamEntry = (props: Props) => {
 				<MarkSpamStatusButton
 					userId={user.id}
 					status="confirmed-spam"
-					onStatusChanged={setUpdatedStatus}
+					onStatusChanged={handleStatusChanged}
 					label="Mark as spam"
 				/>
 				<MarkSpamStatusButton
 					userId={user.id}
 					status="unreviewed"
-					onStatusChanged={setUpdatedStatus}
+					onStatusChanged={handleStatusChanged}
 				/>
-				<Button minimal icon="remove" onClick={handleRemoveTag}>
+				<Button minimal small icon="remove" onClick={handleRemoveTag}>
 					Remove spam tag
 				</Button>
 			</ButtonGroup>

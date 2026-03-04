@@ -404,15 +404,25 @@ const fastForwardDiscussions = async (
 	let updatedCount = 0;
 	for (const [id, updatedDiscussion] of Object.entries(fastForwardedDiscussions)) {
 		if (updatedDiscussion) {
-			verbose(
-				`  Fast-forwarding discussion ${id} from ${discussions[id].currentKey} to ${targetKey}`,
-			);
 			const compressed = {
 				...updatedDiscussion,
 				selection: updatedDiscussion.selection
 					? compressSelectionJSON(updatedDiscussion.selection)
 					: null,
 			};
+			// Skip discussions with invalid selections (NaN positions from failed mapping)
+			if (
+				compressed.selection &&
+				(Number.isNaN(compressed.selection.a) || Number.isNaN(compressed.selection.h))
+			) {
+				verbose(
+					`  Skipping discussion ${id} - invalid selection after fast-forward (NaN position)`,
+				);
+				continue;
+			}
+			verbose(
+				`  Fast-forwarding discussion ${id} from ${discussions[id].currentKey} to ${targetKey}`,
+			);
 			updates[id] = compressed;
 			updatedCount++;
 		}
@@ -580,9 +590,13 @@ const pruneDraft = async (
 				// Check if this is a corrupted history error
 				// - "Position X out of range" = missing/corrupted steps
 				// - "Invalid content for node doc" = reconstructed doc is empty/malformed
+				// - "Inconsistent open depths" = malformed ProseMirror steps
+				// - "Cannot read properties of null" = null doc from failed reconstruction
 				const isCorruptedHistory =
 					(errorStr.includes('Position') && errorStr.includes('out of range')) ||
-					errorStr.includes('Invalid content for node');
+					errorStr.includes('Invalid content for node') ||
+					errorStr.includes('Inconsistent open depths') ||
+					errorStr.includes('Cannot read properties of null');
 
 				if (isCorruptedHistory && pubId) {
 					// Try to repair by creating a checkpoint from a Release
@@ -631,39 +645,32 @@ const pruneDraft = async (
 	const discussionsUpdated = await fastForwardDiscussions(draftRef, pruneThreshold);
 	localStats.discussionsUpdated += discussionsUpdated;
 
-	// Prune changes before the safe threshold
-	localStats.changesDeleted += await pruneKeysBefore(draftRef, 'changes', pruneThreshold);
-
-	// Prune merges before the safe threshold (legacy data)
-	localStats.mergesDeleted += await pruneKeysBefore(draftRef, 'merges', pruneThreshold);
-
-	// Prune checkpoints before the prune threshold (keep threshold checkpoint and any after)
-	localStats.checkpointsDeleted += await pruneKeysBefore(draftRef, 'checkpoints', pruneThreshold);
+	// Prune changes, merges, and checkpoints in parallel (they're independent)
+	const [changesDeleted, mergesDeleted, checkpointsDeleted] = await Promise.all([
+		pruneKeysBefore(draftRef, 'changes', pruneThreshold),
+		pruneKeysBefore(draftRef, 'merges', pruneThreshold),
+		pruneKeysBefore(draftRef, 'checkpoints', pruneThreshold),
+	]);
+	localStats.changesDeleted += changesDeleted;
+	localStats.mergesDeleted += mergesDeleted;
+	localStats.checkpointsDeleted += checkpointsDeleted;
 
 	// Clean up checkpointMap entries for deleted checkpoints
-	const checkpointMapSnapshot = await draftRef.child('checkpointMap').once('value');
-	const checkpointMap = checkpointMapSnapshot.val();
-	if (checkpointMap) {
-		const oldMapKeys = Object.keys(checkpointMap).filter(
-			(k) => parseInt(k, 10) < pruneThreshold,
-		);
-		if (oldMapKeys.length > 0 && !isDryRun) {
-			// Use batch update for faster deletion
-			const updates: Record<string, null> = {};
-			for (const key of oldMapKeys) {
-				updates[key] = null;
-			}
-			await draftRef.child('checkpointMap').update(updates);
-			verbose(`${prefix}Cleaned up ${oldMapKeys.length} checkpointMap entries`);
+	// Reuse checkpointKeys we already fetched earlier
+	const oldMapKeys = checkpointKeys.filter((k) => k < pruneThreshold).map(String);
+	if (oldMapKeys.length > 0 && !isDryRun) {
+		const updates: Record<string, null> = {};
+		for (const key of oldMapKeys) {
+			updates[key] = null;
 		}
+		await draftRef.child('checkpointMap').update(updates);
+		verbose(`${prefix}Cleaned up ${oldMapKeys.length} checkpointMap entries`);
 	}
 
-	// Remove deprecated singular checkpoint if we have checkpoints/ entries
-	if (!isDryRun) {
-		const hasCheckpoints = (await draftRef.child('checkpoints').once('value')).exists();
-		if (hasCheckpoints) {
-			await draftRef.child('checkpoint').remove();
-		}
+	// Remove deprecated singular checkpoint if we deleted any checkpoints
+	// (avoiding extra read - if we pruned checkpoints, the checkpoints/ path exists)
+	if (!isDryRun && checkpointsDeleted > 0) {
+		await draftRef.child('checkpoint').remove();
 	}
 };
 
@@ -784,13 +791,13 @@ const cleanupOrphanedFirebasePaths = async (): Promise<void> => {
 			}
 
 			fetched++;
-			if (fetched % 500 === 0) {
+			if (fetched % 1000 === 0) {
 				log(`  Scanned ${fetched}/${legacyPubKeys.length} legacy pubs...`);
 			}
 
 			return { pubKey, childKeys, orphanedBranches, hasValidBranch };
 		}),
-		20,
+		50,
 	);
 
 	// Collect all paths to delete

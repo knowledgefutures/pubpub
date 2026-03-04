@@ -25,11 +25,11 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 	cron.schedule('0 */12 * * *', () => run('Backup DB', 'tools-prod backupDb'), {
 		timezone: 'UTC',
 	}); // Every 6 hours
-	cron.schedule('0 5 * * *', () => run('Email Digest', 'tools-prod emailActivityDigest'), {
+	cron.schedule('0 13 * * *', () => run('Email Digest', 'tools-prod emailActivityDigest'), {
 		timezone: 'UTC',
 	});
 	cron.schedule(
-		'0 1 * * 0',
+		'0 5 * * 0',
 		() => run('Firebase Cleanup', 'tools-prod cleanupFirebase --execute'),
 		{
 			timezone: 'UTC',

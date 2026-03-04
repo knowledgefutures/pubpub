@@ -8,6 +8,13 @@ services:
             target: dev
         env_file:
             - .env.dev
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - >
+                    curl -f http://localhost:3000
+            interval: 10s
+            timeout: 3s
         environment:
             IS_DUQDUQ: ""
             NODE_ENV: development
@@ -36,9 +43,12 @@ services:
             CLOUDAMQP_APIKEY: ""
         command: ["pnpm", "run", "workers-dev"]
         depends_on:
-            - db
-            - rabbitmq
-            - app
+            db:
+                condition: service_started
+            rabbitmq:
+                condition: service_started
+            app:
+                condition: service_healthy
         networks: [appnet]
         volumes:
             - ..:/app

@@ -44,7 +44,7 @@ brew install pandoc poppler
 ## To Run Dev Mode
 
 ```
-pnpm start
+pnpm dev
 ```
 
 Navigate to `localhost:9876`
@@ -91,24 +91,24 @@ containers and components are differentiated:
 
 ### Containers
 
--   Associated with a specific URL route
--   One a single container is used on a given URL route
--   Calls hydrateWrapper() to initialize React bindings after using server-side renered HTML for
-    immediate display.
--   Holds the ground truth data for a given view. Often the ground truth data is passed into
-    containers as props through hydrateWrapper(), but in cases where the ground truth data is being
-    changed, the container will hold ground truth data in it's state.
+- Associated with a specific URL route
+- One a single container is used on a given URL route
+- Calls hydrateWrapper() to initialize React bindings after using server-side renered HTML for
+  immediate display.
+- Holds the ground truth data for a given view. Often the ground truth data is passed into
+  containers as props through hydrateWrapper(), but in cases where the ground truth data is being
+  changed, the container will hold ground truth data in it's state.
 
 ### Components
 
--   All other non-container components :)
--   Many components are used within a given URL route
--   Can store it's own state if needed for UX functionality - but should always update the ground
-    truth data held in its parent container.
--   Can make it's own API requests when the functionality and layout of the pertaining request is
-    contained within the single component. Though if this request influences the ground truth data,
-    the component should be passed an updating function that allows it to update the ground truth
-    data held in the container.
+- All other non-container components :)
+- Many components are used within a given URL route
+- Can store it's own state if needed for UX functionality - but should always update the ground
+  truth data held in its parent container.
+- Can make it's own API requests when the functionality and layout of the pertaining request is
+  contained within the single component. Though if this request influences the ground truth data,
+  the component should be passed an updating function that allows it to update the ground truth
+  data held in the container.
 
 ## Commits
 
@@ -118,11 +118,11 @@ Before your first pull request, make sure to copy our `.githooks` into your `.gi
 
 Preferred practice is to prefix commits with one of the following categories:
 
--   `fix`: for commits focused on specific bug fixes
--   `feature`: for commits that introduce a new feature
--   `update`: for commits that improve an existing feature
--   `dev`: for commits that focus solely on documentation, refactoring code, or developer experience
-    updates
+- `fix`: for commits focused on specific bug fixes
+- `feature`: for commits that introduce a new feature
+- `update`: for commits that improve an existing feature
+- `dev`: for commits that focus solely on documentation, refactoring code, or developer experience
+  updates
 
 ## Supporting Services
 
@@ -131,7 +131,6 @@ Thank you to these groups for providing their tools for free to PubPub's open so
 [![Browserstack-logo@2x](https://user-images.githubusercontent.com/1000455/64237395-318a4c80-cef4-11e9-8b78-98ed3ec58ce3.png)](https://www.browserstack.com/)
 
 [![Fastly-logo](https://github.com/user-attachments/assets/e5daf0da-373d-48b7-956a-5c2acbb7a798)](https://www.fastly.com/)
-
 
 ## Code of Conduct
 

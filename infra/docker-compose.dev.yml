@@ -1,4 +1,3 @@
-version: "3.9"
 name: pubpub_v6_dev
 
 services:
@@ -10,6 +9,7 @@ services:
         env_file:
             - .env.dev
         environment:
+            IS_DUQDUQ: ""
             NODE_ENV: development
             PORT: 3000
             # disable this
@@ -24,7 +24,6 @@ services:
         networks: [appnet]
         volumes:
             - ..:/app
-            - /app/node_modules
 
     worker:
         build:
@@ -40,12 +39,12 @@ services:
         command: ["pnpm", "run", "workers-dev"]
         depends_on:
             - db
+            - app
             - rabbitmq
             - app
         networks: [appnet]
         volumes:
             - ..:/app
-            - /app/node_modules
 
     rabbitmq:
         image: rabbitmq:3.13-alpine
@@ -86,7 +85,7 @@ services:
             - .env.dev
         environment:
             NODE_ENV: development
-        command: ['pnpm', 'run', 'cron']
+        command: ["pnpm", "run", "cron"]
         networks: [appnet]
         volumes:
             - ..:/app

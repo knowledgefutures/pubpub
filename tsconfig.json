@@ -5,7 +5,7 @@
 	// should have any effect on our TS builds since "exclude" only removes files from the "include"
 	// array (which we specify in the client/server specific .tsconfig.json files) and those don't
 	// contain node_modules/ or dist/ to begin with.
-	"exclude": ["**/node_modules/*", "**/dist/*", "**/sdk/**"],
+	"exclude": ["**/node_modules/**/*", "**/dist/**/*", "./sdk/**"],
 	"compilerOptions": {
 		/* Visit https://aka.ms/tsconfig.json to read more about this file */
 		/* Basic Options */

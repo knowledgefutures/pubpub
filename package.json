@@ -274,6 +274,7 @@
 	"packageManager": "pnpm@10.4.0",
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.6",
+		"@esbuild/linux-arm64": "0.27.3",
 		"@sentry/cli": "^2.20.5",
 		"@sentry/webpack-plugin": "^2.7.0",
 		"@storybook/addon-knobs": "^6.4.0",

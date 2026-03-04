@@ -2,7 +2,7 @@ node_modules
 config.js
 
 # infra files
-infra/
+infra/**/*
 
 # git
 .git

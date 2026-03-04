@@ -657,6 +657,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.3.6
         version: 2.4.3
+      '@esbuild/linux-arm64':
+        specifier: 0.27.3
+        version: 0.27.3
       '@sentry/cli':
         specifier: ^2.20.5
         version: 2.58.4
@@ -13620,8 +13623,7 @@ snapshots:
   '@esbuild/freebsd-x64@0.27.3':
     optional: true
 
-  '@esbuild/linux-arm64@0.27.3':
-    optional: true
+  '@esbuild/linux-arm64@0.27.3': {}
 
   '@esbuild/linux-arm@0.27.3':
     optional: true

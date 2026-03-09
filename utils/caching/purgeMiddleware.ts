@@ -26,6 +26,11 @@ const nonPurgeNonGetRoutes = {
 	 * (community admin dashboard) Also, otherwise archiving would put a lot of stress on the app
 	 */
 	'/api/communities/archive': ['POST'],
+	// shouldnt purge the community where we access the superadmin dash
+	'/api/spamTags': ['PUT'],
+	'/api/spamTags/user': ['DELETE', 'PUT'],
+	'/api/spamTags/queryCommunitiesForSpam': ['POST'],
+	'/api/spamTags/userRecentDiscussions': ['POST'],
 } satisfies {
 	[Path in `/api/${string}`]: AllowedMethods[];
 };

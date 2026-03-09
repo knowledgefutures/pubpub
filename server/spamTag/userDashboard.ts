@@ -207,7 +207,7 @@ export const queryUsersForSpamManagement = async (
 	return plain as SerializedSpamUserRow[];
 };
 
-const getAffiliationForUserIds = async (
+export const getAffiliationForUserIds = async (
 	userIds: string[],
 ): Promise<Map<string, types.SpamUserAffiliation>> => {
 	const [members, attributions, discussions] = await Promise.all([
@@ -251,22 +251,29 @@ const getAffiliationForUserIds = async (
 		let discussionCount = 0;
 		for (const m of members) {
 			if (m.userId === uid) {
-				const comm = (m as any).community;
-				if (comm?.subdomain) subdomains.add(comm.subdomain);
+				const subdomain = m['community.subdomain'];
+				if (subdomain) {
+					subdomains.add(subdomain);
+				}
 			}
 		}
 		for (const a of attributions) {
 			if (a.userId === uid) {
 				pubCount += 1;
-				const pub = (a as any).pub;
-				if (pub?.community?.subdomain) subdomains.add(pub.community.subdomain);
+
+				const subdomain = a['pub.community.subdomain'];
+				if (subdomain) {
+					subdomains.add(subdomain);
+				}
 			}
 		}
 		for (const d of discussions) {
 			if (d.userId === uid) {
 				discussionCount += 1;
-				const pub = (d as any).pub;
-				if (pub?.community?.subdomain) subdomains.add(pub.community.subdomain);
+				const subdomain = d['pub.community.subdomain'];
+				if (subdomain) {
+					subdomains.add(subdomain);
+				}
 			}
 		}
 		map.set(uid, {

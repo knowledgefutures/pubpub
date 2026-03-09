@@ -8,6 +8,7 @@ import {
 } from 'server/utils/email/communitySpam';
 import { postToSlackAboutCommunityStatusChange } from 'server/utils/slack';
 import { expect } from 'utils/assert';
+import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
 import { getSuspectedCommunitySpamVerdict } from './communityScore';
 
@@ -98,4 +99,6 @@ export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommuni
 		subdomain: ctx.communitySubdomain,
 		status,
 	});
+
+	schedulePurge(`${ctx.communitySubdomain}.pubpub.org`);
 };

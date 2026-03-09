@@ -6,7 +6,9 @@ import mergeWith from 'lodash.mergewith';
 import { SpamTag, User } from 'server/models';
 import { deleteSessionsForUser } from 'server/utils/session';
 import { expect } from 'utils/assert';
+import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
+import { getAffiliationForUserIds } from './userDashboard';
 import { getSuspectedUserSpamVerdict } from './userScore';
 
 const mergeSpamTagFields = (
@@ -58,6 +60,17 @@ const invalidateUserSessions = async (user: User) => {
 	);
 };
 
+const schedulePurgesForUser = async (userId: string) => {
+	// should schedule purges for all communities the user has commented on, ugh
+	const communities = await getAffiliationForUserIds([userId]);
+	const communitySubdomains = communities.get(userId)?.communitySubdomains;
+	if (communitySubdomains) {
+		for (const communitySubdomain of communitySubdomains) {
+			schedulePurge(`${communitySubdomain}.pubpub.org`);
+		}
+	}
+};
+
 export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<UpsertResult> => {
 	const { userId, fields, status } = options;
 	const user = await fetchUserWithSpamTag(userId);
@@ -73,7 +86,7 @@ export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<Upse
 		);
 		await existingTag.update(data as types.SpamVerdict<SpamTag>);
 		if (status === 'confirmed-spam' && existingTag.status !== status) {
-			await invalidateUserSessions(user);
+			await Promise.all([invalidateUserSessions(user), schedulePurgesForUser(userId)]);
 		}
 		return { spamTag: existingTag, user };
 	}
@@ -85,7 +98,7 @@ export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<Upse
 		{ where: { id: userId }, limit: 1, individualHooks: false },
 	);
 	if (status === 'confirmed-spam') {
-		await invalidateUserSessions(user);
+		await Promise.all([invalidateUserSessions(user), schedulePurgesForUser(userId)]);
 	}
 	return { spamTag, user };
 };

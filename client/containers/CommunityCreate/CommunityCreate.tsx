@@ -145,7 +145,6 @@ const CommunityCreate = () => {
 		setHeroLogo(val);
 	};
 
-	console.log('createError', createError);
 	return (
 		<div id="community-create-container">
 			<GridWrapper containerClassName={isCreated ? undefined : 'small'}>

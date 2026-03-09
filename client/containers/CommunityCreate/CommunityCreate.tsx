@@ -91,6 +91,7 @@ const CommunityCreate = () => {
 		evt.preventDefault();
 		setCreateIsLoading(true);
 		if (!acceptTerms) return false;
+
 		const formData = new FormData(evt.currentTarget);
 		const honeypot = (formData.get('website') as string) ?? '';
 		const payload = {
@@ -118,7 +119,13 @@ const CommunityCreate = () => {
 			setIsCreated(true);
 		} catch (error) {
 			setCreateIsLoading(false);
-			setCreateError((error as Error).message);
+			if (error instanceof Error) {
+				setCreateError(error.message);
+			} else if (typeof error === 'string') {
+				setCreateError(error);
+			} else {
+				setCreateError('Error Creating Community');
+			}
 			return;
 		}
 	};
@@ -138,6 +145,7 @@ const CommunityCreate = () => {
 		setHeroLogo(val);
 	};
 
+	console.log('createError', createError);
 	return (
 		<div id="community-create-container">
 			<GridWrapper containerClassName={isCreated ? undefined : 'small'}>
@@ -173,6 +181,13 @@ const CommunityCreate = () => {
 								value={subdomain}
 								onChange={onSubdomainChange}
 								helperText={`https://${subdomain || '[URL]'}.pubpub.org`}
+								error={
+									createError
+										? createError === 'URL already used'
+											? 'URL already in use by another community'
+											: 'Error Creating Community'
+										: undefined
+								}
 							/>
 							<InputField
 								label="Title"
@@ -231,24 +246,17 @@ const CommunityCreate = () => {
 								</Checkbox>
 							</InputField>
 							<Altcha ref={altchaRef} auto="onload" />
-							<InputField
-								error={
-									createError
-										? createError === 'URL already used'
-											? 'URL already in use by another community'
-											: 'Error Creating Community'
-										: undefined
-								}
-							>
-								<Button
-									name="create"
-									type="submit"
-									className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
-									text="Create Community"
-									disabled={!subdomain || !title || !acceptTerms}
-									loading={createIsLoading}
-								/>
-							</InputField>
+							<Button
+								name="create"
+								type="submit"
+								className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY} create-account-button`}
+								text="Create Community"
+								disabled={!subdomain || !title || !acceptTerms}
+								loading={createIsLoading}
+							/>
+							{createError && createError !== 'URL already used' && (
+								<p className="error-message">{createError}</p>
+							)}
 						</form>
 					</div>
 				)}

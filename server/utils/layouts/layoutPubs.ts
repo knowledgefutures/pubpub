@@ -86,6 +86,47 @@ const getPublishDate = (pub: PubWithMetadata): Date | null => {
 	return pub.customPublishedAt || pub.firstReleaseDate || null;
 };
 
+const getLowestRelevantCollectionRank = (
+	pub: PubWithMetadata,
+	collectionIdsSet: Set<string> | null,
+): string | null => {
+	let lowestRank: string | null = null;
+
+	for (const collectionPub of pub.collectionPubs) {
+		if (collectionIdsSet && !collectionIdsSet.has(collectionPub.collectionId)) {
+			continue;
+		}
+
+		const rank = collectionPub.rank || '';
+		if (lowestRank === null || rank.localeCompare(lowestRank) < 0) {
+			lowestRank = rank;
+		}
+	}
+
+	return lowestRank;
+};
+
+const compareCollectionRanks = (
+	aRank: string | null,
+	bRank: string | null,
+	direction: PubsQueryOrdering['direction'],
+): number => {
+	if (aRank === null && bRank === null) {
+		return 0;
+	}
+
+	if (aRank === null) {
+		return direction === 'ASC' ? 1 : -1;
+	}
+
+	if (bRank === null) {
+		return direction === 'ASC' ? -1 : 1;
+	}
+
+	const rankComparison = aRank.localeCompare(bRank);
+	return direction === 'ASC' ? rankComparison : rankComparison * -1;
+};
+
 const filterPubsByCollection = (
 	pubs: PubWithMetadata[],
 	collectionIds: string[],
@@ -117,23 +158,28 @@ const sortPubs = (
 	const sorted = [...pubs];
 	const ordering = getQueryOrdering(sort);
 
+	if (ordering.field === 'collectionRank') {
+		const collectionIdsSet = collectionIds.length > 0 ? new Set(collectionIds) : null;
+		const lowestRankByPubId = new Map(
+			sorted.map((pub) => [pub.id, getLowestRelevantCollectionRank(pub, collectionIdsSet)]),
+		);
+
+		sorted.sort((a, b) =>
+			compareCollectionRanks(
+				lowestRankByPubId.get(a.id) ?? null,
+				lowestRankByPubId.get(b.id) ?? null,
+				ordering.direction,
+			),
+		);
+
+		return sorted;
+	}
+
 	sorted.sort((a, b) => {
 		let aValue: number | null = null;
 		let bValue: number | null = null;
 
-		if (ordering.field === 'collectionRank') {
-			const getMinRank = (pub: PubWithMetadata) => {
-				const relevantRanks = pub.collectionPubs
-					.filter(
-						(cp) =>
-							collectionIds.length === 0 || collectionIds.includes(cp.collectionId),
-					)
-					.map((cp) => parseFloat(cp.rank));
-				return relevantRanks.length > 0 ? Math.min(...relevantRanks) : Number.MAX_VALUE;
-			};
-			aValue = getMinRank(a);
-			bValue = getMinRank(b);
-		} else if (ordering.field === 'creationDate') {
+		if (ordering.field === 'creationDate') {
 			aValue = a.createdAt.getTime();
 			bValue = b.createdAt.getTime();
 		} else if (ordering.field === 'publishDate') {

@@ -35,6 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
 	require('server/utils/serverModuleOverwrite');
 }
 
+import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 import { blocklistMiddleware } from './utils/blocklist';
 
@@ -250,6 +251,7 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
+appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;
 

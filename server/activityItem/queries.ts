@@ -100,6 +100,88 @@ const buildMemberActivityItemParams = <
 	};
 };
 
+type BanActivityOptions = {
+	actorId: null | string;
+	communityId: string;
+	bannedUserId: string;
+	reason?: types.BanReason | null;
+	sourceThreadCommentId?: string | null;
+};
+
+const resolveBanSource = async (sourceThreadCommentId?: string | null) => {
+	if (!sourceThreadCommentId) return {};
+	const comment = await ThreadComment.findOne({
+		where: { id: sourceThreadCommentId },
+		raw: true,
+		include: [
+			{
+				model: Thread,
+				as: 'thread',
+				attributes: ['id'],
+				include: [
+					{
+						model: Discussion,
+						as: 'discussion',
+						attributes: ['id'],
+						include: [
+							{
+								model: Pub,
+								as: 'pub',
+								attributes: ['slug', 'id', 'title'],
+							},
+						],
+					},
+				],
+			},
+		],
+		useMaster: true,
+	});
+	if (!comment) return { sourceThreadCommentId };
+
+	const pubId = comment['thread.discussion.pub.id'];
+	const pubTitle = comment['thread.discussion.pub.title'];
+
+	return {
+		sourceThreadCommentId,
+		sourcePubId: pubId,
+		sourcePubTitle: pubTitle,
+	};
+};
+
+const buildModerationPayload = async (options: BanActivityOptions) => {
+	const { communityId, bannedUserId, reason, sourceThreadCommentId } = options;
+	const [community, source] = await Promise.all([
+		Community.findOne({ where: { id: communityId }, useMaster: true }).then(expect),
+		resolveBanSource(sourceThreadCommentId),
+	]);
+	return {
+		userId: bannedUserId,
+		community: { title: community.title },
+		reason: reason ?? null,
+		...source,
+	};
+};
+
+export const createCommunityBanCreatedActivityItem = async (options: BanActivityOptions) => {
+	const payload = await buildModerationPayload(options);
+	return createActivityItem({
+		actorId: options.actorId,
+		kind: 'community-ban-created' as const,
+		communityId: options.communityId,
+		payload,
+	});
+};
+
+export const createCommunityBanRetractedActivityItem = async (options: BanActivityOptions) => {
+	const payload = await buildModerationPayload(options);
+	return createActivityItem({
+		actorId: options.actorId,
+		kind: 'community-ban-retracted' as const,
+		communityId: options.communityId,
+		payload,
+	});
+};
+
 export const createCommunityCreatedActivityItem = async (
 	actorId: null | string,
 	communityId: string,

@@ -1,5 +1,6 @@
 import type { CanCreatePub } from 'types';
 
+import { isUserBannedInCommunity } from 'server/communityBan/queries';
 import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
@@ -38,9 +39,10 @@ export const canCreatePub = async ({
 			return { create: false };
 		}
 
-		const [scopeData, communityData] = await Promise.all([
+		const [scopeData, communityData, isBanned] = await Promise.all([
 			getScope({ communityId, collectionId, loginId: userId }),
 			Community.findOne({ where: { id: communityId }, attributes: ['hideCreatePubButton'] }),
+			isUserBannedInCommunity(userId, communityId),
 		]);
 
 		const {
@@ -49,7 +51,7 @@ export const canCreatePub = async ({
 		const { hideCreatePubButton } = expect(communityData);
 
 		return {
-			create: canManage || !hideCreatePubButton,
+			create: !isBanned && (canManage || !hideCreatePubButton),
 			collectionIds: [collectionId],
 		};
 	}

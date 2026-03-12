@@ -3,6 +3,7 @@ export type ActivityFilter =
 	| 'community'
 	| 'discussion'
 	| 'member'
+	| 'moderation'
 	| 'page'
 	| 'pub'
 	| 'pubEdge'

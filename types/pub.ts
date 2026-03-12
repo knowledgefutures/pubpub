@@ -17,7 +17,7 @@ import type { SerializedModel } from './serializedModel';
 import type { Submission, SubmissionStatus } from './submission';
 import type { Thread, ThreadComment } from './thread';
 import type { UserSubscription } from './userSubscription';
-import type { DefinitelyHas, Maybe } from './util';
+import type { DefinitelyHas, Maybe, Prettify } from './util';
 
 export type Draft = SerializedModel<DraftModel>;
 export type Doc = SerializedModel<DocModel>;
@@ -48,12 +48,15 @@ export type PubDocInfo = {
 	};
 };
 
-export type PubPageDiscussion = DefinitelyHas<Discussion, 'anchors'> & {
-	isAuthorSpam?: boolean;
-	thread: Thread & {
-		comments: (DefinitelyHas<ThreadComment, 'author'> & { isAuthorSpam?: boolean })[];
-	};
-};
+export type PubPageThreadComment = DefinitelyHas<ThreadComment, 'author'>;
+
+export type PubPageDiscussion = Prettify<
+	DefinitelyHas<Omit<Discussion, 'thread'>, 'anchors'> & {
+		thread: Prettify<{
+			[K in keyof Thread]: K extends 'comments' ? PubPageThreadComment[] : Thread[K];
+		}>;
+	}
+>;
 
 export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPubs'> &
 	PubDocInfo & {

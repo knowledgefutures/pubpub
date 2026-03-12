@@ -40,12 +40,32 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
-		const { query } = spamUsersFiltersById.all;
+		const filterId = (locationData.query.filter as string) ?? 'all';
+		const baseFilter = spamUsersFiltersById[filterId] ?? spamUsersFiltersById.all;
+		const sortParam = locationData.query.sort as string | undefined;
+		const ordering = sortParam
+			? {
+					field: sortParam.split(':')[0],
+					direction: sortParam.split(':')[1] || 'DESC',
+				}
+			: baseFilter.query!.ordering;
 		const users = await queryUsersForSpamManagement({
 			limit: 50,
 			searchTerm,
 			includeAffiliation: true,
-			...query!,
+			...baseFilter.query!,
+			ordering: ordering as any,
+			communitySubdomain: (locationData.query.community as string) || undefined,
+			createdAfter: (locationData.query.createdAfter as string) || undefined,
+			createdBefore: (locationData.query.createdBefore as string) || undefined,
+			activeAfter: (locationData.query.activeAfter as string) || undefined,
+			activeBefore: (locationData.query.activeBefore as string) || undefined,
+			minActivities: locationData.query.minActivities
+				? Number(locationData.query.minActivities)
+				: undefined,
+			maxActivities: locationData.query.maxActivities
+				? Number(locationData.query.maxActivities)
+				: undefined,
 		});
 		return {
 			searchTerm,

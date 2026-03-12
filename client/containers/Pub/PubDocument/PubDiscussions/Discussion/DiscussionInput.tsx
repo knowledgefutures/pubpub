@@ -114,7 +114,7 @@ const DiscussionInput = (props: Props) => {
 							...disc,
 							thread: {
 								...disc.thread,
-								comments: [...disc.thread!.comments, outputData],
+								comments: [...(disc.thread!.comments ?? []), outputData],
 							},
 						};
 					}

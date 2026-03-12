@@ -1,3 +1,5 @@
+import type { ActivityItemKind } from 'types';
+
 import React from 'react';
 
 import { Router } from 'express';
@@ -8,6 +10,8 @@ import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+
+const moderationKinds: ActivityItemKind[] = ['community-ban-created', 'community-ban-retracted'];
 
 export const router = Router();
 
@@ -23,7 +27,7 @@ router.get(
 			const {
 				scopeData: {
 					scope,
-					activePermissions: { canView },
+					activePermissions: { canView, canAdminCommunity },
 				},
 			} = initialData;
 
@@ -35,7 +39,12 @@ router.get(
 				throw new ForbiddenError();
 			}
 
-			const activityData = await fetchActivityItems({ scope, limit: 50 });
+			const excludeKinds = canAdminCommunity ? undefined : moderationKinds;
+			const activityData = await fetchActivityItems({
+				scope,
+				limit: 50,
+				excludeKinds,
+			});
 
 			return renderToNodeStream(
 				res,

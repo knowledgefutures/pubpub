@@ -2,9 +2,18 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import { Column, DataType, Default, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+	Column,
+	DataType,
+	Default,
+	HasMany,
+	HasOne,
+	Model,
+	PrimaryKey,
+	Table,
+} from 'sequelize-typescript';
 
-import { ThreadComment, ThreadEvent } from '../models';
+import { Discussion, ThreadComment, ThreadEvent } from '../models';
 
 @Table
 export class Thread extends Model<InferAttributes<Thread>, InferCreationAttributes<Thread>> {
@@ -23,4 +32,7 @@ export class Thread extends Model<InferAttributes<Thread>, InferCreationAttribut
 
 	@HasMany(() => ThreadEvent, { onDelete: 'CASCADE', as: 'events', foreignKey: 'threadId' })
 	declare events?: ThreadEvent[];
+
+	@HasOne(() => Discussion, { onDelete: 'CASCADE', as: 'discussion', foreignKey: 'threadId' })
+	declare discussion?: Discussion;
 }

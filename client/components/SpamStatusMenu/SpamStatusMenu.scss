@@ -1,0 +1,12 @@
+.spam-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+
+  & button {
+    flex-grow: 1;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

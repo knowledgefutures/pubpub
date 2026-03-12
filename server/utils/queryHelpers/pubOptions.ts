@@ -28,12 +28,13 @@ import {
 } from 'server/models';
 
 import { getPubEdgeIncludes } from './pubEdgeOptions';
-import { baseAuthor, baseThread, baseVisibility } from './util';
+import { authorIncludes, baseVisibility, threadIncludes } from './util';
 
 export default (options: PubGetOptions) => {
 	const {
 		isAuth,
 		isPreview,
+		communityId,
 		getCollections,
 		getMembers,
 		getCommunity,
@@ -72,8 +73,8 @@ export default (options: PubGetOptions) => {
 	let collectionPubs: any = [];
 	let community: any = [];
 	let anchors = [{ model: DiscussionAnchor, as: 'anchors' }];
-	let author = baseAuthor;
-	let thread = baseThread;
+	let author = authorIncludes(communityId);
+	let thread = threadIncludes(communityId);
 	if (isPreview) {
 		pubAttributes = [
 			'id',

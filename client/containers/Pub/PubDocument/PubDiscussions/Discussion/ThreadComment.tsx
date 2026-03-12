@@ -1,4 +1,11 @@
-import type { Callback, SpamStatus } from 'types';
+import type {
+	Callback,
+	PubPageData,
+	PubPageDiscussion,
+	PubPageThreadComment,
+	SerializedModel,
+	SpamStatus,
+} from 'types';
 
 import React, { useCallback, useState } from 'react';
 
@@ -7,7 +14,7 @@ import classNames from 'classnames';
 import TimeAgo from 'react-timeago';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { Avatar, Icon, SpamStatusMenu } from 'components';
+import { Avatar, BanUserDialog, Icon, SpamStatusMenu } from 'components';
 import Editor, { type EditorChangeObject, getJSON, getText, viewIsEmpty } from 'components/Editor';
 import { buttons, FormattingBar } from 'components/FormattingBar';
 import { usePageContext } from 'utils/hooks';
@@ -15,10 +22,12 @@ import { getPartsOfFullName } from 'utils/names';
 
 import './threadComment.scss';
 
+import type { CommunityBan } from 'server/models';
+
 type Props = {
-	discussionData: any;
-	threadCommentData: any;
-	pubData: any;
+	discussionData: PubPageDiscussion;
+	threadCommentData: PubPageThreadComment;
+	pubData: PubPageData;
 	updateLocalData: (...args: any[]) => any;
 	isPreview?: boolean;
 };
@@ -32,10 +41,13 @@ const ThreadComment = (props: Props) => {
 		isPreview = false,
 	} = props;
 	const { loginData, communityData, locationData, scopeData } = usePageContext();
-	const { isSuperAdmin } = scopeData.activePermissions;
+	const { isSuperAdmin, canAdminCommunity } = scopeData.activePermissions;
 	const [isEditing, setIsEditing] = useState(false);
+	const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
 	const [changeObject, setChangeObject] = useState<null | EditorChangeObject>(null);
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+	const [isRetracting, setIsRetracting] = useState(false);
+
 	const handlePutThreadComment = (threadCommentUpdates) => {
 		return apiFetch('/api/threadComment', {
 			method: 'PUT',
@@ -56,7 +68,7 @@ const ThreadComment = (props: Props) => {
 							...discussion,
 							thread: {
 								...discussion.thread,
-								comments: discussion.thread.comments.map((comment) => {
+								comments: discussion.thread.comments?.map((comment) => {
 									if (comment.id === threadCommentData.id) {
 										return { ...comment, ...updatedThreadCommentData };
 									}
@@ -73,21 +85,21 @@ const ThreadComment = (props: Props) => {
 
 	const handleSpamStatusChanged = useCallback(
 		(status: SpamStatus | null) => {
-			const isNowSpam = status === 'confirmed-spam';
 			const targetUserId = threadCommentData.userId;
 			updateLocalData('pub', {
 				discussions: pubData.discussions.map((discussion) => ({
 					...discussion,
-					...(discussion.userId === targetUserId && {
-						isAuthorSpam: isNowSpam || undefined,
-					}),
 					thread: {
 						...discussion.thread,
-						comments: discussion.thread.comments.map((comment) => {
-							if (comment.userId === targetUserId) {
-								return { ...comment, isAuthorSpam: isNowSpam || undefined };
-							}
-							return comment;
+						comments: discussion.thread.comments?.map((comment) => {
+							if (comment.userId !== targetUserId) return comment;
+							return {
+								...comment,
+								author: {
+									...comment.author,
+									spamTag: status ? { ...comment.author?.spamTag, status } : null,
+								},
+							};
 						}),
 					},
 				})),
@@ -95,6 +107,72 @@ const ThreadComment = (props: Props) => {
 		},
 		[threadCommentData.userId, pubData.discussions, updateLocalData],
 	);
+
+	const handleBanned = useCallback(
+		(banData: SerializedModel<CommunityBan>) => {
+			const targetUserId = threadCommentData.userId;
+			updateLocalData('pub', {
+				discussions: pubData.discussions.map((discussion) => ({
+					...discussion,
+					thread: {
+						...discussion.thread,
+						comments: discussion.thread.comments?.map((comment) => {
+							if (comment.userId !== targetUserId) return comment;
+							return {
+								...comment,
+								author: {
+									...comment.author,
+									communityBans: [
+										...(comment.author?.communityBans ?? []),
+										banData,
+									],
+								},
+							};
+						}),
+					},
+				})),
+			});
+		},
+		[threadCommentData.userId, pubData.discussions, updateLocalData],
+	);
+
+	const handleRetractBan = useCallback(async () => {
+		const banIds = threadCommentData.author?.communityBans
+			?.filter((ban) => ban.status === 'active')
+			?.map((ban) => ban.id);
+		if (!banIds?.length) return;
+		setIsRetracting(true);
+		try {
+			await Promise.all(
+				banIds.map((id) =>
+					apiFetch.put(`/api/communityBans/${id}`, {
+						status: 'retracted',
+					}),
+				),
+			);
+			const targetUserId = threadCommentData.userId;
+			updateLocalData('pub', {
+				discussions: pubData.discussions.map((discussion) => ({
+					...discussion,
+					thread: {
+						...discussion.thread,
+						comments: discussion.thread.comments?.map((comment) => {
+							if (comment.userId !== targetUserId) return comment;
+							return {
+								...comment,
+								author: {
+									...comment.author,
+									communityBans: [],
+								},
+							};
+						}),
+					},
+				})),
+			});
+		} finally {
+			setIsRetracting(false);
+		}
+	}, [threadCommentData, pubData.discussions, updateLocalData]);
 
 	const isAuthor = loginData.id === threadCommentData.userId;
 	const renderText = (
@@ -112,13 +190,25 @@ const ThreadComment = (props: Props) => {
 		);
 	};
 	const commenterName = discussionData.commenter?.name ?? threadCommentData.commenter?.name;
-	const isAuthorSpam = !!threadCommentData.isAuthorSpam;
+	const isAuthorSpam = threadCommentData.author?.spamTag?.status === 'confirmed-spam';
+	const isAuthorBanned = threadCommentData.author?.communityBans?.some(
+		(ban) => ban.status === 'active',
+	);
+	const showBanButton =
+		!isPreview &&
+		canAdminCommunity &&
+		threadCommentData.userId &&
+		threadCommentData.userId !== loginData.id &&
+		!isAuthorBanned;
+	const showUnbanButton = !isPreview && canAdminCommunity && isAuthorBanned;
+
 	return (
 		<div
 			className={classNames(
 				'thread-comment-component',
 				isPreview && 'is-preview',
 				isAuthorSpam && 'is-spam',
+				isAuthorBanned && !isAuthorSpam && 'is-banned',
 			)}
 		>
 			<div className="avatar-wrapper">
@@ -126,7 +216,7 @@ const ThreadComment = (props: Props) => {
 					width={18}
 					initials={
 						threadCommentData.author
-							? threadCommentData.author.intials
+							? threadCommentData.author.initials
 							: commenterName
 								? getPartsOfFullName(commenterName).initials
 								: '?'
@@ -141,6 +231,9 @@ const ThreadComment = (props: Props) => {
 							? threadCommentData.author.fullName
 							: (commenterName ?? 'anonymous')}
 						{isAuthorSpam && isPreview && <span className="spam-badge">Spam</span>}
+						{isAuthorBanned && !isAuthorSpam && isPreview && (
+							<span className="banned-badge">Banned</span>
+						)}
 						{isPreview ? ': ' : ''}
 					</span>
 
@@ -182,10 +275,34 @@ const ThreadComment = (props: Props) => {
 								}}
 							/>
 						)}
+						{showBanButton && (
+							<Button
+								icon={<Icon icon="flag" iconSize={12} />}
+								minimal
+								small
+								onClick={() => setIsBanDialogOpen(true)}
+								className="ban-button"
+							>
+								Ban
+							</Button>
+						)}
+						{showUnbanButton && (
+							<Button
+								icon={<Icon icon="flag" iconSize={12} />}
+								minimal
+								small
+								loading={isRetracting}
+								onClick={handleRetractBan}
+								className="ban-button"
+							>
+								Unban
+							</Button>
+						)}
 						{!isPreview && isSuperAdmin && threadCommentData.userId && (
 							<SpamStatusMenu
 								userId={threadCommentData.userId}
 								onStatusChanged={handleSpamStatusChanged}
+								currentStatus={threadCommentData.author?.spamTag?.status}
 							/>
 						)}
 					</span>
@@ -194,6 +311,12 @@ const ThreadComment = (props: Props) => {
 					<div className="thread-comment-spam-banner">
 						This user has been banned. Only you and other admins of this community can
 						see this comment. You can safely remove it.
+					</div>
+				)}
+				{!isPreview && isAuthorBanned && !isAuthorSpam && (
+					<div className="thread-comment-banned-banner">
+						This user has been banned from this community. Only you and other admins can
+						see this content.
 					</div>
 				)}
 				{!isPreview && (
@@ -245,6 +368,17 @@ const ThreadComment = (props: Props) => {
 					/>
 				)}
 			</div>
+			{canAdminCommunity && threadCommentData.userId && (
+				<BanUserDialog
+					isOpen={isBanDialogOpen}
+					onClose={() => setIsBanDialogOpen(false)}
+					userId={threadCommentData.userId}
+					communityId={communityData.id}
+					threadCommentId={threadCommentData.id}
+					userName={threadCommentData.author?.fullName}
+					onBanned={handleBanned}
+				/>
+			)}
 		</div>
 	);
 };

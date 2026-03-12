@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Router } from 'express';
 
+import { getActiveBannedUsersForCommunity } from 'server/communityBan/queries';
 import Html from 'server/Html';
 import { handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -29,12 +30,22 @@ router.get(
 				throw new NotFoundError();
 			}
 
+			const isCommunityScope =
+				initialData.scopeData.elements.activeTargetType === 'community';
+			const canAdmin = initialData.scopeData.activePermissions.canAdminCommunity;
+			const bannedUsersData =
+				isCommunityScope && canAdmin
+					? (await getActiveBannedUsersForCommunity(initialData.communityData.id)).map(
+							(r) => r.toJSON(),
+						)
+					: [];
+
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="DashboardMembers"
 					initialData={initialData}
-					viewData={{ membersData }}
+					viewData={{ membersData, bannedUsersData }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: `Members · ${initialData.scopeData.elements.activeTarget.title ?? initialData.communityData.title}`,

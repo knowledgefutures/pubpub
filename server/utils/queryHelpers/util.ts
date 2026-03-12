@@ -1,5 +1,8 @@
+import type { IncludeOptions } from 'sequelize';
+
 import {
 	Commenter,
+	CommunityBan,
 	includeUserModel,
 	SpamTag,
 	Thread,
@@ -30,7 +33,13 @@ export const ensureSerialized = (item: any) => {
 	return item;
 };
 
-export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, loginId) => {
+export const sanitizeOnVisibility = <
+	T extends { visibility: { access: string | null; users?: { id: string }[] } },
+>(
+	objectsWithVisibility: T[],
+	activePermissions: any,
+	loginId: string | null,
+) => {
 	const { canView, canAdmin } = activePermissions;
 	return objectsWithVisibility.filter((item) => {
 		if (item.visibility.access === 'public') {
@@ -42,7 +51,7 @@ export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, l
 		if (item.visibility.access === 'private') {
 			return (
 				canAdmin ||
-				item.visibility.users.find((user) => {
+				item.visibility.users?.find((user) => {
 					return user.id === loginId;
 				})
 			);
@@ -51,13 +60,26 @@ export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, l
 	});
 };
 
-const authorWithSpamTag = () => ({
+const authorWithModeration = (communityId?: string) => ({
 	...includeUserModel({ as: 'author' }),
-	include: [{ model: SpamTag, as: 'spamTag' }],
+	include: [
+		{ model: SpamTag, as: 'spamTag' },
+		...(communityId
+			? [
+					{
+						model: CommunityBan,
+						as: 'communityBans',
+						where: { communityId, status: 'active' },
+						duplicating: false,
+						required: false,
+					} as IncludeOptions,
+				]
+			: []),
+	],
 });
 
-export const baseAuthor = [authorWithSpamTag()];
-export const baseThread = [
+export const authorIncludes = (communityId?: string) => [authorWithModeration(communityId)];
+export const threadIncludes = (communityId?: string) => [
 	{
 		model: Thread,
 		as: 'thread',
@@ -65,7 +87,7 @@ export const baseThread = [
 			{
 				model: ThreadComment,
 				as: 'comments',
-				include: [authorWithSpamTag(), { model: Commenter, as: 'commenter' }],
+				include: [authorWithModeration(communityId), { model: Commenter, as: 'commenter' }],
 			},
 			{
 				model: ThreadEvent,

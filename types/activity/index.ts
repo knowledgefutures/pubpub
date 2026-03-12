@@ -5,6 +5,7 @@ import type { SerializedModel } from '../serializedModel';
 import type { ActivityAssociations } from './associations';
 import type { CollectionActivityItem } from './collection';
 import type { CommunityActivityItem } from './community';
+import type { CommunityBanActivityItem } from './communityBan';
 import type { FacetsActivityItem } from './facets';
 import type { MemberActivityItem } from './member';
 import type { PageActivityItem } from './page';
@@ -13,6 +14,7 @@ import type { SubmissionActivityItem } from './submission';
 
 export type * from './collection';
 export type * from './community';
+export type * from './communityBan';
 export type * from './facets';
 export type * from './member';
 export type * from './page';
@@ -22,6 +24,7 @@ export type * from './submission';
 export type InsertableActivityItem =
 	| CommunityActivityItem
 	| CollectionActivityItem
+	| CommunityBanActivityItem
 	| FacetsActivityItem
 	| PageActivityItem
 	| PubActivityItem

@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { Checkbox } from 'reakit/Checkbox';
 
 import { Icon, type IconName } from 'components';
+import { usePageContext } from 'utils/hooks';
 
 import './activityFilters.scss';
 
@@ -26,6 +27,7 @@ const filterLabels: Record<ActivityFilter, FilterLabel> = {
 	pub: { label: 'Pubs', icon: 'pubDoc' },
 	page: { label: 'Pages', icon: 'page-layout' },
 	member: { label: 'Members', icon: 'people' },
+	moderation: { label: 'Moderation', icon: 'flag' },
 	review: { label: 'Reviews', icon: 'social-media' },
 	discussion: { label: 'Discussions', icon: 'chat' },
 	pubEdge: { label: 'Connections', icon: 'layout-auto' },
@@ -47,18 +49,29 @@ const filtersByScopeKind = {
 		'discussion',
 		'submission',
 	]),
+	communityAdmin: sortedFilters([
+		'community',
+		'collection',
+		'pub',
+		'page',
+		'member',
+		'moderation',
+		'review',
+		'discussion',
+		'submission',
+	]),
 	collection: sortedFilters(['pub', 'member', 'review', 'discussion', 'submission']),
 	pub: sortedFilters(['member', 'review', 'discussion', 'pubEdge', 'submission']),
 };
 
-const getFiltersForScope = (scope: ScopeId) => {
+const getFiltersForScope = (scope: ScopeId, canAdminCommunity: boolean) => {
 	if ('pubId' in scope && scope.pubId) {
 		return filtersByScopeKind.pub;
 	}
 	if ('collectionId' in scope && scope.collectionId) {
 		return filtersByScopeKind.collection;
 	}
-	return filtersByScopeKind.community;
+	return canAdminCommunity ? filtersByScopeKind.communityAdmin : filtersByScopeKind.community;
 };
 
 const toggleFilterInclusion = (currentFilters: ActivityFilter[], toggleFilter: ActivityFilter) => {
@@ -70,6 +83,8 @@ const toggleFilterInclusion = (currentFilters: ActivityFilter[], toggleFilter: A
 
 const ActivityFilters = (props: Props) => {
 	const { activeFilters, onUpdateActiveFilters, scope } = props;
+	const { scopeData } = usePageContext();
+	const { canAdminCommunity } = scopeData.activePermissions;
 
 	return (
 		<div
@@ -79,7 +94,7 @@ const ActivityFilters = (props: Props) => {
 			)}
 		>
 			<div className="label">Filter by</div>
-			{getFiltersForScope(scope).map((filter) => {
+			{getFiltersForScope(scope, canAdminCommunity).map((filter) => {
 				const { label, icon } = filterLabels[filter];
 				return (
 					<Checkbox

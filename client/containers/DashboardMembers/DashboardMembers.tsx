@@ -1,9 +1,13 @@
-import React from 'react';
+import type { BanReason } from 'types';
 
-import { Button, ControlGroup, Intent } from '@blueprintjs/core';
+import React, { useCallback, useState } from 'react';
 
+import { Button, ControlGroup, Intent, Tab, Tabs } from '@blueprintjs/core';
+
+import { apiFetch } from 'client/utils/apiFetch';
 import { useMembersState } from 'client/utils/members/useMembers';
 import {
+	Avatar,
 	DashboardFrame,
 	InheritedMembersBlock,
 	MemberRow,
@@ -11,26 +15,88 @@ import {
 	UserAutocomplete,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { getReasonLabel } from 'utils/moderationReasons';
 
 import './dashboardMembers.scss';
 
+type BannedUserReport = {
+	id: string;
+	reason: string;
+	reasonText?: string | null;
+	createdAt: string;
+	user: { id: string; fullName: string; slug: string; avatar?: string | null; initials: string };
+	actor: { id: string; fullName: string; slug: string };
+};
+
 type Props = {
 	membersData: any;
+	bannedUsersData: BannedUserReport[];
+};
+
+const BannedUsersTab = (props: { bans: BannedUserReport[] }) => {
+	const [bans, setBans] = useState(props.bans);
+	const [retractingIds, setRetractingIds] = useState<Set<string>>(new Set());
+
+	const handleUnban = useCallback(async (banId: string) => {
+		setRetractingIds((prev) => new Set(prev).add(banId));
+		try {
+			await apiFetch.put(`/api/communityBans/${banId}`, {
+				status: 'retracted',
+			});
+			setBans((prev) => prev.filter((r) => r.id !== banId));
+		} finally {
+			setRetractingIds((prev) => {
+				const next = new Set(prev);
+				next.delete(banId);
+				return next;
+			});
+		}
+	}, []);
+
+	if (!bans.length) {
+		return <i>No banned users.</i>;
+	}
+
+	return (
+		<div className="banned-users-list">
+			{bans.map((ban) => (
+				<div key={ban.id} className="banned-user-row">
+					<Avatar width={30} initials={ban.user.initials} avatar={ban.user.avatar} />
+					<div className="banned-user-info">
+						<span className="banned-user-name">{ban.user.fullName}</span>
+						<span className="banned-user-detail">
+							Banned by {ban.actor.fullName}
+							{ban.reason ? ` (${getReasonLabel(ban.reason as BanReason)})` : ''}
+						</span>
+					</div>
+					<Button
+						small
+						intent={Intent.WARNING}
+						text="Unban"
+						loading={retractingIds.has(ban.id)}
+						onClick={() => handleUnban(ban.id)}
+					/>
+				</div>
+			))}
+		</div>
+	);
 };
 
 const DashboardMembers = (props: Props) => {
-	const { membersData } = props;
+	const { membersData, bannedUsersData } = props;
 	const { membersByType, addMember, updateMember, removeMember } = useMembersState({
 		initialMembers: membersData.members,
 	});
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeTargetType, activeTargetName },
-		activePermissions: { canManage },
+		activePermissions: { canManage, canAdminCommunity },
 	} = scopeData;
 
 	const localMembers = membersByType[activeTargetType];
 	const showLocalEmptyState = !localMembers.length && !membersData.invitations.length;
+	const showBannedTab =
+		activeTargetType === 'community' && canAdminCommunity && bannedUsersData.length > 0;
 
 	const hasInheritedMembers =
 		(membersByType.collection.length && activeTargetType !== 'collection') ||
@@ -38,12 +104,8 @@ const DashboardMembers = (props: Props) => {
 		// @ts-expect-error FIXME: Organization aren't really a thing anymore
 		(membersByType.organization.length && activeTargetType !== 'organization');
 
-	return (
-		<DashboardFrame
-			className="dashboard-members-container"
-			title="Members"
-			details={`Invite and manage collaborators on this ${activeTargetName}.`}
-		>
+	const membersContent = (
+		<>
 			{canManage && (
 				<SettingsSection title="Add Member">
 					<ControlGroup className="add-member-controls">
@@ -114,6 +176,27 @@ const DashboardMembers = (props: Props) => {
 							/>
 						)}
 				</SettingsSection>
+			)}
+		</>
+	);
+
+	return (
+		<DashboardFrame
+			className="dashboard-members-container"
+			title="Members"
+			details={`Invite and manage collaborators on this ${activeTargetName}.`}
+		>
+			{showBannedTab ? (
+				<Tabs id="dashboard-members-tabs">
+					<Tab id="members" title="Members" panel={membersContent} />
+					<Tab
+						id="banned"
+						title={`Banned Users (${bannedUsersData.length})`}
+						panel={<BannedUsersTab bans={bannedUsersData} />}
+					/>
+				</Tabs>
+			) : (
+				membersContent
 			)}
 		</DashboardFrame>
 	);

@@ -1,6 +1,6 @@
-import type { PubPageData, PubPageDiscussion, SpamStatus } from 'types';
+import type { PubPageData, PubPageDiscussion, PubPageThreadComment } from 'types';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@blueprintjs/core';
 import classNames from 'classnames';
@@ -16,8 +16,6 @@ import ManageTools, { type SortType } from './ManageTools';
 import ThreadComment from './ThreadComment';
 
 import './discussion.scss';
-
-type PubPageThreadComment = PubPageDiscussion['thread']['comments'][number];
 
 type Props = {
 	pubData: PubPageData;
@@ -58,7 +56,11 @@ const Discussion = (props: Props) => {
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
 	const showManageTools = canAdmin || (isDiscussionAuthor && !discussionData.isClosed);
 	const discussionId = discussionData.id;
-	const isAuthorSpam = !!discussionData.isAuthorSpam;
+
+	const rootComment = discussionData.thread.comments?.find(
+		(comment) => comment.userId === discussionData.userId,
+	);
+	const isAuthorSpam = rootComment?.author?.spamTag?.status === 'confirmed-spam';
 
 	useEffect(() => {
 		if (isPreviewExpandedByHash(discussionId)) {
@@ -84,7 +86,7 @@ const Discussion = (props: Props) => {
 			pendingHiddenCount = 0;
 		};
 
-		threadComments.forEach((threadComment, index) => {
+		threadComments.forEach((threadComment: PubPageThreadComment, index: number) => {
 			const isRootThread = index === 0;
 			const meetsMinimum = shownDiscussionsCount < minShown;
 			const matchesSearch = discussionMatchesSearchTerm(threadComment, searchTerm);
@@ -110,32 +112,6 @@ const Discussion = (props: Props) => {
 		flushPendingCount('root');
 		return elements;
 	};
-
-	const handleSpamStatusChanged = useCallback(
-		(status: SpamStatus | null) => {
-			const isNowSpam = status === 'confirmed-spam';
-			const authorUserId = discussionData.userId;
-			updateLocalData('pub', {
-				discussions: pubData.discussions.map((discussion) => {
-					const authorMatch = discussion.userId === authorUserId;
-					return {
-						...discussion,
-						...(authorMatch && { isAuthorSpam: isNowSpam || undefined }),
-						thread: {
-							...discussion.thread,
-							comments: discussion.thread.comments.map((comment) => {
-								if (comment.userId === authorUserId) {
-									return { ...comment, isAuthorSpam: isNowSpam || undefined };
-								}
-								return comment;
-							}),
-						},
-					};
-				}),
-			});
-		},
-		[discussionData.userId, pubData.discussions, updateLocalData],
-	);
 
 	const handleUpdateDiscussion = (discussionUpdates) => {
 		return apiFetch('/api/discussions', {
@@ -185,7 +161,7 @@ const Discussion = (props: Props) => {
 		if (isPreview) {
 			return renderPreviewDiscussionsAndOverflow(filteredThreadComments, 2);
 		}
-		return sortThreadComments(filteredThreadComments, sortType).map((item) => {
+		return sortThreadComments(filteredThreadComments ?? [], sortType).map((item) => {
 			return (
 				<ThreadComment
 					key={item.id}
@@ -200,12 +176,10 @@ const Discussion = (props: Props) => {
 	};
 
 	const renderInput = () => {
-		if (!canReply) {
-			return null;
-		}
+		if (!canReply) return null;
 		return (
 			<DiscussionInput
-				key={discussionData.thread.comments.length}
+				key={discussionData.thread.comments?.length}
 				discussionData={discussionData}
 			/>
 		);
@@ -247,13 +221,6 @@ const Discussion = (props: Props) => {
 				/>
 			)}
 			<LabelList pubData={pubData} discussionData={discussionData} />
-			{isAuthorSpam && isPreview && <span className="spam-badge">Spam</span>}
-			{isAuthorSpam && !isPreview && (
-				<div className="discussion-spam-banner">
-					This user has been banned. Only you and other admins of this community can see
-					this discussion. You can safely remove it.
-				</div>
-			)}
 			{!isPreview && (
 				<>
 					{showManageTools && (
@@ -263,7 +230,6 @@ const Discussion = (props: Props) => {
 							onUpdateDiscussion={handleUpdateDiscussion}
 							sortType={sortType}
 							setSortType={setSortType}
-							onSpamStatusChanged={handleSpamStatusChanged}
 						/>
 					)}
 					{renderAnchorText()}

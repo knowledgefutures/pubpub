@@ -1,8 +1,10 @@
+import type { Discussion, PatchFn } from 'types';
+
 import React, { useState } from 'react';
 
 import { Button } from '@blueprintjs/core';
 
-import { ConfirmDialog, Icon, SpamStatusMenu } from 'components';
+import { ConfirmDialog, Icon } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
@@ -28,19 +30,11 @@ type Props = {
 	};
 	setSortType: (s: SortType) => any;
 	sortType: SortType;
-	onUpdateDiscussion: (...args: any[]) => any;
-	onSpamStatusChanged?: (status: import('types').SpamStatus | null) => void;
+	onUpdateDiscussion: PatchFn<Discussion>;
 };
 
 const ManageTools = (props: Props) => {
-	const {
-		pubData,
-		discussionData,
-		onUpdateDiscussion,
-		sortType,
-		setSortType,
-		onSpamStatusChanged,
-	} = props;
+	const { pubData, discussionData, onUpdateDiscussion, sortType, setSortType } = props;
 	const { scopeData } = usePageContext();
 	const { canAdmin, isSuperAdmin } = scopeData.activePermissions;
 	const { isClosed } = discussionData;
@@ -115,12 +109,6 @@ const ManageTools = (props: Props) => {
 			{renderArchiveButton()}
 			{renderSortMenu()}
 			{isSuperAdmin && <DiscussionReanchor discussionData={discussionData} />}
-			{isSuperAdmin && discussionData.userId && (
-				<SpamStatusMenu
-					userId={discussionData.userId}
-					onStatusChanged={onSpamStatusChanged}
-				/>
-			)}
 		</div>
 	);
 };

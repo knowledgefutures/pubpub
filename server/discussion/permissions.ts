@@ -17,15 +17,18 @@ export const getCreatePermission = async ({
 
 	const pub = await Pub.findOne({ where: { id: pubId } });
 	const hasAccessHash = pub?.commentHash === commentAccessHash;
-	const scopeData = await getScope({
-		communityId,
-		pubId,
-		loginId: userId,
-		accessHash,
-	});
+	const [scopeData] = await Promise.all([
+		getScope({
+			communityId,
+			pubId,
+			loginId: userId,
+			accessHash,
+		}),
+	]);
 
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const nonMembersVisibility = visibilityAccess && visibilityAccess !== 'members';
+
 	return canView || (canCreateDiscussions && nonMembersVisibility) || hasAccessHash;
 };
 

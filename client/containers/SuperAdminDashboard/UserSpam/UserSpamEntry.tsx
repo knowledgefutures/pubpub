@@ -1,22 +1,25 @@
 import type { SpamStatus, UserSpamTagFields } from 'types';
 
+import type { SpamAction } from './MarkSpamStatusButton';
+
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Button, ButtonGroup, Collapse, type Intent, Spinner, Tag } from '@blueprintjs/core';
+import { Button, type Intent, Spinner, Tag } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { formatDate } from 'utils/dates';
-
-import MarkSpamStatusButton from './MarkSpamStatusButton';
 
 import './userSpamEntry.scss';
 
 import type { RecentDiscussion, SpamUser } from './types';
 
+import { Popover } from 'client/components';
+
+import UserSpamActions from './UserSpamActions';
+
 type Props = {
 	user: SpamUser;
-	onSpamTagRemoved?: (userId: string) => void;
-	onStatusChanged?: (userId: string, status: SpamStatus) => void;
+	onStatusChanged?: (userId: string, status: SpamStatus | null) => void;
 };
 
 const getIntentForSpamScore = (spamScore: number): Intent => {
@@ -58,21 +61,20 @@ const DiscussionItem = ({ discussion }: { discussion: RecentDiscussion }) => {
 };
 
 const UserSpamEntry = (props: Props) => {
-	const { user, onSpamTagRemoved, onStatusChanged: onStatusChangedProp } = props;
-	const { fullName, email, slug, createdAt, spamTag, affiliation } = user;
+	const { user, onStatusChanged: onStatusChangedProp } = props;
+	const { fullName, email, slug, createdAt, spamTag, affiliation, communityBans } = user;
 	const hasTag = spamTag != null;
 	const initialStatus = hasTag ? spamTag.status : null;
 	const [status, setUpdatedStatus] = useState<null | SpamStatus>(initialStatus);
 
 	const handleStatusChanged = useCallback(
-		(newStatus: SpamStatus) => {
-			setUpdatedStatus(newStatus);
-			onStatusChangedProp?.(user.id, newStatus);
+		(action: SpamAction) => {
+			setUpdatedStatus(action === 'remove' ? null : action);
+			onStatusChangedProp?.(user.id, action === 'remove' ? null : action);
 		},
 		[user.id, onStatusChangedProp],
 	);
 
-	const [discussionsOpen, setDiscussionsOpen] = useState(false);
 	const [recentDiscussions, setRecentDiscussions] = useState<RecentDiscussion[] | null>(null);
 	const [discussionsLoading, setDiscussionsLoading] = useState(false);
 
@@ -81,12 +83,8 @@ const UserSpamEntry = (props: Props) => {
 		: ({} as UserSpamTagFields);
 	const fieldsJsonString = useMemo(() => JSON.stringify(fields, null, 2), [fields]);
 
-	const handleToggleDiscussions = useCallback(async () => {
-		if (recentDiscussions) {
-			setDiscussionsOpen((prev) => !prev);
-			return;
-		}
-		setDiscussionsOpen(true);
+	const _handleToggleDiscussions = useCallback(async () => {
+		if (recentDiscussions) return;
 		setDiscussionsLoading(true);
 		try {
 			const result = await apiFetch.post('/api/spamTags/userRecentDiscussions', {
@@ -98,10 +96,10 @@ const UserSpamEntry = (props: Props) => {
 		}
 	}, [user.id, recentDiscussions]);
 
-	const renderFieldsReport = () => {
+	const renderFieldsBan = () => {
 		if (Object.keys(fields).length === 0) return null;
 		return (
-			<div className="fields-report">
+			<div className="fields-ban">
 				<details>
 					<summary>Matched fields</summary>
 					<code>
@@ -133,110 +131,7 @@ const UserSpamEntry = (props: Props) => {
 		);
 	};
 
-	const [removeLoading, setRemoveLoading] = useState(false);
-	const handleRemoveTag = useCallback(async () => {
-		setRemoveLoading(true);
-		try {
-			await apiFetch.delete('/api/spamTags/user', { userId: user.id });
-			setUpdatedStatus(null);
-			onSpamTagRemoved?.(user.id);
-		} finally {
-			setRemoveLoading(false);
-		}
-	}, [user.id, onSpamTagRemoved]);
-
-	const renderActions = () => {
-		if (!hasTag || status === null) {
-			return (
-				<ButtonGroup>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="unreviewed"
-						onStatusChanged={handleStatusChanged}
-					/>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="confirmed-not-spam"
-						onStatusChanged={handleStatusChanged}
-					/>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="confirmed-spam"
-						onStatusChanged={handleStatusChanged}
-					/>
-				</ButtonGroup>
-			);
-		}
-		if (status === 'unreviewed') {
-			return (
-				<ButtonGroup>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="confirmed-not-spam"
-						onStatusChanged={handleStatusChanged}
-					/>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="confirmed-spam"
-						onStatusChanged={handleStatusChanged}
-					/>
-					<Button
-						minimal
-						small
-						icon="remove"
-						loading={removeLoading}
-						onClick={handleRemoveTag}
-					>
-						Remove spam tag
-					</Button>
-				</ButtonGroup>
-			);
-		}
-		if (status === 'confirmed-spam') {
-			return (
-				<ButtonGroup>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="confirmed-not-spam"
-						onStatusChanged={handleStatusChanged}
-						label="Mark as not spam"
-					/>
-					<MarkSpamStatusButton
-						userId={user.id}
-						status="unreviewed"
-						onStatusChanged={handleStatusChanged}
-					/>
-					<Button
-						minimal
-						small
-						icon="remove"
-						loading={removeLoading}
-						onClick={handleRemoveTag}
-					>
-						Remove spam tag
-					</Button>
-				</ButtonGroup>
-			);
-		}
-		return (
-			<ButtonGroup>
-				<MarkSpamStatusButton
-					userId={user.id}
-					status="confirmed-spam"
-					onStatusChanged={handleStatusChanged}
-					label="Mark as spam"
-				/>
-				<MarkSpamStatusButton
-					userId={user.id}
-					status="unreviewed"
-					onStatusChanged={handleStatusChanged}
-				/>
-				<Button minimal small icon="remove" onClick={handleRemoveTag}>
-					Remove spam tag
-				</Button>
-			</ButtonGroup>
-		);
-	};
+	const [_removeLoading, _setRemoveLoading] = useState(false);
 
 	const renderSuspiciousFiles = () => {
 		const list = fields?.suspiciousFiles;
@@ -293,6 +188,30 @@ const UserSpamEntry = (props: Props) => {
 		);
 	};
 
+	const popoverContent = useMemo(() => {
+		if (discussionsLoading) {
+			return (
+				<div className="discussions-popover-content">
+					<Spinner size={16} />
+				</div>
+			);
+		}
+		if (!recentDiscussions || recentDiscussions.length === 0) {
+			return (
+				<div className="discussions-popover-content">
+					<div className="no-discussions">No discussions found</div>
+				</div>
+			);
+		}
+		return (
+			<div className="discussions-popover-content">
+				{recentDiscussions.map((d) => (
+					<DiscussionItem key={d.id} discussion={d} />
+				))}
+			</div>
+		);
+	}, [recentDiscussions, discussionsLoading]);
+
 	const renderAffiliation = () => {
 		if (!affiliation) return null;
 		const { communitySubdomains, pubCount, discussionCount } = affiliation;
@@ -320,31 +239,117 @@ const UserSpamEntry = (props: Props) => {
 			);
 		}
 		if (pubCount > 0) parts.push(`${pubCount} pub(s)`);
-		if (discussionCount > 0) parts.push(`${discussionCount} discussion(s)`);
+		if (discussionCount > 0) {
+			parts.push(
+				<Popover
+					key="discussions"
+					placement="bottom-start"
+					aria-label="Recent discussions"
+					content={popoverContent}
+					unstable_fixed
+					lazy={false}
+				>
+					<Button
+						minimal
+						onClick={_handleToggleDiscussions}
+						small
+						className="inline-discussions-btn"
+					>
+						{discussionCount} discussion(s)
+					</Button>
+				</Popover>,
+			);
+		}
 		return (
 			<div className="affiliation">
-				<Tag minimal>
-					{parts.map((part, index) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: idcc
-						<span key={index}>
-							{part}
-							{index < parts.length - 1 ? ' · ' : ''}
-						</span>
-					))}
-				</Tag>
+				{parts.map((part, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: idcc
+					<span key={index} className="affiliation-part">
+						{part}
+						{index < parts.length - 1 ? ' \u00b7 ' : ''}
+					</span>
+				))}
 			</div>
 		);
 	};
 
-	const renderRecentDiscussions = () => {
-		if (discussionsLoading) return <Spinner size={16} />;
-		if (!recentDiscussions || recentDiscussions.length === 0) {
-			return <div className="no-discussions">No discussions found</div>;
-		}
-		return recentDiscussions.map((d) => <DiscussionItem key={d.id} discussion={d} />);
+	const renderCommunityBans = () => {
+		if (!communityBans?.length) return null;
+		return (
+			<div className="community-bans">
+				{communityBans.map((ban, index) => {
+					return (
+						<Popover
+							aria-label="Flag details"
+							key={`${ban.id}-${index}`}
+							placement="bottom"
+							content={
+								<div className="flag-detail-popover">
+									<div className="flag-detail-header">
+										<Tag intent="warning" minimal>
+											{ban.reason}
+										</Tag>
+										<span className="flag-detail-meta">
+											{ban.actorName && (
+												<>
+													banned by{' '}
+													<a
+														href={`/user/${ban.actorSlug}`}
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{ban.actorName}
+													</a>
+												</>
+											)}{' '}
+											{formatDate(ban.createdAt)}
+										</span>
+									</div>
+									{ban.reasonText && (
+										<div className="flag-detail-note">{ban.reasonText}</div>
+									)}
+									{ban.sourceCommentText && (
+										<div className="flag-detail-comment">
+											<span className="flag-detail-comment-label">
+												Banned comment
+											</span>
+											<blockquote>
+												{ban.sourceCommentText.length > 300
+													? `${ban.sourceCommentText.slice(0, 300)}...`
+													: ban.sourceCommentText}
+											</blockquote>
+											<p className="flag-detail-comment-context">
+												On{' '}
+												<a
+													href={`https://${ban.communitySubdomain}.pubpub.org/pub/${ban.sourceCommentPubSlug}`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ban.sourceCommentPubTitle}
+												</a>{' '}
+												in{' '}
+												<a
+													href={`https://${ban.communitySubdomain}.pubpub.org`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ban.communityTitle}
+												</a>
+											</p>
+										</div>
+									)}
+								</div>
+							}
+						>
+							<Button minimal small icon="flag" intent="warning">
+								{ban.communitySubdomain}: {ban.reason}
+							</Button>
+						</Popover>
+					);
+				})}
+			</div>
+		);
 	};
-
-	const discussionCount = affiliation?.discussionCount ?? 0;
 
 	return (
 		<div className="user-spam-entry-component">
@@ -355,7 +360,7 @@ const UserSpamEntry = (props: Props) => {
 				{email && <span className="email">{email}</span>}
 				{slug && <span className="slug">@{slug}</span>}
 			</div>
-			{renderFieldsReport()}
+			{renderFieldsBan()}
 			{renderSuspiciousFiles()}
 			{renderSuspiciousComments()}
 			{renderHoneypotTriggers()}
@@ -370,22 +375,15 @@ const UserSpamEntry = (props: Props) => {
 					<Tag minimal>Created: {formatDate(createdAt)}</Tag>
 					{renderAffiliation()}
 				</div>
-				<div className="actions">{renderActions()}</div>
+				<div className="actions">
+					<UserSpamActions
+						userId={user.id}
+						status={status}
+						handleAction={handleStatusChanged}
+					/>
+				</div>
 			</div>
-			<div className="discussions-section">
-				<Button
-					minimal
-					small
-					icon={discussionsOpen ? 'chevron-up' : 'chevron-down'}
-					onClick={handleToggleDiscussions}
-				>
-					{discussionsOpen ? 'Hide' : 'Show'} discussions
-					{discussionCount > 0 ? ` (${discussionCount})` : ''}
-				</Button>
-				<Collapse isOpen={discussionsOpen}>
-					<div className="discussions-list">{renderRecentDiscussions()}</div>
-				</Collapse>
-			</div>
+			{renderCommunityBans()}
 		</div>
 	);
 };

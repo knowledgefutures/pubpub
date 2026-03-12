@@ -28,6 +28,10 @@ router.post(
 	'/api/discussions',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
+		if (!requestIds.pubId) {
+			throw new BadRequestError(new Error('pubId is required.'));
+		}
+
 		const canCreate = await getCreatePermission(requestIds);
 		if (!canCreate) {
 			throw new ForbiddenError();

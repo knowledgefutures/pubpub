@@ -79,7 +79,10 @@ export const getPubForRequest = async (options: GetPubForRequestOptions) => {
 	const communityId = initialData.communityData.id;
 	const { log, end } = createLogger('getPubForRequest');
 
-	const pubData = await log('getPub', getPub({ slug, communityId }, pubGetOptions));
+	const pubData = await log(
+		'getPub',
+		getPub({ slug, communityId }, { ...pubGetOptions, communityId }),
+	);
 
 	const sanitized = await log(
 		'sanitizePub',

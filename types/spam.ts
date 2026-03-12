@@ -48,6 +48,21 @@ export type SpamUserAffiliation = {
 	discussionCount: number;
 };
 
+export type SpamUserCommunityBan = {
+	id: string;
+	communitySubdomain: string;
+	communityTitle: string | null;
+	reason: string;
+	reasonText: string | null;
+	status: string;
+	createdAt: string;
+	actorName: string | null;
+	actorSlug: string | null;
+	sourceCommentText: string | null;
+	sourceCommentPubSlug: string | null;
+	sourceCommentPubTitle: string | null;
+};
+
 export type SpamUserQuery = {
 	status?: SpamStatus[] | null;
 	offset?: number;
@@ -63,7 +78,15 @@ export type SpamUserQuery = {
 	activeBefore?: string;
 	minActivities?: number;
 	maxActivities?: number;
+	hasCommunityBan?: boolean;
+	spamFieldsFilter?: SpamFieldsFilterKey[];
 };
+
+export type SpamFieldsFilterKey =
+	| 'honeypotTriggers'
+	| 'suspiciousFiles'
+	| 'suspiciousComments'
+	| 'manuallyMarkedBy';
 
 export type RecentDiscussion = {
 	id: string;
@@ -90,6 +113,41 @@ export type HoneypotContext = {
 	pubSlug?: string;
 	content?: string;
 };
+
+export type BanReason =
+	| 'spam-content'
+	| 'hateful-language'
+	| 'harassment'
+	| 'impersonation'
+	| 'other';
+
+/** @deprecated use BanReason */
+export type UserCommunityFlagReason = BanReason;
+
+export type BanStatus = 'active' | 'retracted';
+
+/** @deprecated use BanStatus */
+export type UserCommunityFlagStatus = BanStatus;
+
+export type SerializedCommunityBan = {
+	id: string;
+	userId: string;
+	communityId: string;
+	actorId: string;
+	reason: BanReason;
+	reasonText: string | null;
+	sourceThreadCommentId: string | null;
+	spamTagId: string | null;
+	status: BanStatus;
+	createdAt: string;
+	updatedAt: string;
+	user?: { fullName: string; slug: string; email?: string };
+	actor?: { fullName: string; slug: string };
+	community?: { subdomain: string };
+};
+
+/** @deprecated use SerializedCommunityBan */
+export type SerializedUserCommunityFlag = SerializedCommunityBan;
 
 export type UserSpamTagFields = {
 	suspiciousFiles?: string[];

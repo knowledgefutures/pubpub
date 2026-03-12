@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { isUserBannedInCommunity } from 'server/communityBan/queries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { BadRequestError, ForbiddenError } from 'server/utils/errors';
 import { handleHoneypotTriggered, isHoneypotFilled } from 'server/utils/honeypot';
@@ -33,6 +34,12 @@ router.post(
 			throw new ForbiddenError();
 		}
 		const userId = (req.user?.id as string) || null;
+		if (userId && req.body.communityId) {
+			const banned = await isUserBannedInCommunity(userId, req.body.communityId);
+			if (banned) {
+				throw new ForbiddenError();
+			}
+		}
 		const options = { ...req.body, userId };
 		const newThreadComment = await createThreadComment(options);
 		return res.status(201).json(newThreadComment);
@@ -46,6 +53,13 @@ router.post(
 		const permissions = await getPermissions(requestIds);
 		if (!permissions.create) {
 			throw new ForbiddenError();
+		}
+		const formUserId = (req.user?.id as string) || null;
+		if (formUserId && req.body.communityId) {
+			const banned = await isUserBannedInCommunity(formUserId, req.body.communityId);
+			if (banned) {
+				throw new ForbiddenError();
+			}
 		}
 		if (isHoneypotFilled(req.body)) {
 			if (req.user?.id)

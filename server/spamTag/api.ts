@@ -2,6 +2,8 @@ import type { UserSpamTagFields } from 'types';
 
 import { Router } from 'express';
 
+import { notifyBannersOfCommunityBanResolution } from 'server/communityBan/queries';
+import { isUserSuperAdmin } from 'server/user/queries';
 import { ForbiddenError } from 'server/utils/errors';
 import { wrap } from 'server/wrap';
 import { expect } from 'utils/assert';
@@ -41,6 +43,16 @@ router.put(
 		if (!canUpdate) {
 			throw new ForbiddenError();
 		}
+
+		if (status === 'confirmed-spam') {
+			const targetIsSuperAdmin = await isUserSuperAdmin({ userId });
+			if (targetIsSuperAdmin) {
+				return res
+					.status(403)
+					.json({ error: 'Cannot mark a platform administrator as spam' });
+			}
+		}
+
 		const actorId = req.user?.id;
 		const actorName = (req.user as any)?.fullName ?? 'Unknown';
 		const fields =
@@ -64,6 +76,17 @@ router.put(
 				spamFields: spamTag.fields as UserSpamTagFields,
 			}),
 		);
+
+		if (status === 'confirmed-spam' || status === 'confirmed-not-spam') {
+			// notify community admins who filed bans about this user
+			const resolution =
+				status === 'confirmed-spam'
+					? 'The user has been confirmed to violate our Terms of Service and Acceptable Use Policy, and has been banned.'
+					: 'The user has been reviewed and confirmed as not violating our Terms of Service and Acceptable Use Policy. They remain banned in your community, but no further action is taken.';
+			notifyBannersOfCommunityBanResolution(userId, user, resolution).catch((err) =>
+				console.error('Failed to notify banners of resolution', err),
+			);
+		}
 
 		// should schedule purges for all communities the user has commented on, ugh
 		const communities = await getAffiliationForUserIds([userId]);
@@ -127,6 +150,8 @@ router.post('/api/spamTags/queryUsersForSpam', async (req, res) => {
 		activeBefore,
 		minActivities,
 		maxActivities,
+		hasCommunityBan,
+		spamFieldsFilter,
 	} = req.body;
 	const canQuery = await canManipulateSpamTags({
 		userId: expect(req.user).id,
@@ -149,6 +174,8 @@ router.post('/api/spamTags/queryUsersForSpam', async (req, res) => {
 		activeBefore,
 		minActivities: minActivities != null ? Number(minActivities) : undefined,
 		maxActivities: maxActivities != null ? Number(maxActivities) : undefined,
+		hasCommunityBan: !!hasCommunityBan,
+		spamFieldsFilter: Array.isArray(spamFieldsFilter) ? spamFieldsFilter : undefined,
 	});
 	return res.status(200).send(queryResult);
 });

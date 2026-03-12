@@ -36,6 +36,7 @@ export type PubEdgeIncludesOptions = {
 export type PubGetOptions = {
 	isAuth?: boolean;
 	isPreview?: boolean;
+	communityId?: string;
 	// get collection pubs for pub
 	getCollections?:
 		| boolean

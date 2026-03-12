@@ -1,4 +1,4 @@
-import type { Express, Request } from 'express';
+import type { Request } from 'express';
 
 import type * as types from 'types';
 

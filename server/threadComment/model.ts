@@ -14,7 +14,7 @@ import {
 	Table,
 } from 'sequelize-typescript';
 
-import { Commenter, User } from '../models';
+import { Commenter, Thread, User } from '../models';
 
 @Table
 export class ThreadComment extends Model<
@@ -52,4 +52,7 @@ export class ThreadComment extends Model<
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })
 	declare commenter?: Commenter;
+
+	@BelongsTo(() => Thread, { as: 'thread', foreignKey: 'threadId' })
+	declare thread?: Thread;
 }

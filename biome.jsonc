@@ -25,6 +25,12 @@
 			"!.vscode"
 		]
 	},
+	"css": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab"
+		}
+	},
 	"linter": {
 		"rules": {
 			"recommended": false,

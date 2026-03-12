@@ -4,6 +4,7 @@ import { literal, Op } from 'sequelize';
 
 import {
 	Community,
+	CommunityBan,
 	Discussion,
 	Member,
 	Pub,
@@ -45,6 +46,8 @@ const getUserWhereQuery = (options: {
 	activeBefore?: string;
 	minActivities?: number;
 	maxActivities?: number;
+	hasCommunityBan?: boolean;
+	spamFieldsFilter?: types.SpamFieldsFilterKey[];
 }) => {
 	const conditions: any[] = [];
 
@@ -102,6 +105,43 @@ const getUserWhereQuery = (options: {
 		conditions.push(literal(`${activityCountSubquery} <= ${Number(options.maxActivities)}`));
 	}
 
+	if (options.hasCommunityBan) {
+		conditions.push({
+			id: {
+				[Op.in]: literal(`(
+					SELECT DISTINCT "userId" FROM "CommunityBans"
+					WHERE "status" = 'active'
+				)`),
+			},
+		});
+	}
+
+	if (options.spamFieldsFilter?.length) {
+		const allowed = new Set<string>([
+			'honeypotTriggers',
+			'suspiciousFiles',
+			'suspiciousComments',
+			'manuallyMarkedBy',
+		]);
+		const validKeys = options.spamFieldsFilter.filter((k) => allowed.has(k));
+		if (validKeys.length > 0) {
+			// each key: fields->key exists and is a non-empty array
+			const jsonConditions = validKeys
+				.map((k) => {
+					const escaped = User.sequelize!.escape(k);
+					return `("fields"->>${escaped} IS NOT NULL AND jsonb_array_length("fields"->${escaped}) > 0)`;
+				})
+				.join(' OR ');
+			conditions.push({
+				spamTagId: {
+					[Op.in]: literal(`(
+						SELECT "id" FROM "SpamTags" WHERE ${jsonConditions}
+					)`),
+				},
+			});
+		}
+	}
+
 	if (conditions.length === 0) return {};
 	if (conditions.length === 1) return { where: conditions[0] };
 	return { where: { [Op.and]: conditions } };
@@ -142,6 +182,7 @@ export type UserSpamManagementRow =
 type SerializedSpamUserRow = Record<string, unknown> & {
 	id: string;
 	affiliation?: types.SpamUserAffiliation;
+	communityBans?: types.SpamUserCommunityBan[];
 };
 
 export const queryUsersForSpamManagement = async (
@@ -162,6 +203,8 @@ export const queryUsersForSpamManagement = async (
 		activeBefore,
 		minActivities,
 		maxActivities,
+		hasCommunityBan,
+		spamFieldsFilter,
 	} = query;
 	const hasStatusFilter = status && status.length > 0;
 	const spamTagRequired = spamTagPresence === 'present' || !!hasStatusFilter;
@@ -184,6 +227,8 @@ export const queryUsersForSpamManagement = async (
 			activeBefore,
 			minActivities,
 			maxActivities,
+			hasCommunityBan,
+			spamFieldsFilter,
 		}),
 		attributes: ['id', 'fullName', 'email', 'slug', 'createdAt'],
 		limit,
@@ -198,15 +243,96 @@ export const queryUsersForSpamManagement = async (
 	});
 	if (includeAffiliation && plain.length > 0) {
 		const userIds = plain.map((r) => r.id as string);
-		const affiliationMap = await getAffiliationForUserIds(userIds);
+		const [affiliationMap, bansMap] = await Promise.all([
+			getAffiliationForUserIds(userIds),
+			getCommunityBansForUserIds(userIds),
+		]);
 		return plain.map((r) => ({
 			...r,
 			affiliation: affiliationMap.get(r.id as string),
+			communityBans: bansMap.get(r.id as string) ?? [],
 		})) as SerializedSpamUserRow[];
 	}
 	return plain as SerializedSpamUserRow[];
 };
 
+const getCommunityBansForUserIds = async (
+	userIds: string[],
+): Promise<Map<string, types.SpamUserCommunityBan[]>> => {
+	const bans = await CommunityBan.findAll({
+		raw: true,
+		where: { userId: { [Op.in]: userIds }, status: 'active' },
+		attributes: ['id', 'userId', 'reason', 'reasonText', 'status', 'createdAt'],
+		include: [
+			{ model: Community, as: 'community', attributes: ['subdomain', 'title'] },
+			{
+				model: User,
+				as: 'actor',
+				attributes: ['id', 'fullName', 'slug'],
+			},
+			// very elegant
+			{
+				model: ThreadComment,
+				as: 'sourceThreadComment',
+				attributes: ['id', 'text'],
+				include: [
+					{
+						model: Thread,
+						as: 'thread',
+						attributes: ['id'],
+						include: [
+							{
+								model: Discussion,
+								as: 'discussion',
+								attributes: ['id'],
+								include: [
+									{
+										model: Pub,
+										as: 'pub',
+										attributes: ['slug', 'title'],
+									},
+								],
+							},
+						],
+					},
+				],
+			},
+		],
+	});
+
+	const map = new Map<string, types.SpamUserCommunityBan[]>();
+	for (const r of bans) {
+		const raw = r as any;
+		// this raw stuff is a bit rough, but it's much more performant with these deeply nested includes
+		const commentText = raw['sourceThreadComment.text'] as string | undefined;
+		const entry: types.SpamUserCommunityBan = {
+			id: raw.id,
+			communityTitle: raw['community.title'] ?? null,
+			communitySubdomain: raw['community.subdomain'] ?? 'unknown',
+			reason: raw.reason,
+			reasonText: raw.reasonText ?? null,
+			status: raw.status,
+			createdAt: raw.createdAt,
+			actorName: raw['actor.fullName'] ?? null,
+			actorSlug: raw['actor.slug'] ?? null,
+			sourceCommentText: commentText || null,
+			sourceCommentPubSlug: raw['sourceThreadComment.thread.discussion.pub.slug'] ?? null,
+			sourceCommentPubTitle: raw['sourceThreadComment.thread.discussion.pub.title'] ?? null,
+		};
+		const existing = map.get(raw.userId);
+		if (existing) {
+			existing.push(entry);
+		} else {
+			map.set(raw.userId, [entry]);
+		}
+	}
+	return map;
+};
+
+/**
+ * for searching by community in the user dashboard
+ * not really the same as what we usually call "CommunityAffiliation", which only looks at membership and pub attribution
+ */
 export const getAffiliationForUserIds = async (
 	userIds: string[],
 ): Promise<Map<string, types.SpamUserAffiliation>> => {

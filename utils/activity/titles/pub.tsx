@@ -2,6 +2,7 @@ import type { TitleRenderer } from 'client/utils/activity/types';
 import type {
 	CollectionPubCreatedActivityItem,
 	CollectionPubRemovedActivityItem,
+	CommunityBanCreatedActivityItem,
 	FacetsActivityItem,
 	MemberActivityItem,
 	PubActivityItem,

@@ -6,14 +6,17 @@ import { Button } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 
+export type SpamAction = SpamStatus | 'remove';
+export type SpamActionHandler = (status: SpamAction) => unknown;
+
 type Props = {
 	userId: string;
-	status: SpamStatus;
-	onStatusChanged: (status: SpamStatus) => unknown;
+	action: SpamAction;
+	handleAction: SpamActionHandler;
 	label?: string;
 };
 
-const propsForStatuses: Record<SpamStatus, Partial<React.ComponentProps<typeof Button>>> = {
+const propsForActions: Record<SpamAction, Partial<React.ComponentProps<typeof Button>>> = {
 	'confirmed-not-spam': {
 		icon: 'tick',
 		children: 'Not spam',
@@ -27,18 +30,29 @@ const propsForStatuses: Record<SpamStatus, Partial<React.ComponentProps<typeof B
 		icon: 'undo',
 		children: 'Mark unreviewed',
 	},
+	remove: {
+		icon: 'remove',
+		children: 'Remove spam tag',
+	},
 };
 
 const MarkSpamStatusButton = (props: Props) => {
-	const { status, userId, onStatusChanged, label } = props;
+	const { action, userId, handleAction, label } = props;
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleClick = useCallback(async () => {
 		setIsLoading(true);
-		await apiFetch.put('/api/spamTags/user', { status, userId });
+
+		if (action === 'remove') {
+			await apiFetch.delete('/api/spamTags/user', { userId });
+		} else {
+			await apiFetch.put('/api/spamTags/user', { status: action, userId });
+		}
 		setIsLoading(false);
-		onStatusChanged(status);
-	}, [status, userId, onStatusChanged]);
+		handleAction(action);
+	}, [action, userId, handleAction]);
+
+	const buttonProps = propsForActions[action];
 
 	return (
 		<Button
@@ -46,8 +60,8 @@ const MarkSpamStatusButton = (props: Props) => {
 			small
 			loading={isLoading}
 			onClick={handleClick}
-			{...propsForStatuses[status]}
-			children={label ?? propsForStatuses[status]?.children}
+			{...buttonProps}
+			children={label ?? buttonProps?.children}
 		/>
 	);
 };

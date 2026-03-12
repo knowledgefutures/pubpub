@@ -1,4 +1,4 @@
-import type { Discussion, SanitizedPubData } from 'types';
+import type { DefinitelyHas, Discussion, SanitizedPubData } from 'types';
 
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
@@ -20,7 +20,8 @@ const sanitizeHashes = (pubData, activePermissions) => {
 const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease: boolean) => {
 	const shownVisibilityAccess = isRelease ? 'public' : 'members';
 	return discussions.filter(
-		(discussion) => discussion.visibility?.access === shownVisibilityAccess,
+		(discussion): discussion is DefinitelyHas<Discussion, 'visibility'> =>
+			discussion.visibility?.access === shownVisibilityAccess,
 	);
 };
 

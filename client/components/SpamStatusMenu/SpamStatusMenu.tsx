@@ -1,10 +1,14 @@
+import type { SpamAction } from 'client/containers/SuperAdminDashboard/UserSpam/MarkSpamStatusButton';
 import type { SpamStatus } from 'types';
 
 import React, { useCallback, useState } from 'react';
 
+import UserSpamActions from 'client/containers/SuperAdminDashboard/UserSpam/UserSpamActions';
 import { apiFetch } from 'client/utils/apiFetch';
 import { Icon } from 'components';
-import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
+import { MenuButton } from 'components/Menu';
+
+import './SpamStatusMenu.scss';
 
 type Props = {
 	userId: string;
@@ -13,22 +17,21 @@ type Props = {
 	small?: boolean;
 };
 
-const statusLabels: Record<SpamStatus, { label: string; icon: string }> = {
-	'confirmed-spam': { label: 'Mark as spam', icon: 'cross' },
-	'confirmed-not-spam': { label: 'Mark as not spam', icon: 'tick' },
-	unreviewed: { label: 'Mark as unreviewed', icon: 'undo' },
-};
-
 const SpamStatusMenu = (props: Props) => {
 	const { userId, currentStatus = null, onStatusChanged, small = true } = props;
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleSetStatus = useCallback(
-		async (status: SpamStatus) => {
+	const handleAction = useCallback(
+		async (action: SpamAction) => {
 			setIsLoading(true);
+
 			try {
-				await apiFetch.put('/api/spamTags/user', { status, userId });
-				onStatusChanged?.(status);
+				if (action === 'remove') {
+					await apiFetch.delete('/api/spamTags/user', { userId });
+				} else {
+					await apiFetch.put('/api/spamTags/user', { status: action, userId });
+				}
+				onStatusChanged?.(action === 'remove' ? null : action);
 			} finally {
 				setIsLoading(false);
 			}
@@ -36,41 +39,20 @@ const SpamStatusMenu = (props: Props) => {
 		[userId, onStatusChanged],
 	);
 
-	const handleRemoveTag = useCallback(async () => {
-		setIsLoading(true);
-		try {
-			await apiFetch.delete('/api/spamTags/user', { userId });
-			onStatusChanged?.(null);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [userId, onStatusChanged]);
-
 	return (
 		<MenuButton
 			aria-label="Spam actions"
 			buttonContent="Spam"
+			className="spam-menu"
 			buttonProps={{
 				icon: <Icon icon="shield" iconSize={small ? 12 : 14} />,
 				minimal: true,
 				small,
 				loading: isLoading,
+				className: 'spam-button',
 			}}
 		>
-			{(Object.keys(statusLabels) as SpamStatus[]).map((status) => (
-				<MenuItem
-					key={status}
-					text={statusLabels[status].label}
-					icon={status === currentStatus ? 'tick' : 'blank'}
-					onClick={() => handleSetStatus(status)}
-				/>
-			))}
-			{currentStatus && (
-				<>
-					<MenuItemDivider />
-					<MenuItem text="Remove spam tag" icon="trash" onClick={handleRemoveTag} />
-				</>
-			)}
+			<UserSpamActions userId={userId} status={currentStatus} handleAction={handleAction} />
 		</MenuButton>
 	);
 };

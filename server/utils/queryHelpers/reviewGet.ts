@@ -1,6 +1,6 @@
 import { Pub, Reviewer, ReviewNew } from 'server/models';
 
-import { baseAuthor, baseThread, baseVisibility } from './util';
+import { authorIncludes, baseVisibility, threadIncludes } from './util';
 
 export default async (pubSlug: string, reviewNumber: number, communityId: string) => {
 	const sanitizedSlug = pubSlug.toLowerCase();
@@ -17,9 +17,9 @@ export default async (pubSlug: string, reviewNumber: number, communityId: string
 			pubId: pubData.id,
 		},
 		include: [
-			...baseAuthor,
+			...authorIncludes(communityId),
 			...baseVisibility,
-			...baseThread,
+			...threadIncludes(communityId),
 			{ model: Reviewer, as: 'reviewers' },
 		],
 	});

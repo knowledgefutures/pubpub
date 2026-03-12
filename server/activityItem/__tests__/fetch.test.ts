@@ -9,6 +9,7 @@ import {
 	createCollectionActivityItem,
 	createCollectionPubActivityItem,
 	createCollectionUpdatedActivityItem,
+	createCommunityBanCreatedActivityItem,
 	createCommunityCreatedActivityItem,
 	createCommunityUpdatedActivityItem,
 	createMemberCreatedActivityItem,
@@ -155,6 +156,34 @@ describe('fetchActivityItems', () => {
 			},
 		});
 		expectAssociationIds(associations, { community: [community.id], user: [actor.id] });
+	});
+
+	it('fetches items for community-ban-created', async () => {
+		const { actor, loudmouth, community } = models;
+		await createCommunityBanCreatedActivityItem({
+			actorId: actor.id,
+			communityId: community.id,
+			bannedUserId: loudmouth.id,
+		});
+		const {
+			activityItems: [banItem],
+			associations,
+		} = await fetchActivityItems({
+			scope: { communityId: community.id },
+		});
+		expect(banItem).toMatchObject({
+			kind: 'community-ban-created',
+			actorId: actor.id,
+			communityId: community.id,
+			payload: {
+				userId: loudmouth.id,
+				community: { title: community.title },
+			},
+		});
+		expectAssociationIds(associations, {
+			community: [community.id],
+			user: [actor.id, loudmouth.id],
+		});
 	});
 
 	it('fetches items for member-created, member-updated, and member-removed across pub, collection, and community membership', async () => {

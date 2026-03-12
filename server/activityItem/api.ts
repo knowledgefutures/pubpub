@@ -1,4 +1,4 @@
-import type { ActivityFilter, ScopeId } from 'types';
+import type { ActivityFilter, ActivityItemKind, ScopeId } from 'types';
 
 import { Router } from 'express';
 
@@ -9,6 +9,8 @@ import { wrap } from 'server/wrap';
 import { fetchActivityItems } from './fetch';
 
 export const router = Router();
+
+const moderationKinds: ActivityItemKind[] = ['community-ban-created', 'community-ban-retracted'];
 
 const unwrapRequest = (req) => {
 	const { body, user } = req;
@@ -27,14 +29,15 @@ export const activityItemRouter = Router().post(
 	wrap(async (req, res) => {
 		const { scope, offset, limit, userId, filters } = unwrapRequest(req);
 		const {
-			activePermissions: { canView },
+			activePermissions: { canView, canAdminCommunity },
 		} = await getScope({ loginId: userId, ...scope });
 
 		if (!canView) {
 			throw new ForbiddenError();
 		}
 
-		const result = await fetchActivityItems({ limit, offset, scope, filters });
+		const excludeKinds = canAdminCommunity ? undefined : moderationKinds;
+		const result = await fetchActivityItems({ limit, offset, scope, filters, excludeKinds });
 		res.status(200).json(result);
 	}),
 );

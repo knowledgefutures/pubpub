@@ -17,6 +17,7 @@ type Props = {
 const UserCreate = (props: Props) => {
 	const { signupData } = props;
 	const altchaRef = useRef<import('components').AltchaRef>(null);
+	const formStartedAtMsRef = useRef(Date.now());
 	const [postUserIsLoading, setPostUserIsLoading] = useState(false);
 	const [postUserError, setPostUserError] = useState<string | undefined>(undefined);
 	const [subscribed, setSubscribed] = useState(false);
@@ -44,8 +45,8 @@ const UserCreate = (props: Props) => {
 		evt.preventDefault();
 		if (!acceptTerms) return;
 		const formData = new FormData(evt.currentTarget);
-		const confirmPwHoneypot = formData.get('confirmPassword') as string;
 		const websiteHoneypot = formData.get('website') as string;
+		const passwordHoneypot = formData.get('confirmPassword') as string;
 		setPostUserIsLoading(true);
 		setPostUserError(undefined);
 		try {
@@ -61,14 +62,14 @@ const UserCreate = (props: Props) => {
 				title,
 				bio,
 				location,
-				// useful to check
-				website: websiteHoneypot,
 				orcid,
 				github,
 				twitter,
 				facebook,
 				googleScholar,
-				_honeypot: confirmPwHoneypot || websiteHoneypot,
+				_honeypot: websiteHoneypot,
+				_passwordHoneypot: passwordHoneypot,
+				_formStartedAtMs: formStartedAtMsRef.current,
 				altcha: altchaPayload,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			};

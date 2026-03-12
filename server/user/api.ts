@@ -14,6 +14,33 @@ import { createUser, getSuggestedEditsUserInfo, updateUser } from './queries';
 
 export const router = Router();
 
+const ACCOUNT_RESTRICTED_MESSAGE =
+	'Your account has been restricted. If you believe this is an error, please contact hello@pubpub.org.';
+const FAST_HONEYPOT_WINDOW_MS = 5_000;
+
+const getFastHoneypotSignal = ({
+	honeypot,
+	formStartedAtMs,
+	nowMs = Date.now(),
+}: {
+	honeypot: unknown;
+	formStartedAtMs: unknown;
+	nowMs?: number;
+}): string | null => {
+	const honeypotValue = typeof honeypot === 'string' ? honeypot.trim() : '';
+
+	if (honeypotValue.length === 0) return null;
+
+	const parsedFormStartedAtMs = Number(formStartedAtMs);
+
+	if (!Number.isFinite(parsedFormStartedAtMs)) return null;
+
+	const elapsedMs = nowMs - parsedFormStartedAtMs;
+	if (elapsedMs < 0 || elapsedMs > FAST_HONEYPOT_WINDOW_MS) return null;
+
+	return honeypotValue;
+};
+
 const getRequestIds = (req) => {
 	const user = req.user || {};
 	return {
@@ -35,18 +62,24 @@ router.post('/api/users', async (req, res) => {
 		if (!ok) {
 			return res.status(400).json('Please complete the verification and try again.');
 		}
-		const { altcha, _honeypot, website, ...body } = { ...req.body };
+		const { altcha, _honeypot, _passwordHoneypot, _formStartedAtMs, ...body } = { ...req.body };
+		const fastHoneypotSignal = getFastHoneypotSignal({
+			honeypot: _passwordHoneypot,
+			formStartedAtMs: _formStartedAtMs,
+		});
+
 		const newUser = await createUser(body);
-		if (isHoneypotFilled(req.body)) {
+		if (fastHoneypotSignal || _honeypot) {
 			await handleHoneypotTriggered(
 				newUser.id,
 				'create-user',
-				req.body.website ?? 'confirmPassword honeypot',
+				_honeypot || 'confirmPassword + very fast',
 				{
 					communitySubdomain: req.headers.host?.split('.')[0],
 					content: req.body.fullName ? `name: ${req.body.fullName}` : undefined,
 				},
 			);
+			return res.status(403).json(ACCOUNT_RESTRICTED_MESSAGE);
 		}
 		passport.authenticate('local')(req, res, () => {
 			const hashedUserId = getHashedUserId(newUser);

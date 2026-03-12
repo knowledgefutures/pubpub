@@ -34,6 +34,11 @@ const Honeypot = (props: HoneypotProps) => {
 					name={name}
 					autoComplete="off"
 					style={{ width: 80, fontSize: 11, padding: '1px 4px' }}
+					data-1p-ignore
+					data-lpignore="true"
+					data-bwignore
+					data-form-type="other"
+					data-protonpass-ignore
 				/>
 			</label>
 		);

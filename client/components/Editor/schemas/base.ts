@@ -268,15 +268,22 @@ export const baseMarks = {
 			},
 		],
 		toDOM: (node) => {
-			/* Links seem to be recieving a target attr that is a dom element */
+			/* Links seem to be receiving a target attr that is a dom element */
 			/* coming from the wrong source in some interfaces. This ensures */
 			/* only strings can be a target attr. */
-			const attrs = node.attrs;
+			const attrs = { ...node.attrs };
 			if (attrs.target && typeof attrs.target !== 'string') {
 				attrs.target = null;
 			}
+
 			const { pubEdgeId, ...restAttrs } = attrs;
-			return ['a', { 'data-pub-edge-id': pubEdgeId, ...restAttrs }] as DOMOutputSpec;
+			return [
+				'a',
+				{
+					'data-pub-edge-id': pubEdgeId,
+					...restAttrs,
+				},
+			] as DOMOutputSpec;
 		},
 	},
 	sub: {

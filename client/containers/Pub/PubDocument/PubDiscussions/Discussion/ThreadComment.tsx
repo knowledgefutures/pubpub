@@ -20,6 +20,8 @@ import { buttons, FormattingBar } from 'components/FormattingBar';
 import { usePageContext } from 'utils/hooks';
 import { getPartsOfFullName } from 'utils/names';
 
+import { commentEditorCustomMarks } from './commentEditorMarks';
+
 import './threadComment.scss';
 
 import type { CommunityBan } from 'server/models';
@@ -185,6 +187,7 @@ const ThreadComment = (props: Props) => {
 				key={key}
 				isReadOnly={isReadOnly}
 				initialContent={threadCommentData.content}
+				customMarks={commentEditorCustomMarks}
 				onChange={onChange}
 			/>
 		);

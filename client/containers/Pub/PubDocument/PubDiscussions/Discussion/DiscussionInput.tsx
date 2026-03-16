@@ -18,6 +18,8 @@ import { buttons, FormattingBar } from 'components/FormattingBar';
 import { usePubContext } from 'containers/Pub/pubHooks';
 import { usePageContext } from 'utils/hooks';
 
+import { commentEditorCustomMarks } from './commentEditorMarks';
+
 type OwnProps = {
 	discussionData: any;
 	isPubBottomInput?: boolean;
@@ -237,6 +239,7 @@ const DiscussionInput = (props: Props) => {
 						<Editor
 							key={editorKey}
 							placeholder={getPlaceholderText(isNewThread, isPubBottomInput)}
+							customMarks={commentEditorCustomMarks}
 							onChange={(editorChangeObject) => {
 								setChangeObject(editorChangeObject);
 							}}

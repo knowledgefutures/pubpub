@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { Discussion, Thread, ThreadComment } from 'server/models';
+import { Discussion, SpamTag, Thread, ThreadComment, User } from 'server/models';
 import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const alreadyAppliedManagedLabel = {
@@ -473,4 +473,31 @@ it('lets admins remove managed labels from discussions', async () => {
 		.expect(200);
 
 	expect(discussion.labels).toEqual(targetLabels);
+});
+
+it('bans new accounts that post discussion starter comments with links', async () => {
+	const { guest, releasePub } = models;
+	const agent = await login(guest);
+	await agent
+		.post('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				text: 'Visit https://spam.example now',
+				visibilityAccess: 'public',
+			}),
+		)
+		.expect(403);
+	const user = await User.findOne({
+		where: { id: guest.id },
+		include: [{ model: SpamTag, as: 'spamTag' }],
+	});
+	expect(user?.spamTag?.status).toEqual('confirmed-spam');
+	const newAccountLinkCommentTriggers = (user?.spamTag?.fields as any)
+		?.newAccountLinkCommentTriggers;
+	expect(newAccountLinkCommentTriggers?.length).toEqual(1);
+	expect(newAccountLinkCommentTriggers?.[0]).toMatchObject({
+		source: 'discussion',
+		value: 'https://spam.example',
+	});
 });

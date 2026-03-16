@@ -149,9 +149,19 @@ export type SerializedCommunityBan = {
 /** @deprecated use SerializedCommunityBan */
 export type SerializedUserCommunityFlag = SerializedCommunityBan;
 
+export type NewAccountLinkCommentTriggerSource = 'discussion' | 'thread-comment';
+
+export type NewAccountLinkCommentTrigger = {
+	source: NewAccountLinkCommentTriggerSource;
+	value: string;
+	accountAgeMinutes: number;
+	triggeredAt?: string;
+};
+
 export type UserSpamTagFields = {
 	suspiciousFiles?: string[];
 	suspiciousComments?: string[];
+	newAccountLinkCommentTriggers?: NewAccountLinkCommentTrigger[];
 	honeypotTriggers?: {
 		honeypot: HoneypotTrigger;
 		value: string;

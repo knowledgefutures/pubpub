@@ -1,3 +1,4 @@
+import { SpamTag, User } from 'server/models';
 import { expectCreatedActivityItem, login, modelize, setup, teardown } from 'stubstub';
 
 const models = modelize`
@@ -237,4 +238,31 @@ it('allows admins to edit users comments', async () => {
 		)
 		.expect(200);
 	expect(threadComment.text).toEqual("I eat bees. They're delicious");
+});
+
+it('bans new accounts that post thread comments with links', async () => {
+	const { guest, publicDiscussion, publicThread } = models;
+	const agent = await login(guest);
+	await agent
+		.post('/api/threadComment')
+		.send(
+			createThreadComment({
+				discussion: publicDiscussion,
+				thread: publicThread,
+				text: 'Visit https://spam.example now',
+			}),
+		)
+		.expect(403);
+	const user = await User.findOne({
+		where: { id: guest.id },
+		include: [{ model: SpamTag, as: 'spamTag' }],
+	});
+	expect(user?.spamTag?.status).toEqual('confirmed-spam');
+	const newAccountLinkCommentTriggers = (user?.spamTag?.fields as any)
+		?.newAccountLinkCommentTriggers;
+	expect(newAccountLinkCommentTriggers?.length).toEqual(1);
+	expect(newAccountLinkCommentTriggers?.[0]).toMatchObject({
+		source: 'thread-comment',
+		value: 'https://spam.example',
+	});
 });

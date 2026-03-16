@@ -51,7 +51,10 @@ type UserBanSlackOptions = {
 };
 
 export const postToSlackAboutUserBan = async (opts: UserBanSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (process.env.NODE_ENV === 'test') {
+		return;
+	}
+
 	const { userName, userSlug, userAvatar, reason, actorName } = opts;
 	const profileUrl = getUserProfileUrl(userSlug);
 	const dashUrl = getSpamDashUrl(userName);

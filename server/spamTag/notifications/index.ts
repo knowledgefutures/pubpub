@@ -22,6 +22,7 @@ export type SpamEvent =
 	| 'new-spam-tag'
 	| 'suspicious-upload'
 	| 'honeypot-ban'
+	| 'new-account-link-comment-ban'
 	| 'manual-ban'
 	| 'spam-lifted'
 	| 'community-flag'
@@ -96,6 +97,7 @@ type Contexts = {
 	'community-flag': CommunityFlagContext;
 	'community-flag-retracted': CommunityFlagRetractedContext;
 	'community-flag-resolved': CommunityFlagResolvedContext;
+	'new-account-link-comment-ban': NewSpamTagContext;
 };
 
 const handlers = {
@@ -122,6 +124,18 @@ const handlers = {
 			}),
 	],
 	'honeypot-ban': [(ctx) => sendSpamBanEmail({ toEmail: ctx.userEmail, userName: ctx.userName })],
+	'new-account-link-comment-ban': [
+		(ctx) => sendSpamBanEmail({ toEmail: ctx.userEmail, userName: ctx.userName }),
+		(ctx) => sendBanDevEmail({ userEmail: ctx.userEmail, userName: ctx.userName }),
+		(ctx) =>
+			postToSlackAboutUserBan({
+				userId: ctx.userId,
+				userName: ctx.userName,
+				userSlug: ctx.userSlug,
+				userAvatar: ctx.userAvatar,
+				reason: ctx.spamFields,
+			}),
+	],
 	'manual-ban': [
 		(ctx) =>
 			postToSlackAboutUserBan({

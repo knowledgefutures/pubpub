@@ -10,10 +10,6 @@ import { communitySpamPhrases } from './phrases';
 
 const CURRENT_SPAM_SCORE_VERSION = 3;
 
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
-
 type SpamField<T> = {
 	extract: (value: T) => Maybe<string>;
 	isProse: boolean;
@@ -165,10 +161,6 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 	};
 };
 
-// ---------------------------------------------------------------------------
-// signal configuration
-// ---------------------------------------------------------------------------
-
 type SignalContext = {
 	user: User;
 	isAffiliated: boolean;
@@ -196,14 +188,12 @@ const spamSignals: SpamSignal[] = [
 			);
 		},
 	},
-
 	{
 		name: 'website-not-affiliated',
 		score: 3,
 		test: (ctx) => !!ctx.user.website && !ctx.isAffiliated,
 		evidence: (ctx) => [ctx.user.website!],
 	},
-
 	{
 		name: 'website-added-quickly',
 		score: 3,
@@ -215,14 +205,12 @@ const spamSignals: SpamSignal[] = [
 		},
 		evidence: (ctx) => [ctx.user.website!],
 	},
-
 	{
 		name: 'bio-contains-url',
 		score: 2,
 		test: (ctx) => ctx.bioUrls.length > 0,
 		evidence: (ctx) => ctx.bioUrls,
 	},
-
 	{
 		name: 'gambling-website',
 		score: 3,
@@ -230,14 +218,12 @@ const spamSignals: SpamSignal[] = [
 			!!ctx.user.website && GAMBLING_URL_PATTERNS.some((p) => p.test(ctx.user.website!)),
 		evidence: (ctx) => [ctx.user.website!],
 	},
-
 	{
 		name: 'website-with-88',
 		score: 2,
 		test: (ctx) => !!ctx.user.website && ctx.user.website.includes('88'),
 		evidence: (ctx) => [ctx.user.website!],
 	},
-
 	{
 		name: 'vietnamese-gambling-bio',
 		score: 3,
@@ -247,14 +233,12 @@ const spamSignals: SpamSignal[] = [
 			return VIETNAMESE_SPAM_PATTERNS.filter((p) => p.test(bio)).map((p) => p.source);
 		},
 	},
-
 	{
 		name: 'spam-slug-pattern',
 		score: 2,
 		test: (ctx) => SPAM_SLUG_PATTERNS.some((p) => p.test(ctx.user.slug)),
 		evidence: (ctx) => [ctx.user.slug],
 	},
-
 	{
 		name: 'disposable-email',
 		score: 2,
@@ -264,7 +248,6 @@ const spamSignals: SpamSignal[] = [
 		},
 		evidence: (ctx) => [ctx.user.email],
 	},
-
 	{
 		name: 'bio-promotes-website',
 		score: 2,
@@ -277,7 +260,6 @@ const spamSignals: SpamSignal[] = [
 		test: (ctx) => ctx.commentData.commentsWithLinks > 0 && !ctx.isAffiliated,
 		evidence: (ctx) => ctx.commentData.linkUrls.slice(0, 10),
 	},
-
 	{
 		name: 'all-comments-have-links',
 		score: 2,
@@ -288,14 +270,12 @@ const spamSignals: SpamSignal[] = [
 			`${ctx.commentData.commentsWithLinks}/${ctx.commentData.totalComments} comments`,
 		],
 	},
-
 	{
 		name: 'template-spam-with-links',
 		score: 2,
 		test: (ctx) => ctx.commentData.commentsWithLinksAndTemplates > 0,
 		evidence: (ctx) => ctx.commentData.templateMatches.slice(0, 10),
 	},
-
 	{
 		name: '-edu-email',
 		score: -10,
@@ -310,10 +290,6 @@ const spamSignals: SpamSignal[] = [
 		evidence: (ctx) => [ctx.user.bio!],
 	},
 ];
-
-// ---------------------------------------------------------------------------
-// report computation
-// ---------------------------------------------------------------------------
 
 export type SignalHit = {
 	name: string;
@@ -396,8 +372,6 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 	};
 };
 
-// the original synchronous scoring for backward compatibility with existing callers
-// that don't need the full async analysis
 export const getSuspectedUserSpamVerdict = (user: User): types.SpamVerdict<SpamTag> => {
 	const { score, fields } = getProfilePhraseScore(user);
 	return {

@@ -61,4 +61,7 @@ export const communitySpamPhrases = [
 	'free quotes',
 	'affordable',
 	'apk',
+	'search engine optimization',
+	'building company',
+	'construction company',
 ];

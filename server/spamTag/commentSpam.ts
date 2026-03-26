@@ -65,6 +65,10 @@ export const extractLinksFromContent = (content: DocJson | null | undefined): st
 		contentTree.descendants((node) => {
 			node.marks.forEach((mark) => {
 				if (mark.type.name === 'link') {
+					// don't push relative urls
+					if (mark.attrs.href.startsWith('/')) {
+						return;
+					}
 					links.push(mark);
 				}
 			});

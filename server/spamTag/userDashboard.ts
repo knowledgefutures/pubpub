@@ -413,12 +413,13 @@ export const getAffiliationForUserIds = async (
 
 export const getRecentDiscussionsForUser = async (
 	userId: string,
+	limit = 3,
 ): Promise<types.RecentDiscussion[]> => {
 	const discussions = await Discussion.findAll({
 		where: { userId },
 		attributes: ['id', 'title', 'createdAt'],
 		order: [['createdAt', 'DESC']],
-		limit: 3,
+		limit,
 		include: [
 			{
 				model: Pub,
@@ -453,6 +454,52 @@ export const getRecentDiscussionsForUser = async (
 			pubSlug: json.pub?.slug ?? null,
 			communitySubdomain: json.pub?.community?.subdomain ?? null,
 			firstCommentText: json.thread?.comments?.[0]?.text ?? null,
+		};
+	});
+};
+
+export const getRecentDiscussionsForUserRaw = async (userId: string, limit = 3) => {
+	const comments = await ThreadComment.findAll({
+		where: { userId },
+		attributes: ['id', 'text', 'content', 'createdAt'],
+		order: [['createdAt', 'DESC']],
+		limit,
+		include: [
+			{
+				model: Thread,
+				as: 'thread',
+				attributes: ['id'],
+				include: [
+					{
+						model: Discussion,
+						as: 'discussion',
+						attributes: ['id'],
+						include: [
+							{
+								model: Pub,
+								as: 'pub',
+								attributes: ['slug', 'title'],
+							},
+						],
+					},
+				],
+			},
+		],
+		raw: true,
+	});
+
+	return comments.map((c) => {
+		const json = c as any;
+		return {
+			id: json.id as string,
+			text: json.text as string,
+			content: json.content as types.DocJson,
+			createdAt: json.createdAt as string,
+			discussionId: (json['pub.thread.discussion.id'] as string) ?? null,
+			pubTitle: (json['pub.thread.discussion.pub.title'] as string) ?? null,
+			pubSlug: (json['pub.thread.discussion.pub.slug'] as string) ?? null,
+			communitySubdomain:
+				(json['pub.thread.discussion.pub.community.subdomain'] as string) ?? null,
 		};
 	});
 };

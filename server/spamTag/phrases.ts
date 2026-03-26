@@ -5,6 +5,7 @@ export const communitySpamPhrases = [
 	'lottery',
 	'slots',
 	'escorts',
+	'escort',
 	'stripper',
 	'porn',
 	'naked',
@@ -64,4 +65,6 @@ export const communitySpamPhrases = [
 	'search engine optimization',
 	'building company',
 	'construction company',
+	'full movie',
+	'personal injury lawyer',
 ];

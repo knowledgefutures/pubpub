@@ -2,8 +2,18 @@ import type * as types from 'types';
 import type { UserSpamTagFields } from 'types';
 
 import mergeWith from 'lodash.mergewith';
+import { Op } from 'sequelize';
 
-import { SpamTag, User } from 'server/models';
+import {
+	Collection,
+	CollectionAttribution,
+	Community,
+	Member,
+	Pub,
+	PubAttribution,
+	SpamTag,
+	User,
+} from 'server/models';
 import { deleteSessionsForUser } from 'server/utils/session';
 import { expect } from 'utils/assert';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
@@ -121,4 +131,65 @@ export const removeSpamTagFromUser = async (userId: string) => {
 		{ where: { id: userId }, limit: 1, individualHooks: false },
 	);
 	await spamTag.destroy();
+};
+
+const communityInclude = [
+	{
+		model: Community,
+		as: 'community',
+		attributes: ['subdomain', 'domain'],
+		include: [{ model: SpamTag, as: 'spamTag', where: { status: 'not-spam' } }],
+	},
+];
+
+/**
+ * gets all affiliations for a user with communities that aren't marked as spam
+ */
+export const getLegitimateAffiliationsForUser = async (userId: string) => {
+	const [members, collectionAttributions, pubAttributions] = await Promise.all([
+		Member.findAll({
+			raw: true,
+			where: { userId },
+			limit: 1,
+			attributes: ['userId', 'communityId'],
+			include: communityInclude,
+			// include: [{ model: Community, as: 'community', attributes: ['subdomain', 'domain'] }],
+		}),
+		CollectionAttribution.findAll({
+			raw: true,
+			limit: 1,
+			where: { userId },
+			attributes: ['userId'],
+			include: [
+				{
+					model: Collection,
+					as: 'collection',
+					attributes: ['communityId'],
+					include: communityInclude,
+					// include: [
+					// 	{ model: Community, as: 'community', attributes: ['subdomain', 'domain'] },
+					// ],
+				},
+			],
+		}),
+		PubAttribution.findAll({
+			raw: true,
+			limit: 1,
+			where: { userId },
+			attributes: ['userId'],
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					attributes: ['communityId'],
+					include: communityInclude,
+					// include: [
+					// 	{ model: Community, as: 'community', attributes: ['subdomain', 'domain'] },
+					// ],
+				},
+			],
+		}),
+	]);
+
+	return members?.length > 0 || collectionAttributions?.length > 0 || pubAttributions?.length > 0;
 };

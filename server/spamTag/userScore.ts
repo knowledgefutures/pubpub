@@ -7,6 +7,8 @@ import { type SpamTag, ThreadComment, type User } from 'server/models';
 import { extractLinksFromContent, extractUrlsFromString } from './commentSpam';
 import { containsLink, matchesCommentSpamTemplate } from './contentAnalysis';
 import { communitySpamPhrases } from './phrases';
+import { getRecentDiscussionsForUserRaw } from './userDashboard';
+import { getLegitimateAffiliationsForUser } from './userQueries';
 
 const CURRENT_SPAM_SCORE_VERSION = 3;
 
@@ -111,20 +113,17 @@ const bioMatchesWebsiteDomain = (
 	}
 };
 
-type UserCommentData = {
+export type UserCommentData = {
 	totalComments: number;
 	commentsWithLinks: number;
 	linkUrls: string[];
 	templateMatches: string[];
 	commentsWithLinksAndTemplates: number;
+	recentComments: Awaited<ReturnType<typeof getRecentDiscussionsForUserRaw>>;
 };
 
 const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
-	const comments = await ThreadComment.findAll({
-		where: { userId },
-		attributes: ['content', 'text'],
-		limit: 200,
-	});
+	const comments = await getRecentDiscussionsForUserRaw(userId, 200);
 
 	let commentsWithLinks = 0;
 	let commentsWithLinksAndTemplates = 0;
@@ -153,6 +152,7 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 	}
 
 	return {
+		recentComments: comments.slice(0, 5),
 		totalComments: comments.length,
 		commentsWithLinks,
 		linkUrls: [...new Set(allLinkUrls)],
@@ -171,10 +171,19 @@ type SignalContext = {
 
 type SpamSignal = {
 	name: string;
-	score: number;
+	score: number | ((ctx: SignalContext) => number);
 	test: (ctx: SignalContext) => boolean;
 	evidence: (ctx: SignalContext) => string[];
 };
+
+const academicallySoundingPhrases = [
+	'professor',
+	'graduated',
+	'is a',
+	'degree',
+	'bachelor',
+	'master',
+];
 
 const spamSignals: SpamSignal[] = [
 	{
@@ -190,13 +199,22 @@ const spamSignals: SpamSignal[] = [
 	},
 	{
 		name: 'website-not-affiliated',
-		score: 3,
+		score: (ctx) => {
+			let score = 3;
+
+			// it's MORE suspicious if the user has no comments and an un-affiliated website
+			if (ctx.commentData.totalComments === 0) {
+				score += 2;
+			}
+
+			return score;
+		},
 		test: (ctx) => !!ctx.user.website && !ctx.isAffiliated,
 		evidence: (ctx) => [ctx.user.website!],
 	},
 	{
 		name: 'website-added-quickly',
-		score: 3,
+		score: 1,
 		test: (ctx) => {
 			if (!ctx.user.website) return false;
 			const createdAt = new Date(ctx.user.createdAt as unknown as string).getTime();
@@ -255,17 +273,41 @@ const spamSignals: SpamSignal[] = [
 		evidence: (ctx) => [ctx.user.website!, ctx.user.bio?.slice(0, 200) ?? ''],
 	},
 	{
-		name: 'comments-with-links-not-affiliated',
-		score: 6,
-		test: (ctx) => ctx.commentData.commentsWithLinks > 0 && !ctx.isAffiliated,
-		evidence: (ctx) => ctx.commentData.linkUrls.slice(0, 10),
-	},
-	{
-		name: 'all-comments-have-links',
-		score: 2,
-		test: (ctx) =>
-			ctx.commentData.totalComments > 0 &&
-			ctx.commentData.commentsWithLinks === ctx.commentData.totalComments,
+		name: 'comments-with-links',
+		score: (ctx) => {
+			// just posting links doesn't really do anything
+			let score = 0;
+
+			// some problem with old frankenbook comments, ignore those
+			if (
+				ctx.commentData.recentComments.some(
+					(c) =>
+						c.communitySubdomain === 'frankenbook' &&
+						new Date(c.createdAt) < new Date('2020-01-01'),
+				)
+			) {
+				//
+				return 0;
+			}
+
+			// very suspicious if all your comments are just links
+			if (ctx.commentData.commentsWithLinks === ctx.commentData.totalComments) {
+				score += 3;
+			}
+
+			// no affil is slightly suspicious
+			if (!ctx.isAffiliated) {
+				score += 3;
+			}
+
+			// more than 5 comments with links is also sus
+			if (ctx.commentData.commentsWithLinks > 4) {
+				score += 3;
+			}
+
+			return score;
+		},
+		test: (ctx) => ctx.commentData.totalComments > 0 && ctx.commentData.commentsWithLinks > 0,
 		evidence: (ctx) => [
 			`${ctx.commentData.commentsWithLinks}/${ctx.commentData.totalComments} comments`,
 		],
@@ -277,17 +319,44 @@ const spamSignals: SpamSignal[] = [
 		evidence: (ctx) => ctx.commentData.templateMatches.slice(0, 10),
 	},
 	{
-		name: '-edu-email',
-		score: -10,
-		test: (ctx) => !!ctx.user.email?.endsWith('.edu'),
-		evidence: (ctx) => [ctx.user.email],
-	},
-	{
 		name: 'bio contains attempted html',
 		score: 6,
 		test: (ctx) =>
 			!!ctx.user.bio && (/<(a|p)/.test(ctx.user.bio) || !!ctx.user.bio.includes('href=')),
 		evidence: (ctx) => [ctx.user.bio!],
+	},
+
+	// negative signals
+	{
+		name: '-edu-email',
+		score: -10,
+		test: (ctx) => !!ctx.user.email?.endsWith('.edu'),
+		evidence: (ctx) => [ctx.user.email],
+	},
+	// bit more lenient towards accounts made pre 2020
+	{
+		name: '-old-account',
+		score: -2,
+		test: (ctx) => {
+			const createdAt = new Date(ctx.user.createdAt as unknown as string).getTime();
+			const now = new Date('2020-01-01T00:00:00Z').getTime();
+			return createdAt < now;
+		},
+		evidence: (ctx) => [ctx.user.createdAt as unknown as string],
+	},
+	{
+		name: '-academically-sounding-bio-phrases',
+		score: (ctx) => {
+			let score = 0;
+			if (academicallySoundingPhrases.some((p) => ctx.user.bio?.toLowerCase().includes(p))) {
+				score += 2;
+			}
+			return -score;
+		},
+		test: (ctx) => {
+			return academicallySoundingPhrases.some((p) => ctx.user.bio?.toLowerCase().includes(p));
+		},
+		evidence: (ctx) => [ctx.user.bio ?? ''],
 	},
 ];
 
@@ -302,6 +371,7 @@ export type UserSpamReport = {
 	fields: Record<string, string[]>;
 	signals: string[];
 	signalHits: SignalHit[];
+	commentData: UserCommentData;
 };
 
 export const computeUserSpamReport = async (user: User): Promise<UserSpamReport> => {
@@ -309,7 +379,7 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 	const bioUrls = extractUrlsFromString(user.bio) ?? [];
 
 	const [isAffiliated, commentData] = await Promise.all([
-		isUserAffiliatedWithAnyCommunity(user.id),
+		getLegitimateAffiliationsForUser(user.id),
 		getUserCommentData(user.id),
 	]);
 
@@ -331,9 +401,14 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 		if (!signal.test(ctx)) continue;
 
 		const signalScore =
-			signal.name === 'profile-spam-phrases' ? profilePhraseResult.score : signal.score;
+			signal.name === 'profile-spam-phrases'
+				? profilePhraseResult.score
+				: typeof signal.score === 'function'
+					? signal.score(ctx)
+					: signal.score;
 
 		const evidence = signal.evidence(ctx);
+
 		score += signalScore;
 		signalHits.push({ name: signal.name, score: signalScore, evidence });
 	}
@@ -369,6 +444,7 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 		fields,
 		signals: signalHits.map((h) => h.name),
 		signalHits,
+		commentData,
 	};
 };
 

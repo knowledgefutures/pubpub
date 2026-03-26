@@ -54,10 +54,7 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 				`tools-prod scanSpamUsers --execute --input ${outputPath} --min-score 6`,
 			);
 
-			run(
-				'Spam Scan (report)',
-				`tools-prod scanSpamUsers --report --input ${outputPath}`,
-			);
+			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${outputPath}`);
 		},
 		{ timezone: 'UTC' },
 	); // Daily at 4 AM UTC

@@ -47,12 +47,21 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Op } from 'sequelize';
 
-import { ThreadComment, User } from 'server/models';
+import { User } from 'server/models';
 import { extractLinksFromContent, extractUrlsFromString } from 'server/spamTag/commentSpam';
 import { containsLink } from 'server/spamTag/contentAnalysis';
 import { DEV_TEAM_EMAIL } from 'server/spamTag/notifications/email';
+import {
+	getRecentDiscussionsForUser,
+	getRecentDiscussionsForUserRaw,
+} from 'server/spamTag/userDashboard';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
-import { computeUserSpamReport, type SignalHit } from 'server/spamTag/userScore';
+import {
+	computeUserSpamReport,
+	type SignalHit,
+	type UserCommentData,
+	type UserSpamReport,
+} from 'server/spamTag/userScore';
 import { sendEmail } from 'server/utils/email/reset';
 import { createPubPubS3Client } from 'server/utils/s3';
 import { asyncMap } from 'utils/async';
@@ -126,45 +135,8 @@ const parseSinceArg = (value: string | null): Date | null => {
 	return date;
 };
 
-const getRecentCommentsWithLinks = async (
-	userId: string,
-	limit: number,
-): Promise<{ total: number; withLinks: number; evidence: CommentEvidence[] }> => {
-	const comments = await ThreadComment.findAll({
-		where: { userId },
-		attributes: ['content', 'text', 'createdAt'],
-		order: [['createdAt', 'DESC']],
-		limit: 200,
-	});
-
-	const evidence: CommentEvidence[] = [];
-	let withLinks = 0;
-
-	for (const comment of comments) {
-		const doc = comment.content as DocJson | null;
-		const text = comment.text ?? '';
-
-		if (!containsLink(doc, text)) continue;
-
-		withLinks++;
-
-		if (evidence.length < limit) {
-			const links = [
-				...(extractLinksFromContent(doc) ?? []),
-				...(extractUrlsFromString(text) ?? []),
-			];
-			evidence.push({ text: text.slice(0, 500), links: [...new Set(links)] });
-		}
-	}
-
-	return { total: comments.length, withLinks, evidence };
-};
-
-const buildEntry = async (
-	user: User,
-	report: { score: number; signals: string[]; signalHits: SignalHit[] },
-): Promise<AnalyzeEntry> => {
-	const commentInfo = await getRecentCommentsWithLinks(user.id, 5);
+const buildEntry = async (user: User, report: UserSpamReport): Promise<AnalyzeEntry> => {
+	// const commentInfo = await getRecentCommentsWithLinks(user.id, 5);
 	const hasProfileSignal = report.signals.some((s) => s.includes('website') || s.includes('bio'));
 
 	const profile = hasProfileSignal
@@ -185,9 +157,9 @@ const buildEntry = async (
 		score: report.score,
 		signals: report.signals,
 		signalHits: report.signalHits,
-		commentCount: commentInfo.total,
-		commentsWithLinks: commentInfo.withLinks,
-		recentComments: commentInfo.evidence,
+		commentCount: report.commentData.totalComments,
+		commentsWithLinks: report.commentData.commentsWithLinks,
+		recentComments: report.commentData.recentComments,
 		profile,
 	};
 };
@@ -229,6 +201,7 @@ async function analyze() {
 	let scanned = 0;
 	let errors = 0;
 
+	// only null spamtags, no use going over alreayd tagged users
 	const whereClause: Record<string, unknown> = {
 		spamTagId: { [Op.is]: null as any },
 	};
@@ -253,7 +226,7 @@ async function analyze() {
 			],
 			limit: BATCH_SIZE,
 			offset,
-			order: [['createdAt', 'DESC']],
+			order: [['createdAt', 'ASC']],
 		});
 
 		if (users.length === 0) break;
@@ -285,7 +258,7 @@ async function analyze() {
 				const entry = await buildEntry(user, report);
 				entry.index = writer.length;
 				writer.push(entry);
-			} else if (cleanWriter && report.score > 0) {
+			} else if (cleanWriter ) {
 				const entry = await buildEntry(user, report);
 				entry.index = cleanWriter.length;
 				cleanWriter.push(entry);

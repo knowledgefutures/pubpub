@@ -41,14 +41,22 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 	cron.schedule(
 		'0 4 * * *',
 		() => {
-			const outputPath = `/tmp/spam-scan-${new Date().toISOString().slice(0, 10)}.json`;
+			const dateStamp = new Date().toISOString().slice(0, 10);
+			const outputPath = `/tmp/spam-scan-${dateStamp}.json`;
+
 			run(
 				'Spam Scan (analyze)',
 				`tools-prod scanSpamUsers --analyze --since 26h --output ${outputPath} --min-score 6`,
 			);
+
 			run(
 				'Spam Scan (execute)',
 				`tools-prod scanSpamUsers --execute --input ${outputPath} --min-score 6`,
+			);
+
+			run(
+				'Spam Scan (report)',
+				`tools-prod scanSpamUsers --report --input ${outputPath}`,
 			);
 		},
 		{ timezone: 'UTC' },

@@ -2,67 +2,59 @@
 scanSpamUsers -- two-phase bulk spam detection tool
 
 usage:
-  npm run tools scanSpamUsers --analyze --output results.json [--min-score N] [--input skip.json] [--since 2024-01-01] [--concurrency 10]
-  npm run tools scanSpamUsers --execute --input results.json [--min-score N] [--signals sig1,sig2] [--range 0-100] [--concurrency 10]
+  npm run tools scanSpamUsers --analyze --output results.json [--min-score N] [--input skip.json] [--since 2024-01-01] [--concurrency 10] [--include-clean]
+  npm run tools scanSpamUsers --execute --input results.json [--min-score N] [--signals sig1,sig2] [--range 0-100] [--concurrency 10] [--ban] 
+  npm run tools scanSpamUsers --report --input results.json [--execute-input executed.json]
 
 analyze phase:
   scans all users without an existing spam tag, computes spam scores, and
-  writes a json file with detailed evidence for each flagged user. the file
-  contains an array of entries sorted by score descending.
+  writes a json file with detailed evidence for each flagged user.
 
   --output <path>        required. where to write the results json.
   --min-score <n>        minimum score to include in output. default 5.
   --input <path>         optional. path to an existing results json whose
-                         user ids will be skipped (so you can re-run
-                         incrementally).
+                         user ids will be skipped (re-run incrementally).
   --since <date|duration> only scan users created after this date (ISO string)
-                         or relative duration like "24h", "7d". useful for
-                         incremental cron runs.
+                         or relative duration like "24h", "7d".
   --concurrency <n>      how many users to process in parallel. default 10.
-  --include-clean        also write a separate .clean.json file with users
-                         that scored > 0 but below --min-score. useful for
-                         reviewing false negatives.
+  --include-clean        also write a .clean.json file with users that scored
+                         > 0 but below --min-score (for reviewing false negatives).
 
 execute phase:
-  reads a results json produced by --analyze and applies spam tags to the
-  users in it, subject to filters.
+  reads a results json produced by --analyze and applies spam tags.
 
   --input <path>         required. the results json from analyze.
   --min-score <n>        only tag users whose score >= n.
   --signals <s1,s2,...>  only tag users who have ALL of these signals.
-  --range <start>-<end>  only process entries whose index is in [start, end)
-                         (0-based, as shown in the output file).
+  --range <start>-<end>  only process entries in [start, end) (0-based).
   --concurrency <n>      how many users to tag in parallel. default 5.
+  --ban                  set status to confirmed-spam instead of unreviewed.
+                         side effects (session invalidation, cache purge) are
+                         skipped for performance.
 
-output file format (json array):
-  each entry has:
-    index          sequential 0-based index
-    userId         user uuid
-    email          user email
-    slug           user slug (username)
-    fullName       user display name
-    createdAt      account creation timestamp
-    score          computed spam score
-    signals        array of signal names
-    commentCount   total number of comments by this user
-    commentsWithLinks  how many of those contain links
-    recentComments     up to 5 most recent comments that contain links,
-                       each with { text, links }
-    profile        { website, bio, bioUrls } -- present when profile
-                   signals fired
+report phase:
+  uploads analyze (and optionally execute) results to s3 and sends a summary
+  email to the dev team.
+
+  --input <path>         required. the analyze results json.
+  --execute-input <path> optional. the execute results json (if separate).
 */
 /** biome-ignore-all lint/performance/noAwaitInLoops: batch pagination loop is inherently sequential */
 
 import type { DocJson } from 'types';
 
 import * as fs from 'fs';
+import * as path from 'path';
 import { Op } from 'sequelize';
 
 import { ThreadComment, User } from 'server/models';
 import { extractLinksFromContent, extractUrlsFromString } from 'server/spamTag/commentSpam';
 import { containsLink } from 'server/spamTag/contentAnalysis';
+import { DEV_TEAM_EMAIL } from 'server/spamTag/notifications/email';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
 import { computeUserSpamReport, type SignalHit } from 'server/spamTag/userScore';
+import { sendEmail } from 'server/utils/email/reset';
+import { createPubPubS3Client } from 'server/utils/s3';
 import { asyncMap } from 'utils/async';
 import { JsonArrayWriter } from 'utils/jsonArrayWriter';
 
@@ -325,13 +317,14 @@ async function execute() {
 	}
 
 	const entries: AnalyzeEntry[] = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
-	const minScore = parseInt(parseArg('min-score') ?? '0', 10);
+	const minScore = parseInt(parseArg('min-score') ?? String(DEFAULT_MIN_SCORE), 10);
 	const concurrency = parseInt(
 		parseArg('concurrency') ?? String(DEFAULT_EXECUTE_CONCURRENCY),
 		10,
 	);
 	const signalsArg = parseArg('signals');
 	const requiredSignals = signalsArg ? signalsArg.split(',') : [];
+	const shouldBan = hasFlag('ban');
 
 	const rangeArg = parseArg('range');
 	let rangeStart = 0;
@@ -357,7 +350,7 @@ async function execute() {
 	console.log(
 		`executing on ${inputPath}: ${entries.length} total, ${filtered.length} after filters, ` +
 			`min-score=${minScore}, signals=${requiredSignals.join(',') || 'any'}, ` +
-			`range=[${rangeStart}, ${rangeEnd}), concurrency=${concurrency}`,
+			`range=[${rangeStart}, ${rangeEnd}), concurrency=${concurrency}, ban=${shouldBan}`,
 	);
 
 	let tagged = 0;
@@ -369,6 +362,7 @@ async function execute() {
 			try {
 				await upsertSpamTag({
 					userId: entry.userId,
+					status: shouldBan ? 'confirmed-spam' : undefined,
 					fields: {
 						suspiciousComments: entry.recentComments
 							.flatMap((c) => c.links)
@@ -401,10 +395,119 @@ async function execute() {
 	);
 }
 
+// ---------------------------------------------------------------------------
+// report
+// ---------------------------------------------------------------------------
+
+const getReportS3Client = () => {
+	const accessKeyId = process.env.AWS_BACKUP_ACCESS_KEY_ID;
+	const secretAccessKey = process.env.AWS_BACKUP_SECRET_ACCESS_KEY;
+
+	if (!accessKeyId || !secretAccessKey) {
+		throw new Error('missing AWS_BACKUP_ACCESS_KEY_ID / AWS_BACKUP_SECRET_ACCESS_KEY');
+	}
+
+	return createPubPubS3Client({
+		accessKeyId,
+		secretAccessKey,
+		bucket: 'pubpub-backups',
+	});
+};
+
+const uploadReportToS3 = async (localPath: string, s3Key: string) => {
+	const s3 = getReportS3Client();
+	const stream = fs.createReadStream(localPath);
+	const result = await s3.uploadFile(s3Key, stream);
+
+	console.log(`uploaded ${localPath} to ${result.url}`);
+	return result.url;
+};
+
+const buildSummary = (entries: AnalyzeEntry[], label: string): string => {
+	if (entries.length === 0) return `${label}: 0 entries`;
+
+	const signalCounts: Record<string, number> = {};
+	let totalScore = 0;
+
+	for (const entry of entries) {
+		totalScore += entry.score;
+		for (const signal of entry.signals) {
+			signalCounts[signal] = (signalCounts[signal] ?? 0) + 1;
+		}
+	}
+
+	const avgScore = (totalScore / entries.length).toFixed(1);
+
+	const sortedSignals = Object.entries(signalCounts)
+		.sort(([, a], [, b]) => b - a)
+		.map(([name, count]) => `  ${name}: ${count}`)
+		.join('\n');
+
+	return [
+		`${label}: ${entries.length} entries (avg score ${avgScore})`,
+		'',
+		'signal breakdown:',
+		sortedSignals,
+	].join('\n');
+};
+
+async function report() {
+	const inputPath = parseArg('input');
+	if (!inputPath) {
+		console.error('--input is required for --report');
+		process.exit(1);
+	}
+
+	const executeInputPath = parseArg('execute-input');
+	const dateStamp = new Date().toISOString().slice(0, 10);
+	const s3Prefix = `spam-scans/${dateStamp}`;
+
+	const analyzeEntries: AnalyzeEntry[] = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
+	const analyzeS3Key = `${s3Prefix}/${path.basename(inputPath)}`;
+	const analyzeUrl = await uploadReportToS3(inputPath, analyzeS3Key);
+
+	let executeUrl: string | null = null;
+	let executedEntries: AnalyzeEntry[] | null = null;
+
+	if (executeInputPath && fs.existsSync(executeInputPath)) {
+		executedEntries = JSON.parse(fs.readFileSync(executeInputPath, 'utf-8'));
+		const executeS3Key = `${s3Prefix}/${path.basename(executeInputPath)}`;
+		executeUrl = await uploadReportToS3(executeInputPath, executeS3Key);
+	}
+
+	const analyzeSummary = buildSummary(analyzeEntries, 'analyzed (flagged)');
+	const executeSummary = executedEntries
+		? buildSummary(executedEntries, 'executed (tagged)')
+		: null;
+
+	const emailBody = [
+		`spam scan report for ${dateStamp}`,
+		'',
+		analyzeSummary,
+		`report: ${analyzeUrl}`,
+		'',
+		...(executeSummary ? [executeSummary, `report: ${executeUrl}`, ''] : []),
+		'-- PubPub Spam Scanner',
+	].join('\n');
+
+	await sendEmail({
+		to: [DEV_TEAM_EMAIL],
+		subject: `spam scan report: ${dateStamp} (${analyzeEntries.length} flagged)`,
+		text: emailBody,
+	});
+
+	console.log(`report email sent to ${DEV_TEAM_EMAIL}`);
+}
+
+// ---------------------------------------------------------------------------
+// main
+// ---------------------------------------------------------------------------
+
 async function main() {
 	if (hasFlag('analyze')) return analyze();
 	if (hasFlag('execute')) return execute();
-	console.error('specify --analyze or --execute');
+	if (hasFlag('report')) return report();
+	console.error('specify --analyze, --execute, or --report');
 	process.exit(1);
 }
 

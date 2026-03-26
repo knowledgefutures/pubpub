@@ -63,7 +63,7 @@ import {
 	type UserSpamReport,
 } from 'server/spamTag/userScore';
 import { sendEmail } from 'server/utils/email/reset';
-import { createPubPubS3Client } from 'server/utils/s3';
+import { assetsClient, createPubPubS3Client } from 'server/utils/s3';
 import { asyncMap } from 'utils/async';
 import { JsonArrayWriter } from 'utils/jsonArrayWriter';
 
@@ -258,7 +258,7 @@ async function analyze() {
 				const entry = await buildEntry(user, report);
 				entry.index = writer.length;
 				writer.push(entry);
-			} else if (cleanWriter ) {
+			} else if (cleanWriter) {
 				const entry = await buildEntry(user, report);
 				entry.index = cleanWriter.length;
 				cleanWriter.push(entry);
@@ -372,23 +372,8 @@ async function execute() {
 // report
 // ---------------------------------------------------------------------------
 
-const getReportS3Client = () => {
-	const accessKeyId = process.env.AWS_BACKUP_ACCESS_KEY_ID;
-	const secretAccessKey = process.env.AWS_BACKUP_SECRET_ACCESS_KEY;
-
-	if (!accessKeyId || !secretAccessKey) {
-		throw new Error('missing AWS_BACKUP_ACCESS_KEY_ID / AWS_BACKUP_SECRET_ACCESS_KEY');
-	}
-
-	return createPubPubS3Client({
-		accessKeyId,
-		secretAccessKey,
-		bucket: 'pubpub-backups',
-	});
-};
-
 const uploadReportToS3 = async (localPath: string, s3Key: string) => {
-	const s3 = getReportS3Client();
+	const s3 = assetsClient;
 	const stream = fs.createReadStream(localPath);
 	const result = await s3.uploadFile(s3Key, stream);
 

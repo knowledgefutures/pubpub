@@ -119,40 +119,57 @@ export type UserCommentData = {
 	linkUrls: string[];
 	templateMatches: string[];
 	commentsWithLinksAndTemplates: number;
-	recentComments: Awaited<ReturnType<typeof getRecentDiscussionsForUserRaw>>;
+	recentComments: (Awaited<ReturnType<typeof getRecentDiscussionsForUserRaw>>[number] & {
+		links: string[];
+		templateMatches: string[];
+	})[];
 };
 
 const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 	const comments = await getRecentDiscussionsForUserRaw(userId, 200);
 
-	let commentsWithLinks = 0;
-	let commentsWithLinksAndTemplates = 0;
 	const allLinkUrls: string[] = [];
 	const allTemplateMatches: string[] = [];
+
+	const newComments = [] as UserCommentData['recentComments'];
 
 	for (const comment of comments) {
 		const doc = comment.content as DocJson | null;
 		const text = comment.text;
 		const hasLink = containsLink(doc, text);
 
+		const { content, ...rest } = comment;
+		const newComment = {
+			...rest,
+			links: [] as string[],
+			templateMatches: [] as string[],
+		} as UserCommentData['recentComments'][number];
+
 		if (hasLink) {
-			commentsWithLinks++;
 			const docLinks = extractLinksFromContent(doc);
 			const textLinks = extractUrlsFromString(text);
 			allLinkUrls.push(...(docLinks ?? []), ...(textLinks ?? []));
+			newComment.links = [...(docLinks ?? []), ...(textLinks ?? [])];
 		}
 
 		const templates = matchesCommentSpamTemplate(text);
 		if (templates.length > 0) {
 			allTemplateMatches.push(...templates);
-			if (hasLink) {
-				commentsWithLinksAndTemplates++;
-			}
+			newComment.templateMatches = templates;
 		}
+
+		// content to large
+		newComments.push(newComment);
 	}
 
+	const commentsWithLinks = newComments.reduce((acc, c) => acc + (c.links.length > 0 ? 1 : 0), 0);
+	const commentsWithLinksAndTemplates = newComments.reduce(
+		(acc, c) => acc + (c.templateMatches.length > 0 ? 1 : 0),
+		0,
+	);
+
 	return {
-		recentComments: comments.slice(0, 5),
+		recentComments: newComments.slice(0, 5),
 		totalComments: comments.length,
 		commentsWithLinks,
 		linkUrls: [...new Set(allLinkUrls)],

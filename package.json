@@ -240,7 +240,7 @@
 		"sass": "1.67.0",
 		"sass-loader": "^7.1.0",
 		"saxes": "^6.0.0",
-		"sequelize": "^6.31.1",
+		"sequelize": "^6.37.8",
 		"sequelize-typescript": "^2.1.5",
 		"sequelize-typescript-generator": "^10.1.2",
 		"sitemap": "^6.2.0",

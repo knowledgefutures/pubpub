@@ -247,7 +247,7 @@ importers:
         version: 1.8.1
       connect-session-sequelize:
         specifier: ^7.1.7
-        version: 7.1.7(sequelize@6.37.7(pg@8.18.0))
+        version: 7.1.7(sequelize@6.37.8(pg@8.18.0))
       cookie-parser:
         specifier: ^1.4.4
         version: 1.4.7
@@ -573,11 +573,11 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       sequelize:
-        specifier: ^6.31.1
-        version: 6.37.7(pg@8.18.0)
+        specifier: ^6.37.8
+        version: 6.37.8(pg@8.18.0)
       sequelize-typescript:
         specifier: ^2.1.5
-        version: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.7(pg@8.18.0))
+        version: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.8(pg@8.18.0))
       sequelize-typescript-generator:
         specifier: ^10.1.2
         version: 10.1.2(@types/node@24.11.0)(@types/validator@13.15.10)(pg@8.18.0)(reflect-metadata@0.1.14)(typescript@5.9.3)
@@ -2159,6 +2159,7 @@ packages:
   '@esbuild/linux-arm64@0.27.3':
     resolution: {integrity: sha512-sZOuFz/xWnZ4KH3YfFrKCf1WyPZHakVzTiqji3WDc0BCl2kBwiJLCXpzLzUBLgmp4veFZdvN5ChW4Eq/8Fc2Fg==}
     engines: {node: '>=18'}
+    cpu: [arm64]
     os: [linux]
 
   '@esbuild/linux-arm@0.27.3':
@@ -3131,6 +3132,9 @@ packages:
 
   '@sinonjs/text-encoding@0.7.3':
     resolution: {integrity: sha512-DE427ROAphMQzU4ENbliGYrBSYPXF+TtLg9S8vzeA+OF4ZKzoDdzfL8sxuMUGS/lgRhM6j1URSk9ghf7Xo1tyA==}
+    deprecated: |-
+      Deprecated: no longer maintained and no longer used by Sinon packages. See
+        https://github.com/sinonjs/nise/issues/243 for replacement details.
 
   '@smithy/abort-controller@4.2.8':
     resolution: {integrity: sha512-peuVfkYHAmS5ybKxWcfraK7WBBP0J+rkfUcbHJJKQ4ir3UAUNQI+Y4Vt/PqSzGqgloJ5O1dk7+WzNL8wcCSXbw==}
@@ -3731,8 +3735,8 @@ packages:
   '@types/dateformat@3.0.1':
     resolution: {integrity: sha512-KlPPdikagvL6ELjWsljbyDIPzNCeliYkqRpI+zea99vBBbCIA5JNshZAwQKTON139c87y9qvTFVgkFd14rtS4g==}
 
-  '@types/debug@4.1.12':
-    resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+  '@types/debug@4.1.13':
+    resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
@@ -5908,8 +5912,8 @@ packages:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
 
-  dottie@2.0.6:
-    resolution: {integrity: sha512-iGCHkfUc5kFekGiqhe8B/mdaurD+lakO9txNnTvKtA6PISrw86LgqHvRzWYPyoE2Ph5aMIrCw9/uko6XHTKCwA==}
+  dottie@2.0.7:
+    resolution: {integrity: sha512-7lAK2A0b3zZr3UC5aE69CPdCFR4RHW1o2Dr74TqFykxkUCBXSRJum/yPc7g8zRHJqWKomPLHwFLLoUnn8PXXRg==}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -7709,7 +7713,6 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -8973,6 +8976,9 @@ packages:
   pg-connection-string@2.11.0:
     resolution: {integrity: sha512-kecgoJwhOpxYU21rZjULrmrBJ698U2RxXofKVzOn5UDj61BPj/qMb7diYUR1nLScCDbrztQFl1TaQZT0t1EtzQ==}
 
+  pg-connection-string@2.12.0:
+    resolution: {integrity: sha512-U7qg+bpswf3Cs5xLzRqbXbQl85ng0mfSV/J0nnA31MCLgvEaAo7CIhmeyrmJpOr7o+zm0rXK+hNnT5l9RHkCkQ==}
+
   pg-connection-string@2.6.1:
     resolution: {integrity: sha512-w6ZzNu6oMmIzEAYVw+RLK0+nqHPt8K3ZnknKi+g48Ak2pr3dtljJW3o+D/n2zzCG07Zoe9VOX3aiKpj+BN0pjg==}
 
@@ -9284,8 +9290,14 @@ packages:
   prosemirror-transform@1.11.0:
     resolution: {integrity: sha512-4I7Ce4KpygXb9bkiPS3hTEk4dSHorfRw8uI0pE8IhxlK2GXsqv5tIA7JUSxtSu7u8APVOTtbUBxTmnHIxVkIJw==}
 
+  prosemirror-transform@1.12.0:
+    resolution: {integrity: sha512-GxboyN4AMIsoHNtz5uf2r2Ru551i5hWeCMD6E2Ib4Eogqoub0NflniaBPVQ4MrGE5yZ8JV9tUHg9qcZTTrcN4w==}
+
   prosemirror-view@1.41.6:
     resolution: {integrity: sha512-mxpcDG4hNQa/CPtzxjdlir5bJFDlm0/x5nGBbStB2BWX+XOQ9M8ekEG+ojqB5BcVu2Rc80/jssCMZzSstJuSYg==}
+
+  prosemirror-view@1.41.7:
+    resolution: {integrity: sha512-jUwKNCEIGiqdvhlS91/2QAg21e4dfU5bH2iwmSDQeosXJgKF7smG0YSplOWK0cjSNgIqXe7VXqo7EIfUFJdt3w==}
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
@@ -10083,8 +10095,8 @@ packages:
       reflect-metadata: '*'
       sequelize: '>=6.20.1'
 
-  sequelize@6.37.7:
-    resolution: {integrity: sha512-mCnh83zuz7kQxxJirtFD7q6Huy6liPanI67BSlbzSYgVNl5eXVdE2CN1FuAeZwG1SNpGsNRCV+bJAVVnykZAFA==}
+  sequelize@6.37.8:
+    resolution: {integrity: sha512-HJ0IQFqcTsTiqbEgiuioYFMSD00TP6Cz7zoTti+zVVBwVe9fEhev9cH6WnM3XU31+ABS356durAb99ZuOthnKw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       ibm_db: '*'
@@ -15965,7 +15977,7 @@ snapshots:
 
   '@types/dateformat@3.0.1': {}
 
-  '@types/debug@4.1.12':
+  '@types/debug@4.1.13':
     dependencies:
       '@types/ms': 2.1.0
 
@@ -16246,7 +16258,7 @@ snapshots:
 
   '@types/prosemirror-view@1.24.0':
     dependencies:
-      prosemirror-view: 1.41.6
+      prosemirror-view: 1.41.7
 
   '@types/qs@6.14.0': {}
 
@@ -17947,10 +17959,10 @@ snapshots:
       xdg-basedir: 4.0.0
     optional: true
 
-  connect-session-sequelize@7.1.7(sequelize@6.37.7(pg@8.18.0)):
+  connect-session-sequelize@7.1.7(sequelize@6.37.8(pg@8.18.0)):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
-      sequelize: 6.37.7(pg@8.18.0)
+      sequelize: 6.37.8(pg@8.18.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -18578,7 +18590,7 @@ snapshots:
 
   dotenv@8.6.0: {}
 
-  dottie@2.0.6: {}
+  dottie@2.0.7: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -22137,7 +22149,7 @@ snapshots:
     dependencies:
       lodash: 4.17.23
       passport-local: 1.0.0
-      sequelize: 6.37.7(pg@8.18.0)
+      sequelize: 6.37.8(pg@8.18.0)
     transitivePeerDependencies:
       - ibm_db
       - mariadb
@@ -22242,6 +22254,8 @@ snapshots:
     optional: true
 
   pg-connection-string@2.11.0: {}
+
+  pg-connection-string@2.12.0: {}
 
   pg-connection-string@2.6.1: {}
 
@@ -22632,11 +22646,21 @@ snapshots:
     dependencies:
       prosemirror-model: 1.25.4
 
+  prosemirror-transform@1.12.0:
+    dependencies:
+      prosemirror-model: 1.25.4
+
   prosemirror-view@1.41.6:
     dependencies:
       prosemirror-model: 1.25.4
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
+
+  prosemirror-view@1.41.7:
+    dependencies:
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
+      prosemirror-transform: 1.12.0
 
   proto-list@1.2.4: {}
 
@@ -23727,8 +23751,8 @@ snapshots:
       change-case: 4.1.2
       eslint: 8.57.1
       pluralize: 8.0.0
-      sequelize: 6.37.7(pg@8.18.0)
-      sequelize-typescript: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.7(pg@8.18.0))
+      sequelize: 6.37.8(pg@8.18.0)
+      sequelize-typescript: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.8(pg@8.18.0))
       typescript: 5.9.3
       yargs: 17.7.2
     transitivePeerDependencies:
@@ -23746,25 +23770,25 @@ snapshots:
       - supports-color
       - tedious
 
-  sequelize-typescript@2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.7(pg@8.18.0)):
+  sequelize-typescript@2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.8(pg@8.18.0)):
     dependencies:
       '@types/node': 24.11.0
       '@types/validator': 13.15.10
       glob: 7.2.0
       reflect-metadata: 0.1.14
-      sequelize: 6.37.7(pg@8.18.0)
+      sequelize: 6.37.8(pg@8.18.0)
 
-  sequelize@6.37.7(pg@8.18.0):
+  sequelize@6.37.8(pg@8.18.0):
     dependencies:
-      '@types/debug': 4.1.12
+      '@types/debug': 4.1.13
       '@types/validator': 13.15.10
       debug: 4.4.3(supports-color@5.5.0)
-      dottie: 2.0.6
+      dottie: 2.0.7
       inflection: 1.13.4
       lodash: 4.17.23
       moment: 2.30.1
       moment-timezone: 0.5.48
-      pg-connection-string: 2.11.0
+      pg-connection-string: 2.12.0
       retry-as-promised: 7.1.1
       semver: 7.7.4
       sequelize-pool: 7.1.0

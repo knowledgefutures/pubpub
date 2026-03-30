@@ -1,4 +1,4 @@
-import type { SpamUserQueryOrdering } from 'types';
+import type { SpamFieldsFilter, SpamUserQueryOrdering } from 'types';
 
 import type { SpamUsersFilter } from './filters';
 import type { SpamUser } from './types';
@@ -18,7 +18,7 @@ type QueryFilters = {
 	activeBefore?: string;
 	minActivities?: number;
 	maxActivities?: number;
-	spamFieldsFilter?: string[];
+	spamFieldsFilter?: SpamFieldsFilter;
 };
 
 type UseSpamUsersOptions = {

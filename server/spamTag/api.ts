@@ -1,4 +1,4 @@
-import type { UserSpamTagFields } from 'types';
+import type { SpamFieldsFilter, SpamFieldsFilterKey, UserSpamTagFields } from 'types';
 
 import { Router } from 'express';
 
@@ -159,6 +159,31 @@ router.post('/api/spamTags/queryUsersForSpam', async (req, res) => {
 	if (!canQuery) {
 		throw new ForbiddenError();
 	}
+
+	const parsedSpamFieldsFilter = (() => {
+		if (Array.isArray(spamFieldsFilter)) {
+			return { include: spamFieldsFilter as SpamFieldsFilterKey[] };
+		}
+
+		if (!spamFieldsFilter || typeof spamFieldsFilter !== 'object') {
+			return undefined;
+		}
+
+		const filterObject = spamFieldsFilter as SpamFieldsFilter;
+		const include = Array.isArray(filterObject.include)
+			? (filterObject.include as SpamFieldsFilterKey[])
+			: undefined;
+		const exclude = Array.isArray(filterObject.exclude)
+			? (filterObject.exclude as SpamFieldsFilterKey[])
+			: undefined;
+
+		if (!include?.length && !exclude?.length) {
+			return undefined;
+		}
+
+		return { include, exclude };
+	})();
+
 	const queryResult = await queryUsersForSpamManagement({
 		offset: offset && parseInt(offset, 10),
 		limit: limit && parseInt(limit, 10),
@@ -175,7 +200,7 @@ router.post('/api/spamTags/queryUsersForSpam', async (req, res) => {
 		minActivities: minActivities != null ? Number(minActivities) : undefined,
 		maxActivities: maxActivities != null ? Number(maxActivities) : undefined,
 		hasCommunityBan: !!hasCommunityBan,
-		spamFieldsFilter: Array.isArray(spamFieldsFilter) ? spamFieldsFilter : undefined,
+		spamFieldsFilter: parsedSpamFieldsFilter,
 	});
 	return res.status(200).send(queryResult);
 });

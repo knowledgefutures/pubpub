@@ -25,16 +25,39 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 	cron.schedule('0 */12 * * *', () => run('Backup DB', 'tools-prod backupDb'), {
 		timezone: 'UTC',
 	}); // Every 6 hours
+
 	cron.schedule('0 13 * * *', () => run('Email Digest', 'tools-prod emailActivityDigest'), {
 		timezone: 'UTC',
 	});
+
 	cron.schedule(
 		'0 5 * * 0',
 		() => run('Firebase Cleanup', 'tools-prod cleanupFirebase --execute'),
 		{
 			timezone: 'UTC',
 		},
-	); // Weekly on Sunday at 1 AM UTC
+	); // Weekly on Sunday at 5 AM UTC
+
+	cron.schedule(
+		'0 4 * * *',
+		() => {
+			const dateStamp = new Date().toISOString().slice(0, 10);
+			const outputPath = `/tmp/spam-scan-${dateStamp}.json`;
+
+			run(
+				'Spam Scan (analyze)',
+				`tools-prod scanSpamUsers --analyze --since 26h --output ${outputPath} --min-score 6`,
+			);
+
+			run(
+				'Spam Scan (execute)',
+				`tools-prod scanSpamUsers --execute --input ${outputPath} --min-score 6`,
+			);
+
+			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${outputPath}`);
+		},
+		{ timezone: 'UTC' },
+	); // Daily at 4 AM UTC
 } else {
 	const logNotSet = () => {
 		log(

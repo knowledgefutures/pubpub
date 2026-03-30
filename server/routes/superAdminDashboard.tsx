@@ -22,6 +22,25 @@ import {
 
 export const router = Router();
 
+const parseSpamFieldFilterParam = (
+	value: string | undefined,
+): types.SpamFieldsFilterKey[] | undefined => {
+	if (!value) {
+		return undefined;
+	}
+
+	const values = value
+		.split(',')
+		.map((entry) => entry.trim())
+		.filter(Boolean) as types.SpamFieldsFilterKey[];
+
+	if (values.length === 0) {
+		return undefined;
+	}
+
+	return values;
+};
+
 const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.LocationData) => {
 	if (tabKind === 'landingPageFeatures') {
 		return { landingPageFeatures: await getLandingPageFeatures({ onlyValidItems: false }) };
@@ -49,6 +68,25 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 					direction: sortParam.split(':')[1] || 'DESC',
 				}
 			: baseFilter.query!.ordering;
+
+		const spamFieldsIncludeParam =
+			(locationData.query.spamFieldsInclude as string | undefined) ??
+			(locationData.query.spamFields as string | undefined);
+		const spamFieldsExcludeParam = locationData.query.spamFieldsExclude as string | undefined;
+		const spamFieldsInclude = parseSpamFieldFilterParam(spamFieldsIncludeParam);
+		const spamFieldsExclude = parseSpamFieldFilterParam(spamFieldsExcludeParam);
+		const hasSpamFieldFiltersInQuery =
+			spamFieldsIncludeParam != null || spamFieldsExcludeParam != null;
+
+		const spamFieldsFilter = hasSpamFieldFiltersInQuery
+			? {
+					include: spamFieldsInclude,
+					exclude: spamFieldsExclude,
+				}
+			: {
+					exclude: ['automatedScan'] as types.SpamFieldsFilterKey[],
+				};
+
 		const users = await queryUsersForSpamManagement({
 			limit: 50,
 			searchTerm,
@@ -66,6 +104,7 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			maxActivities: locationData.query.maxActivities
 				? Number(locationData.query.maxActivities)
 				: undefined,
+			spamFieldsFilter,
 		});
 		return {
 			searchTerm,

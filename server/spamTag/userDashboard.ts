@@ -36,6 +36,37 @@ const activityCountSubquery = `(
 	AND "ActivityItems"."kind" IN (${pubActivityKinds})
 )`;
 
+const spamFieldFilterKeys = new Set<types.SpamFieldsFilterKey>([
+	'honeypotTriggers',
+	'suspiciousFiles',
+	'suspiciousComments',
+	'manuallyMarkedBy',
+	'automatedScan',
+]);
+
+const getValidSpamFieldFilterKeys = (
+	keys: types.SpamFieldsFilterKey[] | undefined,
+): types.SpamFieldsFilterKey[] => {
+	if (!keys?.length) {
+		return [];
+	}
+
+	return keys.filter((key): key is types.SpamFieldsFilterKey => spamFieldFilterKeys.has(key));
+};
+
+const buildSpamFieldsJsonPresenceCondition = (keys: types.SpamFieldsFilterKey[]) => {
+	return keys
+		.map((key) => {
+			const escaped = User.sequelize!.escape(key);
+			return `(
+				"fields"->>${escaped} IS NOT NULL
+				AND jsonb_typeof("fields"->${escaped}) = 'array'
+				AND jsonb_array_length("fields"->${escaped}) > 0
+			)`;
+		})
+		.join(' OR ');
+};
+
 const getUserWhereQuery = (options: {
 	searchTerm?: string | null;
 	spamTagPresence?: types.SpamUserQuery['spamTagPresence'];
@@ -47,7 +78,7 @@ const getUserWhereQuery = (options: {
 	minActivities?: number;
 	maxActivities?: number;
 	hasCommunityBan?: boolean;
-	spamFieldsFilter?: types.SpamFieldsFilterKey[];
+	spamFieldsFilter?: types.SpamFieldsFilter;
 }) => {
 	const conditions: any[] = [];
 
@@ -116,30 +147,29 @@ const getUserWhereQuery = (options: {
 		});
 	}
 
-	if (options.spamFieldsFilter?.length) {
-		const allowed = new Set<string>([
-			'honeypotTriggers',
-			'suspiciousFiles',
-			'suspiciousComments',
-			'manuallyMarkedBy',
-		]);
-		const validKeys = options.spamFieldsFilter.filter((k) => allowed.has(k));
-		if (validKeys.length > 0) {
-			// each key: fields->key exists and is a non-empty array
-			const jsonConditions = validKeys
-				.map((k) => {
-					const escaped = User.sequelize!.escape(k);
-					return `("fields"->>${escaped} IS NOT NULL AND jsonb_array_length("fields"->${escaped}) > 0)`;
-				})
-				.join(' OR ');
-			conditions.push({
-				spamTagId: {
-					[Op.in]: literal(`(
-						SELECT "id" FROM "SpamTags" WHERE ${jsonConditions}
-					)`),
-				},
-			});
-		}
+	const includeFields = getValidSpamFieldFilterKeys(options.spamFieldsFilter?.include);
+	if (includeFields.length > 0) {
+		const includeCondition = buildSpamFieldsJsonPresenceCondition(includeFields);
+		conditions.push({
+			spamTagId: {
+				[Op.in]: literal(`(
+					SELECT "id" FROM "SpamTags" WHERE ${includeCondition}
+				)`),
+			},
+		});
+	}
+
+	const excludeFields = getValidSpamFieldFilterKeys(options.spamFieldsFilter?.exclude);
+	if (excludeFields.length > 0) {
+		const excludeCondition = buildSpamFieldsJsonPresenceCondition(excludeFields);
+		conditions.push(
+			literal(`(
+				"User"."spamTagId" IS NULL
+				OR "User"."spamTagId" NOT IN (
+					SELECT "id" FROM "SpamTags" WHERE ${excludeCondition}
+				)
+			)`),
+		);
 	}
 
 	if (conditions.length === 0) return {};

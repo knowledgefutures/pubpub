@@ -42,7 +42,7 @@ router.post(
 		const [bannedUser, actor, community, { spamTag }] = await Promise.all([
 			User.findByPk(userId, { attributes: ['id', 'email', 'fullName', 'slug'] }),
 			User.findByPk(actorId, { attributes: ['id', 'email', 'fullName', 'slug'] }),
-			Community.findByPk(communityId, { attributes: ['subdomain'] }),
+			Community.findByPk(communityId, { attributes: ['subdomain', 'title'] }),
 			upsertSpamTag({ userId }),
 		]);
 
@@ -63,6 +63,7 @@ router.post(
 			userSlug: bannedUser?.slug ?? '',
 			communityId,
 			communitySubdomain: community?.subdomain ?? '',
+			communityName: community?.title ?? community?.subdomain ?? '',
 			actorFullName: actor?.fullName ?? '',
 			actorSlug: actor?.slug ?? '',
 			actorEmail: actor?.email ?? '',

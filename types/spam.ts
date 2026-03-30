@@ -79,14 +79,22 @@ export type SpamUserQuery = {
 	minActivities?: number;
 	maxActivities?: number;
 	hasCommunityBan?: boolean;
-	spamFieldsFilter?: SpamFieldsFilterKey[];
+	spamFieldsFilter?: SpamFieldsFilter;
 };
 
 export type SpamFieldsFilterKey =
 	| 'honeypotTriggers'
 	| 'suspiciousFiles'
 	| 'suspiciousComments'
-	| 'manuallyMarkedBy';
+	| 'manuallyMarkedBy'
+	| 'automatedScan';
+
+export type SpamFieldsFilterMode = 'include' | 'exclude';
+
+export type SpamFieldsFilter = {
+	include?: SpamFieldsFilterKey[];
+	exclude?: SpamFieldsFilterKey[];
+};
 
 export type RecentDiscussion = {
 	id: string;

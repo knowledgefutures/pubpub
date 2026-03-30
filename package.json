@@ -260,7 +260,7 @@
 		"valid-url": "^1.0.9",
 		"vite-tsconfig-paths": "^5.1.4",
 		"xmlbuilder": "^13.0.2",
-		"yaml": "^1.6.0",
+		"yaml": "^1.10.3",
 		"yargs": "^13.2.4",
 		"zod": "3.22.4",
 		"zod-to-json-schema": "3.17.0",

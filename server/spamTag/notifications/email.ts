@@ -9,16 +9,42 @@ import { buildReasonText, getSpamDashUrl } from './shared';
 
 export const DEV_TEAM_EMAIL = 'dev@pubpub.org';
 
-export const sendSpamBanEmail = ({ toEmail, userName }: { toEmail: string; userName: string }) => {
+export type BanEmailOptions = {
+	toEmail: string;
+	userName: string;
+	/** Human-readable description of why the account was restricted. */
+	reason?: string;
+	/** Whether the decision was made (in whole or part) using automated means. */
+	isAutomated?: boolean;
+};
+
+export const sendSpamBanEmail = ({ toEmail, userName, reason, isAutomated }: BanEmailOptions) => {
+	const reasonBlock = reason
+		? `Specifically, the following was identified:\n${reason}`
+		: 'Our systems identified activity on your account that is inconsistent with legitimate use of the platform.';
+
+	const automatedBlock = isAutomated
+		? 'This decision was made with the assistance of automated detection systems and may be reviewed by a human moderator.'
+		: 'This decision was made by a human moderator.';
+
 	return sendEmail({
 		to: [toEmail],
 		subject: 'PubPub account restriction',
 		text: stripIndent(`
 			Hello${userName ? ` ${userName}` : ''},
 
-			Your activity on PubPub has been flagged as being in violation of our Acceptable Use Policy (https://www.pubpub.org/legal/aup). Your account has been banned. You are no longer able to log in and use the platform.
+			Your PubPub account has been restricted because your activity was found to be in violation of our Acceptable Use Policy (https://www.pubpub.org/legal/aup), specifically the prohibition on spam, unsolicited messages, and commercial communications.
 
-			If you believe this is an error, please contact us at hello@pubpub.org.
+			${reasonBlock}
+
+			${automatedBlock}
+
+			As a result, your account has been suspended. You are no longer able to log in or use the platform. Your existing content may be hidden from public view.
+
+			If you believe this is an error, you may:
+			- Contact us at hello@pubpub.org to request an internal review of this decision.
+			- Seek resolution through an out-of-court dispute settlement body certified under the Digital Services Act.
+			- Pursue judicial redress in a court of competent jurisdiction.
 
 			Sincerely,
 			PubPub Team
@@ -119,6 +145,39 @@ export const sendLiftDevEmail = ({
 			Review: ${reviewUrl}
 
 			-- PubPub Spam System
+		`),
+	});
+};
+
+export const sendCommunityBanUserEmail = ({
+	toEmail,
+	userName,
+	communityName,
+	reason,
+}: {
+	toEmail: string;
+	userName: string;
+	communityName: string;
+	reason?: string;
+}) => {
+	const reasonLine = reason ? `Reason given: ${reason}.` : '';
+	return sendEmail({
+		to: [toEmail],
+		subject: `You have been removed from a community on PubPub`,
+		text: stripIndent(`
+			Hello${userName ? ` ${userName}` : ''},
+
+			An administrator of the community "${communityName}" on PubPub has removed you from their community. You are no longer able to post or interact within that community. ${reasonLine}
+
+			This action was taken by a community administrator based on their community guidelines and PubPub's Acceptable Use Policy (https://www.pubpub.org/legal/aup). You may still use PubPub and participate in other communities.
+
+			If you believe this is an error, you may:
+			- Contact us at hello@pubpub.org to request a review of this decision.
+			- Seek resolution through an out-of-court dispute settlement body certified under the Digital Services Act.
+			- Pursue judicial redress in a court of competent jurisdiction.
+
+			Sincerely,
+			PubPub Team
 		`),
 	});
 };

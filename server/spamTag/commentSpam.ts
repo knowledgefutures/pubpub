@@ -22,8 +22,7 @@ const NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES = IS_WINDOW_MINUTES_VALID
 	: DEFAULT_NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES;
 
 const NEW_ACCOUNT_LINK_COMMENT_WINDOW_MS = NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES * 60 * 1000;
-const URL_REGEX = /\b(?:https?:\/\/|www\.)[^\s<]+/i;
-const MAX_TRIGGER_VALUE_LENGTH = 500;
+const URL_REGEX = /\b(?:https?:\/\/|www\.)[^\s<]+/gi;
 
 type AutoBanNewAccountLinkCommentOptions = {
 	userId: string;
@@ -32,17 +31,17 @@ type AutoBanNewAccountLinkCommentOptions = {
 	source: NewAccountLinkCommentTriggerSource;
 };
 
-const extractUrlFromString = (value: string): string | null => {
+export const extractUrlsFromString = (value: string | null | undefined): string[] | null => {
 	if (!value) {
 		return null;
 	}
 
-	const matchedUrl = value.match(URL_REGEX)?.[0];
+	const matchedUrl = value.matchAll(URL_REGEX);
 	if (!matchedUrl) {
 		return null;
 	}
 
-	return matchedUrl.slice(0, MAX_TRIGGER_VALUE_LENGTH);
+	return [...matchedUrl].map((match) => match[0]);
 };
 
 const hasValidContentShape = (value: unknown): value is DocJson => {
@@ -54,7 +53,7 @@ const hasValidContentShape = (value: unknown): value is DocJson => {
 	return typeof content.type === 'string';
 };
 
-const extractFirstLinkFromContent = (content: DocJson): string | null => {
+export const extractLinksFromContent = (content: DocJson | null | undefined): string[] | null => {
 	if (!hasValidContentShape(content)) {
 		return null;
 	}
@@ -66,20 +65,34 @@ const extractFirstLinkFromContent = (content: DocJson): string | null => {
 		contentTree.descendants((node) => {
 			node.marks.forEach((mark) => {
 				if (mark.type.name === 'link') {
+					// don't push relative urls
+					if (mark.attrs.href.startsWith('/')) {
+						return;
+					}
 					links.push(mark);
 				}
 			});
 		});
 
-		const linkFromTree = links[0]?.attrs.href;
-		if (typeof linkFromTree !== 'string' || !linkFromTree.length) {
+		const hrefs = links
+			.map((link) => link.attrs.href)
+			.filter((href) => typeof href === 'string' && href.length);
+		if (hrefs.length === 0) {
 			return null;
 		}
 
-		return linkFromTree.slice(0, MAX_TRIGGER_VALUE_LENGTH);
+		return hrefs;
 	} catch {
 		return null;
 	}
+};
+
+export const extractFirstLinkFromContent = (content: DocJson): string | null => {
+	const links = extractLinksFromContent(content);
+	if (!links) {
+		return null;
+	}
+	return links[0];
 };
 
 const getAccountAgeMs = (createdAt: Date | null | undefined): number => {
@@ -125,9 +138,9 @@ export const autoBanForNewAccountLinkComment = async (
 	}
 
 	const linkFromTree = extractFirstLinkFromContent(content);
-	const linkFromText = extractUrlFromString(text);
+	const linkFromText = extractUrlsFromString(text);
 
-	const firstLink = linkFromTree || linkFromText;
+	const firstLink = linkFromTree?.[0] || linkFromText?.[0];
 
 	if (!firstLink) {
 		return false;

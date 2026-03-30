@@ -2,6 +2,7 @@ import type { BanReason, SpamStatus, UserSpamTagFields } from 'types';
 
 import {
 	sendBanDevEmail,
+	sendCommunityBanUserEmail,
 	sendCommunityFlagDevEmail,
 	sendCommunityFlagResolvedEmail,
 	sendLiftDevEmail,
@@ -62,6 +63,7 @@ type SpamLiftedContext = SharedContext & {
 type CommunityFlagContext = SharedContext & {
 	communityId: string;
 	communitySubdomain: string;
+	communityName?: string;
 	sourceThreadCommentId?: string | null;
 	actorFullName: string;
 	actorSlug: string;
@@ -123,9 +125,23 @@ const handlers = {
 				uploadKey: ctx.uploadKey,
 			}),
 	],
-	'honeypot-ban': [(ctx) => sendSpamBanEmail({ toEmail: ctx.userEmail, userName: ctx.userName })],
+	'honeypot-ban': [
+		(ctx) =>
+			sendSpamBanEmail({
+				toEmail: ctx.userEmail,
+				userName: ctx.userName,
+				reason: 'Your account triggered an automated spam detection mechanism.',
+				isAutomated: true,
+			}),
+	],
 	'new-account-link-comment-ban': [
-		(ctx) => sendSpamBanEmail({ toEmail: ctx.userEmail, userName: ctx.userName }),
+		(ctx) =>
+			sendSpamBanEmail({
+				toEmail: ctx.userEmail,
+				userName: ctx.userName,
+				reason: 'A link was posted from your account shortly after it was created, which matches a pattern commonly associated with spam.',
+				isAutomated: true,
+			}),
 		(ctx) => sendBanDevEmail({ userEmail: ctx.userEmail, userName: ctx.userName }),
 		(ctx) =>
 			postToSlackAboutUserBan({
@@ -146,7 +162,12 @@ const handlers = {
 				reason: ctx.spamFields,
 				actorName: ctx.actorName,
 			}),
-		(ctx) => sendSpamBanEmail({ toEmail: ctx.userEmail, userName: ctx.userName }),
+		(ctx) =>
+			sendSpamBanEmail({
+				toEmail: ctx.userEmail,
+				userName: ctx.userName,
+				isAutomated: false,
+			}),
 		(ctx) =>
 			sendBanDevEmail({
 				userEmail: ctx.userEmail,
@@ -189,6 +210,13 @@ const handlers = {
 				communitySubdomain: ctx.communitySubdomain,
 				flagReason: ctx.flagReason,
 				flagReasonText: ctx.flagReasonText,
+			}),
+		(ctx) =>
+			sendCommunityBanUserEmail({
+				toEmail: ctx.userEmail,
+				userName: ctx.userName,
+				communityName: ctx.communityName || ctx.communitySubdomain,
+				reason: ctx.flagReasonText ?? undefined,
 			}),
 	],
 	'community-flag-retracted': [

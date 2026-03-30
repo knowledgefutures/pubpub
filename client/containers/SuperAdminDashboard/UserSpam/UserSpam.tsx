@@ -1,11 +1,17 @@
-import type { SpamFieldsFilterKey, SpamStatus, SpamUserQueryOrdering } from 'types';
+import type {
+	SpamFieldsFilter,
+	SpamFieldsFilterKey,
+	SpamFieldsFilterMode,
+	SpamStatus,
+	SpamUserQueryOrdering,
+} from 'types';
 
 import type { SpamUsersFilter } from './filters';
 import type { SpamUser } from './types';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { Button, ButtonGroup, Checkbox, HTMLSelect, Spinner } from '@blueprintjs/core';
+import { Button, ButtonGroup, HTMLSelect, Spinner } from '@blueprintjs/core';
 import { useDebounce, useUpdateEffect } from 'react-use';
 
 import { Popover } from 'client/components';
@@ -41,7 +47,12 @@ const spamFieldOptions: { key: SpamFieldsFilterKey; label: string }[] = [
 	{ key: 'suspiciousFiles', label: 'Suspicious files' },
 	{ key: 'suspiciousComments', label: 'Suspicious comments' },
 	{ key: 'manuallyMarkedBy', label: 'Manually marked' },
+	{ key: 'automatedScan', label: 'Automated scan' },
 ];
+
+const defaultSpamFieldsFilter: SpamFieldsFilter = {
+	exclude: ['automatedScan'],
+};
 
 type DatePreset = { label: string; days: number };
 
@@ -70,6 +81,59 @@ const parseSort = (value: string): SpamUserQueryOrdering => {
 	return { field, direction } as SpamUserQueryOrdering;
 };
 
+const parseSpamFieldFilterParam = (
+	value: string | undefined,
+): SpamFieldsFilterKey[] | undefined => {
+	if (!value) {
+		return undefined;
+	}
+
+	const keys = value
+		.split(',')
+		.map((entry) => entry.trim())
+		.filter(Boolean) as SpamFieldsFilterKey[];
+
+	if (keys.length === 0) {
+		return undefined;
+	}
+
+	return keys;
+};
+
+const normalizeSpamFieldsFilter = (
+	filter: SpamFieldsFilter | undefined,
+): SpamFieldsFilter | undefined => {
+	const include = filter?.include?.length
+		? (Array.from(new Set(filter.include)) as SpamFieldsFilterKey[])
+		: undefined;
+	const exclude = filter?.exclude?.length
+		? (Array.from(new Set(filter.exclude)) as SpamFieldsFilterKey[])
+		: undefined;
+
+	if (!include?.length && !exclude?.length) {
+		return undefined;
+	}
+
+	return { include, exclude };
+};
+
+type SpamFieldFilterState = SpamFieldsFilterMode | 'off';
+
+const getSpamFieldFilterState = (
+	filter: SpamFieldsFilter | undefined,
+	key: SpamFieldsFilterKey,
+): SpamFieldFilterState => {
+	if (filter?.include?.includes(key)) {
+		return 'include';
+	}
+
+	if (filter?.exclude?.includes(key)) {
+		return 'exclude';
+	}
+
+	return 'off';
+};
+
 const readUrlParams = () => {
 	if (typeof window === 'undefined') return {};
 	const params = new URLSearchParams(window.location.search);
@@ -85,6 +149,8 @@ const readUrlParams = () => {
 		activeBefore: get('activeBefore'),
 		minActivities: get('minActivities'),
 		maxActivities: get('maxActivities'),
+		spamFieldsInclude: get('spamFieldsInclude'),
+		spamFieldsExclude: get('spamFieldsExclude'),
 		spamFields: get('spamFields'),
 	};
 };
@@ -100,7 +166,7 @@ const buildUrlParams = (state: {
 	activeBefore?: string;
 	minActivities?: number;
 	maxActivities?: number;
-	spamFieldsFilter?: SpamFieldsFilterKey[];
+	spamFieldsFilter?: SpamFieldsFilter;
 }) => {
 	const params = new URLSearchParams();
 	if (state.searchTerm) params.set('q', state.searchTerm);
@@ -115,7 +181,12 @@ const buildUrlParams = (state: {
 	if (state.activeBefore) params.set('activeBefore', state.activeBefore);
 	if (state.minActivities != null) params.set('minActivities', String(state.minActivities));
 	if (state.maxActivities != null) params.set('maxActivities', String(state.maxActivities));
-	if (state.spamFieldsFilter?.length) params.set('spamFields', state.spamFieldsFilter.join(','));
+	if (state.spamFieldsFilter?.include?.length) {
+		params.set('spamFieldsInclude', state.spamFieldsFilter.include.join(','));
+	}
+	if (state.spamFieldsFilter?.exclude?.length) {
+		params.set('spamFieldsExclude', state.spamFieldsFilter.exclude.join(','));
+	}
 	const qs = params.toString();
 	return qs ? `?${qs}` : '';
 };
@@ -150,14 +221,55 @@ const UserSpam = (props: Props) => {
 	const [maxActivities, setMaxActivities] = useState<number | undefined>(
 		urlParams.maxActivities ? Number(urlParams.maxActivities) : undefined,
 	);
-	const [spamFieldsFilter, setSpamFieldsFilter] = useState<SpamFieldsFilterKey[]>(
-		urlParams.spamFields ? (urlParams.spamFields.split(',') as SpamFieldsFilterKey[]) : [],
-	);
 
-	const toggleSpamField = useCallback((key: SpamFieldsFilterKey) => {
-		setSpamFieldsFilter((prev) =>
-			prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
-		);
+	const hasSpamFieldsFilterInUrl =
+		urlParams.spamFieldsInclude != null ||
+		urlParams.spamFieldsExclude != null ||
+		urlParams.spamFields != null;
+
+	const initialSpamFieldsFilter =
+		normalizeSpamFieldsFilter(
+			hasSpamFieldsFilterInUrl
+				? {
+						include: parseSpamFieldFilterParam(
+							urlParams.spamFieldsInclude ?? urlParams.spamFields,
+						),
+						exclude: parseSpamFieldFilterParam(urlParams.spamFieldsExclude),
+					}
+				: defaultSpamFieldsFilter,
+		) ?? defaultSpamFieldsFilter;
+
+	const [spamFieldsFilter, setSpamFieldsFilter] =
+		useState<SpamFieldsFilter>(initialSpamFieldsFilter);
+
+	const cycleSpamFieldFilter = useCallback((key: SpamFieldsFilterKey) => {
+		setSpamFieldsFilter((prev) => {
+			const include = new Set(prev.include ?? []);
+			const exclude = new Set(prev.exclude ?? []);
+			const currentState = getSpamFieldFilterState(prev, key);
+
+			if (currentState === 'include') {
+				include.delete(key);
+				exclude.add(key);
+			} else if (currentState === 'exclude') {
+				exclude.delete(key);
+			} else {
+				include.add(key);
+			}
+
+			return (
+				normalizeSpamFieldsFilter({
+					include:
+						include.size > 0
+							? (Array.from(include) as SpamFieldsFilterKey[])
+							: undefined,
+					exclude:
+						exclude.size > 0
+							? (Array.from(exclude) as SpamFieldsFilterKey[])
+							: undefined,
+				}) ?? {}
+			);
+		});
 	}, []);
 
 	useDebounce(() => setSearchTerm(inputSearchTerm), 300, [inputSearchTerm]);
@@ -181,7 +293,7 @@ const UserSpam = (props: Props) => {
 			activeBefore,
 			minActivities,
 			maxActivities,
-			spamFieldsFilter: spamFieldsFilter.length > 0 ? spamFieldsFilter : undefined,
+			spamFieldsFilter: normalizeSpamFieldsFilter(spamFieldsFilter),
 		}),
 		[
 			createdAfter,
@@ -223,7 +335,7 @@ const UserSpam = (props: Props) => {
 			activeBefore,
 			minActivities,
 			maxActivities,
-			spamFieldsFilter: spamFieldsFilter.length > 0 ? spamFieldsFilter : undefined,
+			spamFieldsFilter: normalizeSpamFieldsFilter(spamFieldsFilter),
 		});
 		window.history.replaceState({}, '', window.location.pathname + qs);
 	}, [
@@ -262,6 +374,10 @@ const UserSpam = (props: Props) => {
 	const handleSortChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
 		setOrdering(parseSort(e.target.value));
 	}, []);
+
+	const includeSpamFieldsCount = spamFieldsFilter.include?.length ?? 0;
+	const excludeSpamFieldsCount = spamFieldsFilter.exclude?.length ?? 0;
+	const totalSpamFieldsCount = includeSpamFieldsCount + excludeSpamFieldsCount;
 
 	return (
 		<div className="user-spam-component">
@@ -503,30 +619,47 @@ const UserSpam = (props: Props) => {
 					content={
 						<div className="popover-panel">
 							<div className="popover-panel-title">Detection reason</div>
-							{spamFieldOptions.map((opt) => (
-								<Checkbox
-									key={opt.key}
-									checked={spamFieldsFilter.includes(opt.key)}
-									onChange={() => toggleSpamField(opt.key)}
-									label={opt.label}
-									style={{ marginBottom: 0 }}
-								/>
-							))}
-							{spamFieldsFilter.length > 0 && (
+							{spamFieldOptions.map((opt) => {
+								const state = getSpamFieldFilterState(spamFieldsFilter, opt.key);
+								const intent =
+									state === 'include'
+										? 'primary'
+										: state === 'exclude'
+											? 'danger'
+											: 'none';
+								const stateLabel = state === 'off' ? 'off' : state;
+
+								return (
+									<Button
+										key={opt.key}
+										small
+										fill
+										minimal={state === 'off'}
+										intent={intent}
+										onClick={() => cycleSpamFieldFilter(opt.key)}
+										style={{ marginBottom: 6 }}
+									>
+										{`${opt.label}: ${stateLabel}`}
+									</Button>
+								);
+							})}
+							{totalSpamFieldsCount > 0 && (
 								<Button
 									small
 									minimal
 									icon="cross"
 									text="Clear"
-									onClick={() => setSpamFieldsFilter([])}
+									onClick={() => setSpamFieldsFilter({})}
 								/>
 							)}
 						</div>
 					}
 				>
-					<Button small minimal icon="filter" active={spamFieldsFilter.length > 0}>
+					<Button small minimal icon="filter" active={totalSpamFieldsCount > 0}>
 						Reason
-						{spamFieldsFilter.length > 0 ? ` (${spamFieldsFilter.length})` : ''}
+						{totalSpamFieldsCount > 0
+							? ` (${includeSpamFieldsCount} in, ${excludeSpamFieldsCount} out)`
+							: ''}
 					</Button>
 				</Popover>
 			</div>

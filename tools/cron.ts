@@ -44,12 +44,13 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 			const dateStamp = new Date().toISOString().slice(0, 10);
 			const commentsPath = `/tmp/spam-scan-comments-${dateStamp}.json`;
 			const accountsPath = `/tmp/spam-scan-accounts-${dateStamp}.json`;
+			const outputPath = `/tmp/spam-scan-${dateStamp}.json`;
 
 			// primary: scan users who commented in the last 72h (catches active
 			// spammers regardless of account age)
 			run(
 				'Spam Scan (analyze recent commenters)',
-				`tools-prod scanSpamUsers --analyze --mode recent-comments --since 72h --output ${commentsPath} --min-score 6`,
+				`tools-prod scanSpamUsers --analyze --mode recent-comments --since 72h --skip-profile-signals --output ${commentsPath} --min-score 6`,
 			);
 
 			run(
@@ -61,15 +62,20 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 			// that haven't commented yet). skip users already caught above.
 			run(
 				'Spam Scan (analyze new accounts)',
-				`tools-prod scanSpamUsers --analyze --since 72h --output ${accountsPath} --input ${commentsPath} --min-score 6`,
+				`tools-prod scanSpamUsers --analyze --since 72h --output ${accountsPath} --input ${commentsPath} --min-score 8`,
 			);
 
 			run(
 				'Spam Scan (execute new accounts)',
-				`tools-prod scanSpamUsers --execute --input ${accountsPath} --ban --min-score 6`,
+				`tools-prod scanSpamUsers --execute --input ${accountsPath} --ban --min-score 8`,
 			);
 
-			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${commentsPath}`);
+			// merge the two results into a single file using jq
+			run(
+				'Spam Scan (merge results)',
+				`jq -s '[.[]]' ${commentsPath} ${accountsPath} > ${outputPath}`,
+			);
+			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${outputPath}`);
 		},
 		{ timezone: 'UTC' },
 	); // Daily at 4 AM UTC

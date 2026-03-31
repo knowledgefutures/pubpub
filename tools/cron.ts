@@ -46,12 +46,12 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 
 			run(
 				'Spam Scan (analyze)',
-				`tools-prod scanSpamUsers --analyze --since 26h --output ${outputPath} --min-score 6`,
+				`tools-prod scanSpamUsers --analyze --since 72h --output ${outputPath} --min-score 6`,
 			);
 
 			run(
 				'Spam Scan (execute)',
-				`tools-prod scanSpamUsers --execute --input ${outputPath} --min-score 6`,
+				`tools-prod scanSpamUsers --execute --input ${outputPath} --ban --min-score 6`,
 			);
 
 			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${outputPath}`);

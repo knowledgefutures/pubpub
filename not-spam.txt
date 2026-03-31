@@ -1,0 +1,809 @@
+Heidi Baumgartner
+email: heidib@stanford.edu
+slug: heidi-baumgartner
+Confirmed not spamSpam score: 0Created: Jan 09, 2024
+Communities: oecs · 1 pub(s) ·
+Jip Prinsen
+email: prinsen@trialanderror.org
+slug: jip-prinsen
+Confirmed not spamSpam score: 0Created: Mar 29, 2024
+Communities: jtrialerror · 1 pub(s)
+Lorenz Weinberg
+email: lorenz.weinberg@fu-berlin.de
+slug: lorenz-weinberg
+Confirmed not spamSpam score: 0Created: Oct 23, 2024
+Communities: oabb ·
+Bruce R. Caron
+email: brcaron@gmail.com
+slug: bruce-caron
+Confirmed not spamSpam score: 0Created: Jan 21, 2018
+Communities: openscientist, 52, jods, junana, arcadia-research · 67 pub(s) ·
+Edith Page
+email: epage1@student.gsu.edu
+slug: edith-epage1studentgsuedu
+Confirmed not spamSpam score: 0Created: Sep 07, 2021
+Communities: opc, digitalcriminology · 24 pub(s) ·
+David W. Park
+email: park@lakeforest.edu
+slug: david-park
+Confirmed not spamSpam score: 0Created: Jun 05, 2019
+Communities: hms, msp · 37 pub(s) ·
+Ali Donaldson
+email: alidonaldson@gmail.com
+slug: alison-donaldson
+Confirmed not spamSpam score: 0Created: Jul 16, 2020
+Communities: researchinaction · 4 pub(s) ·
+Taylor Reiter
+email: taylor.reiter@arcadiascience.com
+slug: taylor-reiter
+Confirmed not spamSpam score: 0Created: Aug 03, 2022
+Communities: arcadia-research · 34 pub(s) ·
+Nuno Correia
+email: mail@nunocorreia.com
+slug: nuno-correia
+Confirmed not spamSpam score: 0Created: Jan 15, 2021
+Communities: erre ·
+Jack Armitage
+email: jack@jackarmitage.com
+slug: jack-armitage-2
+Confirmed not spamSpam score: 0Created: Apr 22, 2020
+Communities: hybrid-livecode, chime, aimc2023, nime, aimc2024, ... · 22 pub(s) ·
+Hannah Rogers
+email: hannahstarrogers@gmail.com
+slug: hannah-rogers
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, ame130fall2020frankenbookclone, fall2020frankenbookclone1, 125-class, frankenbook-230, ... ·
+Peter Simonson
+email: peter.simonson@colorado.edu
+slug: pete-simonson
+Confirmed not spamSpam score: 0Created: Jun 05, 2020
+Communities: hms, msp · 11 pub(s) ·
+Aric Maiden
+email: aric.maiden@gmail.com
+slug: aric-maiden
+Confirmed not spamSpam score: 0Created: Aug 30, 2020
+Communities: frankenbook, fall2020frankenbookclone1, 125-class, ame130fall2020frankenbookclone, 1115-class, ... ·
+Sara Brownell
+email: sara.brownell@asu.edu
+slug: sara-brownell
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, fall2020frankenbookclone1, ame130fall2020frankenbookclone, 1115-class, fall2020frankenbookclone2, ... ·
+Ron Broglio
+email: ronald.broglio@asu.edu
+slug: ron-broglio
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, 125-class, fall2020frankenbookclone1, ame130fall2020frankenbookclone, 1115-class, ... ·
+Frank Rashid
+email: frankdrashid@outlook.com
+slug: frank-rashid
+Matched fields
+
+{
+  "honeypotTriggers": [
+    {
+      "value": "",
+      "context": {
+        "communitySubdomain": "detroitstudies"
+      },
+      "honeypot": "create-user",
+      "triggeredAt": "2026-03-04T17:29:55.509Z"
+    }
+  ]
+}
+
+Honeypot triggers
+
+    create-user 
+
+Confirmed not spamSpam score: 0Created: Mar 04, 2026
+Jessica Sherrill
+email: jessicarsherrill@gmail.com
+slug: jessica-sherrill
+Matched fields
+
+Honeypot triggers
+
+    create-user 
+
+Confirmed not spamSpam score: 0Created: Mar 05, 2026
+David Wishengrad
+email: davewishengrad@gmail.com
+slug: david-wishengrad
+Matched fields
+
+Honeypot triggers
+
+    create-user 
+
+Confirmed not spamSpam score: 0Created: Mar 10, 2026
+Communities: life-is-most-important-in-life · 1 pub(s) ·
+Priyankha Sunil
+email: psunil7@seas.upenn.edu
+slug: priyankha-sunil
+Matched fields
+
+Honeypot triggers
+
+    create-user 
+
+Confirmed not spamSpam score: 0Created: Mar 07, 2026
+prof premraj pushpakaran
+email: drpremrajp@nitc.ac.in
+slug: prof-premraj-pushpakaran
+Confirmed not spamSpam score: 0Created: Oct 26, 2016
+Nicole S.
+email: nicole.siggins@gmail.com
+slug: nicoles
+Confirmed not spamSpam score: 0Created: Jan 04, 2019
+Communities: bookbook ·
+Sarah Schwettmann
+email: schwett@mit.edu
+slug: sarah
+Confirmed not spamSpam score: 0Created: Feb 11, 2017
+Communities: generism, credcon, mmm, knowledgestructure, sj, ... · 63 pub(s) ·
+Oswaldo Zurita
+email: oswaldo@ecotonourbano.com
+slug: oswaldo-zurita
+Confirmed not spamSpam score: 0Created: Sep 24, 2020
+Communities: participa-conl ·
+Miguel Guevara
+email: miguel.guevara@upla.cl
+slug: miguel-guevara
+Confirmed not spamSpam score: 0Created: Aug 18, 2020
+Communities: achirp, cienciometria, datascope, nime · 14 pub(s) ·
+Prasanna Sritharan
+email: psbiomech@gmail.com
+slug: prasanna-sritharan
+Confirmed not spamSpam score: 0Created: Aug 23, 2019
+Communities: tjoe ·
+Gabrielle Lavenir
+email: gabrielle.lavenir@gmail.com
+slug: gabrielle-lavenir
+Confirmed not spamSpam score: 0Created: May 25, 2021
+Communities: aberrationsnumeriques · 3 pub(s) ·
+Pierre Alexandre Tremblay
+email: p.a.tremblay@hud.ac.uk
+slug: pierre-alexandre-tremblay
+Confirmed not spamSpam score: 0Created: Mar 25, 2021
+Communities: nime ·
+John Sullivan
+email: johnny@johnnyvenom.com
+slug: john-sullivan
+Confirmed not spamSpam score: 0Created: Nov 25, 2020
+Communities: idmil, johnnyvenom, eco-nime, econime, audiomostlyeco, ... · 21 pub(s) ·
+Martin Martinez Casales
+email: martin.martinez.casales@gmail.com
+slug: martin-martinez-casales
+Confirmed not spamSpam score: 0Created: Oct 06, 2020
+Communities: mtyideal2040 ·
+Marlene Kallaß
+email: adam.kallass@s-nos.org
+slug: adam-kallass
+Confirmed not spamSpam score: 0Created: Dec 07, 2024
+Communities: testexchange · 3 pub(s) ·
+Michelle Gonzalez
+email: michelle@cybercivilrights.org
+slug: michelle-gonzalez
+Confirmed not spamSpam score: 0Created: Feb 25, 2022
+Communities: nfpcsa ·
+Morgan F. Wofford
+email: mfwofford@ucla.edu
+slug: morgan-wofford
+Confirmed not spamSpam score: 0Created: Feb 06, 2019
+Communities: hdsr · 3 pub(s) ·
+Michael Hemenway
+email: michael@machinesaspartners.com
+slug: michael-hemenway
+Confirmed not spamSpam score: 0Created: Nov 05, 2019
+Communities: cursor · 4 pub(s) ·
+Adrian Sennrich
+email: adrian.sennrich@fhnw.ch
+slug: adrian-sennrich
+Confirmed not spamSpam score: 0Created: Jan 30, 2023
+Communities: phase0 · 5 pub(s) ·
+Nao Tokui
+email: tokui@sfc.keio.ac.jp
+slug: nao-tokui
+Confirmed not spamSpam score: 0Created: Jan 19, 2022
+Communities: nime · 4 pub(s) ·
+Sushant Rao
+email: sushantrao@yahoo.com
+slug: sushant-rao
+Confirmed not spamSpam score: 0Created: Aug 19, 2021
+Communities: edn, b2gservitization, howto, extracurricular, dsr, ... · 24 pub(s) ·
+Sophia Mustafoska
+email: mustafoska@dzhw.eu
+slug: sophia-mustafoska
+Confirmed not spamSpam score: 0Created: Mar 18, 2024
+Communities: openrewi ·
+Lucia Benetti
+email: luciabenetti@gmail.com
+slug: lucia-benetti
+Confirmed not spamSpam score: 0Created: Jan 06, 2020
+Communities: musicalchange ·
+Franziska Schroeder
+email: f.schroeder@qub.ac.uk
+slug: franziska-schroeder
+Confirmed not spamSpam score: 0Created: Jan 16, 2021
+Communities: nime, aimc2023, pwb · 4 pub(s) ·
+Raja Mudrak
+email: raja.mudrak@stud.uni-hannover.de
+slug: raja-mudrak
+Confirmed not spamSpam score: 0Created: Apr 17, 2024
+Communities: openrewi · 11 pub(s) ·
+Saskia Schaefer
+email: saskia.schaefer@hu-berlin.de
+slug: saskia-schaefer
+Confirmed not spamSpam score: 0Created: Jun 02, 2021
+Communities: sidit, replitonationalismworkshop, replito · 9 pub(s) ·
+Adrián Lozano SOSAC
+email: adrian.lozano@sosac.org
+slug: adrian-lozano-sosac
+Confirmed not spamSpam score: 0Created: Sep 19, 2020
+Communities: participa-conl, mtyideal2040 · 1 pub(s) ·
+Thelma Svenns
+email: thelmasv@gmail.com
+slug: thelma-svenns
+Confirmed not spamSpam score: 0Created: Dec 10, 2020
+Communities: nime, holzap · 3 pub(s) ·
+Michael Coors
+email: michael.coors@uzh.ch
+slug: michael-coors
+Confirmed not spamSpam score: 0Created: Jan 11, 2021
+Communities: cursor · 3 pub(s) ·
+Sergi Jorda
+email: sergi.jorda@upf.edu
+slug: sergi-jorda
+Confirmed not spamSpam score: 0Created: Jan 25, 2021
+Communities: nime, aimc2023 · 4 pub(s) ·
+Max Milas
+email: max.milas@uni-muenster.de
+slug: max-milas
+Confirmed not spamSpam score: 0Created: Feb 15, 2024
+Communities: openrewi · 2 pub(s) ·
+Alex Sallade
+email: asallade86@gmail.com
+slug: alex-sallade
+Confirmed not spamSpam score: 0Created: Jan 06, 2020
+Communities: musicalchange · 11 pub(s) ·
+Chelsea Johnston
+email: chelsea@knowledgefutures.org
+slug: chelsea-johnston-2
+Confirmed not spamSpam score: 0Created: Dec 11, 2023
+Communities: data-feminism, perseus, tmb, mit-genai, kft, ... · 27 pub(s) ·
+Robert Böttner
+email: robert.a.boettner@gmail.com
+slug: robert-bottner
+Confirmed not spamSpam score: 0Created: Oct 09, 2023
+Communities: openrewi · 1 pub(s) ·
+Steffen Schwerdtfeger
+email: steffen.schwerdtfeger@berlinexchange.de
+slug: steffen-schwerdtfeger-2
+Confirmed not spamSpam score: 0Created: Jan 21, 2022
+Communities: testexchange · 43 pub(s) ·
+Simone Franz
+email: simone.franz@mailbox.org
+slug: simone-franz
+Confirmed not spamSpam score: 0Created: May 24, 2022
+Communities: 0277 · 1 pub(s) ·
+Maximilian Petras
+email: mpetras@law.uni-kiel.de
+slug: maximilian-petras
+Confirmed not spamSpam score: 0Created: Jan 30, 2022
+Communities: informationsfreiheit, lpeg, openrewi, legacy-help, copim · 41 pub(s) ·
+marcela guerra
+email: bethcamomila@gmail.com
+slug: marcela-guerra
+Confirmed not spamSpam score: 0Created: May 20, 2020
+Communities: malu, psp, familiae, novella, limalu, ... · 114 pub(s) ·
+Roman Rick Sallaba
+email: sallaba@mpisoc.mpg.de
+slug: roman-rick-sallaba
+Confirmed not spamSpam score: 0Created: Dec 10, 2024
+Communities: openrewi · 1 pub(s) ·
+Nicholas Jackson
+email: nickaj93@gmail.com
+slug: nicholas-jackson
+Confirmed not spamSpam score: 0Created: Jan 06, 2020
+Communities: musicalchange · 11 pub(s) ·
+Vicki Bartek
+email: bartekv@chop.edu
+slug: vicki-bartek
+Confirmed not spamSpam score: 0Created: Aug 17, 2021
+Communities: academicentrepreneurship-clone, academicentrepreneurship, mmm · 15 pub(s) ·
+Julia Enxing
+email: julia.enxing1@tu-dresden.de
+slug: julia-enxing-2
+Confirmed not spamSpam score: 0Created: Aug 30, 2019
+Communities: cursor · 7 pub(s) ·
+Susanna Roßbach
+email: susanna.rossbach@law-school.de
+slug: susanna-rossbach
+Confirmed not spamSpam score: 0Created: Feb 19, 2024
+Communities: openrewi · 1 pub(s) ·
+Daniel Shanahan
+email: shanahan.37@osu.edu
+slug: daniel-shanahan
+Confirmed not spamSpam score: 0Created: Dec 02, 2019
+Communities: musicalchange, musical-change · 5 pub(s) ·
+Kelsey Cotton
+email: kelsey@chalmers.se
+slug: kelsey-cotton-2
+Confirmed not spamSpam score: 0Created: May 12, 2022
+Communities: intro2ai, rtdsubmission, aimc2023, aimc2024 · 6 pub(s) ·
+Rebecca Frank
+email: rfrank@gmail.com
+slug: rebecca-frank
+Confirmed not spamSpam score: 0Created: Nov 15, 2023
+Communities: digital-preservation-a-critical-vocabulary · 2 pub(s) ·
+Unjournal Admin (NA)
+email: contact@unjournal.org
+slug: unjournal-admin-na
+Confirmed not spamSpam score: 0Created: Dec 20, 2023
+Communities: testabcd123456789, unjournal, kf-notes · 17 pub(s) ·
+Ledgerback Cooperative
+email: hello@ledgerback.coop
+slug: ledgerback-cooperative
+Confirmed not spamSpam score: 0Created: Oct 31, 2019
+Communities: thinklusive, ledgerback · 73 pub(s) ·
+Gianna Sannipoli
+email: gmsannipoli@yahoo.com
+slug: gianna-sannipoli
+Confirmed not spamSpam score: 0Created: Jun 17, 2020
+Communities: sar · 21 pub(s) ·
+Laurel Pardue
+email: punk@mit.edu
+slug: laurel-pardue
+Confirmed not spamSpam score: 0Created: Feb 22, 2021
+Communities: nime · 4 pub(s) ·
+Julia-Jasmin Bold
+email: julia.bold@hs-mainz.de
+slug: julia-jasmin-bold
+Confirmed not spamSpam score: 0Created: Jan 23, 2024
+Communities: gestaltungai · 6 pub(s) ·
+Elizabeth Denlinger
+email: cahearn+denlinger@mit.edu
+slug: elizabeth-denlinger
+Confirmed not spamSpam score: 0Created: Feb 26, 2018
+Communities: frankenbook, 125-class, ame130fall2020frankenbookclone, 1115-class, fall2020frankenbookclone1, ... ·
+Stephanie Naufel
+email: stephanie-naufel@fake.com
+slug: stephanie-naufel
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, fall2020frankenbookclone1, frankenbook-230, 1115-class, 125-class, ... ·
+Maximilian Petras
+email: hdueo@posteo.de
+slug: maximilian-petras-2
+Confirmed not spamSpam score: 0Created: Jan 16, 2024
+Communities: openrewi · 12 pub(s) ·
+Kelsey Dufresne
+email: kvdowns@ncsu.edu
+slug: kelsey-dufresne
+Confirmed not spamSpam score: 0Created: Nov 19, 2020
+Communities: fermentology, autogeddon, mobilenetworkedcreativity, out-of-the-archives, esse-quam-videri-make-america-again, ... · 71 pub(s) ·
+Prachee Avasthi
+email: prachee.avasthi@arcadiascience.com
+slug: prachee-avasthi
+Confirmed not spamSpam score: 0Created: Mar 04, 2022
+Communities: arcadia-research, gabestein · 36 pub(s) ·
+Nathan Villicaña-Shaw
+email: nathanshawsemail@gmail.com
+slug: nathan-villicana-shaw
+Confirmed not spamSpam score: 0Created: Nov 19, 2020
+Communities: nime · 3 pub(s) ·
+Adela Roa-Varon
+email: roa-varona@si.edu
+slug: adela-roa-varon
+Confirmed not spamSpam score: 0Created: Mar 04, 2022
+Communities: cobra, deepseacapacity · 8 pub(s) ·
+Célya Gruson-Daniel
+email: celyagd@hackyourphd.org
+slug: celya-gd
+Confirmed not spamSpam score: 0Created: Jun 06, 2017
+Communities: phd-cgd, inno3, ancre-savoirs, opensource-esr, meta-open-research, ... · 41 pub(s) ·
+Kelsey Cotton
+email: kelseyc@kth.se
+slug: kelsey-cotton
+Confirmed not spamSpam score: 0Created: Dec 17, 2020
+Communities: bodyelectricnime, ugapplicationkelsey, itu-dk-proposal, cc21-3voices, nimefinal, ... · 17 pub(s) ·
+Lisa Andersson López
+email: lisaanderssonlopez@gmail.com
+slug: lisa-lisaanderssonlopezgmailcom
+Confirmed not spamSpam score: 0Created: Dec 10, 2020
+Communities: nime, holzap · 2 pub(s) ·
+Bill Rowan
+email: wdrowan8@gmail.com
+slug: bill-rowan
+Confirmed not spamSpam score: 0Created: Mar 30, 2021
+Communities: c4disc ·
+Gunter Rudnik
+email: g.rudnik@email.de
+slug: gunter-rudnik
+Confirmed not spamSpam score: 0Created: Jul 08, 2024
+Communities: openrewi · 5 pub(s) ·
+Miguel Astor-Aguilera
+email: maaguile@asu.edu
+slug: miguel-astor-aguilera
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, ame130fall2020frankenbookclone, fall2020frankenbookclone1, 1115-class, 125-class, ... ·
+Judith Guston
+email: jmguston@rosenbach.org
+slug: judith-guston
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, 125-class, fall2020frankenbookclone1, 1115-class, fall2020frankenbookclone2, ... ·
+Mary Margaret Fonow
+email: MaryMargaret.Fonow@asu.edu
+slug: mary-margaret-fonow
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, 125-class, ame130fall2020frankenbookclone, fall2020frankenbookclone1, frankenbook-230, ... ·
+Scott Jacques
+email: me@scottjacques.us
+slug: scott-jacques
+Confirmed not spamSpam score: 0Created: Aug 28, 2019
+Communities: crimrxiv, cybercrimeinvestigation, dc3, socarxivonpubpub, jcjlj, ... · 907 pub(s) ·
+Vincent Cusson
+email: cusson.v@gmail.com
+slug: vincent-cusson
+Confirmed not spamSpam score: 0Created: Jan 19, 2021
+Communities: idmil, nime · 9 pub(s) ·
+Julian Seidl
+email: julian.seidl@posteo.de
+slug: julian-seidl
+Confirmed not spamSpam score: 0Created: Jun 20, 2024
+Communities: openrewi · 2 pub(s) ·
+Fritzi-Marie Titzmann
+email: fritzi.titzmann@hu-berlin.de
+slug: fritzi-marie-titzmann
+Confirmed not spamSpam score: 0Created: Jun 14, 2021
+Communities: livingtogether-lookingapart, replito · 36 pub(s) ·
+Stephanie Koscak
+email: koscakse@wfu.edu
+slug: stephanie-koscak
+Confirmed not spamSpam score: 0Created: Jun 13, 2022
+Communities: domesticknowledge, legacy-help, commonplace · 8 pub(s) ·
+Heather Staines
+email: heather.staines@gmail.com
+slug: heather-staines
+Confirmed not spamSpam score: 0Created: Jul 14, 2017
+Communities: apa, mindthegap, kf2019, glamlabs, demosite, ... · 195 pub(s) ·
+DGPPE UANL
+email: dgppe@uanl.mx
+slug: dgppe-uanl
+Confirmed not spamSpam score: 0Created: Sep 28, 2020
+Communities: participa-conl · 1 pub(s) ·
+Beth Fischer
+email: beth.fischer@gmail.com
+slug: bethfischer
+Confirmed not spamSpam score: 0Created: Dec 20, 2018
+Communities: handbook, wcma · 45 pub(s) ·
+Maxime Le Calvé
+email: lecalvem@hu-berlin.de
+slug: maxime-le-calve
+Confirmed not spamSpam score: 0Created: Apr 22, 2021
+Communities: stretchingmaterialities, stretchingsensesschool, drift-sink-emerge-repeat, crealab, speculativerealitieslab, ... · 222 pub(s) ·
+Thomas Renkert
+email: thomas.renkert@dwi.uni-heidelberg.de
+slug: thomas-renkert
+Confirmed not spamSpam score: 0Created: Jul 03, 2016
+Communities: cursor, mmm, sj, distributedtheology, communitary, ... · 127 pub(s) ·
+Sean A Hays
+email: seanahays@gmail.com
+slug: sean-a-hays
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, fall2020frankenbookclone1, ame130fall2020frankenbookclone, 1115-class, fall2020frankenbookclone2, ... ·
+Robert Roth
+email: robert.roth@arcadiascience.com
+slug: robert-roth
+Confirmed not spamSpam score: 0Created: Nov 28, 2022
+Communities: arcadia-research, arcadia-demo · 16 pub(s) ·
+Charles Adjovu
+email: kylethefox1@gmail.com
+slug: charles-adjovu
+Confirmed not spamSpam score: 0Created: Feb 20, 2020
+Communities: thinklusive, ledgerback, commonplace · 120 pub(s) ·
+Kinga Zeller
+email: kinga.zeller@gmx.de
+slug: kinga-zeller
+Confirmed not spamSpam score: 0Created: Jan 13, 2021
+Communities: cursor · 22 pub(s) ·
+Abby Luthin
+email: abbyluthin@gmail.com
+slug: abby-luthin
+Confirmed not spamSpam score: 0Created: Apr 19, 2023
+Communities: hdsr ·
+Eric Tuttle
+email: eric.tuttle@ptsem.edu
+slug: eric-tuttle
+Confirmed not spamSpam score: 0Created: May 28, 2018
+Communities: cursor, collaborative-common-prayer · 2 pub(s) ·
+Michael Weiss
+email: weiss@sce.carleton.ca
+slug: michael-weiss
+Confirmed not spamSpam score: 0Created: Apr 10, 2020
+Communities: managing-software-projects, managing-remote-software-projects, globalgers, coreperiphery · 22 pub(s) ·
+Eric Witz
+email: ewitz@mit.edu
+slug: eric-witz
+Confirmed not spamSpam score: 0Created: Oct 28, 2019
+Communities: hdsr, covid-19, mitp-at-home, demo, innovationsjournal · 3 pub(s) ·
+Gabriel Stein
+email: gabe@pubpub.org
+slug: gabriel-stein
+Confirmed not spamSpam score: 0Created: Feb 06, 2017
+Communities: legacy-help, jods, bookbook, testing, kf-notes, ... · 621 pub(s) ·
+James Scott-Brown
+email: james@jamesscottbrown.com
+slug: jamesscott-brown
+Confirmed not spamSpam score: 0Created: Nov 18, 2018
+Communities: bookbook ·
+Florian Jenett
+email: florian.jenett@hs-mainz.de
+slug: florian-jenett
+Confirmed not spamSpam score: 0Created: Jan 29, 2024
+Communities: gestaltungai · 17 pub(s) ·
+Andrea Davis
+email: andavis@astate.edu
+slug: andrea-davis
+Confirmed not spamSpam score: 0Created: Sep 18, 2020
+Communities: memoryandhistory, astatedh · 47 pub(s) ·
+Maike Neufend
+email: maike.neufend@open-access-berlin.de
+slug: maike-neufend
+Confirmed not spamSpam score: 0Created: Jan 25, 2023
+Communities: oabb · 47 pub(s) ·
+Andreas Ledl
+email: dr.andreasledl@gmail.com
+slug: andreas-ledl-3
+Confirmed not spamSpam score: 0Created: Feb 12, 2021
+Communities: nullsiebenundzwanzigsieben, 0277 · 2 pub(s) ·
+Nikolas Eisentraut
+email: mail@nikolaseisentraut.de
+slug: nikolas-eisentraut
+Confirmed not spamSpam score: 0Created: May 06, 2022
+Communities: openrewi · 59 pub(s) ·
+Patrick McGurrin
+email: patrick.mcgurrin@gmail.com
+slug: patrick-mcgurrin
+Confirmed not spamSpam score: 0Created: Jan 05, 2018
+Communities: frankenbook, 125-class, fall2020frankenbookclone1, 1115-class, fall2020frankenbookclone2, ... ·
+Lisa Yaszek
+email: lisa.yaszek@lmc.gatech.edu
+slug: lisa-yaszek
+Confirmed not spamSpam score: 0Created: Jan 05, 2018
+Communities: entanglements, frankenbook, 125-class, fall2020frankenbookclone1, ame130fall2020frankenbookclone, ... ·
+Jefferson Pooley
+email: press@mediastudies.press
+slug: jeffpooley-2
+Confirmed not spamSpam score: 0Created: Jan 06, 2019
+Communities: msp, hms, news, legacies-of-katz, demo, ... · 61 pub(s) ·
+David Reinstein
+email: daaronr@gmail.com
+slug: david-reinstein
+Confirmed not spamSpam score: 0Created: Mar 13, 2023
+Communities: unjournal, testabcd123456789, msp, cursor, legacy-help, ... · 60 pub(s) ·
+Hanna Reichel
+email: hanna.reichel@ptsem.edu
+slug: hanna-reichel
+Confirmed not spamSpam score: 0Created: Jul 04, 2016
+Communities: distributedtheology, cursor, communitary, sandbox, diakonia · 39 pub(s) ·
+Luigi Russi
+email: lrussi@speedpost.net
+slug: luigi-russi
+Confirmed not spamSpam score: 0Created: Jul 15, 2020
+Communities: researchinaction · 46 pub(s) ·
+Robert Oppenheimer
+email: robert.oppenheimer@dtc.ox.ac.uk
+slug: robert-oppenheimer
+Confirmed not spamSpam score: 0Created: Jan 22, 2018
+Communities: frankenbook, 125-class, ame130fall2020frankenbookclone, 1115-class, fall2020frankenbookclone1, ... ·
+Lawrence Dritsas
+email: L.Dritsas@ed.ac.uk
+slug: lawrence-dritsas
+Confirmed not spamSpam score: 0Created: Jan 05, 2018
+Communities: frankenbook, 125-class, fall2020frankenbookclone1, 1115-class, fall2020frankenbookclone2, ... ·
+Emily Zarka
+email: ezarka@asu.edu
+slug: emily-zarka
+Confirmed not spamSpam score: 0Created: Mar 14, 2018
+Communities: frankenbook, 125-class, ame130fall2020frankenbookclone, fall2020frankenbookclone1, frankenbook-230, ... ·
+Amy Brand
+email: amybrand@mit.edu
+slug: amy-brand
+Confirmed not spamSpam score: 0Created: Oct 25, 2016
+Communities: prt, goldsmithspress, resonantgames, bookbook, practiceofchange, ... · 14 pub(s) ·
+Jerry Cangelosi
+email: gcang@uw.edu
+slug: jerry-cangelosi
+Confirmed not spamSpam score: 0Created: Dec 11, 2023
+Communities: rapidreviewscovid19 ·
+Nick Lindsay
+email: nlindsay@mit.edu
+slug: nick-lindsay
+Confirmed not spamSpam score: 0Created: Feb 24, 2016
+Communities: projections, goldsmithspress, bookbook, mitoataskforce, hdsr, ... · 6 pub(s) ·
+Terry Ehling
+email: ehling@mit.edu
+slug: terry-ehling
+Confirmed not spamSpam score: 0Created: Dec 17, 2017
+Communities: goldsmithspress, cfrp, bookbook, resonantgames, mmm, ... · 8 pub(s) ·
+Charles Fernyhough
+email: c.p.fernyhough@durham.ac.uk
+slug: charles-fernyhough
+Matched fields
+
+Honeypot triggers
+
+    create-user 
+
+Confirmed not spamSpam score: 0Created: Mar 09, 2026
+Communities: oecs ·
+Lisa Hahn
+email: hahnlisa@hotmail.de
+slug: lisa-hahn
+Confirmed not spamSpam score: 0Created: Mar 31, 2022
+Communities: openrewi · 6 pub(s) ·
+Linda Martin
+email: linda.martin@open-access-berlin.de
+slug: linda-martin
+Confirmed not spamSpam score: 0Created: Jan 17, 2023
+Communities: ccbooks, oabb · 19 pub(s) ·
+Marianne Raab
+email: mraab1@udayton.edu
+slug: marianne-raab
+Confirmed not spamSpam score: 0Created: Sep 26, 2019
+Communities: 1115-class, 125-class, frankenbook-125, frankenbook-230, frankenbook, ... · 20 pub(s) ·
+Toby Steiner
+email: info@flavoursofopen.science
+slug: tobias-steiner
+Confirmed not spamSpam score: 0Created: Mar 25, 2020
+Communities: copim, openbookcollective, scalingsmall, openbookfutures, experimentalbooks, ... · 53 pub(s) ·
+Nicole Piemonte
+email: nicole.piemonte@asu.edu
+slug: nicole-piemonte
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, fall2020frankenbookclone1, 125-class, ame130fall2020frankenbookclone, 1115-class, ... ·
+Julia Strutz
+email: julia.strutz@gmx.de
+slug: julia-strutz
+Confirmed not spamSpam score: 0Created: Nov 16, 2020
+Communities: korumapolitikalari, replito, replitonationalismworkshop, off, livingtogether-lookingapart, ... · 34 pub(s) ·
+Nadja-Christina Schneider
+email: nadja-christina.schneider@hu-berlin.de
+slug: nadja-christina-schneider
+Confirmed not spamSpam score: 0Created: Jan 27, 2021
+Communities: replito, livingtogether-lookingapart, legacy-help · 21 pub(s) ·
+David H Guston
+email: david.guston@asu.edu
+slug: david-h-guston
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, fall2020frankenbookclone1, fall2020frankenbookclone2, 1115-class, fb-raab-template, ... · 9 pub(s) ·
+Claudia Westermann
+email: claudia.westermann@xjtlu.edu.cn
+slug: claudia-westermann
+Confirmed not spamSpam score: 0Created: Aug 03, 2019
+Communities: ta, crac, creatures, newmacy, colloquies, ... · 64 pub(s) ·
+Janneke Adema
+email: jannekeadema@hotmail.com
+slug: janneke-adema
+Confirmed not spamSpam score: 0Created: Apr 16, 2020
+Communities: copim, livingbooks, scalingsmall, ecologicalrewritings, experimentalbooks, ... · 80 pub(s) ·
+Susana Galan
+email: galansusana@gmail.com
+slug: susana-galan
+Confirmed not spamSpam score: 0Created: Nov 15, 2022
+Communities: bookbook ·
+Frankenbook Editor
+email: travis.s.rich+frankenbookeditor@gmail.com
+slug: frankenbook-editor
+Confirmed not spamSpam score: 0Created: Jun 11, 2018
+Communities: frankenbook, fall2020frankenbookclone1, 125-class, ame130fall2020frankenbookclone, 1115-class, ... ·
+Joel Gereboff
+email: joel.gereboff@asu.edu
+slug: joel-gereboff
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: frankenbook, ame130fall2020frankenbookclone, fall2020frankenbookclone1, 125-class, frankenbook-230, ... ·
+Joey Eschrich
+email: jpe@asu.edu
+slug: joey-eschrich
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: essayjamtest, frankenbook, pandemics-and-games-essay-jam, climate-action-almanac, flourishingcommons, ... · 14 pub(s) ·
+Ed Finn
+email: edfinn@asu.edu
+slug: ed-finn
+Confirmed not spamSpam score: 0Created: Dec 21, 2017
+Communities: fall2020frankenbookclone1, fall2020frankenbookclone2, ame130fall2020frankenbookclone, frankenbook, climate-action-almanac, ... · 14 pub(s) ·
+Ash Lange
+email: modgonne@aol.com
+slug: ash-lange
+Confirmed not spamSpam score: 0Created: Aug 13, 2020
+Communities: dervolf, sar · 21 pub(s) ·
+William O. Pate II
+email: william@sareview.org
+slug: william-pate
+Confirmed not spamSpam score: 0Created: Jun 14, 2020
+Communities: sar, inadequate, legacy-help, commonplace · 229 pub(s) ·
+Allison Vanouse
+email: avanouse@gmail.com
+slug: allison-vanouse
+Confirmed not spamSpam score: 0Created: Jan 15, 2020
+Communities: cfrp, vestiges, design-justice, covid-19, phone-and-spear, ... · 138 pub(s) ·
+Annalena Mayr
+email: annalenamayr@gmx.de
+slug: annalena-mayr
+Confirmed not spamSpam score: 0Created: Jul 31, 2023
+Communities: openrewi, open-access-brandenburg · 13 pub(s) ·
+Megan L. Hochstrasser
+email: megan.hochstrasser@arcadiascience.com
+slug: megan-hochstrasser-2
+Confirmed not spamSpam score: 0Created: Mar 21, 2022
+Communities: arcadia-research, arcadia-demo · 80 pub(s) ·
+Samuel Klein
+email: meta.sj@gmail.com
+slug: samuel-klein
+Confirmed not spamSpam score: 0Created: Jul 03, 2016
+Communities: scribe, stanford-jblp, totb, underlay, generism, ... · 444 pub(s) ·
+Shari Gaffron
+email: gaffron@mpisoc.mpg.de
+slug: shari-gaffron
+Confirmed not spamSpam score: 0Created: Jul 04, 2024
+Communities: openrewi, open-access-brandenburg · 2 pub(s) ·
+Joseph Reagle
+email: joseph.acct@reagle.org
+slug: joseph-reagle
+Confirmed not spamSpam score: 0Created: Apr 06, 2019
+Communities: wikipedia20, readingthecomments, hackinglife · 24 pub(s) ·
+Frederike van Oorschot
+email: f.vanoorschot@gmx.de
+slug: frederike-van-oorschot
+Confirmed not spamSpam score: 0Created: Nov 22, 2017
+Communities: gonedigital, pannenberg, cursor · 67 pub(s) ·
+Catherine Ahearn
+email: coahearn@gmail.com
+slug: catherine--ahearn
+Confirmed not spamSpam score: 0Created: Jun 02, 2017
+Communities: joi, jods, innovationsjournal, bookbook, legacy-help, ... · 287 pub(s) ·
+Maxi Kindling
+email: maxi.kindling@posteo.de
+slug: maxi-kindling
+Confirmed not spamSpam score: 0Created: May 17, 2023
+Communities: oabb · 40 pub(s) ·
+Hannah Jacobs
+email: hj24@duke.edu
+slug: hannahjacobs
+Confirmed not spamSpam score: 0Created: Dec 20, 2018
+Communities: handbook, expansive, nime, reviewsindh · 52 pub(s) ·
+PubPub Team
+email: team@pubpub.org
+slug: pubpub-team
+Confirmed not spamSpam score: 0Created: Jan 04, 2016
+Communities: cursor, explore, viral, plix, responsive, ... · 639 pub(s) ·
+Connected Corpus
+email: christiana.olfert@tufts.edu
+slug: christiana-olfert
+Confirmed not spamSpam score: 0Created: Mar 15, 2023
+Communities: theconnectedcorpus · 13 pub(s) ·
+Amy Graves
+email: amygraves.edit@gmail.com
+slug: amy-graves
+Confirmed not spamSpam score: 0Created: Oct 09, 2018
+Communities: jods, ijamm, hdsr · 1 pub(s) ·
+Sarah Gulliford (Kearns)
+email: skearns@knowledgefutures.org
+slug: sarah-kearns
+Confirmed not spamSpam score: 0Created: Jul 08, 2019
+Communities: goldsmithspress, hackinglife, jods, readingthecomments, mindthegap, ... · 258 pub(s) ·
+J&J Copyediting
+email: katelyn@jjeditorial.com
+slug: katelyn-witt
+Confirmed not spamSpam score: 0Created: Jan 13, 2022
+Communities: mit-genai, jbt, projections, oecs, mit-serc · 1 pub(s) ·
+Amara M. Deis
+email: amara_deis@harvard.edu
+slug: amara-deis
+Confirmed not spamSpam score: 0Created: Jan 06, 2022
+Communities: hdsr · 5 pub(s) ·
+HDSR Editorial Office
+email: datasciencereview@harvard.edu
+slug: hdsr-editorial-office
+Confirmed not spamSpam score: 0Created: Feb 06, 2019
+Communities: hdsr, hdsrcon · 30 pub(s) ·

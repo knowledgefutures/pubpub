@@ -120,6 +120,13 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 		// Load the HTML
 		await page.setContent(html, { waitUntil: 'load', timeout: PAGE_TIMEOUT_MS });
 
+		// Chromium 146 renders characters like ↩ (U+21A9) as color emoji by
+		// default.  Force text presentation so they stay as simple glyphs —
+		// important for academic reference back-links.
+		await page.addStyleTag({
+			content: `*, *::before, *::after { font-variant-emoji: text; }`,
+		});
+
 		// Wait for all web fonts before paged.js measures text.
 		// (Key fix from the pubpub/pagedjs-cli fork.)
 		await page.evaluate(() => document.fonts.ready);

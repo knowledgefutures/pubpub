@@ -57,6 +57,10 @@ export default (options: PubGetOptions) => {
 			model: PubAttribution,
 			as: 'attributions',
 			separate: true,
+			order: [
+				['order', 'ASC NULLS LAST'],
+				['createdAt', 'ASC'],
+			],
 			include: [includeUserModel({ as: 'user' })],
 		},
 	];

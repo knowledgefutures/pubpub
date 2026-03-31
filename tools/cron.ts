@@ -42,19 +42,37 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		'0 4 * * *',
 		() => {
 			const dateStamp = new Date().toISOString().slice(0, 10);
-			const outputPath = `/tmp/spam-scan-${dateStamp}.json`;
+			const commentsPath = `/tmp/spam-scan-comments-${dateStamp}.json`;
+			const accountsPath = `/tmp/spam-scan-accounts-${dateStamp}.json`;
 
+			// primary: scan users who commented in the last 72h (catches active
+			// spammers regardless of account age)
 			run(
-				'Spam Scan (analyze)',
-				`tools-prod scanSpamUsers --analyze --since 72h --output ${outputPath} --min-score 6`,
+				'Spam Scan (analyze recent commenters)',
+				`tools-prod scanSpamUsers --analyze --mode recent-comments --since 72h --output ${commentsPath} --min-score 6`,
 			);
 
 			run(
-				'Spam Scan (execute)',
-				`tools-prod scanSpamUsers --execute --input ${outputPath} --ban --min-score 6`,
+				'Spam Scan (execute recent commenters)',
+				`tools-prod scanSpamUsers --execute --input ${commentsPath} --ban --min-score 6`,
 			);
 
-			run('Spam Scan (report)', `tools-prod scanSpamUsers --report --input ${outputPath}`);
+			// secondary: scan newly created accounts (catches seo-only accounts
+			// that haven't commented yet). skip users already caught above.
+			run(
+				'Spam Scan (analyze new accounts)',
+				`tools-prod scanSpamUsers --analyze --since 72h --output ${accountsPath} --input ${commentsPath} --min-score 6`,
+			);
+
+			run(
+				'Spam Scan (execute new accounts)',
+				`tools-prod scanSpamUsers --execute --input ${accountsPath} --ban --min-score 6`,
+			);
+
+			run(
+				'Spam Scan (report)',
+				`tools-prod scanSpamUsers --report --input ${commentsPath}`,
+			);
 		},
 		{ timezone: 'UTC' },
 	); // Daily at 4 AM UTC

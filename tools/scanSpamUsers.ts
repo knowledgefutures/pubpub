@@ -2,23 +2,31 @@
 scanSpamUsers -- two-phase bulk spam detection tool
 
 usage:
-  npm run tools scanSpamUsers --analyze --output results.json [--min-score N] [--input skip.json] [--since 2024-01-01] [--concurrency 10] [--include-clean]
-  npm run tools scanSpamUsers --execute --input results.json [--min-score N] [--signals sig1,sig2] [--range 0-100] [--concurrency 10] [--ban] 
+  npm run tools scanSpamUsers --analyze --output results.json [options]
+  npm run tools scanSpamUsers --execute --input results.json [options]
   npm run tools scanSpamUsers --report --input results.json [--execute-input executed.json]
 
 analyze phase:
-  scans all users without an existing spam tag, computes spam scores, and
+  scans users without an existing spam tag, computes spam scores, and
   writes a json file with detailed evidence for each flagged user.
 
-  --output <path>        required. where to write the results json.
-  --min-score <n>        minimum score to include in output. default 5.
-  --input <path>         optional. path to an existing results json whose
-                         user ids will be skipped (re-run incrementally).
-  --since <date|duration> only scan users created after this date (ISO string)
-                         or relative duration like "24h", "7d".
-  --concurrency <n>      how many users to process in parallel. default 10.
-  --include-clean        also write a .clean.json file with users that scored
-                         > 0 but below --min-score (for reviewing false negatives).
+  --output <path>          required. where to write the results json.
+  --min-score <n>          minimum score to include in output. default 5.
+  --input <path>           optional. path to an existing results json whose
+                           user ids will be skipped (re-run incrementally).
+  --since <date|duration>  only scan users created (or who commented) after
+                           this date (ISO string) or duration like "24h", "7d".
+  --mode <mode>            scanning mode. default "new-accounts".
+                           "new-accounts"     scan users created since --since.
+                           "recent-comments"  scan users who commented since
+                                              --since, regardless of account age.
+                                              requires --since.
+  --exclude-signals <s,s>  comma-separated signal names to skip during scoring.
+  --skip-profile-signals   convenience flag: exclude all profile/website/bio
+                           signals (useful for comment-focused scans).
+  --concurrency <n>        how many users to process in parallel. default 10.
+  --include-clean          also write a .clean.json file with users that scored
+                           > 0 but below --min-score (for reviewing false negatives).
 
 execute phase:
   reads a results json produced by --analyze and applies spam tags.
@@ -47,7 +55,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Op } from 'sequelize';
 
-import { User } from 'server/models';
+import { ThreadComment, User } from 'server/models';
 import { extractLinksFromContent, extractUrlsFromString } from 'server/spamTag/commentSpam';
 import { containsLink } from 'server/spamTag/contentAnalysis';
 import { DEV_TEAM_EMAIL } from 'server/spamTag/notifications/email';
@@ -59,6 +67,7 @@ import { upsertSpamTag } from 'server/spamTag/userQueries';
 import {
 	computeUserSpamReport,
 	type SignalHit,
+	type SpamReportOptions,
 	type UserCommentData,
 	type UserSpamReport,
 } from 'server/spamTag/userScore';
@@ -72,9 +81,33 @@ const DEFAULT_MIN_SCORE = 5;
 const DEFAULT_ANALYZE_CONCURRENCY = 5;
 const DEFAULT_EXECUTE_CONCURRENCY = 5;
 
+const PROFILE_SIGNAL_NAMES = new Set([
+	'profile-spam-phrases',
+	'website-not-affiliated',
+	'website-added-quickly',
+	'bio-contains-url',
+	'gambling-website',
+	'website-with-88',
+	'vietnamese-gambling-bio',
+	'bio-promotes-website',
+	'bio contains attempted html',
+]);
+
+const getRecentCommenterUserIds = async (since: Date): Promise<string[]> => {
+	const results = await ThreadComment.findAll({
+		where: { createdAt: { [Op.gte]: since } },
+		attributes: ['userId'],
+		group: ['userId'],
+		raw: true,
+	});
+
+	return results.map((r: any) => r.userId as string);
+};
+
 type CommentEvidence = {
 	text: string;
 	links: string[];
+	phraseMatches: string[];
 };
 
 type AnalyzeEntry = {
@@ -89,6 +122,7 @@ type AnalyzeEntry = {
 	signalHits: SignalHit[];
 	commentCount: number;
 	commentsWithLinks: number;
+	commentPhraseMatches: string[];
 	recentComments: CommentEvidence[];
 	profile: {
 		website: string | null;
@@ -159,6 +193,7 @@ const buildEntry = async (user: User, report: UserSpamReport): Promise<AnalyzeEn
 		signalHits: report.signalHits,
 		commentCount: report.commentData.totalComments,
 		commentsWithLinks: report.commentData.commentsWithLinks,
+		commentPhraseMatches: report.commentData.commentPhraseMatches,
 		recentComments: report.commentData.recentComments,
 		profile,
 	};
@@ -179,6 +214,22 @@ async function analyze() {
 	const sinceDate = parseSinceArg(parseArg('since'));
 	const includeClean = hasFlag('include-clean');
 	const cleanPath = includeClean ? outputPath.replace(/\.json$/, '.clean.json') : null;
+	const mode = parseArg('mode') ?? 'new-accounts';
+
+	const skipProfileSignals = hasFlag('skip-profile-signals');
+	const excludeSignalsArg = parseArg('exclude-signals');
+	const excludeSignals = [
+		...(excludeSignalsArg ? excludeSignalsArg.split(',') : []),
+		...(skipProfileSignals ? [...PROFILE_SIGNAL_NAMES] : []),
+	];
+
+	const reportOptions: SpamReportOptions | undefined =
+		excludeSignals.length > 0 ? { excludeSignals } : undefined;
+
+	if (mode === 'recent-comments' && !sinceDate) {
+		console.error('--since is required for --mode recent-comments');
+		process.exit(1);
+	}
 
 	const skipIds = new Set<string>();
 	const inputPath = parseArg('input');
@@ -190,25 +241,35 @@ async function analyze() {
 
 	const sinceLabel = sinceDate ? ` since=${sinceDate.toISOString()}` : '';
 	const cleanLabel = cleanPath ? ` clean=${cleanPath}` : '';
+	const excludeLabel = excludeSignals.length > 0 ? ` exclude=[${excludeSignals.join(',')}]` : '';
 	console.log(
-		`analyzing users (min-score=${minScore}, concurrency=${concurrency}${sinceLabel}${cleanLabel}, output=${outputPath})`,
+		`analyzing users (mode=${mode}, min-score=${minScore}, concurrency=${concurrency}${sinceLabel}${cleanLabel}${excludeLabel}, output=${outputPath})`,
 	);
 
 	const writer = new JsonArrayWriter<AnalyzeEntry>(outputPath);
 	const cleanWriter = cleanPath ? new JsonArrayWriter<AnalyzeEntry>(cleanPath) : null;
 
-	let offset = 0;
 	let scanned = 0;
 	let errors = 0;
 
-	// only null spamtags, no use going over alreayd tagged users
 	const whereClause: Record<string, unknown> = {
 		spamTagId: { [Op.is]: null as any },
 	};
 
-	if (sinceDate) {
+	// for recent-comments mode, first collect commenter user ids, then use those
+	// as the pool of users to check. for new-accounts mode, filter by creation date.
+	if (mode === 'recent-comments') {
+		const allCommenterIds = await getRecentCommenterUserIds(sinceDate!);
+		const filteredIds = allCommenterIds.filter((id) => !skipIds.has(id));
+		console.log(
+			`found ${allCommenterIds.length} recent commenters (${filteredIds.length} after skipping known ids)`,
+		);
+		whereClause.id = { [Op.in]: filteredIds };
+	} else if (sinceDate) {
 		whereClause.createdAt = { [Op.gte]: sinceDate };
 	}
+
+	let offset = 0;
 
 	while (true) {
 		const users = await User.findAll({
@@ -238,7 +299,7 @@ async function analyze() {
 			toProcess,
 			async (user) => {
 				try {
-					const report = await computeUserSpamReport(user);
+					const report = await computeUserSpamReport(user, reportOptions);
 					return { user, report };
 				} catch (err) {
 					errors++;

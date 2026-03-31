@@ -266,7 +266,8 @@ export const searchCommunities = async (
       c."accentColorDark",
       c."headerLogo",
       coalesce(cpc.pub_count, 0)::int AS "pubCount",
-      ts_rank_cd(c."searchVector", to_tsquery('english', :tsQuery)) AS rank,
+      ts_rank_cd(c."searchVector", to_tsquery('english', :tsQuery))
+        + ln(1 + coalesce(cpc.pub_count, 0)) AS rank,
       count(*) OVER() AS total
     FROM "Communities" c
     LEFT JOIN "SpamTags" st ON st.id = c."spamTagId"

@@ -239,7 +239,7 @@ const Search2 = () => {
 	const [page, setPage] = useState(
 		locationData.query.page ? Number(locationData.query.page) - 1 : 0,
 	);
-	const initialMode = locationData.query.mode || 'pubs';
+	const initialMode = locationData.query.mode || (isBasePubPub ? 'communities' : 'pubs');
 	const [mode, setMode] = useState<SearchMode>(
 		initialMode === 'communities' && isBasePubPub ? 'communities' : 'pubs',
 	);
@@ -390,8 +390,8 @@ const Search2 = () => {
 								large={true}
 								animate={false}
 							>
-								<Tab id="pubs" title="Pubs" />
 								{isBasePubPub && <Tab id="communities" title="Communities" />}
+								<Tab id="pubs" title="Pubs" />
 							</Tabs>
 							{/* mode === 'pubs' && throttledQuery.trim() && (
 								<button

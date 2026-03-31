@@ -58,6 +58,8 @@
 		"@anatine/zod-openapi": "^2.1.0",
 		"@aws-sdk/client-s3": "^3.427.0",
 		"@aws-sdk/lib-storage": "^3.427.0",
+		"pdf-lib": "^1.17.1",
+		"playwright-core": "^1.49.0",
 		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17",
 		"@blueprintjs/core": "3.26.0",
 		"@blueprintjs/icons": "3.14.0",

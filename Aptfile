@@ -21,3 +21,18 @@ libxml2-utils
 
 # postgresql-client for pg-dump
 postgresql-client-16
+
+# Chromium and dependencies for pubstash (HTML-to-PDF via Playwright + paged.js)
+chromium
+fonts-liberation
+fonts-noto-color-emoji
+libnss3
+libatk-bridge2.0-0
+libdrm2
+libxcomposite1
+libxdamage1
+libxrandr2
+libgbm1
+libpango-1.0-0
+libcairo2
+libasound2

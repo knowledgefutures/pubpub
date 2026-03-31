@@ -46,6 +46,7 @@ type AuthorFacet = { name: string; count: number };
 const buildTsQuery = (searchTerm: string): string | null => {
 	const sanitized = searchTerm
 		.trim()
+		.toLowerCase()
 		.replace(/[^\w\s]/g, ' ') // strip all non-word, non-space chars (incl. hyphens)
 		.replace(/\s+/g, ' ')
 		.trim();

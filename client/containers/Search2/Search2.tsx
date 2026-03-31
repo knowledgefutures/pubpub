@@ -339,6 +339,7 @@ const Search2 = () => {
 
 	useEffect(() => {
 		setActiveAuthor(null);
+		setAuthorFacets([]);
 		setPage(0);
 	}, [throttledQuery]);
 

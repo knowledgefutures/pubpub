@@ -9,6 +9,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	DefaultScope,
 	HasMany,
 	HasOne,
 	Index,
@@ -38,6 +39,7 @@ import {
 	Submission,
 } from '../models';
 
+@DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table({
 	indexes: [
 		{

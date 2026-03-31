@@ -15,6 +15,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	DefaultScope,
 	HasMany,
 	Is,
 	IsLowercase,
@@ -36,6 +37,7 @@ import {
 	SpamTag,
 } from '../models';
 
+@DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table
 // GIN index on searchVector is created in searchTriggers.ts
 // after the column is added via ALTER TABLE.

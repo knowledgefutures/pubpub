@@ -133,7 +133,6 @@ export const communitySpamPhrases = [
 	'affordable',
 	'apk',
 	'full movie',
-	'services',
 	'geometry dash',
 
 	// generic spam openers (multi-word so they don't false-positive on normal prose)

@@ -1,3 +1,4 @@
+// Search: Changes here trigger searchVector updates on Pubs. See server/search2/searchTriggers.ts
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
 import type { SerializedModel } from 'types';
@@ -16,7 +17,15 @@ import {
 
 import { Pub, User } from '../models';
 
-@Table
+@Table({
+	indexes: [
+		{
+			name: 'pubattributions_pubid_isauthor_idx',
+			fields: ['pubId'],
+			where: { isAuthor: true },
+		},
+	],
+})
 export class PubAttribution extends Model<
 	InferAttributes<PubAttribution>,
 	InferCreationAttributes<PubAttribution>

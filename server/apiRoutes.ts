@@ -24,6 +24,7 @@ import { router as reviewRouter } from './review/api';
 import { router as reviewerRouter } from './reviewer/api';
 import { router as rssRouter } from './rss/api';
 import { router as searchRouter } from './search/api';
+import { router as search2Router } from './search2/api';
 import { router as signupRouter } from './signup/api';
 import { router as spamTagRouter } from './spamTag/api';
 import { router as submissionRouter } from './submission/api';
@@ -57,6 +58,7 @@ const apiRouter = Router()
 	.use(reviewerRouter)
 	.use(rssRouter)
 	.use(searchRouter)
+	.use(search2Router)
 	.use(signupRouter)
 	.use(spamTagRouter)
 	.use(subscribeRouter)

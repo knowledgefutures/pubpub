@@ -120,5 +120,16 @@ export const knexInstance = knex({ client: 'pg' });
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
 if (process.env.NODE_ENV !== 'test') {
-	sequelize.sync({ force: false });
+	sequelize.sync({ force: false }).then(async () => {
+		// Install search triggers and backfill tsvector columns
+		const { installSearchTriggers, backfillPubSearchVectors, backfillCommunitySearchVectors } =
+			await import('server/search2/searchTriggers');
+		await installSearchTriggers();
+		// Run backfill in the background so it doesn't block app startup.
+		// Serialized (not parallel) because they share an advisory lock.
+		(async () => {
+			await backfillPubSearchVectors();
+			await backfillCommunitySearchVectors();
+		})().catch((err) => console.error('Search vector backfill error:', err));
+	});
 }

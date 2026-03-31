@@ -1,3 +1,4 @@
+// Search: Postgres triggers maintain a searchVector column. See server/search2/searchTriggers.ts
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
 import type { SerializedModel } from 'types';
@@ -44,9 +45,14 @@ import {
 			unique: true,
 			fields: ['communityId', 'slug'],
 		},
+		// GIN index on searchVector is created in searchTriggers.ts
+		// after the column is added via ALTER TABLE.
 	],
 })
-export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub>> {
+export class Pub extends Model<
+	InferAttributes<Pub, { omit: 'searchVector' }>,
+	InferCreationAttributes<Pub, { omit: 'searchVector' }>
+> {
 	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
 
 	@Default(DataType.UUIDV4)
@@ -134,6 +140,14 @@ export class Pub extends Model<InferAttributes<Pub>, InferCreationAttributes<Pub
 
 	@Column(DataType.UUID)
 	declare scopeSummaryId: string | null;
+
+	/**
+	 * Pre-computed tsvector for full-text search.
+	 * Weights: A=title, B=description, C=byline (attributions), D=latest release doc content.
+	 * Updated by Postgres triggers on Pubs, PubAttributions, and Releases.
+	 */
+	@Column(DataType.TSVECTOR)
+	declare searchVector: any | null;
 
 	@HasMany(() => PubAttribution, { onDelete: 'CASCADE', as: 'attributions', foreignKey: 'pubId' })
 	declare attributions?: PubAttribution[];

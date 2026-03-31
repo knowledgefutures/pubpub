@@ -34,6 +34,7 @@ export { default as PasswordReset } from './PasswordReset/PasswordReset';
 export { default as Pricing } from './Pricing/Pricing';
 export { default as Pub } from './Pub/Pub';
 export { default as Search } from './Search/Search';
+export { default as Search2 } from './Search2/Search2';
 export { default as Signup } from './Signup/Signup';
 export { default as SuperAdminDashboard } from './SuperAdminDashboard';
 export { default as User } from './User/User';

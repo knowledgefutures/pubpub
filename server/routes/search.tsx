@@ -56,7 +56,7 @@ const createFilter = (
 	return maybeLimitedToCommunity;
 };
 
-router.get('/search', async (req, res, next) => {
+router.get('/search-v1', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);

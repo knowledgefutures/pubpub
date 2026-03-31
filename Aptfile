@@ -25,7 +25,12 @@ postgresql-client-16
 # Chromium and dependencies for pubstash (HTML-to-PDF via Playwright + paged.js)
 chromium
 fonts-liberation
+fonts-dejavu-core
+fonts-freefont-ttf
+fonts-kacst
+fonts-noto-cjk
 fonts-noto-color-emoji
+fonts-thai-tlwg
 libnss3
 libatk-bridge2.0-0
 libdrm2

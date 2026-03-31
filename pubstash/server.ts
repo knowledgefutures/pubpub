@@ -199,32 +199,6 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 			() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
 		);
 
-		// Chromium 146+ renders certain Unicode characters (e.g. ↩ U+21A9 in
-		// footnote back-links) as color emoji instead of simple text glyphs.
-		// Fix at the Unicode level by appending U+FE0E (Variation Selector 15 =
-		// "text presentation") to every affected character in text nodes.
-		// This is more reliable than CSS font-variant-emoji because page.pdf()
-		// uses Chromium's internal print path which may ignore that property.
-		await page.evaluate(() => {
-			const VS15 = '\uFE0E';
-			// Characters with dual text/emoji presentation that commonly appear
-			// in academic documents and should remain as simple text glyphs.
-			const EMOJI_CAPABLE =
-				/[\u2139\u21A9\u21AA\u2194-\u2199\u23CF\u23ED-\u23EF\u23F1\u23F2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D]/;
-			const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-			let node: Text | null;
-			while ((node = walker.nextNode() as Text | null)) {
-				const text = node.nodeValue;
-				if (text && EMOJI_CAPABLE.test(text)) {
-					// Append VS15 after each matching char (skip if already followed by VS15)
-					node.nodeValue = text.replace(
-						/([\u2139\u21A9\u21AA\u2194-\u2199\u23CF\u23ED-\u23EF\u23F1\u23F2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D])(?!\uFE0E)/g,
-						`$1${VS15}`,
-					);
-				}
-			}
-		});
-
 		// Extract <meta> tags for PDF metadata
 		const meta: PdfMeta = await page.evaluate(() => {
 			const m: Record<string, string> = {};

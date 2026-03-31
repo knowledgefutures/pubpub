@@ -10,14 +10,14 @@ Zero external framework dependencies — uses Node's built-in `http` module and 
 
 1. On startup, launches **one persistent Chromium** process via Playwright.
 2. For each `POST /convert?format=pdf` request containing HTML:
-   - Acquires a semaphore slot (default max concurrency: 2).
+   - Acquires a semaphore slot (default max concurrency: 4).
    - Opens a new browser **page** (not a new browser).
    - Injects the paged.js polyfill, waits for `.pagedjs_pages`.
    - Calls `page.pdf()`, closes the page.
    - Uploads the PDF to S3, returns `{ url }`.
 3. Graceful shutdown closes the browser on SIGTERM/SIGINT.
 
-This eliminates the old architecture's OOM pattern: the original pubstash spawned a **new Chromium process** (via `pagedjs-cli → exec()`) for every single request, with no concurrency limit. A burst of requests would launch dozens of Chromium processes simultaneously, each consuming 200–500 MB, instantly exhausting RAM.
+This eliminates the old architecture's OOM pattern: the original pubstash spawned a **new Chromium process** (via `pagedjs-cli → exec()`) for every single request, with no concurrency limit. A burst of requests would launch dozens of Chromium processes simultaneously, each consuming 200–500 MB, quickly exhausting RAM.
 
 ## Environment variables
 

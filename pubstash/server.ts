@@ -95,9 +95,9 @@ const OUTLINE_TAGS = ['h1', 'h2', 'h3'];
  */
 async function getBrowser(): Promise<Browser> {
 	if (!browser || !browser.isConnected()) {
-		console.log('[pubstash] browser not connected, (re)launching…');
+		console.info('[pubstash] browser not connected, (re)launching…');
 		browser = await launchBrowser();
-		console.log(`[pubstash] chromium launched (version ${browser.version()})`);
+		console.info(`[pubstash] chromium launched (version ${browser.version()})`);
 	}
 	return browser;
 }
@@ -316,7 +316,7 @@ const httpServer = http.createServer(async (req, res) => {
 			}
 
 			const id = Date.now();
-			console.log(
+			console.info(
 				`[pubstash] convert start id=${id} bytes=${html.length} sem=${JSON.stringify(sem.stats)}`,
 			);
 			const start = performance.now();
@@ -326,7 +326,7 @@ const httpServer = http.createServer(async (req, res) => {
 				const pdfBuffer = await convertHtmlToPdf(html);
 				const pdfUrl = await uploadPdfToS3(pdfBuffer);
 				const duration = ((performance.now() - start) / 1000).toFixed(2);
-				console.log(
+				console.info(
 					`[pubstash] convert done  id=${id} duration=${duration}s size=${pdfBuffer.length}`,
 				);
 				return json(res, 200, { url: pdfUrl });
@@ -347,15 +347,15 @@ const httpServer = http.createServer(async (req, res) => {
 // ---------------------------------------------------------------------------
 async function main() {
 	browser = await launchBrowser();
-	console.log(`[pubstash] chromium launched (version ${browser.version()})`);
+	console.info(`[pubstash] chromium launched (version ${browser.version()})`);
 
 	httpServer.listen(PORT, () => {
-		console.log(`[pubstash] listening on 0.0.0.0:${PORT}  max_concurrency=${MAX_CONCURRENCY}`);
+		console.info(`[pubstash] listening on 0.0.0.0:${PORT}  max_concurrency=${MAX_CONCURRENCY}`);
 	});
 
 	// Graceful shutdown
 	const shutdown = async () => {
-		console.log('[pubstash] shutting down…');
+		console.info('[pubstash] shutting down…');
 		httpServer.close();
 		await browser.close();
 		process.exit(0);

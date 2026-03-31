@@ -172,7 +172,7 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 			const m: Record<string, string> = {};
 			const title = document.querySelector('title');
 			if (title) m.title = title.textContent?.trim() ?? '';
-			for (const tag of document.querySelectorAll('meta')) {
+			for (const tag of Array.from(document.querySelectorAll('meta'))) {
 				if (tag.name && tag.content) m[tag.name] = tag.content;
 			}
 			return m;

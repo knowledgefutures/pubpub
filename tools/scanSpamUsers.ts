@@ -328,7 +328,7 @@ async function analyze() {
 
 		console.log(
 			`[${new Date().toISOString()}] scanned=${scanned} flagged=${writer.length}` +
-				`${cleanWriter ? ` clean=${cleanWriter.length}` : ''} errors=${errors}`,
+				`${cleanWriter ? ` clean=${cleanWriter.length}` : ''} errors=${errors} lastDate=${new Date(users[users.length - 1].updatedAt as unknown as string).toISOString()}`,
 		);
 		offset += BATCH_SIZE;
 	}

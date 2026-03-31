@@ -214,12 +214,6 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 				const phrases = getMatchingSpamPhrases(text, true);
 
 				if (phrases.length > 0) {
-					console.log({
-						userId,
-						text,
-						links: illegitimate,
-						phrases,
-					});
 					allCommentPhraseMatches.push(...phrases);
 					newComment.phraseMatches = phrases;
 				}
@@ -386,6 +380,7 @@ const spamSignals: SpamSignal[] = [
 				return 0;
 			}
 
+			const linkRatio = ctx.commentData.commentsWithLinks / ctx.commentData.totalComments;
 			const allCommentsAreLinks =
 				ctx.commentData.commentsWithLinks === ctx.commentData.totalComments;
 			const hasEnoughComments = ctx.commentData.totalComments >= 3;
@@ -394,20 +389,23 @@ const spamSignals: SpamSignal[] = [
 				score += 5;
 			} else if (allCommentsAreLinks) {
 				score += 3;
-			} else {
-				const linkRatio = ctx.commentData.commentsWithLinks / ctx.commentData.totalComments;
+			} else if (linkRatio >= 0.7 && hasEnoughComments) {
+				score += 3;
+			}
 
-				if (linkRatio >= 0.7 && hasEnoughComments) {
+			// the not-affiliated and absolute-count bonuses only apply when
+			// the link ratio is meaningful. 8 out of 200 comments having
+			// links is not a pattern worth penalizing.
+			const isSignificantRatio = linkRatio >= 0.33;
+
+			if (isSignificantRatio) {
+				if (!ctx.isAffiliated) {
 					score += 3;
 				}
-			}
 
-			if (!ctx.isAffiliated) {
-				score += 3;
-			}
-
-			if (ctx.commentData.commentsWithLinks > 4) {
-				score += 3;
+				if (ctx.commentData.commentsWithLinks > 4) {
+					score += 3;
+				}
 			}
 
 			return score;

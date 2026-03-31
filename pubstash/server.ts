@@ -105,6 +105,8 @@ async function getBrowser(): Promise<Browser> {
 async function convertHtmlToPdf(html: string): Promise<Buffer> {
 	const activeBrowser = await getBrowser();
 	const page = await activeBrowser.newPage();
+	page.setDefaultTimeout(PAGE_TIMEOUT_MS);
+	page.setDefaultNavigationTimeout(PAGE_TIMEOUT_MS);
 	try {
 		// Accumulate per-page box data from paged.js events
 		const collectedPages: PageBoxes[] = [];
@@ -179,6 +181,24 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 		// Wait for paged.js DOM to land
 		await page.waitForSelector('.pagedjs_pages', { timeout: PAGE_TIMEOUT_MS });
 
+		// Give the browser time to finish layout/paint for long documents.
+		// The paged.js 'rendered' event fires when JS work is done, but
+		// Chromium may still be laying out pages for large docs.
+		await page.waitForFunction(
+			() => {
+				const pages = document.querySelectorAll('.pagedjs_page');
+				// Ensure at least one page exists and all pages have content
+				if (pages.length === 0) return false;
+				const last = pages[pages.length - 1];
+				return last.getBoundingClientRect().height > 0;
+			},
+			{ timeout: PAGE_TIMEOUT_MS },
+		);
+		// Additional idle wait to let paint/compositing finish
+		await page.evaluate(
+			() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+		);
+
 		// Extract <meta> tags for PDF metadata
 		const meta: PdfMeta = await page.evaluate(() => {
 			const m: Record<string, string> = {};
@@ -237,6 +257,9 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 		}, OUTLINE_TAGS);
 
 		// Generate the raw PDF
+		console.info(
+			`[pubstash] paged.js produced ${collectedPages.length} pages, generating PDF…`,
+		);
 		const rawPdf = await page.pdf({
 			format: 'Letter',
 			printBackground: true,

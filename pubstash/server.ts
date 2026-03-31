@@ -310,6 +310,14 @@ const httpServer = http.createServer(async (req, res) => {
 				});
 			}
 
+			const communityId = url.searchParams.get('communityId');
+			const pubId = url.searchParams.get('pubId');
+			if (!communityId || !pubId) {
+				return json(res, 400, {
+					error: 'Missing required query parameters: communityId, pubId',
+				});
+			}
+
 			const html = await readBody(req, BODY_LIMIT);
 			if (!html) {
 				return json(res, 400, { error: 'Request body must be HTML text' });
@@ -324,7 +332,7 @@ const httpServer = http.createServer(async (req, res) => {
 			await sem.acquire();
 			try {
 				const pdfBuffer = await convertHtmlToPdf(html);
-				const pdfUrl = await uploadPdfToS3(pdfBuffer);
+				const pdfUrl = await uploadPdfToS3(pdfBuffer, { communityId, pubId });
 				const duration = ((performance.now() - start) / 1000).toFixed(2);
 				console.info(
 					`[pubstash] convert done  id=${id} duration=${duration}s size=${pdfBuffer.length}`,

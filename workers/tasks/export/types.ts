@@ -5,6 +5,7 @@ import type { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations
 import type { Note, RenderedStructuredValues } from 'utils/notes';
 
 export type PubMetadata = {
+	communityId: string;
 	title: string;
 	slug: string;
 	pubUrl: string;

@@ -252,7 +252,7 @@ const Search2 = () => {
 	const [activeAuthor, setActiveAuthor] = useState<string | null>(null);
 	const [sidebarOpen, _setSidebarOpen] = useState(true);
 
-	const throttledQuery = useThrottled(searchQuery, 400, false);
+	const throttledQuery = useThrottled(searchQuery, 1000, false);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const abortRef = useRef<AbortController | null>(null);
 

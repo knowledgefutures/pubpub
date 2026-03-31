@@ -1,3 +1,4 @@
+// Search: Changes here trigger searchVector updates on Pubs. See server/search2/searchTriggers.ts
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
 import type { SerializedModel } from 'types';

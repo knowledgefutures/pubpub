@@ -1,3 +1,4 @@
+// Search: Postgres triggers maintain a searchVector column. See server/search2/searchTriggers.ts
 import type { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
 import type { SerializedModel } from 'types';

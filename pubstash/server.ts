@@ -67,7 +67,6 @@ async function launchBrowser(): Promise<Browser> {
 			'--disable-setuid-sandbox',
 			'--disable-dev-shm-usage', // write shared-memory to /tmp instead of /dev/shm
 			'--disable-gpu',
-			'--single-process', // reduce memory footprint
 		],
 	});
 }
@@ -91,8 +90,21 @@ const PAGEDJS_POLYFILL = 'https://unpkg.com/pagedjs@0.4.3/dist/paged.polyfill.js
 // Heading tags to include in the PDF outline (matches pagedjs-cli defaults)
 const OUTLINE_TAGS = ['h1', 'h2', 'h3'];
 
+/**
+ * Get a healthy browser instance, relaunching if the previous one crashed.
+ */
+async function getBrowser(): Promise<Browser> {
+	if (!browser || !browser.isConnected()) {
+		console.log('[pubstash] browser not connected, (re)launching…');
+		browser = await launchBrowser();
+		console.log(`[pubstash] chromium launched (version ${browser.version()})`);
+	}
+	return browser;
+}
+
 async function convertHtmlToPdf(html: string): Promise<Buffer> {
-	const page = await browser.newPage();
+	const activeBrowser = await getBrowser();
+	const page = await activeBrowser.newPage();
 	try {
 		// Accumulate per-page box data from paged.js events
 		const collectedPages: PageBoxes[] = [];

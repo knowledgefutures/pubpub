@@ -32,7 +32,7 @@ const getSearchPath = (query, page, mode) => {
 
 	const queryString = params.toString();
 
-	return `/search${queryString.length > 0 ? `?${queryString}` : ''}`;
+	return `/search-v1${queryString.length > 0 ? `?${queryString}` : ''}`;
 };
 
 const updateHistory = (query, page, mode) => {

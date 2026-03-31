@@ -6,7 +6,7 @@ export const router = Router();
 
 const ALL_FIELDS: SearchFields[] = ['title', 'description', 'byline', 'content'];
 
-router.get('/api/search2', async (req, res) => {
+router.get('/api/search', async (req, res) => {
 	try {
 		const q = (req.query.q as string) || '';
 		const mode = (req.query.mode as string) || 'pubs';

@@ -69,7 +69,7 @@ const getSearchPath = (query: string, page: number, mode: string) => {
 	if (page > 0) params.append('page', String(page + 1));
 	if (mode !== 'pubs') params.append('mode', mode);
 	const qs = params.toString();
-	return `/search2${qs ? `?${qs}` : ''}`;
+	return `/search${qs ? `?${qs}` : ''}`;
 };
 
 const updateHistory = (query: string, page: number, mode: string) => {
@@ -314,7 +314,7 @@ const Search2 = () => {
 			}
 
 			try {
-				const resp = await fetch(`/api/search2?${params}`, {
+				const resp = await fetch(`/api/search?${params}`, {
 					signal: controller.signal,
 					credentials: 'include',
 				});

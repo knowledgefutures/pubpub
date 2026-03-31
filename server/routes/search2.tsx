@@ -12,7 +12,7 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 export const router = Router();
 
-router.get('/search2', async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);

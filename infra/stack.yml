@@ -134,7 +134,7 @@ services:
             PORT: '8080'
             MAX_CONCURRENCY: '4'
             CHROMIUM_PATH: '/usr/bin/chromium'
-        command: ['node', 'dist/server/pubstash/server.js']
+        command: ['pnpm', 'run', 'pubstash-prod']
         networks: [appnet]
         healthcheck:
             test:

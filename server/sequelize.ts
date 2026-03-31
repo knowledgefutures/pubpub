@@ -125,7 +125,11 @@ if (process.env.NODE_ENV !== 'test') {
 		const { installSearchTriggers, backfillPubSearchVectors, backfillCommunitySearchVectors } =
 			await import('server/search2/searchTriggers');
 		await installSearchTriggers();
-		await backfillPubSearchVectors();
-		await backfillCommunitySearchVectors();
+		// Run backfill in the background so it doesn't block app startup.
+		// Serialized (not parallel) because they share an advisory lock.
+		(async () => {
+			await backfillPubSearchVectors();
+			await backfillCommunitySearchVectors();
+		})().catch((err) => console.error('Search vector backfill error:', err));
 	});
 }

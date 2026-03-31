@@ -70,30 +70,31 @@ export const installSearchTriggers = async () => {
 		RETURNS trigger
 		LANGUAGE plpgsql AS $$
 		DECLARE
-			pub_row RECORD;
+			target_pub_id uuid;
+			pub_title text;
+			pub_description text;
 			byline_text text;
 			doc_text text;
 			doc_id uuid;
 		BEGIN
 			-- Determine which pub to update
 			IF TG_TABLE_NAME = 'Pubs' THEN
-				pub_row := NEW;
+				target_pub_id := NEW.id;
 			ELSIF TG_TABLE_NAME = 'PubAttributions' THEN
 				IF TG_OP = 'DELETE' THEN
-					pub_row := OLD;
+					target_pub_id := OLD."pubId";
 				ELSE
-					pub_row := NEW;
+					target_pub_id := NEW."pubId";
 				END IF;
 			ELSIF TG_TABLE_NAME = 'Releases' THEN
-				pub_row := NEW;
+				target_pub_id := NEW."pubId";
 			END IF;
 
-			-- Get the full pub title/description (needed when triggered from related tables)
-			IF TG_TABLE_NAME != 'Pubs' THEN
-				SELECT INTO pub_row p.* FROM "Pubs" p WHERE p.id = pub_row."pubId";
-				IF NOT FOUND THEN
-					RETURN COALESCE(NEW, OLD);
-				END IF;
+			-- Get the pub's title and description
+			SELECT p.title, p.description INTO pub_title, pub_description
+			FROM "Pubs" p WHERE p.id = target_pub_id;
+			IF NOT FOUND THEN
+				RETURN COALESCE(NEW, OLD);
 			END IF;
 
 			-- Aggregate byline from PubAttributions + Users
@@ -101,14 +102,14 @@ export const installSearchTriggers = async () => {
 			INTO byline_text
 			FROM "PubAttributions" pa
 			LEFT JOIN "Users" u ON u.id = pa."userId"
-			WHERE pa."pubId" = pub_row.id
+			WHERE pa."pubId" = target_pub_id
 			  AND pa."isAuthor" = true
 			  AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL);
 
 			-- Get latest release doc content
 			SELECT r."docId" INTO doc_id
 			FROM "Releases" r
-			WHERE r."pubId" = pub_row.id
+			WHERE r."pubId" = target_pub_id
 			ORDER BY r."createdAt" DESC
 			LIMIT 1;
 
@@ -119,11 +120,11 @@ export const installSearchTriggers = async () => {
 
 			-- Update the search vector
 			UPDATE "Pubs" SET "searchVector" =
-				setweight(to_tsvector('english', coalesce(pub_row.title, '')), 'A') ||
-				setweight(to_tsvector('english', coalesce(pub_row.description, '')), 'B') ||
+				setweight(to_tsvector('english', coalesce(pub_title, '')), 'A') ||
+				setweight(to_tsvector('english', coalesce(pub_description, '')), 'B') ||
 				setweight(to_tsvector('english', coalesce(byline_text, '')), 'C') ||
 				setweight(to_tsvector('english', coalesce(doc_text, '')), 'D')
-			WHERE id = pub_row.id;
+			WHERE id = target_pub_id;
 
 			RETURN COALESCE(NEW, OLD);
 		END;
@@ -181,58 +182,124 @@ export const installSearchTriggers = async () => {
 	`);
 };
 
+const BATCH_SIZE = 500;
+const BATCH_DELAY_MS = 200;
+
 /**
- * Backfill searchVector for all existing Pubs. Run once after adding the column.
- * Uses batched updates to avoid locking the whole table.
+ * Advisory lock key for search vector backfill. Only one process across all
+ * dynos/containers will hold this lock at a time; others skip the backfill.
+ * The number is arbitrary but must be consistent.
  */
-export const backfillPubSearchVectors = async () => {
-	// Step 1: Set title + description for ALL pubs that haven't been backfilled
-	await sequelize.query(`
-		UPDATE "Pubs" SET "searchVector" =
-			setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-			setweight(to_tsvector('english', coalesce(description, '')), 'B')
-		WHERE "searchVector" IS NULL;
-	`);
+const BACKFILL_LOCK_KEY = 839271;
 
-	// Step 2: Layer in byline (weight C) from PubAttributions
-	await sequelize.query(`
-		UPDATE "Pubs" p SET "searchVector" = p."searchVector" ||
-			setweight(to_tsvector('english', byline_sub.byline_text), 'C')
-		FROM (
-			SELECT pa."pubId",
-			       string_agg(coalesce(u."fullName", pa.name), ' ') AS byline_text
-			FROM "PubAttributions" pa
-			LEFT JOIN "Users" u ON u.id = pa."userId"
-			WHERE pa."isAuthor" = true
-			  AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL)
-			GROUP BY pa."pubId"
-		) byline_sub
-		WHERE p.id = byline_sub."pubId";
-	`);
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-	// Step 3: Layer in latest release doc content (weight D)
-	await sequelize.query(`
-		UPDATE "Pubs" p SET "searchVector" = p."searchVector" ||
-			setweight(to_tsvector('english', doc_sub.doc_text), 'D')
-		FROM (
-			SELECT DISTINCT ON (r."pubId") r."pubId",
-			       extract_doc_text(d.content) AS doc_text
-			FROM "Releases" r
-			JOIN "Docs" d ON d.id = r."docId"
-			ORDER BY r."pubId", r."createdAt" DESC
-		) doc_sub
-		WHERE p.id = doc_sub."pubId";
-	`);
+/**
+ * Run a callback while holding a Postgres advisory lock. Uses a dedicated
+ * transaction so the lock is held on a single connection for its full
+ * duration and automatically released when the transaction commits/rolls back.
+ * Returns false (and skips the callback) if another session already holds it.
+ */
+const withBackfillLock = async (fn: () => Promise<void>): Promise<boolean> => {
+	return sequelize.transaction(async (transaction) => {
+		const [rows] = await sequelize.query(
+			`SELECT pg_try_advisory_xact_lock(:key) AS locked`,
+			{ replacements: { key: BACKFILL_LOCK_KEY }, transaction },
+		);
+		const acquired = (rows as any)[0]?.locked === true;
+		if (!acquired) {
+			console.log('[search backfill] Another process already holds the lock, skipping');
+			return false;
+		}
+		await fn();
+		return true;
+	});
 };
 
 /**
- * Backfill searchVector for all existing Communities.
+ * Run a batched UPDATE that processes BATCH_SIZE rows at a time with a short
+ * sleep between batches. Returns total rows updated. The query MUST include
+ * a LIMIT clause referencing :batchSize so each iteration is bounded.
+ */
+const batchedUpdate = async (label: string, sql: string): Promise<number> => {
+	let totalUpdated = 0;
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		const [, rowCount] = await sequelize.query(sql, {
+			replacements: { batchSize: BATCH_SIZE },
+		});
+		const affected = typeof rowCount === 'number' ? rowCount : (rowCount as any)?.rowCount ?? 0;
+		if (affected === 0) break;
+		totalUpdated += affected;
+		console.log(`[search backfill] ${label}: ${totalUpdated} rows so far`);
+		await sleep(BATCH_DELAY_MS);
+	}
+	return totalUpdated;
+};
+
+/**
+ * Backfill searchVector for all existing Pubs that have NULL searchVector.
+ * Processes in small batches to avoid locking the table or saturating the
+ * connection pool. Uses a Postgres advisory lock so only one process (across
+ * all dynos) runs the backfill; the rest skip it.
+ */
+export const backfillPubSearchVectors = async () => {
+	await withBackfillLock(async () => {
+		// Step 1: Set all 4 weights in one pass for pubs with NULL searchVector.
+		// This avoids the previous multi-step approach where Steps 2/3 could
+		// re-process already-backfilled rows. Each batch computes the full
+		// vector (title + description + byline + doc content) atomically.
+		const total = await batchedUpdate(
+			'pubs full vector',
+			`UPDATE "Pubs" p SET "searchVector" =
+				setweight(to_tsvector('english', coalesce(p.title, '')), 'A') ||
+				setweight(to_tsvector('english', coalesce(p.description, '')), 'B') ||
+				setweight(to_tsvector('english', coalesce(byline_sub.byline_text, '')), 'C') ||
+				setweight(to_tsvector('english', coalesce(doc_sub.doc_text, '')), 'D')
+			FROM (
+				SELECT id AS pub_id FROM "Pubs"
+				WHERE "searchVector" IS NULL
+				LIMIT :batchSize
+			) batch
+			LEFT JOIN LATERAL (
+				SELECT string_agg(coalesce(u."fullName", pa.name), ' ') AS byline_text
+				FROM "PubAttributions" pa
+				LEFT JOIN "Users" u ON u.id = pa."userId"
+				WHERE pa."pubId" = batch.pub_id
+				  AND pa."isAuthor" = true
+				  AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL)
+			) byline_sub ON true
+			LEFT JOIN LATERAL (
+				SELECT extract_doc_text(d.content) AS doc_text
+				FROM "Releases" r
+				JOIN "Docs" d ON d.id = r."docId"
+				WHERE r."pubId" = batch.pub_id
+				ORDER BY r."createdAt" DESC
+				LIMIT 1
+			) doc_sub ON true
+			WHERE p.id = batch.pub_id`,
+		);
+
+		console.log(`[search backfill] Pubs complete: ${total} rows`);
+	});
+};
+
+/**
+ * Backfill searchVector for all existing Communities with NULL searchVector.
+ * Batched to avoid blocking other queries. Skips if another process is
+ * already running a backfill (shares the same advisory lock).
  */
 export const backfillCommunitySearchVectors = async () => {
-	await sequelize.query(`
-		UPDATE "Communities" SET "searchVector" =
-			setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-			setweight(to_tsvector('english', coalesce(description, '')), 'B')
-		WHERE "searchVector" IS NULL;
-	`);
+	await withBackfillLock(async () => {
+		const total = await batchedUpdate(
+			'communities',
+			`UPDATE "Communities" SET "searchVector" =
+				setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+				setweight(to_tsvector('english', coalesce(description, '')), 'B')
+			WHERE id IN (
+				SELECT id FROM "Communities" WHERE "searchVector" IS NULL LIMIT :batchSize
+			)`,
+		);
+		console.log(`[search backfill] Communities complete: ${total} rows`);
+	});
 };

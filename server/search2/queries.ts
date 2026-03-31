@@ -44,7 +44,11 @@ type AuthorFacet = { name: string; count: number };
  * e.g. "hello world" -> "hello:* & world:*"
  */
 const buildTsQuery = (searchTerm: string): string | null => {
-	const sanitized = searchTerm.trim().replace(/[^\w\s-]/g, '');
+	const sanitized = searchTerm
+		.trim()
+		.replace(/[^\w\s]/g, ' ') // strip all non-word, non-space chars (incl. hyphens)
+		.replace(/\s+/g, ' ')
+		.trim();
 	const terms = sanitized.split(/\s+/).filter(Boolean);
 	if (terms.length === 0) return null;
 	return terms.map((w) => `${w}:*`).join(' & ');
@@ -119,10 +123,9 @@ export const searchPubs = async (
 		: '';
 	const ilikeTerm = `%${searchTerm.trim().replace(/[%_]/g, '')}%`;
 
-	// When weight filtering is active, we strip the tsvector to only the
-	// selected weights before matching and ranking. Otherwise we use the
-	// full searchVector which is entirely covered by the GIN index.
-	const vectorExpr = useWeightFilter
+	// Always match against the full searchVector to use the GIN index.
+	// Only apply ts_filter for ranking so fields don't affect index usage.
+	const rankExpr = useWeightFilter
 		? `ts_filter(p."searchVector", '{${weightMask.split('').join(',')}}')`
 		: `p."searchVector"`;
 
@@ -149,7 +152,7 @@ export const searchPubs = async (
         c."headerLogo" AS "communityHeaderLogo",
         c."accentTextColor" AS "communityTextColor",
         pb.byline,
-        ts_rank_cd(${vectorExpr}, to_tsquery('english', :tsQuery)) AS rank
+        ts_rank_cd(${rankExpr}, to_tsquery('english', :tsQuery)) AS rank
       FROM "Pubs" p
       INNER JOIN "Communities" c ON c.id = p."communityId"
       INNER JOIN "Releases" r_exists ON r_exists."pubId" = p.id
@@ -158,7 +161,7 @@ export const searchPubs = async (
       WHERE (st.status IS NULL OR st.status != 'confirmed')
         AND p."searchVector" IS NOT NULL
         AND (
-          ${vectorExpr} @@ to_tsquery('english', :tsQuery)
+          p."searchVector" @@ to_tsquery('english', :tsQuery)
           OR p.title ILIKE :ilikeTerm
         )
         ${communityFilter}

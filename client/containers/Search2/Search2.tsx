@@ -393,7 +393,7 @@ const Search2 = () => {
 								<Tab id="pubs" title="Pubs" />
 								{isBasePubPub && <Tab id="communities" title="Communities" />}
 							</Tabs>
-							{mode === 'pubs' && throttledQuery.trim() && (
+							{/* mode === 'pubs' && throttledQuery.trim() && (
 								<button
 									type="button"
 									className="filter-toggle"
@@ -402,7 +402,7 @@ const Search2 = () => {
 									<Icon icon="filter" iconSize={14} />
 									{sidebarOpen ? 'Hide Filters' : 'Show Filters'}
 								</button>
-							)}
+							) */}
 						</div>
 					</div>
 				</div>

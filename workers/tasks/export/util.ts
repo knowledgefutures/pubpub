@@ -6,13 +6,13 @@ import tmp from 'tmp-promise';
 
 import { Export } from 'server/models';
 import { assetsClient } from 'server/utils/s3';
-import { generateHash } from 'utils/hashes';
+import { generateExportKey } from 'utils/export/keys';
 
 tmp.setGracefulCleanup();
 
-export const uploadDocument = async (pubId, tmpFile, extension) => {
+export const uploadDocument = async (communityId: string, pubId: string, tmpFile, extension) => {
 	const readableStream = fs.createReadStream(tmpFile.path);
-	const key = `${generateHash(8)}/${pubId}.${extension}`;
+	const key = generateExportKey(communityId, pubId, extension);
 	const { url } = await assetsClient.uploadFile(key, readableStream);
 	return url;
 };

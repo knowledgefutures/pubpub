@@ -12,7 +12,8 @@
 		"utils/**/*",
 		"workers/**/*",
 		"facets/**/*",
-		"deposit/**/*"
+		"deposit/**/*",
+		"pubstash/**/*"
 	],
 	"exclude": [
 		"../**/__tests__/**/*",

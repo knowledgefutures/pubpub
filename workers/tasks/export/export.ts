@@ -44,13 +44,14 @@ export const exportTask = async ({ exportId }: { exportId: string }) => {
 		};
 		const staticHtml = await renderStaticHtml(staticHtmlOptions);
 		if (pagedTarget) {
-			url = (await exportWithPaged(staticHtml)).url;
+			const { communityId } = pubMetadata;
+			url = (await exportWithPaged(staticHtml, { communityId, pubId })).url;
 		} else {
 			await writeToFile(staticHtml, tmpFile);
 		}
 	}
 	if (url === undefined) {
-		url = await uploadDocument(pubId, tmpFile, extension);
+		url = await uploadDocument(pubMetadata.communityId, pubId, tmpFile, extension);
 	}
 	await assignFileToExportById(exportId, url);
 

@@ -46,6 +46,24 @@ services:
             - rabbitmq
         networks: [appnet]
 
+    pubstash:
+        image: pubpub:test-build
+        env_file:
+            - .env.dev
+        environment:
+            NODE_ENV: production
+            PORT: "8080"
+            MAX_CONCURRENCY: "4"
+            CHROMIUM_PATH: "/usr/bin/chromium"
+        command: ["pnpm", "run", "pubstash-prod"]
+        networks: [appnet]
+        ports:
+            - "${PUBSTASH_PORT:-8080}:8080"
+        deploy:
+            resources:
+                limits:
+                    memory: 2G
+
     rabbitmq:
         image: rabbitmq:3.13-alpine
         environment:

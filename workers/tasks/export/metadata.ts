@@ -100,6 +100,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 
 	const hostname = getCorrectHostname(pubData.community.subdomain, pubData.community.domain);
 	return {
+		communityId: pubData.community.id,
 		title: pubData.title,
 		slug: pubData.slug,
 		pubUrl,

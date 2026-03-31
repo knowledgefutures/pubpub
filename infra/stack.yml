@@ -125,6 +125,34 @@ services:
             replicas: 1
             restart_policy:
                 condition: any
+
+    pubstash:
+        image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
+        env_file: [.env]
+        environment:
+            NODE_ENV: production
+            PORT: '8080'
+            MAX_CONCURRENCY: '4'
+            CHROMIUM_PATH: '/usr/bin/chromium'
+        command: ['pnpm', 'run', 'pubstash-prod']
+        networks: [appnet]
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'curl -sf http://127.0.0.1:8080/ || exit 1'
+            interval: 15s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+        deploy:
+            replicas: 1
+            resources:
+                limits:
+                    memory: 2G
+                reservations:
+                    memory: 512M
+            restart_policy:
+                condition: on-failure
 networks:
     appnet:
         driver: overlay

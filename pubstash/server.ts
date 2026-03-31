@@ -335,7 +335,7 @@ const httpServer = http.createServer(async (req, res) => {
 // ---------------------------------------------------------------------------
 async function main() {
 	browser = await launchBrowser();
-	console.log(`[pubstash] chromium launched (pid ${browser.process()?.pid})`);
+	console.log(`[pubstash] chromium launched (version ${browser.version()})`);
 
 	httpServer.listen(PORT, () => {
 		console.log(`[pubstash] listening on 0.0.0.0:${PORT}  max_concurrency=${MAX_CONCURRENCY}`);

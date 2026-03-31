@@ -202,10 +202,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 const withBackfillLock = async (fn: () => Promise<void>): Promise<boolean> => {
 	return sequelize.transaction(async (transaction) => {
-		const [rows] = await sequelize.query(
-			`SELECT pg_try_advisory_xact_lock(:key) AS locked`,
-			{ replacements: { key: BACKFILL_LOCK_KEY }, transaction },
-		);
+		const [rows] = await sequelize.query(`SELECT pg_try_advisory_xact_lock(:key) AS locked`, {
+			replacements: { key: BACKFILL_LOCK_KEY },
+			transaction,
+		});
 		const acquired = (rows as any)[0]?.locked === true;
 		if (!acquired) {
 			console.log('[search backfill] Another process already holds the lock, skipping');
@@ -220,18 +220,27 @@ const withBackfillLock = async (fn: () => Promise<void>): Promise<boolean> => {
  * Run a batched UPDATE that processes BATCH_SIZE rows at a time with a short
  * sleep between batches. Returns total rows updated. The query MUST include
  * a LIMIT clause referencing :batchSize so each iteration is bounded.
+ * Caps at MAX_BATCHES iterations as a safety net against infinite loops.
  */
+const MAX_BATCHES = 10_000; // 10k × 500 = 5M rows max
+
 const batchedUpdate = async (label: string, sql: string): Promise<number> => {
 	let totalUpdated = 0;
-	// eslint-disable-next-line no-constant-condition
-	while (true) {
+	for (let i = 0; i < MAX_BATCHES; i++) {
+		// biome-ignore lint/performance/noAwaitInLoops: intentionally sequential batching
 		const [, rowCount] = await sequelize.query(sql, {
 			replacements: { batchSize: BATCH_SIZE },
 		});
-		const affected = typeof rowCount === 'number' ? rowCount : (rowCount as any)?.rowCount ?? 0;
+		const affected =
+			typeof rowCount === 'number' ? rowCount : ((rowCount as any)?.rowCount ?? 0);
 		if (affected === 0) break;
 		totalUpdated += affected;
 		console.log(`[search backfill] ${label}: ${totalUpdated} rows so far`);
+		if (i === MAX_BATCHES - 1) {
+			console.error(
+				`[search backfill] ${label}: hit MAX_BATCHES limit (${MAX_BATCHES}), stopping`,
+			);
+		}
 		await sleep(BATCH_DELAY_MS);
 	}
 	return totalUpdated;

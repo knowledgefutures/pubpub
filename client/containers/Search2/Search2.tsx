@@ -250,7 +250,7 @@ const Search2 = () => {
 	);
 	const [authorFacets, setAuthorFacets] = useState<AuthorFacet[]>([]);
 	const [activeAuthor, setActiveAuthor] = useState<string | null>(null);
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [sidebarOpen, _setSidebarOpen] = useState(true);
 
 	const throttledQuery = useThrottled(searchQuery, 400, false);
 	const inputRef = useRef<HTMLInputElement | null>(null);

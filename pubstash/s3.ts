@@ -1,13 +1,12 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import crypto from 'node:crypto';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 // ---------------------------------------------------------------------------
 // S3 config – reuses the same bucket & credentials as the main PubPub app
 // ---------------------------------------------------------------------------
 const BUCKET = process.env.AWS_S3_BUCKET ?? 'assets.pubpub.org';
 const REGION = process.env.AWS_S3_REGION ?? 'us-east-1';
-const BASE_URL =
-	process.env.AWS_S3_ASSET_PROXY ?? `https://${BUCKET}`;
+const BASE_URL = process.env.AWS_S3_ASSET_PROXY ?? `https://${BUCKET}`;
 
 const s3 = new S3Client({
 	region: REGION,

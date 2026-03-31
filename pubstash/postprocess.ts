@@ -5,7 +5,15 @@
  * modern pdf-lib (^1.17). The original used pdf-lib 0.6.4 with a custom
  * PDFDocumentWriter — none of that is needed with the current API.
  */
-import { PDFDocument, PDFDict, PDFName, PDFString, PDFArray, PDFNumber, PDFRef } from 'pdf-lib';
+import {
+	PDFArray,
+	PDFDict,
+	PDFDocument,
+	PDFName,
+	PDFNumber,
+	type PDFRef,
+	PDFString,
+} from 'pdf-lib';
 
 // ---------------------------------------------------------------------------
 // Types for data extracted from the browser page
@@ -128,7 +136,7 @@ function addOutline(pdfDoc: PDFDocument, outline: OutlineNode[]) {
 	if (!outline.length) return;
 
 	const context = pdfDoc.context;
-	const pages = pdfDoc.getPages();
+	const _pages = pdfDoc.getPages();
 
 	// Build a map from element id → page index + PDFRef for named destinations
 	// (We'll create /Dest as a named destination string which Chromium's page.pdf

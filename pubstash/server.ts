@@ -1,6 +1,7 @@
 import http from 'node:http';
-import { chromium, type Browser } from 'playwright-core';
-import { postProcessPdf, type PdfMeta, type PageBoxes, type OutlineNode } from './postprocess';
+import { type Browser, chromium } from 'playwright-core';
+
+import { type OutlineNode, type PageBoxes, type PdfMeta, postProcessPdf } from './postprocess';
 import { uploadPdfToS3 } from './s3';
 
 // ---------------------------------------------------------------------------
@@ -184,7 +185,10 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 				tagList: string[],
 			): { title: string; id: string; children: any[] }[] {
 				const result: { title: string; id: string; children: any[] }[] = [];
-				const stack: { depth: number; node: { title: string; id: string; children: any[] } }[] = [];
+				const stack: {
+					depth: number;
+					node: { title: string; id: string; children: any[] };
+				}[] = [];
 
 				for (const el of nodes) {
 					const depth = tagList.indexOf(el.tagName.toLowerCase());
@@ -334,9 +338,7 @@ async function main() {
 	console.log(`[pubstash] chromium launched (pid ${browser.process()?.pid})`);
 
 	httpServer.listen(PORT, () => {
-		console.log(
-			`[pubstash] listening on 0.0.0.0:${PORT}  max_concurrency=${MAX_CONCURRENCY}`,
-		);
+		console.log(`[pubstash] listening on 0.0.0.0:${PORT}  max_concurrency=${MAX_CONCURRENCY}`);
 	});
 
 	// Graceful shutdown

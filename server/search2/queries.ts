@@ -122,25 +122,17 @@ export const searchPubs = async (
 			  AND (af.name ILIKE :authorFilter OR au."fullName" ILIKE :authorFilter)
 		)`
 		: '';
-	const ilikeTerm = `%${searchTerm.trim().replace(/[%_]/g, '')}%`;
 
-	// Always match against the full searchVector to use the GIN index.
-	// Only apply ts_filter for ranking so fields don't affect index usage.
+	// For ranking, only use the selected weight sections so that ts_rank_cd
+	// doesn't read the full tsvector (which can be very large when D=doc content
+	// is present). This dramatically reduces memory/IO since Postgres only needs
+	// to deserialize the filtered weights, not the entire vector.
 	const rankExpr = useWeightFilter
 		? `ts_filter(p."searchVector", '{${weightMask.split('').join(',')}}')`
 		: `p."searchVector"`;
 
 	const query = `
-    WITH pub_bylines AS (
-      SELECT pa."pubId",
-             string_agg(COALESCE(u."fullName", pa.name), ', ' ORDER BY pa."order") AS byline
-      FROM "PubAttributions" pa
-      LEFT JOIN "Users" u ON u.id = pa."userId"
-      WHERE pa."isAuthor" = true
-        AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL)
-      GROUP BY pa."pubId"
-    ),
-    matching_pubs AS (
+    WITH matching_pubs AS (
       SELECT
         p.id, p.title, p.slug, p.avatar, p.description, p."customPublishedAt",
         c.id AS "communityId",
@@ -152,31 +144,23 @@ export const searchPubs = async (
         c."accentColorLight" AS "communityAccentColorLight",
         c."headerLogo" AS "communityHeaderLogo",
         c."accentTextColor" AS "communityTextColor",
-        pb.byline,
         ts_rank_cd(${rankExpr}, to_tsquery('english', :tsQuery)) AS rank
       FROM "Pubs" p
       INNER JOIN "Communities" c ON c.id = p."communityId"
-      INNER JOIN "Releases" r_exists ON r_exists."pubId" = p.id
-      LEFT JOIN pub_bylines pb ON pb."pubId" = p.id
       LEFT JOIN "SpamTags" st ON st.id = c."spamTagId"
       WHERE (st.status IS NULL OR st.status != 'confirmed')
         AND p."searchVector" IS NOT NULL
-        AND (
-          p."searchVector" @@ to_tsquery('english', :tsQuery)
-          OR p.title ILIKE :ilikeTerm
-        )
+        AND p."searchVector" @@ to_tsquery('english', :tsQuery)
+        AND EXISTS (SELECT 1 FROM "Releases" r WHERE r."pubId" = p.id)
         ${communityFilter}
         ${authorFilter}
-    ),
-    deduped AS (
-      SELECT DISTINCT ON (id) * FROM matching_pubs
     ),
     facet_data AS (
       SELECT json_agg(sub) AS facets FROM (
         SELECT COALESCE(u."fullName", pa.name) AS name, count(DISTINCT pa."pubId")::int AS count
         FROM "PubAttributions" pa
         LEFT JOIN "Users" u ON u.id = pa."userId"
-        WHERE pa."pubId" IN (SELECT id FROM deduped)
+        WHERE pa."pubId" IN (SELECT id FROM matching_pubs)
           AND pa."isAuthor" = true
           AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL)
         GROUP BY COALESCE(u."fullName", pa.name)
@@ -185,10 +169,17 @@ export const searchPubs = async (
       ) sub
     )
     SELECT
-      d.*,
+      m.*,
+      (
+        SELECT string_agg(COALESCE(u."fullName", pa.name), ', ' ORDER BY pa."order")
+        FROM "PubAttributions" pa
+        LEFT JOIN "Users" u ON u.id = pa."userId"
+        WHERE pa."pubId" = m.id AND pa."isAuthor" = true
+          AND (pa.name IS NOT NULL OR u."fullName" IS NOT NULL)
+      ) AS byline,
       count(*) OVER() AS total,
       (SELECT facets FROM facet_data) AS "authorFacets"
-    FROM deduped d
+    FROM matching_pubs m
     ORDER BY rank DESC
     LIMIT :limit
     OFFSET :offset
@@ -197,7 +188,6 @@ export const searchPubs = async (
 	const results = await sequelize.query(query, {
 		replacements: {
 			tsQuery,
-			ilikeTerm,
 			limit,
 			offset,
 			...(communityId ? { communityId } : {}),
@@ -248,15 +238,7 @@ export const searchCommunities = async (
 	const tsQuery = buildTsQuery(searchTerm);
 	if (!tsQuery) return { results: [], total: 0 };
 
-	const ilikeTerm = `%${searchTerm.trim().replace(/[%_]/g, '')}%`;
-
 	const query = `
-    WITH community_pub_counts AS (
-      SELECT p."communityId", count(DISTINCT p.id) AS pub_count
-      FROM "Pubs" p
-      INNER JOIN "Releases" r ON r."pubId" = p.id
-      GROUP BY p."communityId"
-    )
     SELECT
       c.id,
       c.title,
@@ -266,26 +248,32 @@ export const searchCommunities = async (
       c.avatar,
       c."accentColorDark",
       c."headerLogo",
-      coalesce(cpc.pub_count, 0)::int AS "pubCount",
+      (
+        SELECT count(DISTINCT p.id)::int
+        FROM "Pubs" p
+        WHERE p."communityId" = c.id
+          AND EXISTS (SELECT 1 FROM "Releases" r WHERE r."pubId" = p.id)
+      ) AS "pubCount",
       ts_rank_cd(c."searchVector", to_tsquery('english', :tsQuery))
-        + ln(1 + coalesce(cpc.pub_count, 0)) AS rank,
+        + ln(1 + (
+          SELECT count(DISTINCT p.id)
+          FROM "Pubs" p
+          WHERE p."communityId" = c.id
+            AND EXISTS (SELECT 1 FROM "Releases" r WHERE r."pubId" = p.id)
+        )) AS rank,
       count(*) OVER() AS total
     FROM "Communities" c
     LEFT JOIN "SpamTags" st ON st.id = c."spamTagId"
-    LEFT JOIN community_pub_counts cpc ON cpc."communityId" = c.id
     WHERE (st.status IS NULL OR st.status != 'confirmed')
       AND c."searchVector" IS NOT NULL
-      AND (
-        c."searchVector" @@ to_tsquery('english', :tsQuery)
-        OR c.title ILIKE :ilikeTerm
-      )
+      AND c."searchVector" @@ to_tsquery('english', :tsQuery)
     ORDER BY rank DESC
     LIMIT :limit
     OFFSET :offset
   `;
 
 	const results = await sequelize.query(query, {
-		replacements: { tsQuery, ilikeTerm, limit, offset },
+		replacements: { tsQuery, limit, offset },
 		type: QueryTypes.SELECT,
 	});
 

@@ -7,12 +7,13 @@ export const containsLink = (
 	text: string | null | undefined,
 ): boolean => {
 	if (!doc && !text) return false;
-	if (doc) {
-		return extractFirstLinkFromContent(doc) !== null;
-	}
 
 	if (text) {
 		return extractUrlsFromString(text) !== null;
+	}
+
+	if (doc) {
+		return extractFirstLinkFromContent(doc) !== null;
 	}
 
 	return false;

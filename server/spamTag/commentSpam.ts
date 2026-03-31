@@ -22,7 +22,7 @@ const NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES = IS_WINDOW_MINUTES_VALID
 	: DEFAULT_NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES;
 
 const NEW_ACCOUNT_LINK_COMMENT_WINDOW_MS = NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES * 60 * 1000;
-const URL_REGEX = /\b(?:https?:\/\/|www\.)[^\s<]+/gi;
+const URL_REGEX = /(?:https?:\/\/|www\.)[^\s<]+/gi;
 
 type AutoBanNewAccountLinkCommentOptions = {
 	userId: string;

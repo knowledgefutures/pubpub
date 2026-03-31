@@ -57,10 +57,15 @@ const Login = () => {
 							)}?breakCache=${cacheBreaker}`
 						: `/?breakCache=${cacheBreaker}`;
 				})
-				.catch(() => {
+				.catch((err) => {
 					setLoginLoading(false);
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Invalid Email or Password"' is ... Remove this comment to see the full error message
-					setLoginError('Invalid Email or Password');
+					if (typeof err === 'string' && err.includes('restricted')) {
+						// @ts-expect-error ts-migrate(2345)
+						setLoginError(err);
+					} else {
+						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Invalid Email or Password"' is ... Remove this comment to see the full error message
+						setLoginError('Invalid Email or Password');
+					}
 				});
 		return altchaRef.current
 			?.verify()

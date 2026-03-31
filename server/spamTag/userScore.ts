@@ -23,19 +23,21 @@ const profileSpamFields: Record<string, SpamField<User>> = {
 	bio: { extract: (u) => u.bio, isProse: true, weight: 1 },
 };
 
+const compiledSpamPhrases = communitySpamPhrases.map((phrase) => {
+	const escaped = phrase.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return { phrase, regex: new RegExp(`\\b${escaped}\\b`, 'i') };
+});
+
 const getMatchingSpamPhrases = (text: string, isProse: boolean): string[] => {
 	if (!text) return [];
 
-	return communitySpamPhrases.filter((phrase) => {
-		const lower = text.toLowerCase();
-		const lowerPhrase = phrase.toLowerCase();
+	const lower = text.toLowerCase();
 
-		if (isProse) {
-			return lower.includes(' ' + lowerPhrase) || lower.includes(lowerPhrase + ' ');
-		}
+	if (!isProse) {
+		return communitySpamPhrases.filter((phrase) => lower.includes(phrase.toLowerCase()));
+	}
 
-		return lower.includes(lowerPhrase);
-	});
+	return compiledSpamPhrases.filter(({ regex }) => regex.test(lower)).map(({ phrase }) => phrase);
 };
 
 const getProfilePhraseScore = (user: User) => {
@@ -95,6 +97,40 @@ const SPAM_SLUG_PATTERNS = [
 	/^trang-chu-/i,
 ];
 
+const LEGITIMATE_LINK_PATTERNS = [
+	/\.edu(?:\/|$)/i,
+	/wikipedia\.org/i,
+	/doi\.org/i,
+	/researchgate\.net/i,
+	/arxiv\.org/i,
+	/biorxiv\.org/i,
+	/medrxiv\.org/i,
+	/scholar\.google/i,
+	/pubmed\.ncbi\.nlm\.nih\.gov/i,
+	/ncbi\.nlm\.nih\.gov/i,
+	/jstor\.org/i,
+	/springer\.com/i,
+	/sciencedirect\.com/i,
+	/nature\.com/i,
+	/science\.org/i,
+	/wiley\.com/i,
+	/tandfonline\.com/i,
+	/archive\.org/i,
+	/zenodo\.org/i,
+	/orcid\.org/i,
+	/plos\.org/i,
+	/plosone\.org/i,
+	/frontiersin\.org/i,
+	/ssrn\.com/i,
+	/academia\.edu/i,
+	/.*\.?pubpub\.org/i,
+	/https?:\/\/[^/]*\.gov\//i,
+	/github\.com/i,
+	/youtube\.com/i,
+];
+
+const isLegitimateUrl = (url: string): boolean => LEGITIMATE_LINK_PATTERNS.some((p) => p.test(url));
+
 const bioMatchesWebsiteDomain = (
 	bio: string | null | undefined,
 	website: string | null | undefined,
@@ -116,12 +152,17 @@ const bioMatchesWebsiteDomain = (
 export type UserCommentData = {
 	totalComments: number;
 	commentsWithLinks: number;
-	linkUrls: string[];
-	templateMatches: string[];
+	commentsWithSpamPhrases: number;
 	commentsWithLinksAndTemplates: number;
+	linkUrls: string[];
+	legitimateLinks: string[];
+	templateMatches: string[];
+	commentPhraseMatches: string[];
 	recentComments: (Awaited<ReturnType<typeof getRecentDiscussionsForUserRaw>>[number] & {
 		links: string[];
+		legitimateLinks: string[];
 		templateMatches: string[];
+		phraseMatches: string[];
 	})[];
 };
 
@@ -129,7 +170,9 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 	const comments = await getRecentDiscussionsForUserRaw(userId, 200);
 
 	const allLinkUrls: string[] = [];
+	const allLegitimateLinks: string[] = [];
 	const allTemplateMatches: string[] = [];
+	const allCommentPhraseMatches: string[] = [];
 
 	const newComments = [] as UserCommentData['recentComments'];
 
@@ -143,13 +186,38 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 			...rest,
 			links: [] as string[],
 			templateMatches: [] as string[],
+			phraseMatches: [] as string[],
 		} as UserCommentData['recentComments'][number];
 
 		if (hasLink) {
 			const docLinks = extractLinksFromContent(doc);
 			const textLinks = extractUrlsFromString(text);
-			allLinkUrls.push(...(docLinks ?? []), ...(textLinks ?? []));
-			newComment.links = [...(docLinks ?? []), ...(textLinks ?? [])];
+
+			const allLinks = [...(docLinks ?? []), ...(textLinks ?? [])];
+			const { legitimate, illegitimate } = allLinks.reduce(
+				(acc, link) => {
+					isLegitimateUrl(link) ? acc.legitimate.push(link) : acc.illegitimate.push(link);
+					return acc;
+				},
+				{ legitimate: [] as string[], illegitimate: [] as string[] },
+			);
+
+			newComment.links = illegitimate;
+			newComment.legitimateLinks = legitimate;
+
+			allLegitimateLinks.push(...legitimate);
+
+			if (illegitimate.length > 0) {
+				allLinkUrls.push(...illegitimate);
+
+				// only check this for comments with links
+				const phrases = getMatchingSpamPhrases(text, true);
+
+				if (phrases.length > 0) {
+					allCommentPhraseMatches.push(...phrases);
+					newComment.phraseMatches = phrases;
+				}
+			}
 		}
 
 		const templates = matchesCommentSpamTemplate(text);
@@ -158,13 +226,18 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 			newComment.templateMatches = templates;
 		}
 
-		// content to large
 		newComments.push(newComment);
 	}
 
 	const commentsWithLinks = newComments.reduce((acc, c) => acc + (c.links.length > 0 ? 1 : 0), 0);
+
 	const commentsWithLinksAndTemplates = newComments.reduce(
 		(acc, c) => acc + (c.templateMatches.length > 0 ? 1 : 0),
+		0,
+	);
+
+	const commentsWithSpamPhrases = newComments.reduce(
+		(acc, c) => acc + (c.phraseMatches.length > 0 ? 1 : 0),
 		0,
 	);
 
@@ -172,9 +245,12 @@ const getUserCommentData = async (userId: string): Promise<UserCommentData> => {
 		recentComments: newComments.slice(0, 5),
 		totalComments: comments.length,
 		commentsWithLinks,
-		linkUrls: [...new Set(allLinkUrls)],
-		templateMatches: [...new Set(allTemplateMatches)],
+		commentsWithSpamPhrases,
 		commentsWithLinksAndTemplates,
+		linkUrls: [...new Set(allLinkUrls)],
+		legitimateLinks: [...new Set(allLegitimateLinks)],
+		templateMatches: [...new Set(allTemplateMatches)],
+		commentPhraseMatches: [...new Set(allCommentPhraseMatches)],
 	};
 };
 
@@ -196,7 +272,7 @@ type SpamSignal = {
 const academicallySoundingPhrases = [
 	'professor',
 	'graduated',
-	'is a',
+	// 'is a',
 	'degree',
 	'bachelor',
 	'master',
@@ -292,34 +368,44 @@ const spamSignals: SpamSignal[] = [
 	{
 		name: 'comments-with-links',
 		score: (ctx) => {
-			// just posting links doesn't really do anything
 			let score = 0;
 
-			// some problem with old frankenbook comments, ignore those
-			if (
-				ctx.commentData.recentComments.some(
-					(c) =>
-						c.communitySubdomain === 'frankenbook' &&
-						new Date(c.createdAt) < new Date('2020-01-01'),
-				)
-			) {
-				//
+			const isFrankenbookLegacy = ctx.commentData.recentComments.some(
+				(c) =>
+					c.communitySubdomain === 'frankenbook' &&
+					new Date(c.createdAt) < new Date('2020-01-01'),
+			);
+
+			if (isFrankenbookLegacy) {
 				return 0;
 			}
 
-			// very suspicious if all your comments are just links
-			if (ctx.commentData.commentsWithLinks === ctx.commentData.totalComments) {
+			const linkRatio = ctx.commentData.commentsWithLinks / ctx.commentData.totalComments;
+			const allCommentsAreLinks =
+				ctx.commentData.commentsWithLinks === ctx.commentData.totalComments;
+			const hasEnoughComments = ctx.commentData.totalComments >= 3;
+
+			if (allCommentsAreLinks && hasEnoughComments) {
+				score += 5;
+			} else if (allCommentsAreLinks) {
+				score += 3;
+			} else if (linkRatio >= 0.7 && hasEnoughComments) {
 				score += 3;
 			}
 
-			// no affil is slightly suspicious
-			if (!ctx.isAffiliated) {
-				score += 3;
-			}
+			// the not-affiliated and absolute-count bonuses only apply when
+			// the link ratio is meaningful. 8 out of 200 comments having
+			// links is not a pattern worth penalizing.
+			const isSignificantRatio = linkRatio >= 0.33;
 
-			// more than 5 comments with links is also sus
-			if (ctx.commentData.commentsWithLinks > 4) {
-				score += 3;
+			if (isSignificantRatio) {
+				if (!ctx.isAffiliated) {
+					score += 3;
+				}
+
+				if (ctx.commentData.commentsWithLinks > 4) {
+					score += 3;
+				}
 			}
 
 			return score;
@@ -328,6 +414,30 @@ const spamSignals: SpamSignal[] = [
 		evidence: (ctx) => [
 			`${ctx.commentData.commentsWithLinks}/${ctx.commentData.totalComments} comments`,
 		],
+	},
+	{
+		name: 'comment-spam-phrases',
+		score: (ctx) => {
+			const phraseCount = ctx.commentData.commentPhraseMatches.length;
+			const commentCount = ctx.commentData.commentsWithSpamPhrases;
+
+			// base: 1 per unique phrase, capped at 4
+			let score = Math.min(phraseCount, 4);
+
+			if (commentCount >= 3) {
+				score += 3;
+			} else if (commentCount >= 2) {
+				score += 1;
+			}
+
+			if (!ctx.isAffiliated) {
+				score += 2;
+			}
+
+			return score;
+		},
+		test: (ctx) => ctx.commentData.commentsWithSpamPhrases > 0,
+		evidence: (ctx) => ctx.commentData.commentPhraseMatches.slice(0, 15),
 	},
 	{
 		name: 'template-spam-with-links',
@@ -375,6 +485,18 @@ const spamSignals: SpamSignal[] = [
 		},
 		evidence: (ctx) => [ctx.user.bio ?? ''],
 	},
+	{
+		name: '-legitimate-links-in-comments',
+		score: (ctx) => {
+			const urls = ctx.commentData.legitimateLinks;
+			if (urls.length === 0) return 0;
+
+			// at least some do
+			return -3;
+		},
+		test: (ctx) => ctx.commentData.legitimateLinks.length > 0,
+		evidence: (ctx) => ctx.commentData.legitimateLinks,
+	},
 ];
 
 export type SignalHit = {
@@ -391,7 +513,14 @@ export type UserSpamReport = {
 	commentData: UserCommentData;
 };
 
-export const computeUserSpamReport = async (user: User): Promise<UserSpamReport> => {
+export type SpamReportOptions = {
+	excludeSignals?: string[];
+};
+
+export const computeUserSpamReport = async (
+	user: User,
+	options?: SpamReportOptions,
+): Promise<UserSpamReport> => {
 	const profilePhraseResult = getProfilePhraseScore(user);
 	const bioUrls = extractUrlsFromString(user.bio) ?? [];
 
@@ -408,13 +537,16 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 		bioUrls,
 	};
 
+	const activeSignals = options?.excludeSignals?.length
+		? spamSignals.filter((s) => !options.excludeSignals!.includes(s.name))
+		: spamSignals;
+
 	const signalHits: SignalHit[] = [];
 	let score = 0;
 
-	// profile-spam-phrases is special: its score comes from the phrase matcher, not from the config
 	const fields: Record<string, string[]> = {};
 
-	for (const signal of spamSignals) {
+	for (const signal of activeSignals) {
 		if (!signal.test(ctx)) continue;
 
 		const signalScore =
@@ -434,9 +566,14 @@ export const computeUserSpamReport = async (user: User): Promise<UserSpamReport>
 		Object.assign(fields, profilePhraseResult.fields);
 	}
 
-	const commentLinksHit = signalHits.find((h) => h.name === 'comments-with-links-not-affiliated');
+	const commentLinksHit = signalHits.find((h) => h.name === 'comments-with-links');
 	if (commentLinksHit) {
 		fields.suspiciousCommentLinks = commentLinksHit.evidence;
+	}
+
+	const commentPhrasesHit = signalHits.find((h) => h.name === 'comment-spam-phrases');
+	if (commentPhrasesHit) {
+		fields.commentSpamPhrases = commentPhrasesHit.evidence;
 	}
 
 	const templateHit = signalHits.find((h) => h.name === 'template-spam-with-links');
@@ -477,8 +614,9 @@ export const getSuspectedUserSpamVerdict = (user: User): types.SpamVerdict<SpamT
 
 export const computeFullUserSpamVerdict = async (
 	user: User,
+	options?: SpamReportOptions,
 ): Promise<types.SpamVerdict<SpamTag> & { signals: string[] }> => {
-	const report = await computeUserSpamReport(user);
+	const report = await computeUserSpamReport(user, options);
 	return {
 		fields: report.fields,
 		spamScore: report.score,

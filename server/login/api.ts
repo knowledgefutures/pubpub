@@ -1,6 +1,7 @@
 import type { AppRouteImplementation } from '@ts-rest/express';
 
 import type * as types from 'types';
+import type { UserSpamTagFields } from 'types';
 import type { contract } from 'utils/api/contract';
 
 import crypto from 'crypto';
@@ -109,7 +110,11 @@ const performLogin = (req: any, res: any): Promise<LoginResult> => {
 		.then(async (user) => {
 			const spamTag = await getSpamTagForUser(user.id);
 			if (spamTag?.status === 'confirmed-spam') {
-				throw new Error('ACCOUNT_RESTRICTED');
+				const fields = spamTag.fields as UserSpamTagFields | null;
+				const wasAutomated = !fields?.manuallyMarkedBy?.length;
+				throw new Error(
+					wasAutomated ? 'ACCOUNT_RESTRICTED_AUTOMATED' : 'ACCOUNT_RESTRICTED',
+				);
 			}
 			const logIn = promisify(req.logIn.bind(req));
 			await logIn(user);
@@ -125,10 +130,17 @@ const performLogin = (req: any, res: any): Promise<LoginResult> => {
 			return { status: 201, body: 'success' } as const;
 		})
 		.catch((err) => {
-			if (err.message === 'ACCOUNT_RESTRICTED') {
+			if (
+				err.message === 'ACCOUNT_RESTRICTED' ||
+				err.message === 'ACCOUNT_RESTRICTED_AUTOMATED'
+			) {
+				const isAutomated = err.message === 'ACCOUNT_RESTRICTED_AUTOMATED';
+				const automatedNote = isAutomated
+					? ' This action was taken by our automated spam detection systems.'
+					: '';
 				return {
 					status: 403,
-					body: 'Your account has been restricted. If you believe this is an error, please contact hello@pubpub.org.',
+					body: `Your account has been restricted due to activity identified as spam.${automatedNote} If you believe this is an error, please contact help@pubpub.org.`,
 				} as const;
 			}
 			const unaunthenticatedValues = ['Invalid password', 'Invalid email'];

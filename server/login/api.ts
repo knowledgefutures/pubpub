@@ -160,14 +160,8 @@ export const loginFromFormRouteImplementation: AppRouteImplementation<
 	typeof contract.auth.loginFromForm
 > = async ({ req, res }) => {
 	const ok = await verifyCaptchaPayload(req.body.altcha);
-	if (!ok && req.body.altcha) {
-		// Payload was provided but invalid — reject
-		return { status: 400, body: 'Please complete the verification and try again.' } as const;
-	}
 	if (!ok) {
-		// No payload at all (captcha service may be down) — allow login
-		// with a warning so we can track how often this happens.
-		console.warn('[login] captcha payload missing — allowing login without captcha');
+		return { status: 400, body: 'Please complete the verification and try again.' } as const;
 	}
 	return performLogin(req, res);
 };

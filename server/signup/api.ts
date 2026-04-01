@@ -12,11 +12,8 @@ router.post('/api/signup', async (req, res) => {
 		return res.status(201).json(true);
 	}
 	const ok = await verifyCaptchaPayload(req.body.altcha);
-	if (!ok && req.body.altcha) {
-		return res.status(400).json('Please complete the verification and try again.');
-	}
 	if (!ok) {
-		console.warn('[signup] captcha payload missing — allowing signup without captcha');
+		return res.status(400).json('Please complete the verification and try again.');
 	}
 	const { _honeypot, altcha: _altcha, ...body } = req.body;
 	return createSignup(body, req.hostname)

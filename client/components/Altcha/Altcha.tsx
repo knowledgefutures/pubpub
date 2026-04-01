@@ -28,7 +28,6 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 	const [simulateFailure, setSimulateFailure] = useState(false);
 	const [widgetKey, setWidgetKey] = useState(0);
 	const valueRef = useRef<string | null>(null);
-	const errorRef = useRef(false);
 	valueRef.current = value;
 
 	useEffect(() => {
@@ -47,9 +46,6 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 
 			switch (e.detail.state) {
 				case 'error':
-					errorRef.current = true;
-					setAltchaVisible(true);
-					break;
 				case 'code':
 				case 'unverified':
 					setAltchaVisible(true);
@@ -60,7 +56,6 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 					}
 					break;
 				case 'verified':
-					errorRef.current = false;
 					if (e.detail.payload) {
 						setValue(e.detail.payload);
 						setAltchaVisible(false);
@@ -85,13 +80,9 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 			},
 			verify(): Promise<string> {
 				const w = widgetRef.current;
-				// If widget failed to load or challenge endpoint is down,
-				// resolve with empty string so the form can still submit.
-				// The server decides whether to accept requests without captcha.
-				if (!w) return Promise.resolve('');
+				if (!w) return Promise.reject(new Error('Altcha widget not mounted'));
 				const current = valueRef.current;
 				if (current) return Promise.resolve(current);
-				if (errorRef.current) return Promise.resolve('');
 				return new Promise((resolve, reject) => {
 					const handler = (ev: Event) => {
 						const e = ev as CustomEvent<{ payload?: string; state: string }>;
@@ -103,9 +94,7 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 						}
 						if (state === 'error' || state === 'expired') {
 							w.removeEventListener('statechange', handler);
-							// Resolve with empty string instead of rejecting
-							// so the form submission can proceed to the server.
-							resolve('');
+							reject(new Error('Captcha verification failed'));
 						}
 					};
 					w.addEventListener('statechange', handler);
@@ -126,35 +115,6 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 		setValue(null);
 		widgetRef.current?.reset();
 	};
-
-	// Remove the `required` attribute that altcha-widget sets on its internal
-	// hidden checkbox.  This prevents native browser form validation from
-	// throwing "An invalid form control is not focusable" when the challenge
-	// endpoint is unavailable and the checkbox can never be checked.
-	// We handle verification entirely through the imperative verify() API.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: widgetKey triggers re-attach after remount
-	useEffect(() => {
-		if (!loaded) return;
-		const w = widgetRef.current;
-		if (!w) return;
-		const removeRequired = () => {
-			const root = w.shadowRoot;
-			if (root) {
-				const checkbox = root.querySelector('input[type="checkbox"]');
-				if (checkbox) {
-					checkbox.removeAttribute('required');
-				}
-				const hiddenInput = root.querySelector('input[type="hidden"]');
-				if (hiddenInput) {
-					hiddenInput.removeAttribute('required');
-				}
-			}
-		};
-		// Run immediately and also after a short delay to catch async renders
-		removeRequired();
-		const timer = setTimeout(removeRequired, 500);
-		return () => clearTimeout(timer);
-	}, [loaded, widgetKey]);
 
 	if (!loaded) return null;
 

@@ -172,7 +172,7 @@ const CommunityCreate = () => {
 							features and functionality are available, but only logged in Members
 							will be able to view the community.
 						</p>
-						<form onSubmit={onCreateSubmit} noValidate>
+						<form onSubmit={onCreateSubmit}>
 							<Honeypot name="website" />
 							<InputField
 								label="URL"

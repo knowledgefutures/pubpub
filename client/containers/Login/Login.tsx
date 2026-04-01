@@ -94,7 +94,7 @@ const Login = () => {
 								<a href="https://www.pubpub.org">PubPub</a> account.
 							</p>
 						)}
-						<form onSubmit={onLoginSubmit} noValidate>
+						<form onSubmit={onLoginSubmit}>
 							<InputField
 								label="Email"
 								placeholder="example@email.com"

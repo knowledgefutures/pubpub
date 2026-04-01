@@ -70,10 +70,9 @@ const Login = () => {
 		return altchaRef.current
 			?.verify()
 			.then(doLogin)
-			.catch(() => {
+			.catch((err) => {
 				setLoginLoading(false);
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"Verification failed..."' is ... Remove this comment to see the full error message
-				setLoginError('Verification failed. Please try again.');
+				setLoginError(err?.message || 'Verification failed. Please try again.');
 			});
 	};
 	const onLogoutSubmit = () => {
@@ -95,7 +94,7 @@ const Login = () => {
 								<a href="https://www.pubpub.org">PubPub</a> account.
 							</p>
 						)}
-						<form onSubmit={onLoginSubmit}>
+						<form onSubmit={onLoginSubmit} noValidate>
 							<InputField
 								label="Email"
 								placeholder="example@email.com"

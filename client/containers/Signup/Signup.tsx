@@ -86,7 +86,7 @@ const Signup = () => {
 								other PubPub communities.
 							</p>
 						)}
-						<form onSubmit={onSignupSubmit}>
+						<form onSubmit={onSignupSubmit} noValidate>
 							<InputField
 								label="Email"
 								placeholder="example@email.com"
@@ -125,7 +125,7 @@ const Signup = () => {
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; description: Element; visua... Remove this comment to see the full error message
 						visual="tick-circle"
 						action={
-							<form onSubmit={handleResendEmail}>
+							<form onSubmit={handleResendEmail} noValidate>
 								<Button
 									name="resendEmail"
 									disabled={!altchaRef.current?.value}

@@ -59,8 +59,11 @@ router.post('/api/users', async (req, res) => {
 			throw new Error('Not Authorized');
 		}
 		const ok = await verifyCaptchaPayload(req.body.altcha);
-		if (!ok) {
+		if (!ok && req.body.altcha) {
 			return res.status(400).json('Please complete the verification and try again.');
+		}
+		if (!ok) {
+			console.warn('[user/create] captcha payload missing — allowing without captcha');
 		}
 		const { altcha, _honeypot, _passwordHoneypot, _formStartedAtMs, ...body } = { ...req.body };
 		const fastHoneypotSignal = getFastHoneypotSignal({

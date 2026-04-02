@@ -1,5 +1,7 @@
 import type { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
+import { extractAssetsUrl } from 'utils/images';
+
 export const baseNodes: { [key: string]: NodeSpec } = {
 	doc: {
 		content: 'block+',
@@ -259,7 +261,7 @@ export const baseMarks = {
 						return false;
 					}
 					return {
-						href: dom.getAttribute('href'),
+						href: extractAssetsUrl(dom.getAttribute('href')),
 						title: dom.getAttribute('title'),
 						target: dom.getAttribute('target'),
 						pubEdgeId: dom.getAttribute('data-pub-edge-id'),
@@ -272,6 +274,7 @@ export const baseMarks = {
 			/* coming from the wrong source in some interfaces. This ensures */
 			/* only strings can be a target attr. */
 			const attrs = { ...node.attrs };
+			attrs.href = extractAssetsUrl(attrs.href);
 			if (attrs.target && typeof attrs.target !== 'string') {
 				attrs.target = null;
 			}

@@ -2,7 +2,7 @@ import type { DOMOutputSpec } from 'prosemirror-model';
 
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
-import { getResizedUrl, getSrcSet } from 'utils/images';
+import { extractAssetsUrl, getResizedUrl, getSrcSet } from 'utils/images';
 
 import { isResizeableFormat } from '../utils/media';
 import { buildLabel } from '../utils/references';
@@ -53,20 +53,21 @@ export default {
 					}
 					return {
 						id: node.getAttribute('id') || null,
-						url: node.getAttribute('data-url') || null,
+						url: extractAssetsUrl(node.getAttribute('data-url')) || null,
 						caption: node.getAttribute('data-caption') || '',
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
 						altText: node.getAttribute('data-alt-text') || '',
 						hideLabel: node.getAttribute('data-hide-label') || '',
-						href: node.getAttribute('data-href') || null,
+						href: extractAssetsUrl(node.getAttribute('data-href')) || null,
 					};
 				},
 			},
 		],
 		toDOM: (node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
-			const { url, align, id, altText, caption, fullResolution, size, hideLabel, href } =
-				node.attrs;
+			const { align, id, altText, caption, fullResolution, size, hideLabel } = node.attrs;
+			const url = extractAssetsUrl(node.attrs.url);
+			const href = extractAssetsUrl(node.attrs.href);
 
 			const width = align === 'breakout' ? 1920 : 800;
 			const isResizeable = isResizeableFormat(url) && !fullResolution;

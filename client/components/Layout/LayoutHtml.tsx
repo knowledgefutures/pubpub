@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GridWrapper } from 'components';
+import { normalizeResizeUrlsInHtml } from 'utils/images';
 
 const propTypes = {
 	content: PropTypes.object.isRequired,
@@ -15,11 +16,12 @@ const LayoutHtml = function (props) {
 	if (!props.content.html) {
 		return null;
 	}
+	const normalizedHtml = normalizeResizeUrlsInHtml(props.content.html);
 	return (
 		<div className="layout-html-component">
 			<div className="block-content">
 				<GridWrapper>
-					<div dangerouslySetInnerHTML={{ __html: props.content.html }} />
+					<div dangerouslySetInnerHTML={{ __html: normalizedHtml }} />
 				</GridWrapper>
 			</div>
 		</div>

@@ -18,6 +18,7 @@ import { Discussion } from './discussion/model';
 import { DiscussionAnchor } from './discussionAnchor/model';
 import { Doc } from './doc/model';
 import { Draft } from './draft/model';
+import { DraftCheckpoint } from './draftCheckpoint/model';
 import { EmailChangeToken } from './emailChangeToken/model';
 import { Export } from './export/model';
 import { ExternalPublication } from './externalPublication/model';
@@ -78,6 +79,7 @@ sequelize.addModels([
 	DiscussionAnchor,
 	Doc,
 	Draft,
+	DraftCheckpoint,
 	EmailChangeToken,
 	Export,
 	ExternalPublication,
@@ -174,6 +176,7 @@ export {
 	EmailChangeToken,
 	Doc,
 	Draft,
+	DraftCheckpoint,
 	Export,
 	ExternalPublication,
 	FeatureFlag,

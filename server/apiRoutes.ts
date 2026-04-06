@@ -12,6 +12,7 @@ import { router as customScriptRouter } from './customScript/api';
 import { router as devApiRouter } from './dev/api';
 import { router as discussionRouter } from './discussion/api';
 import { router as doiRouter } from './doi/api';
+import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
@@ -46,6 +47,7 @@ const apiRouter = Router()
 	.use(customScriptRouter)
 	.use(discussionRouter)
 	.use(doiRouter)
+	.use(draftCheckpointRouter)
 	.use(editorRouter)
 	.use(integrationDataOAuth1Router)
 	.use(landingPageFeatureRouter)

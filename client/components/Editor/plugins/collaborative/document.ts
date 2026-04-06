@@ -45,6 +45,7 @@ export default (
 ) => {
 	const { collaborativeOptions, isReadOnly, onError = noop } = options;
 	const {
+		pubId,
 		firebaseRef: ref,
 		onStatusChange = noop,
 		onUpdateLatestKey = noop,
@@ -100,7 +101,7 @@ export default (
 					/* If multiple of saveEveryNSteps, update checkpoint */
 					const saveEveryNSteps = 100;
 					if (snapshot.key && snapshot.key % saveEveryNSteps === 0) {
-						storeCheckpoint(ref, newState.doc, snapshot.key);
+						storeCheckpoint(pubId, newState.doc, snapshot.key);
 					}
 				}
 

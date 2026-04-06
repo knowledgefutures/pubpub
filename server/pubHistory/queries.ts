@@ -14,7 +14,7 @@ export const restorePubDraftToHistoryKey = async (options: RestorePubOptions) =>
 	const { pubId, userId, historyKey } = options;
 	assert(typeof historyKey === 'number' && historyKey >= 0);
 	const pubDraftRef = await getPubDraftRef(pubId);
-	const { doc } = await getPubDraftDoc(pubDraftRef, historyKey);
+	const { doc } = await getPubDraftDoc(pubId, historyKey);
 	const editor = await editFirebaseDraftByRef(pubDraftRef, userId);
 
 	editor.transform((tr, schema) => {

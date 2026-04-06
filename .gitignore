@@ -63,6 +63,7 @@ dist
 workers/tasks/export/styles/printDocument.css
 pubpub-postgres-test/
 pubpub-localdb/
+firebase-export-*/
 .pubpub_repl_history*
 tsconfig.tsbuildinfo
 .jest/secret-env.js

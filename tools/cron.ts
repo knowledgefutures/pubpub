@@ -30,6 +30,10 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		timezone: 'UTC',
 	});
 
+	cron.schedule('0 5 * * 6', () => run('Cold Storage', 'tools-prod coldStorage --execute'), {
+		timezone: 'UTC',
+	}); // Weekly on Saturday at 5 AM UTC (day before cleanup)
+
 	cron.schedule(
 		'0 5 * * 0',
 		() => run('Firebase Cleanup', 'tools-prod cleanupFirebase --execute'),

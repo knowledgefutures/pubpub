@@ -225,7 +225,6 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 							const draftDocPromise = getPubDraftDoc(
 								getDatabaseRef(firebasePath),
 								null,
-								false,
 							).then((d) => d.doc);
 
 							const [draftDoc, facets] = await Promise.all([

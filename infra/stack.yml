@@ -109,6 +109,10 @@ services:
             -c work_mem=16MB
             -c maintenance_work_mem=512MB
             -c max_connections=500
+            -c max_wal_size=4GB
+            -c min_wal_size=1GB
+            -c wal_buffers=64MB
+            -c checkpoint_completion_target=0.9
         volumes:
             - pgdata:/var/lib/postgresql/data
         networks: [appnet, dbaccess]

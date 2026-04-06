@@ -23,7 +23,21 @@ require("utils/environment").setEnvironment(
 	process.env.IS_DUQDUQ,
 	process.env.IS_QUBQUB,
 );
-require("server/hooks");
+
+// Tools that don't need Postgres: set a dummy DATABASE_URL before server/hooks
+// triggers Sequelize initialization, and skip hooks entirely.
+const noDatabaseTools = [
+	"measureFirebaseBreakdown",
+	"measureNonCheckpointSize",
+	"exportFirebasePubs",
+];
+if (noDatabaseTools.includes(process.argv[2])) {
+	if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("@db:")) {
+		process.env.DATABASE_URL = "postgres://localhost:5432/unused";
+	}
+} else {
+	require("server/hooks");
+}
 
 const command = process.argv[2];
 const commandFiles = {
@@ -34,10 +48,14 @@ const commandFiles = {
 	backfillDepositTargets: "./backfillDepositTargets",
 	backup: "./backup/backup",
 	backupDb: "./backup-db",
+	bootstrapCheckpoints: "./bootstrapCheckpoints",
 	branchMaintenance: "./branchMaintenance",
 	bulkimport: "../workers/tasks/import/bulk/cli",
 	checkpointBackfill: "./dashboardMigrations/backfillCheckpoints",
 	cleanupFirebase: "./cleanupFirebase",
+	coldStorage: "./coldStorage",
+	measureFirebaseBreakdown: "./measureFirebaseBreakdown",
+	measureNonCheckpointSize: "./measureNonCheckpointSize",
 	clone: "./clone",
 	devshell: "./devshell",
 	depositCollectionPubs: "./depositCollectionPubs",
@@ -45,6 +63,7 @@ const commandFiles = {
 	emailUsers: "./emailUsers",
 	encrypt: "./encrypt",
 	exportCollection: "./exportCollection",
+	exportFirebasePubs: "./exportFirebasePubs",
 	figurelist: "./figurelist",
 	discoverBrokenDois: "./fix-dois/discover",
 	fixDois: "./fix-dois/fix",

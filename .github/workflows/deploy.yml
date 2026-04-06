@@ -190,9 +190,11 @@ jobs:
             # deploy/update stack
             sudo env IMAGE_TAG="$IMAGE_TAG" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub
 
-            # show progress and cleanup
+            # show progress
             sudo docker stack services pubpub
-            sudo docker image prune -f
+
+            # Remove images not used by running containers, keeping the last 72h for rollback
+            sudo docker image prune -a --filter "until=72h" -f
 
             # wait until rollout is complete and then clear cache
             wait_rollout() {

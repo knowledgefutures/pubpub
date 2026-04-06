@@ -4,26 +4,30 @@ import type { Step } from 'prosemirror-transform';
 
 import type { CompressedChange, CompressedKeyable } from '../types';
 
-import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub';
+import { compressStepJSON } from 'prosemirror-compress-pubpub';
 import uuid from 'uuid';
+
+import { apiFetch } from 'client/utils/apiFetch';
 
 export const firebaseTimestamp = { '.sv': 'timestamp' };
 
-export const storeCheckpoint = async (
-	firebaseRef: firebase.database.Reference,
-	doc: Node,
-	keyNumber: number,
-) => {
-	const checkpoint = {
-		d: compressStateJSON({ doc: doc.toJSON() }).d,
-		k: keyNumber,
-		t: firebaseTimestamp,
-	};
-	await Promise.all([
-		firebaseRef.child(`checkpoints/${keyNumber}`).set(checkpoint),
-		firebaseRef.child('checkpoint').set(checkpoint),
-		firebaseRef.child(`checkpointMap/${keyNumber}`).set(firebaseTimestamp),
-	]);
+/**
+ * Store a checkpoint by writing the doc to Postgres via the server API.
+ * Firebase checkpoints are no longer written — Postgres is the single
+ * source of truth for checkpoints.
+ */
+export const storeCheckpoint = async (pubId: string, doc: Node, keyNumber: number) => {
+	try {
+		await apiFetch.post('/api/draftCheckpoint', {
+			pubId,
+			historyKey: keyNumber,
+			doc: doc.toJSON(),
+		});
+	} catch (err) {
+		// Non-fatal: the checkpoint is an optimization, not required for correctness.
+		// The next checkpoint attempt (100 steps later) will try again.
+		console.error('Failed to store checkpoint:', err);
+	}
 };
 
 export const flattenKeyables = (

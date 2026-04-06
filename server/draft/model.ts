@@ -10,7 +10,6 @@ import {
 	Model,
 	PrimaryKey,
 	Table,
-	//	HasOne,
 } from 'sequelize-typescript';
 // import { Pub } from '../models';
 
@@ -29,7 +28,4 @@ export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes
 	@AllowNull(false)
 	@Column(DataType.STRING)
 	declare firebasePath: string;
-
-	// @HasOne(() => Pub, { as: 'pub', foreignKey: 'draftId' })
-	// pub?: Pub;
 }

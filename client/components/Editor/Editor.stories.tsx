@@ -162,6 +162,7 @@ storiesOf('Editor', module)
 							updatechangeObject(evt);
 						}}
 						collaborativeOptions={{
+							pubId: 'storybook-pub-id',
 							firebaseRef: draftRef as any,
 							clientData,
 							initialDocKey: -1,
@@ -237,6 +238,7 @@ storiesOf('Editor', module)
 							}
 						}}
 						collaborativeOptions={{
+							pubId: 'storybook-pub-id',
 							firebaseRef: draftRef as any,
 							clientData,
 							initialDocKey: -1,

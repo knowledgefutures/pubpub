@@ -33,6 +33,7 @@ const markSentryError = (err: Error) => {
 const PubBody = (props: Props) => {
 	const { editorWrapperRef } = props;
 	const {
+		pubData,
 		noteManager,
 		updateCollabData,
 		historyData: { setLatestHistoryKey },
@@ -84,6 +85,7 @@ const PubBody = (props: Props) => {
 
 	const collaborativeOptions = includeCollabPlugin &&
 		!!firebaseDraftRef && {
+			pubId: pubData.id,
 			initialDocKey: initialHistoryKey,
 			firebaseRef: firebaseDraftRef,
 			clientData: localCollabUser,

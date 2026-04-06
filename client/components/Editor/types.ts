@@ -42,6 +42,7 @@ export type CollaborativeOptions = {
 	clientData: {
 		id: null | string;
 	};
+	pubId: string;
 	firebaseRef: firebase.database.Reference;
 	initialDocKey: number;
 	onStatusChange?: (status: CollaborativeEditorStatus) => unknown;

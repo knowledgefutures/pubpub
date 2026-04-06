@@ -27,10 +27,11 @@ export const getPubFirebaseDraft = async (
 		historyKey,
 	);
 	if (latestTimestamp && pubData.draft) {
-		await Draft.update(
-			{ latestKeyAt: new Date(latestTimestamp) },
-			{ where: { id: pubData.draft.id } },
-		);
+		const keyDate = new Date(latestTimestamp);
+		// Guard against invalid dates (e.g. BIGINT-as-string from Sequelize)
+		if (!Number.isNaN(keyDate.getTime())) {
+			await Draft.update({ latestKeyAt: keyDate }, { where: { id: pubData.draft.id } });
+		}
 	}
 
 	return {

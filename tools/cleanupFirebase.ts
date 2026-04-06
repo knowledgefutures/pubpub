@@ -6,6 +6,7 @@
  * 2. Pruning changes/merges/checkpoints before the safe prune threshold
  * 3. Removing orphaned drafts (drafts without an associated Pub)
  * 4. Removing orphaned Firebase paths (paths not referenced in Postgres)
+ * 5. Removing v5→v6 migration stubs (drafts containing only {"lastMergeKey":-1})
  *
  * IMPORTANT: The safe prune threshold is min(latestCheckpointKey, latestReleaseKey).
  * - We must preserve changes from latestCheckpointKey onwards to reconstruct the doc
@@ -30,8 +31,9 @@ import {
 } from 'prosemirror-compress-pubpub';
 import { QueryTypes } from 'sequelize';
 
-import { editorSchema, getFirebaseDoc } from 'components/Editor';
+import { editorSchema, getFirebaseDoc, getStepsInChangeRange } from 'components/Editor';
 import { createFastForwarder } from 'components/Editor/plugins/discussions/fastForward';
+import { getDraftCheckpoint } from 'server/draftCheckpoint/queries';
 import { Doc, Draft, Pub, Release } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { getDatabaseRef } from 'server/utils/firebaseAdmin';
@@ -169,6 +171,8 @@ interface CleanupStats {
 	orphanedDraftsDeleted: number;
 	orphanedFirebasePathsFound: number;
 	orphanedFirebasePathsDeleted: number;
+	migrationStubsFound: number;
+	migrationStubsDeleted: number;
 	discussionsUpdated: number;
 	changesDeleted: number;
 	mergesDeleted: number;
@@ -186,6 +190,8 @@ const stats: CleanupStats = {
 	orphanedDraftsDeleted: 0,
 	orphanedFirebasePathsFound: 0,
 	orphanedFirebasePathsDeleted: 0,
+	migrationStubsFound: 0,
+	migrationStubsDeleted: 0,
 	discussionsUpdated: 0,
 	changesDeleted: 0,
 	mergesDeleted: 0,
@@ -512,10 +518,96 @@ const pruneDraft = async (
 	preloadedReleaseKey: number | null = null,
 	label: string = '',
 	localStats: CleanupStats = stats,
+	draftId: string | null = null,
 ): Promise<void> => {
 	const prefix = label ? `[${label}] ` : '  ';
 	const draftRef = getDatabaseRef(firebasePath);
 
+	// --- PG-checkpoint-aware fast path ---
+	// If a PG checkpoint exists, it is the source of truth for the doc.
+	// We can safely prune all Firebase changes/checkpoints before the PG key.
+	// Before pruning, capture stepMaps for the range we're about to delete.
+	if (draftId) {
+		const pgCheckpoint = await getDraftCheckpoint(draftId);
+		if (pgCheckpoint) {
+			const pgKey = pgCheckpoint.historyKey;
+			verbose(`${prefix}PG checkpoint at key ${pgKey}, using PG-aware prune`);
+
+			// Before pruning, ensure stepMaps cover the range we're about to delete.
+			// If there's a release, we need stepMaps from release→pgKey.
+			const latestReleaseKey =
+				preloadedReleaseKey ?? (pubId ? await getLatestReleaseHistoryKey(pubId) : null);
+
+			if (latestReleaseKey !== null && latestReleaseKey < pgKey) {
+				const existingToKey = pgCheckpoint.stepMapToKey;
+				// Only capture new stepMaps if there's a gap
+				const captureFrom =
+					existingToKey != null ? existingToKey + 1 : latestReleaseKey + 1;
+
+				if (captureFrom <= pgKey) {
+					try {
+						const stepsByChange = await getStepsInChangeRange(
+							draftRef,
+							editorSchema,
+							captureFrom,
+							pgKey,
+						);
+						const allSteps = stepsByChange.reduce((a, b) => [...a, ...b], []);
+						if (allSteps.length > 0) {
+							const newMaps = allSteps.map((step) =>
+								Array.from((step.getMap() as any).ranges as number[]),
+							);
+							const composedMaps = [...(pgCheckpoint.stepMaps ?? []), ...newMaps];
+							verbose(
+								`${prefix}Capturing ${newMaps.length} stepMaps (${captureFrom}→${pgKey}) before prune`,
+							);
+
+							if (!isDryRun) {
+								await pgCheckpoint.update({
+									stepMaps: composedMaps,
+									stepMapToKey: pgKey,
+								});
+							}
+						}
+					} catch (err: any) {
+						log(
+							`${prefix}Warning: could not capture stepMaps before prune: ${err.message}`,
+						);
+					}
+				}
+			}
+
+			// Prune changes, merges, and old Firebase checkpoints before the PG key
+			const [changesDeleted, mergesDeleted, checkpointsDeleted] = await Promise.all([
+				pruneKeysBefore(draftRef, 'changes', pgKey),
+				pruneKeysBefore(draftRef, 'merges', pgKey),
+				pruneKeysBefore(draftRef, 'checkpoints', pgKey + 1), // remove ALL Firebase checkpoints at or below pgKey
+			]);
+			localStats.changesDeleted += changesDeleted;
+			localStats.mergesDeleted += mergesDeleted;
+			localStats.checkpointsDeleted += checkpointsDeleted;
+
+			// Clean up Firebase checkpointMap entries and deprecated singular checkpoint
+			if (!isDryRun) {
+				const checkpointKeys = await getCheckpointKeys(draftRef);
+				if (checkpointKeys.length > 0) {
+					const updates: Record<string, null> = {};
+					for (const k of checkpointKeys) {
+						updates[String(k)] = null;
+					}
+					await draftRef.child('checkpointMap').update(updates);
+				}
+				await draftRef.child('checkpoint').remove();
+			}
+
+			verbose(
+				`${prefix}PG-aware prune: deleted ${changesDeleted} changes, ${mergesDeleted} merges, ${checkpointsDeleted} checkpoints`,
+			);
+			return;
+		}
+	}
+
+	// --- Legacy path: no PG checkpoint, use Firebase checkpoints ---
 	const latestCheckpointKey = await getLatestCheckpointKey(draftRef);
 
 	if (latestCheckpointKey === null) {
@@ -524,7 +616,7 @@ const pruneDraft = async (
 		return;
 	}
 
-	verbose(`${prefix}Latest checkpoint key: ${latestCheckpointKey}`);
+	verbose(`${prefix}Latest Firebase checkpoint key: ${latestCheckpointKey}`);
 
 	// Determine safe prune threshold: min(latestCheckpointKey, latestReleaseHistoryKey)
 	// - We need changes from latestCheckpointKey onwards to reconstruct the doc
@@ -723,17 +815,57 @@ const getValidFirebasePaths = async (): Promise<Set<string>> => {
 };
 
 /**
+ * Shared Firebase key discovery — called once, results shared across
+ * orphan cleanup, stub cleanup, and prune pre-filtering.
+ */
+interface FirebaseKeyDiscovery {
+	/** All keys under drafts/ (e.g. 'draft-abc-123') */
+	draftKeys: string[];
+	/** All pub-* keys at root */
+	legacyPubKeys: string[];
+	/** Map of pub-* key → child keys (branches, metadata, etc.) */
+	legacyPubChildren: Map<string, string[]>;
+}
+
+const discoverFirebaseKeys = async (): Promise<FirebaseKeyDiscovery> => {
+	log('Discovering Firebase keys...');
+
+	const [draftKeys, rootKeys] = await Promise.all([getShallowKeys('drafts'), getShallowKeys('')]);
+	log(`  Found ${draftKeys.length} keys under drafts/`);
+
+	const legacyPubKeys = rootKeys.filter((key) => key.startsWith('pub-'));
+	const legacyPubChildren = new Map<string, string[]>();
+
+	if (legacyPubKeys.length > 0) {
+		log(`  Found ${legacyPubKeys.length} legacy pub-* paths, scanning children...`);
+		let fetched = 0;
+		await runWithConcurrency(
+			legacyPubKeys.map((pubKey) => async () => {
+				const childKeys = await getShallowKeys(pubKey);
+				legacyPubChildren.set(pubKey, childKeys);
+				fetched++;
+				if (fetched % 1000 === 0) {
+					log(`  Scanned ${fetched}/${legacyPubKeys.length} legacy pubs...`);
+				}
+			}),
+			50,
+		);
+	}
+
+	return { draftKeys, legacyPubKeys, legacyPubChildren };
+};
+
+/**
  * Scan Firebase for orphaned top-level paths and delete them
  */
-const cleanupOrphanedFirebasePaths = async (): Promise<void> => {
+const cleanupOrphanedFirebasePaths = async (discovery: FirebaseKeyDiscovery): Promise<void> => {
 	log('Scanning Firebase for orphaned paths...');
 
 	const validPaths = await getValidFirebasePaths();
 	verbose(`  Found ${validPaths.size} valid paths in database`);
 
-	// Check for orphaned paths under 'drafts/' prefix using shallow key listing
-	const draftKeys = await getShallowKeys('drafts');
-	verbose(`  Found ${draftKeys.length} keys under drafts/`);
+	const { draftKeys, legacyPubKeys, legacyPubChildren } = discovery;
+	verbose(`  ${draftKeys.length} keys under drafts/`);
 
 	// Identify orphaned drafts
 	const orphanedDraftKeys = draftKeys.filter((key) => !validPaths.has(`drafts/${key}`));
@@ -759,12 +891,9 @@ const cleanupOrphanedFirebasePaths = async (): Promise<void> => {
 		log(`  Deleted ${orphanedDraftKeys.length} orphaned draft paths`);
 	}
 
-	// Check for orphaned 'pub-*' paths (legacy format) using shallow key listing
-	const rootKeys = await getShallowKeys('');
-	const legacyPubKeys = rootKeys.filter((key) => key.startsWith('pub-'));
-	log(`  Found ${legacyPubKeys.length} legacy pub-* paths at root`);
+	// Process legacy pubs using pre-fetched children
+	log(`  ${legacyPubKeys.length} legacy pub-* paths at root`);
 
-	// Process legacy pubs in batches with concurrency for getShallowKeys
 	interface LegacyPubInfo {
 		pubKey: string;
 		childKeys: string[];
@@ -772,33 +901,23 @@ const cleanupOrphanedFirebasePaths = async (): Promise<void> => {
 		hasValidBranch: boolean;
 	}
 
-	// Fetch all child keys with limited concurrency and progress logging
-	let fetched = 0;
-	const legacyPubInfos: LegacyPubInfo[] = await runWithConcurrency(
-		legacyPubKeys.map((pubKey) => async () => {
-			const childKeys = await getShallowKeys(pubKey);
-			const branchKeys = childKeys.filter((k) => k.startsWith('branch-'));
-			const orphanedBranches: string[] = [];
-			let hasValidBranch = false;
+	const legacyPubInfos: LegacyPubInfo[] = legacyPubKeys.map((pubKey) => {
+		const childKeys = legacyPubChildren.get(pubKey) ?? [];
+		const branchKeys = childKeys.filter((k) => k.startsWith('branch-'));
+		const orphanedBranches: string[] = [];
+		let hasValidBranch = false;
 
-			for (const branchKey of branchKeys) {
-				const firebasePath = `${pubKey}/${branchKey}`;
-				if (validPaths.has(firebasePath)) {
-					hasValidBranch = true;
-				} else {
-					orphanedBranches.push(firebasePath);
-				}
+		for (const branchKey of branchKeys) {
+			const firebasePath = `${pubKey}/${branchKey}`;
+			if (validPaths.has(firebasePath)) {
+				hasValidBranch = true;
+			} else {
+				orphanedBranches.push(firebasePath);
 			}
+		}
 
-			fetched++;
-			if (fetched % 1000 === 0) {
-				log(`  Scanned ${fetched}/${legacyPubKeys.length} legacy pubs...`);
-			}
-
-			return { pubKey, childKeys, orphanedBranches, hasValidBranch };
-		}),
-		50,
-	);
+		return { pubKey, childKeys, orphanedBranches, hasValidBranch };
+	});
 
 	// Collect all paths to delete
 	const pathsToDelete: string[] = [];
@@ -841,6 +960,60 @@ const cleanupOrphanedFirebasePaths = async (): Promise<void> => {
 	}
 
 	log(`Found ${stats.orphanedFirebasePathsFound} orphaned Firebase paths`);
+};
+
+/**
+ * Remove v5→v6 migration stubs from Firebase.
+ *
+ * During the v5→v6 migration, every branch was written with a `lastMergeKey` field
+ * (the highest merge index, defaulting to -1 when no merges existed). Many drafts
+ * never received any edits after migration, so they still contain only
+ * `{"lastMergeKey": -1}` — 18 bytes of dead weight per path.
+ *
+ * Nothing reads `lastMergeKey` at runtime (client, server, or collab-service).
+ * These stubs are safe to delete.
+ */
+const cleanupMigrationStubs = async (discovery: FirebaseKeyDiscovery): Promise<void> => {
+	log('Scanning for v5→v6 migration stubs...');
+
+	const { draftKeys } = discovery;
+
+	// For each draft, check if its only child key is 'lastMergeKey'
+	let scanned = 0;
+	const stubPaths: string[] = [];
+
+	await runWithConcurrency(
+		draftKeys.map((draftKey) => async () => {
+			const childKeys = await getShallowKeys(`drafts/${draftKey}`);
+			scanned++;
+			if (scanned % 500 === 0) {
+				verbose(`  Scanned ${scanned}/${draftKeys.length} drafts for stubs...`);
+			}
+			if (childKeys.length === 1 && childKeys[0] === 'lastMergeKey') {
+				stubPaths.push(`drafts/${draftKey}`);
+			}
+		}),
+		50,
+	);
+
+	stats.migrationStubsFound = stubPaths.length;
+	log(`  Found ${stubPaths.length} migration stubs`);
+
+	if (!isDryRun && stubPaths.length > 0) {
+		let deleted = 0;
+		await runWithConcurrency(
+			stubPaths.map((path) => async () => {
+				await getDatabaseRef(path).child('lastMergeKey').remove();
+				deleted++;
+				if (deleted % 100 === 0) {
+					log(`  Deleted ${deleted}/${stubPaths.length} stubs...`);
+				}
+			}),
+			30,
+		);
+		stats.migrationStubsDeleted = stubPaths.length;
+		log(`  Deleted ${stubPaths.length} migration stubs`);
+	}
 };
 
 /**
@@ -919,7 +1092,7 @@ const processPubDraft = async (pubId: string): Promise<void> => {
 	verbose(`[${pubLabel}] Draft path: ${pub.draft.firebasePath}`);
 
 	try {
-		await pruneDraft(pub.draft.firebasePath, pubId, null, pubLabel);
+		await pruneDraft(pub.draft.firebasePath, pubId, null, pubLabel, stats, pub.draft.id);
 		await cleanupOrphanedBranchesForPub(pubId, pub.draft.firebasePath);
 		stats.draftsProcessed++;
 	} catch (err) {
@@ -947,7 +1120,7 @@ const processDraftById = async (draftId: string): Promise<void> => {
 	verbose(`[${draftLabel}] Draft path: ${draft.firebasePath}`);
 
 	try {
-		await pruneDraft(draft.firebasePath, pub?.id ?? null, null, draftLabel);
+		await pruneDraft(draft.firebasePath, pub?.id ?? null, null, draftLabel, stats, draft.id);
 		stats.draftsProcessed++;
 	} catch (err) {
 		log(`  Error processing draft: ${(err as Error).message}`);
@@ -979,100 +1152,99 @@ const processAllDrafts = async (): Promise<void> => {
 		log('No orphaned drafts found in Postgres');
 	}
 
-	// Scan Firebase for orphaned paths
+	// Single Firebase key discovery pass — shared across orphan cleanup,
+	// stub cleanup, and prune pre-filtering.
+	const discovery = await discoverFirebaseKeys();
+
+	// Scan Firebase for orphaned paths and migration stubs
 	if (scanFirebase) {
-		await cleanupOrphanedFirebasePaths();
+		await cleanupOrphanedFirebasePaths(discovery);
+		await cleanupMigrationStubs(discovery);
 	}
 
-	// Then, prune old data from active drafts
-	log('Pruning old data from active drafts...');
+	// Pre-filter: only process pubs whose drafts actually have Firebase data.
+	// After orphan/stub cleanup, some paths may have been deleted — re-read
+	// draft keys if we ran cleanup, otherwise use the discovery data as-is.
+	const currentDraftKeys =
+		scanFirebase && !isDryRun ? await getShallowKeys('drafts') : discovery.draftKeys;
+	const firebaseDraftIdSet = new Set(currentDraftKeys.map((k) => k.replace('draft-', '')));
 
-	// Get total count for progress
-	const totalPubs = await Pub.count();
-	log(`Found ${totalPubs} total pubs to process`);
-
-	// Use a streaming worker pool approach: workers pull work as they finish
-	// rather than waiting for entire batches to complete
-	const WORKER_COUNT = 50;
-	let nextOffset = 0;
-	let allFetched = false;
-	const pubQueue: Pub[] = [];
-	const releaseKeyCache = new Map<string, number>();
-	let activeFetches = 0;
-	const PREFETCH_THRESHOLD = WORKER_COUNT * 2; // Keep queue filled
-
-	// Function to prefetch more pubs if queue is running low
-	const prefetchPubs = async () => {
-		if (allFetched || activeFetches > 0 || pubQueue.length > PREFETCH_THRESHOLD) {
-			return;
-		}
-		activeFetches++;
-		try {
-			const pubs = await Pub.findAll({
-				attributes: ['id', 'slug'],
-				include: [{ model: Draft, as: 'draft', attributes: ['id', 'firebasePath'] }],
-				limit: batchSize,
-				offset: nextOffset,
-				order: [['id', 'ASC']],
-			});
-
-			if (pubs.length === 0) {
-				allFetched = true;
-			} else {
-				// Prefetch release keys for this batch
-				const pubIds = pubs.filter((p) => p.draft).map((p) => p.id);
-				const releaseKeys = await batchGetLatestReleaseKeys(pubIds);
-				for (const [pubId, key] of releaseKeys) {
-					releaseKeyCache.set(pubId, key);
-				}
-
-				for (const pub of pubs) {
-					if (pub.draft) {
-						pubQueue.push(pub);
-					}
-				}
-				nextOffset += pubs.length;
-
-				if (pubs.length < batchSize) {
-					allFetched = true;
-				}
+	// Build legacy path set from pre-fetched children (no extra Firebase calls)
+	const legacyFirebasePaths = new Set<string>();
+	for (const [pubKey, children] of discovery.legacyPubChildren) {
+		for (const child of children) {
+			if (child.startsWith('branch-')) {
+				legacyFirebasePaths.add(`${pubKey}/${child}`);
 			}
-		} finally {
-			activeFetches--;
 		}
-	};
+	}
 
-	// Initial prefetch
-	await prefetchPubs();
+	log(
+		`Found ${firebaseDraftIdSet.size} modern drafts and ${legacyFirebasePaths.size} legacy paths with Firebase data`,
+	);
+
+	// Fetch only pubs whose drafts have Firebase data
+	log('Fetching pubs with active Firebase data...');
+	const pubsWithFirebaseData = await Pub.findAll({
+		attributes: ['id', 'slug'],
+		include: [{ model: Draft, as: 'draft', attributes: ['id', 'firebasePath'] }],
+		order: [['id', 'ASC']],
+	});
+
+	// Filter to only pubs whose draft has data in Firebase
+	const pubQueue = pubsWithFirebaseData.filter((pub) => {
+		if (!pub.draft) return false;
+		const { firebasePath } = pub.draft;
+		// Modern format: drafts/draft-{draftId}
+		if (firebasePath.startsWith('drafts/draft-')) {
+			return firebaseDraftIdSet.has(pub.draft.id);
+		}
+		// Legacy format: pub-{pubId}/branch-{branchId}
+		return legacyFirebasePaths.has(firebasePath);
+	});
+
+	const totalPubs = pubQueue.length;
+	log(
+		`Found ${totalPubs} pubs with Firebase data to process (skipped ${pubsWithFirebaseData.length - totalPubs} empty)`,
+	);
+
+	// Prefetch all release keys in a single batch
+	const pubIdsToProcess = pubQueue.map((p) => p.id);
+	const releaseKeyCache = new Map<string, number>();
+	for (let i = 0; i < pubIdsToProcess.length; i += batchSize) {
+		const batch = pubIdsToProcess.slice(i, i + batchSize);
+		// biome-ignore lint/performance/noAwaitInLoops: sequential batch fetching
+		const releaseKeys = await batchGetLatestReleaseKeys(batch);
+		for (const [pid, key] of releaseKeys) {
+			releaseKeyCache.set(pid, key);
+		}
+	}
+
+	const WORKER_COUNT = 50;
 
 	// Track total processed across all workers for progress logging
 	let totalProcessed = 0;
+	let queueIndex = 0;
 
-	// Worker function that continuously processes pubs
+	// Worker function that continuously processes pubs from the pre-built queue
 	const workerWithStats = async (workerId: number, localStats: CleanupStats) => {
-		while (true) {
-			// Get next pub from queue
-			const pub = pubQueue.shift();
-			if (!pub) {
-				if (allFetched) {
-					return; // No more work
-				}
-				// Wait for more pubs to be fetched
-				// biome-ignore lint/performance/noAwaitInLoops: intentional sleep while queue is empty
-				await new Promise((r) => setTimeout(r, 50));
-				continue;
-			}
-
-			// Trigger prefetch if queue is getting low
-			if (pubQueue.length < PREFETCH_THRESHOLD && !allFetched) {
-				prefetchPubs(); // Fire and forget
-			}
+		while (queueIndex < pubQueue.length) {
+			const currentIndex = queueIndex++;
+			const pub = pubQueue[currentIndex];
 
 			try {
 				const pubLabel = pub.slug || pub.id.slice(0, 8);
 				verbose(`[W${workerId}:${pubLabel}] Processing...`);
 				const releaseKey = releaseKeyCache.get(pub.id) ?? null;
-				await pruneDraft(pub.draft!.firebasePath, pub.id, releaseKey, pubLabel, localStats);
+				// biome-ignore lint/performance/noAwaitInLoops: worker pool pattern requires sequential processing
+				await pruneDraft(
+					pub.draft!.firebasePath,
+					pub.id,
+					releaseKey,
+					pubLabel,
+					localStats,
+					pub.draft!.id,
+				);
 				await cleanupOrphanedBranchesForPub(pub.id, pub.draft!.firebasePath, localStats);
 				localStats.draftsProcessed++;
 				totalProcessed++;
@@ -1101,6 +1273,8 @@ const processAllDrafts = async (): Promise<void> => {
 		orphanedDraftsDeleted: 0,
 		orphanedFirebasePathsFound: 0,
 		orphanedFirebasePathsDeleted: 0,
+		migrationStubsFound: 0,
+		migrationStubsDeleted: 0,
 		discussionsUpdated: 0,
 		changesDeleted: 0,
 		mergesDeleted: 0,
@@ -1151,6 +1325,8 @@ const printSummary = () => {
 	log(`Orphaned drafts deleted: ${stats.orphanedDraftsDeleted}`);
 	log(`Orphaned Firebase paths found: ${stats.orphanedFirebasePathsFound}`);
 	log(`Orphaned Firebase paths deleted: ${stats.orphanedFirebasePathsDeleted}`);
+	log(`Migration stubs found: ${stats.migrationStubsFound}`);
+	log(`Migration stubs deleted: ${stats.migrationStubsDeleted}`);
 	log(`Discussions fast-forwarded: ${stats.discussionsUpdated}`);
 	log(`Changes deleted: ${stats.changesDeleted}`);
 	log(`Merges deleted: ${stats.mergesDeleted}`);
@@ -1171,6 +1347,9 @@ const _postSummaryToSlack = async () => {
 			: '',
 		`• Orphaned drafts deleted: ${stats.orphanedDraftsDeleted}`,
 		`• Orphaned Firebase paths deleted: ${stats.orphanedFirebasePathsDeleted}`,
+		stats.migrationStubsDeleted > 0
+			? `• Migration stubs deleted: ${stats.migrationStubsDeleted}`
+			: '',
 		`• Discussions fast-forwarded: ${stats.discussionsUpdated}`,
 		`• Changes pruned: ${stats.changesDeleted}`,
 		`• Merges pruned: ${stats.mergesDeleted}`,

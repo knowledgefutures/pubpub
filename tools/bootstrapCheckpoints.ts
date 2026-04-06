@@ -20,6 +20,7 @@
  *   pnpm run tools bootstrapCheckpoints --execute            # Actually migrate
  *   pnpm run tools bootstrapCheckpoints --draftId=<uuid>     # Single draft
  *   pnpm run tools bootstrapCheckpoints --execute --extractConcurrency=3  # Slower but safer
+ *   pnpm run tools bootstrapCheckpoints --execute --replaceErrors        # Write fallback docs for corrupted drafts
  */
 
 import type firebase from 'firebase';
@@ -27,8 +28,9 @@ import type firebase from 'firebase';
 import firebaseAdmin from 'firebase-admin';
 import { Op, QueryTypes } from 'sequelize';
 
-import { editorSchema, getFirebaseDoc, getStepsInChangeRange } from 'components/Editor';
-import { Draft, DraftCheckpoint, Pub, Release } from 'server/models';
+import { editorSchema, getStepsInChangeRange } from 'components/Editor';
+import { flattenKeyables } from 'components/Editor/utils';
+import { Doc, Draft, DraftCheckpoint, Pub, Release } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { getDatabaseRef } from 'server/utils/firebaseAdmin';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
@@ -41,6 +43,7 @@ const {
 		extractConcurrency: extractConcurrencyArg = 5,
 		verbose: verboseFlag,
 		skipPathNormalization,
+		replaceErrors: replaceErrorsFlag = false,
 	},
 } = require('yargs');
 
@@ -50,6 +53,7 @@ const isDryRun = !execute;
 // overwhelming Firebase or OOMing the container.
 const CONCURRENCY = Number(concurrencyArg);
 const EXTRACT_CONCURRENCY = Number(extractConcurrencyArg);
+const REPLACE_ERRORS = !!replaceErrorsFlag;
 
 // biome-ignore lint/suspicious/noConsole: CLI tool output
 const log = (msg: string) => console.log(`[bootstrap] ${new Date().toISOString()} ${msg}`);
@@ -461,45 +465,193 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 
 	try {
 		const draftRef = getDatabaseRef(firebasePath);
+		const { uncompressStateJSON, uncompressStepJSON } = require('prosemirror-compress-pubpub');
+		const { Node } = require('prosemirror-model');
+		const { Step } = require('prosemirror-transform');
 
-		// Read the full current doc from Firebase (checkpoint + changes)
-		const {
-			doc,
-			key: currentKey,
-			timestamp: currentTimestamp,
-		} = await getFirebaseDoc(draftRef, editorSchema);
+		// --- Step 1: Read Firebase checkpoint ---
+		let baseDoc: any = null;
+		let baseKey = -1;
+		let baseTimestamp: number | null = null;
 
-		if (currentKey < 0) {
+		const checkpointMapSnap = await draftRef.child('checkpointMap').once('value');
+		const checkpointMap = checkpointMapSnap.val();
+		if (checkpointMap) {
+			const bestKey = Object.keys(checkpointMap)
+				.map((k) => parseInt(k, 10))
+				.reduce((a, b) => Math.max(a, b), -1);
+			if (bestKey >= 0) {
+				const ckptSnap = await draftRef.child(`checkpoints/${bestKey}`).once('value');
+				const ckpt = ckptSnap.val();
+				if (ckpt) {
+					const { doc: ckptDoc } = uncompressStateJSON(ckpt);
+					baseDoc = Node.fromJSON(editorSchema, ckptDoc);
+					baseKey = bestKey;
+					baseTimestamp = ckpt.t ?? null;
+				}
+			}
+		}
+		if (!baseDoc) {
+			// Try deprecated single 'checkpoint' key
+			const oldCkptSnap = await draftRef.child('checkpoint').once('value');
+			const oldCkpt = oldCkptSnap.val();
+			if (oldCkpt) {
+				const { doc: ckptDoc } = uncompressStateJSON(oldCkpt);
+				baseDoc = Node.fromJSON(editorSchema, ckptDoc);
+				baseKey = parseInt(oldCkpt.k, 10) || 0;
+				baseTimestamp = oldCkpt.t ?? null;
+			}
+		}
+		if (!baseDoc) {
+			// No checkpoint at all — start from empty doc
+			baseDoc = Node.fromJSON(editorSchema, {
+				type: 'doc',
+				attrs: { meta: {} },
+				content: [{ type: 'paragraph' }],
+			});
+			baseKey = -1;
+		}
+
+		// --- Step 2: Apply changes resiliently (skip broken steps) ---
+		const [changesSnap, mergesSnap] = await Promise.all([
+			draftRef
+				.child('changes')
+				.orderByKey()
+				.startAt(String(baseKey + 1))
+				.once('value'),
+			draftRef
+				.child('merges')
+				.orderByKey()
+				.startAt(String(baseKey + 1))
+				.once('value'),
+		]);
+
+		const allKeyables = { ...changesSnap.val(), ...mergesSnap.val() };
+		const flattenedChanges = flattenKeyables(allKeyables);
+		const totalSteps = flattenedChanges.reduce((sum: number, c: any) => sum + c.s.length, 0);
+
+		const orderedChangeKeys = Object.keys(allKeyables)
+			.map((k) => parseInt(k, 10))
+			.sort((a, b) => a - b);
+		const latestFirebaseKey = orderedChangeKeys.length
+			? orderedChangeKeys[orderedChangeKeys.length - 1]
+			: baseKey;
+
+		let currentDoc = baseDoc;
+		let appliedCount = 0;
+		let hitError = false;
+		let lastAppliedKey = baseKey;
+
+		for (const changeKey of orderedChangeKeys) {
+			const entry = allKeyables[String(changeKey)];
+			const changesAtKey: any[] = Array.isArray(entry) ? entry : [entry];
+			for (const change of changesAtKey) {
+				const stepsInChange = change.s.map(uncompressStepJSON);
+				for (const stepJson of stepsInChange) {
+					const step = Step.fromJSON(editorSchema, stepJson);
+					const { failed, doc: nextDoc } = step.apply(currentDoc);
+					if (failed || !nextDoc) {
+						hitError = true;
+						break;
+					}
+					currentDoc = nextDoc;
+					appliedCount++;
+				}
+				if (hitError) break;
+			}
+			if (!hitError) lastAppliedKey = changeKey;
+			if (hitError) break;
+		}
+		const replayTimestamp: number | null =
+			flattenedChanges.length > 0
+				? Number(flattenedChanges[flattenedChanges.length - 1].t) || null
+				: baseTimestamp;
+
+		if (!hitError && latestFirebaseKey < 0 && !currentDoc) {
 			verbose(`  [ckpt] ${draftId}: no history in Firebase`);
 			stats.checkpointsSkippedEmpty++;
 			return;
 		}
 
-		const docJson = doc.toJSON();
+		// If replay hit an error, we have a partial doc (last good state before the break).
+		// Check if we can do better with a release doc.
+		let docJson = currentDoc.toJSON();
+		let checkpointKey = latestFirebaseKey; // Use the full range key for a clean replay
+		const checkpointTimestamp = replayTimestamp;
 
-		// Compute stepMaps from latest release if applicable
+		if (hitError) {
+			// Our doc is valid but only up to where replay broke.
+			// The checkpointKey should reflect the actual state of the doc,
+			// but we use latestFirebaseKey so cold storage knows the full range.
+			// Check if a release doc is better.
+			const pub = await Pub.findOne({ where: { draftId }, attributes: ['id'] });
+			let releaseKey = -1;
+			let releaseDocJson: any = null;
+			if (pub) {
+				const latestRelease = await Release.findOne({
+					where: { pubId: pub.id },
+					attributes: ['historyKey', 'docId'],
+					order: [['historyKey', 'DESC']],
+					include: [{ model: Doc, as: 'doc', attributes: ['content'] }],
+				});
+				if (latestRelease?.doc?.content) {
+					releaseKey = latestRelease.historyKey;
+					releaseDocJson = latestRelease.doc.content;
+				}
+			}
+
+			// Pick the best: whichever represents a more recent state.
+			// lastAppliedKey = the last fully-replayed change key.
+			// The release is at releaseKey.
+
+			if (releaseDocJson && releaseKey > lastAppliedKey) {
+				log(
+					`  [ckpt] ${draftId}: replay broke at step ${appliedCount}/${totalSteps} (last good key ${lastAppliedKey}), ` +
+						`release doc at key ${releaseKey} is newer — will use release`,
+				);
+				docJson = releaseDocJson;
+				checkpointKey = releaseKey;
+			} else {
+				log(
+					`  [ckpt] ${draftId}: replay broke at step ${appliedCount}/${totalSteps} (last good key ${lastAppliedKey}), ` +
+						`latest firebase key ${latestFirebaseKey}` +
+						(releaseKey >= 0
+							? `, release at key ${releaseKey} (not newer)`
+							: ', no release') +
+						` — will use last good replay state`,
+				);
+				checkpointKey = latestFirebaseKey;
+			}
+
+			if (!REPLACE_ERRORS) {
+				log(`  [ckpt] ${draftId}: --replaceErrors not set, skipping write`);
+				stats.checkpointsFailed++;
+				return;
+			}
+		}
+
+		// --- Compute stepMaps from latest release ---
 		let stepMaps: number[][] | null = null;
-		const pub = await Pub.findOne({
-			where: { draftId },
-			attributes: ['id'],
-		});
-		if (pub) {
+		const pubForMaps = hitError
+			? null
+			: await Pub.findOne({ where: { draftId }, attributes: ['id'] });
+		if (pubForMaps) {
 			const latestRelease = await Release.findOne({
-				where: { pubId: pub.id },
+				where: { pubId: pubForMaps.id },
 				attributes: ['historyKey'],
 				order: [['historyKey', 'DESC']],
 			});
-			if (latestRelease && latestRelease.historyKey < currentKey) {
+			if (latestRelease && latestRelease.historyKey < checkpointKey) {
 				try {
 					const stepsByChange = await getStepsInChangeRange(
 						draftRef,
 						editorSchema,
 						latestRelease.historyKey + 1,
-						currentKey,
+						checkpointKey,
 					);
-					const allSteps = stepsByChange.reduce((a, b) => [...a, ...b], []);
+					const allSteps = stepsByChange.reduce((a: any, b: any) => [...a, ...b], []);
 					if (allSteps.length > 0) {
-						stepMaps = allSteps.map((step) =>
+						stepMaps = allSteps.map((step: any) =>
 							Array.from((step.getMap() as any).ranges as number[]),
 						);
 					}
@@ -511,7 +663,7 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 
 		if (isDryRun) {
 			verbose(
-				`  [ckpt] Would create checkpoint for ${draftId}: key=${currentKey}, size=${JSON.stringify(docJson).length}B, stepMaps=${stepMaps?.length ?? 0}`,
+				`  [ckpt] Would create checkpoint for ${draftId}: key=${checkpointKey}, size=${JSON.stringify(docJson).length}B, stepMaps=${stepMaps?.length ?? 0}`,
 			);
 			stats.checkpointsCreated++;
 			return;
@@ -519,21 +671,21 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 
 		await DraftCheckpoint.create({
 			draftId,
-			historyKey: currentKey,
+			historyKey: checkpointKey,
 			doc: docJson,
-			timestamp: currentTimestamp,
+			timestamp: checkpointTimestamp,
 			stepMaps,
-			stepMapToKey: stepMaps ? currentKey : null,
+			stepMapToKey: stepMaps ? checkpointKey : null,
 		});
 
 		// Backfill latestKeyAt if it's null — prevents cold storage from treating
 		// this draft as "never tracked" and freezing it immediately.
-		if (!draft.latestKeyAt && currentTimestamp) {
-			await draft.update({ latestKeyAt: new Date(currentTimestamp) });
+		if (!draft.latestKeyAt && checkpointTimestamp) {
+			await draft.update({ latestKeyAt: new Date(checkpointTimestamp) });
 		}
 
 		stats.checkpointsCreated++;
-		verbose(`  [ckpt] Created checkpoint for ${draftId} at key ${currentKey}`);
+		verbose(`  [ckpt] Created checkpoint for ${draftId} at key ${checkpointKey}`);
 	} catch (err: any) {
 		log(`  [ckpt] ERROR ${draftId}: ${err.message}`);
 		stats.checkpointsFailed++;

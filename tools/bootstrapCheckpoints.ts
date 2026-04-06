@@ -30,7 +30,7 @@ import { Op, QueryTypes } from 'sequelize';
 
 import { editorSchema, getStepsInChangeRange } from 'components/Editor';
 import { flattenKeyables } from 'components/Editor/utils';
-import { Doc, Draft, DraftCheckpoint, Pub, Release } from 'server/models';
+import { Community, Doc, Draft, DraftCheckpoint, Pub, Release } from 'server/models';
 import { sequelize } from 'server/sequelize';
 import { getDatabaseRef } from 'server/utils/firebaseAdmin';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
@@ -542,20 +542,27 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 		let hitError = false;
 		let lastAppliedKey = baseKey;
 
+		let replayError: string | null = null;
 		for (const changeKey of orderedChangeKeys) {
 			const entry = allKeyables[String(changeKey)];
 			const changesAtKey: any[] = Array.isArray(entry) ? entry : [entry];
 			for (const change of changesAtKey) {
-				const stepsInChange = change.s.map(uncompressStepJSON);
-				for (const stepJson of stepsInChange) {
-					const step = Step.fromJSON(editorSchema, stepJson);
-					const { failed, doc: nextDoc } = step.apply(currentDoc);
-					if (failed || !nextDoc) {
-						hitError = true;
-						break;
+				try {
+					const stepsInChange = change.s.map(uncompressStepJSON);
+					for (const stepJson of stepsInChange) {
+						const step = Step.fromJSON(editorSchema, stepJson);
+						const { failed, doc: nextDoc } = step.apply(currentDoc);
+						if (failed || !nextDoc) {
+							replayError = failed || 'step.apply returned null doc';
+							hitError = true;
+							break;
+						}
+						currentDoc = nextDoc;
+						appliedCount++;
 					}
-					currentDoc = nextDoc;
-					appliedCount++;
+				} catch (stepErr: any) {
+					replayError = stepErr?.message || String(stepErr);
+					hitError = true;
 				}
 				if (hitError) break;
 			}
@@ -584,7 +591,16 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 			// The checkpointKey should reflect the actual state of the doc,
 			// but we use latestFirebaseKey so cold storage knows the full range.
 			// Check if a release doc is better.
-			const pub = await Pub.findOne({ where: { draftId }, attributes: ['id'] });
+			const pub = await Pub.findOne({
+				where: { draftId },
+				attributes: ['id', 'title', 'slug'],
+				include: [
+					{ model: Community, as: 'community', attributes: ['subdomain', 'title'] },
+				],
+			});
+			const pubLabel = pub
+				? `"${pub.title}" (${pub.community?.subdomain ?? '?'})`
+				: '(no pub)';
 			let releaseKey = -1;
 			let releaseDocJson: any = null;
 			if (pub) {
@@ -604,17 +620,18 @@ const extractCheckpoint = async (draft: Draft): Promise<void> => {
 			// lastAppliedKey = the last fully-replayed change key.
 			// The release is at releaseKey.
 
+			const lostSteps = totalSteps - appliedCount;
+			const diagPrefix =
+				`  [ckpt] ${draftId} ${pubLabel}: replay broke at step ${appliedCount}/${totalSteps} ` +
+				`(${lostSteps} steps lost, last good key ${lastAppliedKey}, error: ${replayError})`;
+
 			if (releaseDocJson && releaseKey > lastAppliedKey) {
-				log(
-					`  [ckpt] ${draftId}: replay broke at step ${appliedCount}/${totalSteps} (last good key ${lastAppliedKey}), ` +
-						`release doc at key ${releaseKey} is newer — will use release`,
-				);
+				log(`${diagPrefix}, release doc at key ${releaseKey} is newer — will use release`);
 				docJson = releaseDocJson;
 				checkpointKey = releaseKey;
 			} else {
 				log(
-					`  [ckpt] ${draftId}: replay broke at step ${appliedCount}/${totalSteps} (last good key ${lastAppliedKey}), ` +
-						`latest firebase key ${latestFirebaseKey}` +
+					`${diagPrefix}, latest firebase key ${latestFirebaseKey}` +
 						(releaseKey >= 0
 							? `, release at key ${releaseKey} (not newer)`
 							: ', no release') +

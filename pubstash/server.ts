@@ -1,8 +1,23 @@
 import http from 'node:http';
+import * as Sentry from '@sentry/node';
 import { type Browser, chromium } from 'playwright-core';
 
 import { type OutlineNode, type PageBoxes, type PdfMeta, postProcessPdf } from './postprocess';
 import { uploadPdfToS3 } from './s3';
+
+// ---------------------------------------------------------------------------
+// Sentry
+// ---------------------------------------------------------------------------
+if (process.env.NODE_ENV === 'production') {
+	Sentry.init({
+		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
+		environment: process.env.PUBPUB_PRODUCTION === 'true' ? 'prod' : 'dev',
+		release: process.env.HEROKU_SLUG_COMMIT,
+		tracesSampleRate: 0.1,
+		integrations: [new Sentry.Integrations.Http({ tracing: true })],
+		serverName: 'pubstash',
+	});
+}
 
 // ---------------------------------------------------------------------------
 // Config
@@ -96,6 +111,7 @@ const OUTLINE_TAGS = ['h1', 'h2', 'h3'];
 async function getBrowser(): Promise<Browser> {
 	if (!browser || !browser.isConnected()) {
 		console.info('[pubstash] browser not connected, (re)launching…');
+		Sentry.captureMessage('pubstash browser not connected, relaunching', 'warning');
 		browser = await launchBrowser();
 		console.info(`[pubstash] chromium launched (version ${browser.version()})`);
 	}
@@ -276,7 +292,9 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 
 		return Buffer.from(processed);
 	} finally {
-		await page.close();
+		await page.close().catch((closeErr) => {
+			console.error('[pubstash] failed to close page:', closeErr.message);
+		});
 	}
 }
 
@@ -287,16 +305,23 @@ function readBody(req: http.IncomingMessage, limit: number): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const chunks: Buffer[] = [];
 		let size = 0;
+		let rejected = false;
 		req.on('data', (chunk: Buffer) => {
+			if (rejected) return;
 			size += chunk.length;
 			if (size > limit) {
+				rejected = true;
 				req.destroy();
-				reject(new Error(`Request body exceeds limit of ${limit} bytes`));
+				return reject(new Error(`Request body exceeds limit of ${limit} bytes`));
 			}
 			chunks.push(chunk);
 		});
-		req.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
-		req.on('error', reject);
+		req.on('end', () => {
+			if (!rejected) resolve(Buffer.concat(chunks).toString('utf-8'));
+		});
+		req.on('error', (err) => {
+			if (!rejected) reject(err);
+		});
 	});
 }
 
@@ -341,9 +366,16 @@ const httpServer = http.createServer(async (req, res) => {
 				});
 			}
 
-			const html = await readBody(req, BODY_LIMIT);
+			const html = await readBody(req, BODY_LIMIT).catch((err) => {
+				// Body-too-large is a client error, not a server error
+				json(res, 413, { error: err.message });
+				return null;
+			});
 			if (!html) {
-				return json(res, 400, { error: 'Request body must be HTML text' });
+				if (!res.headersSent) {
+					return json(res, 400, { error: 'Request body must be HTML text' });
+				}
+				return;
 			}
 
 			const id = Date.now();
@@ -369,7 +401,13 @@ const httpServer = http.createServer(async (req, res) => {
 		return json(res, 404, { error: 'Not found' });
 	} catch (err: any) {
 		console.error(`[pubstash] error: ${err.message}`);
-		return json(res, 500, { error: err.message ?? 'Internal server error' });
+		Sentry.captureException(err, {
+			tags: { service: 'pubstash' },
+			extra: { method: req.method, url: req.url },
+		});
+		if (!res.headersSent) {
+			return json(res, 500, { error: err.message ?? 'Internal server error' });
+		}
 	}
 });
 
@@ -389,13 +427,26 @@ async function main() {
 		console.info('[pubstash] shutting down…');
 		httpServer.close();
 		await browser.close();
+		await Sentry.close(2000);
 		process.exit(0);
 	};
 	process.on('SIGINT', shutdown);
 	process.on('SIGTERM', shutdown);
+
+	// Catch-all for errors outside request context (event listeners, timers, etc.)
+	// Note: Sentry's default OnUncaughtException / OnUnhandledRejection integrations
+	// already capture these in production — we only add console logging here.
+	process.on('unhandledRejection', (reason) => {
+		console.error('[pubstash] unhandled rejection:', reason);
+	});
+	process.on('uncaughtException', (err) => {
+		console.error('[pubstash] uncaught exception:', err);
+	});
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
 	console.error('[pubstash] fatal:', err);
+	Sentry.captureException(err, { tags: { service: 'pubstash', fatal: 'true' } });
+	await Sentry.close(2000);
 	process.exit(1);
 });

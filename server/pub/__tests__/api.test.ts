@@ -494,8 +494,10 @@ describe('GET /api/pubs', () => {
 		]);
 
 		expect(orderAsc.length).toEqual(orderDesc.length);
-		expect(orderAsc.at(0)).toEqual(orderDesc.at(-1));
-		expect(orderAsc.at(1)).toEqual(orderDesc.at(-2));
+		// Compare by id rather than deep-equal: nested arrays like attributions
+		// can come back in non-deterministic order between requests.
+		expect(orderAsc.at(0).id).toEqual(orderDesc.at(-1).id);
+		expect(orderAsc.at(1).id).toEqual(orderDesc.at(-2).id);
 	});
 
 	it('should limit the number of pubs returned', async () => {

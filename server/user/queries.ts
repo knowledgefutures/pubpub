@@ -21,7 +21,7 @@ export const createUser = async (inputValues: InputValues) => {
 	const newSlug = slugifyString(fullName);
 	const existingSlugCount = await User.count({
 		where: {
-			slug: { [Op.iLike]: `${newSlug}%` },
+			slug: { [Op.like]: `${newSlug}%` },
 		},
 	});
 	const newUser = {

@@ -117,7 +117,14 @@ class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C
 	declare sha3hashedPassword: CreationOptional<string>;
 }
 
-@Table
+@Table({
+	indexes: [
+		{
+			name: 'users_slug_pattern_idx',
+			fields: [{ name: 'slug', operator: 'text_pattern_ops' }],
+		},
+	],
+})
 export class User extends ModelWithPassport<InferAttributes<User>, InferCreationAttributes<User>> {
 	public declare toJSON: <M extends Model>(this: M) => SerializedModel<M>;
 

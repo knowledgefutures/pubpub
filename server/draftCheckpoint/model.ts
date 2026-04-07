@@ -68,6 +68,6 @@ export class DraftCheckpoint extends Model<
 	@Column(DataType.INTEGER)
 	declare stepMapToKey: number | null;
 
-	@BelongsTo(() => Draft, { as: 'draft', foreignKey: 'draftId' })
+	@BelongsTo(() => Draft, { as: 'draft', foreignKey: 'draftId', onDelete: 'CASCADE' })
 	declare draft?: Draft;
 }

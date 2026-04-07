@@ -1,7 +1,7 @@
 import { Pub } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
-export const updatePermissions = ['title', 'status', 'labels', 'releaseRequested'] as const;
+export const updatePermissions = ['title', 'status', 'releaseRequested'] as const;
 
 export const getPermissions = async ({
 	userId,

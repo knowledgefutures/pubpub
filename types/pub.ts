@@ -3,7 +3,6 @@ import type {
 	Doc as DocModel,
 	Draft as DraftModel,
 	Pub as PubModel,
-	PubVersion as PubVersionModel,
 	Release as ReleaseModel,
 } from 'server/models';
 
@@ -31,7 +30,6 @@ export type Export = {
 	workerTaskId?: string;
 };
 
-export type PubVersion = SerializedModel<PubVersionModel>;
 export type DepositRecord = SerializedModel<CrossrefDepositRecord>;
 export type Pub = SerializedModel<PubModel>;
 

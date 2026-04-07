@@ -26,16 +26,7 @@ import {
 	Unique,
 } from 'sequelize-typescript';
 
-import {
-	Collection,
-	DepositTarget,
-	Member,
-	Organization,
-	Page,
-	Pub,
-	ScopeSummary,
-	SpamTag,
-} from '../models';
+import { Collection, DepositTarget, Member, Page, Pub, ScopeSummary, SpamTag } from '../models';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table
@@ -241,17 +232,7 @@ export class Community extends Model<
 	declare searchVector: any | null;
 
 	@Column(DataType.UUID)
-	declare organizationId: string | null;
-
-	@Column(DataType.UUID)
 	declare scopeSummaryId: string | null;
-
-	@BelongsTo(() => Organization, {
-		onDelete: 'CASCADE',
-		as: 'organization',
-		foreignKey: 'organizationId',
-	})
-	declare organization?: Organization;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',

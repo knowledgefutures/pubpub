@@ -220,12 +220,6 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	@Column(DataType.TEXT)
 	declare resetHash: string | null;
 
-	@Column(DataType.BOOLEAN)
-	declare inactive: boolean | null;
-
-	@Column(DataType.INTEGER)
-	declare pubpubV3Id: number | null;
-
 	@Column(DataType.TEXT)
 	declare passwordDigest: string | null;
 

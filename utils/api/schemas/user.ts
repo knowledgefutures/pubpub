@@ -27,8 +27,6 @@ export const privateUserSchema = z.object({
 		.transform((d) => d.toString())
 		.nullable() as z.ZodType<string | null>,
 	resetHash: z.string().nullable(),
-	inactive: z.boolean().nullable(),
-	pubpubV3Id: z.number().nullable(),
 	passwordDigest: z.string().nullable(),
 	hash: z.string(),
 	salt: z.string(),
@@ -61,6 +59,4 @@ export const userSchema = privateUserSchema.omit({
 	resetHash: true,
 	resetHashExpiration: true,
 	gdprConsent: true,
-	pubpubV3Id: true,
-	inactive: true,
 }) satisfies z.ZodType<User>;

@@ -96,7 +96,6 @@ export const communitySchema = baseSchema.extend({
 	premiumLicenseFlag: z.boolean().nullable().default(false),
 	defaultPubCollections: z.array(z.string()).nullable(),
 	spamTagId: z.string().uuid().nullable(),
-	organizationId: z.string().uuid().nullable(),
 	scopeSummaryId: z.string().uuid().nullable(),
 	accentTextColor: z.string(),
 	analyticsSettings: analyticsSettingsSchema,

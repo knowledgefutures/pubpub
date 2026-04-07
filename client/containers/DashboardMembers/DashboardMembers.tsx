@@ -100,9 +100,7 @@ const DashboardMembers = (props: Props) => {
 
 	const hasInheritedMembers =
 		(membersByType.collection.length && activeTargetType !== 'collection') ||
-		(membersByType.community.length && activeTargetType !== 'community') ||
-		// @ts-expect-error FIXME: Organization aren't really a thing anymore
-		(membersByType.organization.length && activeTargetType !== 'organization');
+		(membersByType.community.length && activeTargetType !== 'community');
 
 	const membersContent = (
 		<>
@@ -167,14 +165,6 @@ const DashboardMembers = (props: Props) => {
 							scope="Community"
 						/>
 					)}
-					{!!membersByType.organization.length &&
-						// @ts-expect-error FIXME: Organization aren't really a thing anymore
-						activeTargetType !== 'organization' && (
-							<InheritedMembersBlock
-								members={membersByType.organization}
-								scope="Organization"
-							/>
-						)}
 				</SettingsSection>
 			)}
 		</>

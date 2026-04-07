@@ -53,9 +53,6 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 	@Index
 	declare communityId: string | null;
 
-	@Column(DataType.UUID)
-	declare organizationId: string | null;
-
 	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
 	declare user?: User;
 

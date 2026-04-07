@@ -32,7 +32,6 @@ import {
 	Member,
 	PubAttribution,
 	PubEdge,
-	PubVersion,
 	Release,
 	ReviewNew,
 	ScopeSummary,
@@ -182,9 +181,6 @@ export class Pub extends Model<
 
 	@HasMany(() => Release, { onDelete: 'CASCADE', as: 'releases', foreignKey: 'pubId' })
 	declare releases?: Release[];
-
-	@HasMany(() => PubVersion, { onDelete: 'CASCADE', as: 'pubVersions', foreignKey: 'pubId' })
-	declare pubVersions?: PubVersion[];
 
 	@HasMany(() => PubEdge, { onDelete: 'CASCADE', as: 'outboundEdges', foreignKey: 'pubId' })
 	declare outboundEdges?: Omit<PubEdge, 'pub'>[];

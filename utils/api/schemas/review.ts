@@ -8,7 +8,6 @@ export const reviewNewSchema = z.object({
 	number: z.number(),
 	status: z.enum(['open', 'closed', 'completed']).default('open'),
 	releaseRequested: z.boolean().nullable(),
-	labels: z.unknown().nullable(),
 	threadId: z.string().uuid(),
 	visibilityId: z.string().uuid(),
 	userId: z.string().uuid().nullable(),

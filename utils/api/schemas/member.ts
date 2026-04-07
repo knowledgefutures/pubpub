@@ -15,7 +15,6 @@ export const memberSchema = baseSchema.extend({
 	pubId: z.string().uuid().nullable(),
 	collectionId: z.string().uuid().nullable(),
 	communityId: z.string().uuid().nullable(),
-	organizationId: z.string().uuid().nullable(),
 });
 
 export const idUnionSchema = z.object({

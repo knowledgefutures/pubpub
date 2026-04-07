@@ -51,9 +51,6 @@ export class PublicPermissions extends Model<
 	@Column(DataType.UUID)
 	declare communityId: string | null;
 
-	@Column(DataType.UUID)
-	declare organizationId: string | null;
-
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })
 	declare pub?: Pub;
 }

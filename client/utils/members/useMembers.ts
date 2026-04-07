@@ -12,7 +12,6 @@ export const useMembers = ({ members, updateMembers }) => {
 		pub: members.filter((mb) => mb.pubId),
 		collection: members.filter((mb) => mb.collectionId),
 		community: members.filter((mb) => mb.communityId),
-		organization: members.filter((mb) => mb.organizationId),
 	};
 
 	const addMember = (user) => {

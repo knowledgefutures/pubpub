@@ -51,11 +51,6 @@ export class Release extends Model<InferAttributes<Release>, InferCreationAttrib
 	@Column(DataType.INTEGER)
 	declare historyKey: number;
 
-	@AllowNull(false)
-	@Default(false)
-	@Column(DataType.BOOLEAN)
-	declare historyKeyMissing: CreationOptional<boolean>;
-
 	@BelongsTo(() => Doc, { as: 'doc', foreignKey: 'docId' })
 	declare doc?: Doc;
 

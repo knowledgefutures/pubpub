@@ -9,7 +9,6 @@ import { CollectionAttribution } from './collectionAttribution/model';
 import { CollectionPub } from './collectionPub/model';
 import { Commenter } from './commenter/model';
 import { Community } from './community/model';
-import { CommunityAdmin } from './communityAdmin/model';
 import { CommunityBan } from './communityBan/model';
 import { CrossrefDepositRecord } from './crossrefDepositRecord/model';
 import { CustomScript } from './customScript/model';
@@ -30,15 +29,11 @@ import { FeatureFlagUser } from './featureFlagUser/model';
 import { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
 import { LandingPageFeature } from './landingPageFeature/model';
 import { Member } from './member/model';
-import { Merge } from './merge/model';
-import { Organization } from './organization/model';
 import { Page } from './page/model';
 import { Pub } from './pub/model';
 import { PubAttribution } from './pubAttribution/model';
 import { PubEdge } from './pubEdge/model';
 import { PublicPermissions } from './publicPermissions/model';
-import { PubManager } from './pubManager/model';
-import { PubVersion } from './pubVersion/model';
 import { Release } from './release/model';
 import { ReviewNew } from './review/model';
 import { ReviewEvent } from './reviewEvent/model';
@@ -71,7 +66,6 @@ sequelize.addModels([
 	CollectionPub,
 	Commenter,
 	Community,
-	CommunityAdmin,
 	CrossrefDepositRecord,
 	CustomScript,
 	DepositTarget,
@@ -91,14 +85,10 @@ sequelize.addModels([
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
-	Merge,
-	Organization,
 	Page,
 	Pub,
 	PubAttribution,
 	PubEdge,
-	PubManager,
-	PubVersion,
 	PublicPermissions,
 	Release,
 	ReviewEvent,
@@ -167,7 +157,6 @@ export {
 	CollectionPub,
 	Commenter,
 	Community,
-	CommunityAdmin,
 	CrossrefDepositRecord,
 	CustomScript,
 	DepositTarget,
@@ -185,15 +174,11 @@ export {
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
-	Merge,
-	Organization,
 	Page,
 	Pub,
 	PubAttribution,
 	PubEdge,
 	PublicPermissions,
-	PubManager,
-	PubVersion,
 	Release,
 	Reviewer,
 	ReviewEvent,

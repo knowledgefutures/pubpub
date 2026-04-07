@@ -43,9 +43,6 @@ export class ReviewNew extends Model<
 	@Column(DataType.BOOLEAN)
 	declare releaseRequested: boolean | null;
 
-	@Column(DataType.JSONB)
-	declare labels: object | null;
-
 	@AllowNull(false)
 	@Column(DataType.UUID)
 	declare threadId: string;

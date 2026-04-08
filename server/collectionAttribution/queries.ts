@@ -7,7 +7,7 @@ import { expect } from 'utils/assert';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 export const getCollectionAttributions = (collectionId: string) =>
-	CollectionAttribution.findAll({ where: { id: collectionId } });
+	CollectionAttribution.findAll({ where: { collectionId } });
 
 export const createCollectionAttribution = async (
 	inputValues: CollectionAttributionCreationParams,

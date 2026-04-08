@@ -8,7 +8,7 @@ import { includeUserModel, PubAttribution } from 'server/models';
 import { expect } from 'utils/assert';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
-export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
+export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { pubId } });
 
 export const createPubAttribution = async ({
 	userId,

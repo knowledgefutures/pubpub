@@ -22,18 +22,23 @@ export default async () => {
 	if (process.env.NODE_ENV !== 'test') {
 		throw new Error('Something has gone terribly wrong and I refuse to proceed.');
 	}
+
+	const path = require('path');
+	const dotenv = require('dotenv');
+	dotenv.config({ path: path.join(__dirname, '..', '..', 'infra', '.env.test') });
+
+	console.log(process.env);
+	const { env, refreshEnv } = await import('server/env');
+	console.log(env);
+
 	if (!process.env.DATABASE_URL) {
 		console.log('\nSit tight while a local test database is created...');
 		await initTestDatabase();
 		global.testDbServerProcess = await startTestDatabaseServer();
-		process.env.DATABASE_URL = await setupTestDatabase();
+		env.DATABASE_URL = await setupTestDatabase();
 	}
+	refreshEnv();
 
-	// only use one database for the test db
-	process.env.DATABASE_READ_REPLICA_1_URL = process.env.DATABASE_URL;
-	process.env.DATABASE_READ_REPLICA_2_URL = process.env.DATABASE_URL;
-	// see hack comment above
-	// process.env.PUBPUB_SYNCING_MODELS_FOR_TEST_DB = 'true';
 	/**
 	 * Two things of note
 	 *

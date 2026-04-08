@@ -3,17 +3,15 @@ import type { DocJson, NewAccountLinkCommentTriggerSource, UserSpamTagFields } f
 import { type Mark, Node } from 'prosemirror-model';
 
 import { editorSchema } from 'client/components/Editor';
+import { env } from 'server/env';
 import { SpamTag, User } from 'server/models';
 import { contextFromUser, notify } from 'server/spamTag/notifications';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
 
 const DEFAULT_NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES = 10;
 
-const parsedWindowMinutes = parseInt(
-	process.env.NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES ||
-		DEFAULT_NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES.toString(),
-	10,
-);
+const parsedWindowMinutes =
+	env.NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES ?? DEFAULT_NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES;
 
 const IS_WINDOW_MINUTES_VALID = Number.isFinite(parsedWindowMinutes) && parsedWindowMinutes > 0;
 
@@ -156,7 +154,7 @@ export const autoBanForNewAccountLinkComment = async (
 		fields,
 	});
 
-	const shouldNotify = previousStatus !== 'confirmed-spam' && process.env.NODE_ENV !== 'test';
+	const shouldNotify = previousStatus !== 'confirmed-spam' && env.NODE_ENV !== 'test';
 
 	if (shouldNotify) {
 		await notify(

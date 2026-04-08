@@ -4,6 +4,7 @@ import { fromPandoc, parsePandocJson, setPandocApiVersion } from '@pubpub/prosem
 import { spawnSync } from 'child_process';
 import path from 'path';
 
+import { env } from 'server/env';
 import { extensionToPandocFormat, type PandocFormat } from 'utils/import/formats';
 
 import { extractBibliographyItems } from './bibliography';
@@ -18,7 +19,7 @@ import { extensionFor } from './util';
 
 setPandocApiVersion([1, 22]);
 
-const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
+const dataRoot = env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
 
 const createPandocArgs = (
 	pandocFormat: PandocFormat,

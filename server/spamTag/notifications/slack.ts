@@ -1,5 +1,6 @@
 import type { BanReason, UserSpamTagFields } from 'types';
 
+import { env } from 'server/env';
 import { postToSlack } from 'server/utils/slack';
 
 import {
@@ -15,7 +16,7 @@ type SuspiciousUploadSlackOptions = {
 };
 
 export const postToSlackAboutSuspiciousUpload = async (opts: SuspiciousUploadSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (env.NODE_ENV === 'test') return;
 	const { userName, uploadKey } = opts;
 	const dashUrl = getSpamDashUrl(userName);
 	await postToSlack({
@@ -51,7 +52,7 @@ type UserBanSlackOptions = {
 };
 
 export const postToSlackAboutUserBan = async (opts: UserBanSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		return;
 	}
 
@@ -109,7 +110,7 @@ type UserLiftedSlackOptions = {
 };
 
 export const postToSlackAboutUserLifted = async (opts: UserLiftedSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (env.NODE_ENV === 'test') return;
 	const { userName, userSlug, actorName } = opts;
 	const profileUrl = getUserProfileUrl(userSlug);
 	const byText = actorName ? ` by ${actorName}` : '';
@@ -148,7 +149,7 @@ type NewSpamTagSlackOptions = {
 };
 
 export const postToSlackAboutNewUserSpamTag = async (opts: NewSpamTagSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (env.NODE_ENV === 'test') return;
 	const { userName, userSlug, spamScore } = opts;
 	const profileUrl = getUserProfileUrl(userSlug);
 	const dashUrl = getSpamDashUrl(userName);
@@ -195,7 +196,7 @@ type CommunityFlagSlackOptions = {
 };
 
 export const postToSlackAboutCommunityFlag = async (opts: CommunityFlagSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (env.NODE_ENV === 'test') return;
 	const { userName, userSlug, actorName, communitySubdomain, reason, reasonText } = opts;
 	const profileUrl = getUserProfileUrl(userSlug);
 	const dashUrl = getSpamDashUrl(userName);
@@ -239,7 +240,7 @@ export const postToSlackAboutCommunityFlag = async (opts: CommunityFlagSlackOpti
 };
 
 export const postToSlackAboutCommunityFlagRetracted = async (opts: CommunityFlagSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') return;
+	if (env.NODE_ENV === 'test') return;
 	const { userName, userSlug, actorName, communitySubdomain, reason, reasonText } = opts;
 	const profileUrl = getUserProfileUrl(userSlug);
 	const dashUrl = getSpamDashUrl(userName);

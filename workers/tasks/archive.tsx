@@ -11,6 +11,7 @@ import { PassThrough, Readable, Transform } from 'stream';
 
 import { renderStatic } from 'client/components/Editor/utils/renderStatic';
 import { editorSchema } from 'client/components/Editor/utils/schema';
+import { env } from 'server/env';
 import { fetchFacetsForScopeIds } from 'server/facets';
 import {
 	Collection,
@@ -525,7 +526,7 @@ const getPubs = async (communityId: string) => {
 // create multiple readable streams that generate URLs for public pages, collections, and all pub releases
 const createUrlStreams = (communityData: any, pubs: Pub[], numStreams: number) => {
 	const baseUrl =
-		process.env.NODE_ENV === 'production'
+		env.NODE_ENV === 'production'
 			? communityUrl(communityData.community)
 			: 'http://localhost:9876';
 

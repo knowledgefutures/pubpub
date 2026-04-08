@@ -1,6 +1,13 @@
 require('server/utils/serverModuleOverwrite');
 
+const { env } = require('server/env');
+const { resolveAppCommit } = require('server/utils/appCommit');
 const { setEnvironment, setAppCommit } = require('utils/environment');
 
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ, process.env.IS_QUBQUB);
-setAppCommit(process.env.HEROKU_SLUG_COMMIT);
+setEnvironment(env.PUBPUB_PRODUCTION, env.IS_DUQDUQ, env.IS_QUBQUB);
+
+const appCommit = resolveAppCommit();
+
+if (appCommit) {
+	setAppCommit(appCommit);
+}

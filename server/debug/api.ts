@@ -3,12 +3,14 @@
 
 import { type Request, type Response, Router } from 'express';
 
+import { env } from 'server/env';
+
 import { poolOptions, sequelize } from '../sequelize';
 
 export const router = Router(); // adjust path as needed
 
 export const poolStatsHandler = (req: Request, res: Response) => {
-	if (process.env.NODE_ENV === 'production') {
+	if (env.NODE_ENV === 'production') {
 		return res.status(404).json({ error: 'Not available in production' });
 	}
 

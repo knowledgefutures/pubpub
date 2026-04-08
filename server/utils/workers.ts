@@ -1,5 +1,6 @@
 import amqplib from 'amqplib';
 
+import { env } from 'server/env';
 import { createWorkerTask } from 'server/workerTask/queries';
 import { TaskPriority, taskQueueName } from 'utils/workers';
 
@@ -60,8 +61,7 @@ const invalidateChannel = () => {
 };
 
 const createChannel = async (): Promise<amqplib.ConfirmChannel> => {
-	const amqpUrl = process.env.CLOUDAMQP_URL;
-	if (!amqpUrl) throw new Error('CLOUDAMQP_URL environment variable not set');
+	const amqpUrl = env.CLOUDAMQP_URL;
 
 	return withRetry(async () => {
 		const connection = await amqplib.connect(amqpUrl, {
@@ -103,15 +103,15 @@ const createChannel = async (): Promise<amqplib.ConfirmChannel> => {
 };
 
 const getDefaultTaskPriority = () => {
-	const processPriority = process.env.DEFAULT_QUEUE_TASK_PRIORITY;
+	const processPriority = env.DEFAULT_QUEUE_TASK_PRIORITY;
 	if (processPriority) {
-		return parseInt(processPriority, 10);
+		return processPriority;
 	}
 	return TaskPriority.Normal;
 };
 
 const getOrCreateOpenChannel = async (): Promise<amqplib.ConfirmChannel> => {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		return {
 			sendToQueue: () => {},
 			waitForConfirms: () => {},

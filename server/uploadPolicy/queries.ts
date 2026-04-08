@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { expect } from 'utils/assert';
+import { env } from 'server/env';
 
 type GetUploadPolicyParams = {
 	contentType: string;
@@ -11,8 +11,8 @@ type GetUploadPolicyParams = {
 export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
-	const awsAccessKeyId = expect(process.env.AWS_ACCESS_KEY_ID);
-	const awsAccessKeySecret = process.env.AWS_SECRET_ACCESS_KEY;
+	const awsAccessKeyId = env.AWS_ACCESS_KEY_ID;
+	const awsAccessKeySecret = env.AWS_SECRET_ACCESS_KEY;
 	const expirationDate = new Date(Date.now() + 60000);
 
 	const policyObject = {
@@ -33,7 +33,6 @@ export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 		.toString('base64')
 		.replace(/\n|\r/, '');
 
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
 	const hmac = crypto.createHmac('sha1', awsAccessKeySecret);
 	hmac.update(policy);
 	const signature = hmac.digest('base64');

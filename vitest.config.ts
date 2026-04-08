@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [tsconfigPaths()],
+
 	test: {
 		globals: true,
 		globalSetup: path.resolve(__dirname, 'stubstub/global/setup.ts'),

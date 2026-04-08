@@ -143,10 +143,17 @@ const models = modelize`
 	}
 `;
 
+let token: string;
+let serviceId: string;
+
 setup(beforeAll, async () => {
 	await models.resolve();
 
-	process.env.TEST_FASTLY_PURGE = '1';
+	const { env } = await import('server/env');
+	token = env.FASTLY_PURGE_TOKEN;
+	serviceId = env.FASTLY_SERVICE_ID;
+
+	env.TEST_FASTLY_PURGE = true;
 
 	// mock fetch, we don't actually want to send api calls
 	vi.spyOn(global, 'fetch').mockImplementation(
@@ -157,22 +164,15 @@ setup(beforeAll, async () => {
 	);
 });
 
-teardown(afterAll, () => {
-	delete process.env.TEST_FASTLY_PURGE;
+teardown(afterAll, async () => {
+	const { env } = await import('server/env');
+	env.TEST_FASTLY_PURGE = false;
 	setEnvironment(false, false, false);
 
 	vi.restoreAllMocks();
 });
 
-const expectFastlyPurge = ({
-	key,
-	token = process.env.FASTLY_PURGE_TOKEN_PROD,
-	serviceId = process.env.FASTLY_SERVICE_ID_PROD,
-}: {
-	key: string;
-	token?: string;
-	serviceId?: string;
-}) => {
+const expectFastlyPurge = ({ key }: { key: string }) => {
 	expect(global.fetch).toHaveBeenCalledWith(
 		`https://api.fastly.com/service/${serviceId}/purge/${key}`,
 		{
@@ -360,35 +360,6 @@ describe('purging', () => {
 		await finishDeferredTasks();
 
 		expect(global.fetch).toHaveBeenCalledTimes(1);
-	});
-
-	it('should purge the appropriate host depending on env', async () => {
-		const { community, admin } = models;
-
-		setEnvironment(false, true, false);
-
-		const agent = await login(admin);
-
-		const host = `something.pubpub.org`;
-
-		await agent
-			.post('/api/collections')
-			.send({
-				communityId: community.id,
-				title: 'test',
-				kind: 'tag',
-			})
-			.set('Host', host)
-			.expect(201);
-
-		await finishDeferredTasks();
-
-		expect(global.fetch).toHaveBeenCalledTimes(1);
-		expectFastlyPurge({
-			key: 'something.duqduq.org',
-			token: process.env.FASTLY_PURGE_TOKEN_DUQDUQ,
-			serviceId: process.env.FASTLY_SERVICE_ID_DUQDUQ,
-		});
 	});
 });
 

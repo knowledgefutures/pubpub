@@ -1,7 +1,9 @@
 import md5 from 'crypto-js/md5';
 import request from 'request-promise';
 
-const key = process.env.MAILCHIMP_API_KEY;
+import { env } from 'server/env';
+
+const key = env.MAILCHIMP_API_KEY;
 
 const base = 'https://us5.api.mailchimp.com/3.0/lists';
 

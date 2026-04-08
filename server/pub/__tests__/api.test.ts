@@ -587,7 +587,7 @@ describe('GET /api/pubs', () => {
 });
 
 vi.mock('utils/import/uploadAndConvertImages', async () => {
-	if (process.env.AWS_ACCESS_KEY_ID) {
+	if (process.env.INTEGRATION) {
 		return import('utils/import/uploadAndConvertImages');
 	}
 	return {
@@ -596,7 +596,6 @@ vi.mock('utils/import/uploadAndConvertImages', async () => {
 });
 
 describe('/api/pubs/text', () => {
-	const isAWSAccessKeySet = !!process.env.AWS_ACCESS_KEY_ID;
 	let adminAgent: Awaited<ReturnType<typeof login>>;
 
 	beforeAll(async () => {
@@ -774,7 +773,7 @@ describe('/api/pubs/text', () => {
 		expect(pub.attributions?.[0]?.name).toEqual('Testy McTestface');
 		expect(pub.customPublishedAt).toMatch(/^1337-01-01/);
 
-		if (isAWSAccessKeySet) {
+		if (process.env.INTEGRATION) {
 			const response = await fetch(url, { method: 'HEAD' });
 
 			expect(response.ok).toEqual(true);

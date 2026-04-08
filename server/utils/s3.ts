@@ -12,6 +12,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { type Progress, Upload } from '@aws-sdk/lib-storage';
 
+import { env } from 'server/env';
+
 type UploadInput = PutObjectCommandInput['Body'];
 
 type UploadResult = {
@@ -169,8 +171,8 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 };
 
 export const assetsClient = createPubPubS3Client({
-	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+	accessKeyId: env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 	bucket: 'assets.pubpub.org',
 	ACL: 'public-read',
 });

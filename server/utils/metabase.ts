@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+import { env } from 'server/env';
+
 const dashboardNums = {
 	community: {
 		type: 'community',
@@ -60,7 +62,7 @@ export const generateMetabaseToken = <T extends keyof DashboardNums>(
 		exp: Math.round(Date.now() / 1000) + 10 * 60, // 10 minute expiration
 	};
 
-	const metabaseSecretKey = process.env.METABASE_SECRET_KEY;
+	const metabaseSecretKey = env.METABASE_SECRET_KEY;
 
 	if (!metabaseSecretKey) {
 		throw new Error('METABASE_SECRET_KEY environment variable not set');

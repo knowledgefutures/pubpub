@@ -5,6 +5,8 @@ import type { ForbiddenSlugStatus } from 'types';
 import * as Sentry from '@sentry/node';
 import { resolve } from 'path';
 
+import { env } from 'server/env';
+
 import { isRequestAborted } from '../abort';
 
 export enum PubPubApplicationError {
@@ -119,7 +121,7 @@ export const handleErrors = (req: Request, res: Response, next: NextFunction) =>
 			return next();
 		}
 		console.error('Err', err);
-		if (process.env.NODE_ENV === 'production') {
+		if (env.NODE_ENV === 'production') {
 			Sentry.configureScope((scope) => {
 				scope.setTag('error_source', 'server_error_handler');
 			});

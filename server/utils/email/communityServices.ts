@@ -1,9 +1,11 @@
 import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
+import { env } from 'server/env';
+
 const mg = mailgun.client({
 	username: 'api',
-	key: process.env.MAILGUN_API_KEY!,
+	key: env.MAILGUN_API_KEY,
 });
 
 export const sendServicesInquiryEmail = ({ contactEmail, additionalDetails, selections }) => {

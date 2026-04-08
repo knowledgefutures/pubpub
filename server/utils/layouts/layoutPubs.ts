@@ -2,6 +2,7 @@ import type { InitialData, Maybe, PubsQueryOrdering, SanitizedPubData } from 'ty
 
 import { QueryTypes } from 'sequelize';
 
+import { env } from 'server/env';
 import { sequelize } from 'server/models';
 import { getPubsById, queryPubIds } from 'server/pub/queryMany';
 import {
@@ -367,9 +368,7 @@ const shouldUsePerBlockFetching = (blocks: LayoutBlock[], communitySlug: string)
 		return true;
 	}
 
-	const largeCommunitySlugs = process.env.LARGE_COMMUNITY_SLUGS
-		? process.env.LARGE_COMMUNITY_SLUGS.split(',').map((s) => s.trim())
-		: [];
+	const largeCommunitySlugs = env.LARGE_COMMUNITY_SLUGS?.split(',').map((s) => s.trim()) ?? [];
 
 	return largeCommunitySlugs.includes(communitySlug);
 };

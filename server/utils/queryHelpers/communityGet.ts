@@ -1,3 +1,4 @@
+import { env } from 'server/env';
 import { Collection, Community, Member, Page, ScopeSummary, SpamTag } from 'server/models';
 import { isProd } from 'utils/environment';
 
@@ -20,7 +21,7 @@ export function createLogger(initialId: string) {
 	const logger = logg.bind(this as any, acc);
 
 	const log = <T>(id: string, q: Promise<T>) => {
-		if (!process.env.DEBUG_LOG) {
+		if (!env.DEBUG_LOG) {
 			return q;
 		}
 
@@ -32,7 +33,7 @@ export function createLogger(initialId: string) {
 	return {
 		log,
 		end: () => {
-			if (!process.env.DEBUG_LOG) {
+			if (!env.DEBUG_LOG) {
 				return;
 			}
 

@@ -27,6 +27,7 @@ services:
         environment:
             NODE_ENV: production
             PORT: '3000'
+            APP_COMMIT: '${APP_COMMIT:-}'
             # Reuse the existing env var name, but point it at the in-swarm broker:
             CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
         networks: [appnet]
@@ -60,6 +61,7 @@ services:
         env_file: [.env]
         environment:
             NODE_ENV: production
+            APP_COMMIT: '${APP_COMMIT:-}'
             CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
             CLOUDAMQP_APIKEY: ''
         command: ['pnpm', 'run', 'workers-prod']

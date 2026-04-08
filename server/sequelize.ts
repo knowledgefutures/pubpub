@@ -11,6 +11,7 @@ import { Sequelize } from 'sequelize-typescript';
 
 /* eslint-enable */
 import { abortStorage } from './abort';
+import { env } from './env';
 import { DatabaseRequestAbortedError } from './utils/errors';
 
 // cls-hooked-compatible namespace backed by AsyncLocalStorage.
@@ -41,7 +42,7 @@ export const clsNamespace = {
 // biome-ignore lint/correctness/useHookAtTopLevel: not a react hook
 Sequelize.useCLS(clsNamespace as any);
 
-const database_url = process.env.DATABASE_URL;
+const database_url = env.DATABASE_URL;
 
 class SequelizeWithId extends Sequelize {
 	/* Create standard id type for our database */
@@ -56,28 +57,15 @@ class SequelizeWithId extends Sequelize {
 	};
 }
 
-if (!database_url) {
-	console.log('Process.env:', process.env);
-	throw new Error('DATABASE_URL environment variable not set');
-}
-
 const useSSL = database_url.includes('.');
 
 export const poolOptions = {
-	max: process.env.SEQUELIZE_MAX_CONNECTIONS
-		? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-		: 20,
+	max: env.SEQUELIZE_MAX_CONNECTIONS ?? 20,
 	evict: 10_000,
 	min: 2,
-	idle: process.env.SEQUELIZE_IDLE_TIMEOUT
-		? parseInt(process.env.SEQUELIZE_IDLE_TIMEOUT, 10)
-		: 60_000,
-	acquire: process.env.SEQUELIZE_ACQUIRE_TIMEOUT
-		? parseInt(process.env.SEQUELIZE_ACQUIRE_TIMEOUT, 10)
-		: 10_000,
-	maxUses: process.env.SEQUELIZE_MAX_USES
-		? parseInt(process.env.SEQUELIZE_MAX_USES, 10)
-		: Infinity,
+	idle: env.SEQUELIZE_IDLE_TIMEOUT ?? 60_000,
+	acquire: env.SEQUELIZE_ACQUIRE_TIMEOUT ?? 10_000,
+	maxUses: env.SEQUELIZE_MAX_USES ?? Infinity,
 } satisfies PoolOptions;
 
 // this is to avoid thundering herd
@@ -119,7 +107,7 @@ export const knexInstance = knex({ client: 'pg' });
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
-if (process.env.NODE_ENV !== 'test') {
+if (env.NODE_ENV !== 'test') {
 	sequelize.sync({ force: false }).then(async () => {
 		// Install search triggers and backfill tsvector columns
 		const { installSearchTriggers, backfillPubSearchVectors, backfillCommunitySearchVectors } =

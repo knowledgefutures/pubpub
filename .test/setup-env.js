@@ -4,40 +4,7 @@
  * handled by JSDom, but there are some edge cases.
  */
 
-process.env.DOI_SUBMISSION_URL = '';
-process.env.DOI_LOGIN_ID = '';
-process.env.DOI_LOGIN_PASSWORD = '';
-process.env.MATOMO_TOKEN_AUTH = '';
-process.env.MAILGUN_API_KEY = 'some-nonsense';
-process.env.MAILCHIMP_API_KEY = '';
-process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 = '';
-process.env.CLOUDAMQP_APIKEY = '';
-process.env.CLOUDAMQP_URL = '';
-process.env.ALGOLIA_ID = 'ooo';
-process.env.ALGOLIA_KEY = 'ooo';
-process.env.ALGOLIA_SEARCH_KEY = 'ooo';
-process.env.JWT_SIGNING_SECRET = 'shhhhhh';
-process.env.BYPASS_CAPTCHA = 'true';
-process.env.FIREBASE_TEST_DB_URL = 'http://localhost:9875?ns=pubpub-v6';
-process.env.ZOTERO_CLIENT_KEY = 'abc';
-process.env.ZOTERO_CLIENT_SECRET = 'def';
 
-process.env.FASTLY_PURGE_TOKEN_PROD = 'token';
-process.env.FASTLY_SERVICE_ID_PROD = 'prod';
-
-process.env.FASTLY_PURGE_TOKEN_DUQDUQ = 'token_duqduq';
-process.env.FASTLY_SERVICE_ID_DUQDUQ = 'duqduq';
-
-if (process.env.INTEGRATION) {
-	try {
-		require('../config.js');
-	} catch (e) {
-		console.log('No config.js found');
-	}
-} else {
-	process.env.AWS_ACCESS_KEY_ID = '';
-	process.env.AWS_SECRET_ACCESS_KEY = '';
-}
 
 if (typeof document !== 'undefined') {
 	require('mutationobserver-shim');

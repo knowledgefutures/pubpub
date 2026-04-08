@@ -9,6 +9,7 @@ import slowDown from 'express-slow-down';
 
 import { chooseCollectionForPub } from 'client/utils/collections';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
+import { env } from 'server/env';
 import Html from 'server/Html';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
@@ -182,7 +183,7 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
  * useful anyway.
  */
 const speedLimiter: RequestHandler =
-	process.env.NODE_ENV === 'test'
+	env.NODE_ENV === 'test'
 		? (req, res, next) => next()
 		: slowDown({
 				windowMs: 60000, // 1 minute for requests to be kept in memory. value of 60000ms is default but expressed here for clarity

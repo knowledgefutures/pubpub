@@ -6,6 +6,7 @@ import * as stream from 'stream';
 import { promisify } from 'util';
 import { createGzip } from 'zlib';
 
+import { env } from 'server/env';
 import { Page, Pub, Release } from 'server/models';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
@@ -17,8 +18,8 @@ import { isProd } from 'utils/environment';
 export const router = Router();
 
 const s3 = createPubPubS3Client({
-	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+	accessKeyId: env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 	bucket: 'sitemaps.pubpub.org',
 	ACL: 'public-read',
 });

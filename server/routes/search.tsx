@@ -6,6 +6,7 @@ import algoliasearch from 'algoliasearch';
 import { Router } from 'express';
 
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
+import { env } from 'server/env';
 import Html from 'server/Html';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -13,9 +14,9 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 export const router = Router();
 
-const client = algoliasearch(process.env.ALGOLIA_ID!, process.env.ALGOLIA_KEY!);
-const searchId = process.env.ALGOLIA_ID!;
-const searchKey = process.env.ALGOLIA_SEARCH_KEY!;
+const client = algoliasearch(env.ALGOLIA_ID, env.ALGOLIA_KEY);
+const searchId = env.ALGOLIA_ID;
+const searchKey = env.ALGOLIA_SEARCH_KEY;
 
 const filterValueAgainstKeys = (keys: string[], value: string) => {
 	const keyValuePairs = keys.map((key) => `${key}:${value}`);

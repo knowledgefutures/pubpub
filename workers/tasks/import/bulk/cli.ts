@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 
+import { env } from 'server/env';
 import { User } from 'server/models';
 import { TaskPriority } from 'utils/workers';
 
@@ -78,8 +79,7 @@ const writePlanToFile = async (path, plan) => {
 };
 
 const setLowWorkerPriority = () => {
-	// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'string | ... Remove this comment to see the full error message
-	process.env.DEFAULT_QUEUE_TASK_PRIORITY = TaskPriority.Low;
+	env.DEFAULT_QUEUE_TASK_PRIORITY = TaskPriority.Low;
 };
 
 const main = async () => {

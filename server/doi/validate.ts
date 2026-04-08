@@ -3,6 +3,7 @@ import type { RelationTypeName } from 'utils/pubEdge/relations';
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 
+import { env } from 'server/env';
 import { type ExternalPublication, type Pub, PubEdge } from 'server/models';
 import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
@@ -39,7 +40,7 @@ const isReviewRelationType = (relationType: RelationTypeName) =>
 	REVIEW_RELATION_TYPES.includes(relationType);
 
 const isTestEnvironment = () => {
-	const submissionUrl = process.env.DOI_SUBMISSION_URL || '';
+	const submissionUrl = env.DOI_SUBMISSION_URL ?? '';
 	return submissionUrl.includes('test') || submissionUrl.includes('sandbox');
 };
 

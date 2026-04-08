@@ -14,6 +14,7 @@ import { router as discussionRouter } from './discussion/api';
 import { router as doiRouter } from './doi/api';
 import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
+import { env } from './env';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
@@ -76,7 +77,7 @@ const apiRouter = Router()
 	.use(zoteroIntegrationRouter)
 	.use(apiDocsRouter);
 
-if (!isProd() && process.env.NODE_ENV !== 'test') {
+if (!isProd() && env.NODE_ENV !== 'test') {
 	apiRouter.use(devApiRouter);
 }
 

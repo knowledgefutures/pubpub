@@ -5,6 +5,7 @@ import amqplib from 'amqplib';
 import path from 'path';
 import { Worker } from 'worker_threads';
 
+import { env } from 'server/env';
 import { WorkerTask } from 'server/models';
 import { expect } from 'utils/assert';
 import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
@@ -20,7 +21,7 @@ const customTimeouts = {
 	archive: 14_400, // 4 hours
 } satisfies Partial<Record<TaskType, number>>;
 
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
 		environment: isProd() ? 'prod' : 'dev',
@@ -31,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const { schedulePurge: schedulePurgeWorker } = createCachePurgeDebouncer({
-	errorHandler: process.env.NODE_ENV === 'production' ? Sentry.captureException : undefined,
+	errorHandler: env.NODE_ENV === 'production' ? Sentry.captureException : undefined,
 	debounceTime: 5000,
 	throttleTime: 1000,
 });
@@ -96,7 +97,7 @@ const processTask = (channel) => async (message) => {
 
 	const onWorkerError = async (error) => {
 		console.error('In task:', error);
-		if (process.env.NODE_ENV === 'production') {
+		if (env.NODE_ENV === 'production') {
 			Sentry.captureException(error);
 		}
 		await onWorkerFinished({
@@ -141,7 +142,7 @@ const processTask = (channel) => async (message) => {
 	}, maxWorkerTime * 1000);
 };
 
-const cloudAmqpUrl = process.env.CLOUDAMQP_URL;
+const cloudAmqpUrl = env.CLOUDAMQP_URL;
 if (!cloudAmqpUrl) {
 	throw new Error('CLOUDAMQP_URL environment variable not set');
 }
@@ -212,11 +213,7 @@ async function connectAndConsumeWithRetry({
 
 			console.log(
 				` ==> Sequelize Max Connections: ${
-					process.env.WORKER
-						? 2
-						: process.env.SEQUELIZE_MAX_CONNECTIONS
-							? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-							: 5
+					env.WORKER ? 2 : (env.SEQUELIZE_MAX_CONNECTIONS ?? 5)
 				}`,
 			);
 			console.log(` [*] Waiting for messages on ${taskQueueName}. To exit press CTRL+C`);

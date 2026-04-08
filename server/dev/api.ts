@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { env } from 'server/env';
 import { Community } from 'server/models';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { wrap } from 'server/wrap';
@@ -8,14 +9,24 @@ import { canSelectCommunityForDevelopment } from 'utils/environment';
 export const router = Router();
 
 export const setSubdomain = async (subdomain: string | null) => {
-	process.env.FORCE_BASE_PUBPUB = subdomain === null ? 'true' : '';
-	if (subdomain) {
-		const exists = await Community.findOne({ where: { subdomain } });
-		if (!exists) {
-			throw new NotFoundError();
-		}
-		process.env.PUBPUB_LOCAL_COMMUNITY = subdomain;
+	const isBasePubPub = subdomain === null;
+	env.FORCE_BASE_PUBPUB = isBasePubPub;
+
+	if (isBasePubPub) {
+		env.PUBPUB_LOCAL_COMMUNITY = undefined;
+		return;
 	}
+
+	if (!subdomain) {
+		return;
+	}
+
+	const exists = await Community.findOne({ where: { subdomain } });
+	if (!exists) {
+		throw new NotFoundError();
+	}
+
+	env.PUBPUB_LOCAL_COMMUNITY = subdomain;
 };
 
 router.post(

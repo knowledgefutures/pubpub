@@ -3,6 +3,7 @@ import { Readable } from 'stream';
 import xmlbuilder from 'xmlbuilder';
 
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
+import { env } from 'server/env';
 import { expect } from 'utils/assert';
 import { aes256Decrypt } from 'utils/crypto';
 
@@ -13,17 +14,13 @@ const getDoiLogin = async (communityId: string) => {
 		if (username && password && passwordInitVec) {
 			return {
 				login: username,
-				password: aes256Decrypt(
-					password,
-					expect(process.env.AES_ENCRYPTION_KEY),
-					passwordInitVec,
-				),
+				password: aes256Decrypt(password, expect(env.AES_ENCRYPTION_KEY), passwordInitVec),
 			};
 		}
 	}
 	return {
-		login: process.env.DOI_LOGIN_ID,
-		password: process.env.DOI_LOGIN_PASSWORD,
+		login: env.DOI_LOGIN_ID,
+		password: env.DOI_LOGIN_PASSWORD,
 	};
 };
 
@@ -32,7 +29,7 @@ export const submitDoiData = async (
 	timestamp: number,
 	communityId: string,
 ) => {
-	const { DOI_SUBMISSION_URL } = process.env;
+	const DOI_SUBMISSION_URL = env.DOI_SUBMISSION_URL;
 
 	if (!DOI_SUBMISSION_URL) {
 		throw new Error('DOI_SUBMISSION_URL environment variable not set');

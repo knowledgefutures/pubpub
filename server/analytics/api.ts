@@ -6,6 +6,7 @@ import { initServer } from '@ts-rest/express';
 import { getCountryForTimezone } from 'countries-and-timezones';
 import express from 'express';
 
+import { env } from 'server/env';
 import { contract } from 'utils/api/contract';
 
 const s = initServer();
@@ -13,12 +14,12 @@ const s = initServer();
 const sendToStitch = async (
 	payload: AnalyticsEvent & { country: string | null; countryCode: string | null },
 ) => {
-	if (!process.env.STITCH_WEBHOOK_URL) {
+	if (!env.STITCH_WEBHOOK_URL) {
 		// throw new Error('Missing STITCH_WEBHOOK_URL');
 		return null;
 	}
 
-	const response = await fetch(process.env.STITCH_WEBHOOK_URL, {
+	const response = await fetch(env.STITCH_WEBHOOK_URL, {
 		method: 'POST',
 		body: JSON.stringify(payload),
 		headers: {

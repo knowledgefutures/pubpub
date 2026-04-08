@@ -1,5 +1,6 @@
 import { verifySolution } from 'altcha-lib';
 
+import { env } from 'server/env';
 import { isProd } from 'utils/environment';
 
 /**
@@ -22,14 +23,14 @@ import { isProd } from 'utils/environment';
 const DEV_HMAC_KEY = 'dev-altcha-hmac-key-do-not-use-in-production';
 
 export const getAltchaHmacKey = (): string => {
-	const key = process.env.ALTCHA_HMAC_KEY;
+	const key = env.ALTCHA_HMAC_KEY;
 	if (isProd() && !key) {
 		throw new Error('ALTCHA_HMAC_KEY must be set in production');
 	}
 	return key ?? DEV_HMAC_KEY;
 };
 
-export const isCaptchaBypassed = (): boolean => process.env.BYPASS_CAPTCHA === 'true';
+export const isCaptchaBypassed = (): boolean => env.BYPASS_CAPTCHA;
 
 export const verifyCaptchaPayload = async (payload: unknown): Promise<boolean> => {
 	if (isCaptchaBypassed()) return true;

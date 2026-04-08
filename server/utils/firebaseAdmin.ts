@@ -16,6 +16,7 @@ import {
 } from 'components/Editor';
 import { createFirebaseChange, flattenKeyables } from 'components/Editor/utils';
 import { getDraftCheckpoint } from 'server/draftCheckpoint/queries';
+import { env } from 'server/env';
 import { Draft, Pub } from 'server/models';
 import { expect } from 'utils/assert';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
@@ -24,14 +25,16 @@ const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
 		return firebaseAdmin.apps[0];
 	}
-	if (process.env.NODE_ENV === 'test') {
-		if (process.env.FIREBASE_TEST_DB_URL) {
-			return firebaseAdmin.initializeApp({ databaseURL: process.env.FIREBASE_TEST_DB_URL });
+	if (env.NODE_ENV === 'test') {
+		if (env.FIREBASE_TEST_DB_URL) {
+			return firebaseAdmin.initializeApp({
+				databaseURL: env.FIREBASE_TEST_DB_URL,
+			});
 		}
 		return null;
 	}
 	const serviceAccount = JSON.parse(
-		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 as string, 'base64').toString(),
+		Buffer.from(env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 	);
 	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(`Firebase App will use: ${getFirebaseConfig().databaseURL}`);

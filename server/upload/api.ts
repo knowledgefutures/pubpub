@@ -6,6 +6,7 @@ import bb from 'busboy';
 import mime from 'mime-types';
 import uuid from 'uuid';
 
+import { env } from 'server/env';
 import { contextFromUser, notify } from 'server/spamTag/notifications';
 import { isSuspiciousUploadKey } from 'server/spamTag/uploadScamKeywords';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
@@ -28,16 +29,16 @@ export const generateFileNameForUpload = (file: string) => {
  * are integration testing
  */
 if (
-	process.env.NODE_ENV === 'test' &&
-	process.env.INTEGRATION_TESTING &&
-	(!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY)
+	env.NODE_ENV === 'test' &&
+	env.INTEGRATION_TESTING &&
+	(!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY)
 ) {
 	require('../../config');
 }
 
 const s3Client = createPubPubS3Client({
-	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+	accessKeyId: env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 	bucket: 'assets.pubpub.org',
 	ACL: 'public-read',
 });

@@ -5,33 +5,32 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { type ErrorRequestHandler, Router } from 'express';
 import enforce from 'express-sslify';
-import fs from 'fs';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
+
+import { env } from './env';
+import { resolveAppCommit } from './utils/appCommit';
 
 const app = express();
 
 const appRouter = Router();
 
-import { getAppCommit, isProd, isQubQub, setAppCommit, setEnvironment } from 'utils/environment';
+import { getAppCommit, isProd, setAppCommit, setEnvironment } from 'utils/environment';
 
 // ACHTUNG: These calls must appear before we import any more of our own code to ensure that
 // the environment, and in particular the choice of dev vs. prod, is configured correctly!
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ, process.env.IS_QUBQUB);
-if (isQubQub() && !process.env.HEROKU_SLUG_COMMIT) {
-	try {
-		setAppCommit(fs.readFileSync('.app-commit').toString());
-	} catch (err) {
-		console.error('Unable to read app commit from .app-commit file: ', err);
-	}
-} else {
-	setAppCommit(process.env.HEROKU_SLUG_COMMIT);
+setEnvironment(env.PUBPUB_PRODUCTION, env.IS_DUQDUQ, env.IS_QUBQUB);
+
+const appCommit = resolveAppCommit();
+
+if (appCommit) {
+	setAppCommit(appCommit);
 }
 
 import { errorMiddleware, HTTPStatusError } from 'server/utils/errors';
 
-if (process.env.NODE_ENV !== 'test') {
+if (env.NODE_ENV !== 'test') {
 	require('server/utils/serverModuleOverwrite');
 }
 
@@ -56,7 +55,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	}
 	// Log the error if we're testing. Normally this is handled in the error middleware, but
 	// that isn't active while handling individual requests in a test environment.
-	if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
+	if (env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
 		// biome-ignore lint/suspicious/noConsole: shhhhhh
 		console.log('Got an error in an API route while testing:', err);
 	}
@@ -69,10 +68,10 @@ import { contract } from 'utils/api/contract';
 import { server } from 'utils/api/server';
 
 // just hardcoded blocking, very bad, but we really need it
-// set process.env.BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
+// set BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
 appRouter.use(blocklistMiddleware);
 
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
 		environment: isProd() ? 'prod' : 'dev',
@@ -87,7 +86,7 @@ if (process.env.NODE_ENV === 'production') {
 	// The Sentry request handler must be the first middleware on the app
 	appRouter.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
 	appRouter.use(Sentry.Handlers.tracingHandler());
-	if (process.env.DISABLE_SSL_REDIRECT !== 'true') {
+	if (!env.DISABLE_SSL_REDIRECT) {
 		appRouter.use(enforce.HTTPS({ trustProtoHeader: true }));
 	}
 }
@@ -123,7 +122,7 @@ appRouter.use(
 		secret: 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
-		store: process.env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
+		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',
 			/* These are necessary for */
@@ -185,13 +184,11 @@ process.on('uncaughtException', (err) => {
 });
 
 /** Same as Heroku's default timeout */
-const TIMEOUT_MS = process.env.REQUEST_TIMEOUT_MS
-	? parseInt(process.env.REQUEST_TIMEOUT_MS, 10)
-	: 30_000;
+const TIMEOUT_MS = env.REQUEST_TIMEOUT_MS;
 
 appRouter.use((req, res, next) => {
 	// don't abort requests in test environment
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		return next();
 	}
 
@@ -226,15 +223,16 @@ appRouter.use((req, res, next) => {
 		// @ts-expect-error
 		req.headers.host = req.headers.communityhostname;
 	}
+
+	const localCommunity = env.PUBPUB_LOCAL_COMMUNITY;
 	if (
-		process.env.PUBPUB_LOCAL_COMMUNITY ||
+		localCommunity ||
 		req.hostname.includes('localhost') ||
 		req.hostname.includes('127.0.0.1')
 	) {
 		req.headers.localhost = req.headers.host;
-		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
-			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
-			req.headers.host = `${subdomain}.duqduq.org`;
+		if (localCommunity) {
+			req.headers.host = `${localCommunity}.duqduq.org`;
 		} else {
 			req.headers.host = 'demo.pubpub.org';
 		}
@@ -298,7 +296,7 @@ createExpressEndpoints(contractWithoutCustomScript, server, appRouter, {
 		}
 		const prettifiedError = fromZodError(error);
 
-		if (process.env.NODE_ENV !== 'production') {
+		if (env.NODE_ENV !== 'production') {
 			console.error(prettifiedError);
 		}
 
@@ -322,7 +320,7 @@ appRouter.use(rootRouter);
 /* ------------- */
 /* Error Handlers */
 /* ------------- */
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
 	// The Sentry error handler must be before any other error middleware
 	appRouter.use(Sentry.Handlers.errorHandler());
 }
@@ -334,7 +332,7 @@ app.use(appRouter);
 /* ------------ */
 /* Start Server */
 /* ------------ */
-const port = process.env.PORT || 9876;
+const port = env.PORT;
 export const startServer = () => {
 	return app.listen(
 		port,
@@ -345,7 +343,7 @@ export const startServer = () => {
 			}
 			console.info(
 				`==> Sequelize Max Connections:,
-				${process.env.SEQUELIZE_MAX_CONNECTIONS ? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10) : 5}`,
+				${env.SEQUELIZE_MAX_CONNECTIONS ?? 5}`,
 			);
 			console.info('----\n==> 🌎  API is running on port %s', port);
 			console.info('==> 💻  Send requests to http://localhost:%s', port);

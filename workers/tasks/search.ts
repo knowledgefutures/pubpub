@@ -1,10 +1,11 @@
 import algoliasearch from 'algoliasearch';
 
+import { env } from 'server/env';
+
 import { Community, PubAttribution } from '../../server/models';
 import { getPageSearchData, getPubSearchData } from '../utils/searchUtils';
 
-// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
+const client = algoliasearch(env.ALGOLIA_ID, env.ALGOLIA_KEY);
 const pubsIndex = client.initIndex('pubs');
 const pagesIndex = client.initIndex('pages');
 

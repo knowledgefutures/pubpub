@@ -1,3 +1,4 @@
+import { env } from 'server/env';
 import { isDuqDuq } from 'utils/environment';
 
 import { shouldntPurge } from './skipPurgeConditions';
@@ -23,18 +24,8 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 		return '';
 	}
 
-	const [serviceId, token] = duqduq
-		? [process.env.FASTLY_SERVICE_ID_DUQDUQ, process.env.FASTLY_PURGE_TOKEN_DUQDUQ]
-		: [process.env.FASTLY_SERVICE_ID_PROD, process.env.FASTLY_PURGE_TOKEN_PROD];
-
-	if (!token) {
-		throw new Error(`No Fastly purge token found for ${duqduq ? 'DuqDuq' : 'prod'}'}
-		Did you forget to set FASTLY_PURGE_TOKEN_${duqduq ? 'DUQDUQ' : 'PROD'}?`);
-	}
-	if (!serviceId) {
-		throw new Error(`No Fastly service ID found for ${duqduq ? 'DuqDuq' : 'prod'}'}
-		Did you forget to set FASTLY_SERVICE_ID_${duqduq ? 'DUQDUQ' : 'PROD'}?`);
-	}
+	// ? [env.FASTLY_SERVICE_ID_DUQDUQ, env.FASTLY_PURGE_TOKEN_DUQDUQ]
+	const [serviceId, token] = [env.FASTLY_SERVICE_ID, env.FASTLY_PURGE_TOKEN];
 
 	try {
 		const purge = await fetch(

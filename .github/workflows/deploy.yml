@@ -167,6 +167,12 @@ jobs:
             cd "${APP_DIR}"
             git fetch --prune --tags origin
             git checkout --detach "${DEPLOY_REF}"
+            APP_COMMIT="$(git rev-parse HEAD)"
+
+            if [[ -z "$APP_COMMIT" ]]; then
+              echo "Unable to resolve APP_COMMIT from DEPLOY_REF='${DEPLOY_REF}'"
+              exit 1
+            fi
 
             cd infra
             umask 077
@@ -183,12 +189,13 @@ jobs:
             echo "$GHCR_TOKEN" | sudo docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
             echo "IMAGE_TAG in shell: [$IMAGE_TAG]"
+            echo "APP_COMMIT in shell: [$APP_COMMIT]"
             
             # For some reason, not pulling explicitly makes the docker stack deploy throw an error that it can't find the package.
             sudo docker pull ghcr.io/knowledgefutures/pubpub:"$IMAGE_TAG"
 
             # deploy/update stack
-            sudo env IMAGE_TAG="$IMAGE_TAG" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub
+            sudo env IMAGE_TAG="$IMAGE_TAG" APP_COMMIT="$APP_COMMIT" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub
 
             # show progress
             sudo docker stack services pubpub

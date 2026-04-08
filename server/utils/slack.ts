@@ -1,5 +1,6 @@
 import type { SpamStatus } from 'types';
 
+import { env } from 'server/env';
 import { isDangerousSpamScore } from 'server/spamTag/communityScore';
 import { isProd } from 'utils/environment';
 import { getSuperAdminTabUrl } from 'utils/superAdmin';
@@ -7,7 +8,7 @@ import { getSuperAdminTabUrl } from 'utils/superAdmin';
 const defaultBody = { username: 'PubPub', unfurl_links: true };
 
 export const postToSlack = async (body: Record<string, any>) => {
-	const slackUrl = process.env.SLACK_WEBHOOK_URL!;
+	const slackUrl = env.SLACK_WEBHOOK_URL!;
 	if (slackUrl) {
 		try {
 			const res = await fetch(slackUrl, {
@@ -112,7 +113,7 @@ type CommunityStatusSlackOptions = {
 };
 
 export const postToSlackAboutCommunityStatusChange = async (opts: CommunityStatusSlackOptions) => {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		return;
 	}
 
@@ -163,7 +164,7 @@ export const postToSlackAboutCommunityStatusChange = async (opts: CommunityStatu
 };
 
 export const postToSlackAboutNewCommunity = async (opts: NewCommunitySlackOptions) => {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		return;
 	}
 

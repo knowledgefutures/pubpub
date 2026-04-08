@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { env } from 'server/env';
+
 const MUTATING_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH'] as const;
 type MutatingMethod = (typeof MUTATING_METHODS)[number];
 
@@ -23,7 +25,7 @@ function isAllowedRoute(req: Request): boolean {
 
 export const readOnlyMiddleware = () => {
 	return (req: Request, res: Response, next: NextFunction) => {
-		const isReadOnly = process.env.PUBPUB_READ_ONLY === 'true';
+		const isReadOnly = env.PUBPUB_READ_ONLY;
 
 		if (!isReadOnly) {
 			return next();

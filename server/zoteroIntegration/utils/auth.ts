@@ -1,5 +1,6 @@
 import passportOAuth1 from 'passport-oauth1';
 
+import { env } from 'server/env';
 import { IntegrationDataOAuth1, User, ZoteroIntegration } from 'server/models';
 import { expect } from 'utils/assert';
 import { isDevelopment, isDuqDuq } from 'utils/environment';
@@ -16,8 +17,8 @@ export const zoteroAuthStrategy = () =>
 			requestTokenURL: 'https://www.zotero.org/oauth/request',
 			accessTokenURL: 'https://www.zotero.org/oauth/access',
 			userAuthorizationURL: 'https://www.zotero.org/oauth/authorize',
-			consumerKey: process.env.ZOTERO_CLIENT_KEY,
-			consumerSecret: process.env.ZOTERO_CLIENT_SECRET,
+			consumerKey: env.ZOTERO_CLIENT_KEY,
+			consumerSecret: env.ZOTERO_CLIENT_SECRET,
 			callbackURL: `${baseRedirectUrl}/auth/zotero/redirect`,
 			signatureMethod: 'HMAC-SHA1',
 			passReqToCallback: true,

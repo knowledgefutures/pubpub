@@ -35,6 +35,7 @@ describe('/pub', () => {
 		const { draftPub, draftPubEditor, community } = models;
 		const agent = await login(draftPubEditor);
 		const host = getHost(community);
+		console.log(host);
 		const { headers } = await agent.get(`/pub/${draftPub.slug}`).set('Host', host).expect(302);
 		expect(headers.location).toEqual(`https://${host}/pub/${draftPub.slug}/draft`);
 	});

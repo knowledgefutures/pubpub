@@ -2,6 +2,7 @@ import type * as types from 'types';
 
 import queryString from 'query-string';
 
+import { env } from 'server/env';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { isUserMemberOfScope } from 'server/member/queries';
 import { UserNotification } from 'server/models';
@@ -144,7 +145,7 @@ export const getInitialData = async (
 	if (
 		(communityData.domain &&
 			whereQuery.subdomain &&
-			process.env.NODE_ENV === 'production' &&
+			env.NODE_ENV === 'production' &&
 			isProd()) ||
 		(communityData.domain &&
 			communityData.domain === 'duqduqdomaintest.underlay.org' &&

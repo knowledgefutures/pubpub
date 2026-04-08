@@ -42,7 +42,7 @@ services:
         environment:
             NODE_ENV: development
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
-            CLOUDAMQP_APIKEY: ""
+
         command: ["pnpm", "run", "workers-dev"]
         depends_on:
             db:

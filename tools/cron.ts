@@ -34,6 +34,14 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		timezone: 'UTC',
 	}); // Weekly on Saturday at 5 AM UTC (day before cleanup)
 
+	cron.schedule(
+		'0 2 * * 0',
+		() => run('Purge Notifications', 'tools-prod purgeNotifications --execute'),
+		{
+			timezone: 'UTC',
+		},
+	); // Weekly on Sunday at 2 AM UTC
+
 	cron.schedule('0 3 * * 0', () => run('DB Cleanup', 'tools-prod dbCleanup --execute'), {
 		timezone: 'UTC',
 	}); // Weekly on Sunday at 3 AM UTC
@@ -45,14 +53,6 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 			timezone: 'UTC',
 		},
 	); // Weekly on Sunday at 5 AM UTC
-
-	cron.schedule(
-		'0 3 * * 0',
-		() => run('Purge Notifications', 'tools-prod purgeNotifications --execute'),
-		{
-			timezone: 'UTC',
-		},
-	); // Weekly on Sunday at 3 AM UTC
 
 	cron.schedule(
 		'0 4 * * *',

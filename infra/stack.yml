@@ -63,7 +63,6 @@ services:
             NODE_ENV: production
             APP_COMMIT: '${APP_COMMIT:-}'
             CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
-            CLOUDAMQP_APIKEY: ''
         command: ['pnpm', 'run', 'workers-prod']
         networks: [appnet]
         deploy:
@@ -126,6 +125,10 @@ services:
     cron:
         image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
         env_file: [.env]
+        environment:
+            NODE_ENV: production
+            APP_COMMIT: '${APP_COMMIT:-}'
+            CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
         command: ['pnpm', 'run', 'cron']
         networks: [appnet]
         deploy:

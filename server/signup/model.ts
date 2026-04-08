@@ -7,6 +7,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	IsEmail,
 	IsLowercase,
 	Model,
@@ -37,9 +38,16 @@ export class Signup extends Model<InferAttributes<Signup>, InferCreationAttribut
 	@Column(DataType.INTEGER)
 	declare count: number | null;
 
+	@Index({ name: 'signups_completed_updated_at', using: 'BTREE' })
 	@Column(DataType.BOOLEAN)
 	declare completed: boolean | null;
 
 	@Column(DataType.UUID)
 	declare communityId: string | null;
+
+	@Index({ name: 'signups_completed_updated_at', using: 'BTREE' })
+	declare updatedAt: CreationOptional<Date>;
+
+	@Index({ using: 'BTREE' })
+	declare createdAt: CreationOptional<Date>;
 }

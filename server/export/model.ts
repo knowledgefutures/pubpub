@@ -41,6 +41,7 @@ export class Export extends Model<InferAttributes<Export>, InferCreationAttribut
 	@Column(DataType.UUID)
 	declare pubId: string;
 
+	@Index({ using: 'BTREE' })
 	@Column(DataType.UUID)
 	declare workerTaskId: string | null;
 

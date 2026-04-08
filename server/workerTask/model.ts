@@ -7,6 +7,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -25,6 +26,7 @@ export class WorkerTask extends Model<
 	declare id: CreationOptional<string>;
 
 	@AllowNull(false)
+	@Index({ name: 'worker_tasks_created_at_type', using: 'BTREE' })
 	@Column(DataType.TEXT)
 	declare type: string;
 
@@ -48,4 +50,7 @@ export class WorkerTask extends Model<
 
 	@Column(DataType.INTEGER)
 	declare priority: number | null;
+
+	@Index({ name: 'worker_tasks_created_at_type', using: 'BTREE' })
+	declare createdAt: CreationOptional<Date>;
 }

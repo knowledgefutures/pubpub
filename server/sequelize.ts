@@ -112,7 +112,7 @@ export const knexInstance = knex({ client: 'pg' });
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
 if (process.env.NODE_ENV !== 'test') {
-	async () => {
+	(async () => {
 		// Install pg_trgm extension before sync so the User model's GIN trigram
 		// indexes can be created.
 		await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
@@ -136,5 +136,5 @@ if (process.env.NODE_ENV !== 'test') {
 				await backfillCommunitySearchVectors();
 			})().catch((err) => console.error('Search vector backfill error:', err));
 		}
-	};
+	})();
 }

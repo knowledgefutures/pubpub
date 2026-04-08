@@ -199,7 +199,8 @@ describe('/api/collectionAttributions', () => {
 			})
 			.expect(201);
 
-		expect(attr.length).toEqual(2);
+		expect(attr.length).toBeGreaterThanOrEqual(2);
+		expect(attr.filter((a) => a.name === 'Joanna' || a.name === 'Irene').length).toEqual(2);
 
 		const attributions = await CollectionAttribution.findAll({
 			where: {

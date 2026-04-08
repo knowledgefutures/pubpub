@@ -8,13 +8,55 @@
 import { Op } from 'sequelize';
 
 import { Signup, WorkerTask } from 'server/models';
+import { sequelize } from 'server/sequelize';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+const BATCH_SIZE = 10_000;
 
 const execute = process.argv.includes('--execute');
 
 const log = (msg: string) => console.log(`[dbCleanup] ${msg}`);
+
+/**
+ * Delete rows matching a raw WHERE clause in batches to avoid locking the
+ * table with a single enormous transaction.  Uses
+ *   DELETE … WHERE id IN (SELECT id … LIMIT)
+ * which is compatible with PostgreSQL.
+ */
+async function destroyInBatches(
+	tableName: string,
+	whereClause: string,
+	replacements: Record<string, unknown>,
+	totalCount: number,
+) {
+	let totalDeleted = 0;
+
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		// biome-ignore lint/performance/noAwaitInLoops: intentional sequential batching to limit DB load
+		const [, meta] = await sequelize.query(
+			`DELETE FROM "${tableName}"
+			 WHERE id IN (
+			   SELECT id FROM "${tableName}"
+			   WHERE ${whereClause}
+			   LIMIT :batchSize
+			 )`,
+			{ replacements: { ...replacements, batchSize: BATCH_SIZE } },
+		);
+
+		const deletedInBatch = (meta as any)?.rowCount ?? 0;
+		totalDeleted += deletedInBatch;
+
+		log(`  … deleted ${totalDeleted.toLocaleString()} / ${totalCount.toLocaleString()}`);
+
+		if (deletedInBatch < BATCH_SIZE) {
+			break;
+		}
+	}
+
+	return totalDeleted;
+}
 
 async function cleanupWorkerTasks() {
 	const cutoff = new Date(Date.now() - THIRTY_DAYS_MS);
@@ -27,16 +69,16 @@ async function cleanupWorkerTasks() {
 		},
 	});
 
-	log(`WorkerTasks to delete (non-archive, older than 30d): ${count}`);
+	log(`WorkerTasks to delete (non-archive, older than 30d): ${count.toLocaleString()}`);
 
 	if (execute && count > 0) {
-		const deleted = await WorkerTask.destroy({
-			where: {
-				type: { [Op.ne]: 'archive' },
-				createdAt: { [Op.lt]: cutoff },
-			},
-		});
-		log(`WorkerTasks deleted: ${deleted}`);
+		const deleted = await destroyInBatches(
+			'WorkerTasks',
+			`"type" != 'archive' AND "createdAt" < :cutoff`,
+			{ cutoff },
+			count,
+		);
+		log(`WorkerTasks deleted: ${deleted.toLocaleString()}`);
 	}
 }
 
@@ -60,28 +102,30 @@ async function cleanupSignups() {
 		},
 	});
 
-	log(`Signups to delete (completed, older than 7d): ${completedCount}`);
-	log(`Signups to delete (incomplete/abandoned, older than 30d): ${abandonedCount}`);
+	log(`Signups to delete (completed, older than 7d): ${completedCount.toLocaleString()}`);
+	log(
+		`Signups to delete (incomplete/abandoned, older than 30d): ${abandonedCount.toLocaleString()}`,
+	);
 
 	if (execute) {
 		if (completedCount > 0) {
-			const deleted = await Signup.destroy({
-				where: {
-					completed: true,
-					updatedAt: { [Op.lt]: sevenDaysAgo },
-				},
-			});
-			log(`Completed signups deleted: ${deleted}`);
+			const deleted = await destroyInBatches(
+				'Signups',
+				`"completed" = true AND "updatedAt" < :cutoff`,
+				{ cutoff: sevenDaysAgo },
+				completedCount,
+			);
+			log(`Completed signups deleted: ${deleted.toLocaleString()}`);
 		}
 
 		if (abandonedCount > 0) {
-			const deleted = await Signup.destroy({
-				where: {
-					[Op.or]: [{ completed: false }, { completed: null }],
-					createdAt: { [Op.lt]: thirtyDaysAgo },
-				},
-			});
-			log(`Abandoned signups deleted: ${deleted}`);
+			const deleted = await destroyInBatches(
+				'Signups',
+				`("completed" = false OR "completed" IS NULL) AND "createdAt" < :cutoff`,
+				{ cutoff: thirtyDaysAgo },
+				abandonedCount,
+			);
+			log(`Abandoned signups deleted: ${deleted.toLocaleString()}`);
 		}
 	}
 }

@@ -57,6 +57,7 @@ const commandFiles = {
 	measureFirebaseBreakdown: "./measureFirebaseBreakdown",
 	measureNonCheckpointSize: "./measureNonCheckpointSize",
 	clone: "./clone",
+	dbCleanup: "./dbCleanup",
 	devshell: "./devshell",
 	depositCollectionPubs: "./depositCollectionPubs",
 	emailActivityDigest: "./emailActivityDigest",

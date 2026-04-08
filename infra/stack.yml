@@ -100,7 +100,7 @@ services:
     db:
         image: postgres:16
         tmpfs:
-            - /dev/shm:size=2147483648
+            - /dev/shm:size=4294967296
         environment:
             POSTGRES_USER: appuser
             POSTGRES_PASSWORD: apppassword
@@ -118,6 +118,7 @@ services:
         volumes:
             - pgdata:/var/lib/postgresql/data
         networks: [appnet, dbaccess]
+        stop_grace_period: 60s
         deploy:
             replicas: 1
             restart_policy:

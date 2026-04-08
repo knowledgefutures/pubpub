@@ -1,5 +1,4 @@
 import md5 from 'crypto-js/md5';
-import request from 'request-promise';
 
 import { env } from 'server/env';
 
@@ -7,76 +6,66 @@ const key = env.MAILCHIMP_API_KEY;
 
 const base = 'https://us5.api.mailchimp.com/3.0/lists';
 
+const authHeader = `Basic ${Buffer.from(`pubpub-backend:${key}`).toString('base64')}`;
+
 const emailHash = (email) => {
 	return md5(email.toLowerCase()).toString();
 };
 
-const callback = (error, response, body) => {
-	if (response.statusCode !== 200) {
-		console.warn(body);
-	} else {
-		const list = response.body.list_id;
-		const member = response.body.id;
-		const tagsSent = JSON.parse(response.request.body).tags;
-		const tagsReceived = response.body.tags;
-		if (!tagsSent.every((val) => tagsReceived.includes(val))) {
-			const tagsArr = [];
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-			tagsSent.map((val) => tagsArr.push({ name: val, status: 'active' }));
-			const options = {
-				method: 'POST',
-				auth: {
-					user: 'pubpub-backend',
-					password: key,
-				},
-				uri: `${base}/${list}/members/${member}/tags`,
-				body: {
-					tags: tagsArr,
-				},
-				json: true,
-			};
-			request(options)
-				.then()
-				.catch((err) => {
-					console.warn(err);
-				});
-		}
+const ensureTags = async (listId: string, memberId: string, sentTags: string[]) => {
+	const tagsArr = sentTags.map((val) => ({ name: val, status: 'active' as const }));
+	try {
+		await fetch(`${base}/${listId}/members/${memberId}/tags`, {
+			method: 'POST',
+			headers: {
+				Authorization: authHeader,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ tags: tagsArr }),
+		});
+	} catch (err) {
+		console.warn(err);
 	}
-	return false;
 };
 
-export const subscribeUser = (email, list, tags) => {
+export const subscribeUser = async (email, list, tags) => {
 	const subHash = emailHash(email);
-	const options = {
+	const response = await fetch(`${base}/${list}/members/${subHash}`, {
 		method: 'PUT',
-		auth: {
-			user: 'pubpub-backend',
-			password: key,
+		headers: {
+			Authorization: authHeader,
+			'Content-Type': 'application/json',
 		},
-		uri: `${base}/${list}/members/${subHash}`,
-		body: {
+		body: JSON.stringify({
 			email_address: email,
 			status_if_new: 'pending',
 			tags,
-		},
-		json: true,
-	};
-	return request(options, callback);
+		}),
+	});
+
+	if (!response.ok) {
+		console.warn(await response.text());
+		return;
+	}
+
+	const body = await response.json();
+	const tagsReceived = body.tags;
+	if (!tags.every((val) => tagsReceived.includes(val))) {
+		await ensureTags(body.list_id, body.id, tags);
+	}
 };
 
-export const getListGrowth = (list) => {
-	const options = {
+export const getListGrowth = async (list) => {
+	const url = new URL(`${base}/${list}/growth-history`);
+	url.searchParams.set('sort_field', 'month');
+	url.searchParams.set('sort_dir', 'asc');
+
+	const response = await fetch(url, {
 		method: 'GET',
-		auth: {
-			user: 'pubpub-backend',
-			password: key,
+		headers: {
+			Authorization: authHeader,
 		},
-		uri: `${base}/${list}/growth-history`,
-		qs: {
-			sort_field: 'month',
-			sort_dir: 'asc',
-		},
-		json: true,
-	};
-	return request(options);
+	});
+
+	return response.json();
 };

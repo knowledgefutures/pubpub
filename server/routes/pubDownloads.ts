@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import fetch from 'node-fetch';
-import { pipeline } from 'stream';
+import { pipeline, Readable } from 'stream';
 import { promisify } from 'util';
 
 import { createPubExportsForLatestRelease } from 'server/export/queries';
@@ -34,8 +33,8 @@ router.get(
 			if (bestPubDownloadUrl) {
 				res.attachment(bestPubDownloadUrl);
 				const downloadResponse = await fetch(bestPubDownloadUrl);
-				if (downloadResponse.ok) {
-					return promisify(pipeline)(downloadResponse.body, res);
+				if (downloadResponse.ok && downloadResponse.body) {
+					return promisify(pipeline)(Readable.fromWeb(downloadResponse.body as any), res);
 				}
 			}
 

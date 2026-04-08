@@ -139,7 +139,7 @@ export const errorMiddleware = (err: Error, _, res: Response, next: NextFunction
 			desiredSlug: err.desiredSlug,
 		});
 	} else if (err instanceof RequestAbortedError) {
-		console.log('[REQUEST DESTROYED]: ENDING RESPONSE, DESTROYING CONNECTION', err);
+		console.debug('[REQUEST DESTROYED]: ENDING RESPONSE, DESTROYING CONNECTION', err);
 		res.end();
 		res.destroy();
 	} else if (err instanceof HTTPStatusError) {

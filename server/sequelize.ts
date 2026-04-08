@@ -42,8 +42,6 @@ export const clsNamespace = {
 // biome-ignore lint/correctness/useHookAtTopLevel: not a react hook
 Sequelize.useCLS(clsNamespace as any);
 
-const database_url = env.DATABASE_URL;
-
 class SequelizeWithId extends Sequelize {
 	/* Create standard id type for our database */
 	idType = {
@@ -55,6 +53,12 @@ class SequelizeWithId extends Sequelize {
 	declare connectionManager: ConnectionManager & {
 		pool: { read: Pool<Connection>; write: Pool<Connection> };
 	};
+}
+
+const database_url = env.DATABASE_URL;
+
+if (!database_url) {
+	throw new Error('DATABASE_URL environment variable not set');
 }
 
 const useSSL = database_url.includes('.');

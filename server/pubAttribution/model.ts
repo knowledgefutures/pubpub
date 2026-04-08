@@ -64,6 +64,7 @@ export class PubAttribution extends Model<
 	@Column(DataType.STRING)
 	declare orcid: string | null;
 
+	@Index
 	@Column(DataType.UUID)
 	declare userId: string | null;
 

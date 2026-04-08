@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -53,10 +54,12 @@ export class CollectionAttribution extends Model<
 	@Column(DataType.STRING)
 	declare orcid: string | null;
 
+	@Index
 	@Column(DataType.UUID)
 	declare userId: string | null;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare collectionId: string;
 

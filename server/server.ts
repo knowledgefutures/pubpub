@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-// import compression from 'compression';
 import CreateSequelizeStore from 'connect-session-sequelize';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -92,7 +91,6 @@ if (env.NODE_ENV === 'production') {
 }
 appRouter.use(deduplicateSlash());
 appRouter.use(noSlash());
-// appRouter.use(compression());
 appRouter.use(express.json({ limit: '50mb' }));
 appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
 appRouter.use(cookieParser());

@@ -1,6 +1,5 @@
 
 import fs from 'fs';
-import fetch from 'node-fetch';
 
 import { Collection, CollectionPub } from 'server/models';
 import { getBestDownloadUrl } from 'utils/pub/downloads';

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import request from 'request-promise';
 
 import { getStructuredCitations } from 'server/utils/citations';
 import { renderToKatexString } from 'utils/katex';
@@ -40,12 +39,15 @@ router.get('/api/editor/embed', (req, res) => {
 		if (type === 'github') {
 			const githubParts = (input as string).split('/');
 			// GitHub API requests require a user agent: https://developer.github.com/v3/#user-agent-required
-			return request(`https://api.github.com/gists/${githubParts[githubParts.length - 1]}`, {
-				json: true,
+			return fetch(`https://api.github.com/gists/${githubParts[githubParts.length - 1]}`, {
 				headers: {
 					'User-Agent': 'pubpub',
 				},
 			})
+				.then((r) => {
+					if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
+					return r.json();
+				})
 				.then((result) => {
 					return res.status(200).json({
 						title: `${result.description}`,
@@ -60,7 +62,11 @@ router.get('/api/editor/embed', (req, res) => {
 		return res.status(400).json('Type not supported');
 	}
 
-	return request(oembedUrl, { json: true })
+	return fetch(oembedUrl)
+		.then((r) => {
+			if (!r.ok) throw new Error(`Oembed error: ${r.status}`);
+			return r.json();
+		})
 		.then((result) => {
 			return res.status(200).json(result);
 		})

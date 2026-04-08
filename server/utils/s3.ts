@@ -112,13 +112,9 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 			leavePartsOnError: false, // optional manually handle dropped parts
 		});
 
-		parallelUploads3.on(
-			'httpUploadProgress',
-			progressCallback ??
-				((progress) => {
-					console.log(progress);
-				}),
-		);
+		if (progressCallback) {
+			parallelUploads3.on('httpUploadProgress', progressCallback);
+		}
 
 		await parallelUploads3.done();
 	};

@@ -8,6 +8,7 @@ import {
 	Column,
 	DataType,
 	Default,
+	Index,
 	Model,
 	PrimaryKey,
 	Table,
@@ -28,6 +29,7 @@ export class Reviewer extends Model<InferAttributes<Reviewer>, InferCreationAttr
 	declare name: string | null;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare reviewId: string;
 

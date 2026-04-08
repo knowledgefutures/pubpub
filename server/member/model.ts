@@ -38,6 +38,7 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
 	declare subscribedToActivityDigest: CreationOptional<boolean>;
 
 	@AllowNull(false)
+	@Index
 	@Column(DataType.UUID)
 	declare userId: string;
 

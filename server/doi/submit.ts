@@ -1,5 +1,3 @@
-import request from 'request-promise';
-import { Readable } from 'stream';
 import xmlbuilder from 'xmlbuilder';
 
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
@@ -37,24 +35,27 @@ export const submitDoiData = async (
 
 	const { login, password } = await getDoiLogin(communityId);
 	const xmlObject = xmlbuilder.create(json, { headless: true }).end({ pretty: true });
-	const readStream = new Readable();
 
-	readStream._read = function noop() {};
-	readStream.push(xmlObject);
-	readStream.push(null);
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'path' does not exist on type 'Readable'.
-	readStream.path = `/${timestamp}.xml`;
-	return request({
+	const formData = new FormData();
+	formData.append('login_id', login ?? '');
+	formData.append('login_passwd', password ?? '');
+	formData.append(
+		'fname',
+		new Blob([xmlObject], { type: 'application/xml' }),
+		`${timestamp}.xml`,
+	);
+
+	const response = await fetch(DOI_SUBMISSION_URL, {
 		method: 'POST',
-		url: DOI_SUBMISSION_URL,
-		formData: {
-			login_id: login,
-			login_passwd: password,
-			fname: readStream,
-		},
+		body: formData,
 		headers: {
-			'content-type': 'multipart/form-data',
 			'user-agent': 'PubPub (mailto:hello@pubpub.org)',
 		},
 	});
+
+	const body = await response.text();
+	if (!response.ok) {
+		throw new Error(`DOI submission failed (${response.status}): ${body}`);
+	}
+	return body;
 };

@@ -215,12 +215,6 @@ importers:
       big-json:
         specifier: ^2.0.2
         version: 2.0.2
-      body-parser:
-        specifier: ^1.19.0
-        version: 1.20.4
-      bourbon:
-        specifier: ^5.1.0
-        version: 5.1.0
       busboy:
         specifier: ^1.6.0
         version: 1.6.0
@@ -242,9 +236,6 @@ importers:
       color:
         specifier: ^3.1.1
         version: 3.2.1
-      compression:
-        specifier: ^1.7.4
-        version: 1.8.1
       connect-session-sequelize:
         specifier: ^7.1.7
         version: 7.1.7(sequelize@6.37.7(pg@8.18.0))
@@ -257,9 +248,6 @@ importers:
       countries-and-timezones:
         specifier: ^3.6.0
         version: 3.8.0
-      crypto:
-        specifier: ^1.0.1
-        version: 1.0.1
       crypto-js:
         specifier: ^3.1.9-1
         version: 3.3.0
@@ -311,9 +299,6 @@ importers:
       firebase-admin:
         specifier: ^9.4.2
         version: 9.12.0(@firebase/app-compat@0.5.8)(@firebase/app-types@0.6.1)
-      firebase-server:
-        specifier: ^1.1.0
-        version: 1.1.0
       fs-extra:
         specifier: ^8.1.0
         version: 8.1.0
@@ -413,9 +398,6 @@ importers:
       node-cron:
         specifier: ^4.2.1
         version: 4.2.1
-      node-fetch:
-        specifier: ^2.6.7
-        version: 2.7.0
       parse5-html-rewriting-stream:
         specifier: ^7.1.0
         version: 7.1.0
@@ -482,9 +464,6 @@ importers:
       prosemirror-schema-list:
         specifier: ^1.2.2
         version: 1.5.1
-      prosemirror-schema-table:
-        specifier: ^0.22.0
-        version: 0.22.0
       prosemirror-state:
         specifier: ^1.4.2
         version: 1.4.4
@@ -557,9 +536,6 @@ importers:
       request:
         specifier: ^2.88.0
         version: 2.88.2
-      request-promise:
-        specifier: ^4.2.4
-        version: 4.2.6(request@2.88.2)
       rss:
         specifier: ^1.2.2
         version: 1.2.2
@@ -4083,9 +4059,6 @@ packages:
   '@types/node@24.11.0':
     resolution: {integrity: sha512-fPxQqz4VTgPI/IQ+lj9r0h+fDR66bzoeMGHp8ASee+32OSGIkeASsoZuJixsQoVef1QJbeubcPBxKk22QVoWdw==}
 
-  '@types/node@9.6.61':
-    resolution: {integrity: sha512-/aKAdg5c8n468cYLy2eQrcR5k6chlbNwZNGUj3TboyPa2hcO2QAJcfymlqPzMiRj8B6nYKXjzQz36minFE0RwQ==}
-
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
@@ -4996,9 +4969,6 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  bourbon@5.1.0:
-    resolution: {integrity: sha512-rO4rwNAVNuzPmnL+DruxAe7DR2YFFo4nHsgDVRd9URMgDxtHmVBUnvFLXPan6teVe7jkybCyxcnR+CKClotj3g==}
-
   bowser@2.14.1:
     resolution: {integrity: sha512-tzPjzCxygAKWFOJP011oxFHs57HzIhOEracIgAePE4pqB3LikALKnSzUyU4MGs9/iCEUuHlAJTjTc5M+u7YEGg==}
 
@@ -5339,17 +5309,9 @@ packages:
     resolution: {integrity: sha512-+W/5efTR7y5HRD7gACw9yQjqMVvEMLBHmboM/kPWam+H+Hmyrgjh6YncVKK122YZkXrLudzTuAukUw9FnMf7IQ==}
     engines: {node: 10.* || >= 12.*}
 
-  cli-table@0.3.11:
-    resolution: {integrity: sha512-IqLQi4lO0nIB4tcdTpN4LCB9FI3uqrJZK7RC515EnhZ6qBaglkIgICb1wjeAqpdoOabm1+SuQtkXIPdYC93jhQ==}
-    engines: {node: '>= 0.2.0'}
-
   cli-truncate@2.1.0:
     resolution: {integrity: sha512-n8fOixwDD6b/ObinzTrp1ZKFzbgvKZvuz/TvejnLn1aQfC6r52XEx85FmuC+3HI+JM7coBRXUvNqEU2PHVrHpg==}
     engines: {node: '>=8'}
-
-  cli@1.0.1:
-    resolution: {integrity: sha512-41U72MB56TfUMGndAKK8vJ78eooOD4Z5NOL4xEfjc0c23s+6EYKXlXsmACBVclLP1yOfWCgEganVzddVrSNoTg==}
-    engines: {node: '>=0.2.5'}
 
   cliui@4.1.0:
     resolution: {integrity: sha512-4FG+RSG9DL7uEwRUZXZn3SS34DiDPfzP0VOiEwtUWlE+AR2EIg+hSyvrIgUUfhdgR/UkAeW2QHgeP+hWrXs7jQ==}
@@ -5414,10 +5376,6 @@ packages:
 
   colors@1.0.3:
     resolution: {integrity: sha512-pFGrxThWcWQ2MsAz6RtgeWe4NK2kUE1WfsrvvlctdII745EW9I0yflqhe7++M5LEc7bV2c/9/5zc8sFcpL0Drw==}
-    engines: {node: '>=0.1.90'}
-
-  colors@1.4.0:
-    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
     engines: {node: '>=0.1.90'}
 
   combined-stream@0.0.7:
@@ -5677,10 +5635,6 @@ packages:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
 
-  crypto@1.0.1:
-    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
-    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
-
   css-box-model@1.2.1:
     resolution: {integrity: sha512-a7Vr4Q/kd/aw96bnJG332W9V9LkJO69JRcaCYDUqjp6/z0w6VcZjgAcTbgFxEPfBgdnAwlh3iwu+hLopa+flJw==}
 
@@ -5796,10 +5750,6 @@ packages:
   d@1.0.2:
     resolution: {integrity: sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw==}
     engines: {node: '>=0.12'}
-
-  daemon@1.1.0:
-    resolution: {integrity: sha512-1vX9YVcP21gt12nSD3SQRC/uPU7fyA6M8qyClTBIFuiRWoylFn57PwXhjBAqRl085bZAje7sILhZU48qcS9SWw==}
-    engines: {node: '>= 0.8.0'}
 
   dashdash@1.14.1:
     resolution: {integrity: sha512-jRFi8UDGo6j+odZiEpjazZaWqEal3w/basFjQHQEwVtZJGDpxbH1MeYluwCS8Xq5wmLJooDlMgvVarmWfGM44g==}
@@ -6347,11 +6297,6 @@ packages:
     resolution: {integrity: sha512-oruZaFkjorTpF32kDSI5/75ViwGeZginGGy2NoOSg3Q9bnwlnmDm4HLnkl0RE3n+njDXR037aY1+x58Z/zFdwQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  esprima@1.2.5:
-    resolution: {integrity: sha512-S9VbPDU0adFErpDai3qDkjq8+G05ONtKzcyNrPKg/ZKa+tf879nX2KexNU95b31UoTJjRLInNBHHHjFPoCd7lQ==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
   esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
@@ -6419,10 +6364,6 @@ packages:
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
-
-  exit@0.1.2:
-    resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
-    engines: {node: '>= 0.8.0'}
 
   expand-brackets@2.1.4:
     resolution: {integrity: sha512-w/ozOKR9Obk3qoWeY/WDi6MFta9AoMR+zud60mdnbniMcBxRuFJyDt2LdX/14A1UABeqk+Uk+LDfUpvoGKppZA==}
@@ -6645,18 +6586,6 @@ packages:
   firebase-admin@9.12.0:
     resolution: {integrity: sha512-AtA7OH5RbIFGoc0gZOQgaYC6cdjdhZv4w3XgWoupkPKO1HY+0GzixOuXDa75kFeoVyhIyo4PkLg/GAC1dC1P6w==}
     engines: {node: '>=10.13.0'}
-
-  firebase-json@0.1.0:
-    resolution: {integrity: sha512-uTIoxEDLrdURiqZRe66v7SnnQt4KuXnCZA7ZZ36rO7ZUHTVFhzlbip5t4c+UlG42GQk1OxdOlZvAskApt0//OA==}
-
-  firebase-server@1.1.0:
-    resolution: {integrity: sha512-FH0Cy/pquE3klkQYneFh3GZE2ZL81T53wQEi7kHClKxbdnz5+JgUAesJReGs6xXAPM4cKG2HStW6DZh6V17+Zg==}
-    engines: {node: '>=8.3.0'}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    hasBin: true
-
-  firebase-token-generator@2.0.0:
-    resolution: {integrity: sha512-EX/Rw6C0NLF6StuszW9Pn4zGUU8dw0UdHY6u8zP5t/CsbYRwWVh0CwN6INFE5U4IizZtgqbWQhcAQNkBtNkyfQ==}
 
   firebase@7.24.0:
     resolution: {integrity: sha512-j6jIyGFFBlwWAmrlUg9HyQ/x+YpsPkc/TTkbTyeLwwAJrpAmmEHNPT6O9xtAnMV4g7d3RqLL/u9//aZlbY4rQA==}
@@ -8040,10 +7969,6 @@ packages:
   jws@4.0.1:
     resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
 
-  jwt-simple@0.5.6:
-    resolution: {integrity: sha512-40aUybvhH9t2h71ncA1/1SbtTNCVZHgsTsTgqPUxGWDmUDrXyDf2wMNQKEbdBjbf4AI+fQhbECNTV6lWxQKUzg==}
-    engines: {node: '>= 0.4.0'}
-
   katex@0.13.24:
     resolution: {integrity: sha512-jZxYuKCma3VS5UuxOx/rFV1QyGSl3Uy/i0kTJF3HgQ5xMinCQVF8Zd4bMY/9aI9b9A2pjIBOsjSSm68ykTAr8w==}
     hasBin: true
@@ -8203,9 +8128,6 @@ packages:
   lodash.escape@4.0.1:
     resolution: {integrity: sha512-nXEOnb/jK9g0DYMr1/Xvq6l5xMD7GDG55+GSYIYmS0G4tBk/hURD4JR9WCavs04t33WmJx9kCyp9vJ+mr4BOUw==}
 
-  lodash.flatten@4.4.0:
-    resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
-
   lodash.flattendeep@4.4.0:
     resolution: {integrity: sha512-uHaJFihxmJcEX3kT4I23ABqKKalJ/zDrDg0lsFtc1h+3uw49SIJ5beyhx5ExVRti3AvKoOJngIj7xz3oylPdWQ==}
 
@@ -8262,9 +8184,6 @@ packages:
 
   lodash.pickby@4.6.0:
     resolution: {integrity: sha512-AZV+GsS/6ckvPOVQPXSiFFacKvKB4kOQu6ynt9wz0F3LO4R9Ij4K1ddYsIytDpSgLz88JHd9P+oaLeej5/Sl7Q==}
-
-  lodash.set@4.3.2:
-    resolution: {integrity: sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==}
 
   lodash.throttle@4.1.1:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
@@ -8654,9 +8573,6 @@ packages:
   monaco-editor@0.21.3:
     resolution: {integrity: sha512-9N7wATLpi+googstvtm6IKg97vPQ77FDYEpkow5tLriM/VJ0DaTRyUP4UVzcoH7KlPDX+e/rE7/imcOUeGkT6g==}
 
-  moo@0.4.3:
-    resolution: {integrity: sha512-gFD2xGCl8YFgGHsqJ9NKRVdwlioeW3mI1iqfLNYQOv0+6JRwG58Zk9DIGQgyIaffSYaO1xsKnMaYzzNr1KyIAw==}
-
   moo@0.5.2:
     resolution: {integrity: sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q==}
 
@@ -8973,9 +8889,6 @@ packages:
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
-
-  orderedmap@1.1.8:
-    resolution: {integrity: sha512-eWEYOAggZZpZbJ9CTsqAKOTxlbBHdHZ8pzcfEvNTxGrjQ/m+Q25nSWUiMlT9MTbgpB6FOiBDKqsgJ2FlLDVNaw==}
 
   orderedmap@2.1.1:
     resolution: {integrity: sha512-TvAWxi0nDe1j/rtMcWcIj94+Ffe6n7zhow33h40SKxmsmozs6dz/e+EajymfoFcHd7sxNn8yHM8839uixMOV6g==}
@@ -9557,20 +9470,11 @@ packages:
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
 
-  prosemirror-model@0.22.0:
-    resolution: {integrity: sha512-PwW3+oUo/scadnFG+yROwFm4pfgFs8qipUil85sxKExkxE1MSlyqUvd+x75hmL2cPzCmuecWyylM5RNQ2NloUw==}
-
   prosemirror-model@1.25.4:
     resolution: {integrity: sha512-PIM7E43PBxKce8OQeezAs9j4TP+5yDpZVbuurd1h5phUxEKIu+G2a+EUZzIC5nS1mJktDJWzbqS23n1tsAf5QA==}
 
   prosemirror-schema-list@1.5.1:
     resolution: {integrity: sha512-927lFx/uwyQaGwJxLWCZRkjXG0p48KpMj6ueoYiu4JX05GGuGcgzAy62dfiV8eFZftgyBUvLx76RsMe20fJl+Q==}
-
-  prosemirror-schema-table@0.22.0:
-    resolution: {integrity: sha512-rNLRm1SoJlSWJXe7mtZTO47RUs1p34rxLY2q4Thr7M6wyk4OurNFpg9x4Ko58+GySwU3GIRGyn2FQysOW3YMDg==}
-
-  prosemirror-state@0.22.0:
-    resolution: {integrity: sha512-74F+inLR2qvfgDRY3ix016R/eMlIM82DhAiV2uF5bisR2kWZeM3LvWbEljtEqwcAgXdH2nWvl1QB1+kFrcb4dw==}
 
   prosemirror-state@1.4.4:
     resolution: {integrity: sha512-6jiYHH2CIGbCfnxdHbXZ12gySFY/fz/ulZE333G6bPqIZ4F+TXo9ifiR86nAHpWnfoNjOb3o5ESi7J8Uz1jXHw==}
@@ -9583,9 +9487,6 @@ packages:
 
   prosemirror-tables@1.8.5:
     resolution: {integrity: sha512-V/0cDCsHKHe/tfWkeCmthNUcEp1IVO3p6vwN8XtwE9PZQLAZJigbw3QoraAdfJPir4NKJtNvOB8oYGKRl+t0Dw==}
-
-  prosemirror-transform@0.22.2:
-    resolution: {integrity: sha512-wzr8FEY5jLa/m6k9fvsC8qPasN2rBr/OjPk1+fiXYRmIKOwDkeeiWcgn2OsCuhjr/49x10fWOrqCdhwIwrrkZw==}
 
   prosemirror-transform@1.11.0:
     resolution: {integrity: sha512-4I7Ce4KpygXb9bkiPS3hTEk4dSHorfRw8uI0pE8IhxlK2GXsqv5tIA7JUSxtSu7u8APVOTtbUBxTmnHIxVkIJw==}
@@ -10087,10 +9988,6 @@ packages:
     resolution: {integrity: sha512-ZqtSMuVybkISo2OWvqvm7iHSWngvdaW3IpsT9/uP8v4gMi591LY6h35wdOfvQdWCKFWZWm2Y1Opp4kV7vQKT6A==}
     engines: {node: '>=0.10.0'}
 
-  replaceall@0.1.6:
-    resolution: {integrity: sha512-sL26E4+8Kec7bwpRjHlQvbNZcpnGroT3PA7ywsgH6GjzxAg4IGNlNalLoRC/JmTed7cMhyDbi44pWw1kMhDxlw==}
-    engines: {node: '>= 0.8.x'}
-
   req-cwd@2.0.0:
     resolution: {integrity: sha512-ueoIoLo1OfB6b05COxAA9UpeoscNpYyM+BqYlA7H6LVF4hKGPXQQSSaD2YmvDVJMkk4UDpAHIeU1zG53IqjvlQ==}
     engines: {node: '>=4'}
@@ -10098,26 +9995,6 @@ packages:
   req-from@2.0.0:
     resolution: {integrity: sha512-LzTfEVDVQHBRfjOUMgNBA+V6DWsSnoeKzf42J7l0xa/B4jyPOuuF5MlNSmomLNGemWTnV2TIdjSSLnEn95fOQA==}
     engines: {node: '>=4'}
-
-  request-promise-core@1.1.4:
-    resolution: {integrity: sha512-TTbAfBBRdWD7aNNOoVOBH4pN/KigV6LyapYNNlAPA8JwbovRti1E88m3sYAwsLi5ryhPKsE9APwnjFTgdUjTpw==}
-    engines: {node: '>=0.10.0'}
-    peerDependencies:
-      request: ^2.34
-
-  request-promise-native@1.0.9:
-    resolution: {integrity: sha512-wcW+sIUiWnKgNY0dqCpOZkUbF/I+YPi+f09JZIDa39Ec+q82CpSYniDp+ISgTTbKmnpJWASeJBPZmoxH84wt3g==}
-    engines: {node: '>=0.12.0'}
-    deprecated: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
-    peerDependencies:
-      request: ^2.34
-
-  request-promise@4.2.6:
-    resolution: {integrity: sha512-HCHI3DJJUakkOr8fNoCc73E5nU5bqITjOYFMDrKHYOXWXrgD/SBaC7LjwuPymUprRyuF06UK7hd/lMHkmUXglQ==}
-    engines: {node: '>=0.10.0'}
-    deprecated: request-promise has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
-    peerDependencies:
-      request: ^2.34
 
   request@2.88.2:
     resolution: {integrity: sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==}
@@ -10726,10 +10603,6 @@ packages:
   std-env@3.10.0:
     resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
 
-  stealthy-require@1.1.1:
-    resolution: {integrity: sha512-ZnWpYnYugiOVEY5GkcuJK1io5V8QmNYChG62gSit9pQVGErXtrKuPC55ITaVSukmMta5qpMU7vqLt2Lnni4f/g==}
-    engines: {node: '>=0.10.0'}
-
   stickybits@3.7.11:
     resolution: {integrity: sha512-WO+ns7BYZqGS4jWVTg5JNhIvNV4LGbUtNTSck4zAkWRQzA1IfxwIkMGc0BbdGy4PGIjK7kKo5CZcN6Sd5dHVlw==}
 
@@ -10968,10 +10841,6 @@ packages:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
     deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-
-  targaryen@3.1.0:
-    resolution: {integrity: sha512-AfmboMHadeAV4zf536J0UloVLlmlDIt7EflO05RAr5b6CQPZhOjCLWPMwMASRnuZhan+mto3YBoPNd6mVVEVAA==}
-    hasBin: true
 
   tarn@3.0.2:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
@@ -11918,18 +11787,6 @@ packages:
 
   ws@6.2.3:
     resolution: {integrity: sha512-jmTjYU0j60B+vHey6TfR3Z7RD61z/hmxBS3VMSGIrroOWXQEneK1zNuotOUrGyBHQj0yrpsLHPWtigEFd13ndA==}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
-  ws@7.5.10:
-    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
-    engines: {node: '>=8.3.0'}
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
@@ -16747,8 +16604,6 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@9.6.61': {}
-
   '@types/normalize-package-data@2.4.4': {}
 
   '@types/npmlog@4.1.6':
@@ -17825,8 +17680,6 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  bourbon@5.1.0: {}
-
   bowser@2.14.1: {}
 
   boxen@1.3.0:
@@ -18358,19 +18211,10 @@ snapshots:
     optionalDependencies:
       '@colors/colors': 1.5.0
 
-  cli-table@0.3.11:
-    dependencies:
-      colors: 1.0.3
-
   cli-truncate@2.1.0:
     dependencies:
       slice-ansi: 3.0.0
       string-width: 4.2.3
-
-  cli@1.0.1:
-    dependencies:
-      exit: 0.1.2
-      glob: 7.2.3
 
   cliui@4.1.0:
     dependencies:
@@ -18442,8 +18286,6 @@ snapshots:
   colorette@2.0.19: {}
 
   colors@1.0.3: {}
-
-  colors@1.4.0: {}
 
   combined-stream@0.0.7:
     dependencies:
@@ -18767,8 +18609,6 @@ snapshots:
   crypto-random-string@2.0.0:
     optional: true
 
-  crypto@1.0.1: {}
-
   css-box-model@1.2.1:
     dependencies:
       tiny-invariant: 1.3.3
@@ -18901,8 +18741,6 @@ snapshots:
     dependencies:
       es5-ext: 0.10.64
       type: 2.7.3
-
-  daemon@1.1.0: {}
 
   dashdash@1.14.1:
     dependencies:
@@ -19616,8 +19454,6 @@ snapshots:
       acorn-jsx: 5.3.2(acorn@8.16.0)
       eslint-visitor-keys: 3.4.3
 
-  esprima@1.2.5: {}
-
   esprima@4.0.1: {}
 
   esquery@1.7.0:
@@ -19701,8 +19537,6 @@ snapshots:
       onetime: 5.1.2
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
-
-  exit@0.1.2: {}
 
   expand-brackets@2.1.4(supports-color@5.5.0):
     dependencies:
@@ -20040,28 +19874,6 @@ snapshots:
       - '@firebase/app-types'
       - encoding
       - supports-color
-
-  firebase-json@0.1.0:
-    dependencies:
-      pegjs: 0.10.0
-
-  firebase-server@1.1.0:
-    dependencies:
-      '@types/node': 9.6.61
-      cli: 1.0.1
-      daemon: 1.1.0
-      debug: 3.2.7(supports-color@5.5.0)
-      firebase: 7.24.0
-      jwt-simple: 0.5.6
-      lodash: 4.17.23
-      targaryen: 3.1.0
-      ws: 7.5.10
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  firebase-token-generator@2.0.0: {}
 
   firebase@7.24.0:
     dependencies:
@@ -21632,8 +21444,6 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  jwt-simple@0.5.6: {}
-
   katex@0.13.24:
     dependencies:
       commander: 8.3.0
@@ -21794,8 +21604,6 @@ snapshots:
 
   lodash.escape@4.0.1: {}
 
-  lodash.flatten@4.4.0: {}
-
   lodash.flattendeep@4.4.0: {}
 
   lodash.flow@3.5.0: {}
@@ -21831,8 +21639,6 @@ snapshots:
   lodash.pick@4.4.0: {}
 
   lodash.pickby@4.6.0: {}
-
-  lodash.set@4.3.2: {}
 
   lodash.throttle@4.1.1: {}
 
@@ -22293,8 +22099,6 @@ snapshots:
 
   monaco-editor@0.21.3: {}
 
-  moo@0.4.3: {}
-
   moo@0.5.2: {}
 
   move-concurrently@1.0.1:
@@ -22683,8 +22487,6 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
       word-wrap: 1.2.5
-
-  orderedmap@1.1.8: {}
 
   orderedmap@2.1.1: {}
 
@@ -23328,10 +23130,6 @@ snapshots:
       prosemirror-state: 1.4.4
       w3c-keyname: 2.2.8
 
-  prosemirror-model@0.22.0:
-    dependencies:
-      orderedmap: 1.1.8
-
   prosemirror-model@1.25.4:
     dependencies:
       orderedmap: 2.1.1
@@ -23341,17 +23139,6 @@ snapshots:
       prosemirror-model: 1.25.4
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
-
-  prosemirror-schema-table@0.22.0:
-    dependencies:
-      prosemirror-model: 0.22.0
-      prosemirror-state: 0.22.0
-      prosemirror-transform: 0.22.2
-
-  prosemirror-state@0.22.0:
-    dependencies:
-      prosemirror-model: 0.22.0
-      prosemirror-transform: 0.22.2
 
   prosemirror-state@1.4.4:
     dependencies:
@@ -23387,10 +23174,6 @@ snapshots:
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.6
-
-  prosemirror-transform@0.22.2:
-    dependencies:
-      prosemirror-model: 0.22.0
 
   prosemirror-transform@1.11.0:
     dependencies:
@@ -24123,8 +23906,6 @@ snapshots:
       is-finite: 1.1.0
     optional: true
 
-  replaceall@0.1.6: {}
-
   req-cwd@2.0.0:
     dependencies:
       req-from: 2.0.0
@@ -24132,26 +23913,6 @@ snapshots:
   req-from@2.0.0:
     dependencies:
       resolve-from: 3.0.0
-
-  request-promise-core@1.1.4(request@2.88.2):
-    dependencies:
-      lodash: 4.17.23
-      request: 2.88.2
-
-  request-promise-native@1.0.9(request@2.88.2):
-    dependencies:
-      request: 2.88.2
-      request-promise-core: 1.1.4(request@2.88.2)
-      stealthy-require: 1.1.1
-      tough-cookie: 2.5.0
-
-  request-promise@4.2.6(request@2.88.2):
-    dependencies:
-      bluebird: 3.7.2
-      request: 2.88.2
-      request-promise-core: 1.1.4(request@2.88.2)
-      stealthy-require: 1.1.1
-      tough-cookie: 2.5.0
 
   request@2.88.2:
     dependencies:
@@ -24927,8 +24688,6 @@ snapshots:
 
   std-env@3.10.0: {}
 
-  stealthy-require@1.1.1: {}
-
   stickybits@3.7.11: {}
 
   stop-iteration-iterator@1.1.0:
@@ -25243,27 +25002,6 @@ snapshots:
       minizlib: 2.1.2
       mkdirp: 1.0.4
       yallist: 4.0.0
-
-  targaryen@3.1.0:
-    dependencies:
-      cli-table: 0.3.11
-      colors: 1.4.0
-      debug: 2.6.9(supports-color@5.5.0)
-      esprima: 1.2.5
-      firebase-json: 0.1.0
-      firebase-token-generator: 2.0.0
-      lodash.flatten: 4.4.0
-      lodash.omit: 4.5.0
-      lodash.set: 4.3.2
-      minimist: 1.2.8
-      moo: 0.4.3
-      nearley: 2.20.1
-      replaceall: 0.1.6
-      request: 2.88.2
-      request-promise-native: 1.0.9(request@2.88.2)
-      strip-json-comments: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
 
   tarn@3.0.2: {}
 
@@ -26364,8 +26102,6 @@ snapshots:
   ws@6.2.3:
     dependencies:
       async-limiter: 1.0.1
-
-  ws@7.5.10: {}
 
   ws@8.19.0: {}
 

@@ -1,5 +1,4 @@
 import fs from 'fs';
-import fetch from 'node-fetch';
 import path from 'path';
 
 // crossref polite pool: 3 concurrent, 10/s total with mailto

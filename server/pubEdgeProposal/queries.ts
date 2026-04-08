@@ -1,5 +1,4 @@
 import cheerio from 'cheerio';
-import fetch, { type Response } from 'node-fetch';
 import { Op } from 'sequelize';
 
 import { Community, Pub } from 'server/models';

@@ -1,7 +1,6 @@
 import type { RelationTypeName } from 'utils/pubEdge/relations';
 
 import cheerio from 'cheerio';
-import fetch from 'node-fetch';
 
 import { env } from 'server/env';
 import { type ExternalPublication, type Pub, PubEdge } from 'server/models';

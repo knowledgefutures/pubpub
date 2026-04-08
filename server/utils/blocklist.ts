@@ -1,12 +1,9 @@
 import type { RequestHandler } from 'express';
 
-import { env } from 'server/env';
+const blockList = process.env.BLOCKLIST_IP_ADDRESSES?.split(',') ?? [];
 
 export const blocklistMiddleware: RequestHandler = async (req, res, next) => {
-	/** You are only allowed to access API */
-	const maybeBlockList = env.BLOCKLIST_IP_ADDRESSES?.split(',') || [];
-
-	if (!maybeBlockList.length) {
+	if (!blockList.length) {
 		return next();
 	}
 
@@ -18,7 +15,7 @@ export const blocklistMiddleware: RequestHandler = async (req, res, next) => {
 		return next();
 	}
 
-	for (const blocklistIp of maybeBlockList) {
+	for (const blocklistIp of blockList) {
 		if (ip.startsWith(blocklistIp)) {
 			console.warn('Blocking IP', {
 				ip,

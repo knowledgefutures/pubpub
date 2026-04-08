@@ -1,7 +1,6 @@
 
 import { Pub, Community } from 'server/models';
 import { Op } from 'sequelize';
-import fetch from 'node-fetch';
 import { communityUrl } from 'utils/canonicalUrls';
 import { promptOkay } from './utils/prompt';
 /** Usage: npm run tools pubCrawl -- --subdomain subdomain */

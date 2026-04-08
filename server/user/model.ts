@@ -123,6 +123,21 @@ class ModelWithPassport<T extends {} = any, C extends {} = T> extends Model<T, C
 			name: 'users_slug_pattern_idx',
 			fields: [{ name: 'slug', operator: 'text_pattern_ops' }],
 		},
+		{
+			name: 'users_full_name_trgm_idx',
+			using: 'gin',
+			fields: [{ name: 'fullName', operator: 'gin_trgm_ops' }],
+		},
+		{
+			name: 'users_email_trgm_idx',
+			using: 'gin',
+			fields: [{ name: 'email', operator: 'gin_trgm_ops' }],
+		},
+		{
+			name: 'users_slug_trgm_idx',
+			using: 'gin',
+			fields: [{ name: 'slug', operator: 'gin_trgm_ops' }],
+		},
 	],
 })
 export class User extends ModelWithPassport<InferAttributes<User>, InferCreationAttributes<User>> {

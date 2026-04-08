@@ -17,6 +17,7 @@ export const setup = (
 	}
 	beforeFn(async () => {
 		if (actionsFn) {
+			await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
 			await sequelize.sync();
 			await actionsFn();
 		}

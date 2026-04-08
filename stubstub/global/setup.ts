@@ -52,6 +52,8 @@ export default async () => {
 	 * tests
 	 */
 	const { sequelize } = await import('../../server/models');
+	// Install pg_trgm before sync so the User model's GIN trigram indexes can be created
+	await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
 	await sequelize.sync();
 
 	/**

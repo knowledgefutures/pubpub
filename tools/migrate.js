@@ -55,6 +55,7 @@ const main = async () => {
 		throwIfNo: true,
 		yesIsDefault: false,
 	});
+	await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
 	await sequelize.sync();
 	const migrationFn = getMigrationFnForPath(migrationPath);
 	console.info('Starting migration');

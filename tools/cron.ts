@@ -47,6 +47,14 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 	); // Weekly on Sunday at 5 AM UTC
 
 	cron.schedule(
+		'0 3 * * 0',
+		() => run('Purge Notifications', 'tools-prod purgeNotifications --execute'),
+		{
+			timezone: 'UTC',
+		},
+	); // Weekly on Sunday at 3 AM UTC
+
+	cron.schedule(
 		'0 4 * * *',
 		() => {
 			const dateStamp = new Date().toISOString().slice(0, 10);

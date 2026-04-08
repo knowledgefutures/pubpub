@@ -29,6 +29,7 @@ export class UserNotification extends Model<
 	declare id: CreationOptional<string>;
 
 	@Index({ using: 'BTREE' })
+	@Index({ name: 'user_notifications_user_id_is_read', using: 'BTREE' })
 	@AllowNull(false)
 	@Column(DataType.UUID)
 	declare userId: string;
@@ -41,6 +42,7 @@ export class UserNotification extends Model<
 	@Column(DataType.UUID)
 	declare activityItemId: string;
 
+	@Index({ name: 'user_notifications_user_id_is_read', using: 'BTREE' })
 	@AllowNull(false)
 	@Default(false)
 	@Column(DataType.BOOLEAN)

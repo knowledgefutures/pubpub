@@ -39,7 +39,7 @@ const UserNotifications = (props: Props) => {
 						fill
 						leftIcon="search"
 						value={filterTerm || ''}
-						placeholder="Filter threads"
+						placeholder="Filter notifications"
 						onChange={(evt: any) => setFilterTerm(evt.target.value)}
 					/>
 					<Button

@@ -80,26 +80,16 @@ export const fetchUserNotifications = async (
 		...(latestDateToShow && { createdAt: { [Op.lte]: latestDateToShow } }),
 	};
 
-	const [maybeUnreadNotifications, readNotifications] = await Promise.all([
-		offset === 0 &&
-			UserNotification.findAll({
-				where: { ...sharedWhere, isRead: false },
-				include: [{ model: ActivityItem, as: 'activityItem' }],
-				order: [['createdAt', 'DESC']],
-			}),
-		UserNotification.findAll({
-			where: { ...sharedWhere, isRead: true },
-			limit,
-			offset,
-			include: [{ model: ActivityItem, as: 'activityItem' }],
-			order: [['createdAt', 'DESC']],
-		}),
-	]);
-
-	const allNotifications = [
-		...(maybeUnreadNotifications || []),
-		...readNotifications,
-	] as types.UserNotificationWithActivityItemModel[];
+	const allNotifications = (await UserNotification.findAll({
+		where: sharedWhere,
+		include: [{ model: ActivityItem, as: 'activityItem' }],
+		order: [
+			['isRead', 'ASC'], // unread first
+			['createdAt', 'DESC'],
+		],
+		limit,
+		offset,
+	})) as types.UserNotificationWithActivityItemModel[];
 
 	const allPubIds = allNotifications
 		.map((n) => n.activityItem.pubId)

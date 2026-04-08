@@ -415,6 +415,9 @@ rules.fromProsemirrorNode(
 	},
 );
 
+// The suggestion mark (suggested edits) has no Pandoc equivalent — strip it on export
+rules.fromProsemirrorMark('suggestion', (_mark, content) => content);
+
 rules.validate();
 
 export { rules };

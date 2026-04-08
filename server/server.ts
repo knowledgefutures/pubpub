@@ -342,8 +342,7 @@ export const startServer = () => {
 				console.error(err);
 			}
 			console.info(
-				`==> Sequelize Max Connections:,
-				${env.SEQUELIZE_MAX_CONNECTIONS ?? 5}`,
+				`==> Sequelize Max Connections: ${process.env.SEQUELIZE_MAX_CONNECTIONS ? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10) : 20}`,
 			);
 			console.info('----\n==> 🌎  API is running on port %s', port);
 			console.info('==> 💻  Send requests to http://localhost:%s', port);

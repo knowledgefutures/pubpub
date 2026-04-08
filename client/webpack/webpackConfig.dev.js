@@ -35,6 +35,9 @@ module.exports = {
 		},
 	},
 	devtool: 'eval',
+	watchOptions: {
+		ignored: [/node_modules\/(?!@pubpub)/, /\.git/, /dist/, /infra/, /scripts/, /static/, /tmp/],
+	},
 	output: {
 		filename: '[name].js',
 		path: resolve(__dirname, '../../dist/client'),
@@ -48,9 +51,9 @@ module.exports = {
 		assets: false,
 		children: false,
 		timings: true,
-		chunks: true,
-		chunkModules: true,
-		entrypoints: true,
+		chunks: false,
+		chunkModules: false,
+		entrypoints: false,
 		modules: false,
 	},
 	module: {

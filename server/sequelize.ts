@@ -114,10 +114,13 @@ if (env.NODE_ENV !== 'test') {
 			await import('server/search2/searchTriggers');
 		await installSearchTriggers();
 		// Run backfill in the background so it doesn't block app startup.
-		// Serialized (not parallel) because they share an advisory lock.
-		(async () => {
-			await backfillPubSearchVectors();
-			await backfillCommunitySearchVectors();
-		})().catch((err) => console.error('Search vector backfill error:', err));
+		// Only in production — in dev the backfill re-runs on every hot-reload.
+		if (process.env.NODE_ENV === 'production') {
+			// Serialized (not parallel) because they share an advisory lock.
+			(async () => {
+				await backfillPubSearchVectors();
+				await backfillCommunitySearchVectors();
+			})().catch((err) => console.error('Search vector backfill error:', err));
+		}
 	});
 }

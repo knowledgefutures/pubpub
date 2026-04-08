@@ -70,3 +70,5 @@ tsconfig.tsbuildinfo
 .jest/secret-env.js
 
 infra/pgdata/
+
+tmp

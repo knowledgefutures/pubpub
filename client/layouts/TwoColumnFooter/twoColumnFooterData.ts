@@ -30,7 +30,7 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		{
 			key: 'non-profit',
 			text: `
-			eLife is a non-profit organisation advancing open science by transforming how research is communicated,reviewed, and assessed. 
+			eLife is a non-profit organisation advancing open science by transforming how research is communicated, reviewed, and assessed. 
 			By developing open tools and collaborating with research communities, institutions, and funders, we are building a fairer, more effective global research ecosystem.
 		`,
 		},

@@ -30,10 +30,8 @@ const defaultTwoColumnFooterProps: TwoColumnFooterProps = {
 		{
 			key: 'non-profit',
 			text: `
-			eLife is a non-profit organisation inspired by research funders and led
-			by scientists. Our mission is to help scientists accelerate discovery by
-			operating a platform for research communication that encourages and
-			recognises the most responsible behaviours in science.
+			eLife is a non-profit organisation advancing open science by transforming how research is communicated,reviewed, and assessed. 
+			By developing open tools and collaborating with research communities, institutions, and funders, we are building a fairer, more effective global research ecosystem.
 		`,
 		},
 		{

@@ -4,7 +4,6 @@ export const router = Router();
 
 const redirectHosts = {
 	'www.pubpub.org': {
-		'/iai': 'https://v3.pubpub.org/iai',
 		'/help': 'https://help.pubpub.org',
 	},
 	'pubpub.ito.com': {

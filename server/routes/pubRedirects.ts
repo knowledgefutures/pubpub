@@ -40,7 +40,7 @@ router.get('/pub/:slug', async (req, res, next) => {
 				: `${pubData.community.subdomain}.pubpub.org`;
 			return res.redirect(`https://${newDomain}/pub/${req.params.slug.replace(/_/gi, '-')}`);
 		}
-		return res.redirect(`https://v3.pubpub.org/pub/${req.params.slug}`);
+		return next();
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

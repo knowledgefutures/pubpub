@@ -5,10 +5,8 @@ import { vi } from 'vitest';
 import { ActivityItem, UserNotification } from 'server/models';
 import { createThreadComment } from 'server/threadComment/queries';
 import { finishDeferredTasks } from 'server/utils/deferred';
+import { transporter } from 'server/utils/email/transport';
 import { modelize, setup, teardown } from 'stubstub';
-
-// const mailgunMessages = require('../hooks.ts').mg.messages;
-import { mg } from '../hooks';
 
 const models = modelize`
     User rando {}
@@ -109,17 +107,12 @@ const models = modelize`
     }
 `;
 
-const mailgunMessages = mg.messages;
-
 setup(beforeAll, async () => {
 	await models.resolve();
 
-	// mock mailgun messages so we can listen for them
-	vi.spyOn(mailgunMessages, 'create').mockImplementation(
-		() =>
-			Promise.resolve({
-				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
-			}) as unknown as Promise<Response>,
+	// mock transporter so we can listen for sent emails
+	vi.spyOn(transporter, 'sendMail').mockImplementation(
+		() => Promise.resolve({ messageId: 'test-id' }) as any,
 	);
 });
 
@@ -178,12 +171,12 @@ describe('UserNotifications created when ActivityItems are created', () => {
 		).toEqual([0, 1, 1, 0, 0]);
 
 		// sends email to craveEmailUser
-		expect(mailgunMessages.create).toHaveBeenCalledTimes(1);
+		expect(transporter.sendMail).toHaveBeenCalledTimes(1);
 	});
 
 	it('creates the right notifications for a public Discussion ThreadComment and send emails to users who have explicitly opted in', async () => {
 		// check that mock has been reset correctly
-		expect(mailgunMessages.create).toHaveBeenCalledTimes(0);
+		expect(transporter.sendMail).toHaveBeenCalledTimes(0);
 
 		const {
 			chattyUser,
@@ -230,7 +223,7 @@ describe('UserNotifications created when ActivityItems are created', () => {
 		).toEqual([1, 1, 1, 0, 0]);
 
 		// sends one email
-		expect(mailgunMessages.create).toHaveBeenCalledTimes(1);
+		expect(transporter.sendMail).toHaveBeenCalledTimes(1);
 	});
 
 	it('creates the right notifications for a members-only Review ThreadComment and does not send emails', async () => {
@@ -267,6 +260,6 @@ describe('UserNotifications created when ActivityItems are created', () => {
 		).toEqual([1, 1, 0]);
 
 		// sends no email for review thread
-		expect(mailgunMessages.create).toHaveBeenCalledTimes(0);
+		expect(transporter.sendMail).toHaveBeenCalledTimes(0);
 	});
 });

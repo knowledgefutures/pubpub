@@ -101,7 +101,16 @@ export const envSchema = z.object({
 		.describe('Key prefix for backup objects'),
 
 	// ── Email ────────────────────────────────────────────────────────────
-	MAILGUN_API_KEY: z.string().min(1).describe('Mailgun API key for transactional emails'),
+	SMTP_HOST: z
+		.string()
+		.min(1)
+		.describe('SMTP server hostname (e.g. email-smtp.us-east-1.amazonaws.com)'),
+	SMTP_PORT: z.coerce
+		.number()
+		.default(587)
+		.describe('SMTP server port (587 for STARTTLS, 465 for TLS)'),
+	SMTP_USER: z.string().min(1).describe('SMTP authentication username'),
+	SMTP_PASS: z.string().min(1).describe('SMTP authentication password'),
 	MAILCHIMP_API_KEY: z.string().optional().describe('Mailchimp API key for mailing lists'),
 
 	// ── Search ───────────────────────────────────────────────────────────

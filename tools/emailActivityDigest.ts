@@ -1,18 +1,13 @@
 import type * as types from 'types';
 
 import * as Sentry from '@sentry/node';
-import mailgun from 'mailgun.js';
 import { Op } from 'sequelize';
 
 import { iterAllCommunities } from 'server/community/queries';
 import { includeUserModel, Member } from 'server/models';
 import { renderDigestEmail } from 'server/utils/email';
+import { sendEmail } from 'server/utils/email/transport';
 import { asyncMap } from 'utils/async';
-
-const mg = mailgun.client({
-	username: 'api',
-	key: process.env.MAILGUN_API_KEY!,
-});
 
 const memberQueryOptions = {
 	include: [includeUserModel({ attributes: ['email'], as: 'user' })],
@@ -48,12 +43,11 @@ async function main() {
 						const scope = { communityId: community.id };
 						const digest = await renderDigestEmail(community, { scope, user });
 						if (digest === null) return;
-						await mg.messages.create('mg.pubpub.org', {
-							from: 'PubPub Team <hello@mg.pubpub.org>',
+						await sendEmail({
 							to: [email],
 							subject: `${community.title} daily activity digest`,
 							html: digest,
-							'h:Reply-To': 'hello@pubpub.org',
+							replyTo: 'hello@pubpub.org',
 						});
 					} catch (err) {
 						// biome-ignore lint/suspicious/noConsole: shhhhhh

@@ -1,10 +1,8 @@
 import type { ActivityRenderContext } from 'client/utils/activity/types';
 import type * as types from 'types';
 
-import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
-import { env } from 'server/env';
 import {
 	ActivityItem,
 	Community,
@@ -14,14 +12,10 @@ import {
 	UserNotificationPreferences,
 } from 'server/models';
 import { defer } from 'server/utils/deferred';
+import { sendEmail } from 'server/utils/email/transport';
 import { discussionTitle } from 'utils/activity/titles/discussion';
 import { expect } from 'utils/assert';
 import * as urls from 'utils/canonicalUrls';
-
-export const mg = mailgun.client({
-	username: 'api',
-	key: env.MAILGUN_API_KEY,
-});
 
 const template = async (activityItem: types.ActivityItemOfKind<'pub-discussion-comment-added'>) => {
 	const actor = expect(await User.findByPk(expect(activityItem.actorId)));
@@ -67,8 +61,7 @@ const createEmailForUserNotification = async (notification: UserNotification) =>
 	const user = expect(await User.findByPk(notification.userId));
 	const activityItem = expect(await ActivityItem.findByPk(notification.activityItemId));
 	if (activityItem.kind === 'pub-discussion-comment-added') {
-		await mg.messages.create('mg.pubpub.org', {
-			from: 'PubPub Team <hello@mg.pubpub.org>',
+		await sendEmail({
 			to: [user.email],
 			subject: 'New reply to PubPub discussion',
 			html: await template(

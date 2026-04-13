@@ -1,49 +1,13 @@
-import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
-import { env } from 'server/env';
+import { sendEmail, transporter } from './transport';
 
-export const mg = mailgun.client({
-	username: 'api',
-	key: env.MAILGUN_API_KEY,
-});
-
-type From = { name: string; address: string };
-type Body = { text: string } | { html: string };
-
-type SendEmailOptions = {
-	from?: From;
-	replyTo?: string;
-	to: string[];
-	cc?: string[];
-	bcc?: string[];
-	subject: string;
-} & Body;
-
-const defaultFrom: From = {
-	name: 'PubPub Team',
-	address: 'hello@pubpub.org',
-};
-
-export const sendEmail = (options: SendEmailOptions) => {
-	const { from = defaultFrom, to, subject } = options;
-	const body = 'text' in options ? { text: options.text } : { html: options.html };
-	return mg.messages.create('mg.pubpub.org', {
-		from: `${from.name} <${from.address}>`,
-		to,
-		subject,
-		...('replyTo' in options && { 'h:Reply-To': options.replyTo }),
-		...('cc' in options && { cc: options.cc }),
-		...('bcc' in options && { bcc: options.bcc }),
-		...body,
-	});
-};
+export { sendEmail, transporter };
 
 export const sendPasswordResetEmail = ({ toEmail, resetUrl }) => {
 	// TODO: We should probably indicate the community somewhere.
 	// e.g. 'We've received a request to reset your PubPub account on Responsive Science.'
-	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@mg.pubpub.org>',
+	return sendEmail({
 		to: [toEmail],
 		subject: 'Password Reset · PubPub',
 		text: stripIndent(`
@@ -54,13 +18,12 @@ export const sendPasswordResetEmail = ({ toEmail, resetUrl }) => {
 			Sincerely,
 			PubPub Support
 		`),
-		'h:Reply-To': 'hello@pubpub.org',
+		replyTo: 'hello@pubpub.org',
 	});
 };
 
 export const sendEmailChangeEmail = ({ toEmail, changeUrl }) => {
-	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@mg.pubpub.org>',
+	return sendEmail({
 		to: [toEmail],
 		subject: 'Confirm Email Change · PubPub',
 		text: stripIndent(`
@@ -73,6 +36,6 @@ export const sendEmailChangeEmail = ({ toEmail, changeUrl }) => {
 			Sincerely,
 			PubPub Support
 		`),
-		'h:Reply-To': 'hello@pubpub.org',
+		replyTo: 'hello@pubpub.org',
 	});
 };

@@ -1,16 +1,9 @@
-import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
 
-import { env } from 'server/env';
-
-const mg = mailgun.client({
-	username: 'api',
-	key: env.MAILGUN_API_KEY,
-});
+import { sendEmail } from './transport';
 
 export const sendSignupEmail = ({ toEmail, signupUrl }) => {
-	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@mg.pubpub.org>',
+	return sendEmail({
 		to: [toEmail],
 		subject: 'Welcome to PubPub!',
 		text: stripIndent(`
@@ -23,6 +16,6 @@ export const sendSignupEmail = ({ toEmail, signupUrl }) => {
 			Sincerely,
 			PubPub Support
 		`),
-		'h:Reply-To': 'hello@pubpub.org',
+		replyTo: 'hello@pubpub.org',
 	});
 };

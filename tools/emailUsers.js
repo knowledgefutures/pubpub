@@ -1,16 +1,11 @@
 
 import stripIndent from 'strip-indent';
-import mailgun from 'mailgun.js';
 
 import { User } from 'server/models';
+import { sendEmail } from 'server/utils/email/transport';
 import { isProd } from 'utils/environment';
 
 import { promptOkay } from './utils/prompt';
-
-const mg = mailgun.client({
-	username: 'api',
-	key: process.env.MAILGUN_API_KEY,
-});
 
 const emailSubject = 'Proposed Terms and Privacy Policy Updates';
 const emailBody = stripIndent(`
@@ -54,7 +49,7 @@ function validateEmail(email) {
 	return re.test(String(email).toLowerCase());
 }
 
-const sendEmail = async (user) => {
+const sendEmailToUser = async (user) => {
 	const userEmail = user.dataValues.email;
 	if (!validateEmail(userEmail)) {
 		return Promise.resolve(`SKIPPING: ${userEmail} (invalid email)`);
@@ -62,12 +57,11 @@ const sendEmail = async (user) => {
 	try {
 		// Uncomment the below to see attempted emails.
 		// console.log(`ATTEMPTING: ${userEmail}`);
-		await mg.messages.create('mg.pubpub.org', {
-			from: 'PubPub Team <hello@mg.pubpub.org>',
+		await sendEmail({
 			to: [userEmail],
 			subject: emailSubject,
 			text: emailBody,
-			'h:Reply-To': 'hello@pubpub.org',
+			replyTo: 'hello@pubpub.org',
 		});
 		const successMessage = `SUCCEEDED: ${userEmail}`;
 		/* This is the only guaranteed log of emails sent. Promise.map does not guarantee order,
@@ -101,7 +95,7 @@ const main = async () => {
 		throwIfNo: true,
 	});
 	try {
-		const emailed = await Promise.map(users, sendEmail, { concurrency: 5 });
+		const emailed = await Promise.map(users, sendEmailToUser, { concurrency: 5 });
 		emailed.forEach((emailedMessage) => {
 			console.log(emailedMessage);
 		});

@@ -37,7 +37,10 @@ All environment variables used by PubPub, with types, defaults, and descriptions
 | `S3_BACKUP_SECRET_KEY` | string | No | — | S3 backup secret key (if different from AWS) |
 | `S3_BACKUP_BUCKET` | string | No | — | S3 bucket name for backups |
 | `S3_BACKUP_KEY_PREFIX` | string | No | pg-backups | Key prefix for backup objects |
-| `MAILGUN_API_KEY` | string | **Yes** | — | Mailgun API key for transactional emails |
+| `SMTP_HOST` | string | **Yes** | — | SMTP server hostname (e.g. email-smtp.us-east-1.amazonaws.com) |
+| `SMTP_PORT` | number | No | 587 | SMTP server port (587 for STARTTLS, 465 for TLS) |
+| `SMTP_USER` | string | **Yes** | — | SMTP authentication username |
+| `SMTP_PASS` | string | **Yes** | — | SMTP authentication password |
 | `MAILCHIMP_API_KEY` | string | No | — | Mailchimp API key for mailing lists |
 | `ALGOLIA_ID` | string | **Yes** | — | Algolia application ID |
 | `ALGOLIA_KEY` | string | **Yes** | — | Algolia admin API key |
@@ -86,7 +89,9 @@ These must be set for the server to start:
 - [ ] `FIREBASE_SERVICE_ACCOUNT_BASE64` — Base64-encoded Firebase service-account JSON
 - [ ] `AWS_ACCESS_KEY_ID` — AWS access key for S3 uploads
 - [ ] `AWS_SECRET_ACCESS_KEY` — AWS secret key for S3 uploads
-- [ ] `MAILGUN_API_KEY` — Mailgun API key for transactional emails
+- [ ] `SMTP_HOST` — SMTP server hostname
+- [ ] `SMTP_USER` — SMTP authentication username
+- [ ] `SMTP_PASS` — SMTP authentication password
 - [ ] `ALGOLIA_ID` — Algolia application ID
 - [ ] `ALGOLIA_KEY` — Algolia admin API key
 - [ ] `ALGOLIA_SEARCH_KEY` — Algolia public search-only key

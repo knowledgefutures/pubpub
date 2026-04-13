@@ -3,7 +3,7 @@ import SHA3 from 'crypto-js/sha3';
 import { vi } from 'vitest';
 
 import { EmailChangeToken, User } from 'server/models';
-import { mg } from 'server/utils/email/reset';
+import { transporter } from 'server/utils/email/transport';
 import { login, modelize, setup, teardown } from 'stubstub';
 
 const uuid = crypto.randomUUID();
@@ -21,17 +21,12 @@ const models = modelize`
     }
 `;
 
-const mailgunMessages = mg.messages;
-
 setup(beforeAll, async () => {
 	await models.resolve();
 
-	// mock mailgun messages so we don't actually send emails in tests
-	vi.spyOn(mailgunMessages, 'create').mockImplementation(
-		() =>
-			Promise.resolve({
-				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
-			}) as unknown as Promise<Response>,
+	// mock transporter so we don't actually send emails in tests
+	vi.spyOn(transporter, 'sendMail').mockImplementation(
+		() => Promise.resolve({ messageId: 'test-id' }) as any,
 	);
 });
 

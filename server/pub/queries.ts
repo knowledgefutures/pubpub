@@ -25,7 +25,6 @@ import {
 import { PubPubError } from 'server/utils/errors';
 import { writeDocumentToPubDraft } from 'server/utils/firebaseTools';
 import { buildPubOptions } from 'server/utils/queryHelpers';
-import { deletePubSearchData, setPubSearchData } from 'server/utils/search';
 import { expect } from 'utils/assert';
 import { asyncForEach } from 'utils/async';
 import { getReadableDateInYear } from 'utils/dates';
@@ -123,8 +122,6 @@ export const createPub = async (
 		createMember,
 	]);
 
-	setPubSearchData(newPub.id);
-
 	switch (true) {
 		case including?.includes('draft'):
 			newPub.draft = draft;
@@ -204,7 +201,6 @@ export const updatePub = async (
 		});
 		throw new Error(e);
 	}
-	setPubSearchData(inputValues.pubId);
 	return 'customPublishedAt' in actualFilteredValues
 		? { ...actualFilteredValues, customPublishedAt: inputValues.customPublishedAt }
 		: actualFilteredValues;
@@ -212,10 +208,7 @@ export const updatePub = async (
 
 export const destroyPub = async (pubId: string, actorId: null | string = null) => {
 	const pub = expect(await Pub.findByPk(pubId));
-	return pub.destroy({ actorId }).then(() => {
-		deletePubSearchData(pubId);
-		return true;
-	});
+	return pub.destroy({ actorId }).then(() => true);
 };
 
 const findCollectionOptions = {

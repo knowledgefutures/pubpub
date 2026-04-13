@@ -11,14 +11,6 @@ import { isMainThread, parentPort, workerData } from 'worker_threads';
 import { archiveTask } from './tasks/archive';
 import { exportTask } from './tasks/export';
 import { importTask } from './tasks/import';
-import {
-	deletePageSearchData,
-	deletePubSearchData,
-	setPageSearchData,
-	setPubSearchData,
-	updateCommunityData,
-	updateUserData,
-} from './tasks/search';
 
 if (isMainThread) {
 	// Don't run outside of a thread spawned by worker_threads in queue.js
@@ -28,12 +20,6 @@ if (isMainThread) {
 const taskMap = {
 	export: exportTask,
 	import: importTask,
-	deletePageSearchData,
-	setPageSearchData,
-	deletePubSearchData,
-	setPubSearchData,
-	updateCommunityData,
-	updateUserData,
 	archive: archiveTask,
 };
 

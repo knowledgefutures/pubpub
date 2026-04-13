@@ -32,7 +32,6 @@ import {
 	PasswordReset,
 	Pricing,
 	Pub,
-	Search,
 	Search2,
 	Signup,
 	SuperAdminDashboard,
@@ -178,11 +177,6 @@ export default (viewData, locationData, chunkName) => {
 		},
 		Pub: {
 			ActiveComponent: Pub,
-		},
-		Search: {
-			ActiveComponent: Search,
-			hideNav: locationData.isBasePubPub,
-			hideFooter: true,
 		},
 		Search2: {
 			ActiveComponent: Search2,

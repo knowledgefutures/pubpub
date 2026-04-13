@@ -5,7 +5,6 @@ import type { PagePermissions } from './permissions';
 
 import { Community, Page } from 'server/models';
 import { PubPubError } from 'server/utils/errors';
-import { deletePageSearchData, setPageSearchData } from 'server/utils/search';
 import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { expect } from 'utils/assert';
 import { generateHash } from 'utils/hashes';
@@ -55,7 +54,6 @@ export const createPage = async (
 		},
 		{ actorId },
 	);
-	setPageSearchData(newPage.id);
 	const findCommunity = Community.findOne({
 		where: { id: inputValues.communityId },
 		attributes: ['id', 'navigation'],
@@ -132,13 +130,7 @@ export const updatePage = async (
 		where: { id: inputValues.pageId },
 		actorId,
 		individualHooks: true,
-	})
-		.then(() => {
-			return setPageSearchData(inputValues.pageId);
-		})
-		.then(() => {
-			return filteredValues;
-		});
+	}).then(() => filteredValues);
 };
 
 export const destroyPage = async (
@@ -184,5 +176,4 @@ export const destroyPage = async (
 			where: { id: inputValues.communityId },
 		},
 	);
-	return deletePageSearchData(inputValues.pageId);
 };

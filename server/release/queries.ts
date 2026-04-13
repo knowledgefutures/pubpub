@@ -15,7 +15,6 @@ import { Discussion, DiscussionAnchor, Doc, Draft, Pub, Release } from 'server/m
 import { sequelize } from 'server/sequelize';
 import { defer } from 'server/utils/deferred';
 import { getPubDraftDoc, getPubDraftRef } from 'server/utils/firebaseAdmin';
-import { setPubSearchData } from 'server/utils/search';
 
 type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';
 export class ReleaseQueryError extends Error {
@@ -225,7 +224,6 @@ export const createRelease = async ({
 		return nextRelease;
 	});
 
-	setPubSearchData(pubId);
 	if (createExports) {
 		await createLatestPubExports(pubId);
 	}

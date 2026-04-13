@@ -3,7 +3,6 @@ import { promisify } from 'util';
 
 import { Signup, User } from 'server/models';
 import { subscribeUser } from 'server/utils/mailchimp';
-import { updateUserData } from 'server/utils/search';
 import { expect } from 'utils/assert';
 import { ORCID_PATTERN } from 'utils/orcid';
 import { slugifyString } from 'utils/strings';
@@ -104,12 +103,7 @@ export const updateUser = (
 	return User.update(filteredValues, {
 		where: { id: inputValues.userId },
 		individualHooks: true,
-	}).then(() => {
-		if (req.user.fullName !== filteredValues.fullName) {
-			updateUserData(req.user.id);
-		}
-		return filteredValues;
-	});
+	}).then(() => filteredValues);
 };
 
 export const isUserSuperAdmin = async ({ userId }: { userId: undefined | null | string }) => {

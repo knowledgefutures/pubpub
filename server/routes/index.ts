@@ -43,7 +43,6 @@ import { router as noMatchRouter } from './noMatch';
 import { router as pageRouter } from './page'; // Route: ['/', '/:slug']
 import { router as passwordResetRouter } from './passwordReset'; // Route: ['/password-reset', '/password-reset/:resetHash/:slug']
 import { router as robotsRouter } from './robots'; // Route: /robots.txt
-import { router as searchRouter } from './search'; // Route: '/search-v1'
 import { router as search2Router } from './search2'; // Route: '/search'
 import { router as signupRouter } from './signup'; // Route: '/signup'
 import { router as sitemapRouter } from './sitemap'; // Route: /sitemap-*.xml
@@ -84,7 +83,6 @@ rootRouter
 	.use(loginRouter)
 	.use(authenticateRouter)
 	.use(legalRouter)
-	.use(searchRouter)
 	.use(search2Router)
 	.use(signupRouter)
 	.use(superAdminDashboardRouter)

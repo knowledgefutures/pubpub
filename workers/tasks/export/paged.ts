@@ -1,22 +1,18 @@
-import { env } from 'server/env';
+const PUBSTASH_URL = 'http://pubstash:8080';
 
 export const exportWithPaged = async (
 	html: string,
 	opts: { communityId: string; pubId: string },
 ) => {
-	// Default to the in-swarm pubstash service; falls back to PUBSTASH_URL env var
-	// for backwards-compat with the old Fly.io deployment.
-	const baseUrl = env.PUBSTASH_URL ?? 'http://pubstash:8080';
 	const params = new URLSearchParams({
 		format: 'pdf',
 		communityId: opts.communityId,
 		pubId: opts.pubId,
 	});
-	const response = await fetch(`${baseUrl}/convert?${params}`, {
+	const response = await fetch(`${PUBSTASH_URL}/convert?${params}`, {
 		method: 'POST',
 		body: html,
 		headers: {
-			Authorization: env.PUBSTASH_ACCESS_KEY ?? '',
 			'Content-Type': 'text/plain',
 		},
 	});

@@ -42,9 +42,6 @@ All environment variables used by PubPub, with types, defaults, and descriptions
 | `SMTP_USER` | string | **Yes** | — | SMTP authentication username |
 | `SMTP_PASS` | string | **Yes** | — | SMTP authentication password |
 | `MAILCHIMP_API_KEY` | string | No | — | Mailchimp API key for mailing lists |
-| `ALGOLIA_ID` | string | **Yes** | — | Algolia application ID |
-| `ALGOLIA_KEY` | string | **Yes** | — | Algolia admin API key |
-| `ALGOLIA_SEARCH_KEY` | string | **Yes** | — | Algolia public search-only key |
 | `ALTCHA_HMAC_KEY` | string | **Yes** | — | HMAC key for ALTCHA proof-of-work captcha |
 | `BYPASS_CAPTCHA` | boolean | No | `false` | Bypass captcha checks (dev/test only) |
 | `AES_ENCRYPTION_KEY` | string | **Yes** | — | AES-256 key for encrypting deposit credentials |
@@ -60,8 +57,6 @@ All environment variables used by PubPub, with types, defaults, and descriptions
 | `FASTLY_SERVICE_ID_DUQDUQ` | string | No | — | Fastly service ID for DuqDuq |
 | `FASTLY_PURGE_TOKEN_DUQDUQ` | string | No | — | Fastly purge token for DuqDuq |
 | `PURGE_TOKEN` | string | No | — | Legacy Fastly purge token |
-| `PUBSTASH_URL` | string | No | http://pubstash:8080 | PubStash service URL for paged exports |
-| `PUBSTASH_ACCESS_KEY` | string | No | — | PubStash access key |
 | `SLACK_WEBHOOK_URL` | string | No | — | Slack incoming webhook URL for notifications |
 | `STITCH_WEBHOOK_URL` | string | No | — | MongoDB Stitch webhook URL for analytics |
 | `METABASE_SECRET_KEY` | string | No | — | Metabase embedding secret key |
@@ -92,8 +87,5 @@ These must be set for the server to start:
 - [ ] `SMTP_HOST` — SMTP server hostname
 - [ ] `SMTP_USER` — SMTP authentication username
 - [ ] `SMTP_PASS` — SMTP authentication password
-- [ ] `ALGOLIA_ID` — Algolia application ID
-- [ ] `ALGOLIA_KEY` — Algolia admin API key
-- [ ] `ALGOLIA_SEARCH_KEY` — Algolia public search-only key
 - [ ] `ALTCHA_HMAC_KEY` — HMAC key for ALTCHA proof-of-work captcha
 - [ ] `AES_ENCRYPTION_KEY` — AES-256 key for encrypting deposit credentials

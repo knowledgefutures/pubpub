@@ -113,11 +113,6 @@ export const envSchema = z.object({
 	SMTP_PASS: z.string().min(1).describe('SMTP authentication password'),
 	MAILCHIMP_API_KEY: z.string().optional().describe('Mailchimp API key for mailing lists'),
 
-	// ── Search ───────────────────────────────────────────────────────────
-	ALGOLIA_ID: z.string().min(1).describe('Algolia application ID'),
-	ALGOLIA_KEY: z.string().min(1).describe('Algolia admin API key'),
-	ALGOLIA_SEARCH_KEY: z.string().min(1).describe('Algolia public search-only key'),
-
 	// ── Captcha (ALTCHA) ────────────────────────────────────────────────
 	ALTCHA_HMAC_KEY: z.string().min(1).describe('HMAC key for ALTCHA proof-of-work captcha'),
 	BYPASS_CAPTCHA: booleanish.describe('Bypass captcha checks (dev/test only)'),
@@ -146,13 +141,6 @@ export const envSchema = z.object({
 	// ── CDN / Fastly ────────────────────────────────────────────────────
 	FASTLY_SERVICE_ID: z.string().describe('Fastly service ID'),
 	FASTLY_PURGE_TOKEN: z.string().describe('Fastly purge token'),
-
-	// ── PubStash (Export) ───────────────────────────────────────────────
-	PUBSTASH_URL: z
-		.string()
-		.default('http://pubstash:8080')
-		.describe('PubStash service URL for paged exports'),
-	PUBSTASH_ACCESS_KEY: z.string().optional().describe('PubStash access key'),
 
 	// ── Webhooks / Integrations ─────────────────────────────────────────
 	SLACK_WEBHOOK_URL: z.string().describe('Slack incoming webhook URL for notifications'),

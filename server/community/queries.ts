@@ -22,7 +22,6 @@ import { getSpamTagForCommunity } from 'server/spamTag/communityQueries';
 import { defer } from 'server/utils/deferred';
 import { sendCommunityAwaitingApprovalEmail } from 'server/utils/email/communitySpam';
 import { subscribeUser } from 'server/utils/mailchimp';
-import { updateCommunityData } from 'server/utils/search';
 import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { addWorkerTask } from 'server/utils/workers';
 import { isProd } from 'utils/environment';
@@ -168,7 +167,6 @@ export const updateCommunity = async (
 		actorId,
 		individualHooks: true,
 	});
-	updateCommunityData(inputValues.communityId);
 	return filteredValues;
 };
 

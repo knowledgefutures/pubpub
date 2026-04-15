@@ -36,11 +36,13 @@ RUN apt-get update \
 # ---- Production dependencies ----
 FROM base AS prod-deps
 COPY package.json pnpm-lock.yaml ./
+COPY patches/ patches/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 # ---- Builder stage ----
 FROM base AS builder
 COPY package.json pnpm-lock.yaml ./
+COPY patches/ patches/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY . .

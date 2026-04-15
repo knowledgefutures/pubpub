@@ -16,11 +16,9 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 	@import 'components/Editor/styles/textAlign.scss';
 }
 
-/* Import some global variables and styles, including fonts */
+/* Import some global variables and styles */
 @import 'styles/variables.scss';
 @import 'containers/Pub/PubDocument/pubBody.scss';
-
-@import url('https://use.typekit.net/kmi0tdo.css');
 
 body {
 	font-family: $base-font;
@@ -60,6 +58,9 @@ section.cover {
 	.title {
 		margin-top: 0;
 		font-size: 3em;
+		font-weight: 800;
+		letter-spacing: -1.1px;
+		line-height: 1.4em;
 	}
 	.byline {
 		h3 {

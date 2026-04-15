@@ -4,7 +4,7 @@ import path from 'path';
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
 
 /**
- * this is run once per build to generate the export CSn
+ * this is run once per build to generate the export CSS
  */
 export const buildExportCss = async () => {
 	// @ts-expect-error shh

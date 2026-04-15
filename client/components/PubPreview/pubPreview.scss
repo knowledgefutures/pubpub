@@ -70,8 +70,9 @@
 				text-decoration: underline;
 			}
 			.pub-title {
-				font-weight: 500;
+				font-weight: 650;
 				font-size: 24px;
+				letter-spacing: 0px;
 				line-height: 1.33 !important;
 			}
 		}
@@ -156,6 +157,7 @@
 			.pub-title {
 				font-weight: 400;
 				font-size: 22px;
+				letter-spacing: 0px;
 				line-height: 1.33 !important;
 			}
 		}
@@ -197,6 +199,7 @@
 			.pub-title {
 				font-weight: 400;
 				font-size: 18px;
+				letter-spacing: 0px;
 				line-height: 1.33 !important;
 			}
 		}
@@ -213,7 +216,7 @@
 	.title-wrapper {
 		padding-bottom: 5px;
 		font-family:
-			multi-display,
+			'Source Sans 3',
 			-apple-system,
 			'BlinkMacSystemFont',
 			'Segoe UI',
@@ -228,7 +231,8 @@
 	.pub-title {
 		line-height: 1.25 !important;
 		display: inline;
-		font-weight: 500;
+		font-weight: 650;
+		letter-spacing: 0.2px;
 	}
 	.authors {
 		font-size: 14px;

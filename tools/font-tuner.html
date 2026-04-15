@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PubPub Font Tuner v2</title>
+<!-- Typekit: original fonts -->
+<link rel="stylesheet" href="https://use.typekit.net/kmi0tdo.css">
+<!-- Google Fonts: all alternatives -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Header + Landing sans-serifs -->
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Figtree:ital,wght@0,300..900;1,300..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:wght@100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lexend:wght@100..900&family=Manrope:wght@200..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Onest:wght@100..900&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&family=Sora:wght@100..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Urbanist:ital,wght@0,100..900;1,100..900&family=Wix+Madefor+Display:wght@400..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<!-- Body serifs -->
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Piazzolla:ital,opsz,wght@0,8..30,100..900;1,8..30,100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<!-- Non-Google fonts: Fontshare -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=switzer@1&f[]=cabinet-grotesk@1&f[]=general-sans@1&display=swap" rel="stylesheet">
+<!-- Non-Google fonts: Geist (Vercel via jsDelivr) -->
+<style>
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.7.0/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+  }
+</style>
+<style>
+  :root {
+    --text-dark: #2c3654;
+    --text-light: #fff9e9;
+    --bg-dark: #2c3654;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #1a1a1a; color: #333; font-size: 14px; }
+
+  /* Layout */
+  .tuner-app { display: flex; height: 100vh; }
+  .controls-panel {
+    width: 340px; min-width: 340px; background: #111; color: #ddd;
+    overflow-y: auto; padding: 12px; font-size: 12px;
+    border-right: 2px solid #333;
+  }
+  .preview-panel { flex: 1; overflow-y: auto; padding: 0; background: #1a1a1a; }
+
+  /* Controls */
+  .section-header {
+    font-size: 12px; font-weight: 700; color: #fff;
+    margin: 16px 0 6px; padding: 4px 0; border-bottom: 1px solid #444;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .control-group { margin-bottom: 8px; }
+  .control-group label {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1px; font-size: 11px; color: #999;
+  }
+  .control-group label .val { color: #6cf; font-family: monospace; font-size: 11px; }
+  .control-group input[type="range"] { width: 100%; accent-color: #6cf; height: 16px; }
+  .control-group select {
+    width: 100%; background: #222; color: #ddd; border: 1px solid #444;
+    padding: 4px; border-radius: 3px; font-size: 11px; margin-top: 2px;
+  }
+
+  /* Preview */
+  .comparison-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 2px; }
+  .comparison-col { padding: 20px 24px; min-height: 80px; }
+  .comparison-col.before { background: #fff; border-right: 2px solid #f44; }
+  .comparison-col.after { background: #fff; border-left: 2px solid #4a4; }
+  .col-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-family: system-ui; margin-bottom: 8px; font-weight: 700; }
+  .col-label.before-label { color: #c44; }
+  .col-label.after-label { color: #4a4; }
+  .section-divider { background: #333; color: #aaa; padding: 8px 24px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-family: system-ui; }
+
+  /* Overlay mode */
+  .preview-panel.overlay-mode .comparison-row {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+  .preview-panel.overlay-mode .comparison-col.before {
+    border-right: none;
+  }
+  .preview-panel.overlay-mode .comparison-col.after {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-left: none;
+    background: #fff;
+    z-index: 1;
+  }
+
+  /* Pub Header themes */
+  .pub-header-preview { position: relative; padding: 16px; min-height: 100px; border-radius: 4px; }
+  .pub-header-preview.theme-light { background: linear-gradient(135deg, #4a6fa5, #2c3654); color: white; }
+  .pub-header-preview.theme-dark { background: #f5f5f5; color: #222; }
+  .pub-header-preview.theme-white-blocks { background: linear-gradient(135deg, #4a6fa5, #2c3654); color: black; }
+  .pub-header-preview.theme-black-blocks { background: linear-gradient(135deg, #ddd, #f5f5f5); color: white; }
+  .pub-header-preview .pub-title { margin: 0 0 6px; }
+  .pub-header-preview .pub-description { margin: 0 0 3px; }
+  .pub-header-preview .pub-byline { font-style: italic; margin: 0; }
+
+  /* Blocks effect */
+  .pub-header-preview.theme-white-blocks .pub-title span,
+  .pub-header-preview.theme-white-blocks .pub-description span,
+  .pub-header-preview.theme-white-blocks .pub-byline span {
+    display: inline; background: white; padding: 2px 16px;
+    box-decoration-break: clone; -webkit-box-decoration-break: clone;
+    box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.1);
+  }
+  .pub-header-preview.theme-black-blocks .pub-title span,
+  .pub-header-preview.theme-black-blocks .pub-description span,
+  .pub-header-preview.theme-black-blocks .pub-byline span {
+    display: inline; background: black; padding: 2px 16px;
+    box-decoration-break: clone; -webkit-box-decoration-break: clone;
+    box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.1);
+  }
+
+  /* Landing */
+  .landing-jumbotron { background: linear-gradient(0deg, #fff6c9 0%, #fff 100%); padding: 24px; }
+  .landing-dark-section { background: var(--bg-dark); color: var(--text-light); padding: 20px; border-radius: 6px; margin-top: 16px; }
+
+  /* Output */
+  .output-section { margin-top: 16px; }
+  .output-btn { width: 100%; padding: 8px; background: #6cf; color: #000; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 12px; margin-bottom: 4px; }
+  .output-btn:hover { background: #4ad; }
+  .output-btn.copied { background: #4c6; }
+  .import-btn { width: 100%; padding: 8px; background: #fa4; color: #000; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 12px; }
+  .import-btn:hover { background: #e93; }
+  .import-btn.imported { background: #4c6; }
+  #output-area { width: 100%; height: 140px; margin-top: 6px; background: #0a0a0a; color: #6cf; border: 1px solid #333; font-family: monospace; font-size: 10px; padding: 6px; resize: vertical; }
+  #import-area { width: 100%; height: 100px; margin-top: 6px; background: #0a0a0a; color: #fa4; border: 1px solid #444; font-family: monospace; font-size: 10px; padding: 6px; resize: vertical; }
+  /* Mirror pubBody.scss: strong inside headings inherits weight */
+  .comparison-col h1 strong, .comparison-col h2 strong, .comparison-col h3 strong,
+  .comparison-col h4 strong, .comparison-col h5 strong, .comparison-col h6 strong,
+  .comparison-col .body-h1 strong, .comparison-col .body-h2 strong, .comparison-col .body-h3 strong,
+  .comparison-col .body-h4 strong, .comparison-col .body-h5 strong, .comparison-col .body-h6 strong {
+    font-weight: inherit;
+  }
+</style>
+</head>
+<body>
+<div class="tuner-app">
+
+<!-- =================== CONTROLS =================== -->
+<div class="controls-panel">
+  <h2 style="color:#6cf; margin-bottom:8px; font-size:14px;">Font Tuner v2</h2>
+  <p style="font-size:10px; color:#666; margin-bottom:12px;">Left = original Typekit · Right = new Google Font · Adjust sliders &amp; dropdowns</p>
+
+  <!-- VIEW MODE -->
+  <div class="section-header">View Mode</div>
+  <div class="control-group" style="display:flex; gap:8px; align-items:center;">
+    <button type="button" id="mode-toggle" style="flex:1; padding:6px; background:#6cf; color:#000; border:none; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">Switch to Overlay</button>
+  </div>
+  <div class="control-group" id="opacity-group" style="display:none;">
+    <label>overlay opacity <span class="val" id="val-overlay-opacity">0.5</span></label>
+    <input type="range" id="overlay-opacity" min="0" max="1" step="0.01" value="0.5">
+  </div>
+
+  <!-- FONT SELECTORS -->
+  <div class="section-header">Font Selection</div>
+  <div class="control-group">
+    <label>Header font (replaces multi-display)</label>
+    <select id="font-header">
+      <option value="'Red Hat Display', sans-serif" selected>Red Hat Display</option>
+      <optgroup label="── Google Fonts ──">
+      <option value="'Albert Sans', sans-serif">Albert Sans</option>
+      <option value="'Bricolage Grotesque', sans-serif">Bricolage Grotesque</option>
+      <option value="'DM Sans', sans-serif">DM Sans</option>
+      <option value="'Figtree', sans-serif">Figtree</option>
+      <option value="'Hanken Grotesk', sans-serif">Hanken Grotesk</option>
+      <option value="'IBM Plex Sans', sans-serif">IBM Plex Sans</option>
+      <option value="'Instrument Sans', sans-serif">Instrument Sans</option>
+      <option value="'Inter', sans-serif">Inter</option>
+      <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
+      <option value="'Lexend', sans-serif">Lexend</option>
+      <option value="'Manrope', sans-serif">Manrope</option>
+      <option value="'Nunito Sans', sans-serif">Nunito Sans</option>
+      <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+      <option value="'Raleway', sans-serif">Raleway</option>
+      <option value="'Sora', sans-serif">Sora</option>
+      <option value="'Source Sans 3', sans-serif">Source Sans 3 (Adobe)</option>
+      <option value="'Urbanist', sans-serif">Urbanist</option>
+      <option value="'Wix Madefor Display', sans-serif">Wix Madefor Display</option>
+      <option value="'Work Sans', sans-serif">Work Sans</option>
+      </optgroup>
+      <optgroup label="── Fontshare / Other ──">
+      <option value="'Geist', sans-serif">Geist (Vercel)</option>
+      <option value="'Satoshi', sans-serif">Satoshi (Fontshare)</option>
+      <option value="'Switzer', sans-serif">Switzer (Fontshare)</option>
+      <option value="'Cabinet Grotesk', sans-serif">Cabinet Grotesk (Fontshare)</option>
+      <option value="'General Sans', sans-serif">General Sans (Fontshare)</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Body font (replaces skolar-latin)</label>
+    <select id="font-body">
+      <option value="'Source Serif 4', Georgia, serif" selected>Source Serif 4</option>
+      <optgroup label="── Google Fonts ──">
+      <option value="'Bitter', Georgia, serif">Bitter</option>
+      <option value="'Cormorant Garamond', Georgia, serif">Cormorant Garamond</option>
+      <option value="'Crimson Pro', Georgia, serif">Crimson Pro</option>
+      <option value="'Fraunces', Georgia, serif">Fraunces</option>
+      <option value="'IBM Plex Serif', Georgia, serif">IBM Plex Serif</option>
+      <option value="'Libre Baskerville', Georgia, serif">Libre Baskerville</option>
+      <option value="'Literata', Georgia, serif">Literata</option>
+      <option value="'Lora', Georgia, serif">Lora</option>
+      <option value="'Merriweather', Georgia, serif">Merriweather</option>
+      <option value="'Newsreader', Georgia, serif">Newsreader ★</option>
+      <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+      <option value="'Piazzolla', Georgia, serif">Piazzolla ★</option>
+      <option value="'STIX Two Text', Georgia, serif">STIX Two Text (STEM)</option>
+      <option value="'Vollkorn', Georgia, serif">Vollkorn</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Landing font (replaces upgrade)</label>
+    <select id="font-landing">
+      <option value="'Outfit', sans-serif" selected>Outfit</option>
+      <optgroup label="── Google Fonts ──">
+      <option value="'Albert Sans', sans-serif">Albert Sans</option>
+      <option value="'DM Sans', sans-serif">DM Sans</option>
+      <option value="'Figtree', sans-serif">Figtree</option>
+      <option value="'Hanken Grotesk', sans-serif">Hanken Grotesk</option>
+      <option value="'Instrument Sans', sans-serif">Instrument Sans</option>
+      <option value="'Manrope', sans-serif">Manrope</option>
+      <option value="'Onest', sans-serif">Onest</option>
+      <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+      <option value="'Poppins', sans-serif">Poppins</option>
+      <option value="'Raleway', sans-serif">Raleway</option>
+      <option value="'Red Hat Display', sans-serif">Red Hat Display</option>
+      <option value="'Sora', sans-serif">Sora</option>
+      <option value="'Urbanist', sans-serif">Urbanist ★</option>
+      <option value="'Work Sans', sans-serif">Work Sans</option>
+      </optgroup>
+      <optgroup label="── Fontshare / Other ──">
+      <option value="'Geist', sans-serif">Geist (Vercel)</option>
+      <option value="'Switzer', sans-serif">Switzer (Fontshare)</option>
+      <option value="'Cabinet Grotesk', sans-serif">Cabinet Grotesk (Fontshare)</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- PUB HEADER -->
+  <div class="section-header">Pub Header — Title (h1)</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-ph-title-weight">450</span></label>
+    <input type="range" id="ph-title-weight" min="100" max="900" step="1" value="450" data-target=".after .pub-title" data-prop="fontWeight" data-display="val-ph-title-weight">
+  </div>
+  <div class="control-group">
+    <label>line-height <span class="val" id="val-ph-title-lh">1.5</span></label>
+    <input type="range" id="ph-title-lh" min="1.0" max="2.0" step="0.01" value="1.5" data-target=".after .pub-title" data-prop="lineHeight" data-display="val-ph-title-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-ph-title-ls">-1.1</span></label>
+    <input type="range" id="ph-title-ls" min="-2" max="4" step="0.1" value="-1.1" data-target=".after .pub-title" data-prop="letterSpacing" data-display="val-ph-title-ls" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>font-size (px) <span class="val" id="val-ph-title-fs">48</span></label>
+    <input type="range" id="ph-title-fs" min="24" max="72" step="1" value="48" data-target=".after .pub-title" data-prop="fontSize" data-display="val-ph-title-fs" data-suffix="px">
+  </div>
+
+  <div class="section-header">Pub Header — Description</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-ph-desc-weight">300</span></label>
+    <input type="range" id="ph-desc-weight" min="100" max="900" step="1" value="300" data-target=".after .pub-description" data-prop="fontWeight" data-display="val-ph-desc-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (px) <span class="val" id="val-ph-desc-fs">18</span></label>
+    <input type="range" id="ph-desc-fs" min="12" max="28" step="1" value="18" data-target=".after .pub-description" data-prop="fontSize" data-display="val-ph-desc-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-ph-desc-ls">0.3</span></label>
+    <input type="range" id="ph-desc-ls" min="-2" max="4" step="0.1" value="0.3" data-target=".after .pub-description" data-prop="letterSpacing" data-display="val-ph-desc-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Pub Header — Byline</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-ph-byline-weight">400</span></label>
+    <input type="range" id="ph-byline-weight" min="100" max="900" step="1" value="400" data-target=".after .pub-byline" data-prop="fontWeight" data-display="val-ph-byline-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (px) <span class="val" id="val-ph-byline-fs">19</span></label>
+    <input type="range" id="ph-byline-fs" min="12" max="24" step="1" value="19" data-target=".after .pub-byline" data-prop="fontSize" data-display="val-ph-byline-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-ph-byline-ls">0.1</span></label>
+    <input type="range" id="ph-byline-ls" min="-2" max="4" step="0.1" value="0.1" data-target=".after .pub-byline" data-prop="letterSpacing" data-display="val-ph-byline-ls" data-suffix="px">
+  </div>
+
+  <!-- PUB BODY -->
+  <div class="section-header">Pub Body — h1</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-pb-h1-weight">700</span></label>
+    <input type="range" id="pb-h1-weight" min="100" max="900" step="1" value="700" data-target=".after .body-h1" data-prop="fontWeight" data-display="val-pb-h1-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-pb-h1-fs">1.6</span></label>
+    <input type="range" id="pb-h1-fs" min="0.8" max="2.5" step="0.05" value="1.6" data-target=".after .body-h1" data-prop="fontSize" data-display="val-pb-h1-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>line-height (em) <span class="val" id="val-pb-h1-lh">1.1</span></label>
+    <input type="range" id="pb-h1-lh" min="0.8" max="2.0" step="0.05" value="1.1" data-target=".after .body-h1" data-prop="lineHeight" data-display="val-pb-h1-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-pb-h1-ls">0</span></label>
+    <input type="range" id="pb-h1-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .body-h1" data-prop="letterSpacing" data-display="val-pb-h1-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Pub Body — h2</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-pb-h2-weight">600</span></label>
+    <input type="range" id="pb-h2-weight" min="100" max="900" step="1" value="600" data-target=".after .body-h2" data-prop="fontWeight" data-display="val-pb-h2-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-pb-h2-fs">1.4</span></label>
+    <input type="range" id="pb-h2-fs" min="0.8" max="2.5" step="0.05" value="1.4" data-target=".after .body-h2" data-prop="fontSize" data-display="val-pb-h2-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>line-height (em) <span class="val" id="val-pb-h2-lh">1.1</span></label>
+    <input type="range" id="pb-h2-lh" min="0.8" max="2.0" step="0.05" value="1.1" data-target=".after .body-h2" data-prop="lineHeight" data-display="val-pb-h2-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-pb-h2-ls">0</span></label>
+    <input type="range" id="pb-h2-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .body-h2" data-prop="letterSpacing" data-display="val-pb-h2-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Pub Body — h3</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-pb-h3-weight">400</span></label>
+    <input type="range" id="pb-h3-weight" min="100" max="900" step="1" value="400" data-target=".after .body-h3" data-prop="fontWeight" data-display="val-pb-h3-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-pb-h3-fs">1.25</span></label>
+    <input type="range" id="pb-h3-fs" min="0.8" max="2.0" step="0.05" value="1.25" data-target=".after .body-h3" data-prop="fontSize" data-display="val-pb-h3-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>line-height (em) <span class="val" id="val-pb-h3-lh">0.8</span></label>
+    <input type="range" id="pb-h3-lh" min="0.8" max="2.0" step="0.05" value="0.8" data-target=".after .body-h3" data-prop="lineHeight" data-display="val-pb-h3-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-pb-h3-ls">0</span></label>
+    <input type="range" id="pb-h3-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .body-h3" data-prop="letterSpacing" data-display="val-pb-h3-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Pub Body — h4 / h5 / h6</div>
+  <div class="control-group">
+    <label>h4 font-weight <span class="val" id="val-pb-h4-weight">600</span></label>
+    <input type="range" id="pb-h4-weight" min="100" max="900" step="1" value="600" data-target=".after .body-h4" data-prop="fontWeight" data-display="val-pb-h4-weight">
+  </div>
+  <div class="control-group">
+    <label>h4 letter-spacing <span class="val" id="val-pb-h4-ls">0</span></label>
+    <input type="range" id="pb-h4-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .body-h4" data-prop="letterSpacing" data-display="val-pb-h4-ls" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>h5 font-weight <span class="val" id="val-pb-h5-weight">500</span></label>
+    <input type="range" id="pb-h5-weight" min="100" max="900" step="1" value="500" data-target=".after .body-h5" data-prop="fontWeight" data-display="val-pb-h5-weight">
+  </div>
+  <div class="control-group">
+    <label>h6 font-weight <span class="val" id="val-pb-h6-weight">300</span></label>
+    <input type="range" id="pb-h6-weight" min="100" max="900" step="1" value="300" data-target=".after .body-h6" data-prop="fontWeight" data-display="val-pb-h6-weight">
+  </div>
+
+  <div class="section-header">Pub Body — Paragraph</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-pb-p-weight">400</span></label>
+    <input type="range" id="pb-p-weight" min="100" max="900" step="1" value="400" data-target=".after .body-paragraph" data-prop="fontWeight" data-display="val-pb-p-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (px) <span class="val" id="val-pb-p-fs">20</span></label>
+    <input type="range" id="pb-p-fs" min="14" max="28" step="1" value="20" data-target=".after .body-paragraph" data-prop="fontSize" data-display="val-pb-p-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>line-height <span class="val" id="val-pb-p-lh">1.75</span></label>
+    <input type="range" id="pb-p-lh" min="1.0" max="2.5" step="0.01" value="1.75" data-target=".after .body-paragraph" data-prop="lineHeight" data-display="val-pb-p-lh">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing (em) <span class="val" id="val-pb-p-ls">-0.023</span></label>
+    <input type="range" id="pb-p-ls" min="-0.05" max="0.05" step="0.001" value="-0.023" data-target=".after .body-paragraph" data-prop="letterSpacing" data-display="val-pb-p-ls" data-suffix="em">
+  </div>
+
+  <!-- PDF EXPORT -->
+  <div class="section-header">PDF Export — Cover Title</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-pdf-title-weight">450</span></label>
+    <input type="range" id="pdf-title-weight" min="100" max="900" step="1" value="450" data-target=".after .pdf-cover-title" data-prop="fontWeight" data-display="val-pdf-title-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-pdf-title-fs">3</span></label>
+    <input type="range" id="pdf-title-fs" min="1" max="5" step="0.1" value="3" data-target=".after .pdf-cover-title" data-prop="fontSize" data-display="val-pdf-title-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>line-height <span class="val" id="val-pdf-title-lh">1.5</span></label>
+    <input type="range" id="pdf-title-lh" min="1.0" max="2.0" step="0.01" value="1.5" data-target=".after .pdf-cover-title" data-prop="lineHeight" data-display="val-pdf-title-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-pdf-title-ls">-1.1</span></label>
+    <input type="range" id="pdf-title-ls" min="-4" max="4" step="0.1" value="-1.1" data-target=".after .pdf-cover-title" data-prop="letterSpacing" data-display="val-pdf-title-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">PDF Export — Body</div>
+  <div class="control-group">
+    <label>font-size (px) <span class="val" id="val-pdf-body-fs">14</span></label>
+    <input type="range" id="pdf-body-fs" min="10" max="22" step="1" value="14" data-target=".after .pdf-body-text" data-prop="fontSize" data-display="val-pdf-body-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>line-height <span class="val" id="val-pdf-body-lh">1.75</span></label>
+    <input type="range" id="pdf-body-lh" min="1.0" max="2.5" step="0.01" value="1.75" data-target=".after .pdf-body-text" data-prop="lineHeight" data-display="val-pdf-body-lh">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing (em) <span class="val" id="val-pdf-body-ls">-0.023</span></label>
+    <input type="range" id="pdf-body-ls" min="-0.05" max="0.05" step="0.001" value="-0.023" data-target=".after .pdf-body-text" data-prop="letterSpacing" data-display="val-pdf-body-ls" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>h1 font-weight <span class="val" id="val-pdf-h1-weight">700</span></label>
+    <input type="range" id="pdf-h1-weight" min="100" max="900" step="1" value="700" data-target=".after .pdf-body-h1" data-prop="fontWeight" data-display="val-pdf-h1-weight">
+  </div>
+  <div class="control-group">
+    <label>h2 font-weight <span class="val" id="val-pdf-h2-weight">600</span></label>
+    <input type="range" id="pdf-h2-weight" min="100" max="900" step="1" value="600" data-target=".after .pdf-body-h2" data-prop="fontWeight" data-display="val-pdf-h2-weight">
+  </div>
+
+  <!-- LANDING -->
+  <div class="section-header">Landing — Global</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-body-weight">400</span></label>
+    <input type="range" id="lp-body-weight" min="100" max="900" step="1" value="400" data-target=".after .landing-global" data-prop="fontWeight" data-display="val-lp-body-weight">
+  </div>
+  <div class="control-group">
+    <label>line-height <span class="val" id="val-lp-body-lh">2</span></label>
+    <input type="range" id="lp-body-lh" min="1.0" max="3.0" step="0.01" value="2" data-target=".after .landing-global" data-prop="lineHeight" data-display="val-lp-body-lh" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-lp-body-ls">0.2</span></label>
+    <input type="range" id="lp-body-ls" min="-2" max="4" step="0.1" value="0.2" data-target=".after .landing-global" data-prop="letterSpacing" data-display="val-lp-body-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Landing — Hero h1</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-h1-weight">500</span></label>
+    <input type="range" id="lp-h1-weight" min="100" max="900" step="1" value="500" data-target=".after .landing-h1" data-prop="fontWeight" data-display="val-lp-h1-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-lp-h1-fs">3.9</span></label>
+    <input type="range" id="lp-h1-fs" min="1" max="8" step="0.1" value="3.9" data-target=".after .landing-h1" data-prop="fontSize" data-display="val-lp-h1-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-lp-h1-ls">0.2</span></label>
+    <input type="range" id="lp-h1-ls" min="-4" max="8" step="0.1" value="0.2" data-target=".after .landing-h1" data-prop="letterSpacing" data-display="val-lp-h1-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Landing — Hero h2</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-h2-weight">300</span></label>
+    <input type="range" id="lp-h2-weight" min="100" max="900" step="1" value="300" data-target=".after .landing-h2" data-prop="fontWeight" data-display="val-lp-h2-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-lp-h2-fs">2</span></label>
+    <input type="range" id="lp-h2-fs" min="0.5" max="4" step="0.1" value="2" data-target=".after .landing-h2" data-prop="fontSize" data-display="val-lp-h2-fs" data-suffix="em">
+  </div>
+
+  <div class="section-header">Landing — Subtitle (was upgrade-lights 500)</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-sub-weight">200</span></label>
+    <input type="range" id="lp-sub-weight" min="100" max="900" step="1" value="200" data-target=".after .landing-subtitle" data-prop="fontWeight" data-display="val-lp-sub-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-lp-sub-fs">1.5</span></label>
+    <input type="range" id="lp-sub-fs" min="0.5" max="3" step="0.1" value="1.5" data-target=".after .landing-subtitle" data-prop="fontSize" data-display="val-lp-sub-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-lp-sub-ls">0</span></label>
+    <input type="range" id="lp-sub-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .landing-subtitle" data-prop="letterSpacing" data-display="val-lp-sub-ls" data-suffix="px">
+  </div>
+
+  <div class="section-header">Landing — Feature list (was upgrade-lights 500)</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-feat-weight">300</span></label>
+    <input type="range" id="lp-feat-weight" min="100" max="900" step="1" value="300" data-target=".after .landing-featurelist" data-prop="fontWeight" data-display="val-lp-feat-weight">
+  </div>
+
+  <div class="section-header">Landing — Community desc (was upgrade-light 300)</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-desc-weight">300</span></label>
+    <input type="range" id="lp-desc-weight" min="100" max="900" step="1" value="300" data-target=".after .landing-community-desc" data-prop="fontWeight" data-display="val-lp-desc-weight">
+  </div>
+
+  <div class="section-header">Landing — Disclaimer (was upgrade-lights 200)</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-discl-weight">200</span></label>
+    <input type="range" id="lp-discl-weight" min="100" max="900" step="1" value="200" data-target=".after .landing-disclaimer" data-prop="fontWeight" data-display="val-lp-discl-weight">
+  </div>
+
+  <div class="section-header">Landing — h3 / h4</div>
+  <div class="control-group">
+    <label>h3 font-weight <span class="val" id="val-lp-h3-weight">300</span></label>
+    <input type="range" id="lp-h3-weight" min="100" max="900" step="1" value="300" data-target=".after .landing-h3" data-prop="fontWeight" data-display="val-lp-h3-weight">
+  </div>
+  <div class="control-group">
+    <label>h4 font-weight <span class="val" id="val-lp-h4-weight">500</span></label>
+    <input type="range" id="lp-h4-weight" min="100" max="900" step="1" value="500" data-target=".after .landing-h4" data-prop="fontWeight" data-display="val-lp-h4-weight">
+  </div>
+
+  <div class="section-header">Landing — CTA heading</div>
+  <div class="control-group">
+    <label>font-weight <span class="val" id="val-lp-cta-weight">350</span></label>
+    <input type="range" id="lp-cta-weight" min="100" max="900" step="1" value="350" data-target=".after .landing-cta-heading" data-prop="fontWeight" data-display="val-lp-cta-weight">
+  </div>
+  <div class="control-group">
+    <label>font-size (em) <span class="val" id="val-lp-cta-fs">2</span></label>
+    <input type="range" id="lp-cta-fs" min="0.5" max="4" step="0.1" value="2" data-target=".after .landing-cta-heading" data-prop="fontSize" data-display="val-lp-cta-fs" data-suffix="em">
+  </div>
+  <div class="control-group">
+    <label>letter-spacing <span class="val" id="val-lp-cta-ls">0</span></label>
+    <input type="range" id="lp-cta-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .landing-cta-heading" data-prop="letterSpacing" data-display="val-lp-cta-ls" data-suffix="px">
+  </div>
+
+  <!-- PUB PREVIEW -->
+  <div class="section-header">Pub Preview — Title</div>
+  <div class="control-group">
+    <label>large font-weight <span class="val" id="val-pp-lg-weight">650</span></label>
+    <input type="range" id="pp-lg-weight" min="100" max="900" step="1" value="650" data-target=".after .pp-title-large" data-prop="fontWeight" data-display="val-pp-lg-weight">
+  </div>
+  <div class="control-group">
+    <label>large font-size (px) <span class="val" id="val-pp-lg-fs">24</span></label>
+    <input type="range" id="pp-lg-fs" min="14" max="40" step="1" value="24" data-target=".after .pp-title-large" data-prop="fontSize" data-display="val-pp-lg-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>large letter-spacing <span class="val" id="val-pp-lg-ls">-1</span></label>
+    <input type="range" id="pp-lg-ls" min="-2" max="4" step="0.1" value="-1" data-target=".after .pp-title-large" data-prop="letterSpacing" data-display="val-pp-lg-ls" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>base font-weight <span class="val" id="val-pp-base-weight">500</span></label>
+    <input type="range" id="pp-base-weight" min="100" max="900" step="1" value="500" data-target=".after .pp-title-base" data-prop="fontWeight" data-display="val-pp-base-weight">
+  </div>
+  <div class="control-group">
+    <label>base letter-spacing <span class="val" id="val-pp-base-ls">0</span></label>
+    <input type="range" id="pp-base-ls" min="-2" max="4" step="0.1" value="0" data-target=".after .pp-title-base" data-prop="letterSpacing" data-display="val-pp-base-ls" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>small font-weight <span class="val" id="val-pp-sm-weight">400</span></label>
+    <input type="range" id="pp-sm-weight" min="100" max="900" step="1" value="400" data-target=".after .pp-title-small" data-prop="fontWeight" data-display="val-pp-sm-weight">
+  </div>
+  <div class="control-group">
+    <label>small font-size (px) <span class="val" id="val-pp-sm-fs">22</span></label>
+    <input type="range" id="pp-sm-fs" min="12" max="32" step="1" value="22" data-target=".after .pp-title-small" data-prop="fontSize" data-display="val-pp-sm-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>small letter-spacing <span class="val" id="val-pp-sm-ls">-1</span></label>
+    <input type="range" id="pp-sm-ls" min="-2" max="4" step="0.1" value="-1" data-target=".after .pp-title-small" data-prop="letterSpacing" data-display="val-pp-sm-ls" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>minimal font-weight <span class="val" id="val-pp-min-weight">400</span></label>
+    <input type="range" id="pp-min-weight" min="100" max="900" step="1" value="400" data-target=".after .pp-title-minimal" data-prop="fontWeight" data-display="val-pp-min-weight">
+  </div>
+  <div class="control-group">
+    <label>minimal font-size (px) <span class="val" id="val-pp-min-fs">18</span></label>
+    <input type="range" id="pp-min-fs" min="10" max="28" step="1" value="18" data-target=".after .pp-title-minimal" data-prop="fontSize" data-display="val-pp-min-fs" data-suffix="px">
+  </div>
+  <div class="control-group">
+    <label>minimal letter-spacing <span class="val" id="val-pp-min-ls">-0.5</span></label>
+    <input type="range" id="pp-min-ls" min="-2" max="4" step="0.1" value="-0.5" data-target=".after .pp-title-minimal" data-prop="letterSpacing" data-display="val-pp-min-ls" data-suffix="px">
+  </div>
+
+  <!-- IMPORT -->
+  <div class="output-section">
+    <div class="section-header">Import / Restore Values</div>
+    <p style="font-size:10px; color:#888; margin-bottom:6px;">Paste a previous output here and click Import to restore all values:</p>
+    <textarea id="import-area" placeholder="Paste a previous === FONT TUNER OUTPUT === here..."></textarea>
+    <button type="button" class="import-btn" id="import-btn">📥 Import Values</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-section">
+    <div class="section-header">Export</div>
+    <button type="button" class="output-btn" id="copy-btn">📋 Copy Output for Copilot</button>
+    <textarea id="output-area" readonly></textarea>
+  </div>
+</div>
+
+<!-- =================== PREVIEW =================== -->
+<div class="preview-panel">
+
+  <!-- PUB HEADER: DEFAULT (no background image, plain grey) -->
+  <div class="section-divider">Pub Header — Default Theme (no background)</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display)</div>
+      <div class="pub-header-preview theme-dark">
+        <h1 class="pub-title" style="font-family:multi-display,-apple-system,sans-serif; font-size:48px; line-height:1.5em; font-weight:400;">The Future of Open Access Publishing and Knowledge Sharing</h1>
+        <p class="pub-description" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400;">A comprehensive exploration of emerging models for academic publishing</p>
+        <p class="pub-byline" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.5px;">By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</p>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span>)</div>
+      <div class="pub-header-preview theme-dark">
+        <h1 class="pub-title after-header-font" style="font-size:48px; line-height:1.42em; font-weight:517; letter-spacing:0.3px;">The Future of Open Access Publishing and Knowledge Sharing</h1>
+        <p class="pub-description after-header-font" style="font-size:18px; font-weight:500; letter-spacing:0.3px;">A comprehensive exploration of emerging models for academic publishing</p>
+        <p class="pub-byline after-header-font" style="font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.1px;">By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB HEADER: LIGHT -->
+  <div class="section-divider">Pub Header — Light Theme</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display)</div>
+      <div class="pub-header-preview theme-light">
+        <h1 class="pub-title" style="font-family:multi-display,-apple-system,sans-serif; font-size:48px; line-height:1.5em; font-weight:400;">The Future of Open Access Publishing and Knowledge Sharing</h1>
+        <p class="pub-description" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400;">A comprehensive exploration of emerging models for academic publishing</p>
+        <p class="pub-byline" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.5px;">By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</p>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span>)</div>
+      <div class="pub-header-preview theme-light">
+        <h1 class="pub-title after-header-font" style="font-size:48px; line-height:1.42em; font-weight:517; letter-spacing:0.3px;">The Future of Open Access Publishing and Knowledge Sharing</h1>
+        <p class="pub-description after-header-font" style="font-size:18px; font-weight:500; letter-spacing:0.3px;">A comprehensive exploration of emerging models for academic publishing</p>
+        <p class="pub-byline after-header-font" style="font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.1px;">By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB HEADER: WHITE BLOCKS -->
+  <div class="section-divider">Pub Header — White Blocks Theme (box-decoration-break)</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display)</div>
+      <div class="pub-header-preview theme-white-blocks">
+        <h1 class="pub-title" style="font-family:multi-display,-apple-system,sans-serif; font-size:48px; line-height:1.5em; font-weight:400;"><span>The Future of Open Access Publishing and Knowledge Sharing</span></h1>
+        <p class="pub-description" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400;"><span>A comprehensive exploration of emerging models</span></p>
+        <p class="pub-byline" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.5px;"><span>By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</span></p>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span>)</div>
+      <div class="pub-header-preview theme-white-blocks">
+        <h1 class="pub-title after-header-font" style="font-size:48px; line-height:1.42em; font-weight:517; letter-spacing:0.3px;"><span>The Future of Open Access Publishing and Knowledge Sharing</span></h1>
+        <p class="pub-description after-header-font" style="font-size:18px; font-weight:500; letter-spacing:0.3px;"><span>A comprehensive exploration of emerging models</span></p>
+        <p class="pub-byline after-header-font" style="font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.1px;"><span>By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB HEADER: BLACK BLOCKS -->
+  <div class="section-divider">Pub Header — Black Blocks Theme</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display)</div>
+      <div class="pub-header-preview theme-black-blocks">
+        <h1 class="pub-title" style="font-family:multi-display,-apple-system,sans-serif; font-size:48px; line-height:1.5em; font-weight:400;"><span>The Future of Open Access Publishing and Knowledge Sharing</span></h1>
+        <p class="pub-description" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400;"><span>A comprehensive exploration of emerging models</span></p>
+        <p class="pub-byline" style="font-family:multi-display,-apple-system,sans-serif; font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.5px;"><span>By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</span></p>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span>)</div>
+      <div class="pub-header-preview theme-black-blocks">
+        <h1 class="pub-title after-header-font" style="font-size:48px; line-height:1.42em; font-weight:517; letter-spacing:0.3px;"><span>The Future of Open Access Publishing and Knowledge Sharing</span></h1>
+        <p class="pub-description after-header-font" style="font-size:18px; font-weight:500; letter-spacing:0.3px;"><span>A comprehensive exploration of emerging models</span></p>
+        <p class="pub-byline after-header-font" style="font-size:18px; font-weight:400; font-style:italic; letter-spacing:0.1px;"><span>By Yolanda Gypsy-Quiroga, Peggy Youngblood, Quỳnh Nguyễn, György Pálffy, Jaquelyn O'Byrne-Stiglitz, Qiang Yu, Gretchen Bjørg-Magnúsdóttir, Yoshiyuki Taniguchi, and Gwendolyn Quigley</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB BODY -->
+  <div class="section-divider">Pub Body — Content (headings + body text)</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display + skolar-latin)</div>
+      <h2 class="body-h1" style="font-family:multi-display,-apple-system,sans-serif; font-size:1.4em; font-weight:600; line-height:1.3em; letter-spacing:0px; margin-bottom:0.5em;">1. Introduction to <strong>Open Publishing</strong> Infrastructure</h2>
+      <p class="body-paragraph" style="font-family:skolar-latin,Georgia,serif; font-size:20px; font-weight:400; line-height:1.7; letter-spacing:-0.003em; margin-bottom:1em;">The landscape of academic publishing is undergoing a <strong>fundamental transformation</strong>. Open-access mandates from funding agencies, combined with new digital-first platforms, are reshaping how research is disseminated and consumed.</p>
+      <h3 class="body-h2" style="font-family:multi-display,-apple-system,sans-serif; font-size:1.3em; font-weight:500; line-height:1.3em; letter-spacing:0px; margin-bottom:0.5em;">1.1 <strong>Historical</strong> Context</h3>
+      <p class="body-paragraph" style="font-family:skolar-latin,Georgia,serif; font-size:20px; font-weight:400; line-height:1.7; letter-spacing:-0.003em; margin-bottom:1em;">From the earliest scientific journals of the 17th century to modern preprint servers, the mechanisms for sharing knowledge have <strong>continuously evolved</strong>.</p>
+      <h4 class="body-h3" style="font-family:multi-display,-apple-system,sans-serif; font-size:1.2em; font-weight:400; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;">1.1.1 The <strong>Journal</strong> Model</h4>
+      <p class="body-paragraph" style="font-family:skolar-latin,Georgia,serif; font-size:20px; font-weight:400; line-height:1.7; letter-spacing:-0.003em; margin-bottom:0.5em;">Peer-reviewed journals remain the <strong>gold standard</strong> for academic credentialing, yet their business models have come under increasing scrutiny.</p>
+      <h5 class="body-h4" style="font-family:multi-display,-apple-system,sans-serif; font-size:1em; font-weight:500; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;"><strong>Subscription-Based</strong> Access</h5>
+      <h6 class="body-h5" style="font-family:multi-display,-apple-system,sans-serif; font-size:1em; font-weight:400; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;"><strong>Paywall</strong> Economics</h6>
+      <p class="body-h6" style="font-family:multi-display,-apple-system,sans-serif; font-size:1em; font-weight:300; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;">A Note on <strong>Terminology</strong></p>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span> + <span class="after-body-font-name">Source Serif 4</span>)</div>
+      <h2 class="body-h1 after-header-font" style="font-size:1.4em; font-weight:900; line-height:1.3em; letter-spacing:0px; margin-bottom:0.5em;">1. Introduction to <strong>Open Publishing</strong> Infrastructure</h2>
+      <p class="body-paragraph after-body-font" style="font-size:20px; font-weight:400; line-height:1.75; letter-spacing:-0.023em; margin-bottom:1em;">The landscape of academic publishing is undergoing a <strong>fundamental transformation</strong>. Open-access mandates from funding agencies, combined with new digital-first platforms, are reshaping how research is disseminated and consumed.</p>
+      <h3 class="body-h2 after-header-font" style="font-size:1.3em; font-weight:700; line-height:1.3em; letter-spacing:0px; margin-bottom:0.5em;">1.1 <strong>Historical</strong> Context</h3>
+      <p class="body-paragraph after-body-font" style="font-size:20px; font-weight:400; line-height:1.75; letter-spacing:-0.023em; margin-bottom:1em;">From the earliest scientific journals of the 17th century to modern preprint servers, the mechanisms for sharing knowledge have <strong>continuously evolved</strong>.</p>
+      <h4 class="body-h3 after-header-font" style="font-size:1.2em; font-weight:500; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;">1.1.1 The <strong>Journal</strong> Model</h4>
+      <p class="body-paragraph after-body-font" style="font-size:20px; font-weight:400; line-height:1.75; letter-spacing:-0.023em; margin-bottom:0.5em;">Peer-reviewed journals remain the <strong>gold standard</strong> for academic credentialing, yet their business models have come under increasing scrutiny.</p>
+      <h5 class="body-h4 after-header-font" style="font-size:1em; font-weight:500; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;"><strong>Subscription-Based</strong> Access</h5>
+      <h6 class="body-h5 after-header-font" style="font-size:1em; font-weight:400; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;"><strong>Paywall</strong> Economics</h6>
+      <p class="body-h6 after-header-font" style="font-size:1em; font-weight:300; line-height:1.3em; letter-spacing:0.5px; margin-bottom:0.5em;">A Note on <strong>Terminology</strong></p>
+    </div>
+  </div>
+
+  <!-- PDF EXPORT PREVIEW -->
+  <div class="section-divider">PDF Export — Cover Page + Body (Letter-size simulation)</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display + skolar-latin at export sizes)</div>
+      <div style="border:2px solid #ccc; padding:30px 24px; margin-bottom:16px; background:#fff; max-width:100%;">
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-size:3em; font-weight:400; line-height:1.3em; margin-bottom:16px; color:#555;">The Future of Open Access Publishing and Knowledge Sharing</div>
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-size:1em; margin-bottom:8px;">Catherine Ahearn, Travis Rich, Gabriel Stein</div>
+        <div style="font-size:0.85em; color:#888; border-top:1px solid #ddd; padding-top:8px;">Published in Journal of Open Science &middot; Jan 15, 2024</div>
+      </div>
+      <div style="border:2px solid #ccc; padding:20px 24px; background:#fff;">
+        <h2 style="font-family:multi-display,-apple-system,sans-serif; font-size:1.6em; font-weight:600; line-height:1.1em; margin-bottom:0.5em;">1. Introduction to <strong>Open Publishing</strong></h2>
+        <p style="font-family:skolar-latin,Georgia,serif; font-size:14px; font-weight:400; line-height:1.7; letter-spacing:-0.003em; margin-bottom:1em;">The landscape of academic publishing is undergoing a <strong>fundamental transformation</strong>. Open-access mandates from funding agencies, combined with new digital-first platforms, are reshaping how research is disseminated and consumed globally.</p>
+        <h3 style="font-family:multi-display,-apple-system,sans-serif; font-size:1.4em; font-weight:500; line-height:1.1em; margin-bottom:0.5em;">1.1 <strong>Historical</strong> Context</h3>
+        <p style="font-family:skolar-latin,Georgia,serif; font-size:14px; font-weight:400; line-height:1.7; letter-spacing:-0.003em;">From the earliest scientific journals of the 17th century to modern preprint servers, the mechanisms for sharing knowledge have continuously evolved.</p>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span> + <span class="after-body-font-name">Source Serif 4</span>)</div>
+      <div style="border:2px solid #ccc; padding:30px 24px; margin-bottom:16px; background:#fff; max-width:100%;">
+        <div class="pdf-cover-title after-header-font" style="font-size:3em; font-weight:450; line-height:1.5em; letter-spacing:-1.1px; margin-bottom:16px; color:#555;">The Future of Open Access Publishing and Knowledge Sharing</div>
+        <div class="after-header-font" style="font-size:1em; margin-bottom:8px;">Catherine Ahearn, Travis Rich, Gabriel Stein</div>
+        <div style="font-size:0.85em; color:#888; border-top:1px solid #ddd; padding-top:8px;">Published in Journal of Open Science &middot; Jan 15, 2024</div>
+      </div>
+      <div style="border:2px solid #ccc; padding:20px 24px; background:#fff;">
+        <h2 class="pdf-body-h1 after-header-font" style="font-size:1.6em; font-weight:700; line-height:1.1em; margin-bottom:0.5em;">1. Introduction to <strong>Open Publishing</strong></h2>
+        <p class="pdf-body-text after-body-font" style="font-size:14px; font-weight:400; line-height:1.75; letter-spacing:-0.023em; margin-bottom:1em;">The landscape of academic publishing is undergoing a <strong>fundamental transformation</strong>. Open-access mandates from funding agencies, combined with new digital-first platforms, are reshaping how research is disseminated and consumed globally.</p>
+        <h3 class="pdf-body-h2 after-header-font" style="font-size:1.4em; font-weight:600; line-height:1.1em; margin-bottom:0.5em;">1.1 <strong>Historical</strong> Context</h3>
+        <p class="pdf-body-text after-body-font" style="font-size:14px; font-weight:400; line-height:1.75; letter-spacing:-0.023em;">From the earliest scientific journals of the 17th century to modern preprint servers, the mechanisms for sharing knowledge have continuously evolved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB PREVIEW -->
+  <div class="section-divider">Pub Preview — Cards (header font at smaller sizes)</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (multi-display)</div>
+      <div style="border:1px solid #ddd; padding:16px; margin-bottom:12px; border-radius:4px;">
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-weight:500; font-size:24px; line-height:1.33; margin-bottom:6px;">The Future of Open Access Publishing and Knowledge Sharing</div>
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-weight:400; font-size:16px; line-height:1.25; color:#666; margin-bottom:4px;">Catherine Ahearn, Travis Rich, Gabriel Stein</div>
+        <div style="font-size:14px; line-height:1.3; color:#888;">A comprehensive exploration of emerging models for academic publishing in the digital age.</div>
+      </div>
+      <div style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:4px; display:flex; gap:12px;">
+        <div style="width:35%; background:#f0f0f0; min-height:80px; border-radius:2px;"></div>
+        <div style="width:65%;">
+          <div style="font-family:multi-display,-apple-system,sans-serif; font-weight:500; font-size:20px; line-height:1.25; margin-bottom:4px;">Medium Preview: Community-Led Research Platforms</div>
+          <div style="font-size:14px; line-height:1.3; color:#888;">A comprehensive exploration of emerging models for academic publishing.</div>
+        </div>
+      </div>
+      <div style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:4px;">
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-weight:400; font-size:22px; line-height:1.33; margin-bottom:4px;">Community-Led Research Platforms</div>
+        <div style="font-size:14px; line-height:1.3; color:#666;">By the Knowledge Futures Lab</div>
+      </div>
+      <div style="border:1px solid #ddd; padding:8px 12px; border-radius:4px;">
+        <div style="font-family:multi-display,-apple-system,sans-serif; font-weight:400; font-size:18px; line-height:1.33;">A Brief Introduction to Scholarly Infrastructure</div>
+        <div style="font-size:14px; line-height:1.3; color:#666; margin-top:2px;">Jan 15, 2024</div>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-header-font-name">Inter</span>)</div>
+      <div style="border:1px solid #ddd; padding:16px; margin-bottom:12px; border-radius:4px;">
+        <div class="pp-title-large after-header-font" style="font-weight:500; font-size:24px; line-height:1.33; margin-bottom:6px;">The Future of Open Access Publishing and Knowledge Sharing</div>
+        <div class="after-header-font" style="font-weight:400; font-size:16px; line-height:1.25; color:#666; margin-bottom:4px;">Catherine Ahearn, Travis Rich, Gabriel Stein</div>
+        <div style="font-size:14px; line-height:1.3; color:#888;">A comprehensive exploration of emerging models for academic publishing in the digital age.</div>
+      </div>
+      <div style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:4px; display:flex; gap:12px;">
+        <div style="width:35%; background:#f0f0f0; min-height:80px; border-radius:2px;"></div>
+        <div style="width:65%;">
+          <div class="pp-title-base after-header-font" style="font-weight:500; font-size:20px; line-height:1.25; margin-bottom:4px;">Medium Preview: Community-Led Research Platforms</div>
+          <div style="font-size:14px; line-height:1.3; color:#888;">A comprehensive exploration of emerging models for academic publishing.</div>
+        </div>
+      </div>
+      <div style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:4px;">
+        <div class="pp-title-small after-header-font" style="font-weight:400; font-size:22px; line-height:1.33; margin-bottom:4px;">Community-Led Research Platforms</div>
+        <div style="font-size:14px; line-height:1.3; color:#666;">By the Knowledge Futures Lab</div>
+      </div>
+      <div style="border:1px solid #ddd; padding:8px 12px; border-radius:4px;">
+        <div class="pp-title-minimal after-header-font" style="font-weight:400; font-size:18px; line-height:1.33;">A Brief Introduction to Scholarly Infrastructure</div>
+        <div style="font-size:14px; line-height:1.3; color:#666; margin-top:2px;">Jan 15, 2024</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDING: HERO -->
+  <div class="section-divider">Landing Page — Hero</div>
+  <div class="comparison-row">
+    <div class="comparison-col before" style="padding:0;">
+      <div class="col-label before-label" style="padding:12px 24px 0;">Before (upgrade + upgrade-lights)</div>
+      <div class="landing-jumbotron" style="font-family:upgrade,sans-serif; font-weight:300; line-height:2em; letter-spacing:1px;">
+        <h1 style="font-family:upgrade,sans-serif; font-weight:400; font-size:4em; margin:0.5em 0;">PubPub</h1>
+        <p style="font-family:upgrade-lights,sans-serif; font-weight:500; font-size:1.5em; max-width:500px;">An open-source, community-led, end-to-end publishing platform for knowledge communities.</p>
+        <h2 style="font-family:upgrade,sans-serif; font-weight:300; font-size:2em; margin:0.75em 0; border-top:1px #000 solid; padding-top:0.75em; max-width:400px;">Create knowledge. Share it with audiences who care.</h2>
+      </div>
+    </div>
+    <div class="comparison-col after" style="padding:0;">
+      <div class="col-label after-label" style="padding:12px 24px 0;">After (<span class="after-landing-font-name">Outfit</span>)</div>
+      <div class="landing-jumbotron landing-global after-landing-font" style="font-weight:300; line-height:2em; letter-spacing:1px;">
+        <h1 class="landing-h1 after-landing-font" style="font-weight:400; font-size:4em; margin:0.5em 0;">PubPub</h1>
+        <p class="landing-subtitle after-landing-font" style="font-weight:300; font-size:1.5em; max-width:500px;">An open-source, community-led, end-to-end publishing platform for knowledge communities.</p>
+        <h2 class="landing-h2 after-landing-font" style="font-weight:300; font-size:2em; margin:0.75em 0; border-top:1px #000 solid; padding-top:0.75em; max-width:400px;">Create knowledge. Share it with audiences who care.</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDING: FEATURES -->
+  <div class="section-divider">Landing Page — Features</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (upgrade + upgrade-lights)</div>
+      <div style="font-family:upgrade,sans-serif; letter-spacing:1px;">
+        <h3 style="font-family:upgrade,sans-serif; font-weight:200; text-transform:uppercase; font-size:1em; line-height:2em;">Key Features</h3>
+        <h4 style="font-family:upgrade,sans-serif; font-weight:400; font-size:1.25em; line-height:2em;">Collaborate &amp; edit with co-authors in real time</h4>
+        <ul style="font-family:upgrade-lights,sans-serif; font-weight:500; list-style:none; padding:0; line-height:2em;">
+          <li>Keep everyone in the loop</li>
+          <li>Assign roles on-the-fly</li>
+          <li>Easy multi-file imports</li>
+          <li>Complex-content friendly</li>
+        </ul>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-landing-font-name">Outfit</span>)</div>
+      <div class="landing-global after-landing-font" style="letter-spacing:1px;">
+        <h3 class="landing-h3 after-landing-font" style="font-weight:200; text-transform:uppercase; font-size:1em; line-height:2em;">Key Features</h3>
+        <h4 class="landing-h4 after-landing-font" style="font-weight:400; font-size:1.25em; line-height:2em;">Collaborate &amp; edit with co-authors in real time</h4>
+        <ul class="landing-featurelist after-landing-font" style="font-weight:300; list-style:none; padding:0; line-height:2em;">
+          <li>Keep everyone in the loop</li>
+          <li>Assign roles on-the-fly</li>
+          <li>Easy multi-file imports</li>
+          <li>Complex-content friendly</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDING: COMMUNITIES & DISCLAIMER -->
+  <div class="section-divider">Landing Page — Communities &amp; Disclaimer</div>
+  <div class="comparison-row">
+    <div class="comparison-col before">
+      <div class="col-label before-label">Before (upgrade-light / upgrade-lights)</div>
+      <div style="font-family:upgrade,sans-serif; letter-spacing:1px;">
+        <h4 style="font-weight:400; font-size:1.2em; line-height:1.2em; margin-bottom:0.5em;">Harvard Data Science Review</h4>
+        <p style="font-family:upgrade-light,sans-serif; font-weight:300; font-size:0.9em; line-height:1.2em; font-style:italic;">A Harvard initiative focusing on foundational thinking, research milestones, and educational innovation in data science.</p>
+        <div class="landing-dark-section" style="margin-top:16px;">
+          <h4 style="font-family:upgrade,sans-serif; font-weight:300; font-size:2em; line-height:1.2em; margin-bottom:0.5em;">Start building with PubPub today.</h4>
+          <p style="font-family:upgrade-lights,sans-serif; font-weight:200; font-style:italic;">PubPub is free to use. A premium hosted version is available for organizations that need additional support.</p>
+        </div>
+      </div>
+    </div>
+    <div class="comparison-col after">
+      <div class="col-label after-label">After (<span class="after-landing-font-name">Outfit</span>)</div>
+      <div class="landing-global after-landing-font" style="letter-spacing:1px;">
+        <h4 class="landing-h4 after-landing-font" style="font-weight:400; font-size:1.2em; line-height:1.2em; margin-bottom:0.5em;">Harvard Data Science Review</h4>
+        <p class="landing-community-desc after-landing-font" style="font-weight:200; font-size:0.9em; line-height:1.2em; font-style:italic;">A Harvard initiative focusing on foundational thinking, research milestones, and educational innovation in data science.</p>
+        <div class="landing-dark-section" style="margin-top:16px;">
+          <h4 class="after-landing-font landing-cta-heading" style="font-weight:300; font-size:2em; line-height:1.2em; margin-bottom:0.5em;">Start building with PubPub today.</h4>
+          <p class="landing-disclaimer after-landing-font" style="font-weight:100; font-style:italic;">PubPub is free to use. A premium hosted version is available for organizations that need additional support.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const fontSelectors = {
+  header: document.getElementById('font-header'),
+  body: document.getElementById('font-body'),
+  landing: document.getElementById('font-landing'),
+};
+
+function updateFonts() {
+  const hf = fontSelectors.header.value;
+  const bf = fontSelectors.body.value;
+  const lf = fontSelectors.landing.value;
+  document.querySelectorAll('.after-header-font').forEach(el => el.style.fontFamily = hf);
+  document.querySelectorAll('.after-body-font').forEach(el => el.style.fontFamily = bf);
+  document.querySelectorAll('.after-landing-font').forEach(el => el.style.fontFamily = lf);
+  const hName = fontSelectors.header.options[fontSelectors.header.selectedIndex].text;
+  const bName = fontSelectors.body.options[fontSelectors.body.selectedIndex].text;
+  const lName = fontSelectors.landing.options[fontSelectors.landing.selectedIndex].text;
+  document.querySelectorAll('.after-header-font-name').forEach(el => el.textContent = hName);
+  document.querySelectorAll('.after-body-font-name').forEach(el => el.textContent = bName);
+  document.querySelectorAll('.after-landing-font-name').forEach(el => el.textContent = lName);
+}
+fontSelectors.header.addEventListener('change', updateFonts);
+fontSelectors.body.addEventListener('change', updateFonts);
+fontSelectors.landing.addEventListener('change', updateFonts);
+updateFonts();
+
+// Sliders
+document.querySelectorAll('input[type="range"]').forEach(slider => {
+  if (!slider.dataset.display) return; // skip non-tuner sliders (e.g. overlay opacity)
+  const update = () => {
+    const val = slider.value;
+    const suffix = slider.dataset.suffix || '';
+    const prop = slider.dataset.prop;
+    document.getElementById(slider.dataset.display).textContent = val + suffix;
+    document.querySelectorAll(slider.dataset.target).forEach(el => {
+      el.style[prop] = val + suffix;
+    });
+  };
+  slider.addEventListener('input', update);
+  update();
+});
+
+// ===== Overlay mode =====
+const modeToggle = document.getElementById('mode-toggle');
+const opacityGroup = document.getElementById('opacity-group');
+const opacitySlider = document.getElementById('overlay-opacity');
+const opacityVal = document.getElementById('val-overlay-opacity');
+const previewPanel = document.querySelector('.preview-panel');
+let overlayMode = false;
+
+modeToggle.addEventListener('click', () => {
+  overlayMode = !overlayMode;
+  previewPanel.classList.toggle('overlay-mode', overlayMode);
+  modeToggle.textContent = overlayMode ? 'Switch to Side-by-Side' : 'Switch to Overlay';
+  modeToggle.style.background = overlayMode ? '#fa4' : '#6cf';
+  opacityGroup.style.display = overlayMode ? '' : 'none';
+  applyOverlayOpacity();
+});
+
+function applyOverlayOpacity() {
+  const val = overlayMode ? opacitySlider.value : 1;
+  document.querySelectorAll('.comparison-col.after').forEach(el => {
+    el.style.opacity = val;
+  });
+  opacityVal.textContent = opacitySlider.value;
+}
+
+opacitySlider.addEventListener('input', applyOverlayOpacity);
+
+// Output
+function generateOutput() {
+  const hName = fontSelectors.header.options[fontSelectors.header.selectedIndex].text;
+  const bName = fontSelectors.body.options[fontSelectors.body.selectedIndex].text;
+  const lName = fontSelectors.landing.options[fontSelectors.landing.selectedIndex].text;
+  const sections = {};
+  let currentSection = '';
+  document.querySelectorAll('.controls-panel > *').forEach(el => {
+    if (el.classList.contains('section-header')) {
+      currentSection = el.textContent.trim();
+      sections[currentSection] = {};
+    } else if (el.classList.contains('control-group')) {
+      const slider = el.querySelector('input[type="range"]');
+      if (slider && currentSection) {
+        const label = el.querySelector('label').childNodes[0].textContent.trim();
+        const suffix = slider.dataset.suffix || '';
+        sections[currentSection][label] = slider.value + suffix;
+      }
+    }
+  });
+  let out = '=== FONT TUNER OUTPUT ===\n';
+  out += 'Paste this block into the Copilot chat to apply these values.\n\n';
+  out += `[Font Choices]\n`;
+  out += `  Header font (replaces multi-display): ${hName}\n`;
+  out += `  Body font (replaces skolar-latin): ${bName}\n`;
+  out += `  Landing font (replaces upgrade): ${lName}\n\n`;
+  for (const [section, props] of Object.entries(sections)) {
+    if (section === 'Font Selection') continue;
+    out += `[${section}]\n`;
+    for (const [key, val] of Object.entries(props)) {
+      out += `  ${key}: ${val}\n`;
+    }
+    out += '\n';
+  }
+  out += '=== END FONT TUNER OUTPUT ===';
+  return out;
+}
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  const output = generateOutput();
+  document.getElementById('output-area').value = output;
+  navigator.clipboard.writeText(output).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy Output for Copilot'; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+document.querySelectorAll('input[type="range"], select').forEach(el => {
+  el.addEventListener('input', () => { document.getElementById('output-area').value = generateOutput(); saveState(); });
+  el.addEventListener('change', () => { document.getElementById('output-area').value = generateOutput(); saveState(); });
+});
+
+// ===== Import feature =====
+function importValues(text) {
+  if (!text || !text.includes('FONT TUNER OUTPUT')) return false;
+
+  // Parse font choices
+  const headerMatch = text.match(/Header font \(replaces multi-display\):\s*(.+)/i);
+  const bodyMatch = text.match(/Body font \(replaces skolar-latin\):\s*(.+)/i);
+  const landingMatch = text.match(/Landing font \(replaces upgrade\):\s*(.+)/i);
+
+  function selectByText(selectEl, name) {
+    const trimmed = name.trim();
+    for (let i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].text.trim() === trimmed) {
+        selectEl.selectedIndex = i;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  if (headerMatch) selectByText(fontSelectors.header, headerMatch[1]);
+  if (bodyMatch) selectByText(fontSelectors.body, bodyMatch[1]);
+  if (landingMatch) selectByText(fontSelectors.landing, landingMatch[1]);
+  updateFonts();
+
+  // Build a section-aware map: { sectionName: { label: value } }
+  const sectionMap = {};
+  let currentSection = '';
+  const lines = text.split('\n');
+  for (const line of lines) {
+    const sectionMatch = line.match(/^\[(.+)\]$/);
+    if (sectionMatch) {
+      currentSection = sectionMatch[1].trim();
+      sectionMap[currentSection] = {};
+      continue;
+    }
+    if (currentSection) {
+      const m = line.match(/^\s{2}(.+?):\s*(.+)$/);
+      if (m && !m[1].includes('font (replaces')) {
+        sectionMap[currentSection][m[1].trim()] = m[2].trim();
+      }
+    }
+  }
+
+  // Apply to sliders, matching by section + label
+  let currentDomSection = '';
+  document.querySelectorAll('.controls-panel > *').forEach(el => {
+    if (el.classList.contains('section-header')) {
+      currentDomSection = el.textContent.trim();
+      return;
+    }
+    if (!el.classList.contains('control-group')) return;
+    const slider = el.querySelector('input[type="range"]');
+    if (!slider || !currentDomSection) return;
+    const labelText = el.querySelector('label').childNodes[0].textContent.trim();
+    const sectionData = sectionMap[currentDomSection];
+    if (!sectionData || sectionData[labelText] === undefined) return;
+
+    // Strip suffix to get raw number
+    const suffix = slider.dataset.suffix || '';
+    let rawVal = sectionData[labelText];
+    if (suffix && rawVal.endsWith(suffix)) rawVal = rawVal.slice(0, -suffix.length);
+    slider.value = rawVal;
+    // Trigger visual update
+    const displayEl = document.getElementById(slider.dataset.display);
+    if (displayEl) displayEl.textContent = rawVal + suffix;
+    document.querySelectorAll(slider.dataset.target).forEach(target => {
+      target.style[slider.dataset.prop] = rawVal + suffix;
+    });
+  });
+
+  document.getElementById('output-area').value = generateOutput();
+  return true;
+}
+
+document.getElementById('import-btn').addEventListener('click', () => {
+  const text = document.getElementById('import-area').value;
+  const ok = importValues(text);
+  const btn = document.getElementById('import-btn');
+  if (ok) {
+    btn.textContent = '✅ Imported!';
+    btn.classList.add('imported');
+    saveState();
+  } else {
+    btn.textContent = '❌ No valid data found';
+  }
+  setTimeout(() => { btn.textContent = '📥 Import Values'; btn.classList.remove('imported'); }, 2000);
+});
+
+// ===== LocalStorage persistence =====
+function saveState() {
+  try { localStorage.setItem('pubpub-font-tuner', generateOutput()); } catch(_e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('pubpub-font-tuner');
+    if (saved && saved.includes('FONT TUNER OUTPUT')) {
+      importValues(saved);
+    }
+  } catch(_e) {}
+}
+
+// Auto-restore on load
+loadState();
+document.getElementById('output-area').value = generateOutput();
+</script>
+</body>
+</html>

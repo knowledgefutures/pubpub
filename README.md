@@ -49,6 +49,55 @@ pnpm dev
 
 Navigate to `localhost:9876`
 
+## Fonts
+
+PubPub uses three main font families, plus CJK variants:
+
+- **Source Sans 3** — headers, titles, UI text
+- **Source Serif 4** — body text in pubs
+- **Outfit** — landing page
+- **Noto Serif TC/JP/KR/SC** and **Noto Sans TC/JP/KR/SC** — CJK content
+
+All fonts are variable-weight woff2 files from [Fontsource](https://fontsource.org/), hosted on S3 at `assets.pubpub.org/fonts/<hash>/`. The font files are not stored in this repo.
+
+### How it works
+
+A single `fonts.css` on S3 contains all the `@font-face` declarations (~940 rules) for every font family. Each rule uses `unicode-range` subsetting, so browsers only download the woff2 slices for characters actually on the page.
+
+The font CSS is loaded via `<link>` tags in `server/Html.tsx` (web) and `workers/tasks/export/html.tsx` (PDF exports), so the browser can start fetching it in parallel with other resources.
+
+### Cache busting
+
+Files on `assets.pubpub.org` have a long TTL. To avoid cache issues, all font files live under a content-hashed directory (`/fonts/<hash>/`). The hash is derived from the sha256 of all generated files. If nothing changes, the hash stays the same and nothing gets re-uploaded. If anything changes, you get a new directory and new URLs automatically.
+
+Old versions remain on S3 harmlessly — they'll just stop being referenced.
+
+### Updating fonts
+
+Run the upload script:
+
+```
+# Dry run — downloads fonts, generates CSS, shows what would happen, updates source files
+scripts/upload-fonts-to-s3.sh --dry-run
+
+# Real run — same as above, but also uploads to S3
+AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... scripts/upload-fonts-to-s3.sh
+```
+
+The script:
+
+1. Downloads fontsource packages directly from npm (nothing gets installed in the project)
+2. Copies all woff2 files to a staging directory
+3. Generates `fonts.css` with corrected `font-family` names and relative `url()` paths
+4. Computes a content hash from everything in the staging directory
+5. Uploads to `s3://assets.pubpub.org/fonts/<hash>/`
+6. Updates the font URL in `server/Html.tsx` and `workers/tasks/export/html.tsx`
+
+After running the script, commit the updated source files. You need AWS credentials with write access to the `assets.pubpub.org` bucket.
+
+To add or remove font families, edit the `PACKAGES` and `CSS_SOURCES` arrays in the script, and update `client/styles/variables.scss` to match.
+
+
 ## Storybook
 
 To build and test components, we use Storybook. To run:

@@ -51,12 +51,12 @@ $leftColumnWidth: 20%;
 
 #landing-container {
 	/***** Globals *****/
-	font-family: upgrade, sans-serif;
-	font-weight: 300;
+	font-family: 'Outfit', sans-serif;
+	font-weight: 400;
 	font-style: normal;
 	font-size: 1em;
 	line-height: 2em;
-	letter-spacing: 1px;
+	letter-spacing: 0.2px;
 	strong {
 		font-weight: 500;
 	}
@@ -183,9 +183,10 @@ $leftColumnWidth: 20%;
 		.content {
 			h1 {
 				margin: 1em 0 0.5em 0;
-				font-weight: 400;
+				font-weight: 500;
 				font-style: normal;
-				font-size: 4em;
+				font-size: 3.9em;
+				letter-spacing: 0.2px;
 			}
 			h2 {
 				margin: 0.75em 0;
@@ -203,9 +204,10 @@ $leftColumnWidth: 20%;
 			.subtitle {
 				max-width: 500px;
 				font-size: 1.5em;
-				font-family: upgrade-lights, sans-serif;
-				font-weight: 500;
+				font-family: 'Outfit', sans-serif;
+				font-weight: 200;
 				font-style: normal;
+				letter-spacing: 0px;
 			}
 		}
 	}
@@ -234,13 +236,13 @@ $leftColumnWidth: 20%;
 			.feature-number {
 				font-size: 1em;
 				line-height: 2em;
-				font-weight: 200;
+				font-weight: 300;
 				text-transform: uppercase;
 			}
 			h4 {
 				font-size: 1.25em;
 				line-height: 2em;
-				font-weight: 400;
+				font-weight: 500;
 			}
 			> div:nth-child(odd) {
 				text-align: right;
@@ -281,8 +283,8 @@ $leftColumnWidth: 20%;
 			ul {
 				margin-top: 4em;
 				list-style-type: none;
-				font-family: upgrade-lights;
-				font-weight: 500;
+				font-family: 'Outfit', sans-serif;
+				font-weight: 250;
 				li {
 					margin: 2.4em 0;
 				}
@@ -389,8 +391,8 @@ $leftColumnWidth: 20%;
 					.description {
 						font-size: 0.9em;
 						line-height: 1.2em;
-						font-family: upgrade-light;
-						font-weight: 300;
+						font-family: 'Outfit', sans-serif;
+					font-weight: 300;
 						font-style: italic;
 					}
 				}
@@ -425,12 +427,13 @@ $leftColumnWidth: 20%;
 			.container {
 				h4 {
 					font-size: 2em;
-					font-weight: 300;
+					font-weight: 350;
 					line-height: 1.2em;
+					letter-spacing: 0px;
 				}
 				p.disclaimer {
-					font-family: upgrade-lights;
-					font-weight: 200;
+					font-family: 'Outfit', sans-serif;
+					font-weight: 100;
 					font-style: italic;
 				}
 			}

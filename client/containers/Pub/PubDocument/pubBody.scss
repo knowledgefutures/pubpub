@@ -5,7 +5,7 @@ $bp: vendor.$bp-namespace;
 @import 'styles/variables.scss';
 @import '../pub.scss';
 
-$pub-body-font-size: if-is-export(14px, 20px);
+$pub-body-font-size: if-is-export(13px, 19px);
 
 .pub-body-component .editor.ProseMirror,
 .pub-body-styles {
@@ -40,40 +40,45 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		}
 	}
 	h1 {
-		font-size: 1.4em;
-		font-weight: 600;
-		line-height: 1.3em;
+		font-size: 1.6em;
+		font-weight: 700;
+		line-height: 1.1em;
 		letter-spacing: 0px;
 	}
 	h2 {
-		font-size: 1.3em;
-		line-height: 1.3em;
-		font-weight: 500;
+		font-size: 1.4em;
+		line-height: 1.1em;
+		font-weight: 600;
 		letter-spacing: 0px;
 	}
 	h3 {
-		font-size: 1.2em;
-		line-height: 1.3em;
+		font-size: 1.25em;
+		line-height: 0.8em;
 		font-weight: 400;
-		letter-spacing: 0.5px;
+		letter-spacing: 0px;
 	}
 	h4 {
 		font-size: 1em;
 		line-height: 1.3em;
-		font-weight: 500;
-		letter-spacing: 0.5px;
+		font-weight: 600;
+		letter-spacing: 0px;
 	}
 	h5 {
 		font-size: 1em;
 		line-height: 1.3em;
-		font-weight: 400;
-		letter-spacing: 0.5px;
+		font-weight: 500;
+		letter-spacing: 0px;
 	}
 	h6 {
 		font-size: 1em;
 		line-height: 1.3em;
 		font-weight: 300;
-		letter-spacing: 0.5px;
+		letter-spacing: 0px;
+	}
+	// Neutralize <strong> inside headings — headings should look
+	// the same regardless of whether the user toggled bold.
+	h1, h2, h3, h4, h5, h6 {
+		strong { font-weight: inherit; }
 	}
 	* + h1,
 	* + h2,
@@ -86,11 +91,10 @@ $pub-body-font-size: if-is-export(14px, 20px);
 	p,
 	li {
 		font-family: $body-font;
-		letter-spacing: 0.01rem;
 		font-weight: 400;
 		font-style: normal;
-		line-height: 1.7;
-		letter-spacing: -0.003em;
+		line-height: if-is-export(1.7, 1.75);
+		letter-spacing: -0.023em;
 		word-break: break-word;
 	}
 

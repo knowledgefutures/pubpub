@@ -17,18 +17,7 @@ import { digestCitation, getAffiliations, getDedupedAffliations } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
 
-// This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:
-// https://fonts.adobe.com/my_fonts#web_projects-section
-const loadCjkFontsScript = `
-(function(d) {
-  var config = {
-	kitId: 'seb8nix',
-	scriptTimeout: 3000,
-	async: true
-  },
-  h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
-})(document);
-`;
+const fontsHref = 'https://assets.pubpub.org/fonts/8da286c6/fonts.css';
 
 let cachedCss: string | null = null;
 
@@ -294,9 +283,8 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 				<title>{title}</title>
 				<meta charSet="utf-8" />
 
+				<link rel="stylesheet" href={fontsHref} />
 				<style type="text/css" dangerouslySetInnerHTML={{ __html: getStaticCss() }} />
-
-				<script dangerouslySetInnerHTML={{ __html: loadCjkFontsScript }} />
 			</head>
 			<body>
 				{renderFrontMatter(pubMetadata)}

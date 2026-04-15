@@ -53,7 +53,8 @@ $mobile-bottom-buttons-spacing: 10px;
 		margin: 0;
 		font-size: 48px;
 		line-height: 1.5em;
-		font-weight: normal;
+		font-weight: 450;
+		letter-spacing: -1.1px;
 		font-family: $header-font;
 		box-decoration-break: clone;
 		@include smaller-viewport {
@@ -101,18 +102,19 @@ $mobile-bottom-buttons-spacing: 10px;
 		padding-top: $title-elements-spacing;
 		margin: 0;
 		font-size: 18px;
-		font-weight: normal;
+		font-weight: 400;
+		letter-spacing: 0.3px;
 		font-family: $header-font;
 	}
 
 	.byline-component {
 		padding-top: $title-elements-spacing;
 		margin: 0;
-		font-size: 18px;
+		font-size: 19px;
 		font-style: italic;
-		font-weight: normal;
+		font-weight: 400;
 		font-family: $header-font;
-		letter-spacing: 0.5px;
+		letter-spacing: 0.1px;
 		.byline-icon svg {
 			width: 14px;
 			height: auto;

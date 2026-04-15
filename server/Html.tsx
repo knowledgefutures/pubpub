@@ -91,6 +91,8 @@ const Html = (props: Props) => {
 					content="jmmJFnkSOeIEuS54adOzGMwc0kwpsa8wQ-L4GyPpPDg"
 				/>
 				{/* <link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} /> */}
+				<link rel="preconnect" href="https://assets.pubpub.org" crossOrigin="" />
+				<link rel="stylesheet" href="https://assets.pubpub.org/fonts/8da286c6/fonts.css" />
 				<link rel="stylesheet" type="text/css" href={getPath('main', 'css')} />
 				{customScripts?.css && (
 					<style

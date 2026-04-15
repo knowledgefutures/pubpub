@@ -1,0 +1,61 @@
+diff --git a/es/Portal/Portal.js b/es/Portal/Portal.js
+index 25d75dface672490a05ec1e5913edb84f5e07430..312cbbbfcfa70c8cecbbe83252675a7be4fbf1c5 100644
+--- a/es/Portal/Portal.js
++++ b/es/Portal/Portal.js
+@@ -13,17 +13,17 @@ function Portal(_ref) {
+   // https://github.com/reakit/reakit/issues/513
+   var context = useContext(PortalContext) || getBodyElement();
+ 
+-  var _React$useState = useState(function () {
+-    if (typeof document !== "undefined") {
++  var _React$useState = useState(null),
++      portal = _React$useState[0],
++      setPortal = _React$useState[1];
++
++  useEffect(function () {
++    if (typeof document !== "undefined" && !portal) {
+       var element = document.createElement("div");
+       element.className = Portal.__className;
+-      return element;
+-    } // ssr
+-
+-
+-    return null;
+-  }),
+-      portal = _React$useState[0];
++      setPortal(element);
++    }
++  }, []);
+ 
+   useEffect(function () {
+     if (!portal || !context) return undefined;
+diff --git a/lib/Portal/Portal.js b/lib/Portal/Portal.js
+index 6fe994a69f5abe35f02a5c9db55a6f9d81405d59..7d6502194a82fb31e30b7076bb844fbea6fc0a2d 100644
+--- a/lib/Portal/Portal.js
++++ b/lib/Portal/Portal.js
+@@ -17,17 +17,16 @@ function Portal(_ref) {
+   // https://github.com/reakit/reakit/issues/513
+   var context = React.useContext(PortalContext) || getBodyElement();
+ 
+-  var _React$useState = React.useState(function () {
+-    if (typeof document !== "undefined") {
++  var _React$useState = React.useState(null),
++      portal = _React$useState[0],
++      setPortal = _React$useState[1];
++  React.useEffect(function () {
++    if (typeof document !== "undefined" && !portal) {
+       var element = document.createElement("div");
+       element.className = Portal.__className;
+-      return element;
+-    } // ssr
+-
+-
+-    return null;
+-  }),
+-      portal = _React$useState[0];
++      setPortal(element);
++    }
++  }, []);
+ 
+   React.useEffect(function () {
+     if (!portal || !context) return undefined;

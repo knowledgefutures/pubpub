@@ -116,7 +116,6 @@
 		"@types/react-dom": "^17.0.9",
 		"@types/styled-components": "^5.1.12",
 		"@types/website-scraper": "^1.2.10",
-
 		"altcha": "^2.3.0",
 		"altcha-lib": "^1.4.0",
 		"amqplib": "^0.10.9",
@@ -125,7 +124,6 @@
 		"busboy": "^1.6.0",
 		"camelcase-css": "^2.0.1",
 		"cheerio": "1.0.0-rc.12",
-
 		"citation-js": "^0.6.3",
 		"classnames": "^2.2.6",
 		"color": "^3.1.1",
@@ -369,6 +367,9 @@
 			"nodemon",
 			"protobufjs",
 			"validate-with-xmllint"
-		]
+		],
+		"patchedDependencies": {
+			"reakit": "patches/reakit.patch"
+		}
 	}
 }

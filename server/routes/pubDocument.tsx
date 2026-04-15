@@ -142,7 +142,6 @@ const getEnrichedPubData = async (options: EnrichedPubOptions) => {
 		collectionPub.collectionId.startsWith(initialData.locationData.query.readingCollection),
 	);
 
-	console.time('Promise.all: docInfo, edges, subscription, nextCollectionPub');
 	const [docInfo, edges, subscription, nextCollectionPub] = await Promise.all([
 		log('getDocInfo', getDocInfo()),
 		log('getPubEdges', getPubEdges(pubData, initialData)),

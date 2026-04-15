@@ -28,10 +28,6 @@ const Breadcrumbs = (props: Props) => {
 	const [newCollectionIsOpen, setNewCollectionIsOpen] = useState(false);
 	const createPubAltchaRef = useRef<import('components').AltchaRef>(null);
 
-	// console.log(locationData.path.split('/'), locationData.path.split('/').slice(-1))
-	// const modesWithSubmodes = ['discussions', 'reviews', 'pages'];
-	// const isParentMode = modesWithSubmodes.includes(activeMode);
-
 	let title = communityData.title;
 	let avatar = communityData.avatar;
 	let showLockIcon = false;

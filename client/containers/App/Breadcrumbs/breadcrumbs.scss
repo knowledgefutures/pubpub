@@ -74,6 +74,8 @@ $bp: vendor.$bp-namespace;
 		}
 	}
 	.breadcrumb-actions {
+		display: flex;
+		align-items: center;
 		flex: 0 0 auto;
 		.#{$bp}-button {
 			margin-left: 15px;

@@ -2,8 +2,10 @@ import type { AnalyticsInstance, AnalyticsPlugin } from 'use-analytics';
 
 import type { AnalyticsEvent } from 'utils/api/schemas/analytics';
 
-// this gets rewritten to the AWS lambda on fastly
-const ANALYTICS_ENDPOINT = '/api/analytics/track' as const;
+// Stitch/Redshift endpoint — rewritten by Fastly to an AWS Lambda
+const STITCH_ENDPOINT = '/api/analytics/track' as const;
+// Local PG endpoint — bypasses Fastly, goes directly to Express
+const PG_ENDPOINT = '/api/ev' as const;
 
 /**
  * Retrieves the referrer URL and determines if the visit is from a unique visitor If there is no
@@ -72,9 +74,12 @@ const sendData = (data: { payload: any; instance: AnalyticsInstance }) => {
 		...getReferrerAndUnique(),
 		...utmCampaign,
 	} satisfies AnalyticsEvent;
-	// we use navigator.sendBeacon to make sure the request is sent even if the user navigates away from the page
-	// and doesn't block the rest of the page
-	navigator.sendBeacon(ANALYTICS_ENDPOINT, JSON.stringify(toBeSentPayload));
+	const json = JSON.stringify(toBeSentPayload);
+	// Send to both endpoints:
+	// 1. Stitch/Lambda (via Fastly rewrite) for Redshift rollback safety
+	// 2. Local PG (direct to Express) for the new analytics pipeline
+	navigator.sendBeacon(STITCH_ENDPOINT, json);
+	navigator.sendBeacon(PG_ENDPOINT, json);
 };
 
 export const analyticsPlugin = () => {

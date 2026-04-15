@@ -9,7 +9,7 @@ extendZodWithOpenApi(z);
 
 export const analyticsRouter = {
 	track: {
-		path: '/api/analytics/track',
+		path: '/api/ev',
 		method: 'POST',
 		summary: 'Track event',
 		body: analyticsEventSchema,

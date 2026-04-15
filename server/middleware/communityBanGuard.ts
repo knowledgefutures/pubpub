@@ -13,6 +13,7 @@ const EXEMPT_PATHS = new Set([
 	'/api/pubs/many',
 	'/api/activityItems',
 	'/api/analytics/track',
+	'/api/ev',
 	'/api/subscribe',
 ]);
 

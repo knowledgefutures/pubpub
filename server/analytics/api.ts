@@ -1,26 +1,11 @@
 import type { AnalyticsEvent as AnalyticsEventPayload } from 'utils/api/schemas/analytics';
 
 import { initServer } from '@ts-rest/express';
-import { getCountryForTimezone } from 'countries-and-timezones';
 import express from 'express';
 
-import { env } from 'server/env';
 import { contract } from 'utils/api/contract';
 
 import { enqueue } from './writeBuffer';
-
-// ─── Stitch dual-write (temporary for rollback safety) ──────────────────────
-
-/** Fire-and-forget POST to the old Stitch/Redshift webhook so we can rollback if needed. */
-function sendToStitch(payload: unknown) {
-	fetch(env.STITCH_WEBHOOK_URL, {
-		method: 'POST',
-		body: JSON.stringify(payload),
-		headers: { 'Content-Type': 'application/json' },
-	}).catch(() => {
-		// Silently swallow — Stitch is best-effort during the transition period.
-	});
-}
 
 const s = initServer();
 
@@ -105,14 +90,6 @@ export const analyticsServer = s.router(contract.analytics, {
 			},
 		],
 		handler: async ({ body: payload }) => {
-			// Dual-write to Stitch/Redshift for rollback safety (temporary).
-			// Sent unconditionally (before validation) to match old behavior exactly:
-			// { country, countryCode, ...payload }
-			const { timezone } = payload;
-			const { name: country = null, id: countryCode = null } =
-				getCountryForTimezone(timezone) || {};
-			sendToStitch({ country, countryCode, ...payload });
-
 			// Reject events with unreasonable timestamps (future or >30 days old)
 			if (!isTimestampValid(payload.timestamp)) {
 				return {

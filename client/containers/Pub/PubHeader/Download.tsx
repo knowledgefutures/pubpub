@@ -69,6 +69,7 @@ const Download = (props: Props) => {
 			communityId: communityData.id,
 			communityName: communityData.title,
 			communitySubdomain: communityData.subdomain,
+			isProd: locationData.isProd,
 			format: type.format,
 			pubId: pubData.id,
 		});

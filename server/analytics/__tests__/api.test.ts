@@ -118,7 +118,7 @@ describe('analytics', () => {
 		const payload = makeTestPubPageViewPayload();
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
@@ -133,7 +133,7 @@ describe('analytics', () => {
 		const payload = makeTestPagePageViewPayload();
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { event: 'page' } });
@@ -146,7 +146,7 @@ describe('analytics', () => {
 		const payload = makeTestCollectionPageViewPayload();
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({
@@ -161,7 +161,7 @@ describe('analytics', () => {
 		const payload = makeTestOtherPageViewPayload();
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { event: 'other' } });
@@ -173,7 +173,7 @@ describe('analytics', () => {
 		const payload = makeTestPubPageViewPayload({ timezone: 'Europe/Amsterdam' });
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
@@ -189,7 +189,7 @@ describe('analytics', () => {
 		});
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
@@ -205,7 +205,7 @@ describe('analytics', () => {
 		const payload = makeTestPubPageViewPayload({ timestamp: now });
 		const agent = await login();
 
-		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await agent.post('/api/ev').send(payload).expect(204);
 		await flush();
 
 		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });

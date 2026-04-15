@@ -2,6 +2,7 @@ export type DashboardMode =
 	| 'activity'
 	| 'connections'
 	| 'impact'
+	| 'impact2'
 	| 'layout'
 	| 'members'
 	| 'overview'

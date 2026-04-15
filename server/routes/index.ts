@@ -12,6 +12,7 @@ import { router as dashboardDiscussionsRouter } from './dashboardDiscussions';
 import { router as dashboardEdgesRouter } from './dashboardEdges';
 import { router as dashboardFacetsRouter } from './dashboardFacets';
 import { router as dashboardImpactRouter } from './dashboardImpact';
+import { router as dashboardImpact2Router } from './dashboardImpact2';
 import { router as dashboardMembersRouter } from './dashboardMembers';
 import { router as dashboardPageRouter } from './dashboardPage';
 import { router as dashboardPagesRouter } from './dashboardPages';
@@ -63,6 +64,7 @@ rootRouter
 	.use(dashboardEdgesRouter)
 	.use(dashboardFacetsRouter)
 	.use(dashboardImpactRouter)
+	.use(dashboardImpact2Router)
 	.use(dashboardMembersRouter)
 	.use(dashboardCommunityOverviewRouter)
 	.use(dashboardCollectionOverviewRouter)

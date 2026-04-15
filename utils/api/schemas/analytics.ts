@@ -23,17 +23,18 @@ export const baseSchema = z.object({
 /** Information that should always be included in any event payload */
 export const sharedEventPayloadSchema = z.object({
 	communityId: z.string().uuid(),
-	// if it's null, it 'www.pubpub.org'
-	communitySubdomain: z.string(),
-	communityName: z.string(),
-	isProd: z.boolean(),
+	// Dropped columns — accepted for backward compat with cached clients but not stored
+	communitySubdomain: z.string().optional(),
+	communityName: z.string().optional(),
+	isProd: z.boolean().optional(),
 });
 
 export const basePageViewSchema = baseSchema.merge(
 	z.object({
 		type: z.literal('page'),
 		url: z.string().url(),
-		title: z.string(),
+		// Dropped column — accepted for backward compat but not stored
+		title: z.string().optional(),
 		hash: z.string().optional(),
 		height: z.number().int(),
 		width: z.number().int(),
@@ -44,9 +45,9 @@ export const basePageViewSchema = baseSchema.merge(
 export const sharedPageViewPayloadSchema = sharedEventPayloadSchema.merge(
 	z.object({
 		communityId: z.string().uuid().nullable(),
-		// if it's null, it 'www.pubpub.org'
-		communitySubdomain: z.string().nullable().default('www'),
-		communityName: z.string().nullable().default('pubpub'),
+		// Dropped columns — accepted for backward compat but not stored
+		communitySubdomain: z.string().nullable().optional(),
+		communityName: z.string().nullable().optional(),
 		event: z.enum(['page', 'collection', 'pub', 'other']),
 	}),
 );
@@ -61,19 +62,21 @@ export const otherPageViewPayloadSchema = sharedPageViewPayloadSchema.merge(
 export const pagePageViewPayloadSchema = sharedPageViewPayloadSchema.merge(
 	z.object({
 		event: z.literal('page'),
-		pageTitle: z.string(),
+		// Dropped columns — accepted for backward compat but not stored
+		pageTitle: z.string().optional(),
 		pageId: z.string(),
-		pageSlug: z.string(),
+		pageSlug: z.string().optional(),
 	}),
 );
 
 export const collectionPageViewPayloadSchema = sharedPageViewPayloadSchema.merge(
 	z.object({
 		event: z.literal('collection'),
-		collectionTitle: z.string(),
-		collectionKind: z.enum(['issue', 'conference', 'book', 'tag']),
+		// Dropped columns — accepted for backward compat but not stored
+		collectionTitle: z.string().optional(),
+		collectionKind: z.enum(['issue', 'conference', 'book', 'tag']).optional(),
 		collectionId: z.string().uuid(),
-		collectionSlug: z.string(),
+		collectionSlug: z.string().optional(),
 	}),
 );
 
@@ -81,9 +84,10 @@ export const pubPageViewPayloadSchema = sharedPageViewPayloadSchema
 	.merge(
 		z.object({
 			event: z.literal('pub'),
-			pubTitle: z.string(),
+			// Dropped columns — accepted for backward compat but not stored
+			pubTitle: z.string().optional(),
 			pubId: z.string().uuid(),
-			pubSlug: z.string(),
+			pubSlug: z.string().optional(),
 			collectionIds: z
 				.string()
 				.regex(/^[a-f0-9-]+(,[a-f0-9-]+)*$/)

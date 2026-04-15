@@ -71,7 +71,6 @@ const Download = (props: Props) => {
 			communitySubdomain: communityData.subdomain,
 			format: type.format,
 			pubId: pubData.id,
-			isProd: locationData.isProd,
 		});
 		if (type.format === 'formatted') {
 			return download(formattedDownload.url);

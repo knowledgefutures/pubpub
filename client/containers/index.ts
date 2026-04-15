@@ -10,6 +10,7 @@ export { default as DashboardDiscussions } from './DashboardDiscussions/Dashboar
 export { default as DashboardEdges } from './DashboardEdges/DashboardEdges';
 export { default as DashboardFacets } from './DashboardFacets/DashboardFacets';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
+export { default as DashboardImpact2 } from './DashboardImpact2/DashboardImpact2';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export {
 	DashboardCollectionOverview,

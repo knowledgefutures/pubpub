@@ -11,7 +11,7 @@ type Props = {
 const AdminDashboard = (props: Props) => {
 	const { impactData } = props;
 	const { baseToken } = impactData;
-	const dashUrl = `https://metabase.pubpub.org/embed/dashboard/${baseToken}#bordered=false&titled=false`;
+	const dashUrl = `http://localhost:3030/embed/dashboard/${baseToken}#bordered=false&titled=false`;
 	const getOffset = (width) => {
 		return width < 960 ? 45 : 61;
 	};

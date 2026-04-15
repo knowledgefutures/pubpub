@@ -13,6 +13,7 @@ import {
 	DashboardEdges,
 	DashboardFacets,
 	DashboardImpact,
+	DashboardImpact2,
 	DashboardMembers,
 	DashboardPage,
 	DashboardPages,
@@ -81,6 +82,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardImpact: {
 			ActiveComponent: DashboardImpact,
+			isDashboard: true,
+		},
+		DashboardImpact2: {
+			ActiveComponent: DashboardImpact2,
 			isDashboard: true,
 		},
 		DashboardMembers: {

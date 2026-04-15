@@ -85,6 +85,9 @@ services:
         ports:
             - "${DB_PORT:-5439}:5432"
         networks: [appnet]
+
+
+
     # cron:
     #     build:
     #         context: ..
@@ -110,3 +113,4 @@ networks:
 volumes:
     pgdata:
     rabbitmqdata:
+

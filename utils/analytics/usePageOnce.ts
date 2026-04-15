@@ -64,7 +64,6 @@ const determinePayload = (
 			communityId: pubData.communityId,
 			communityName: communityData.title,
 			communitySubdomain: communityData.subdomain,
-			isProd: locationData.isProd,
 			release:
 				pubData.isRelease && pubData.releaseNumber
 					? pubData.releaseNumber
@@ -76,7 +75,6 @@ const determinePayload = (
 		communityId: communityData.id,
 		communityName: communityData.title,
 		communitySubdomain: communityData.subdomain,
-		isProd: locationData.isProd,
 	};
 
 	const collection = scopeData?.elements?.activeCollection;

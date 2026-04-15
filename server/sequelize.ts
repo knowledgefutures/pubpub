@@ -136,5 +136,11 @@ if (process.env.NODE_ENV !== 'test') {
 				await backfillCommunitySearchVectors();
 			})().catch((err) => console.error('Search vector backfill error:', err));
 		}
+
+		// Create analytics materialized views (idempotent — no-ops if they exist).
+		// Refresh is handled by the nightly cron, not at startup, because it can
+		// take several minutes and would delay deploys.
+		const { createSummaryViews } = await import('server/analytics/summaryViews');
+		await createSummaryViews();
 	})();
 }

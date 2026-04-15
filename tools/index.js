@@ -73,6 +73,8 @@ const commandFiles = {
 	flattenBranchHistory: "./flattenBranchHistory",
 	layoutcheck: "./layoutcheck/check",
 	migrate: "./migrate",
+	migrateRedshift: "./migrateRedshift",
+	refreshAnalyticsSummary: "./refreshAnalyticsSummary",
 	migrateDash: "./dashboardMigrations/runMigrations",
 	migrateFirebasePaths: "./migrateFirebasePaths",
 	migration2020_05_06: "./migration2020_05_06",

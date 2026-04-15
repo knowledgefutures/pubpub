@@ -190,6 +190,10 @@ appRouter.use((req, res, next) => {
 		return next();
 	}
 
+	if (req.path.includes('/api/analytics')) {
+		return next();
+	}
+
 	const abortController = new AbortController();
 
 	abortStorage.enterWith({ abortController });

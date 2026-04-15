@@ -1,0 +1,375 @@
+.dashboard-impact2-container {
+	// ── Skeleton loading ────────────────────────────────────────────────
+	@keyframes skeleton-pulse {
+		0% { opacity: 0.15; }
+		50% { opacity: 0.25; }
+		100% { opacity: 0.15; }
+	}
+
+	.skeleton-line {
+		background: #1c2127;
+		border-radius: 3px;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+	}
+
+	.skeleton-stat {
+		border-left-color: #d3d8de !important;
+	}
+
+	.skeleton-value {
+		width: 80px;
+		height: 28px;
+		margin-bottom: 6px;
+	}
+
+	.skeleton-label {
+		width: 100px;
+		height: 10px;
+	}
+
+	.skeleton-heading {
+		width: 100px;
+		height: 10px;
+		margin-bottom: 10px;
+	}
+
+	.skeleton-chart {
+		width: 100%;
+		height: 180px;
+		background: #1c2127;
+		border-radius: 4px;
+		animation: skeleton-pulse 1.5s ease-in-out infinite;
+	}
+
+	.skeleton-table-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 5px 4px;
+	}
+
+	.skeleton-cell {
+		width: 65%;
+		height: 12px;
+	}
+
+	.skeleton-cell-short {
+		width: 30px;
+		height: 12px;
+	}
+
+	.analytics-callout {
+		margin-bottom: 24px;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	// ── Top row: stats + chart ──────────────────────────────────────────
+	.top-row {
+		display: grid;
+		grid-template-columns: 200px 1fr;
+		gap: 20px;
+		margin-bottom: 32px;
+
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.stats-column {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		padding-top: 4px;
+	}
+
+	.stat-card {
+		background: none;
+		border-left: 3px solid #2b95d6;
+		border-radius: 0;
+		padding: 4px 0 4px 12px;
+
+		.stat-value {
+			font-size: 28px;
+			font-weight: 700;
+			line-height: 1.1;
+			color: #1c2127;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.stat-label {
+			font-size: 11px;
+			color: #5c7080;
+			margin-top: 1px;
+			text-transform: uppercase;
+			letter-spacing: 0.6px;
+			font-weight: 600;
+		}
+
+		.stat-subtext {
+			font-size: 10px;
+			color: #8a9ba8;
+			margin-top: 1px;
+		}
+	}
+
+	.chart-column {
+		min-height: 0;
+
+		h3 {
+			font-size: 12px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #5c7080;
+			margin: 0 0 6px;
+		}
+	}
+
+	.fine-print {
+		font-size: 11px;
+		color: #777;
+		margin: 4px 0 0;
+	}
+
+	// ── Top Pages panel (full width) ────────────────────────────────────
+	.top-pages-panel {
+		margin-bottom: 24px;
+	}
+
+	// ── Data grid: breakdown panels (3-column) ─────────────────────────
+	.data-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+		margin-bottom: 36px;
+
+		@media (max-width: 900px) {
+			grid-template-columns: 1fr 1fr;
+		}
+		@media (max-width: 600px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.data-panel {
+		h3 {
+			font-size: 12px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #5c7080;
+			margin: 0 0 6px;
+			padding: 0 4px;
+		}
+	}
+
+	// ── Path cell with title + URL ──────────────────────────────────────
+	.path-cell {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		overflow: hidden;
+		color: inherit;
+		text-decoration: none;
+
+		&:hover {
+			color: #2b95d6;
+			text-decoration: none;
+
+			.path-title {
+				text-decoration: underline;
+			}
+		}
+
+		.path-title {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 13px;
+			line-height: 1.3;
+		}
+
+		.path-url {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 11px;
+			color: #8a9ba8;
+			line-height: 1.3;
+		}
+	}
+
+	// ── Show more button ────────────────────────────────────────────────
+	.show-more-btn {
+		display: block;
+		width: 100%;
+		padding: 6px 0;
+		margin-top: 4px;
+		background: none;
+		border: none;
+		color: #2b95d6;
+		font-size: 11px;
+		cursor: pointer;
+		text-align: center;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+
+
+	// ── Compact table ───────────────────────────────────────────────────
+	.compact-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 13px;
+
+		th {
+			text-align: left;
+			padding: 4px;
+			border-bottom: 1px solid #e1e8ed;
+			font-weight: 600;
+			color: #8a9ba8;
+			font-size: 11px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+		}
+
+		td {
+			padding: 3px 4px;
+			color: #1c2127;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 0;
+		}
+
+		td:last-child {
+			text-align: right;
+			font-variant-numeric: tabular-nums;
+			width: 60px;
+			max-width: none;
+			color: #5c7080;
+			font-weight: 500;
+		}
+
+		tr:hover td {
+			background: rgba(0, 0, 0, 0.02);
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+			&:hover {
+				color: #2b95d6;
+				text-decoration: underline;
+			}
+		}
+	}
+
+	// ── Footer ──────────────────────────────────────────────────────────
+	.analytics-footer {
+		margin-top: 20px;
+		padding-top: 12px;
+		border-top: 1px solid #e1e8ed;
+
+		p {
+			font-size: 11px;
+			color: #777;
+			line-height: 1.5;
+			margin: 0 0 8px;
+
+			code {
+				font-size: 10px;
+				background: rgba(0, 0, 0, 0.04);
+				padding: 1px 3px;
+				border-radius: 2px;
+			}
+		}
+	}
+
+	.stale-callout {
+		margin-bottom: 12px;
+		font-size: 11px;
+		padding: 5px 10px;
+		background: rgba(217, 130, 43, 0.08);
+		color: #946638;
+		border-radius: 4px;
+	}
+}
+
+/* ── Dark mode ─────────────────────────────────────────────────────────── */
+.bp5-dark,
+.bp3-dark {
+	.dashboard-impact2-container {
+		.skeleton-line,
+		.skeleton-chart {
+			background: #f5f8fa;
+		}
+
+		.skeleton-stat {
+			border-left-color: #5c7080 !important;
+		}
+
+		.stat-card {
+			background: none;
+			.stat-value {
+				color: #f5f8fa;
+			}
+			.stat-label {
+				color: #a7b6c2;
+			}
+		}
+
+		.fine-print {
+			color: #738694;
+		}
+
+		.data-panel h3,
+		.chart-column h3 {
+			color: #a7b6c2;
+		}
+
+		.analytics-footer {
+			border-top-color: #30404d;
+			p {
+				color: #738694;
+				code {
+					background: rgba(255, 255, 255, 0.06);
+				}
+			}
+		}
+
+		.compact-table {
+			th {
+				border-bottom-color: #30404d;
+				color: #738694;
+			}
+			td {
+				color: #f5f8fa;
+			}
+			td:last-child {
+				color: #a7b6c2;
+			}
+			tr:hover td {
+				background: rgba(255, 255, 255, 0.04);
+			}
+			a:hover {
+				color: #48aff0;
+			}
+		}
+
+		.path-cell .path-url {
+			color: #738694;
+		}
+
+		.path-cell:hover {
+			color: #48aff0;
+		}
+
+		.show-more-btn {
+			color: #48aff0;
+		}
+	}
+}

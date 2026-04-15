@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { isProd } from 'utils/environment';
 
 import { activityItemRouter } from './activityItem/api';
+import { router as analyticsImpactRouter } from './analytics/impactApi';
 import { router as apiDocsRouter } from './apiDocs/api';
 import { router as captchaRouter } from './captcha/api';
 import { router as citationRouter } from './citation/api';
@@ -15,6 +16,7 @@ import { router as doiRouter } from './doi/api';
 import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
 import { env } from './env';
+import { router as impact2Router } from './impact2/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
@@ -75,6 +77,8 @@ const apiRouter = Router()
 	.use(userNotificationPreferencesRouter)
 	.use(userSubscriptionRouter)
 	.use(zoteroIntegrationRouter)
+	.use(analyticsImpactRouter)
+	.use(impact2Router)
 	.use(apiDocsRouter);
 
 if (!isProd() && env.NODE_ENV !== 'test') {

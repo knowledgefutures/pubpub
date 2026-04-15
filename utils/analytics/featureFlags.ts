@@ -4,7 +4,7 @@ export const shouldUseNewAnalytics = (featureFlags: InitialData['featureFlags'])
 	featureFlags?.newAnalytics;
 
 export const canUseCustomAnalyticsProvider = (featureFlags: InitialData['featureFlags']) =>
-	featureFlags?.customAnalyticsProvider;
+	true || featureFlags?.customAnalyticsProvider;
 
 export const noCookieBanner = (featureFlags: InitialData['featureFlags']) =>
 	featureFlags?.noCookieBanner;

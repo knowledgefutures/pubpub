@@ -11,7 +11,7 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 export const router = Router();
 
 router.get(
-	['/dash/impact', '/dash/collection/:collectionSlug/impact', '/dash/pub/:pubSlug/impact'],
+	['/dash/impact2', '/dash/collection/:collectionSlug/impact2', '/dash/pub/:pubSlug/impact2'],
 	async (req, res, next) => {
 		try {
 			if (!hostIsValid(req, 'community')) {
@@ -24,7 +24,7 @@ router.get(
 			return renderToNodeStream(
 				res,
 				<Html
-					chunkName="DashboardImpact"
+					chunkName="DashboardImpact2"
 					initialData={initialData}
 					viewData={{}}
 					headerComponents={generateMetaComponents({

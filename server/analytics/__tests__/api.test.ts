@@ -1,12 +1,14 @@
-import { vi } from 'vitest';
-
 import { login, setup, teardown } from 'stubstub';
 import {
 	analyticsEventSchema,
 	type basePageViewSchema,
 	type PageViewPayload,
+	type pageViewSchema,
 	type sharedEventPayloadSchema,
 } from 'utils/api/schemas/analytics';
+
+import { AnalyticsEvent } from '../model';
+import { flush } from '../writeBuffer';
 
 const baseTestPayload = {
 	type: 'page',
@@ -25,8 +27,11 @@ const baseTestPayload = {
 	communitySubdomain: 'string',
 } satisfies Omit<(typeof basePageViewSchema & typeof sharedEventPayloadSchema)['_input'], 'event'>;
 
-type PubPageView = PageViewPayload & { event: 'pub' };
-const makeTestPubPageViewPayload = (options?: Partial<PubPageView>) => {
+/** Full input type (payload + base fields like timestamp/timezone, before Zod transforms) */
+type PageViewInput = (typeof pageViewSchema)['_input'];
+
+type PubPageViewInput = PageViewInput & { event: 'pub' };
+const makeTestPubPageViewPayload = (options?: Partial<PubPageViewInput>) => {
 	return {
 		event: 'pub',
 		pubId: 'de3a36ab-26d9-4b76-aaab-f1bffc18b102',
@@ -35,7 +40,7 @@ const makeTestPubPageViewPayload = (options?: Partial<PubPageView>) => {
 		release: 'draft',
 		...baseTestPayload,
 		...options,
-	} satisfies PageViewPayload & { event: 'pub' };
+	} satisfies PubPageViewInput;
 };
 
 type PagePageView = PageViewPayload & { event: 'page' };
@@ -72,22 +77,9 @@ const makeTestOtherPageViewPayload = (options?: Partial<OtherPageView>) => {
 	} satisfies OtherPageView;
 };
 
-setup(beforeAll, async () => {
-	// mock fetch, we don't actually want to send api calls
-	vi.spyOn(global, 'fetch').mockImplementation(
-		() =>
-			Promise.resolve({
-				json: () => Promise.resolve({ status: 'ok', id: 'id' }),
-			}) as unknown as Promise<Response>,
-	);
+setup(beforeAll, () => undefined);
 
-	// to be safe, do not actually send any requests to stitch
-	process.env.STITCH_WEBHOOK_URL = 'http://localhost:9876';
-});
-
-teardown(afterAll, () => {
-	vi.restoreAllMocks();
-});
+teardown(afterAll);
 
 describe('analytics schema', () => {
 	describe('pub page view', () => {
@@ -99,14 +91,16 @@ describe('analytics schema', () => {
 			expect(analyticsEventSchema.safeParse(pubViewNumber)).toBeTruthy();
 		});
 
-		// this is needed otherwise redshift will create two colunms, release__bigint and release__string
 		it('should convert number releases into strings', () => {
 			const pubViewNumber = makeTestPubPageViewPayload({ release: 1 });
 			const parsed = analyticsEventSchema.safeParse(pubViewNumber);
+
 			expect(parsed.success).toBeTruthy();
+
 			if (!parsed.success) {
 				throw new Error('parsed failed');
 			}
+
 			expect(parsed.data).toEqual({
 				...pubViewNumber,
 				release: '1',
@@ -116,11 +110,23 @@ describe('analytics schema', () => {
 });
 
 describe('analytics', () => {
+	afterEach(async () => {
+		await AnalyticsEvent.destroy({ where: {} });
+	});
+
 	test('pub page view', async () => {
 		const payload = makeTestPubPageViewPayload();
 		const agent = await login();
 
 		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
+
+		expect(events).toHaveLength(1);
+		expect(events[0].event).toBe('pub');
+		expect(events[0].pubId).toBe(payload.pubId);
+		expect(events[0].release).toBe('draft');
 	});
 
 	test('page page view', async () => {
@@ -128,6 +134,12 @@ describe('analytics', () => {
 		const agent = await login();
 
 		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { event: 'page' } });
+
+		expect(events).toHaveLength(1);
+		expect(events[0].pageId).toBe(payload.pageId);
 	});
 
 	test('collection page view', async () => {
@@ -135,6 +147,14 @@ describe('analytics', () => {
 		const agent = await login();
 
 		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({
+			where: { collectionId: payload.collectionId },
+		});
+
+		expect(events).toHaveLength(1);
+		expect(events[0].collectionId).toBe(payload.collectionId);
 	});
 
 	test('other page view', async () => {
@@ -142,12 +162,55 @@ describe('analytics', () => {
 		const agent = await login();
 
 		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { event: 'other' } });
+
+		expect(events).toHaveLength(1);
 	});
 
-	test('page page view with optional fields', async () => {
-		const payload = makeTestPagePageViewPayload();
+	test('stores timezone from payload', async () => {
+		const payload = makeTestPubPageViewPayload({ timezone: 'Europe/Amsterdam' });
 		const agent = await login();
 
 		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
+
+		expect(events).toHaveLength(1);
+		expect(events[0].timezone).toBe('Europe/Amsterdam');
+	});
+
+	test('strips dropped fields (collectionIds, pubSlug, etc.)', async () => {
+		const payload = makeTestPubPageViewPayload({
+			collectionIds:
+				'de3a36ab-26d9-4b76-aaab-f1bffc18b102,ae3a36ab-26d9-4b76-aaab-f1bffc18b103',
+		});
+		const agent = await login();
+
+		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
+
+		expect(events).toHaveLength(1);
+		// Dropped fields should not appear on the model
+		expect((events[0] as any).collectionIds).toBeUndefined();
+		expect((events[0] as any).pubSlug).toBeUndefined();
+	});
+
+	test('converts timestamp to createdAt date', async () => {
+		const now = Date.now();
+		const payload = makeTestPubPageViewPayload({ timestamp: now });
+		const agent = await login();
+
+		await agent.post('/api/analytics/track').send(payload).expect(204);
+		await flush();
+
+		const events = await AnalyticsEvent.findAll({ where: { pubId: payload.pubId } });
+
+		expect(events).toHaveLength(1);
+		expect(new Date(events[0].createdAt).getTime()).toBe(now);
 	});
 });

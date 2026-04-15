@@ -55,6 +55,12 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 	); // Weekly on Sunday at 5 AM UTC
 
 	cron.schedule(
+		'30 3 * * *',
+		() => run('Refresh Analytics Matviews', 'tools-prod refreshAnalyticsSummary refresh'),
+		{ timezone: 'UTC' },
+	); // Daily at 3:30 AM UTC (before spam scan)
+
+	cron.schedule(
 		'0 4 * * *',
 		() => {
 			const dateStamp = new Date().toISOString().slice(0, 10);

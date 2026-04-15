@@ -70,6 +70,8 @@ tsconfig.tsbuildinfo
 .jest/secret-env.js
 
 infra/pgdata/
+infra/metabase-plugins/
+tmp/
 
-tmp
 details.md
+

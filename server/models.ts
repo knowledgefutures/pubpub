@@ -3,6 +3,8 @@ import passportLocalSequelize from 'passport-local-sequelize';
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 import { ActivityItem } from './activityItem/model';
+import { AnalyticsEvent } from './analytics/model';
+import { AnalyticsCloudflareCache } from './analyticsCloudflareCache/model';
 import { AuthToken } from './authToken/model';
 import { Collection } from './collection/model';
 import { CollectionAttribution } from './collectionAttribution/model';
@@ -60,6 +62,8 @@ import { ZoteroIntegration } from './zoteroIntegration/model';
 
 sequelize.addModels([
 	ActivityItem,
+	AnalyticsEvent,
+	AnalyticsCloudflareCache,
 	AuthToken,
 	Collection,
 	CollectionAttribution,
@@ -151,6 +155,8 @@ export const includeUserModel = (() => {
 
 export {
 	ActivityItem,
+	AnalyticsEvent,
+	AnalyticsCloudflareCache,
 	AuthToken,
 	Collection,
 	CollectionAttribution,

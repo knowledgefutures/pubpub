@@ -55,6 +55,7 @@ services:
             PORT: "8080"
             MAX_CONCURRENCY: "4"
             CHROMIUM_PATH: "/usr/bin/chromium"
+            CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
         command: ["pnpm", "run", "pubstash-prod"]
         networks: [appnet]
         ports:

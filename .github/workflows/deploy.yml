@@ -229,6 +229,9 @@ jobs:
             }
 
             wait_rollout pubpub_app 600
+            wait_rollout pubpub_worker 300
+            wait_rollout pubpub_pubstash 300
+            wait_rollout pubpub_cron 300
 
             if [[ -n "${CACHE_API_KEY:-}" ]]; then
               if [[ -n "${CACHE_PURGE_ALL_URL:-}" ]]; then

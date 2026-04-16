@@ -190,23 +190,6 @@ const ScopeDropdown = (props: Props) => {
 								</div>
 								{scope.showSettings && scope.type !== 'Page' && (
 									<div className="settings">
-										{renderDropddownButton(
-											scope,
-											'settings',
-											pubPubIcons.settings,
-										)}
-										{renderDropddownButton(
-											scope,
-											'members',
-											pubPubIcons.member,
-										)}
-										{renderDropddownButton(scope, 'impact', pubPubIcons.impact)}
-										{scope.type === 'Collection' &&
-											renderDropddownButton(
-												scope,
-												'layout',
-												pubPubIcons.layout,
-											)}
 										<a
 											href={`/${
 												(
@@ -221,6 +204,23 @@ const ScopeDropdown = (props: Props) => {
 												<Icon icon="globe" iconSize={12} />
 											</Tooltip>
 										</a>
+										{scope.type === 'Collection' &&
+											renderDropddownButton(
+												scope,
+												'layout',
+												pubPubIcons.layout,
+											)}
+										{renderDropddownButton(scope, 'impact', pubPubIcons.impact)}
+										{renderDropddownButton(
+											scope,
+											'members',
+											pubPubIcons.member,
+										)}
+										{renderDropddownButton(
+											scope,
+											'settings',
+											pubPubIcons.settings,
+										)}
 									</div>
 								)}
 								{scope.showSettings && scope.type === 'Page' && (

@@ -29,7 +29,7 @@ const GlobalControls = (props: Props) => {
 		loginData,
 		communityData: { hideCreatePubButton },
 		scopeData: {
-			activePermissions: { canManage },
+			activePermissions: { canManage, canView },
 		},
 	} = usePageContext();
 
@@ -87,7 +87,7 @@ const GlobalControls = (props: Props) => {
 				<>
 					{canCreatePub && <CreatePubButton />}
 					{renderSearch()}
-					{renderDashboardMenu()}
+					{canView && renderDashboardMenu()}
 					{renderNotificiations()}
 				</>
 			);

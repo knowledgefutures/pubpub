@@ -19,6 +19,7 @@ let currentWorkerThreads = 0;
 /** Nice to be able to run certain tasks longer than the default timeout */
 const customTimeouts = {
 	archive: 14_400, // 4 hours
+	import: 300, // 5 minutes
 } satisfies Partial<Record<TaskType, number>>;
 
 if (env.NODE_ENV === 'production') {

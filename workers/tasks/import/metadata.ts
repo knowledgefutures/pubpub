@@ -3,7 +3,7 @@ import type { Falsy } from 'types';
 import { metaValueToJsonSerializable, metaValueToString } from '@pubpub/prosemirror-pandoc';
 import unidecode from 'unidecode';
 
-import { getSearchUsers } from 'server/search/queries';
+import { batchSearchUsers } from 'server/search/queries';
 import { isValidDate } from 'utils/dates';
 
 const getAuthorsArray = (author) => {
@@ -28,15 +28,19 @@ const getAttributions = async (author) => {
 	if (author) {
 		const authorsArray = getAuthorsArray(author);
 		const authorEntries = authorsArray.map(metaValueToJsonSerializable) as any[];
-		const attributions = await Promise.all(
-			authorEntries.map(async (authorEntry: string) => {
-				if (typeof authorEntry === 'string') {
-					const users = await getSearchUsers(authorEntry);
-					return { name: authorEntry, users: users.map((user) => user.toJSON()) };
-				}
-				return authorEntry;
-			}),
+		const stringEntries = authorEntries.filter(
+			(entry): entry is string => typeof entry === 'string',
 		);
+		const usersByName =
+			stringEntries.length > 0
+				? await batchSearchUsers(stringEntries)
+				: new Map<string, any[]>();
+		const attributions = authorEntries.map((authorEntry) => {
+			if (typeof authorEntry === 'string') {
+				return { name: authorEntry, users: usersByName.get(authorEntry) ?? [] };
+			}
+			return authorEntry;
+		});
 		return attributions;
 	}
 	return null;

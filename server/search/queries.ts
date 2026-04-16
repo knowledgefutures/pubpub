@@ -18,3 +18,43 @@ export const getSearchUsers = async (searchString: string, limit = 5) => {
 		limit,
 	});
 };
+
+/**
+ * Batch-search for multiple author names in a single query, returning a map
+ * from each searched name to its matching users (up to `limit` per name).
+ */
+export const batchSearchUsers = async (names: string[], limit = 5) => {
+	const nonEmpty = names.filter((n) => n.length > 0);
+	if (nonEmpty.length === 0) {
+		return new Map<string, any[]>();
+	}
+
+	const users = await User.findAll({
+		where: {
+			[Op.or]: nonEmpty.flatMap((name) => [
+				{ fullName: { [Op.iLike]: `%${name}%` } },
+				{ slug: { [Op.iLike]: `%${name}%` } },
+				{ email: { [Op.iLike]: name } },
+			]),
+		},
+		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
+	});
+
+	const resultMap = new Map<string, any[]>(nonEmpty.map((name) => [name, []]));
+	const allUsers = users.map((u) => u.toJSON());
+
+	for (const name of nonEmpty) {
+		const lowerName = name.toLowerCase();
+		const matches = allUsers
+			.filter(
+				(u: any) =>
+					u.fullName?.toLowerCase().includes(lowerName) ||
+					u.slug?.toLowerCase().includes(lowerName) ||
+					u.email?.toLowerCase() === lowerName,
+			)
+			.slice(0, limit);
+		resultMap.set(name, matches);
+	}
+
+	return resultMap;
+};

@@ -63,7 +63,7 @@ const MAX_RANGE_DAYS = 365 * 2; // 2 years
  * Temporary: set to `true` to show the migration banner. Remove this constant
  * and the <Callout> block once the Redshift import has completed in production.
  */
-const SHOW_MIGRATION_BANNER = true;
+const SHOW_MIGRATION_BANNER = false;
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 

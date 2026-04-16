@@ -142,6 +142,9 @@ appRouter.use((req, res, next) => {
 	if (hostname.indexOf('.pubpub.org') > -1) {
 		req.session.cookie.domain = '.pubpub.org';
 	}
+	if (hostname.indexOf('.duqduq.org') > -1) {
+		req.session.cookie.domain = '.duqduq.org';
+	}
 	next();
 });
 

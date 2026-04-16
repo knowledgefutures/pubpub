@@ -150,7 +150,6 @@ export const envSchema = z.object({
 	SENTRY_ORG: z.string().describe('Sentry organization slug'),
 
 	// ── Analytics ───────────────────────────────────────────────────────
-	METABASE_SECRET_KEY: z.string().describe('Metabase embedding secret key'),
 	STITCH_WEBHOOK_URL: z.string().describe('MongoDB Stitch webhook URL for analytics'),
 	CLOUDFLARE_ANALYTICS_API_TOKEN: z
 		.string()

@@ -4,6 +4,7 @@ import React from 'react';
 
 import CommunitySpam from './CommunitySpam';
 import LandingPageFeatures from './LandingPageFeatures';
+import PlatformAnalytics from './PlatformAnalytics';
 import UserSpam from './UserSpam';
 
 type SuperAdminTab = {
@@ -12,6 +13,10 @@ type SuperAdminTab = {
 };
 
 export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
+	analytics: {
+		title: 'Analytics',
+		component: PlatformAnalytics,
+	},
 	landingPageFeatures: {
 		title: 'Landing Page features',
 		component: LandingPageFeatures,

@@ -22,6 +22,7 @@ import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
 import { router as openSearchRouter } from './openSearch/api';
 import { router as passwordResetRouter } from './passwordReset/api';
+import { router as platformAnalyticsRouter } from './platformAnalytics/api';
 import { router as pubEdgeProposalRouter } from './pubEdgeProposal/api';
 import { router as pubHistoryRouter } from './pubHistory/api';
 import { router as reviewRouter } from './review/api';
@@ -79,6 +80,7 @@ const apiRouter = Router()
 	.use(zoteroIntegrationRouter)
 	.use(analyticsImpactRouter)
 	.use(impact2Router)
+	.use(platformAnalyticsRouter)
 	.use(apiDocsRouter);
 
 if (!isProd() && env.NODE_ENV !== 'test') {

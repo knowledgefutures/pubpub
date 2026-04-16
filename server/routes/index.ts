@@ -34,7 +34,7 @@ import { router as submitRouter } from './submit';
 
 /* import { router as picingRouter} from './picing'); // Route: '/pricing' */
 
-import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin'
+import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin' (redirect to superadmin)
 import { router as authenticateRouter } from './authenticate'; // Route: '/auth'
 import { router as landingRouter } from './landing'; // Route: '/'
 import { router as legalRouter } from './legal'; // Route: '/legal'

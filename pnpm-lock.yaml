@@ -316,9 +316,6 @@ importers:
       html-minifier:
         specifier: ^4.0.0
         version: 4.0.0
-      iframe-resizer-react:
-        specifier: 1.1.0
-        version: 1.1.0(prop-types@15.8.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       install:
         specifier: ^0.12.2
         version: 0.12.2
@@ -7174,18 +7171,6 @@ packages:
 
   iferr@0.1.5:
     resolution: {integrity: sha512-DUNFN5j7Tln0D+TxzloUjKB+CtVu6myn0JEFak6dG18mNt9YkQ6lzGCdafwofISZ1lLF3xRHJ98VKy9ynkcFaA==}
-
-  iframe-resizer-react@1.1.0:
-    resolution: {integrity: sha512-FrytSq91AIJaDgE+6uK/Vdd6IR8CrwLoZ6eGmL2qQMPTzF0xlSV2jaSzRRUh5V2fttD7vzl21jvBl97bV40eBw==}
-    engines: {node: '>=8', npm: '>=5'}
-    peerDependencies:
-      prop-types: '>=15.7.2'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-
-  iframe-resizer@4.4.5:
-    resolution: {integrity: sha512-U8bCywf/Gh07O69RXo6dXAzTtODQrxaHGHRI7Nt4ipXsuq6EMxVsOP/jjaP43YtXz/ibESS0uSVDN3sOGCzSmw==}
-    engines: {node: '>=0.8.0'}
 
   ignore-by-default@1.0.1:
     resolution: {integrity: sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==}
@@ -20553,16 +20538,6 @@ snapshots:
   ieee754@1.2.1: {}
 
   iferr@0.1.5: {}
-
-  iframe-resizer-react@1.1.0(prop-types@15.8.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0):
-    dependencies:
-      iframe-resizer: 4.4.5
-      prop-types: 15.8.1
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
-      warning: 4.0.3
-
-  iframe-resizer@4.4.5: {}
 
   ignore-by-default@1.0.1: {}
 

@@ -1,6 +1,5 @@
 import {
 	About,
-	AdminDashboard,
 	Collection,
 	CommunityCreate,
 	CommunityServices,
@@ -45,11 +44,6 @@ export default (viewData, locationData, chunkName) => {
 		About: {
 			ActiveComponent: About,
 			hideNav: locationData.isBasePubPub,
-		},
-		AdminDashboard: {
-			ActiveComponent: AdminDashboard,
-			hideNav: true,
-			hideFooter: true,
 		},
 		Collection: {
 			ActiveComponent: Collection,

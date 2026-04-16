@@ -153,7 +153,6 @@
 		"google-auth-library": "^9.7.0",
 		"graphlib": "^2.1.8",
 		"html-minifier": "^4.0.0",
-		"iframe-resizer-react": "1.1.0",
 		"install": "^0.12.2",
 		"is-url": "^1.2.4",
 		"js-beautify": "^1.11.0",

@@ -1,5 +1,4 @@
 export { default as About } from './About/About';
-export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as Collection } from './Collection/Collection';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
 export { default as CommunityServices } from './CommunityServices/CommunityServices';

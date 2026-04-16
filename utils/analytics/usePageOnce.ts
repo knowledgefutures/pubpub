@@ -46,7 +46,7 @@ const determinePayload = (
 		// UUID in the array, which creates a ton of events for a single page view if the pub
 		// is in a lot of collections
 		// much easier to just have a single event with a string of UUIDs and then do some
-		// processing in Metabase
+		// processing in analytics queries
 		const collectionIds = uniqueCollectionIds.join(',') || undefined;
 		const collection = chooseCollectionForPub(pubData, locationData);
 

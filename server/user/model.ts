@@ -262,13 +262,13 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	declare spamTag?: SpamTag;
 
 	@HasMany(() => PubAttribution, {
-		onDelete: 'CASCADE',
+		onDelete: 'SET NULL',
 		as: 'attributions',
 		foreignKey: 'userId',
 	})
 	declare attributions?: PubAttribution[];
 
-	@HasMany(() => Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' })
+	@HasMany(() => Discussion, { onDelete: 'NO ACTION', as: 'discussions', foreignKey: 'userId' })
 	declare discussions?: Discussion[];
 
 	@HasMany(() => CommunityBan, {

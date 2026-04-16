@@ -10,6 +10,8 @@ import AccountSecuritySettings from 'components/AccountSecuritySettings';
 import UserNotificationPreferences from 'components/UserNotifications/UserNotificationPreferences';
 import { usePageContext } from 'utils/hooks';
 
+import DeleteAccount from './DeleteAccount';
+
 type PrivacySettingsProps = {
 	integrations: types.Integration[];
 	userEmail: string;
@@ -24,15 +26,6 @@ const exportEmailBody = `
 Hello.
 %0D%0A%0D%0A
 I am writing to request an export of any PubPub account data associated with this email address.
-`;
-
-const deleteEmailBody = `
-Hello.
-%0D%0A%0D%0A
-I am writing to request that the PubPub account associated with this email address, and all%20
-data associated with that account, be deleted.
-%0D%0A%0D%0A
-I understand that this action may be irreversible.
 `;
 
 const possibleIntegrations = [
@@ -162,22 +155,7 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 						</Card>
 					)}
 					<AccountSecuritySettings userEmail={props.userEmail} />
-					<Card>
-						<h5>Account deletion</h5>
-						<p>
-							You can request that we completely delete your PubPub account using the
-							button below. If you have left comments on notable Pubs, we may reserve
-							the right to continue to display them based on the academic research
-							exception to GDPR.
-						</p>
-						<AnchorButton
-							intent="danger"
-							target="_blank"
-							href={`mailto:privacy@pubpub.org?subject=Account+deletion+request&body=${deleteEmailBody.trim()}`}
-						>
-							Request account deletion
-						</AnchorButton>
-					</Card>
+					<DeleteAccount />
 				</React.Fragment>
 			)}
 		</div>

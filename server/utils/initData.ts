@@ -12,6 +12,7 @@ import { getAppCommit, isDuqDuq, isProd, isQubQub, shouldForceBasePubPub } from 
 
 import { PubPubError } from './errors';
 import { getCommunity, getScope, sanitizeCommunity } from './queryHelpers';
+import { ARCHIVE_COMMUNITY_ID } from './systemEntities';
 
 const getNotificationData = async (
 	userId: null | string,
@@ -112,6 +113,7 @@ export const getInitialData = async (
 					type: 'default',
 					credentials: null,
 				},
+				isArchiveCommunity: false,
 			} as any,
 			loginData,
 			locationData,
@@ -183,7 +185,10 @@ export const getInitialData = async (
 	);
 
 	const result = {
-		communityData: cleanedCommunityData,
+		communityData: {
+			...cleanedCommunityData,
+			isArchiveCommunity: cleanedCommunityData.id === ARCHIVE_COMMUNITY_ID,
+		},
 		loginData,
 		locationData,
 		scopeData,

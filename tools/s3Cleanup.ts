@@ -1046,6 +1046,19 @@ async function unquarantineKeys(keys: string[]) {
 	log(`Done: ${restored} restored, ${errors} errors`);
 }
 
+/**
+ * Prompts the user for confirmation via stdin. Returns true if they type 'y' or 'yes'.
+ */
+async function confirm(message: string): Promise<boolean> {
+	const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+	return new Promise((resolve) => {
+		rl.question(`${message} [y/N] `, (answer) => {
+			rl.close();
+			resolve(answer.trim().toLowerCase() === 'y' || answer.trim().toLowerCase() === 'yes');
+		});
+	});
+}
+
 async function main() {
 	// Handle --unquarantine as a standalone command (no DB scan needed)
 	if (unquarantineIdx !== -1) {
@@ -1069,6 +1082,17 @@ async function main() {
 	const referencedKeys = await collectReferencedKeys();
 
 	if (!skipS3List) {
+		// S3 ListObjectsV2 charges ~$5 per million requests. For a large bucket
+		// with millions of objects, a full listing costs roughly $10+.
+		const ok = await confirm(
+			'\n⚠️  This will list every object in the S3 bucket, which costs ~$10 in LIST request fees.\n' +
+				'   Use --skip-s3-list to reuse a previous orphans.txt instead.\n' +
+				'   Continue?',
+		);
+		if (!ok) {
+			log('Aborted.');
+			process.exit(0);
+		}
 		// Phase 2: List S3 bucket and write orphans
 		await listAndCleanS3(referencedKeys);
 	} else {

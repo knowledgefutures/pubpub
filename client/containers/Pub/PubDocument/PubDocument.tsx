@@ -14,6 +14,7 @@ import ContributorsListCondensed from '../../../components/ContributorsListConde
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
 import { usePubHrefs } from '../usePubHrefs';
+import PubArchiveNotice from './PubArchiveNotice';
 import PubBody from './PubBody';
 import PubBottom from './PubBottom/PubBottom';
 import PubFileImport from './PubFileImport';
@@ -64,6 +65,7 @@ const PubDocument = () => {
 			)}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
+					<PubArchiveNotice />
 					<PubMaintenanceNotice pubData={pubData} />
 					{!isReviewingPub && (
 						<PubHistoricalNotice pubData={pubData} historyData={historyData} />

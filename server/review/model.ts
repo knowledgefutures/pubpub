@@ -74,7 +74,7 @@ export class ReviewNew extends Model<
 	declare visibility?: Visibility;
 
 	@BelongsTo(() => User, {
-		onDelete: 'CASCADE',
+		onDelete: 'NO ACTION',
 		as: 'author',
 		foreignKey: 'userId',
 		constraints: false,

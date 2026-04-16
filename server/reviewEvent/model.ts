@@ -45,6 +45,6 @@ export class ReviewEvent extends Model<
 	@Column(DataType.UUID)
 	declare reviewId: string;
 
-	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	@BelongsTo(() => User, { onDelete: 'NO ACTION', as: 'user', foreignKey: 'userId' })
 	declare user?: User;
 }

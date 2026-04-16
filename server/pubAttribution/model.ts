@@ -73,7 +73,7 @@ export class PubAttribution extends Model<
 	@Column(DataType.UUID)
 	declare pubId: string;
 
-	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	@BelongsTo(() => User, { onDelete: 'SET NULL', as: 'user', foreignKey: 'userId' })
 	declare user?: User;
 
 	@BelongsTo(() => Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' })

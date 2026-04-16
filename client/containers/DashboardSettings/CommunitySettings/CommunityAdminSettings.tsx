@@ -1,39 +1,18 @@
 import type { WorkerTask } from 'server/models';
 import type { Community, DiscussionCreationAccess } from 'types';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AnchorButton, Button, Callout } from '@blueprintjs/core';
-import stripIndent from 'strip-indent';
 
 import { SettingsSection } from 'components';
 import { isDataExportEnabled } from 'utils/analytics/featureFlags';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
+import DeleteCommunity from './DeleteCommunity';
 import DiscussionsSection from './DiscussionsSection';
 import { type ArchiveTask, ExportCommunityDataButton } from './ExportCommunityDataButton';
-
-const getEmails = (communityData: Community) => {
-	const exportEmailBody = stripIndent(`
-        Hello.
-        %0D%0A%0D%0A
-        I am writing to request an export of any PubPub community data associated with the community%20
-        ${communityData.title} (${communityData.subdomain}).
-    `);
-
-	const deleteEmailBody = stripIndent(`
-        Hello.
-        %0D%0A%0D%0A
-        I am writing to request that the PubPub community ${communityData.title}%20
-        (${communityData.subdomain}), and all data associated with that community, be deleted.
-        %0D%0A%0D%0A
-        I affirm that I have the legal authority to request this on behalf of my community,%20
-        and understand that this action may be irreversible.
-    `);
-
-	return { exportEmailBody, deleteEmailBody };
-};
 
 type Props = {
 	settingsData: {
@@ -135,8 +114,6 @@ const ExportAndDeleteSettings = (props: Props) => {
 		featureFlags,
 	} = usePageContext();
 
-	const { deleteEmailBody } = useMemo(() => getEmails(communityData), [communityData]);
-
 	if (!canAdminCommunity) {
 		return null;
 	}
@@ -166,20 +143,7 @@ const ExportAndDeleteSettings = (props: Props) => {
 				updateCommunityData={props.updateCommunityData}
 			/>
 
-			<SettingsSection title="Community Deletion">
-				<p>
-					You can request that we completely delete your PubPub Community using the button
-					below. If you have published any notable Pubs, we may reserve the right to
-					continue to display them based on the academic research exception to GDPR.
-				</p>
-				<AnchorButton
-					intent="danger"
-					target="_blank"
-					href={`mailto:privacy@pubpub.org?subject=Community+deletion+request&body=${deleteEmailBody.trim()}`}
-				>
-					Request Community deletion
-				</AnchorButton>
-			</SettingsSection>
+			<DeleteCommunity communityData={communityData} />
 		</>
 	);
 };

@@ -71,6 +71,3 @@ tsconfig.tsbuildinfo
 
 infra/pgdata/
 tmp/
-
-details.md
-

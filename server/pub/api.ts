@@ -161,6 +161,11 @@ export const pubServer = s.router(contract.pub, {
 			throw new ForbiddenError();
 		}
 
+		const pub = expect(await Pub.findByPk(pubId));
+		if (pub.doi) {
+			throw new BadRequestError(new Error('Cannot delete a Pub with an assigned DOI'));
+		}
+
 		await destroyPub(pubId, userId);
 		return {
 			status: 200,

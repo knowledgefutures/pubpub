@@ -63,7 +63,7 @@ export class CollectionAttribution extends Model<
 	@Column(DataType.UUID)
 	declare collectionId: string;
 
-	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' })
+	@BelongsTo(() => User, { onDelete: 'SET NULL', as: 'user', foreignKey: 'userId' })
 	declare user?: User;
 
 	@BelongsTo(() => Collection, {

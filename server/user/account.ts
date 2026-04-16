@@ -8,6 +8,8 @@ import { logout } from 'server/utils/logout';
 import { contract } from 'utils/api/contract';
 import { generateHash } from 'utils/hashes';
 
+import { destroyUser, getUserDeletionAudit } from './destroyUser';
+
 const s = initServer();
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
@@ -174,5 +176,63 @@ export const accountServer = s.router(contract.account, {
 		logout(req, res);
 
 		return { status: 200, body: { success: true, newEmail } };
+	},
+
+	deletionAudit: async ({ req }) => {
+		const userId = req.user?.id;
+
+		if (!userId) {
+			return {
+				status: 403,
+				body: { message: 'Must be logged in to view account deletion audit' },
+			};
+		}
+
+		const audit = await getUserDeletionAudit(userId);
+		return { status: 200, body: audit };
+	},
+
+	deleteAccount: async ({ req, res, body }) => {
+		const userId = req.user?.id;
+
+		if (!userId) {
+			return {
+				status: 403,
+				body: { message: 'Must be logged in to delete account' },
+			};
+		}
+
+		const userData = await User.findOne({ where: { id: userId } });
+
+		if (!userData) {
+			return {
+				status: 403,
+				body: { message: 'User not found' },
+			};
+		}
+
+		// Require password confirmation
+		try {
+			await authenticate(userData, body.password);
+		} catch (_error) {
+			return { status: 403, body: { message: 'Password is incorrect' } };
+		}
+
+		// Block deletion if user is sole admin of any community
+		const audit = await getUserDeletionAudit(userId);
+		if (audit.soleAdminCommunities.length > 0) {
+			return {
+				status: 400,
+				body: {
+					message: `You are the only admin of ${audit.soleAdminCommunities.length} community/communities. Please add another admin or delete those communities first.`,
+				},
+			};
+		}
+
+		// Destroy the account first so logout only happens after successful deletion
+		await destroyUser(userId);
+		logout(req, res);
+
+		return { status: 200, body: { success: true } };
 	},
 });

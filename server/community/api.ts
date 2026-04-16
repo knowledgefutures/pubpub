@@ -19,6 +19,7 @@ import {
 import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 import { createGetRequestIds } from 'utils/getRequestIds';
 
+import { destroyCommunity, getCommunityDeletionAudit } from './destroyCommunity';
 import { getPermissions } from './permissions';
 import {
 	CommunityURLAlreadyExistsError,
@@ -217,5 +218,26 @@ export const communityServer = s.router(contract.community, {
 			body: updatedValues,
 			status: 200,
 		};
+	},
+
+	deletionAudit: async ({ params, req }) => {
+		const community = await ensureUserIsCommunityAdmin({ ...req, id: params.id });
+		const audit = await getCommunityDeletionAudit(community.id);
+		return { status: 200, body: audit };
+	},
+
+	remove: async ({ params, body, req }) => {
+		const community = await ensureUserIsCommunityAdmin({ ...req, id: params.id });
+
+		if (community.title !== body.confirmationTitle) {
+			throw new BadRequestError(
+				new Error(
+					'Confirmation title does not match. Please type the exact community title to confirm deletion.',
+				),
+			);
+		}
+
+		await destroyCommunity(community.id, req.user!.id);
+		return { status: 200, body: { success: true } };
 	},
 });

@@ -52,17 +52,33 @@ class DeletePub extends Component<Props, State> {
 	}
 
 	render() {
-		const canDelete =
-			normalizeTitle(this.props.pubData.title) === normalizeTitle(this.state.title);
+		const { pubData } = this.props;
+
+		if (pubData.doi) {
+			return (
+				<div className={`${Classes.CALLOUT} ${Classes.INTENT_WARNING}`}>
+					<p>
+						<b>This Pub cannot be deleted because it has an assigned DOI.</b>
+					</p>
+					<p>
+						Pubs with DOIs must be preserved for the scholarly record. If you believe
+						this Pub should be removed, please contact us at{' '}
+						<a href="mailto:privacy@pubpub.org">privacy@pubpub.org</a>.
+					</p>
+				</div>
+			);
+		}
+
+		const canDelete = normalizeTitle(pubData.title) === normalizeTitle(this.state.title);
 
 		return (
 			<div className={`${Classes.CALLOUT} ${Classes.INTENT_DANGER}`}>
 				<p>
-					<b>Deleting a Pub is permanent - it cannot be undone.</b>
+					<b>Deleting a Pub is permanent and cannot be undone.</b>
 				</p>
 				<p>
-					This will permanently delete the Pub <b>{this.props.pubData.title}</b>, its
-					discussions, and associated metadata.
+					This will permanently delete the Pub <b>{pubData.title}</b>, its discussions,
+					and associated metadata.
 				</p>
 				<p>Please type the title of the Pub below to confirm your intention.</p>
 

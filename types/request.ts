@@ -89,7 +89,10 @@ export type ScopeData = {
 export type InitialCommunityData = DefinitelyHas<
 	Community,
 	'collections' | 'pages' | 'scopeSummary'
->;
+> & {
+	/** True when this community is the archive community (archive.pubpub.org). */
+	isArchiveCommunity: boolean;
+};
 
 export type InitialNotificationsData = {
 	hasNotifications: boolean;

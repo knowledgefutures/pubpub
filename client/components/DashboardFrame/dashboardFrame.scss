@@ -5,6 +5,8 @@ $bp: vendor.$bp-namespace;
 @import 'styles/mixins.scss';
 
 .dashboard-frame-component {
+	padding-bottom: 120px;
+
 	@include mobile {
 		margin-bottom: 60px; // Clear the BottomMenu
 	}

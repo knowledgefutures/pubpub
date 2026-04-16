@@ -76,7 +76,7 @@ export class CommunityBan extends Model<
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
 	declare community?: Community;
 
-	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'actor', foreignKey: 'actorId' })
+	@BelongsTo(() => User, { onDelete: 'NO ACTION', as: 'actor', foreignKey: 'actorId' })
 	/** last user to interact with the ban, not necessarily the one who created it */
 	declare actor?: User;
 

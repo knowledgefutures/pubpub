@@ -74,7 +74,7 @@ export class Discussion extends Model<
 	})
 	declare visibility?: Visibility;
 
-	@BelongsTo(() => User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' })
+	@BelongsTo(() => User, { onDelete: 'NO ACTION', as: 'author', foreignKey: 'userId' })
 	declare author?: User;
 
 	@BelongsTo(() => Commenter, { onDelete: 'CASCADE', as: 'commenter', foreignKey: 'commenterId' })

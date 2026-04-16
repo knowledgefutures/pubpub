@@ -110,11 +110,10 @@ const CommunityCreate = () => {
 			return;
 		}
 		try {
-			const newCommunity = await apiFetch.post<string>('/api/communities', {
+			await apiFetch.post<string>('/api/communities', {
 				...payload,
 				altcha: altchaPayload,
 			});
-			window.location.href = newCommunity;
 			setCreateIsLoading(false);
 			setIsCreated(true);
 		} catch (error) {

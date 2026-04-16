@@ -156,31 +156,40 @@ export const up = async (queryInterface) => {
         NOW(),
         NOW()
       ) ON CONFLICT (id) DO UPDATE SET "spamTagId" = spam_tag_id, "accentColorLight" = '#FFFFFF', "accentColorDark" = '#112233', "headerColorType" = 'dark', "hideHero" = true, "hideNav" = true;
-
-      -- Create or update the home page
-      INSERT INTO "Pages" (
-        id, title, slug, description, "isPublic", layout, "communityId",
-        "createdAt", "updatedAt"
-      ) VALUES (
-        '${ARCHIVE_HOME_PAGE_ID}',
-        'Home',
-        '',
-        'PubPub Archive home page',
-        true,
-        '[{"id":"0","type":"html","content":{"html":"<div style=\"max-width:640px;margin:2em auto;font-size:1.1em;line-height:1.6\"><p>This is the PubPub Archive community. Pubs from deleted communities that need to be preserved for the scholarly record will be kept here for preservation.</p></div>"}}]'::jsonb,
-        '${ARCHIVE_COMMUNITY_ID}',
-        NOW(),
-        NOW()
-      ) ON CONFLICT (id) DO UPDATE SET
-        layout = EXCLUDED.layout,
-        "isPublic" = true;
-
-      -- Point the community navigation at the home page
-      UPDATE "Communities"
-        SET navigation = '[{"type":"page","id":"${ARCHIVE_HOME_PAGE_ID}"}]'::jsonb
-        WHERE id = '${ARCHIVE_COMMUNITY_ID}';
     END $$;
   `);
+
+  // 5. Create the archive community home page and navigation (separate queries
+  //    so we can use Sequelize replacements for JSON values without escaping
+  //    issues inside PL/pgSQL $$ blocks).
+  const layoutJson = JSON.stringify([{
+    id: '0',
+    type: 'html',
+    content: {
+      html: '<div style="max-width:640px;margin:2em auto;font-size:1.1em;line-height:1.6"><p>This is the PubPub Archive community. Pubs from deleted communities that need to be preserved for the scholarly record will be kept here for preservation.</p></div>',
+    },
+  }]);
+  const navigationJson = JSON.stringify([{ type: 'page', id: ARCHIVE_HOME_PAGE_ID }]);
+
+  await queryInterface.sequelize.query(
+    `INSERT INTO "Pages" (
+       id, title, slug, description, "isPublic", layout, "communityId",
+       "createdAt", "updatedAt"
+     ) VALUES (
+       :pageId, 'Home', '', 'PubPub Archive home page', true,
+       :layout::jsonb, :communityId, NOW(), NOW()
+     ) ON CONFLICT (id) DO UPDATE SET
+       layout = EXCLUDED.layout,
+       "isPublic" = true`,
+    { replacements: { pageId: ARCHIVE_HOME_PAGE_ID, layout: layoutJson, communityId: ARCHIVE_COMMUNITY_ID } },
+  );
+
+  await queryInterface.sequelize.query(
+    `UPDATE "Communities"
+       SET navigation = :navigation::jsonb
+       WHERE id = :communityId`,
+    { replacements: { navigation: navigationJson, communityId: ARCHIVE_COMMUNITY_ID } },
+  );
 };
 
 export const down = async (queryInterface) => {

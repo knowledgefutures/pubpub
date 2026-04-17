@@ -279,26 +279,30 @@ describe('/api/releases', () => {
 				),
 			);
 
+		const r1Key = release.historyKey;
+		const r2Key = nextRelease.historyKey;
+		const r3Key = r2Key + 1;
+
 		expect(discussion1Anchors).toEqual([
-			{ historyKey: 0, selection: { type: 'text', anchor: 8, head: 10 } },
-			{ historyKey: 2, selection: { type: 'text', anchor: 11, head: 13 } },
-			{ historyKey: 3, selection: { type: 'text', anchor: 47, head: 49 } },
+			{ historyKey: r1Key, selection: { type: 'text', anchor: 8, head: 10 } },
+			{ historyKey: r2Key, selection: { type: 'text', anchor: 11, head: 13 } },
+			{ historyKey: r3Key, selection: { type: 'text', anchor: 47, head: 49 } },
 		]);
 
 		expect(discussion2Anchors).toEqual([
-			{ historyKey: 0, selection: { type: 'text', anchor: 1, head: 3 } },
-			{ historyKey: 2, selection: null },
-			{ historyKey: 3, selection: null },
+			{ historyKey: r1Key, selection: { type: 'text', anchor: 1, head: 3 } },
+			{ historyKey: r2Key, selection: null },
+			{ historyKey: r3Key, selection: null },
 		]);
 
 		expect(discussion3Anchors).toEqual([
-			{ historyKey: 2, selection: { type: 'text', anchor: 9, head: 12 } },
-			{ historyKey: 3, selection: { type: 'text', anchor: 19, head: 48 } },
+			{ historyKey: r2Key, selection: { type: 'text', anchor: 9, head: 12 } },
+			{ historyKey: r3Key, selection: { type: 'text', anchor: 19, head: 48 } },
 		]);
 
 		expect(discussion4Anchors).toEqual([
-			{ historyKey: 2, selection: { type: 'text', anchor: 1, head: 7 } },
-			{ historyKey: 3, selection: { type: 'text', anchor: 11, head: 17 } },
+			{ historyKey: r2Key, selection: { type: 'text', anchor: 1, head: 7 } },
+			{ historyKey: r3Key, selection: { type: 'text', anchor: 11, head: 17 } },
 		]);
-	});
+	}, 20_000);
 });

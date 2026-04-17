@@ -28,7 +28,7 @@ import {
 	ScopeSummary,
 	sequelize,
 } from 'server/models';
-import { getDatabaseRef, getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { assetsClient } from 'server/utils/s3';
 import { updateWorkerTask } from 'server/workerTask/queries';
@@ -223,10 +223,7 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 						}
 
 						try {
-							const draftDocPromise = getPubDraftDoc(
-								getDatabaseRef(firebasePath),
-								null,
-							).then((d) => d.doc);
+							const draftDocPromise = getPubDraftDoc(p.id, null).then((d) => d.doc);
 
 							const [draftDoc, facets] = await Promise.all([
 								draftDocPromise,

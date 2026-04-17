@@ -35,7 +35,7 @@ export const useFileManager = () => {
 						fileId === file.id
 							? newLabel
 							: label === newLabel && isExclusiveLabel
-								? null
+								? 'none'
 								: label;
 					return { ...file, label: nextLabel };
 				}),

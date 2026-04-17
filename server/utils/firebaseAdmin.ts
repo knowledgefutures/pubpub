@@ -208,7 +208,7 @@ export const getPubDraftDoc = async (
 		// Use the Postgres checkpoint key as the "first" if Firebase has nothing earlier
 		const effectiveFirstKey = firstKey >= 0 ? firstKey : pgCheckpoint.historyKey;
 		const effectiveFirstTimestamp = firstKey >= 0 ? firstTimestamp : pgCheckpoint.timestamp;
-		const effectiveLatestKey = latestKey >= 0 ? latestKey : currentKey;
+		const effectiveLatestKey = latestKey >= 0 ? Math.max(latestKey, currentKey) : currentKey;
 		const effectiveLatestTimestamp = latestKey >= 0 ? latestTimestamp : currentTimestamp;
 
 		return {
@@ -271,9 +271,8 @@ const getPubDraftDocFromFirebase = async (
 };
 
 export const getLatestKeyInPubDraft = async (pubId: string) => {
-	const pubDraftRef = await getPubDraftRef(pubId);
-	const { key } = await getLatestKeyAndTimestamp(pubDraftRef!);
-	return key;
+	const { mostRecentRemoteKey, historyData } = await getPubDraftDoc(pubId, null);
+	return Math.max(mostRecentRemoteKey, historyData.latestKey);
 };
 
 const getFirebaseDraftPathParts = (draftPath: string) => {
@@ -310,10 +309,11 @@ export const editFirebaseDraftByRef = async (
 	ref: firebase.database.Reference,
 	clientId: string,
 	schema: Schema = editorSchema,
+	initialState?: { doc: Node; key: number },
 ) => {
 	const fetchDoc = async () => getFirebaseDoc(ref, schema);
 
-	let { doc, key: currentKey } = await fetchDoc();
+	let { doc, key: currentKey } = initialState ?? (await fetchDoc());
 	let pendingSteps: Step[] = [];
 
 	const api = {

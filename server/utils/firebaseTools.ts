@@ -33,17 +33,21 @@ const appendNewChange = async ({
 	to,
 	slice,
 	client = 'api',
+	baseKey,
 }: {
 	draftRef: Reference;
 	from: number;
 	to: number;
 	slice: Slice;
 	client?: string;
+	baseKey?: number;
 }) => {
 	const latestChange = (await draftRef.child('changes').limitToLast(1).once('value')).val();
+	const latestFirebaseKey = latestChange ? Number(Object.keys(latestChange)[0]) : null;
 
-	const latestKey = latestChange ? Object.keys(latestChange)[0] : null;
-	const key = latestKey ? Number(latestKey) + 1 : 0;
+	// Use the highest of the Firebase key and the provided base key (from PG checkpoint)
+	const latestKey = Math.max(latestFirebaseKey ?? -1, baseKey ?? -1);
+	const key = latestKey >= 0 ? latestKey + 1 : 0;
 
 	const change = makeReplaceStepFromTo({ from, to, slice, client });
 	await draftRef.child('changes').child(key.toString()).set(change);
@@ -64,28 +68,34 @@ export const writeDocumentToPubDraft = async (
 
 	const doc = hydratedDocument.toJSON() as DocJson;
 
-	const { size, doc: originalDoc } = await getPubDraftDoc(draftRef);
+	const { size, doc: originalDoc, mostRecentRemoteKey } = await getPubDraftDoc(pubId, null);
 	switch (method) {
 		case 'overwrite': {
 			const change = makeReplaceStepFromTo({ from: 0, to: 0, slice });
 			// this removes the old data
-			await draftRef.child('changes').set({ 0: change });
+			await draftRef.child('changes').set({ [mostRecentRemoteKey + 1]: change });
 			return doc;
 		}
 		case 'prepend': {
-			appendNewChange({ from: 0, to: 0, slice, draftRef });
+			appendNewChange({ from: 0, to: 0, slice, draftRef, baseKey: mostRecentRemoteKey });
 			return {
 				...originalDoc,
 				content: [...doc.content, ...originalDoc.content],
 			} as DocJson;
 		}
 		case 'replace': {
-			appendNewChange({ from: 0, to: size, slice, draftRef });
+			appendNewChange({ from: 0, to: size, slice, draftRef, baseKey: mostRecentRemoteKey });
 			return doc;
 		}
 
 		default: {
-			appendNewChange({ from: size, to: size, slice, draftRef });
+			appendNewChange({
+				from: size,
+				to: size,
+				slice,
+				draftRef,
+				baseKey: mostRecentRemoteKey,
+			});
 			return {
 				...originalDoc,
 				content: [...originalDoc.content, ...doc.content],

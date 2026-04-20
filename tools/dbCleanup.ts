@@ -61,20 +61,19 @@ async function destroyInBatches(
 async function cleanupWorkerTasks() {
 	const cutoff = new Date(Date.now() - THIRTY_DAYS_MS);
 
-	// Count what we'd delete: all non-archive tasks older than 30 days
+	// Count what we'd delete: all worker tasks older than 30 days
 	const count = await WorkerTask.count({
 		where: {
-			type: { [Op.ne]: 'archive' },
 			createdAt: { [Op.lt]: cutoff },
 		},
 	});
 
-	log(`WorkerTasks to delete (non-archive, older than 30d): ${count.toLocaleString()}`);
+	log(`WorkerTasks to delete (older than 30d): ${count.toLocaleString()}`);
 
 	if (execute && count > 0) {
 		const deleted = await destroyInBatches(
 			'WorkerTasks',
-			`"type" != 'archive' AND "createdAt" < :cutoff`,
+			`"createdAt" < :cutoff`,
 			{ cutoff },
 			count,
 		);

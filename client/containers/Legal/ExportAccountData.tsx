@@ -15,11 +15,10 @@ type PastExport = {
 };
 
 type Props = {
-	disabled?: boolean;
 	pastExports?: PastExport[];
 };
 
-export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
+const ExportAccountData = ({ pastExports }: Props) => {
 	const [isRequesting, setIsRequesting] = useState(false);
 	const [requestedAt, setRequestedAt] = useState<Date | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
@@ -31,15 +30,14 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 		setMessage(null);
 
 		try {
-			const response = await apiFetch('/api/communities/export', {
+			await apiFetch('/api/account/export', {
 				method: 'POST',
 				body: JSON.stringify({}),
 			});
 
 			setRequestedAt(new Date());
 			setMessage(
-				response.message ??
-					'Your data export is being generated. You will receive an email with a download link when it is ready.',
+				'Your data export is being generated. You will receive an email with a download link when it is ready.',
 			);
 		} catch (e) {
 			const msg =
@@ -55,10 +53,15 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 	}, []);
 
 	const hasInProgress = pastExports?.some((e) => e.isProcessing);
-	const isButtonDisabled = isRequesting || !!requestedAt || hasInProgress || disabled;
+	const isButtonDisabled = isRequesting || !!requestedAt || hasInProgress;
 
 	return (
-		<div>
+		<>
+			<p>
+				Download a copy of your account data in a machine-readable format. This includes
+				your profile information, pub attributions, comments, reviews, and other activity on
+				PubPub.
+			</p>
 			<div>
 				<Button disabled={isButtonDisabled} onClick={startExport}>
 					{isRequesting ? (
@@ -176,6 +179,8 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 					</HTMLTable>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
+
+export default ExportAccountData;

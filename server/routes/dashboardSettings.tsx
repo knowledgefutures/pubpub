@@ -4,7 +4,7 @@ import React from 'react';
 
 import { Router } from 'express';
 
-import { getCommunityArchives } from 'server/community/queries';
+import { getCommunityExports } from 'server/community/queries';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import Html from 'server/Html';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
@@ -25,7 +25,7 @@ const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdm
 					getEdges: 'all',
 				})
 			: null,
-		isAdmin ? getCommunityArchives(initialData.communityData.id) : null,
+		isAdmin ? getCommunityExports(initialData.communityData.id) : null,
 	]);
 	const baseSettingsData = {
 		depositTarget,

@@ -18,6 +18,36 @@ declare global {
 
 const allowedExportFormats = ['formatted', 'pdf', 'jats', 'html'];
 
+/** Simple concurrency limiter for fetch operations */
+class FetchSemaphore {
+	#running = 0;
+	#queue: (() => void)[] = [];
+
+	constructor(private maxConcurrent: number) {}
+
+	async acquire(): Promise<void> {
+		if (this.#running < this.maxConcurrent) {
+			this.#running++;
+			return;
+		}
+		return new Promise<void>((resolve) => {
+			this.#queue.push(() => {
+				this.#running++;
+				resolve();
+			});
+		});
+	}
+
+	release(): void {
+		this.#running--;
+		const next = this.#queue.shift();
+		if (next) next();
+	}
+}
+
+/** Shared global semaphore to limit concurrent asset fetches across all streams */
+const assetFetchSemaphore = new FetchSemaphore(30);
+
 const fetchWithRetry = async (
 	options: RequestInfo | URL,
 	init?: RequestInit,
@@ -42,6 +72,7 @@ export type SiteDownloaderTransformConfig = TransformOptions & {
 	progressTracker?: {
 		incrementProcessed: () => Promise<void>;
 	} | null;
+	sharedAssetUrls?: Set<string>;
 };
 
 const isLinkTag = (tag: any) => tag.tagName === 'link';
@@ -139,10 +170,7 @@ const defaultConfig: SiteDownloaderTransformConfig = {
 };
 
 export class SiteDownloaderTransform extends Transform {
-	static #assetUrls = new Set<string>();
-	static hasAssetUrl(url: string | URL) {
-		return this.#assetUrls.has(url.toString());
-	}
+	#assetUrls: Set<string>;
 
 	#config: SiteDownloaderTransformConfig;
 
@@ -150,17 +178,19 @@ export class SiteDownloaderTransform extends Transform {
 		const finalConfig = { ...defaultConfig, ...config };
 		super({ ...finalConfig, objectMode: true });
 		this.#config = finalConfig;
+		this.#assetUrls = finalConfig.sharedAssetUrls ?? new Set();
 	}
 
 	async #fetch(url: string | URL) {
 		const response = await fetchWithRetry(url, {
 			headers: this.#config.headers,
+			signal: AbortSignal.timeout(30_000),
 		});
-		return response.clone();
+		return response;
 	}
 
 	#pushAsset(assetUrl: URL, assetPath: string) {
-		if (SiteDownloaderTransform.hasAssetUrl(assetUrl.href)) {
+		if (this.#assetUrls.has(assetUrl.href)) {
 			console.log(`Skipping ${assetUrl.href} because it's already been pushed`);
 			return;
 		}
@@ -171,18 +201,20 @@ export class SiteDownloaderTransform extends Transform {
 
 		this.push({ name: assetPath, stream });
 
-		this.#fetch(assetUrl)
-			.then((response) => {
+		(async () => {
+			await assetFetchSemaphore.acquire();
+			try {
+				const response = await this.#fetch(assetUrl);
 				Readable.fromWeb(response.body!).pipe(stream);
-			})
-			.catch((err) => {
+			} catch (err) {
 				console.error(`Failed to fetch asset ${assetUrl.href}:`, err);
-				// If the asset fetch fails, we still want to push an empty stream
-				// so that the archive can be created without errors.
 				Readable.from([]).pipe(stream);
-			});
+			} finally {
+				assetFetchSemaphore.release();
+			}
+		})();
 
-		SiteDownloaderTransform.#assetUrls.add(assetUrl.href);
+		this.#assetUrls.add(assetUrl.href);
 	}
 
 	transformTag(tag: StartTag, pageUrl: URL) {

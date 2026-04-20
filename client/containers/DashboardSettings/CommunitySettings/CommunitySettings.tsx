@@ -1,4 +1,3 @@
-import type { WorkerTask } from 'server/models';
 import type { Community, PageContext } from 'types';
 
 import React, { useMemo } from 'react';
@@ -40,7 +39,13 @@ const mustRefreshAfterPersist = (oldCommunity: Community, update: Partial<Commun
 
 type Props = {
 	settingsData: {
-		archives?: WorkerTask[];
+		archives?: {
+			id: string;
+			createdAt: string;
+			isProcessing: boolean;
+			output: string | null;
+			error: string | null;
+		}[];
 	};
 };
 

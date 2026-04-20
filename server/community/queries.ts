@@ -308,10 +308,10 @@ export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<t
 	}
 };
 
-export const getOrStartArchiveTask = async (communityId: string, key: string) => {
+export const getOrStartCommunityExportTask = async (communityId: string, key: string) => {
 	const pendingTask = await WorkerTask.findOne({
 		where: {
-			type: 'archive',
+			type: 'communityExport',
 			input: {
 				communityId,
 			},
@@ -326,23 +326,25 @@ export const getOrStartArchiveTask = async (communityId: string, key: string) =>
 	}
 
 	const workerTask = await addWorkerTask({
-		type: 'archive',
+		type: 'communityExport',
 		input: { communityId, key },
 	});
 
 	return workerTask;
 };
 
-export const getCommunityArchives = async (communityId: string) => {
+export const getCommunityExports = async (communityId: string) => {
 	const archives = await WorkerTask.findAll({
 		where: {
-			type: 'archive',
+			// Include legacy 'archive' type for backward compat with pre-rename records
+			type: { [Op.in]: ['communityExport', 'archive'] },
 			input: {
 				communityId,
 			},
-			error: null,
 		},
+		attributes: ['id', 'createdAt', 'isProcessing', 'output', 'error'],
 		order: [['createdAt', 'DESC']],
+		limit: 20,
 	});
 	return archives;
 };

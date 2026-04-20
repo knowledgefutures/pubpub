@@ -120,6 +120,27 @@ export const accountRouter = {
 			403: z.object({ message: z.string() }),
 		},
 	},
+	/**
+	 * `POST /api/account/export`
+	 *
+	 * Start an export of the current user's account data. Returns either a
+	 * cached URL or a worker task ID to poll.
+	 */
+	exportData: {
+		method: 'POST',
+		path: '/api/account/export',
+		summary: 'Export account data',
+		description:
+			'Request a GDPR-compliant export of all account data as a downloadable .zip file containing JSON.',
+		body: z.object({}),
+		responses: {
+			200: z.object({
+				workerTaskId: z.string().uuid().optional(),
+			}),
+			403: z.object({ message: z.string() }),
+			429: z.object({ message: z.string() }),
+		},
+	},
 } as const satisfies AppRouter;
 
 type AccountType = typeof accountRouter;

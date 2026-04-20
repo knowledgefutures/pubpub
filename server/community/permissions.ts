@@ -1,6 +1,4 @@
-import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { getScope } from 'server/utils/queryHelpers';
-import { isDataExportEnabled } from 'utils/analytics/featureFlags';
 
 export const getPermissions = async ({
 	userId,
@@ -18,15 +16,10 @@ export const getPermissions = async ({
 			create: true,
 		};
 	}
-	const [scopeData, featureFlags] = await Promise.all([
-		getScope({
-			communityId,
-			loginId: userId,
-		}),
-		getFeatureFlagsForUserAndCommunity(userId, communityId),
-	]);
-
-	const exportEnabled = isDataExportEnabled(featureFlags);
+	const scopeData = await getScope({
+		communityId,
+		loginId: userId,
+	});
 
 	const editProps = [
 		'title',
@@ -78,9 +71,8 @@ export const getPermissions = async ({
 
 	const canUpdate = scopeData.activePermissions.canManage;
 	const canAdmin = scopeData.activePermissions.canAdmin;
-	const canArchive =
-		(scopeData.activePermissions.canAdminCommunity && exportEnabled) ||
-		scopeData.activePermissions.isSuperAdmin;
+	const canExportCommunity =
+		scopeData.activePermissions.canAdminCommunity || scopeData.activePermissions.isSuperAdmin;
 
 	// only admins can edit analytics settings
 	const editPropsWithAnalytics = canAdmin
@@ -91,6 +83,6 @@ export const getPermissions = async ({
 		create: true,
 		update: canUpdate ? editPropsWithAnalytics : false,
 		admin: canAdmin,
-		archive: canArchive,
+		communityExport: canExportCommunity,
 	};
 };

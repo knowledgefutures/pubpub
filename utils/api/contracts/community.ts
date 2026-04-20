@@ -12,23 +12,16 @@ import {
 extendZodWithOpenApi(z);
 
 export const communityRouter = {
-	archive: {
-		path: '/api/communities/archive',
+	communityExport: {
+		path: '/api/communities/export',
 		method: 'POST',
-		summary: 'Archive a community',
-		description: 'Archive a community. Super admin only',
-		body: z.object({
-			dontWait: z.coerce
-				.boolean()
-				.default(false)
-				.describe(
-					"Don't wait for the archive to complete. If true, the archive will be queued and a URL will be returned and workertask will be returned.",
-				),
-		}),
+		summary: 'Export a community',
+		description: 'Export a community as a zip archive. Community admin only.',
+		body: z.object({}),
 		responses: {
 			200: z.object({
-				url: z.string(),
 				workerTaskId: z.string().uuid(),
+				message: z.string().optional(),
 			}),
 		},
 	},

@@ -11,6 +11,7 @@ import {
 	waitUntilObjectExists,
 } from '@aws-sdk/client-s3';
 import { type Progress, Upload } from '@aws-sdk/lib-storage';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { env } from 'server/env';
 
@@ -53,6 +54,7 @@ type PubPubS3Client = {
 	retrieveFileHead: (key: string) => Promise<null | HeadObjectCommandOutput>;
 	checkIfFileExists: (key: string) => Promise<boolean>;
 	waitForFileToExist: (key: string, maxWaitTimeSeconds?: number) => Promise<void>;
+	getPresignedUrl: (key: string, expiresInSeconds?: number) => Promise<string>;
 };
 
 const bufferStream = async (stream: Stream): Promise<Buffer> => {
@@ -156,6 +158,28 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 		);
 	};
 
+	const getPresignedUrl = async (key: string, expiresInSeconds = 7 * 24 * 60 * 60) => {
+		const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+		// Type assertion needed due to @smithy/types version mismatch between
+		// @aws-sdk/client-s3 and @aws-sdk/s3-request-presigner
+		const url = await getSignedUrl(s3Client as any, command as any, {
+			expiresIn: expiresInSeconds,
+		});
+		// Rewrite S3 hostname to custom domain so download URLs are consistent.
+		// Virtual-hosted: https://bucket.s3.region.amazonaws.com/key
+		// Path-style:     https://s3.region.amazonaws.com/bucket/key
+		const escapedBucket = bucket.replace(/\./g, '\\.');
+		return url
+			.replace(
+				new RegExp(`https://${escapedBucket}\\.s3[^/]*\\.amazonaws\\.com`),
+				`https://${bucket}`,
+			)
+			.replace(
+				new RegExp(`https://s3[^/]*\\.amazonaws\\.com/${escapedBucket}`),
+				`https://${bucket}`,
+			);
+	};
+
 	return {
 		uploadFile,
 		uploadFileSplit,
@@ -163,6 +187,7 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 		checkIfFileExists,
 		waitForFileToExist,
 		retrieveFileHead,
+		getPresignedUrl,
 	};
 };
 
@@ -171,4 +196,15 @@ export const assetsClient = createPubPubS3Client({
 	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 	bucket: 'assets.pubpub.org',
 	ACL: 'public-read',
+});
+
+/**
+ * S3 client for private export files (account data, community archives).
+ * Uploaded without public-read ACL; access is via presigned URLs (7-day expiry).
+ * Presigned URLs are rewritten to use assets.pubpub.org as the hostname.
+ */
+export const exportsClient = createPubPubS3Client({
+	accessKeyId: env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+	bucket: 'assets.pubpub.org',
 });

@@ -8,7 +8,6 @@ import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { handleHoneypotTriggered, isHoneypotFilled } from 'server/utils/honeypot';
 import { addWorkerTask } from 'server/utils/workers';
-import { getWorkerTask } from 'server/workerTask/queries';
 import { contract } from 'utils/api/contract';
 import { expect } from 'utils/assert';
 import { communityUrl } from 'utils/canonicalUrls';
@@ -37,8 +36,7 @@ const s = initServer();
 const MAX_DAILY_EXPORTS = 2;
 
 export const communityServer = s.router(contract.community, {
-	// @ts-expect-error
-	archive: async ({ req }) => {
+	communityExport: async ({ req }) => {
 		const community = await ensureUserIsCommunityAdmin(req);
 
 		const permissions = await getPermissions({
@@ -46,13 +44,13 @@ export const communityServer = s.router(contract.community, {
 			communityId: community.id,
 		});
 
-		if (!permissions.archive) {
+		if (!permissions.communityExport) {
 			throw new ForbiddenError();
 		}
 
-		const remainingExports = await WorkerTask.count({
+		const recentExportCount = await WorkerTask.count({
 			where: {
-				type: 'archive',
+				type: 'communityExport',
 				createdAt: {
 					[Op.lt]: new Date(),
 					[Op.gt]: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
@@ -63,16 +61,16 @@ export const communityServer = s.router(contract.community, {
 			},
 		});
 
-		if (!req.user?.dataValues.isSuperAdmin && remainingExports <= MAX_DAILY_EXPORTS) {
+		if (!req.user?.dataValues.isSuperAdmin && recentExportCount >= MAX_DAILY_EXPORTS) {
 			throw new Error('You have reached the maximum number of daily exports.');
 		}
 
-		const key = `legacy-archive/${community.subdomain}/${Date.now()}/static`;
+		const key = `exports/community/${community.id}/${Date.now()}/static`;
 
 		// check if there's already one running
 		const runningTask = await WorkerTask.findOne({
 			where: {
-				type: 'archive',
+				type: 'communityExport',
 				input: { communityId: community.id },
 				isProcessing: true,
 			},
@@ -81,43 +79,25 @@ export const communityServer = s.router(contract.community, {
 		if (runningTask) {
 			return {
 				body: {
-					url: `https://assets.pubpub.org/${key}`,
 					workerTaskId: runningTask.id,
-					message: 'Archive already in progress, please be patient.',
+					message:
+						'Export already in progress. You will receive an email when it is ready.',
 				},
 				status: 200,
 			};
 		}
 
 		const workerTask = await addWorkerTask({
-			type: 'archive',
-			input: { communityId: community.id, key },
+			type: 'communityExport',
+			input: {
+				communityId: community.id,
+				key,
+				requestedByEmail: req.user?.email,
+			},
 		});
 
-		if (req.body.dontWait) {
-			return {
-				body: { url: `https://assets.pubpub.org/${key}`, workerTaskId: workerTask.id },
-				status: 200,
-			};
-		}
-
-		let done = false;
-		let workerTaskData: WorkerTask | null = null;
-
-		while (!done) {
-			// biome-ignore lint/performance/noAwaitInLoops: shhhhhh
-			workerTaskData = await getWorkerTask({ workerTaskId: workerTask.id });
-			if (workerTaskData?.isProcessing === false) {
-				done = true;
-			}
-		}
-
-		if (workerTaskData?.error) {
-			throw new Error(workerTaskData.error);
-		}
-
 		return {
-			body: { url: workerTaskData?.output!, workerTaskId: workerTask.id },
+			body: { workerTaskId: workerTask.id },
 			status: 200,
 		};
 	},

@@ -58,6 +58,7 @@
 		"@anatine/zod-openapi": "^2.1.0",
 		"@aws-sdk/client-s3": "^3.427.0",
 		"@aws-sdk/lib-storage": "^3.427.0",
+		"@aws-sdk/s3-request-presigner": "^3.1032.0",
 		"@benrbray/prosemirror-math": "git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17",
 		"@blueprintjs/core": "3.26.0",
 		"@blueprintjs/icons": "3.14.0",
@@ -261,7 +262,7 @@
 	"engines": {
 		"node": "24.x"
 	},
-	"packageManager": "pnpm@10.4.0",
+	"packageManager": "pnpm@10.4.0+sha256.e57e8a544f7a84247cfa77dd6d923eae5199a373474e53eab1f540c796289386",
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.6",
 		"@esbuild/linux-arm64": "0.27.3",

@@ -11,22 +11,24 @@ import UserNotificationPreferences from 'components/UserNotifications/UserNotifi
 import { usePageContext } from 'utils/hooks';
 
 import DeleteAccount from './DeleteAccount';
+import ExportAccountData from './ExportAccountData';
 
 type PrivacySettingsProps = {
 	integrations: types.Integration[];
 	userEmail: string;
 	isLoggedIn: boolean;
+	accountExports?: {
+		id: string;
+		createdAt: string;
+		isProcessing: boolean;
+		output: string | null;
+		error: string | null;
+	}[];
 	userNotificationPreferences?: types.UserNotificationPreferences;
 	onUpdateUserNotificationPreferences: (
 		preferences: Partial<types.UserNotificationPreferences>,
 	) => void;
 };
-
-const exportEmailBody = `
-Hello.
-%0D%0A%0D%0A
-I am writing to request an export of any PubPub account data associated with this email address.
-`;
 
 const possibleIntegrations = [
 	{
@@ -112,16 +114,7 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 				<React.Fragment>
 					<Card>
 						<h5>Data export</h5>
-						<p>
-							You can request an export of the data associated with your account on
-							PubPub using the button below.
-						</p>
-						<AnchorButton
-							target="_blank"
-							href={`mailto:privacy@pubpub.org?subject=Account+data+export+request&body=${exportEmailBody.trim()}`}
-						>
-							Request data export
-						</AnchorButton>
+						<ExportAccountData pastExports={props.accountExports} />
 					</Card>
 					{possibleIntegrations.map((i) => {
 						const integration = integrations.find(({ name }) => name === i.name);

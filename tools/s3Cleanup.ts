@@ -3,13 +3,14 @@
  *
  * Scans every database column and JSONB structure that can reference an
  * assets.pubpub.org file, builds a Set of all referenced S3 keys, then
- * lists the S3 bucket and deletes (or reports) objects not in that set.
+ * lists the S3 bucket and tags objects not in that set as suspected orphans.
+ * Tagged objects are then transitioned to Glacier Flexible Retrieval by an
+ * S3 lifecycle rule keyed on the `suspectedOrphan=true` tag.
  *
  * Usage:
  *   pnpm run tools-prod s3Cleanup                 # dry-run: writes orphans to tmp/orphans.txt
- *   pnpm run tools-prod s3Cleanup --quarantine     # soft-delete: set orphans to private ACL (reversible)
- *   pnpm run tools-prod s3Cleanup --execute        # hard-delete: permanently remove orphan objects
- *   pnpm run tools-prod s3Cleanup --unquarantine KEY [KEY...]  # restore specific keys to public-read
+ *   pnpm run tools-prod s3Cleanup --tag            # apply suspectedOrphan tags to orphan objects
+ *   pnpm run tools-prod s3Cleanup --untag KEY [KEY...]  # remove suspectedOrphan tags from specific keys
  *   pnpm run tools-prod s3Cleanup --resume         # resume from last saved S3 list marker
  *   pnpm run tools-prod s3Cleanup --skip-s3-list   # reuse tmp/orphans.txt from a previous run
  *   pnpm run tools-prod s3Cleanup --min-age-days=180  # only treat objects older than 180 days as candidates
@@ -17,7 +18,11 @@
  * How it works:
  *   Phase 1 — Scan every DB table/column and extract all assets.pubpub.org keys
  *   Phase 2 — Stream-list every object in the S3 bucket, check against the set
- *   Phase 3 — Quarantine (private ACL), delete, or log orphan keys
+ *   Phase 3 — Tag orphan keys with suspectedOrphan=true (handled by lifecycle rule)
+ *
+ * Tags applied (in --tag mode):
+ *   - suspectedOrphan: "true"         — triggers the S3 lifecycle rule
+ *   - suspectedOrphan-date: "YYYY-MM-DD"  — informational: when the tag was applied
  *
  * For a ~2 TB bucket with millions of objects this will take hours (S3
  * ListObjectsV2 returns 1 000 keys per page). The script is designed to be
@@ -35,19 +40,15 @@
  *     Page/Collection layout text blocks, submission banner bodies)
  *   - Skips _testing/ prefix keys (test assets)
  *   - Skips fonts/ prefix keys (app font files managed by upload-fonts-to-s3.sh)
- *   - In --execute mode, deletes in batches of 1 000 using DeleteObjects API
- *   - In --quarantine mode, sets ACL to private (object stays, URL returns 403)
- *     This is fully reversible with --unquarantine
- *   - Writes a full tmp/orphans.txt manifest before deleting anything
+ *   - Tagging is non-destructive and fully reversible with --untag
+ *   - Writes a full tmp/orphans.txt manifest before tagging anything
  */
 
 /* biome-ignore-all lint/suspicious/noConsole: CLI tool */
 
 import {
-	DeleteObjectsCommand,
 	DeleteObjectTaggingCommand,
 	ListObjectsV2Command,
-	PutObjectAclCommand,
 	PutObjectTaggingCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
@@ -60,10 +61,9 @@ import { sequelize } from 'server/sequelize';
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const BUCKET = 'assets.pubpub.org';
-const BACKUP_BUCKET = 'assets.backup.pubpub.org';
 const REGION = 'us-east-1';
 const S3_LIST_PAGE_SIZE = 1000; // max allowed by AWS
-const DELETE_BATCH_SIZE = 1000; // max allowed by DeleteObjects
+const TAG_BATCH_SIZE = 50; // PutObjectTagging is per-object, so keep concurrency modest
 // Write output files into <project-root>/tmp/ so they're accessible outside Docker
 // and already gitignored.
 const TMP_DIR = path.resolve(__dirname, '..', 'tmp');
@@ -71,11 +71,9 @@ fs.mkdirSync(TMP_DIR, { recursive: true });
 const ORPHAN_FILE = path.join(TMP_DIR, 'orphans.txt');
 const MARKER_FILE = path.join(TMP_DIR, 's3-cleanup-marker.txt');
 const DEFAULT_MIN_AGE_DAYS = 365; // 1 year — ignore anything newer
-const QUARANTINE_BATCH_SIZE = 50; // PutObjectAcl is per-object, so keep concurrency modest
 
-const execute = process.argv.includes('--execute');
-const quarantine = process.argv.includes('--quarantine');
-const unquarantineIdx = process.argv.indexOf('--unquarantine');
+const tagOrphans = process.argv.includes('--tag');
+const untagIdx = process.argv.indexOf('--untag');
 const resume = process.argv.includes('--resume');
 const skipS3List = process.argv.includes('--skip-s3-list');
 
@@ -797,115 +795,10 @@ async function listAndCleanS3(referencedKeys: Set<string>) {
 	return { orphanCount, orphanSizeBytes };
 }
 
-async function deleteOrphans(referencedKeys: Set<string>) {
-	if (!fs.existsSync(ORPHAN_FILE)) {
-		warn(`No ${ORPHAN_FILE} found. Run without --skip-s3-list first.`);
-		return;
-	}
-
-	const s3 = new S3Client({
-		region: REGION,
-		credentials: {
-			accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-			secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-		},
-	});
-
-	const rl = readline.createInterface({
-		input: fs.createReadStream(ORPHAN_FILE),
-		crlfDelay: Infinity,
-	});
-
-	let batch: string[] = [];
-	let totalDeleted = 0;
-	let skippedNowReferenced = 0;
-	let backupErrors = 0;
-
-	async function flushBatch() {
-		if (batch.length === 0) return;
-
-		const deletePayload = {
-			Delete: {
-				Objects: batch.map((key) => ({ Key: key })),
-				Quiet: true as const,
-			},
-		};
-
-		// Delete from primary bucket
-		const primaryResult = await s3.send(
-			new DeleteObjectsCommand({ Bucket: BUCKET, ...deletePayload }),
-		);
-		const primaryErrors = primaryResult.Errors ?? [];
-		if (primaryErrors.length > 0) {
-			warn(
-				`  ${primaryErrors.length} primary delete errors (first: ${primaryErrors[0].Key} → ${primaryErrors[0].Message})`,
-			);
-		}
-
-		// Delete from backup bucket (best-effort — don't fail the run)
-		try {
-			const backupResult = await s3.send(
-				new DeleteObjectsCommand({ Bucket: BACKUP_BUCKET, ...deletePayload }),
-			);
-			const bErrors = backupResult.Errors ?? [];
-			if (bErrors.length > 0) {
-				backupErrors += bErrors.length;
-			}
-		} catch (err) {
-			// Log but don't abort — backup bucket may use different credentials or not exist
-			warn(`  Backup bucket delete failed: ${err}`);
-			backupErrors += batch.length;
-		}
-
-		totalDeleted += batch.length - primaryErrors.length;
-		batch = [];
-
-		if (totalDeleted % 10_000 === 0) {
-			log(`  ...deleted ${totalDeleted.toLocaleString()} objects so far`);
-		}
-	}
-
-	log('Phase 3: Deleting orphan objects...');
-
-	for await (const line of rl) {
-		const key = line.split('\t')[0];
-		if (!key) continue;
-
-		// Re-validate: skip keys that are now referenced in the DB.
-		// This catches assets that became referenced between the
-		// orphan list being generated and --execute being run.
-		if (referencedKeys.has(key)) {
-			skippedNowReferenced++;
-			continue;
-		}
-
-		batch.push(key);
-
-		if (batch.length >= DELETE_BATCH_SIZE) {
-			await flushBatch();
-		}
-	}
-
-	// Flush remaining
-	await flushBatch();
-
-	log(`Phase 3 complete: ${totalDeleted.toLocaleString()} objects deleted`);
-	if (skippedNowReferenced > 0) {
-		log(
-			`  Skipped ${skippedNowReferenced.toLocaleString()} keys that are now referenced in the DB`,
-		);
-	}
-	if (backupErrors > 0) {
-		warn(
-			`  ${backupErrors.toLocaleString()} backup bucket delete errors (primary deletes still succeeded)`,
-		);
-	}
-}
-
 // ─── Main ────────────────────────────────────────────────────────────────────
 
-/** Set ACL to 'private' on orphan keys — makes them return 403 but keeps the data. */
-async function quarantineOrphans(referencedKeys: Set<string>) {
+/** Apply suspectedOrphan tags to orphan keys for lifecycle rule transition. */
+async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 	if (!fs.existsSync(ORPHAN_FILE)) {
 		warn(`No ${ORPHAN_FILE} found. Run without --skip-s3-list first.`);
 		return;
@@ -924,32 +817,23 @@ async function quarantineOrphans(referencedKeys: Set<string>) {
 		crlfDelay: Infinity,
 	});
 
-	let totalQuarantined = 0;
+	let totalTagged = 0;
 	let skippedNowReferenced = 0;
 	let errors = 0;
 	let batch: string[] = [];
 
 	async function flushBatch() {
-		const quarantineDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+		const tagDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 		const results = await Promise.allSettled(
 			batch.map(async (key) => {
-				// Set ACL to private (403 on public URLs)
-				await s3.send(
-					new PutObjectAclCommand({
-						Bucket: BUCKET,
-						Key: key,
-						ACL: 'private',
-					}),
-				);
-				// Tag for lifecycle rule matching + informational date
 				await s3.send(
 					new PutObjectTaggingCommand({
 						Bucket: BUCKET,
 						Key: key,
 						Tagging: {
 							TagSet: [
-								{ Key: 'quarantined', Value: 'true' },
-								{ Key: 'quarantined-date', Value: quarantineDate },
+								{ Key: 'suspectedOrphan', Value: 'true' },
+								{ Key: 'suspectedOrphan-date', Value: tagDate },
 							],
 						},
 					}),
@@ -958,19 +842,19 @@ async function quarantineOrphans(referencedKeys: Set<string>) {
 		);
 		for (const r of results) {
 			if (r.status === 'fulfilled') {
-				totalQuarantined++;
+				totalTagged++;
 			} else {
 				errors++;
 			}
 		}
 		batch = [];
 
-		if (totalQuarantined % 5_000 === 0 && totalQuarantined > 0) {
-			log(`  ...quarantined ${totalQuarantined.toLocaleString()} objects so far`);
+		if (totalTagged % 5_000 === 0 && totalTagged > 0) {
+			log(`  ...tagged ${totalTagged.toLocaleString()} objects so far`);
 		}
 	}
 
-	log('Phase 3: Quarantining orphan objects (setting ACL to private)...');
+	log('Phase 3: Tagging orphan objects with suspectedOrphan=true...');
 
 	for await (const line of rl) {
 		const key = line.split('\t')[0];
@@ -983,29 +867,27 @@ async function quarantineOrphans(referencedKeys: Set<string>) {
 
 		batch.push(key);
 
-		if (batch.length >= QUARANTINE_BATCH_SIZE) {
+		if (batch.length >= TAG_BATCH_SIZE) {
 			await flushBatch();
 		}
 	}
 
 	await flushBatch();
 
-	log(
-		`Phase 3 complete: ${totalQuarantined.toLocaleString()} objects quarantined (ACL → private)`,
-	);
+	log(`Phase 3 complete: ${totalTagged.toLocaleString()} objects tagged (suspectedOrphan=true)`);
 	if (skippedNowReferenced > 0) {
 		log(
 			`  Skipped ${skippedNowReferenced.toLocaleString()} keys that are now referenced in the DB`,
 		);
 	}
 	if (errors > 0) {
-		warn(`  ${errors.toLocaleString()} ACL update errors`);
+		warn(`  ${errors.toLocaleString()} tagging errors`);
 	}
-	log('  To undo: pnpm run tools-prod s3Cleanup --unquarantine <key> [<key>...]');
+	log('  To undo: pnpm run tools-prod s3Cleanup --untag <key> [<key>...]');
 }
 
-/** Restore specific keys back to public-read. */
-async function unquarantineKeys(keys: string[]) {
+/** Remove suspectedOrphan tags from specific keys. */
+async function untagKeys(keys: string[]) {
 	const s3 = new S3Client({
 		region: REGION,
 		credentials: {
@@ -1014,21 +896,13 @@ async function unquarantineKeys(keys: string[]) {
 		},
 	});
 
-	log(`Restoring ${keys.length} key(s) to public-read...`);
+	log(`Removing suspectedOrphan tags from ${keys.length} key(s)...`);
 	let restored = 0;
 	let errors = 0;
 
 	for (const key of keys) {
 		try {
 			// biome-ignore lint/performance/noAwaitInLoops: intentional sequential restore
-			await s3.send(
-				new PutObjectAclCommand({
-					Bucket: BUCKET,
-					Key: key,
-					ACL: 'public-read',
-				}),
-			);
-			// Remove quarantine tag
 			await s3.send(
 				new DeleteObjectTaggingCommand({
 					Bucket: BUCKET,
@@ -1043,7 +917,7 @@ async function unquarantineKeys(keys: string[]) {
 		}
 	}
 
-	log(`Done: ${restored} restored, ${errors} errors`);
+	log(`Done: ${restored} untagged, ${errors} errors`);
 }
 
 /**
@@ -1060,22 +934,18 @@ async function confirm(message: string): Promise<boolean> {
 }
 
 async function main() {
-	// Handle --unquarantine as a standalone command (no DB scan needed)
-	if (unquarantineIdx !== -1) {
-		const keys = process.argv.slice(unquarantineIdx + 1).filter((a) => !a.startsWith('--'));
+	// Handle --untag as a standalone command (no DB scan needed)
+	if (untagIdx !== -1) {
+		const keys = process.argv.slice(untagIdx + 1).filter((a) => !a.startsWith('--'));
 		if (keys.length === 0) {
-			warn('Usage: pnpm run tools-prod s3Cleanup --unquarantine <key> [<key>...]');
+			warn('Usage: pnpm run tools-prod s3Cleanup --untag <key> [<key>...]');
 			process.exit(1);
 		}
-		await unquarantineKeys(keys);
+		await untagKeys(keys);
 		return;
 	}
 
-	const mode = execute
-		? 'EXECUTE (will delete!)'
-		: quarantine
-			? 'QUARANTINE (ACL → private)'
-			: 'DRY-RUN (report only)';
+	const mode = tagOrphans ? 'TAG (suspectedOrphan=true)' : 'DRY-RUN (report only)';
 	log(`Mode: ${mode}`);
 
 	// Phase 1: Always scan DB (fast relative to Phase 2)
@@ -1100,12 +970,10 @@ async function main() {
 	}
 
 	// Phase 3: Act on orphans
-	if (execute) {
-		await deleteOrphans(referencedKeys);
-	} else if (quarantine) {
-		await quarantineOrphans(referencedKeys);
+	if (tagOrphans) {
+		await tagSuspectedOrphans(referencedKeys);
 	} else {
-		log('Dry run complete. Review orphans.txt, then re-run with --quarantine or --execute.');
+		log('Dry run complete. Review orphans.txt, then re-run with --tag.');
 	}
 }
 

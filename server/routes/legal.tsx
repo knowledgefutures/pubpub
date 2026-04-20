@@ -4,6 +4,7 @@ import { Router } from 'express';
 
 import { Legal } from 'containers';
 import Html from 'server/Html';
+import { getAccountExports } from 'server/user/account';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -32,15 +33,17 @@ router.get('/legal/:tab', async (req, res, next) => {
 
 	try {
 		const userId = req.user?.id;
+		const isSettingsTab = req.params.tab === 'settings';
 
-		const [initialData, integrations, userNotificationPreferences] = await Promise.all([
-			getInitialData(req),
-			userId ? getIntegrations(userId) : [],
-			userId ? getOrCreateUserNotificationPreferences(userId) : undefined,
-		]);
+		const [initialData, integrations, userNotificationPreferences, accountExports] =
+			await Promise.all([
+				getInitialData(req),
+				userId ? getIntegrations(userId) : [],
+				userId ? getOrCreateUserNotificationPreferences(userId) : undefined,
+				isSettingsTab && userId ? getAccountExports(userId) : undefined,
+			]);
 
 		const title = tabToTitle[req.params.tab as keyof typeof tabToTitle];
-		const isSettingsTab = req.params.tab === 'settings';
 
 		return renderToNodeStream(
 			res,
@@ -52,6 +55,7 @@ router.get('/legal/:tab', async (req, res, next) => {
 					integrations,
 					userNotificationPreferences,
 					userEmail: isSettingsTab ? req.user?.email : undefined,
+					accountExports: isSettingsTab ? accountExports : undefined,
 				}}
 				headerComponents={generateMetaComponents({
 					initialData,

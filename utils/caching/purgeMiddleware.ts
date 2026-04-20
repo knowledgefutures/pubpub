@@ -22,10 +22,10 @@ const nonPurgeNonGetRoutes = {
 	/** Exports get purged in the export task */
 	'/api/export': ['POST'],
 	/**
-	 * Archive is a special case, it's not a CRUD operation and it only affects non-cached routes
-	 * (community admin dashboard) Also, otherwise archiving would put a lot of stress on the app
+	 * Community export is a special case, it's not a CRUD operation and it only affects non-cached routes
+	 * (community admin dashboard) Also, otherwise exporting would put a lot of stress on the app
 	 */
-	'/api/communities/archive': ['POST'],
+	'/api/communities/export': ['POST'],
 	// shouldnt purge the community where we access the superadmin dash
 	'/api/spamTags': ['PUT'],
 	'/api/spamTags/user': ['DELETE', 'PUT'],

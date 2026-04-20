@@ -8,7 +8,8 @@ import type { Prettify } from 'types';
 
 import { isMainThread, parentPort, workerData } from 'worker_threads';
 
-import { archiveTask } from './tasks/archive';
+import { accountExportTask } from './tasks/accountExport';
+import { communityExportTask } from './tasks/communityExport';
 import { exportTask } from './tasks/export';
 import { importTask } from './tasks/import';
 
@@ -20,7 +21,8 @@ if (isMainThread) {
 const taskMap = {
 	export: exportTask,
 	import: importTask,
-	archive: archiveTask,
+	communityExport: communityExportTask,
+	accountExport: accountExportTask,
 };
 
 export type TaskType = keyof typeof taskMap;

@@ -8,21 +8,29 @@
  * S3 lifecycle rule keyed on the `suspectedOrphan=true` tag.
  *
  * Usage:
- *   pnpm run tools-prod s3Cleanup                 # dry-run: writes orphans to tmp/orphans.txt
+ *   pnpm run tools-prod s3Cleanup                 # dry-run: writes orphans to tmp/newOrphans.txt
  *   pnpm run tools-prod s3Cleanup --tag            # apply suspectedOrphan tags to orphan objects
  *   pnpm run tools-prod s3Cleanup --untag KEY [KEY...]  # remove suspectedOrphan tags from specific keys
  *   pnpm run tools-prod s3Cleanup --resume         # resume from last saved S3 list marker
- *   pnpm run tools-prod s3Cleanup --skip-s3-list   # reuse tmp/orphans.txt from a previous run
+ *   pnpm run tools-prod s3Cleanup --skip-s3-list   # reuse tmp/newOrphans.txt from a previous run
  *   pnpm run tools-prod s3Cleanup --min-age-days=180  # only treat objects older than 180 days as candidates
  *
  * How it works:
  *   Phase 1 — Scan every DB table/column and extract all assets.pubpub.org keys
  *   Phase 2 — Stream-list every object in the S3 bucket, check against the set
+ *             (skips keys already in _orphanAdmin/ manifests from previous runs)
  *   Phase 3 — Tag orphan keys with suspectedOrphan=true (handled by lifecycle rule)
+ *             and upload a manifest of successfully-tagged keys to _orphanAdmin/
  *
  * Tags applied (in --tag mode):
  *   - suspectedOrphan: "true"         — triggers the S3 lifecycle rule
  *   - suspectedOrphan-date: "YYYY-MM-DD"  — informational: when the tag was applied
+ *
+ * Previously-tagged tracking:
+ *   After each --tag run, a manifest of successfully-tagged keys is uploaded to
+ *   s3://assets.pubpub.org/_orphanAdmin/tagged-<timestamp>.txt
+ *   On future runs, these manifests are downloaded and their keys are skipped
+ *   during Phase 2, so only NEW orphans appear in newOrphans.txt.
  *
  * For a ~2 TB bucket with millions of objects this will take hours (S3
  * ListObjectsV2 returns 1 000 keys per page). The script is designed to be
@@ -38,17 +46,19 @@
  *   - Scans all JSONB DocJson trees recursively (Docs, ThreadComments,
  *     Releases, Reviews, Submissions, SubmissionWorkflows, DraftCheckpoints,
  *     Page/Collection layout text blocks, submission banner bodies)
- *   - Skips _testing/ prefix keys (test assets)
- *   - Skips fonts/ prefix keys (app font files managed by upload-fonts-to-s3.sh)
+ *   - Skips any top-level folder starting with _ (e.g. _testing/, _cflogs/, _orphanAdmin/, _fonts/)
+ *   - Skips fonts/ prefix keys (legacy font path, now at _fonts/)
  *   - Tagging is non-destructive and fully reversible with --untag
- *   - Writes a full tmp/orphans.txt manifest before tagging anything
+ *   - Writes a full tmp/newOrphans.txt manifest before tagging anything
  */
 
 /* biome-ignore-all lint/suspicious/noConsole: CLI tool */
 
 import {
 	DeleteObjectTaggingCommand,
+	GetObjectCommand,
 	ListObjectsV2Command,
+	PutObjectCommand,
 	PutObjectTaggingCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
@@ -64,11 +74,12 @@ const BUCKET = 'assets.pubpub.org';
 const REGION = 'us-east-1';
 const S3_LIST_PAGE_SIZE = 1000; // max allowed by AWS
 const TAG_BATCH_SIZE = 50; // PutObjectTagging is per-object, so keep concurrency modest
+const ORPHAN_ADMIN_PREFIX = '_orphanAdmin/'; // S3 prefix for tagging manifests
 // Write output files into <project-root>/tmp/ so they're accessible outside Docker
 // and already gitignored.
 const TMP_DIR = path.resolve(__dirname, '..', 'tmp');
 fs.mkdirSync(TMP_DIR, { recursive: true });
-const ORPHAN_FILE = path.join(TMP_DIR, 'orphans.txt');
+const ORPHAN_FILE = path.join(TMP_DIR, 'newOrphans.txt');
 const MARKER_FILE = path.join(TMP_DIR, 's3-cleanup-marker.txt');
 const DEFAULT_MIN_AGE_DAYS = 365; // 1 year — ignore anything newer
 
@@ -687,9 +698,58 @@ async function collectReferencedKeys(): Promise<Set<string>> {
 	return keys;
 }
 
+// ─── Load previously-tagged keys from _orphanAdmin/ manifests in S3 ─────────
+
+async function loadPreviouslyTaggedKeys(s3: S3Client): Promise<Set<string>> {
+	const previouslyTagged = new Set<string>();
+
+	log('Loading previously-tagged manifests from _orphanAdmin/...');
+
+	// List all manifest files in _orphanAdmin/
+	let continuationToken: string | undefined;
+	let manifestCount = 0;
+	let hasMore = true;
+
+	while (hasMore) {
+		// biome-ignore lint/performance/noAwaitInLoops: paginated listing must be sequential
+		const listResp = await s3.send(
+			new ListObjectsV2Command({
+				Bucket: BUCKET,
+				Prefix: ORPHAN_ADMIN_PREFIX,
+				MaxKeys: 1000,
+				ContinuationToken: continuationToken,
+			}),
+		);
+
+		const objects = listResp.Contents ?? [];
+		for (const obj of objects) {
+			if (!obj.Key || !obj.Key.endsWith('.txt')) continue;
+
+			// biome-ignore lint/performance/noAwaitInLoops: must download sequentially to limit memory
+			const getResp = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: obj.Key }));
+			const body = await getResp.Body?.transformToString('utf-8');
+			if (body) {
+				for (const line of body.split('\n')) {
+					const key = line.trim();
+					if (key) previouslyTagged.add(key);
+				}
+			}
+			manifestCount++;
+		}
+
+		continuationToken = listResp.NextContinuationToken;
+		hasMore = listResp.IsTruncated ?? false;
+	}
+
+	log(
+		`  Loaded ${previouslyTagged.size.toLocaleString()} previously-tagged keys from ${manifestCount} manifest(s)`,
+	);
+	return previouslyTagged;
+}
+
 // ─── Phase 2 & 3: List S3 and Identify/Delete Orphans ───────────────────────
 
-async function listAndCleanS3(referencedKeys: Set<string>) {
+async function listAndCleanS3(referencedKeys: Set<string>, previouslyTagged: Set<string>) {
 	const s3 = new S3Client({
 		region: REGION,
 		credentials: {
@@ -710,6 +770,7 @@ async function listAndCleanS3(referencedKeys: Set<string>) {
 	let orphanCount = 0;
 	let referencedCount = 0;
 	let skippedTooNew = 0;
+	let skippedPreviouslyTagged = 0;
 	let totalSizeBytes = 0;
 	let orphanSizeBytes = 0;
 	let pageCount = 0;
@@ -740,8 +801,8 @@ async function listAndCleanS3(referencedKeys: Set<string>) {
 			const size = obj.Size ?? 0;
 			totalSizeBytes += size;
 
-			// Skip _testing/ prefix (test assets) and fonts/ prefix (app font files)
-			if (key.startsWith('_testing/') || key.startsWith('fonts/')) continue;
+			// Skip known non-asset prefixes
+			if (key.startsWith('_') || key.startsWith('fonts/')) continue;
 
 			// Safety: never touch objects newer than the age threshold.
 			// This prevents race conditions where a file was just uploaded
@@ -753,6 +814,8 @@ async function listAndCleanS3(referencedKeys: Set<string>) {
 
 			if (referencedKeys.has(key)) {
 				referencedCount++;
+			} else if (previouslyTagged.has(key)) {
+				skippedPreviouslyTagged++;
 			} else {
 				orphanCount++;
 				orphanSizeBytes += size;
@@ -785,9 +848,12 @@ async function listAndCleanS3(referencedKeys: Set<string>) {
 	log(`  Total objects listed: ${totalListed.toLocaleString()}`);
 	log(`  Total size: ${(totalSizeBytes / 1e12).toFixed(2)} TB`);
 	log(`  Skipped (newer than ${minAgeDays}d): ${skippedTooNew.toLocaleString()}`);
+	log(`  Skipped (previously tagged): ${skippedPreviouslyTagged.toLocaleString()}`);
 	log(`  Referenced: ${referencedCount.toLocaleString()}`);
-	log(`  Orphans: ${orphanCount.toLocaleString()} (${(orphanSizeBytes / 1e9).toFixed(1)} GB)`);
-	log(`  Orphan list written to: ${ORPHAN_FILE}`);
+	log(
+		`  New orphans: ${orphanCount.toLocaleString()} (${(orphanSizeBytes / 1e9).toFixed(1)} GB)`,
+	);
+	log(`  New orphan list written to: ${ORPHAN_FILE}`);
 
 	// Clean up marker
 	if (fs.existsSync(MARKER_FILE)) fs.unlinkSync(MARKER_FILE);
@@ -821,6 +887,7 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 	let skippedNowReferenced = 0;
 	let errors = 0;
 	let batch: string[] = [];
+	const successfullyTagged: string[] = [];
 
 	async function flushBatch() {
 		const tagDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -838,11 +905,13 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 						},
 					}),
 				);
+				return key;
 			}),
 		);
 		for (const r of results) {
 			if (r.status === 'fulfilled') {
 				totalTagged++;
+				successfullyTagged.push(r.value);
 			} else {
 				errors++;
 			}
@@ -884,6 +953,24 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 		warn(`  ${errors.toLocaleString()} tagging errors`);
 	}
 	log('  To undo: pnpm run tools-prod s3Cleanup --untag <key> [<key>...]');
+
+	// Upload manifest of successfully-tagged keys to _orphanAdmin/ in S3
+	if (successfullyTagged.length > 0) {
+		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+		const manifestKey = `${ORPHAN_ADMIN_PREFIX}tagged-${timestamp}.txt`;
+		const manifestBody = successfullyTagged.join('\n') + '\n';
+
+		log(`  Uploading manifest to s3://${BUCKET}/${manifestKey}...`);
+		await s3.send(
+			new PutObjectCommand({
+				Bucket: BUCKET,
+				Key: manifestKey,
+				Body: manifestBody,
+				ContentType: 'text/plain',
+			}),
+		);
+		log(`  Manifest uploaded: ${successfullyTagged.length.toLocaleString()} keys`);
+	}
 }
 
 /** Remove suspectedOrphan tags from specific keys. */
@@ -948,15 +1035,27 @@ async function main() {
 	const mode = tagOrphans ? 'TAG (suspectedOrphan=true)' : 'DRY-RUN (report only)';
 	log(`Mode: ${mode}`);
 
+	// Shared S3 client for loading manifests and listing
+	const s3 = new S3Client({
+		region: REGION,
+		credentials: {
+			accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+			secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+		},
+	});
+
 	// Phase 1: Always scan DB (fast relative to Phase 2)
 	const referencedKeys = await collectReferencedKeys();
+
+	// Load previously-tagged keys from _orphanAdmin/ manifests in S3
+	const previouslyTagged = await loadPreviouslyTaggedKeys(s3);
 
 	if (!skipS3List) {
 		// S3 ListObjectsV2 charges ~$5 per million requests. For a large bucket
 		// with millions of objects, a full listing costs roughly $10+.
 		const ok = await confirm(
 			'\n⚠️  This will list every object in the S3 bucket, which costs ~$10 in LIST request fees.\n' +
-				'   Use --skip-s3-list to reuse a previous orphans.txt instead.\n' +
+				'   Use --skip-s3-list to reuse a previous newOrphans.txt instead.\n' +
 				'   Continue?',
 		);
 		if (!ok) {
@@ -964,16 +1063,16 @@ async function main() {
 			process.exit(0);
 		}
 		// Phase 2: List S3 bucket and write orphans
-		await listAndCleanS3(referencedKeys);
+		await listAndCleanS3(referencedKeys, previouslyTagged);
 	} else {
-		log('Skipping S3 listing (--skip-s3-list). Using existing orphans.txt.');
+		log('Skipping S3 listing (--skip-s3-list). Using existing newOrphans.txt.');
 	}
 
 	// Phase 3: Act on orphans
 	if (tagOrphans) {
 		await tagSuspectedOrphans(referencedKeys);
 	} else {
-		log('Dry run complete. Review orphans.txt, then re-run with --tag.');
+		log('Dry run complete. Review newOrphans.txt, then re-run with --tag.');
 	}
 }
 

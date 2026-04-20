@@ -4,7 +4,7 @@ set -euo pipefail
 # Download font files from npm (fontsource), upload to S3 under a
 # content-hashed directory, and update source files to point at it.
 #
-# Files are uploaded to: s3://assets.pubpub.org/fonts/<hash>/
+# Files are uploaded to: s3://assets.pubpub.org/_fonts/<hash>/
 # The hash is derived from the content of all generated files, so
 # updating fonts always produces a new URL — no cache purging needed.
 #
@@ -20,7 +20,7 @@ set -euo pipefail
 #   scripts/upload-fonts-to-s3.sh --dry-run  # download + preview, skip upload
 
 BUCKET="assets.pubpub.org"
-S3_BASE="fonts"
+S3_BASE="_fonts"
 DRY_RUN=false
 
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -218,7 +218,7 @@ echo
 
 # 1. server/Html.tsx — fonts <link> href
 sed -i '' -E \
-	"s|href=\"https://assets.pubpub.org/fonts/[^\"]+/fonts.css\"|href=\"${BASE_URL}/fonts.css\"|" \
+	"s|href=\"https://assets.pubpub.org/_fonts/[^\"]+/fonts.css\"|href=\"${BASE_URL}/fonts.css\"|" \
 	"$SERVER_HTML"
 echo "Updated $SERVER_HTML"
 

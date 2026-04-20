@@ -17,7 +17,7 @@ import { digestCitation, getAffiliations, getDedupedAffliations } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
 
-const fontsHref = 'https://assets.pubpub.org/fonts/8da286c6/fonts.css';
+const fontsHref = 'https://assets.pubpub.org/_fonts/8da286c6/fonts.css';
 
 let cachedCss: string | null = null;
 

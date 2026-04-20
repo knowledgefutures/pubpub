@@ -150,24 +150,11 @@ export const envSchema = z.object({
 	SENTRY_ORG: z.string().describe('Sentry organization slug'),
 
 	// ── Analytics ───────────────────────────────────────────────────────
-	STITCH_WEBHOOK_URL: z.string().describe('MongoDB Stitch webhook URL for analytics'),
 	CLOUDFLARE_ANALYTICS_API_TOKEN: z
 		.string()
 		.optional()
 		.describe('Analytics token with read permissions fo Cloudflare GraphQL'),
 	CLOUDFLARE_ZONE_TAG: z.string().optional().describe('Zone ID of the domain used'),
-
-	// ── Analytics Migration (Redshift) ──────────────────────────────────
-	AM_REDSHIFT_PATH: z.string().optional().describe('S3 path for Redshift analytics backup'),
-	AM_REDSHIFT_BACKUP_ACCESS_KEY: z
-		.string()
-		.optional()
-		.describe('AWS access key for Redshift backup'),
-	AM_REDSHIFT_BACKUP_SECRET_KEY: z
-		.string()
-		.optional()
-		.describe('AWS secret key for Redshift backup'),
-	AM_REDSHIFT_BACKUP_ROLE_ARN: z.string().optional().describe('IAM role ARN for Redshift backup'),
 
 	// ── Spam / Security ─────────────────────────────────────────────────
 	BLOCKLIST_IP_ADDRESSES: z

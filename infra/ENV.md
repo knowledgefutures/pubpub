@@ -58,7 +58,6 @@ All environment variables used by PubPub, with types, defaults, and descriptions
 | `FASTLY_PURGE_TOKEN_DUQDUQ` | string | No | — | Fastly purge token for DuqDuq |
 | `PURGE_TOKEN` | string | No | — | Legacy Fastly purge token |
 | `SLACK_WEBHOOK_URL` | string | No | — | Slack incoming webhook URL for notifications |
-| `STITCH_WEBHOOK_URL` | string | No | — | MongoDB Stitch webhook URL for analytics |
 | `SENTRY_AUTH_TOKEN` | string | No | — | Sentry auth token (build-time only) |
 | `SENTRY_ORG` | string | No | — | Sentry organization slug |
 | `BLOCKLIST_IP_ADDRESSES` | string | No | — | Comma-separated list of IP addresses to block |

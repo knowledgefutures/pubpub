@@ -17,14 +17,14 @@ graphs served directly from Postgres.
                       │  Browser (every page view)      │
                       │  navigator.sendBeacon(payload)  │
                       └──────────────┬──────────────────┘
-                                     │ POST /api/analytics/track
-  Redshift (historical)              ▼
-      │                   ┌──────────────────────┐
-      │  one-time          │  Write Buffer        │  in-memory, flushes every
-      │  migration         │  (writeBuffer.ts)    │  5s or 500 events
-      │                   └──────────┬───────────┘
-      │                              │ bulkCreate
-      ▼                              ▼
+                                     │ POST /api/ev
+                                     ▼
+                          ┌──────────────────────┐
+                          │  Write Buffer        │  in-memory, flushes every
+                          │  (writeBuffer.ts)    │  5s or 500 events
+                          └──────────┬───────────┘
+                                     │ bulkCreate
+                                     ▼
   ┌─────────────────────────────────────────────┐
   │  AnalyticsEvents                            │  ~19M rows (raw table)
   │  (server/analytics/model.ts)                │
@@ -37,7 +37,7 @@ graphs served directly from Postgres.
   │  7 Materialized Views (pre-aggregated by day)       │
   │                                                     │
   │  analytics_daily_summary      (44 MB)               │
-  │  analytics_daily_country      (233 MB)              │
+  │  analytics_daily_timezone     (233 MB)              │
   │  analytics_daily_pub          (593 MB)              │
   │  analytics_daily_collection   (99 MB)               │
   │  analytics_daily_referrer     (589 MB)              │
@@ -57,7 +57,7 @@ graphs served directly from Postgres.
 
 ## Write Path (Ingestion)
 
-Every page view sends a `navigator.sendBeacon` POST to `/api/analytics/track`.
+Every page view sends a `navigator.sendBeacon` POST to `/api/ev`.
 Instead of issuing one INSERT per request, events are queued in an **in-memory
 write buffer** (`server/analytics/writeBuffer.ts`) and flushed to Postgres in
 batches:
@@ -113,26 +113,6 @@ pnpm run tools refreshAnalyticsSummary
 # Refresh only (views must already exist):
 pnpm run tools refreshAnalyticsSummary refresh
 ```
-
----
-
-## One-Time Migration (Redshift → Postgres)
-
-The original data lived in AWS Redshift. `tools/migrateRedshift.ts` performs the
-migration:
-
-```sh
-docker compose -f infra/docker-compose.dev.yml run --rm app pnpm run tools migrateRedshift
-```
-
-Steps:
-1. Downloads gzipped CSV files from the S3 backup bucket
-2. For each CSV: creates a staging table → `psql \copy` import → transforms
-   column names/types into `AnalyticsEvents` → `INSERT ... ON CONFLICT DO NOTHING` → drops staging table
-3. After all files: calls `createSummaryViews()` + `refreshSummaryViews()`
-
-This only needs to run once per environment. Re-running is safe (idempotent via
-`ON CONFLICT`).
 
 ---
 
@@ -235,14 +215,13 @@ don't exist across all matviews).
 
 | File | Purpose |
 |------|---------|
-| `server/analytics/api.ts` | HTTP handler for `POST /api/analytics/track` |
+| `server/analytics/api.ts` | HTTP handler for `POST /api/ev` |
 | `server/analytics/writeBuffer.ts` | Batched write buffer (enqueue → bulkCreate) |
 | `server/analytics/model.ts` | Sequelize model + raw table indexes |
 | `server/analytics/summaryViews.ts` | Matview DDL, create/refresh functions |
 | `server/analytics/impactApi.ts` | Dashboard read API + query logic + cache |
 | `server/sequelize.ts` | Calls `createSummaryViews()` on startup |
 | `tools/refreshAnalyticsSummary.ts` | CLI tool for manual/cron refresh |
-| `tools/migrateRedshift.ts` | One-time Redshift → PG migration |
 | `tools/cron.ts` | Nightly refresh schedule (3:30 AM UTC) |
 | `client/containers/DashboardImpact/` | Frontend (Recharts, date picker, tables) |
 | `server/routes/dashboardImpact.tsx` | SSR route for `/dash/impact` |

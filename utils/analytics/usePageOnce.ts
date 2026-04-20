@@ -41,12 +41,14 @@ const determinePayload = (
 		const uniqueCollectionIds = Array.from(
 			new Set((pubData.collectionPubs ?? []).map((cp) => cp.collectionId)),
 		);
+		// Joined as a comma-separated string to keep it a single field
 		// we want to make this a string of comma separated UUIDs instead of an array
 		// because Stitch will turn an array into a separate table with an event for each
 		// UUID in the array, which creates a ton of events for a single page view if the pub
 		// is in a lot of collections
 		// much easier to just have a single event with a string of UUIDs and then do some
 		// processing in analytics queries
+
 		const collectionIds = uniqueCollectionIds.join(',') || undefined;
 		const collection = chooseCollectionForPub(pubData, locationData);
 
@@ -64,7 +66,6 @@ const determinePayload = (
 			communityId: pubData.communityId,
 			communityName: communityData.title,
 			communitySubdomain: communityData.subdomain,
-			isProd: locationData.isProd,
 			release:
 				pubData.isRelease && pubData.releaseNumber
 					? pubData.releaseNumber
@@ -76,7 +77,6 @@ const determinePayload = (
 		communityId: communityData.id,
 		communityName: communityData.title,
 		communitySubdomain: communityData.subdomain,
-		isProd: locationData.isProd,
 	};
 
 	const collection = scopeData?.elements?.activeCollection;

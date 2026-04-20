@@ -1,18 +1,30 @@
 /**
- * Migrates analytics data from a Redshift CSV backup (stored in S3) into the
- * local Postgres AnalyticsEvents table.
+ * One-time migration: Redshift CSV backup (S3) → local Postgres AnalyticsEvents.
+ *
+ * This was run in production on 2026-04-15 to import ~19M rows of historical
+ * analytics data from the old Stitch/Redshift pipeline into the new local PG
+ * table. It is kept here for historical reference and in case a similar
+ * migration is ever needed again.
  *
  * Usage:
  *   pnpm run tools migrateRedshift
  *
- * Required env vars (set in .env.dev or export manually):
- *   AM_REDSHIFT_BACKUP_ACCESS_KEY – AWS key for the S3 bucket holding the backup
- *   AM_REDSHIFT_BACKUP_SECRET_KEY – AWS secret
- *   AM_REDSHIFT_PATH              – s3://bucket/prefix/ path to the CSV files
+ * Required env vars (set in .env or export manually):
+ *   AM_REDSHIFT_BACKUP_ACCESS_KEY – AWS IAM key for the S3 bucket
+ *   AM_REDSHIFT_BACKUP_SECRET_KEY – AWS IAM secret
+ *   AM_REDSHIFT_PATH              – S3 path, e.g. s3://my-bucket/redshift-backup/
  *   DATABASE_URL                   – Postgres connection string (auto-set by tools runner)
  *
  * Optional:
  *   FORCE_DOWNLOAD=1 – re-download even if local copies exist
+ *   DATA_DIR         – override the local directory for CSV files
+ *                      (default: ./tmp/redshift-data)
+ *
+ * The script is fully idempotent:
+ *   - CREATE TABLE/INDEX IF NOT EXISTS
+ *   - INSERT ... ON CONFLICT (id) DO NOTHING
+ *   - Skips Redshift rows newer than the earliest PG row (cutoff logic)
+ *   - Skips S3 download if files already exist locally
  */
 
 import type { Readable } from 'stream';

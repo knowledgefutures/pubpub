@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Button, ButtonGroup, Callout, NonIdealState, Spinner } from '@blueprintjs/core';
+import { Button, ButtonGroup, NonIdealState } from '@blueprintjs/core';
 import {
 	Area,
 	AreaChart,
@@ -58,12 +58,6 @@ type QuickRange = '30d' | '90d' | '1yr' | '2yr';
 // ─── constants ───────────────────────────────────────────────────────────────
 
 const MAX_RANGE_DAYS = 365 * 2; // 2 years
-
-/**
- * Temporary: set to `true` to show the migration banner. Remove this constant
- * and the <Callout> block once the Redshift import has completed in production.
- */
-const SHOW_MIGRATION_BANNER = false;
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -550,17 +544,65 @@ const DashboardImpact = () => {
 				</div>
 			}
 		>
-			{SHOW_MIGRATION_BANNER && (
-				<Callout icon="info-sign" intent="warning" className="migration-banner">
-					A data migration is in progress. Historical analytics data may be incomplete or
-					unavailable for a few hours. Data will backfill automatically once the migration
-					completes.
-				</Callout>
-			)}
-
 			{loading && (
-				<div className="loading-container">
-					<Spinner />
+				<div className="skeleton-container">
+					{/* Row 1: Stats + Chart */}
+					<div className="top-row">
+						<div className="stats-column">
+							{[0, 1, 2].map((i) => (
+								<div className="stat-card skeleton-stat" key={i}>
+									<div className="skeleton-line skeleton-value" />
+									<div className="skeleton-line skeleton-label" />
+								</div>
+							))}
+						</div>
+						<div className="chart-column">
+							<div className="skeleton-line skeleton-heading" />
+							<div className="skeleton-chart" />
+						</div>
+					</div>
+					{/* Row 2: Top Pubs (2/3) + Countries (1/3) */}
+					<div className="row-pubs-countries">
+						{[0, 1].map((i) => (
+							<div className="data-panel" key={i}>
+								<div className="skeleton-line skeleton-heading" />
+								{[0, 1, 2, 3, 4].map((j) => (
+									<div className="skeleton-table-row" key={j}>
+										<div className="skeleton-line skeleton-cell" />
+										<div className="skeleton-line skeleton-cell-short" />
+									</div>
+								))}
+							</div>
+						))}
+					</div>
+					{/* Row 3: Pages + Collections (50-50) */}
+					<div className="row-half">
+						{[0, 1].map((i) => (
+							<div className="data-panel" key={i}>
+								<div className="skeleton-line skeleton-heading" />
+								{[0, 1, 2, 3, 4].map((j) => (
+									<div className="skeleton-table-row" key={j}>
+										<div className="skeleton-line skeleton-cell" />
+										<div className="skeleton-line skeleton-cell-short" />
+									</div>
+								))}
+							</div>
+						))}
+					</div>
+					{/* Row 4: Referrers + Devices + Campaigns (3-col) */}
+					<div className="row-third">
+						{[0, 1, 2].map((i) => (
+							<div className="data-panel" key={i}>
+								<div className="skeleton-line skeleton-heading" />
+								{[0, 1, 2, 3, 4].map((j) => (
+									<div className="skeleton-table-row" key={j}>
+										<div className="skeleton-line skeleton-cell" />
+										<div className="skeleton-line skeleton-cell-short" />
+									</div>
+								))}
+							</div>
+						))}
+					</div>
 				</div>
 			)}
 

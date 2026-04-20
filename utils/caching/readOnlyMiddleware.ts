@@ -10,7 +10,6 @@ const allowedMutatingRoutes: Record<string, MutatingMethod[]> = {
 	'/api/login': ['POST'],
 	'/api/pubs/many': ['POST'],
 	'/api/activityItems': ['POST'],
-	'/api/analytics/track': ['POST'],
 	'/api/ev': ['POST'],
 	'/api/subscribe': ['POST'],
 };

@@ -86,6 +86,7 @@ const commandFiles = {
 	rerankCollections: "./rerankCollections",
 	rerunExport: "./rerunExport",
 	revertSpamBans: "./revertSpamBans",
+	rewriteS3Urls: "./rewriteS3Urls",
 	s3Cleanup: "./s3Cleanup",
 	scanSpamUsers: "./scanSpamUsers",
 	searchSync: "./searchSync",

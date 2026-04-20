@@ -884,15 +884,21 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 	});
 
 	let totalTagged = 0;
+	let totalProcessed = 0;
 	let skippedNowReferenced = 0;
 	let errors = 0;
 	let batch: string[] = [];
+	let lastLoggedAt = 0;
 	const successfullyTagged: string[] = [];
+	const ERROR_FILE = path.join(TMP_DIR, 'tagErrors.txt');
+	const errorStream = fs.createWriteStream(ERROR_FILE, { flags: 'w' });
 
 	async function flushBatch() {
+		const currentBatch = batch;
+		batch = [];
 		const tagDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 		const results = await Promise.allSettled(
-			batch.map(async (key) => {
+			currentBatch.map(async (key) => {
 				await s3.send(
 					new PutObjectTaggingCommand({
 						Bucket: BUCKET,
@@ -908,18 +914,22 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 				return key;
 			}),
 		);
-		for (const r of results) {
+		for (let i = 0; i < results.length; i++) {
+			const r = results[i];
 			if (r.status === 'fulfilled') {
 				totalTagged++;
 				successfullyTagged.push(r.value);
 			} else {
 				errors++;
+				const failedKey = currentBatch[i];
+				const reason = r.reason instanceof Error ? r.reason.message : String(r.reason);
+				errorStream.write(`${failedKey}\t${reason}\n`);
 			}
 		}
-		batch = [];
 
-		if (totalTagged % 5_000 === 0 && totalTagged > 0) {
-			log(`  ...tagged ${totalTagged.toLocaleString()} objects so far`);
+		if (totalTagged - lastLoggedAt >= 5_000) {
+			log(`  ...tagged ${totalTagged.toLocaleString()} objects so far (${errors} errors)`);
+			lastLoggedAt = totalTagged;
 		}
 	}
 
@@ -928,6 +938,7 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 	for await (const line of rl) {
 		const key = line.split('\t')[0];
 		if (!key) continue;
+		totalProcessed++;
 
 		if (referencedKeys.has(key)) {
 			skippedNowReferenced++;
@@ -943,14 +954,21 @@ async function tagSuspectedOrphans(referencedKeys: Set<string>) {
 
 	await flushBatch();
 
+	errorStream.end();
+	await new Promise<void>((resolve) => errorStream.on('finish', resolve));
+
 	log(`Phase 3 complete: ${totalTagged.toLocaleString()} objects tagged (suspectedOrphan=true)`);
+	log(`  Total lines processed from orphan file: ${totalProcessed.toLocaleString()}`);
+	log(
+		`  Breakdown: ${totalTagged.toLocaleString()} tagged + ${errors.toLocaleString()} errors + ${skippedNowReferenced.toLocaleString()} now-referenced = ${(totalTagged + errors + skippedNowReferenced).toLocaleString()}`,
+	);
 	if (skippedNowReferenced > 0) {
 		log(
 			`  Skipped ${skippedNowReferenced.toLocaleString()} keys that are now referenced in the DB`,
 		);
 	}
 	if (errors > 0) {
-		warn(`  ${errors.toLocaleString()} tagging errors`);
+		warn(`  ${errors.toLocaleString()} tagging errors (see ${ERROR_FILE} for details)`);
 	}
 	log('  To undo: pnpm run tools-prod s3Cleanup --untag <key> [<key>...]');
 

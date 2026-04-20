@@ -82,12 +82,29 @@ const processTask = (channel) => async (message) => {
 
 		const { hostname, ...restOutput } = output || {};
 
-		await WorkerTask.update(
-			{ ...rest, output: hostname ? restOutput : output },
-			{
-				where: { id: taskData.id },
-			},
-		);
+		const MAX_RETRIES = 3;
+		for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+			try {
+				// biome-ignore lint/performance/noAwaitInLoops: intentional retry loop
+				await WorkerTask.update(
+					{ ...rest, output: hostname ? restOutput : output },
+					{
+						where: { id: taskData.id },
+					},
+				);
+				break;
+			} catch (err) {
+				console.error(
+					`Failed to update WorkerTask ${taskData.id} (attempt ${attempt}/${MAX_RETRIES}):`,
+					err,
+				);
+				if (attempt === MAX_RETRIES) {
+					throw err;
+				}
+				// biome-ignore lint/performance/noAwaitInLoops: intentional retry backoff
+				await new Promise((r) => setTimeout(r, 1000 * attempt));
+			}
+		}
 
 		if (hostname) {
 			schedulePurgeWorker(hostname);

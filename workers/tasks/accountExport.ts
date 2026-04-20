@@ -4,9 +4,9 @@ import { PassThrough } from 'stream';
 import {
 	ActivityItem,
 	AuthToken,
+	Collection,
 	CollectionAttribution,
 	Community,
-	CommunityBan,
 	Discussion,
 	Member,
 	Pub,
@@ -27,6 +27,20 @@ import {
 import { sendAccountExportReadyEmail } from 'server/utils/email';
 import { exportsClient } from 'server/utils/s3';
 import { updateWorkerTask } from 'server/workerTask/queries';
+import { communityUrl, pubUrl } from 'utils/canonicalUrls';
+
+const makePubUrl = (
+	community: { subdomain: string; domain?: string | null } | null,
+	pub: { slug: string } | null,
+) => {
+	if (!community || !pub) return null;
+	return pubUrl(community as any, pub);
+};
+
+const makeCommunityUrl = (community: { subdomain: string; domain?: string | null } | null) => {
+	if (!community) return null;
+	return communityUrl(community as any);
+};
 
 /**
  * Fetches all data associated with a user account and packages it into a
@@ -93,7 +107,6 @@ export const accountExportTask = async ({
 		notificationPreferences,
 		activity,
 		scopeVisits,
-		communityBans,
 		authTokens,
 		zoteroIntegration,
 		dismissables,
@@ -101,12 +114,18 @@ export const accountExportTask = async ({
 		Member.findAll({
 			where: { userId },
 			include: [
-				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain', 'domain'],
+				},
 				{ model: Pub, as: 'pub', attributes: ['id', 'title', 'slug'] },
 			],
 		}).then((rows) =>
 			rows.map((r) => {
-				const json = r.toJSON();
+				const json = r.toJSON() as any;
+				const community = json.community ?? null;
+				const pub = json.pub ?? null;
 				return {
 					id: json.id,
 					permissions: json.permissions,
@@ -115,8 +134,10 @@ export const accountExportTask = async ({
 					pubId: json.pubId,
 					collectionId: json.collectionId,
 					communityId: json.communityId,
-					community: (json as any).community ?? null,
-					pub: (json as any).pub ?? null,
+					community,
+					pub,
+					communityUrl: makeCommunityUrl(community),
+					pubUrl: makePubUrl(community, pub),
 					createdAt: json.createdAt,
 				};
 			}),
@@ -125,11 +146,24 @@ export const accountExportTask = async ({
 		PubAttribution.findAll({
 			where: { userId },
 			include: [
-				{ model: Pub, as: 'pub', attributes: ['id', 'title', 'slug', 'communityId'] },
+				{
+					model: Pub,
+					as: 'pub',
+					attributes: ['id', 'title', 'slug', 'communityId'],
+					include: [
+						{
+							model: Community,
+							as: 'community',
+							attributes: ['id', 'title', 'subdomain', 'domain'],
+						},
+					],
+				},
 			],
 		}).then((rows) =>
 			rows.map((r) => {
-				const json = r.toJSON();
+				const json = r.toJSON() as any;
+				const pub = json.pub ?? null;
+				const community = pub?.community ?? null;
 				return {
 					id: json.id,
 					name: json.name,
@@ -139,7 +173,10 @@ export const accountExportTask = async ({
 					affiliation: json.affiliation,
 					orcid: json.orcid,
 					pubId: json.pubId,
-					pub: (json as any).pub ?? null,
+					pub: pub ? { id: pub.id, title: pub.title, slug: pub.slug } : null,
+					community,
+					communityUrl: makeCommunityUrl(community),
+					pubUrl: makePubUrl(community, pub),
 					createdAt: json.createdAt,
 				};
 			}),
@@ -147,24 +184,86 @@ export const accountExportTask = async ({
 
 		CollectionAttribution.findAll({
 			where: { userId },
+			include: [
+				{
+					model: Collection,
+					as: 'collection',
+					attributes: ['id', 'title', 'slug', 'communityId'],
+					include: [
+						{
+							model: Community,
+							as: 'community',
+							attributes: ['id', 'title', 'subdomain', 'domain'],
+						},
+					],
+				},
+			],
 		}).then((rows) =>
-			rows.map((r) => ({
-				id: r.id,
-				name: r.name,
-				order: r.order,
-				isAuthor: r.isAuthor,
-				roles: r.roles,
-				affiliation: r.affiliation,
-				orcid: r.orcid,
-				collectionId: r.collectionId,
-				createdAt: r.createdAt,
-			})),
+			rows.map((r) => {
+				const json = r.toJSON() as any;
+				const collection = json.collection ?? null;
+				const community = collection?.community ?? null;
+				return {
+					id: json.id,
+					name: json.name,
+					order: json.order,
+					isAuthor: json.isAuthor,
+					roles: json.roles,
+					affiliation: json.affiliation,
+					orcid: json.orcid,
+					collectionId: json.collectionId,
+					collection: collection
+						? { id: collection.id, title: collection.title, slug: collection.slug }
+						: null,
+					community,
+					communityUrl: makeCommunityUrl(community),
+					createdAt: json.createdAt,
+				};
+			}),
 		),
 
 		Discussion.findAll({
 			where: { userId },
 			attributes: ['id', 'title', 'number', 'isClosed', 'labels', 'pubId', 'createdAt'],
-		}).then((rows) => rows.map((r) => r.toJSON())),
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					attributes: ['id', 'title', 'slug', 'communityId'],
+					include: [
+						{
+							model: Community,
+							as: 'community',
+							attributes: ['id', 'title', 'subdomain', 'domain'],
+						},
+					],
+				},
+			],
+		}).then((rows) =>
+			rows.map((r) => {
+				const json = r.toJSON() as any;
+				const pub = json.pub ?? null;
+				const community = pub?.community ?? null;
+				return {
+					id: json.id,
+					title: json.title,
+					number: json.number,
+					isClosed: json.isClosed,
+					labels: json.labels,
+					pubId: json.pubId,
+					pub: pub ? { id: pub.id, title: pub.title, slug: pub.slug } : null,
+					community: community
+						? {
+								id: community.id,
+								title: community.title,
+								subdomain: community.subdomain,
+							}
+						: null,
+					pubUrl: makePubUrl(community, pub),
+					createdAt: json.createdAt,
+				};
+			}),
+		),
 
 		ThreadComment.findAll({
 			where: { userId },
@@ -183,7 +282,46 @@ export const accountExportTask = async ({
 				'reviewContent',
 				'createdAt',
 			],
-		}).then((rows) => rows.map((r) => r.toJSON())),
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					attributes: ['id', 'title', 'slug', 'communityId'],
+					include: [
+						{
+							model: Community,
+							as: 'community',
+							attributes: ['id', 'title', 'subdomain', 'domain'],
+						},
+					],
+				},
+			],
+		}).then((rows) =>
+			rows.map((r) => {
+				const json = r.toJSON() as any;
+				const pub = json.pub ?? null;
+				const community = pub?.community ?? null;
+				return {
+					id: json.id,
+					title: json.title,
+					number: json.number,
+					status: json.status,
+					releaseRequested: json.releaseRequested,
+					pubId: json.pubId,
+					reviewContent: json.reviewContent,
+					pub: pub ? { id: pub.id, title: pub.title, slug: pub.slug } : null,
+					community: community
+						? {
+								id: community.id,
+								title: community.title,
+								subdomain: community.subdomain,
+							}
+						: null,
+					pubUrl: makePubUrl(community, pub),
+					createdAt: json.createdAt,
+				};
+			}),
+		),
 
 		ReviewEvent.findAll({
 			where: { userId },
@@ -195,6 +333,7 @@ export const accountExportTask = async ({
 			attributes: ['id', 'type', 'data', 'threadId', 'createdAt'],
 		}).then((rows) => rows.map((r) => r.toJSON())),
 
+		// Release has no BelongsTo Pub association, so we look up pub info separately
 		Release.findAll({
 			where: { userId },
 			attributes: ['id', 'noteText', 'pubId', 'historyKey', 'createdAt'],
@@ -221,16 +360,31 @@ export const accountExportTask = async ({
 			where: { userId },
 		}).then((rows) => rows.map((r) => r.toJSON())),
 
-		CommunityBan.findAll({
-			where: { userId },
-			attributes: ['id', 'communityId', 'createdAt'],
-		}).then((rows) => rows.map((r) => r.toJSON())),
-
 		// Include auth token metadata but redact the actual token values
 		AuthToken.findAll({
 			where: { userId },
 			attributes: ['id', 'communityId', 'expiresAt', 'createdAt'],
-		}).then((rows) => rows.map((r) => r.toJSON())),
+			include: [
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain', 'domain'],
+				},
+			],
+		}).then((rows) =>
+			rows.map((r) => {
+				const json = r.toJSON() as any;
+				const community = json.community ?? null;
+				return {
+					id: json.id,
+					communityId: json.communityId,
+					community,
+					communityUrl: makeCommunityUrl(community),
+					expiresAt: json.expiresAt,
+					createdAt: json.createdAt,
+				};
+			}),
+		),
 
 		ZoteroIntegration.findOne({
 			where: { userId },
@@ -266,7 +420,6 @@ export const accountExportTask = async ({
 	addJson('notification-preferences.json', notificationPreferences);
 	addJson('activity.json', activity);
 	addJson('scope-visits.json', scopeVisits);
-	addJson('community-bans.json', communityBans);
 	addJson('auth-tokens.json', authTokens);
 	addJson('zotero-integration.json', zoteroIntegration);
 	addJson('dismissables.json', dismissables);

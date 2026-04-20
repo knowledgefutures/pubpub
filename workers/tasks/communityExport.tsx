@@ -57,6 +57,22 @@ import {
 import { getNotesData } from './export/notes';
 import SimpleNotesList from './export/SimpleNotesList';
 
+const runWithConcurrency = async <T,>(
+	items: T[],
+	concurrency: number,
+	fn: (item: T) => Promise<void>,
+) => {
+	let index = 0;
+	const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+		while (index < items.length) {
+			const item = items[index++];
+			// biome-ignore lint/performance/noAwaitInLoops: intentional — this is a concurrency limiter, each worker processes items sequentially
+			await fn(item);
+		}
+	});
+	await Promise.all(workers);
+};
+
 type FacetsProps = CascadedFacetsForScopes<
 	'CitationStyle' | 'License' | 'NodeLabels' | 'PubEdgeDisplay' | 'PubHeaderTheme'
 >['pub'][string];
@@ -278,14 +294,14 @@ const processHtmlAssets = async (
 			});
 			if (!response.ok) {
 				console.error(
-					`[archive] Failed to download asset ${entry.normalizedUrl}: ${response.status}`,
+					`[communityExport] Failed to download asset ${entry.normalizedUrl}: ${response.status}`,
 				);
 				return;
 			}
 			const buffer = Buffer.from(await response.arrayBuffer());
 			archiveStream.append(buffer, { name: entry.localPath });
 		} catch (e) {
-			console.error(`[archive] Error downloading asset ${entry.normalizedUrl}:`, e);
+			console.error(`[communityExport] Error downloading asset ${entry.normalizedUrl}:`, e);
 		}
 	});
 
@@ -339,23 +355,29 @@ const generatePubHtmlFiles = async (
 		order: [['createdAt', 'ASC']],
 	});
 
-	console.log(`[archive] generatePubHtmlFiles: ${allPubs.length} pubs to process`);
+	console.log(`[communityExport] generatePubHtmlFiles: ${allPubs.length} pubs to process`);
 
 	// Track downloaded assets across all pubs to avoid duplicates
 	const seenAssets = new Map<string, string>();
 
+	const PUB_CONCURRENCY = 10;
+
 	// Process in batches to limit memory usage
 	for (let offset = 0; offset < allPubs.length; offset += batchSize) {
 		const batch = allPubs.slice(offset, offset + batchSize);
-		console.log(`[archive] generatePubHtmlFiles: batch ${offset}–${offset + batch.length}`);
+		console.log(
+			`[communityExport] generatePubHtmlFiles: batch ${offset}–${offset + batch.length}`,
+		);
 
 		// Fetch facets for the batch
 		const pubIds = batch.map((p) => p.id);
 		// biome-ignore lint/performance/noAwaitInLoops: intentionally sequential — batched to limit memory
 		const facets = await fetchFacetsForScopeIds({ pub: pubIds });
 
-		// biome-ignore lint/performance/noAwaitInLoops: sequential per-pub processing required for shared archive stream
-		for (const pub of batch) {
+		// Process pubs concurrently within the batch to overlap network I/O
+		// (asset downloads and Firebase draft fetches)
+		// biome-ignore lint/performance/noAwaitInLoops: intentionally sequential across batches to limit memory
+		await runWithConcurrency(batch, PUB_CONCURRENCY, async (pub) => {
 			const pubJson = pub.toJSON() as any;
 			const pubFacets = facets.pub[pub.id];
 			const pubTitle = pubJson.title || pub.slug;
@@ -367,18 +389,17 @@ const generatePubHtmlFiles = async (
 
 			// Generate HTML for each release (from frozen Doc snapshots — no Firebase needed)
 			if (pubJson.releases?.length) {
-				// biome-ignore lint/performance/noAwaitInLoops: sequential — each release appends to shared archive stream
 				for (let i = 0; i < pubJson.releases.length; i++) {
 					const release = pubJson.releases[i];
 					const docContent = release.doc?.content;
 					if (!docContent) {
 						console.log(
-							`[archive] generatePubHtmlFiles: no doc for release ${i + 1} of pub ${pub.slug}`,
+							`[communityExport] generatePubHtmlFiles: no doc for release ${i + 1} of pub ${pub.slug}`,
 						);
 						continue;
 					}
 					try {
-						// biome-ignore lint/performance/noAwaitInLoops: sequential — appends to shared archive stream
+						// biome-ignore lint/performance/noAwaitInLoops: sequential per-release — each appends to shared archive stream
 						const releaseBody = await getReleaseHtml(
 							pubFacets,
 							docContent,
@@ -399,7 +420,7 @@ const generatePubHtmlFiles = async (
 						});
 					} catch (e) {
 						console.error(
-							`[archive] generatePubHtmlFiles: error rendering release ${i + 1} for pub ${pub.slug}:`,
+							`[communityExport] generatePubHtmlFiles: error rendering release ${i + 1} for pub ${pub.slug}:`,
 							e,
 						);
 					}
@@ -429,15 +450,15 @@ const generatePubHtmlFiles = async (
 					}
 				} catch (e) {
 					console.error(
-						`[archive] generatePubHtmlFiles: error rendering draft for pub ${pub.slug}:`,
+						`[communityExport] generatePubHtmlFiles: error rendering draft for pub ${pub.slug}:`,
 						e,
 					);
 				}
 			}
-		}
+		});
 	}
 
-	console.log('[archive] generatePubHtmlFiles: done');
+	console.log('[communityExport] generatePubHtmlFiles: done');
 };
 
 const createPubStream = async (pubs: Pub[], batchSize = 100) => {
@@ -458,7 +479,9 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 
 			// Use a per-batch transaction to avoid holding a connection for the
 			// entire streaming duration
-			console.log(`[archive] createPubStream: starting batch transaction (offset=${offset})`);
+			console.log(
+				`[communityExport] createPubStream: starting batch transaction (offset=${offset})`,
+			);
 			const [foundPubs, _draftDocs, batchFacets] = await sequelize.transaction(
 				async (trx) => {
 					const pubIds = pubIdSlice.map((p) => p.id);
@@ -490,12 +513,14 @@ const createPubStream = async (pubs: Pub[], batchSize = 100) => {
 			);
 
 			console.log(
-				`[archive] createPubStream: batch transaction done (offset=${offset}, found=${foundPubs.length})`,
+				`[communityExport] createPubStream: batch transaction done (offset=${offset}, found=${foundPubs.length})`,
 			);
 
 			// Fetch draft docs in parallel (outside the DB transaction since
 			// these hit Firebase/PG checkpoints)
-			console.log(`[archive] createPubStream: fetching ${pubIdSlice.length} draft docs`);
+			console.log(
+				`[communityExport] createPubStream: fetching ${pubIdSlice.length} draft docs`,
+			);
 			const drafts = await Promise.all(
 				pubIdSlice.map(async (p) => {
 					const firebasePath = p.draft?.firebasePath;
@@ -664,10 +689,10 @@ const createPubsJsonTransform = () => {
 };
 
 const getCommunityData = async (communityId: string) => {
-	console.log(`[archive] getCommunityData: starting for community ${communityId}`);
+	console.log(`[communityExport] getCommunityData: starting for community ${communityId}`);
 	// fetch all community data in one transaction
 	const result = await sequelize.transaction(async (trx) => {
-		console.log('[archive] getCommunityData: transaction started');
+		console.log('[communityExport] getCommunityData: transaction started');
 		const [
 			community,
 			customScripts,
@@ -758,13 +783,13 @@ const getCommunityData = async (communityId: string) => {
 			}),
 		]);
 
-		console.log('[archive] getCommunityData: main queries done, fetching facets');
+		console.log('[communityExport] getCommunityData: main queries done, fetching facets');
 		const facets = await fetchFacetsForScopeIds({
 			community: [communityId],
 			collection: collections.map((c) => c.id),
 		});
 
-		console.log('[archive] getCommunityData: facets done, building result');
+		console.log('[communityExport] getCommunityData: facets done, building result');
 
 		return {
 			community: {
@@ -784,12 +809,12 @@ const getCommunityData = async (communityId: string) => {
 		};
 	});
 
-	console.log('[archive] getCommunityData: transaction complete');
+	console.log('[communityExport] getCommunityData: transaction complete');
 	return result;
 };
 
 const getPubs = async (communityId: string) => {
-	console.log(`[archive] getPubs: starting for community ${communityId}`);
+	console.log(`[communityExport] getPubs: starting for community ${communityId}`);
 	const pubs = await Pub.findAll({
 		where: { communityId },
 		attributes: ['id', 'slug'],
@@ -810,7 +835,7 @@ const getPubs = async (communityId: string) => {
 		limit: 1_000_000,
 	});
 
-	console.log(`[archive] getPubs: found ${pubs.length} pubs`);
+	console.log(`[communityExport] getPubs: found ${pubs.length} pubs`);
 	return pubs;
 };
 
@@ -828,7 +853,9 @@ export const communityExportTask = async ({
 	const startTime = performance.now();
 	devTools.getMemoryStats();
 
-	console.log(`[archive] communityExportTask: starting for community ${communityId}, key=${key}`);
+	console.log(
+		`[communityExport] communityExportTask: starting for community ${communityId}, key=${key}`,
+	);
 
 	// get community data + all pubs first
 
@@ -837,7 +864,7 @@ export const communityExportTask = async ({
 		getPubs(communityId),
 	]);
 
-	console.log(`[archive] communityExportTask: data fetched, ${pubs.length} pubs`);
+	console.log(`[communityExport] communityExportTask: data fetched, ${pubs.length} pubs`);
 
 	// Capture title before communityData is nulled during streaming
 	const communityTitle = communityData.community?.title ?? 'your community';
@@ -874,11 +901,11 @@ export const communityExportTask = async ({
 	// Wait until the pubs JSON stream is fully processed before
 	// generating HTML files and starting S3 upload.
 	pubsJsonStream.on('end', async () => {
-		console.log('[archive] Pubs JSON stream ended, generating HTML files');
+		console.log('[communityExport] Pubs JSON stream ended, generating HTML files');
 		try {
 			await generatePubHtmlFiles(communityId, archiveStream);
 		} catch (e) {
-			console.error('[archive] Error generating HTML files:', e);
+			console.error('[communityExport] Error generating HTML files:', e);
 		}
 		archiveStream.finalize();
 		// free up memory
@@ -900,12 +927,12 @@ export const communityExportTask = async ({
 		throw e;
 	}
 
-	console.log(`[archive] Uploaded archive to ${s3Key}`);
+	console.log(`[communityExport] Uploaded archive to ${s3Key}`);
 
 	// Generate a presigned URL (7-day expiry, rewritten to assets.pubpub.org)
-	console.log('[archive] Generating presigned URL');
+	console.log('[communityExport] Generating presigned URL');
 	const downloadUrl = await exportsClient.getPresignedUrl(s3Key);
-	console.log('[archive] Presigned URL generated');
+	console.log('[communityExport] Presigned URL generated');
 
 	// set final result in worker task (replacing progress info)
 	if (workerTaskId) {
@@ -931,7 +958,7 @@ export const communityExportTask = async ({
 				downloadUrl,
 			});
 		} catch (emailError) {
-			console.error(`[archive] Failed to send export-ready email:`, emailError);
+			console.error(`[communityExport] Failed to send export-ready email:`, emailError);
 		}
 	}
 

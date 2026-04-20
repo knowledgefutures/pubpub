@@ -21,10 +21,10 @@ import { router as dashboardReviewRouter } from './dashboardReview';
 import { router as dashboardReviewsRouter } from './dashboardReviews';
 import { router as dashboardSettingsRouter } from './dashboardSettings';
 import { router as dashboardSubmissionsRouter } from './dashboardSubmissions';
-/* import { router as cmmunityServicesRouter} from './cmmunityServices'); // Route: '/community-services' */
-/* import { router as eploreRouter} from './eplore'); // Route: '/explore' */
 /* import { router as aoutRouter} from './aout'); // Route: '/about' */
 import { router as emailRouter } from './email'; // Route: '/email'
+/* import { router as cmmunityServicesRouter} from './cmmunityServices'); // Route: '/community-services' */
+import { router as exploreRouter } from './explore'; // Route: '/explore'
 /* Routes for Communities */
 import { router as pubDocumentRouter } from './pubDocument';
 import { router as pubDownloadsRouter } from './pubDownloads';
@@ -79,6 +79,7 @@ rootRouter
 	.use(dashboardCollectionLayoutRouter)
 	.use(submitRouter)
 	.use(communityCreateRouter)
+	.use(exploreRouter)
 	.use(emailRouter)
 	.use(adminDashboardRouter)
 	.use(landingRouter)

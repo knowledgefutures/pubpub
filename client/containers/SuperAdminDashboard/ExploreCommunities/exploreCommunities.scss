@@ -1,0 +1,199 @@
+.explore-communities-admin {
+	/* ---- Stats ---- */
+	.admin-stats {
+		display: flex;
+		gap: 2em;
+		margin-bottom: 1.5em;
+		padding: 1em;
+		background: #f5f5f5;
+		border-radius: 4px;
+
+		.stat {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.stat-number {
+			font-size: 1.8em;
+			font-weight: 600;
+			line-height: 1.2;
+		}
+
+		.stat-label {
+			font-size: 0.8em;
+			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+	}
+
+	/* ---- Controls ---- */
+	.admin-controls {
+		display: flex;
+		gap: 1em;
+		align-items: center;
+		margin-bottom: 0.5em;
+		flex-wrap: wrap;
+	}
+
+	.admin-search {
+		flex: 1;
+		min-width: 200px;
+		padding: 6px 10px;
+		font-size: 14px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		outline: none;
+
+		&:focus {
+			border-color: #333;
+		}
+	}
+
+	.admin-filters {
+		display: flex;
+		gap: 0.5em;
+
+		select {
+			padding: 6px 8px;
+			font-size: 13px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			background: #fff;
+			cursor: pointer;
+		}
+	}
+
+	.admin-result-count {
+		font-size: 12px;
+		color: #888;
+		margin-bottom: 0.5em;
+	}
+
+	/* ---- Table ---- */
+	.admin-community-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 13px;
+
+		th {
+			text-align: left;
+			font-weight: 500;
+			font-size: 11px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #888;
+			padding: 8px 10px;
+			border-bottom: 2px solid #ddd;
+			white-space: nowrap;
+
+			&.sortable {
+				cursor: pointer;
+				user-select: none;
+
+				&:hover {
+					color: #333;
+				}
+			}
+		}
+
+		td {
+			padding: 8px 10px;
+			border-bottom: 1px solid #eee;
+			vertical-align: middle;
+		}
+
+		tr:hover {
+			background-color: #fafafa;
+		}
+
+		tr.is-featured {
+			background-color: #f9fff9;
+
+			&:hover {
+				background-color: #f0faf0;
+			}
+		}
+
+		.col-featured {
+			width: 80px;
+		}
+
+		.col-title {
+			min-width: 250px;
+		}
+
+		.col-pubs,
+		.col-discussions,
+		.col-pageviews,
+		.col-activity {
+			width: 80px;
+			text-align: right;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.col-updated {
+			width: 100px;
+			text-align: right;
+			white-space: nowrap;
+			color: #888;
+		}
+
+		.community-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.accent-dot {
+			flex-shrink: 0;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+		}
+
+		.community-text {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
+
+		.community-name {
+			font-weight: 500;
+			text-decoration: none;
+			color: #333;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		.community-subdomain {
+			font-size: 11px;
+			color: #999;
+		}
+	}
+
+	/* ---- Skeleton loading ---- */
+	.skeleton-row td {
+		padding: 10px 10px;
+	}
+
+	.skeleton-block {
+		display: inline-block;
+		background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+		background-size: 200% 100%;
+		animation: skeleton-shimmer 1.4s ease-in-out infinite;
+		border-radius: 3px;
+		height: 14px;
+	}
+
+	@keyframes skeleton-shimmer {
+		0% {
+			background-position: 200% 0;
+		}
+		100% {
+			background-position: -200% 0;
+		}
+	}
+}

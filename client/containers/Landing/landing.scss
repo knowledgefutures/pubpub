@@ -209,6 +209,20 @@ $leftColumnWidth: 20%;
 				font-style: normal;
 				letter-spacing: 0px;
 			}
+			.explore-link {
+				display: inline-block;
+				margin-top: 1em;
+				font-size: 1.15em;
+				font-weight: 300;
+				color: #000 !important;
+				text-decoration: none;
+				opacity: 0.7;
+				transition: opacity 0.15s;
+				&:hover {
+					opacity: 1;
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 

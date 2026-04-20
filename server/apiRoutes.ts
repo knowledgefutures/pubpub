@@ -16,6 +16,7 @@ import { router as doiRouter } from './doi/api';
 import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
 import { env } from './env';
+import { router as exploreFeaturedRouter } from './exploreFeatured/api';
 import { router as impact2Router } from './impact2/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
@@ -53,6 +54,7 @@ const apiRouter = Router()
 	.use(doiRouter)
 	.use(draftCheckpointRouter)
 	.use(editorRouter)
+	.use(exploreFeaturedRouter)
 	.use(integrationDataOAuth1Router)
 	.use(landingPageFeatureRouter)
 	.use(layoutRouter)

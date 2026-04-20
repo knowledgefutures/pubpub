@@ -3,6 +3,7 @@ import type { SuperAdminTabKind } from 'utils/superAdmin';
 import React from 'react';
 
 import CommunitySpam from './CommunitySpam';
+import ExploreCommunities from './ExploreCommunities';
 import LandingPageFeatures from './LandingPageFeatures';
 import PlatformAnalytics from './PlatformAnalytics';
 import UserSpam from './UserSpam';
@@ -16,6 +17,10 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	analytics: {
 		title: 'Analytics',
 		component: PlatformAnalytics,
+	},
+	exploreCommunities: {
+		title: 'Explore Page',
+		component: ExploreCommunities,
 	},
 	landingPageFeatures: {
 		title: 'Landing Page features',

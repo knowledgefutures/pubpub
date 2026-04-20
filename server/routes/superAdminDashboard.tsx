@@ -6,6 +6,7 @@ import { Router } from 'express';
 
 import { filtersById as spamFiltersById } from 'client/containers/SuperAdminDashboard/CommunitySpam/filters';
 import { filtersById as spamUsersFiltersById } from 'client/containers/SuperAdminDashboard/UserSpam/filters';
+import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
@@ -42,6 +43,9 @@ const parseSpamFieldFilterParam = (
 };
 
 const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.LocationData) => {
+	if (tabKind === 'exploreCommunities') {
+		return { communities: await getExploreCommunities() };
+	}
 	if (tabKind === 'landingPageFeatures') {
 		return { landingPageFeatures: await getLandingPageFeatures({ onlyValidItems: false }) };
 	}

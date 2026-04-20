@@ -193,6 +193,10 @@ const Landing = () => {
 								<a href="/community/create" className="custom-button black">
 									Create your community
 								</a>
+								<br />
+								<a href="/explore" className="explore-link">
+									Explore existing communities →
+								</a>
 							</div>
 							{/* <div className="buttons">
 								<a href="/pricing" className="custom-button">

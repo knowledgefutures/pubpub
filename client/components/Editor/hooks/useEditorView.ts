@@ -9,8 +9,6 @@ import { EditorState, type Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { isDevelopment } from 'utils/environment';
-
 import { getPlugins } from '../plugins';
 import { collabDocPluginKey } from '../plugins/collaborative';
 import { immediatelyDispatchOnChange } from '../plugins/onChange';
@@ -96,7 +94,7 @@ const createEditorView = (options: EditorViewOptions) => {
 			handleScrollToSelection: onScrollToSelection,
 		},
 	);
-	if (isDevelopment()) {
+	if (process.env.NODE_ENV !== 'production') {
 		import('prosemirror-dev-tools').then(({ applyDevTools }) => {
 			applyDevTools(view);
 		});

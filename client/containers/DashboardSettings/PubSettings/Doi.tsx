@@ -19,8 +19,6 @@ import {
 
 import './doi.scss';
 
-import { pubData } from 'utils/storybook/data';
-
 import { WhyAmISeeingThis } from './WhyAmISeeingThis';
 
 type RelationshipIssue = {
@@ -390,6 +388,7 @@ class Doi extends Component<Props, State> {
 
 	renderValidationWarnings() {
 		const { validationIssues } = this.state;
+		const { pubData } = this.props;
 
 		if (!validationIssues || validationIssues.length === 0) {
 			return null;

@@ -17,9 +17,16 @@ const cleanModuleCache = (watchablePaths) => {
 module.exports = (startServer, watchablePathsRelative) => {
 	const watchablePaths = watchablePathsRelative.map(fromRoot);
 	const state = {
-		server: startServer(),
+		server: null,
 		sockets: [],
 	};
+
+	startServer().then((s) => {
+		state.server = s;
+		s.on('connection', (socket) => {
+			state.sockets.push(socket);
+		});
+	});
 
 	// biome-ignore lint/suspicious/noConsole: shhhhhh
 	console.log(
@@ -34,10 +41,17 @@ module.exports = (startServer, watchablePathsRelative) => {
 			}
 		});
 		state.sockets = [];
-		state.server.close(() => {
-			// biome-ignore lint/suspicious/noConsole: shhhhhh
-			state.server = startServer();
-		});
+		if (state.server) {
+			state.server.close(() => {
+				// biome-ignore lint/suspicious/noConsole: shhhhhh
+				startServer().then((s) => {
+					state.server = s;
+					s.on('connection', (socket) => {
+						state.sockets.push(socket);
+					});
+				});
+			});
+		}
 	}, 250);
 
 	chokidar.watch(watchablePaths, { awaitWriteFinish: true }).on('all', (evt, file) => {
@@ -46,9 +60,5 @@ module.exports = (startServer, watchablePathsRelative) => {
 				restart();
 			}
 		}
-	});
-
-	state.server.on('connection', (socket) => {
-		state.sockets.push(socket);
 	});
 };

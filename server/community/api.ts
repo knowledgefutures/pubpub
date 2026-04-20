@@ -65,7 +65,7 @@ export const communityServer = s.router(contract.community, {
 			throw new Error('You have reached the maximum number of daily exports.');
 		}
 
-		const key = `exports/community/${community.id}/${Date.now()}/static`;
+		const key = `exports/community/${community.id}/${Date.now()}`;
 
 		// check if there's already one running
 		const runningTask = await WorkerTask.findOne({

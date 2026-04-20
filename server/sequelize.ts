@@ -111,36 +111,40 @@ export const knexInstance = knex({ client: 'pg' });
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
-if (process.env.NODE_ENV !== 'test') {
-	(async () => {
-		// Install pg_trgm extension before sync so the User model's GIN trigram
-		// indexes can be created.
-		await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
-		await sequelize.sync({ force: false });
+export const sequelizeSyncPromise: Promise<void> =
+	process.env.NODE_ENV !== 'test'
+		? (async () => {
+				// Install pg_trgm extension before sync so the User model's GIN trigram
+				// indexes can be created.
+				await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
+				await sequelize.sync({ force: false });
 
-		// Dynamic imports are used here to avoid circular dependencies — these
-		// modules import `sequelize` from this file, so a top-level import would
-		// create a cycle where one side receives an incomplete module.
+				// Dynamic imports are used here to avoid circular dependencies — these
+				// modules import `sequelize` from this file, so a top-level import would
+				// create a cycle where one side receives an incomplete module.
 
-		// Install search triggers and backfill tsvector columns
-		const { installSearchTriggers, backfillPubSearchVectors, backfillCommunitySearchVectors } =
-			await import('server/search2/searchTriggers');
-		await installSearchTriggers();
+				// Install search triggers and backfill tsvector columns
+				const {
+					installSearchTriggers,
+					backfillPubSearchVectors,
+					backfillCommunitySearchVectors,
+				} = await import('server/search2/searchTriggers');
+				await installSearchTriggers();
 
-		// Run backfill in the background so it doesn't block app startup.
-		// Only in production — in dev the backfill re-runs on every hot-reload.
-		if (process.env.NODE_ENV === 'production') {
-			// Serialized (not parallel) because they share an advisory lock.
-			(async () => {
-				await backfillPubSearchVectors();
-				await backfillCommunitySearchVectors();
-			})().catch((err) => console.error('Search vector backfill error:', err));
-		}
+				// Run backfill in the background so it doesn't block app startup.
+				// Only in production — in dev the backfill re-runs on every hot-reload.
+				if (process.env.NODE_ENV === 'production') {
+					// Serialized (not parallel) because they share an advisory lock.
+					(async () => {
+						await backfillPubSearchVectors();
+						await backfillCommunitySearchVectors();
+					})().catch((err) => console.error('Search vector backfill error:', err));
+				}
 
-		// Create analytics materialized views (idempotent — no-ops if they exist).
-		// Refresh is handled by the nightly cron, not at startup, because it can
-		// take several minutes and would delay deploys.
-		const { createSummaryViews } = await import('server/analytics/summaryViews');
-		await createSummaryViews();
-	})();
-}
+				// Create analytics materialized views (idempotent — no-ops if they exist).
+				// Refresh is handled by the nightly cron, not at startup, because it can
+				// take several minutes and would delay deploys.
+				const { createSummaryViews } = await import('server/analytics/summaryViews');
+				await createSummaryViews();
+			})()
+		: Promise.resolve();

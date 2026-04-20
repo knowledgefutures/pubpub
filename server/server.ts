@@ -40,7 +40,7 @@ import { blocklistMiddleware } from './utils/blocklist';
 import './hooks';
 
 import { User } from './models';
-import { sequelize } from './sequelize';
+import { sequelize, sequelizeSyncPromise } from './sequelize';
 import { zoteroAuthStrategy } from './zoteroIntegration/utils/auth';
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -338,7 +338,8 @@ app.use(appRouter);
 /* Start Server */
 /* ------------ */
 const port = env.PORT;
-export const startServer = () => {
+export const startServer = async () => {
+	await sequelizeSyncPromise;
 	return app.listen(
 		port,
 		// @ts-expect-error

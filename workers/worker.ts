@@ -8,6 +8,8 @@ import type { Prettify } from 'types';
 
 import { isMainThread, parentPort, workerData } from 'worker_threads';
 
+import { sequelizeSyncPromise } from 'server/sequelize';
+
 import { accountExportTask } from './tasks/accountExport';
 import { communityExportTask } from './tasks/communityExport';
 import { exportTask } from './tasks/export';
@@ -36,6 +38,11 @@ export type TaskData<T extends TaskType> = {
 export type TaskResult<T extends TaskType> = Prettify<Awaited<ReturnType<(typeof taskMap)[T]>>>;
 
 const main = async <T extends TaskType>(taskData: TaskData<T>) => {
+	// Wait for sequelize sync + search triggers to finish before running the
+	// task, so DDL statements (ALTER TABLE, CREATE INDEX, etc.) don't race with
+	// task queries and cause "current transaction is aborted" errors.
+	await sequelizeSyncPromise;
+
 	const { type, input, id } = taskData;
 	const subprocesses: ChildProcessWithoutNullStreams[] = [];
 	const taskFn = taskMap[type];

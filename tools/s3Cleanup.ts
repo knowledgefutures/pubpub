@@ -771,6 +771,7 @@ async function listAndCleanS3(referencedKeys: Set<string>, previouslyTagged: Set
 	let referencedCount = 0;
 	let skippedTooNew = 0;
 	let skippedPreviouslyTagged = 0;
+	let skippedBadKeys = 0;
 	let totalSizeBytes = 0;
 	let orphanSizeBytes = 0;
 	let pageCount = 0;
@@ -803,6 +804,14 @@ async function listAndCleanS3(referencedKeys: Set<string>, previouslyTagged: Set
 
 			// Skip known non-asset prefixes
 			if (key.startsWith('_') || key.startsWith('fonts/')) continue;
+
+			// Skip keys with control characters (newlines, tabs, etc.)
+			// These are garbage objects from old bugs and break our TSV format.
+			// biome-ignore lint/suspicious/noControlCharactersInRegex: intentional
+			if (/[\x00-\x1f\x7f]/.test(key)) {
+				skippedBadKeys++;
+				continue;
+			}
 
 			// Safety: never touch objects newer than the age threshold.
 			// This prevents race conditions where a file was just uploaded
@@ -849,6 +858,7 @@ async function listAndCleanS3(referencedKeys: Set<string>, previouslyTagged: Set
 	log(`  Total size: ${(totalSizeBytes / 1e12).toFixed(2)} TB`);
 	log(`  Skipped (newer than ${minAgeDays}d): ${skippedTooNew.toLocaleString()}`);
 	log(`  Skipped (previously tagged): ${skippedPreviouslyTagged.toLocaleString()}`);
+	log(`  Skipped (bad keys with control chars): ${skippedBadKeys.toLocaleString()}`);
 	log(`  Referenced: ${referencedCount.toLocaleString()}`);
 	log(
 		`  New orphans: ${orphanCount.toLocaleString()} (${(orphanSizeBytes / 1e9).toFixed(1)} GB)`,

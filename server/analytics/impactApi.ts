@@ -288,6 +288,18 @@ async function fetchSummaryFromRaw(scope: Scope, startDate: string, endDate: str
 	const aeDateFilter = `ae."createdAt" >= :startDate::date AND ae."createdAt" < (:endDate::date + interval '1 day')`;
 	const aeBaseWhere = `${aeScopeClause} AND ${aeDateFilter}`;
 
+	// Download events don't carry collectionId — they only have pubId.
+	// When scoped to a collection, use a subquery against CollectionPubs
+	// to match downloads by the pubs that belong to this collection.
+	const dlScopeClause = scope.collectionId
+		? `"communityId" = :communityId AND "pubId" IN (SELECT "pubId" FROM "CollectionPubs" WHERE "collectionId" = :collectionId)`
+		: scopeClause;
+	const dlBaseWhere = `${dlScopeClause} AND ${dateFilter}`;
+	const aeDlScopeClause = scope.collectionId
+		? `ae."communityId" = :communityId AND ae."pubId" IN (SELECT "pubId" FROM "CollectionPubs" WHERE "collectionId" = :collectionId)`
+		: aeScopeClause;
+	const aeDlBaseWhere = `${aeDlScopeClause} AND ${aeDateFilter}`;
+
 	const [
 		daily,
 		[totalDlRow],
@@ -312,7 +324,7 @@ async function fetchSummaryFromRaw(scope: Scope, startDate: string, endDate: str
 		sequelize.query<{ totalDownloads: string }>(
 			`SELECT COUNT(*) AS "totalDownloads"
 			FROM "AnalyticsEvents"
-			WHERE ${baseWhere} AND event = 'download'`,
+			WHERE ${dlBaseWhere} AND event = 'download'`,
 			{ replacements: baseReplacements, type: QueryTypes.SELECT },
 		),
 		sequelize.query<TimezoneRow>(
@@ -334,7 +346,7 @@ async function fetchSummaryFromRaw(scope: Scope, startDate: string, endDate: str
 				COUNT(*) FILTER (WHERE ae.event = 'download') AS downloads
 			FROM "AnalyticsEvents" ae
 			LEFT JOIN "Pubs" p ON p.id = ae."pubId"
-			WHERE ${aeBaseWhere} AND ae."pubId" IS NOT NULL AND ae.event IN ('pub','download')
+			WHERE ${aeDlBaseWhere} AND ae."pubId" IS NOT NULL AND ae.event IN ('pub','download')
 			GROUP BY ae."pubId", p.title, p.slug
 			ORDER BY (COUNT(*) FILTER (WHERE ae.event = 'pub') + COUNT(*) FILTER (WHERE ae.event = 'download')) DESC LIMIT 250`,
 			{ replacements: baseReplacements, type: QueryTypes.SELECT },

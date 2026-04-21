@@ -20,7 +20,6 @@ import {
 import { sequelize } from 'server/sequelize';
 import { getSpamTagForCommunity } from 'server/spamTag/communityQueries';
 import { defer } from 'server/utils/deferred';
-import { sendCommunityAwaitingApprovalEmail } from 'server/utils/email/communitySpam';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { addWorkerTask } from 'server/utils/workers';
@@ -131,16 +130,6 @@ export const createCommunity = async (
 		},
 		{ hooks: false },
 	);
-	if (alertAndSubscribe) {
-		const communityUrl = `https://${subdomain}.pubpub.org`;
-		defer(async () => {
-			await sendCommunityAwaitingApprovalEmail({
-				communityId: newCommunityId,
-				communityTitle: inputValues.title,
-				communityUrl,
-			});
-		});
-	}
 	return { subdomain };
 };
 

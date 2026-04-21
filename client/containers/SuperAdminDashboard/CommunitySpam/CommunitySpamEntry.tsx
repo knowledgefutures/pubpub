@@ -46,6 +46,25 @@ const CommunitySpamEntry = (props: Props) => {
 		);
 	};
 
+	const renderReviewRequest = () => {
+		if (!spamTag.approvalRequestedAt) {
+			return null;
+		}
+		return (
+			<div className="review-request-info">
+				<Tag intent="primary" icon="envelope" minimal>
+					Approval requested: {formatDate(spamTag.approvalRequestedAt)}
+				</Tag>
+				{spamTag.approvalRequestMessage && (
+					<details>
+						<summary>Requester's message</summary>
+						<blockquote>{spamTag.approvalRequestMessage}</blockquote>
+					</details>
+				)}
+			</div>
+		);
+	};
+
 	const renderStatusTag = () => {
 		if (status === 'unreviewed') {
 			return <Tag minimal>Unreviewed</Tag>;
@@ -99,6 +118,7 @@ const CommunitySpamEntry = (props: Props) => {
 			</div>
 			{description && <div className="description">{description}</div>}
 			{Object.keys(fields).length > 0 && renderFieldsReport()}
+			{renderReviewRequest()}
 			<div className="details">
 				<div className="tags">
 					{renderStatusTag()}

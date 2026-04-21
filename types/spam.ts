@@ -14,7 +14,8 @@ export type SpamVerdict<T extends SpamTag | SpamTagModel = SpamTag> = Pick<
 export type SpamCommunityQueryOrderingField =
 	| 'community-created-at'
 	| 'spam-score'
-	| 'spam-status-updated-at';
+	| 'spam-status-updated-at'
+	| 'approval-requested-at';
 
 export type SpamCommunityQueryOrdering = {
 	direction: 'ASC' | 'DESC';
@@ -27,6 +28,7 @@ export type SpamCommunityQuery = {
 	limit?: number;
 	searchTerm?: string;
 	ordering: SpamCommunityQueryOrdering;
+	approvalRequested?: boolean;
 };
 
 export type SpamUserQueryOrderingField =

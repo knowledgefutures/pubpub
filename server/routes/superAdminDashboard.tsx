@@ -52,13 +52,15 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	if (tabKind === 'spam') {
 		const searchTerm = locationData.query.q ?? null;
 		const { query } = spamFiltersById[searchTerm ? 'recent' : 'unreviewed'];
+		const { communities, totalCount } = await queryCommunitiesForSpamManagement({
+			limit: 100,
+			searchTerm,
+			...query!,
+		});
 		return {
 			searchTerm,
-			communities: await queryCommunitiesForSpamManagement({
-				limit: 50,
-				searchTerm,
-				...query!,
-			}),
+			communities,
+			totalCount,
 		};
 	}
 	if (tabKind === 'spamUsers') {

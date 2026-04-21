@@ -4,7 +4,7 @@ import type { SpamCommunityQuery } from 'types';
 import { indexById } from 'utils/arrays';
 
 export type SpamCommunitiesFilter = OverviewSearchFilter<
-	Pick<SpamCommunityQuery, 'status' | 'ordering'>
+	Pick<SpamCommunityQuery, 'status' | 'ordering' | 'approvalRequested'>
 >;
 
 export const filters: SpamCommunitiesFilter[] = [
@@ -14,6 +14,15 @@ export const filters: SpamCommunitiesFilter[] = [
 		query: {
 			ordering: { field: 'spam-score', direction: 'DESC' },
 			status: ['unreviewed'],
+		},
+	},
+	{
+		title: '📋 Approval requested',
+		id: 'review-requested',
+		query: {
+			ordering: { field: 'approval-requested-at', direction: 'ASC' },
+			status: ['unreviewed'],
+			approvalRequested: true,
 		},
 	},
 	{

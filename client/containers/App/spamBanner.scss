@@ -15,5 +15,41 @@
 
 	> .text {
 		margin-left: 10px;
+		flex: 1;
+	}
+
+	&.review-submitted {
+		background: #2e7d32;
+	}
+
+	.review-button {
+		margin-left: 16px;
+		flex-shrink: 0;
+	}
+}
+
+.review-request-dialog {
+	.submitted-confirmation {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 12px;
+		padding: 16px 0;
+
+		.bp3-icon {
+			color: #2e7d32;
+		}
+	}
+
+	textarea {
+		resize: vertical;
+		margin-top: 8px;
+	}
+
+	.error-message {
+		color: #db3737;
+		font-size: 13px;
+		margin-top: 6px;
 	}
 }

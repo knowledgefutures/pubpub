@@ -8,6 +8,7 @@ const orderableFields = {
 	'community-created-at': ['createdAt'],
 	'spam-status-updated-at': [{ model: SpamTag, as: 'spamTag' }, 'statusUpdatedAt'],
 	'spam-score': [{ model: SpamTag, as: 'spamTag' }, 'spamScore'],
+	'approval-requested-at': [{ model: SpamTag, as: 'spamTag' }, 'approvalRequestedAt'],
 } as const;
 
 const getWhereQueryPartForUrl = (searchTerm: string) => {
@@ -49,11 +50,21 @@ const getCommunityWhereQuery = (searchTerm: undefined | string) => {
 	return {};
 };
 
-const getSpamTagStatusWhereQuery = (status: undefined | types.SpamStatus[]) => {
+const getSpamTagWhereQuery = (
+	status: undefined | types.SpamStatus[],
+	approvalRequested?: boolean,
+) => {
+	const where: Record<string, any> = {};
 	if (status) {
-		return { where: { status: { [Op.in]: status } } };
+		where.status = { [Op.in]: status };
 	}
-	return {};
+	if (approvalRequested === true) {
+		where.approvalRequestedAt = { [Op.ne]: null };
+	}
+	if (Object.keys(where).length === 0) {
+		return {};
+	}
+	return { where };
 };
 
 type OrderFields = (typeof orderableFields)[keyof typeof orderableFields];
@@ -62,9 +73,9 @@ const getQueryOrdering = (ordering: types.SpamCommunityQueryOrdering) => {
 	return [[...orderableFields[field], direction]] as [OrderFields[number], 'ASC' | 'DESC'][];
 };
 
-export const queryCommunitiesForSpamManagement = (query: types.SpamCommunityQuery) => {
-	const { limit, offset, ordering, status, searchTerm } = query;
-	return Community.findAll({
+export const queryCommunitiesForSpamManagement = async (query: types.SpamCommunityQuery) => {
+	const { limit, offset, ordering, status, searchTerm, approvalRequested } = query;
+	const { rows, count } = await Community.findAndCountAll({
 		...getCommunityWhereQuery(searchTerm),
 		attributes: ['id', 'title', 'subdomain', 'domain', 'description', 'createdAt'],
 		limit,
@@ -75,8 +86,12 @@ export const queryCommunitiesForSpamManagement = (query: types.SpamCommunityQuer
 				model: SpamTag,
 				as: 'spamTag',
 				required: true,
-				...getSpamTagStatusWhereQuery(status),
+				...getSpamTagWhereQuery(status, approvalRequested),
 			},
 		],
-	}) as Promise<types.DefinitelyHas<Community, 'spamTag'>[]>;
+	});
+	return {
+		communities: rows as types.DefinitelyHas<Community, 'spamTag'>[],
+		totalCount: count,
+	};
 };

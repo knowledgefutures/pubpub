@@ -5,4 +5,16 @@
 			margin-bottom: 5px;
 		}
 	}
+
+	.pagination-controls {
+		display: flex;
+		justify-content: center;
+		margin-top: 16px;
+		padding: 10px 0;
+
+		.page-indicator {
+			min-width: 180px;
+			text-align: center;
+		}
+	}
 }

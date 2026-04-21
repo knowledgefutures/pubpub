@@ -34,6 +34,26 @@
 		}
 	}
 
+	.review-request-info {
+		margin-bottom: 6px;
+
+		details > summary {
+			user-select: none;
+			cursor: pointer;
+			font-size: 13px;
+			margin-top: 4px;
+		}
+
+		blockquote {
+			margin: 4px 0 0 0;
+			padding: 6px 10px;
+			background: #f0f7ff;
+			border-left: 3px solid #2196f3;
+			font-size: 13px;
+			white-space: pre-wrap;
+		}
+	}
+
 	.details {
 		display: flex;
 		justify-content: space-between;

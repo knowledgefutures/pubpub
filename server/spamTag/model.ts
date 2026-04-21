@@ -50,4 +50,13 @@ export class SpamTag extends Model<InferAttributes<SpamTag>, InferCreationAttrib
 	@Default(1)
 	@Column(DataType.INTEGER)
 	declare spamScoreVersion: CreationOptional<number | null>;
+
+	@Column(DataType.DATE)
+	declare approvalRequestedAt: Date | null;
+
+	@Column(DataType.TEXT)
+	declare approvalRequestMessage: string | null;
+
+	@Column(DataType.UUID)
+	declare approvalRequestedByUserId: string | null;
 }

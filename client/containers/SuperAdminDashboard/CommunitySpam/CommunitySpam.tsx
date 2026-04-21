@@ -2,11 +2,10 @@ import type { CommunityWithSpam } from './types';
 
 import React, { useState } from 'react';
 
-import { Spinner } from '@blueprintjs/core';
+import { Button, ButtonGroup, Spinner } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
 import { OverviewSearchGroup } from 'client/containers/DashboardOverview/helpers';
-import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 
 import CommunitySpamEntry from './CommunitySpamEntry';
 import { filters, filtersById } from './filters';
@@ -14,30 +13,31 @@ import { useSpamCommunities } from './useSpamCommunities';
 
 import './communitySpam.scss';
 
+const PAGE_SIZE = 100;
+
 type Props = {
 	communities: CommunityWithSpam[];
+	totalCount: number;
 	searchTerm: null | string;
 };
 
 const CommunitySpam = (props: Props) => {
-	const { communities: initialCommunities, searchTerm: initialSearchTerm } = props;
+	const {
+		communities: initialCommunities,
+		totalCount: initialTotalCount,
+		searchTerm: initialSearchTerm,
+	} = props;
 	const [filter, setFilter] = useState(filtersById[initialSearchTerm ? 'recent' : 'unreviewed']);
 	const [searchTerm, setSearchTerm] = useState(initialSearchTerm ?? '');
 
-	const { communities, isLoading, loadMoreCommunities, mayLoadMoreCommunities } =
+	const { communities, isLoading, page, totalPages, totalCount, goToNextPage, goToPrevPage } =
 		useSpamCommunities({
-			limit: 50,
+			pageSize: PAGE_SIZE,
 			searchTerm,
 			initialCommunities,
+			initialTotalCount,
 			filter,
 		});
-
-	useInfiniteScroll({
-		scrollTolerance: 0,
-		useDocumentElement: true,
-		onRequestMoreItems: loadMoreCommunities,
-		enabled: mayLoadMoreCommunities,
-	});
 
 	useUpdateEffect(() => {
 		const nextSearchPart = searchTerm ? `?q=${searchTerm}` : '';
@@ -61,6 +61,29 @@ const CommunitySpam = (props: Props) => {
 					<CommunitySpamEntry community={community} key={community.id} />
 				))}
 			</div>
+			{totalPages > 1 && (
+				<div className="pagination-controls">
+					<ButtonGroup>
+						<Button
+							icon="chevron-left"
+							disabled={page === 0 || isLoading}
+							onClick={goToPrevPage}
+						>
+							Previous
+						</Button>
+						<Button disabled className="page-indicator">
+							Page {page + 1} of {totalPages} ({totalCount} total)
+						</Button>
+						<Button
+							rightIcon="chevron-right"
+							disabled={page >= totalPages - 1 || isLoading}
+							onClick={goToNextPage}
+						>
+							Next
+						</Button>
+					</ButtonGroup>
+				</div>
+			)}
 		</div>
 	);
 };

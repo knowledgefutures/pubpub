@@ -25,14 +25,12 @@ const models = modelize`
 	}
 `;
 
-const { subscribeUser, postToSlackAboutNewCommunity, sendCommunityAwaitingApprovalEmail } =
-	vi.hoisted(() => {
-		return {
-			subscribeUser: vi.fn(),
-			postToSlackAboutNewCommunity: vi.fn(),
-			sendCommunityAwaitingApprovalEmail: vi.fn(),
-		};
-	});
+const { subscribeUser, postToSlackAboutNewCommunity } = vi.hoisted(() => {
+	return {
+		subscribeUser: vi.fn(),
+		postToSlackAboutNewCommunity: vi.fn(),
+	};
+});
 
 setup(beforeAll, async () => {
 	vi.mock('server/utils/mailchimp', () => ({
@@ -40,9 +38,6 @@ setup(beforeAll, async () => {
 	}));
 	vi.mock('server/utils/slack', () => ({
 		postToSlackAboutNewCommunity,
-	}));
-	vi.mock('server/utils/email/communitySpam', () => ({
-		sendCommunityAwaitingApprovalEmail,
 	}));
 
 	await models.resolve();

@@ -3,11 +3,15 @@ import type { SpamFieldsFilter, SpamFieldsFilterKey, UserSpamTagFields } from 't
 import { Router } from 'express';
 
 import { notifyBannersOfCommunityBanResolution } from 'server/communityBan/queries';
+import { Community, Member, SpamTag, User } from 'server/models';
 import { isUserSuperAdmin } from 'server/user/queries';
+import { sendEmail } from 'server/utils/email/transport';
 import { ForbiddenError } from 'server/utils/errors';
+import { postToSlack } from 'server/utils/slack';
 import { wrap } from 'server/wrap';
 import { expect } from 'utils/assert';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
+import { getSuperAdminTabUrl } from 'utils/superAdmin';
 
 import { queryCommunitiesForSpamManagement } from './communityDashboard';
 import { updateSpamTagForCommunity } from './communityQueries';
@@ -32,6 +36,114 @@ router.put(
 		}
 		await updateSpamTagForCommunity({ communityId, status });
 		return res.status(200).send({});
+	}),
+);
+
+router.post(
+	'/api/spamTags/requestCommunityReview',
+	wrap(async (req, res) => {
+		const userId = req.user?.id;
+		if (!userId) {
+			throw new ForbiddenError();
+		}
+		const { communityId, message } = req.body;
+		if (!communityId || typeof communityId !== 'string') {
+			return res.status(400).send({ error: 'communityId required' });
+		}
+
+		// Verify user is an admin of this community
+		const membership = await Member.findOne({
+			where: { communityId, userId, permissions: 'admin' },
+		});
+		if (!membership) {
+			throw new ForbiddenError();
+		}
+
+		const community = await Community.findByPk(communityId, {
+			include: [{ model: SpamTag, as: 'spamTag' }],
+		});
+		if (!community?.spamTag) {
+			return res.status(404).send({ error: 'Community or spam tag not found' });
+		}
+
+		if (community.spamTag.status !== 'unreviewed') {
+			return res.status(400).send({ error: 'Community has already been reviewed' });
+		}
+		if (community.spamTag.approvalRequestedAt) {
+			return res.status(400).send({ error: 'Approval has already been requested' });
+		}
+
+		const trimmedMessage = typeof message === 'string' ? message.trim().slice(0, 2000) : null;
+
+		await community.spamTag.update({
+			approvalRequestedAt: new Date(),
+			approvalRequestMessage: trimmedMessage || null,
+			approvalRequestedByUserId: userId,
+		});
+
+		const user = await User.findByPk(userId, {
+			attributes: ['fullName', 'email', 'slug'],
+		});
+
+		const communityUrl = `https://${community.subdomain}.pubpub.org`;
+		const reviewUrl = `https://pubpub.org${getSuperAdminTabUrl('spam')}?q=${encodeURIComponent(community.subdomain)}`;
+		const requesterName = user?.fullName ?? 'Unknown';
+		const requesterEmail = user?.email ?? 'unknown';
+
+		// Notify team (fire-and-forget — don't block the user response)
+		const messageBlock = trimmedMessage ? `\nMessage from requester:\n${trimmedMessage}\n` : '';
+		sendEmail({
+			to: ['help@pubpub.org'],
+			subject: `Approval requested: ${community.title}`,
+			text: [
+				`A community admin has requested approval for "${community.title}" to be made publicly visible.`,
+				'',
+				`Community: ${communityUrl}`,
+				`Requested by: ${requesterName} (${requesterEmail})`,
+				`Spam score: ${community.spamTag.spamScore}`,
+				messageBlock,
+				`Review in dashboard: ${reviewUrl}`,
+				'',
+				'-- PubPub Spam System',
+			].join('\n'),
+		}).catch((err) => console.error('Failed to send approval request email', err));
+
+		postToSlack({
+			icon_emoji: ':clipboard:',
+			text: `Approval requested for ${community.title}`,
+			attachments: [
+				{
+					fallback: `Approval requested: ${community.title} by ${requesterName}`,
+					color: '#2196f3',
+					blocks: [
+						{
+							type: 'section',
+							text: {
+								type: 'mrkdwn',
+								text: `*<${communityUrl}|${community.title}>* — approval requested by ${requesterName}${trimmedMessage ? `\n> ${trimmedMessage.slice(0, 300)}` : ''}`,
+							},
+						},
+						{
+							type: 'actions',
+							elements: [
+								{
+									type: 'button',
+									text: { type: 'plain_text', text: 'Review in Dashboard' },
+									url: reviewUrl,
+								},
+								{
+									type: 'button',
+									text: { type: 'plain_text', text: 'Visit Community' },
+									url: communityUrl,
+								},
+							],
+						},
+					],
+				},
+			],
+		}).catch((err) => console.error('Failed to post approval request to Slack', err));
+
+		return res.status(200).send({ spamTag: community.spamTag.toJSON() });
 	}),
 );
 
@@ -102,21 +214,22 @@ router.put(
 );
 
 router.post('/api/spamTags/queryCommunitiesForSpam', async (req, res) => {
-	const { offset, limit, searchTerm, status, ordering } = req.body;
+	const { offset, limit, searchTerm, status, ordering, approvalRequested } = req.body;
 	const canQuery = await canManipulateSpamTags({
 		userId: expect(req.user).id,
 	});
 	if (!canQuery) {
 		throw new ForbiddenError();
 	}
-	const queryResult = await queryCommunitiesForSpamManagement({
+	const { communities, totalCount } = await queryCommunitiesForSpamManagement({
 		offset: offset && parseInt(offset, 10),
 		limit: limit && parseInt(limit, 10),
 		ordering,
 		searchTerm,
 		status,
+		approvalRequested: approvalRequested === true ? true : undefined,
 	});
-	return res.status(200).send(queryResult);
+	return res.status(200).send({ communities, totalCount });
 });
 
 router.delete(

@@ -36,7 +36,9 @@ export const sendCommunityAwaitingApprovalEmail = async (ctx: CommunityEmailCont
 
 			Your community "${ctx.communityTitle}" has been created on PubPub.
 
-			New communities are currently subject to approval for compliance with our Terms of Service and Acceptable Use Policy. We strive to moderate all new communities within five business days. During this time, all features and functionality are available, but only logged in Members will be able to view the community.
+			New communities are not yet publicly visible. All features and functionality are available, but only logged-in Members will be able to view the community.
+
+			When you're ready for your community to be publicly visible, visit your community and click "Request Approval" in the banner at the bottom of the page. You can include a brief description of your community's purpose to help us approve it quickly.
 
 			You can access your community at: ${ctx.communityUrl}
 

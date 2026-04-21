@@ -41,11 +41,10 @@ const CommunityCreatedView = ({ subdomain }: { subdomain: string }) => {
 			<div className="community-created-text">
 				<h1>Community Created!</h1>
 				<p>
-					Your community has been successfully created and is now awaiting approval for
-					compliance with our <a href="/legal/terms">Terms of Service</a> and{' '}
-					<a href="/legal/aup">Acceptable Use Policy</a>. We strive to review all new
-					communities within five business days. During this time, all features remain
-					available, but only logged-in Members will be able to view the community.
+					Your community has been successfully created but is not yet publicly visible.
+					All features remain available, but only logged-in Members will be able to view
+					the community. When you're ready for it to be publicly visible, click "Request
+					Approval" in the banner at the bottom of the page.
 				</p>
 				<h2>Your Support Keeps PubPub Free and Open</h2>
 				<p>
@@ -166,10 +165,11 @@ const CommunityCreate = () => {
 						<p>
 							New communities are currently subject to approval for compliance with
 							our <a href="/legal/terms">Terms of Service</a> and{' '}
-							<a href="/legal/aup">Acceptable Use Policy</a>. We strive to moderate
-							all new communities within five business days. During this time, all
+							<a href="/legal/aup">Acceptable Use Policy</a>. Before approval, all
 							features and functionality are available, but only logged in Members
-							will be able to view the community.
+							will be able to view the community. When you're ready for your community
+							to be publicly visible, you can request approval from within the
+							community.
 						</p>
 						<form onSubmit={onCreateSubmit}>
 							<Honeypot name="website" />

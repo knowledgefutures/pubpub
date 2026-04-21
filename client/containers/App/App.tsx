@@ -134,7 +134,13 @@ const App = (props: Props) => {
 						<div id="app" className={classNames({ dashboard: isDashboard })}>
 							{communityData.spamTag &&
 								communityData.spamTag.status !== 'confirmed-not-spam' && (
-									<SpamBanner status={communityData.spamTag.status} />
+									<SpamBanner
+										spamTag={communityData.spamTag}
+										communityId={communityData.id}
+										canAdminCommunity={
+											scopeData.activePermissions.canAdminCommunity
+										}
+									/>
 								)}
 							<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 							{(locationData.isDuqDuq || locationData.isQubQub) && (

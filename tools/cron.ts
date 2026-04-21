@@ -60,6 +60,10 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		{ timezone: 'UTC' },
 	); // Daily at 3:30 AM UTC (before spam scan)
 
+	cron.schedule('0 7 1 */6 *', () => run('S3 Cleanup', 'tools-prod s3Cleanup --tag'), {
+		timezone: 'UTC',
+	}); // Every 6 months (1st of Jan & Jul) at 7 AM UTC
+
 	cron.schedule(
 		'0 4 * * *',
 		() => {

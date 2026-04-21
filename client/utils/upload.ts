@@ -61,9 +61,17 @@ const getFileNameForUpload = (file: File) => {
 	return `${testPrefix}c${communityId}${pubSegment}/u${userId}/${fileName}-${random}${now}.${fileExtension}`;
 };
 
+import { MAX_UPLOAD_SIZE_BYTES } from 'utils/upload';
+
 const getBaseUrlForBucket = (bucket) => `https://s3-external-1.amazonaws.com/${bucket}`;
 
 export const s3Upload = (file: File, onProgress, onFinish, index?: number) => {
+	if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+		const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+		// biome-ignore lint/suspicious/noAlert: simplest feedback for a non-React utility
+		alert(`File "${file.name}" is ${sizeMB} MB, which exceeds the 100 MB upload limit.`);
+		return;
+	}
 	const fileName = getFileNameForUpload(file);
 	const fileType = file.type !== undefined ? file.type : 'image/jpeg';
 	function beginUpload(this: any) {

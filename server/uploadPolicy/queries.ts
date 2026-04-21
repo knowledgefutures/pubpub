@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 import { env } from 'server/env';
+import { MAX_UPLOAD_SIZE_BYTES } from 'utils/upload';
 
 type GetUploadPolicyParams = {
 	contentType: string;
@@ -23,6 +24,7 @@ export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 			{ acl },
 			{ success_action_status: '200' },
 			['starts-with', '$Content-Type', contentType],
+			['content-length-range', 0, MAX_UPLOAD_SIZE_BYTES],
 			...(contentType === 'text/html'
 				? [['starts-with', '$Content-Disposition', 'attachment; filename="']]
 				: []),

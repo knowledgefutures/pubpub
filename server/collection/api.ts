@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { prepareResource, submitResource } from 'deposit/datacite/deposit';
 import { transformCollectionToResource } from 'deposit/transform/collection';
+import { assertCommunityApprovedForDoi } from 'server/doi/permissions';
 import { generateDoi } from 'server/doi/queries';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
@@ -87,6 +88,7 @@ export const collectionServer = s.router(contract.collection, {
 			if (!permissions.update) {
 				throw new ForbiddenError();
 			}
+			await assertCommunityApprovedForDoi(collection.communityId);
 			const collectionDoi =
 				collection.doi ??
 				(

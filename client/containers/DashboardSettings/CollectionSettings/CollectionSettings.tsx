@@ -54,6 +54,9 @@ const CollectionSettings = (props: Props) => {
 		}
 	}, [collection.slug, hasChanges]);
 
+	const isCommunityApproved =
+		!communityData.spamTag || communityData.spamTag.status === 'confirmed-not-spam';
+
 	const tabs: Subtab[] = pruneFalsyValues([
 		{
 			id: 'details',
@@ -83,7 +86,9 @@ const CollectionSettings = (props: Props) => {
 						collection={collection}
 						communityData={communityData}
 						onUpdateCollection={updateCollection}
-						allowUpdateDoi={depositTarget?.service !== 'datacite'}
+						allowUpdateDoi={
+							depositTarget?.service !== 'datacite' && isCommunityApproved
+						}
 					/>
 				</SettingsSection>,
 			],

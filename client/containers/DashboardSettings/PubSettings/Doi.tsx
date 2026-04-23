@@ -44,6 +44,7 @@ type Props = {
 	pubData: any;
 	updatePubData: (...args: any[]) => any;
 	depositTarget?: DepositTarget;
+	depositDisabled?: boolean;
 };
 
 const extractDoiSuffix = (doi: string, depositTarget?: DepositTarget) => {
@@ -516,6 +517,7 @@ class Doi extends Component<Props, State> {
 					pubData={this.props.pubData}
 					target="pub"
 					disabled={
+						this.props.depositDisabled ||
 						this.disabledDueToParentWithoutDoi() ||
 						this.disabledDueToNoReleases() ||
 						this.disabledDueToUnmanagedPrefix() ||

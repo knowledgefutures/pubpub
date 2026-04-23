@@ -6,7 +6,7 @@ import { ForbiddenError } from 'server/utils/errors';
 import { wrap } from 'server/wrap';
 import { parentToSupplementNeedsDoiError } from 'utils/crossref/createDeposit';
 
-import { getPermissions } from './permissions';
+import { assertCommunityApprovedForDoi, getPermissions } from './permissions';
 import { generateDoi, getDoiData, setDoiData } from './queries';
 import { validatePubRelationshipsForDeposit } from './validate';
 
@@ -50,6 +50,10 @@ const previewOrDepositDoi = async (user, body, options = { deposit: false }) => 
 	};
 
 	await assertUserAuthorized(target, requestIds);
+
+	if (deposit) {
+		await assertCommunityApprovedForDoi(communityId);
+	}
 
 	if (pubId && (await pubExistsAndIsMissingReleases(pubId))) {
 		throw new ForbiddenError();
@@ -137,6 +141,7 @@ router.get(
 		};
 
 		await assertUserAuthorized(target, requestIds);
+		await assertCommunityApprovedForDoi(communityId as string);
 
 		return res.status(200).json({
 			dois: await generateDoi({ communityId, collectionId, pubId }, target),

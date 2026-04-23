@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { prepareResource, submitResource } from 'deposit/datacite/deposit';
 import { transformPubToResource } from 'deposit/transform/pub';
 import { assertValidResource } from 'deposit/validate';
+import { assertCommunityApprovedForDoi } from 'server/doi/permissions';
 import { generateDoi } from 'server/doi/queries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
@@ -203,6 +204,7 @@ export const pubServer = s.router(contract.pub, {
 				throw new ForbiddenError();
 			}
 			const pub = expect(await findPub(pubId));
+			await assertCommunityApprovedForDoi(pub.communityId);
 			const pubDoi =
 				pub.doi ??
 				(

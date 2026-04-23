@@ -47,7 +47,9 @@ function extractDoiSuffix(doi: string, depositTarget?: DepositTarget) {
 }
 
 export default function Deposit(props: Props) {
-	const { depositTarget } = props;
+	const { depositTarget, communityData } = props;
+	const isCommunityUnapproved =
+		communityData.spamTag != null && communityData.spamTag.status !== 'confirmed-not-spam';
 	const [resource, setResource] = useState<Resource>();
 	const [doiSuffix, setDoiSuffix] = useState('');
 	const [persistingDoiSuffix, setPersistingDoiSuffix] = useState(false);
@@ -150,6 +152,13 @@ export default function Deposit(props: Props) {
 
 	let children: React.ReactNode;
 
+	const unapprovedWarning = isCommunityUnapproved ? (
+		<Callout intent="warning" style={{ marginBottom: 16 }}>
+			DOI deposit is not available until your community has been approved. You may still
+			preview deposits.
+		</Callout>
+	) : null;
+
 	if (depositTarget?.service === 'datacite') {
 		if (!exists(doiPrefix)) {
 			children = (
@@ -161,6 +170,7 @@ export default function Deposit(props: Props) {
 		} else {
 			children = (
 				<>
+					{unapprovedWarning}
 					{'pub' in props && resource && firstIntraWorkRelationship && (
 						<p>
 							This Pub will be cited as a member of the{' '}
@@ -198,7 +208,11 @@ export default function Deposit(props: Props) {
 						/>
 					)}
 					{!disabledDueToNoReleases && !persistingDoiSuffix && (
-						<DataciteDeposit {...props} onDepositSuccess={onDepositSuccess} />
+						<DataciteDeposit
+							{...props}
+							onDepositSuccess={onDepositSuccess}
+							canSubmit={!isCommunityUnapproved}
+						/>
 					)}
 				</>
 			);
@@ -206,13 +220,17 @@ export default function Deposit(props: Props) {
 	} else {
 		assert('pub' in props);
 		children = (
-			<Doi
-				canIssueDoi={props.canIssueDoi}
-				communityData={props.communityData}
-				updatePubData={props.updatePub}
-				pubData={props.pub}
-				depositTarget={props.depositTarget}
-			/>
+			<>
+				{unapprovedWarning}
+				<Doi
+					canIssueDoi={props.canIssueDoi}
+					communityData={props.communityData}
+					updatePubData={props.updatePub}
+					pubData={props.pub}
+					depositTarget={props.depositTarget}
+					depositDisabled={isCommunityUnapproved}
+				/>
+			</>
 		);
 	}
 

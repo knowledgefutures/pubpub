@@ -5,7 +5,7 @@ import React from 'react';
 import { Router } from 'express';
 
 import {
-	isUserAffiliatedWithAnyCommunity,
+	isUserAffiliatedWithApprovedCommunity,
 	isUserAffiliatedWithCommunity,
 } from 'server/community/queries';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
@@ -75,6 +75,7 @@ router.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 		}
 
 		const isNewishUser = Date.now() - Number(userData.createdAt.valueOf()) < 1000 * 86400 * 30;
+		let isHiddenForNonAdmins = false;
 
 		if (!initialData.locationData.isBasePubPub) {
 			const isThisUserAPartOfThisCommunity = await isUserAffiliatedWithCommunity(
@@ -82,17 +83,24 @@ router.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 				initialData.communityData.id,
 			);
 
-			// useful for superadmins to see global profiles
-			if (!isThisUserAPartOfThisCommunity && !initialData.loginData?.isSuperAdmin) {
-				throw new NotFoundError(new Error('User not found'));
+			if (!isThisUserAPartOfThisCommunity) {
+				if (!isSuperAdmin) {
+					throw new NotFoundError(new Error('User not found'));
+				}
+
+				isHiddenForNonAdmins = true;
 			}
 		} else {
-			const userAffiliatedWithAnyCommunity = await isUserAffiliatedWithAnyCommunity(
+			const affiliatedWithApprovedCommunity = await isUserAffiliatedWithApprovedCommunity(
 				userData.id,
 			);
-			// useful for superadmins to see global profiles
-			if (!userAffiliatedWithAnyCommunity && !initialData.loginData?.isSuperAdmin) {
-				throw new NotFoundError(new Error('User not found'));
+
+			if (!affiliatedWithApprovedCommunity) {
+				if (!isSuperAdmin) {
+					throw new NotFoundError(new Error('User not found'));
+				}
+
+				isHiddenForNonAdmins = true;
 			}
 		}
 
@@ -104,7 +112,7 @@ router.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 				chunkName="User"
 				initialData={initialData}
 				customScripts={customScripts}
-				viewData={{ userData }}
+				viewData={{ userData, isHiddenForNonAdmins }}
 				headerComponents={generateMetaComponents({
 					initialData,
 					title: `${userData.fullName} · PubPub`,

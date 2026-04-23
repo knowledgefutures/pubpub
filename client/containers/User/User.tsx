@@ -13,10 +13,11 @@ import './user.scss';
 
 type Props = {
 	userData: any;
+	isHiddenForNonAdmins?: boolean;
 };
 
 const User = (props: Props) => {
-	const { userData } = props;
+	const { userData, isHiddenForNonAdmins = false } = props;
 	const { locationData, communityData, loginData } = usePageContext();
 	const pubs = (userData.attributions || []).map((attribution) => {
 		return attribution.pub;
@@ -47,7 +48,11 @@ const User = (props: Props) => {
 			{mode !== 'edit' && (
 				<div>
 					<GridWrapper containerClassName="narrow">
-						<UserHeader userData={userData} isUser={selfProfile} />
+						<UserHeader
+							userData={userData}
+							isUser={selfProfile}
+							isHiddenForNonAdmins={isHiddenForNonAdmins}
+						/>
 					</GridWrapper>
 
 					<GridWrapper containerClassName="narrow nav">

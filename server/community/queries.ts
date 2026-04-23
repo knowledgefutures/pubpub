@@ -282,6 +282,72 @@ export const isUserAffiliatedWithAnyCommunity = async (userId: string) => {
 	return Boolean(result?.isAffiliated);
 };
 
+/**
+ * check whether the user is affiliated with at least one community that has
+ * been manually approved (spam tag status = 'confirmed-not-spam').
+ *
+ * this is stricter than isUserAffiliatedWithAnyCommunity: it prevents spam
+ * users from getting a visible profile just by being part of an unreviewed
+ * or spam-flagged community.
+ */
+export const isUserAffiliatedWithApprovedCommunity = async (userId: string) => {
+	const result = await sequelize.query<{ isAffiliated: boolean }>(
+		`
+		SELECT EXISTS (
+			SELECT 1
+			FROM "Members" m
+			INNER JOIN "Communities" cm ON cm."id" = m."communityId"
+			INNER JOIN "SpamTags" st ON st."id" = cm."spamTagId"
+			WHERE m."userId" = :userId
+				AND st."status" = 'confirmed-not-spam'
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "Members" m
+			INNER JOIN "Pubs" p ON p."id" = m."pubId"
+			INNER JOIN "Communities" cm ON cm."id" = p."communityId"
+			INNER JOIN "SpamTags" st ON st."id" = cm."spamTagId"
+			WHERE m."userId" = :userId
+				AND st."status" = 'confirmed-not-spam'
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "Members" m
+			INNER JOIN "Collections" c ON c."id" = m."collectionId"
+			INNER JOIN "Communities" cm ON cm."id" = c."communityId"
+			INNER JOIN "SpamTags" st ON st."id" = cm."spamTagId"
+			WHERE m."userId" = :userId
+				AND st."status" = 'confirmed-not-spam'
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "PubAttributions" pa
+			INNER JOIN "Pubs" p ON p."id" = pa."pubId"
+			INNER JOIN "Communities" cm ON cm."id" = p."communityId"
+			INNER JOIN "SpamTags" st ON st."id" = cm."spamTagId"
+			WHERE pa."userId" = :userId
+				AND st."status" = 'confirmed-not-spam'
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM "CollectionAttributions" ca
+			INNER JOIN "Collections" c ON c."id" = ca."collectionId"
+			INNER JOIN "Communities" cm ON cm."id" = c."communityId"
+			INNER JOIN "SpamTags" st ON st."id" = cm."spamTagId"
+			WHERE ca."userId" = :userId
+				AND st."status" = 'confirmed-not-spam'
+		) AS "isAffiliated";
+		`,
+		{
+			replacements: { userId },
+			type: QueryTypes.SELECT,
+			plain: true,
+		},
+	);
+
+	return Boolean(result?.isAffiliated);
+};
+
 export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {
 	let offset = 0;
 	while (true) {

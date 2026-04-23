@@ -16,10 +16,12 @@ import './userHeader.scss';
 const propTypes = {
 	userData: PropTypes.object.isRequired,
 	isUser: PropTypes.bool,
+	isHiddenForNonAdmins: PropTypes.bool,
 };
 
 const defaultProps = {
 	isUser: false,
+	isHiddenForNonAdmins: false,
 };
 
 const spamStatusDisplay: Record<
@@ -149,6 +151,22 @@ const UserHeader = function (props) {
 								small={false}
 							/>
 						</div>
+					</Callout>
+				)}
+
+				{isSuperAdmin && props.isHiddenForNonAdmins && (
+					<Callout
+						intent="warning"
+						icon="eye-off"
+						style={{ marginTop: 0, marginBottom: 12 }}
+					>
+						This page is not visible to other users. This user is not affiliated with
+						any approved community.{' '}
+						<a
+							href={`/superadmin/spamUsers?q=${encodeURIComponent(props.userData.slug)}`}
+						>
+							View in super admin dashboard
+						</a>
 					</Callout>
 				)}
 				<div className="links">

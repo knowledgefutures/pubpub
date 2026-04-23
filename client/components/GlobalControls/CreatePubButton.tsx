@@ -58,11 +58,8 @@ const CreatePubButton = () => {
 				evt.preventDefault();
 			}}
 			ref={formRef}
-			// only relevant in dev
-			style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+			style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
 		>
-			<Altcha ref={altchaRef} />
-			<Honeypot name="description" />
 			<GlobalControlsButton
 				onClick={handleCreatePub}
 				loading={isLoading}
@@ -71,6 +68,19 @@ const CreatePubButton = () => {
 				desktop={{ text: 'Create Pub' }}
 				mobile={{ icon: 'pubDocNew' }}
 			/>
+			<div
+				style={{
+					position: 'absolute',
+					top: '100%',
+					left: 0,
+					display: 'flex',
+					gap: 6,
+					paddingTop: 4,
+				}}
+			>
+				<Altcha ref={altchaRef} />
+				<Honeypot name="description" />
+			</div>
 		</form>
 	);
 };

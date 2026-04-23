@@ -9,6 +9,7 @@ import { wrap } from 'server/wrap';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { isDuqDuq, isProd } from 'utils/environment';
 
+import { Collection, Community, Member, Pub } from '../models';
 import { getPermissions } from './permissions';
 import { createUser, getSuggestedEditsUserInfo, updateUser } from './queries';
 
@@ -99,6 +100,56 @@ router.post('/api/users', async (req, res) => {
 });
 
 const uuidParser = z.string().uuid();
+
+router.get(
+	'/api/users/communities',
+	wrap(async (req, res) => {
+		if (!req.user?.id) {
+			throw new BadRequestError();
+		}
+		const members = await Member.findAll({
+			where: { userId: req.user.id },
+			attributes: [],
+			include: [
+				{ model: Community, as: 'community', required: false },
+				{
+					model: Pub,
+					as: 'pub',
+					required: false,
+					attributes: [],
+					include: [{ model: Community, as: 'community' }],
+				},
+				{
+					model: Collection,
+					as: 'collection',
+					required: false,
+					attributes: [],
+					include: [{ model: Community, as: 'community' }],
+				},
+			],
+		});
+		const seen = new Set<string>();
+		const communities = members
+			.map((m) => m.community ?? m.pub?.community ?? m.collection?.community)
+			.filter((c): c is Community => {
+				if (!c || seen.has(c.id)) return false;
+				seen.add(c.id);
+				return true;
+			})
+			.sort((a, b) => a.title.localeCompare(b.title))
+			.map((c) => ({
+				id: c.id,
+				title: c.title,
+				subdomain: c.subdomain,
+				domain: c.domain,
+				avatar: c.avatar,
+				headerLogo: c.headerLogo,
+				accentColorDark: c.accentColorDark,
+			}));
+
+		return res.status(200).json(communities);
+	}),
+);
 
 router.get(
 	'/api/users/:id',

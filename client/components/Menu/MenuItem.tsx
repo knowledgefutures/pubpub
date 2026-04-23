@@ -4,7 +4,7 @@ import { Classes, Icon } from '@blueprintjs/core';
 import classNames from 'classnames';
 import * as RK from 'reakit/Menu';
 
-import { Menu } from './Menu';
+import { Menu, type MenuProps } from './Menu';
 import { MenuContext } from './menuContexts';
 
 type SharedMenuItemProps = {
@@ -23,6 +23,7 @@ type SharedMenuItemProps = {
 export type DisplayMenuItemProps = {
 	onDismiss: (...args: any[]) => unknown;
 	hasSubmenu: boolean;
+	submenuDirection?: 'left' | 'right';
 } & SharedMenuItemProps;
 
 const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
@@ -32,6 +33,7 @@ const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
 		className = '',
 		disabled = false,
 		hasSubmenu = false,
+		submenuDirection = 'right',
 		href,
 		icon = null,
 		onClick = null,
@@ -42,7 +44,11 @@ const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
 		...restProps
 	} = props;
 
-	const label = hasSubmenu ? <Icon icon="caret-right" /> : rightElement;
+	const label = hasSubmenu ? (
+		<Icon icon={submenuDirection === 'left' ? 'caret-left' : 'caret-right'} />
+	) : (
+		rightElement
+	);
 
 	const onClickWithHref = (evt) => {
 		if (onClick) {
@@ -93,18 +99,29 @@ export type MenuItemProps = {
 	text?: React.ReactNode;
 	children?: React.ReactNode;
 	dismissOnClick?: boolean;
-	placement?: string;
+	placement?: MenuProps['placement'];
+	menuStyle?: object;
 	labelElement?: React.ReactNode;
 } & SharedMenuItemProps;
 
 export const MenuItem = React.forwardRef((props: MenuItemProps, ref) => {
-	const { children = null, text, dismissOnClick = true, ...restProps } = props;
+	const {
+		children = null,
+		text,
+		dismissOnClick = true,
+		placement,
+		menuStyle,
+		...restProps
+	} = props;
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'dismissMenu' does not exist on type 'nul... Remove this comment to see the full error message
 	const { dismissMenu, parentMenu } = useContext(MenuContext);
 	if (children) {
+		const submenuPlacement = placement || undefined;
 		return (
 			<Menu
 				onDismiss={dismissMenu}
+				placement={submenuPlacement}
+				menuStyle={menuStyle}
 				disclosure={(dProps) => (
 					<RK.MenuItem
 						as={DisplayMenuItem}
@@ -113,6 +130,7 @@ export const MenuItem = React.forwardRef((props: MenuItemProps, ref) => {
 						{...restProps}
 						style={{ display: 'block', '-webkit-appearance': 'unset' }}
 						hasSubmenu={true}
+						submenuDirection={submenuPlacement?.startsWith('left') ? 'left' : 'right'}
 					>
 						{text}
 					</RK.MenuItem>

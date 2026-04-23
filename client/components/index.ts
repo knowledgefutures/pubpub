@@ -62,6 +62,7 @@ export {
 	MenuButton,
 	MenuConfigProvider,
 	MenuItem,
+	MenuItemDivider,
 	MenuSelect,
 	type MenuSelectItem,
 	type MenuSelectItems,

@@ -85,6 +85,24 @@ const GlobalControls = (props: Props) => {
 			const canCreatePub = loggedIn && (!hideCreatePubButton || canManage);
 			return (
 				<>
+					{canSelectCommunityForDevelopment() && (
+						<DevCommunitySwitcherMenu
+							disclosure={
+								<GlobalControlsButton
+									mobileOrDesktop={{
+										icon: pubPubIcons.community,
+										rightIcon: 'caret-down',
+									}}
+								/>
+							}
+						/>
+					)}
+					{loginData.isSuperAdmin && (
+						<GlobalControlsButton
+							href="/superadmin"
+							mobileOrDesktop={{ text: 'Superadmin' }}
+						/>
+					)}
 					{canCreatePub && <CreatePubButton />}
 					{renderSearch()}
 					{canView && renderDashboardMenu()}
@@ -99,6 +117,24 @@ const GlobalControls = (props: Props) => {
 		if (isBasePubPub) {
 			return (
 				<>
+					{canSelectCommunityForDevelopment() && (
+						<DevCommunitySwitcherMenu
+							disclosure={
+								<GlobalControlsButton
+									mobileOrDesktop={{
+										icon: pubPubIcons.community,
+										rightIcon: 'caret-down',
+									}}
+								/>
+							}
+						/>
+					)}
+					{loginData.isSuperAdmin && (
+						<GlobalControlsButton
+							href="/superadmin"
+							mobileOrDesktop={{ text: 'Superadmin' }}
+						/>
+					)}
 					{/* <GlobalControlsButton
 						href="https://www.knowledgefutures.org/pubpub/"
 						mobileOrDesktop={{ text: 'PubPub Platform (new!)' }}
@@ -119,18 +155,6 @@ const GlobalControls = (props: Props) => {
 
 	return (
 		<div className="global-controls-component">
-			{canSelectCommunityForDevelopment() && (
-				<DevCommunitySwitcherMenu
-					disclosure={
-						<GlobalControlsButton
-							mobileOrDesktop={{
-								icon: pubPubIcons.community,
-								rightIcon: 'caret-down',
-							}}
-						/>
-					}
-				/>
-			)}
 			{renderItemsVisibleFromCommunity()}
 			{renderBasePubPubLinks()}
 			{renderUserMenuOrLogin()}

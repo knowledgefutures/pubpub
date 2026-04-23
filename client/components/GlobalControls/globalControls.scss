@@ -29,3 +29,7 @@ $bp: vendor.$bp-namespace;
 		@include button-colors;
 	}
 }
+
+.bp3-menu-item.community-menu-item {
+	align-items: center;
+}

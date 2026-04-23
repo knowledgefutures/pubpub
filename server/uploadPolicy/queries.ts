@@ -1,8 +1,7 @@
 import crypto from 'crypto';
 
 import { env } from 'server/env';
-
-import { MAX_UPLOAD_SIZE_BYTES } from '../../utils/upload';
+import { MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
 
 type GetUploadPolicyParams = {
 	contentType: string;

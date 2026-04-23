@@ -61,7 +61,7 @@ const getFileNameForUpload = (file: File) => {
 	return `${testPrefix}c${communityId}${pubSegment}/u${userId}/${fileName}-${random}${now}.${fileExtension}`;
 };
 
-import { MAX_UPLOAD_SIZE_BYTES } from 'utils/upload';
+import { MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
 
 const getBaseUrlForBucket = (bucket) => `https://s3-external-1.amazonaws.com/${bucket}`;
 

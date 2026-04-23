@@ -1,5 +1,6 @@
 export const superAdminTabKinds = [
 	'analytics',
+	'customDomains',
 	'exploreCommunities',
 	'landingPageFeatures',
 	'spam',

@@ -156,6 +156,12 @@ export const envSchema = z.object({
 		.describe('Analytics token with read permissions fo Cloudflare GraphQL'),
 	CLOUDFLARE_ZONE_TAG: z.string().optional().describe('Zone ID of the domain used'),
 
+	// ── Cloudflare Custom Hostnames ─────────────────────────────────────
+	CLOUDFLARE_CUSTOM_HOSTNAME_API_TOKEN: z
+		.string()
+		.optional()
+		.describe('Cloudflare API token with SSL & Hostnames:Edit permission'),
+
 	// ── Spam / Security ─────────────────────────────────────────────────
 	BLOCKLIST_IP_ADDRESSES: z
 		.string()

@@ -1,0 +1,115 @@
+.custom-domains-component {
+	.cname-notice {
+		display: block;
+		width: 100%;
+		margin-bottom: 20px;
+		padding: 12px 16px;
+		background: #f5f5f5;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		text-align: left;
+		font: inherit;
+		color: inherit;
+
+		&:hover {
+			background: #ebebeb;
+		}
+
+		p {
+			margin: 0 0 8px;
+
+			&:last-of-type {
+				margin-bottom: 4px;
+			}
+		}
+
+		code {
+			font-weight: 600;
+		}
+
+		.copy-hint {
+			font-size: 12px;
+			color: #888;
+		}
+	}
+
+	.add-domain-form {
+		display: flex;
+		gap: 10px;
+		margin-bottom: 20px;
+		align-items: flex-end;
+
+		.bp3-form-group {
+			margin-bottom: 0;
+		}
+	}
+
+	.filter-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 10px;
+
+		.bp3-input-group {
+			flex: 0 0 400px;
+		}
+	}
+
+	.domain-count {
+		font-size: 13px;
+		color: #888;
+		white-space: nowrap;
+	}
+
+	.domains-table {
+		width: 100%;
+		border-collapse: collapse;
+		table-layout: fixed;
+
+		th,
+		td {
+			padding: 8px 12px;
+			text-align: left;
+			border-bottom: 1px solid #e1e1e1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		th:nth-child(1),
+		td:nth-child(1) {
+			width: 35%;
+		}
+
+		th:nth-child(2),
+		td:nth-child(2) {
+			width: calc(45% - 50px);
+		}
+
+		th:nth-child(3),
+		td:nth-child(3) {
+			width: 20%;
+		}
+
+		th:nth-child(4),
+		td:nth-child(4) {
+			width: 50px;
+			text-align: right;
+		}
+
+		th {
+			font-weight: 600;
+			background: #f5f5f5;
+		}
+
+		.community-link {
+			color: #137cbd;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}

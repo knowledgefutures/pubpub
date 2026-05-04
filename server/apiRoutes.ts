@@ -9,6 +9,7 @@ import { router as captchaRouter } from './captcha/api';
 import { router as citationRouter } from './citation/api';
 import { router as communityBanRouter } from './communityBan/api';
 import { router as communityServicesRouter } from './communityServices/api';
+import { router as communityTemplateRouter } from './communityTemplate/api';
 import { router as customScriptRouter } from './customScript/api';
 import { router as devApiRouter } from './dev/api';
 import { router as discussionRouter } from './discussion/api';
@@ -17,6 +18,7 @@ import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
 import { env } from './env';
 import { router as exploreFeaturedRouter } from './exploreFeatured/api';
+import { router as hubRouter } from './hub/api';
 import { router as impact2Router } from './impact2/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
@@ -59,6 +61,8 @@ const apiRouter = Router()
 	.use(landingPageFeatureRouter)
 	.use(layoutRouter)
 	.use(openSearchRouter)
+	.use(hubRouter)
+	.use(communityTemplateRouter)
 	.use(passwordResetRouter)
 	.use(pubEdgeProposalRouter)
 	.use(pubHistoryRouter)

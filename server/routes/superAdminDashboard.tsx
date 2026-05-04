@@ -7,8 +7,23 @@ import { Op } from 'sequelize';
 
 import { filtersById as spamFiltersById } from 'client/containers/SuperAdminDashboard/CommunitySpam/filters';
 import { filtersById as spamUsersFiltersById } from 'client/containers/SuperAdminDashboard/UserSpam/filters';
+import {
+	getContentMentionsForDomain,
+	getContentSearchCounts,
+	getContentSearchPubs,
+	getContentSearchPubsByPhrase,
+} from 'server/community/contentSearchQueries';
+import {
+	getActivityFeed,
+	getEduCollaborators,
+	getEduDomainDetailData,
+	getEduDomainSummaries,
+} from 'server/community/eduQueries';
+import { getAllTemplates } from 'server/communityTemplate/queries';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
+// NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
+import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { Community } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
@@ -64,6 +79,16 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	}
 	if (tabKind === 'landingPageFeatures') {
 		return { landingPageFeatures: await getLandingPageFeatures({ onlyValidItems: false }) };
+	}
+	if (tabKind === 'hubs') {
+		return { hubs: await getAllHubsWithCommunityCounts() };
+	}
+	if (tabKind === 'suggestedHubs') {
+		// Return empty shell — summaries are fetched client-side for fast SSR
+		return {};
+	}
+	if (tabKind === 'templates') {
+		return { templates: await getAllTemplates() };
 	}
 	if (tabKind === 'spam') {
 		const searchTerm = locationData.query.q ?? null;
@@ -219,6 +244,153 @@ router.delete('/api/superadmin/custom-domains', async (req, res, next) => {
 		await community.update({ domain: null });
 
 		return res.json({ success: true });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// JSON API for lazy-loading suggested-hubs sidebar summaries
+router.get('/api/superadmin/suggested-hubs-summaries', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const summaries = await getEduDomainSummaries({ publicOnly: true });
+		return res.json(summaries);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// JSON API for lazy-loading suggested-hubs domain detail
+router.get('/api/superadmin/suggested-hubs/:domain', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const { domain } = req.params;
+		const results = await getEduDomainDetailData({ domain, publicOnly: true });
+		const group = results[0] ?? null;
+		return res.json(group);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// JSON API for lazy-loading suggested-hubs collaborators (fetched on-demand)
+router.get('/api/superadmin/suggested-hubs/:domain/collaborators', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const { domain } = req.params;
+		const collaborators = await getEduCollaborators(domain, { publicOnly: true });
+		return res.json(collaborators);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// JSON API for lazy-loading suggested-hubs activity feed (fetched on-demand)
+router.get('/api/superadmin/suggested-hubs/:domain/activity', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const { domain } = req.params;
+		const feed = await getActivityFeed(domain, { publicOnly: true });
+		return res.json(feed);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// JSON API for known search term content mentions for a domain (cross-reference)
+router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const { domain } = req.params;
+		const mentions = await getContentMentionsForDomain(domain);
+		return res.json(mentions);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── Content Search APIs ─────────────────────────────────────────────────────
+
+const CONTENT_SEARCH_CACHE_TTL_MS = 60 * 60 * 1000;
+let cachedContentSearchCounts: { data: any; expiresAt: number } | null = null;
+
+// GET /api/superadmin/content-search — known search term counts
+router.get('/api/superadmin/content-search', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		if (cachedContentSearchCounts && Date.now() < cachedContentSearchCounts.expiresAt) {
+			return res.json(cachedContentSearchCounts.data);
+		}
+
+		const terms = await getContentSearchCounts();
+		const data = { terms };
+		cachedContentSearchCounts = { data, expiresAt: Date.now() + CONTENT_SEARCH_CACHE_TTL_MS };
+		return res.json(data);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// GET /api/superadmin/content-search/:termIndex/pubs — pubs for a known term
+router.get('/api/superadmin/content-search/:termIndex/pubs', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const termIndex = parseInt(req.params.termIndex, 10);
+		if (Number.isNaN(termIndex) || termIndex < 0) {
+			return res.status(400).json({ error: 'Invalid term index' });
+		}
+
+		const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 100);
+		const offset = parseInt(req.query.offset as string, 10) || 0;
+
+		const result = await getContentSearchPubs(termIndex, { limit, offset });
+		return res.json(result);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// GET /api/superadmin/content-search/adhoc/pubs?q=phrase — ad-hoc phrase search
+router.get('/api/superadmin/content-search/adhoc/pubs', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const phrase = (req.query.q as string) || '';
+		if (!phrase.trim()) {
+			return res.json({ pubs: [], total: 0 });
+		}
+
+		const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 100);
+		const offset = parseInt(req.query.offset as string, 10) || 0;
+
+		const result = await getContentSearchPubsByPhrase(phrase, { limit, offset });
+		return res.json(result);
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

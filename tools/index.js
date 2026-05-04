@@ -79,6 +79,7 @@ const commandFiles = {
 	migrateFirebasePaths: "./migrateFirebasePaths",
 	migration2020_05_06: "./migration2020_05_06",
 	migration2020_06_24: "./migration2020_06_24",
+	migrationCommunityTemplates: "./migrationCommunityTemplates",
 	migrationsDeprecated: "./migrationsDeprecated",
 	movePubs: "./movePubs",
 	pubCrawl: "./pubCrawl",

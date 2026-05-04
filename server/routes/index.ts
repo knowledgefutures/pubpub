@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+/* import { router as picingRouter} from './picing'); // Route: '/pricing' */
+import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin' (redirect to superadmin)
+import { router as authenticateRouter } from './authenticate'; // Route: '/auth'
 import { router as collectionRouter } from './collection'; // Route: /collection/:id
 /* Routes for PubPub */
 import { router as communityCreateRouter } from './communityCreate'; // Route: '/community/create'
@@ -7,6 +10,7 @@ import { router as dashboardActivityRouter } from './dashboardActivity';
 import { router as dashboardCollectionLayoutRouter } from './dashboardCollectionLayout';
 import { router as dashboardCollectionOverviewRouter } from './dashboardCollectionOverview';
 import { router as dashboardCommunityOverviewRouter } from './dashboardCommunityOverview';
+import { router as dashboardCuratedByRouter } from './dashboardCuratedBy';
 import { router as dashboardCustomScriptsRouter } from './dashboardCustomScripts';
 import { router as dashboardDiscussionsRouter } from './dashboardDiscussions';
 import { router as dashboardEdgesRouter } from './dashboardEdges';
@@ -25,17 +29,14 @@ import { router as dashboardSubmissionsRouter } from './dashboardSubmissions';
 import { router as emailRouter } from './email'; // Route: '/email'
 /* import { router as cmmunityServicesRouter} from './cmmunityServices'); // Route: '/community-services' */
 import { router as exploreRouter } from './explore'; // Route: '/explore'
-/* Routes for Communities */
-import { router as pubDocumentRouter } from './pubDocument';
-import { router as pubDownloadsRouter } from './pubDownloads';
-import { router as pubRedirectsRouter } from './pubRedirects';
-import { router as redirectsRouter } from './redirects'; // Redirect needed v3 routes;
-import { router as submitRouter } from './submit';
+import { router as hubDataRouter } from './hubData';
+import { router as hubDirectoryRouter } from './hubDirectory';
+import { router as hubDocsRouter } from './hubDocs';
+import { router as hubLandingRouter } from './hubLanding';
+import { router as hubPricingRouter } from './hubPricing';
 
 /* import { router as picingRouter} from './picing'); // Route: '/pricing' */
 
-import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin' (redirect to superadmin)
-import { router as authenticateRouter } from './authenticate'; // Route: '/auth'
 import { router as landingRouter } from './landing'; // Route: '/'
 import { router as legalRouter } from './legal'; // Route: '/legal'
 /* Routes for all */
@@ -43,10 +44,16 @@ import { router as loginRouter } from './login'; // Route: '/login'
 import { router as noMatchRouter } from './noMatch';
 import { router as pageRouter } from './page'; // Route: ['/', '/:slug']
 import { router as passwordResetRouter } from './passwordReset'; // Route: ['/password-reset', '/password-reset/:resetHash/:slug']
+/* Routes for Communities */
+import { router as pubDocumentRouter } from './pubDocument';
+import { router as pubDownloadsRouter } from './pubDownloads';
+import { router as pubRedirectsRouter } from './pubRedirects';
+import { router as redirectsRouter } from './redirects'; // Redirect needed v3 routes;
 import { router as robotsRouter } from './robots'; // Route: /robots.txt
 import { router as search2Router } from './search2'; // Route: '/search'
 import { router as signupRouter } from './signup'; // Route: '/signup'
 import { router as sitemapRouter } from './sitemap'; // Route: /sitemap-*.xml
+import { router as submitRouter } from './submit';
 import { router as superAdminDashboardRouter } from './superAdminDashboard'; // Route: /superadmin
 import { router as userRouter } from './user'; // Route: ['/user/:slug', '/user/:slug/:mode']
 import { router as userCreateRouter } from './userCreate'; // Route: '/user/create/:hash'
@@ -67,6 +74,7 @@ rootRouter
 	.use(dashboardImpact2Router)
 	.use(dashboardMembersRouter)
 	.use(dashboardCommunityOverviewRouter)
+	.use(dashboardCuratedByRouter)
 	.use(dashboardCollectionOverviewRouter)
 	.use(dashboardCustomScriptsRouter)
 	.use(dashboardPubOverviewRouter)
@@ -81,6 +89,11 @@ rootRouter
 	.use(communityCreateRouter)
 	.use(exploreRouter)
 	.use(emailRouter)
+	.use(hubDataRouter)
+	.use(hubDocsRouter)
+	.use(hubPricingRouter)
+	.use(hubDirectoryRouter)
+	.use(hubLandingRouter)
 	.use(adminDashboardRouter)
 	.use(landingRouter)
 	.use(loginRouter)

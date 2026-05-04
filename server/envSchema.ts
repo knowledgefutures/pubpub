@@ -197,6 +197,14 @@ export const envSchema = z.object({
 		.optional()
 		.describe('Custom task queue name for local development'),
 
+	// ── Content Search ──────────────────────────────────────────────────
+	CONTENT_SEARCH_TERMS: z
+		.string()
+		.optional()
+		.describe(
+			'JSON array of search terms for the "By Content" tab. Each element is a string or [name, ...aliases]',
+		),
+
 	// ── Testing ──────────────────────────────────────────────────────────
 	INTEGRATION_TESTING: booleanish.describe('Signals that integration tests are running'),
 	TEST_FASTLY_PURGE: booleanish.describe('Enable Fastly purge calls during tests'),

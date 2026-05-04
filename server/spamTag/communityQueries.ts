@@ -43,6 +43,7 @@ export const addSpamTagToCommunity = async (communityId: string) => {
 type UpdateSpamTagForCommunityOptions = {
 	communityId: string;
 	status: SpamStatus;
+	skipEmail?: boolean;
 };
 
 export const getSpamTagForCommunity = async (communityId: string) => {
@@ -71,7 +72,7 @@ const getCommunityContext = async (communityId: string) => {
 };
 
 export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommunityOptions) => {
-	const { communityId, status } = options;
+	const { communityId, status, skipEmail = false } = options;
 	const spamTag = await getSpamTagForCommunity(communityId);
 	if (!spamTag) {
 		throw new Error('Community is missing a SpamTag');
@@ -89,10 +90,12 @@ export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommuni
 	if (!ctx) {
 		return;
 	}
-	if (status === 'confirmed-not-spam') {
-		await sendCommunityApprovedEmail(ctx);
-	} else if (status === 'confirmed-spam') {
-		await sendCommunityRejectedAsSpamEmail(ctx);
+	if (!skipEmail) {
+		if (status === 'confirmed-not-spam') {
+			await sendCommunityApprovedEmail(ctx);
+		} else if (status === 'confirmed-spam') {
+			await sendCommunityRejectedAsSpamEmail(ctx);
+		}
 	}
 	await postToSlackAboutCommunityStatusChange({
 		title: ctx.communityTitle,

@@ -2,7 +2,7 @@ import { initServer } from '@ts-rest/express';
 import { Op } from 'sequelize';
 
 import { setSubdomain } from 'server/dev/api';
-import { WorkerTask } from 'server/models';
+import { Community, User, WorkerTask } from 'server/models';
 import { updateDiscussionCreationAccess } from 'server/publicPermissions/queries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
@@ -18,6 +18,12 @@ import {
 import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 import { createGetRequestIds } from 'utils/getRequestIds';
 
+import { applyTemplate } from '../communityTemplate/applyTemplate';
+import { CommunityTemplate } from '../communityTemplate/model';
+import { createTemplateFromCommunity } from '../communityTemplate/queries';
+import { addCommunityToHub, getHubBySlug, isUserHubManager } from '../hub/queries';
+import { HubCommunity } from '../hubCommunity/model';
+import { addSpamTagToCommunity, updateSpamTagForCommunity } from '../spamTag/communityQueries';
 import { destroyCommunity, getCommunityDeletionAudit } from './destroyCommunity';
 import { getPermissions } from './permissions';
 import {
@@ -150,7 +156,173 @@ export const communityServer = s.router(contract.community, {
 		delete body.altcha;
 		delete body._honeypot;
 		try {
-			const newCommunity = await createCommunity(body, req.user);
+			// Resolve hub context before creating the community
+			const hubSlug = (req as any).body.hubSlug as string | undefined;
+			let validatedHub: Awaited<ReturnType<typeof getHubBySlug>> | null = null;
+
+			if (hubSlug) {
+				const org = await getHubBySlug(hubSlug);
+				if (org && org.communityCreationEnabled) {
+					// Server-side domain validation: user email must match hub domains (or be superadmin)
+					const user = await User.findByPk(req.user!.id, {
+						attributes: ['email', 'isSuperAdmin'],
+					});
+					if (user?.isSuperAdmin) {
+						validatedHub = org;
+					} else if (user?.email && org.domains && org.domains.length > 0) {
+						const emailDomain = user.email.split('@')[1]?.toLowerCase();
+						if (emailDomain) {
+							const matches = (org.domains as string[]).some((d) => {
+								const pattern = d.toLowerCase();
+								return (
+									emailDomain === pattern || emailDomain.endsWith(`.${pattern}`)
+								);
+							});
+							if (matches) {
+								validatedHub = org;
+							}
+						}
+					}
+				}
+			}
+
+			// Skip awaiting-approval email + Slack for hub-created communities
+			const newCommunity = await createCommunity(body, req.user, !validatedHub);
+
+			// Apply template if one was selected
+			const templateId = (req as any).body.templateId as string | undefined;
+			const cloneCommunityId = (req as any).body.cloneCommunityId as string | undefined;
+
+			if (templateId) {
+				try {
+					const created = await Community.findOne({
+						where: { subdomain: newCommunity.subdomain },
+						attributes: ['id'],
+					});
+					if (created) {
+						// Validate: if hub context, ensure template belongs to the hub
+						if (validatedHub) {
+							const template = await CommunityTemplate.findOne({
+								where: { id: templateId, hubId: validatedHub.id, isActive: true },
+							});
+							if (!template) {
+								console.warn(
+									`Template ${templateId} not found or not active for hub ${validatedHub.id}`,
+								);
+							} else {
+								await applyTemplate(template, created.id, req.user!.id);
+								await created.update({ templateId });
+							}
+						} else {
+							// No hub context — superadmin or direct template usage
+							const template = await CommunityTemplate.findByPk(templateId);
+							if (template && template.isActive) {
+								await applyTemplate(template, created.id, req.user!.id);
+								await created.update({ templateId });
+							}
+						}
+					}
+				} catch (templateErr) {
+					// Non-fatal: community was created, template just didn't apply
+					console.error('Failed to apply template:', templateErr);
+				}
+			} else if (cloneCommunityId && validatedHub) {
+				// Clone-from-community: find or create an inactive clone template
+				try {
+					// Check that clone access is enabled for this hub
+					const cloneAccess = validatedHub.communityCloneAccess || 'off';
+					let cloneAllowed = false;
+					if (cloneAccess === 'everyone') {
+						cloneAllowed = true;
+					} else if (cloneAccess === 'managers') {
+						const user = await User.findByPk(req.user!.id, {
+							attributes: ['isSuperAdmin'],
+						});
+						if (user?.isSuperAdmin) {
+							cloneAllowed = true;
+						} else {
+							cloneAllowed = await isUserHubManager(req.user!.id, validatedHub.id);
+						}
+					}
+
+					if (!cloneAllowed) {
+						console.warn(
+							`Clone access denied for user ${req.user!.id} on hub ${validatedHub.id} (access: ${cloneAccess})`,
+						);
+					} else {
+						// Verify the source community belongs to this hub
+						const hubAssoc = await HubCommunity.findOne({
+							where: { hubId: validatedHub.id, communityId: cloneCommunityId },
+						});
+						if (hubAssoc) {
+							const created = await Community.findOne({
+								where: { subdomain: newCommunity.subdomain },
+								attributes: ['id'],
+							});
+							if (created) {
+								// Reuse existing clone template if one exists for this source community + hub
+								let cloneTemplate = await CommunityTemplate.findOne({
+									where: {
+										hubId: validatedHub.id,
+										sourceCommunityId: cloneCommunityId,
+										isActive: false,
+									},
+								});
+								if (!cloneTemplate) {
+									const sourceCommunity = await Community.findByPk(
+										cloneCommunityId,
+										{ attributes: ['title', 'subdomain'] },
+									);
+									const label =
+										sourceCommunity?.title ||
+										sourceCommunity?.subdomain ||
+										'community';
+									const { template } = await createTemplateFromCommunity(
+										cloneCommunityId,
+										{
+											title: `Clone of ${label}`,
+											slug: `clone-${sourceCommunity?.subdomain || cloneCommunityId.slice(0, 8)}`,
+											createdById: req.user!.id,
+										},
+									);
+									await template.update({ hubId: validatedHub.id });
+									cloneTemplate = template;
+								}
+								await applyTemplate(cloneTemplate, created.id, req.user!.id);
+								await created.update({ templateId: cloneTemplate.id });
+							}
+						}
+					}
+				} catch (cloneErr) {
+					// Non-fatal: community was created, clone just didn't apply
+					console.error('Failed to apply clone template:', cloneErr);
+				}
+			}
+
+			// Auto-tag community with hub if domain validation passed
+			if (validatedHub) {
+				try {
+					const created = await Community.findOne({
+						where: { subdomain: newCommunity.subdomain },
+						attributes: ['id'],
+					});
+					if (created) {
+						await addCommunityToHub(validatedHub.id, created.id, {
+							dataAccess: 'granted',
+							showOnLandingPage: false,
+						});
+						// Ensure spam tag exists, then mark as not-spam
+						await addSpamTagToCommunity(created.id);
+						await updateSpamTagForCommunity({
+							communityId: created.id,
+							status: 'confirmed-not-spam',
+							skipEmail: true,
+						});
+					}
+				} catch (_e) {
+					// Non-fatal: community was still created
+				}
+			}
 
 			if (isDevelopment()) {
 				await setSubdomain(newCommunity.subdomain);

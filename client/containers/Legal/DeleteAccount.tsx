@@ -15,6 +15,7 @@ type DeletionAudit = {
 	collectionAttributionCount: number;
 	commentCount: number;
 	soleAdminCommunities: { id: string; title: string; subdomain: string }[];
+	soleManagerHubs: { id: string; title: string; slug: string }[];
 };
 
 const DeleteAccount = () => {
@@ -57,7 +58,11 @@ const DeleteAccount = () => {
 		}
 	};
 
-	const canDelete = audit && audit.soleAdminCommunities.length === 0 && password.length > 0;
+	const canDelete =
+		audit &&
+		audit.soleAdminCommunities.length === 0 &&
+		audit.soleManagerHubs.length === 0 &&
+		password.length > 0;
 
 	return (
 		<Card>
@@ -97,52 +102,86 @@ const DeleteAccount = () => {
 						</p>
 					</Callout>
 				)}
-				{audit && audit.soleAdminCommunities.length === 0 && (
-					<div style={{ marginBottom: 15 }}>
-						<p>Here is what will happen when you delete your account:</p>
+				{audit && audit.soleManagerHubs.length > 0 && (
+					<Callout intent="warning" style={{ marginBottom: 15 }}>
+						<p>
+							You cannot delete your account because you are the only manager of{' '}
+							<b>{audit.soleManagerHubs.length}</b>{' '}
+							{audit.soleManagerHubs.length === 1 ? 'hub' : 'hubs'}:
+						</p>
 						<ul style={{ margin: '8px 0' }}>
-							{audit.pubAttributionCount > 0 && (
-								<li>
-									<Tag minimal>{audit.pubAttributionCount}</Tag> pub attribution
-									{audit.pubAttributionCount !== 1 ? 's' : ''} will be{' '}
-									<b>preserved with your name</b> but unlinked from your account.
+							{audit.soleManagerHubs.map((h) => (
+								<li key={h.id}>
+									<a
+										href={`/hub/${h.slug}/data`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<b>{h.title}</b>
+									</a>
 								</li>
-							)}
-							{audit.collectionAttributionCount > 0 && (
-								<li>
-									<Tag minimal>{audit.collectionAttributionCount}</Tag> collection
-									attribution
-									{audit.collectionAttributionCount !== 1 ? 's' : ''} will be{' '}
-									<b>preserved with your name</b> but unlinked from your account.
-								</li>
-							)}
-							{audit.commentCount > 0 && (
-								<li>
-									<Tag minimal>{audit.commentCount}</Tag> discussion comment
-									{audit.commentCount !== 1 ? 's' : ''} will be <b>anonymized</b>{' '}
-									(content preserved, shown as "Deleted User").
-								</li>
-							)}
+							))}
 						</ul>
 						<p>
-							We will delete all legally required information. As a platform with
-							scholarly and academic preservation obligations, your name will be kept
-							(unlinked from your account) where necessary to preserve the scholarly
-							record.
+							Please add another manager to{' '}
+							{audit.soleManagerHubs.length === 1 ? 'this hub' : 'these hubs'} first.
 						</p>
-					</div>
+					</Callout>
 				)}
-				{audit && audit.soleAdminCommunities.length === 0 && (
-					<>
-						<p>Enter your password to confirm account deletion.</p>
-						<InputField
-							label={<b>Password</b>}
-							type="password"
-							value={password}
-							onChange={(evt) => setPassword(evt.target.value)}
-						/>
-					</>
-				)}
+				{audit &&
+					audit.soleAdminCommunities.length === 0 &&
+					audit.soleManagerHubs.length === 0 && (
+						<div style={{ marginBottom: 15 }}>
+							<p>Here is what will happen when you delete your account:</p>
+							<ul style={{ margin: '8px 0' }}>
+								{audit.pubAttributionCount > 0 && (
+									<li>
+										<Tag minimal>{audit.pubAttributionCount}</Tag> pub
+										attribution
+										{audit.pubAttributionCount !== 1 ? 's' : ''} will be{' '}
+										<b>preserved with your name</b> but unlinked from your
+										account.
+									</li>
+								)}
+								{audit.collectionAttributionCount > 0 && (
+									<li>
+										<Tag minimal>{audit.collectionAttributionCount}</Tag>{' '}
+										collection attribution
+										{audit.collectionAttributionCount !== 1 ? 's' : ''} will be{' '}
+										<b>preserved with your name</b> but unlinked from your
+										account.
+									</li>
+								)}
+								{audit.commentCount > 0 && (
+									<li>
+										<Tag minimal>{audit.commentCount}</Tag> discussion comment
+										{audit.commentCount !== 1 ? 's' : ''} will be{' '}
+										<b>anonymized</b> (content preserved, shown as "Deleted
+										User").
+									</li>
+								)}
+							</ul>
+							<p>
+								We will delete all legally required information. As a platform with
+								scholarly and academic preservation obligations, your name will be
+								kept (unlinked from your account) where necessary to preserve the
+								scholarly record.
+							</p>
+						</div>
+					)}
+				{audit &&
+					audit.soleAdminCommunities.length === 0 &&
+					audit.soleManagerHubs.length === 0 && (
+						<>
+							<p>Enter your password to confirm account deletion.</p>
+							<InputField
+								label={<b>Password</b>}
+								type="password"
+								value={password}
+								onChange={(evt) => setPassword(evt.target.value)}
+							/>
+						</>
+					)}
 				{error && (
 					<Callout intent="danger" style={{ marginBottom: 10 }}>
 						{error}

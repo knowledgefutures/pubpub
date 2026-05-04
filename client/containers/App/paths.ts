@@ -7,6 +7,7 @@ import {
 	DashboardCollectionLayout,
 	DashboardCollectionOverview,
 	DashboardCommunityOverview,
+	DashboardCuratedBy,
 	DashboardCustomScripts,
 	DashboardDiscussions,
 	DashboardEdges,
@@ -24,6 +25,11 @@ import {
 	DashboardSubmissionWorkflow,
 	EmailChange,
 	Explore,
+	HubData,
+	HubDirectory,
+	HubDocs,
+	HubLanding,
+	HubPricing,
 	Landing,
 	Legal,
 	Login,
@@ -51,6 +57,7 @@ export default (viewData, locationData, chunkName) => {
 		CommunityCreate: {
 			ActiveComponent: CommunityCreate,
 			hideNav: true,
+			hideHeader: !!viewData?.hubData,
 			hideFooter: true,
 		},
 		CommunityServices: {
@@ -92,6 +99,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardCollectionOverview: {
 			ActiveComponent: DashboardCollectionOverview,
+			isDashboard: true,
+		},
+		DashboardCuratedBy: {
+			ActiveComponent: DashboardCuratedBy,
 			isDashboard: true,
 		},
 		DashboardPubOverview: {
@@ -155,6 +166,30 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: NoMatch,
 			hideNav: locationData.isBasePubPub,
 			hideFooter: true,
+		},
+		HubData: {
+			ActiveComponent: HubData,
+			hideNav: true,
+			hideHeader: true,
+			hideFooter: true,
+		},
+		HubDirectory: {
+			ActiveComponent: HubDirectory,
+			hideNav: locationData.isBasePubPub,
+		},
+		HubDocs: {
+			ActiveComponent: HubDocs,
+			hideNav: locationData.isBasePubPub,
+		},
+		HubLanding: {
+			ActiveComponent: HubLanding,
+			hideNav: true,
+			hideHeader: true,
+			hideFooter: true,
+		},
+		HubPricing: {
+			ActiveComponent: HubPricing,
+			hideNav: locationData.isBasePubPub,
 		},
 		Page: {
 			ActiveComponent: Page,

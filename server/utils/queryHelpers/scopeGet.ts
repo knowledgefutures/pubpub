@@ -4,11 +4,13 @@ import { Op } from 'sequelize';
 
 import { FacetsError } from 'facets';
 import { fetchFacetsForScope } from 'server/facets';
+import { HubPub } from 'server/hubPub/model';
 import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
 	Community,
+	HubCommunity,
 	Member,
 	Pub,
 	PubAttribution,
@@ -117,13 +119,20 @@ const getActiveCounts = async (
 	scopeElements: types.ScopeData['elements'],
 ) => {
 	if (isDashboard) {
-		const [reviews, submissions] = await Promise.all([
+		const [reviews, submissions, curatingHubCount] = await Promise.all([
 			getActiveReviewsCount(scopeElements),
 			getActiveSubmissionsCount(scopeElements),
+			scopeElements.activePub
+				? HubPub.count({
+						where: { pubId: scopeElements.activePub.id },
+					})
+				: HubCommunity.count({
+						where: { communityId: scopeElements.activeCommunity.id },
+					}),
 		]);
-		return { reviews, submissions };
+		return { reviews, submissions, curatingHubCount };
 	}
-	return { reviews: 0, submissions: 0 };
+	return { reviews: 0, submissions: 0, curatingHubCount: 0 };
 };
 
 const getFacets = async (includeFacets: boolean, scopeElements: types.ScopeData['elements']) => {

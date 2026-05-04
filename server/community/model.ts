@@ -16,6 +16,7 @@ import {
 	DataType,
 	Default,
 	DefaultScope,
+	ForeignKey,
 	HasMany,
 	Is,
 	IsLowercase,
@@ -26,6 +27,7 @@ import {
 	Unique,
 } from 'sequelize-typescript';
 
+import { CommunityTemplate } from '../communityTemplate/model';
 import { Collection, DepositTarget, Member, Page, Pub, ScopeSummary, SpamTag } from '../models';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
@@ -233,6 +235,18 @@ export class Community extends Model<
 
 	@Column(DataType.UUID)
 	declare scopeSummaryId: string | null;
+
+	/** The template this community was created from, if any (for provenance tracking) */
+	@AllowNull
+	@Column(DataType.UUID)
+	declare templateId: string | null;
+
+	@BelongsTo(() => CommunityTemplate, {
+		as: 'template',
+		foreignKey: 'templateId',
+		onDelete: 'SET NULL',
+	})
+	declare template?: CommunityTemplate;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',

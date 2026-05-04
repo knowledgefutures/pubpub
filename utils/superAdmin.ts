@@ -3,6 +3,9 @@ export const superAdminTabKinds = [
 	'customDomains',
 	'exploreCommunities',
 	'landingPageFeatures',
+	'hubs',
+	'suggestedHubs',
+	'templates',
 	'spam',
 	'spamUsers',
 ] as const;

@@ -12,6 +12,7 @@ import { CollectionPub } from './collectionPub/model';
 import { Commenter } from './commenter/model';
 import { Community } from './community/model';
 import { CommunityBan } from './communityBan/model';
+import { CommunityTemplate } from './communityTemplate/model';
 import { CrossrefDepositRecord } from './crossrefDepositRecord/model';
 import { CustomScript } from './customScript/model';
 import { DepositTarget } from './depositTarget/model';
@@ -28,6 +29,11 @@ import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding'
 import { FeatureFlag } from './featureFlag/model';
 import { FeatureFlagCommunity } from './featureFlagCommunity/model';
 import { FeatureFlagUser } from './featureFlagUser/model';
+import { Hub } from './hub/model';
+import { HubCommunity } from './hubCommunity/model';
+import { HubManager } from './hubManager/model';
+import { HubOptOut } from './hubOptOut/model';
+import { HubPub } from './hubPub/model';
 import { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
 import { LandingPageFeature } from './landingPageFeature/model';
 import { Member } from './member/model';
@@ -71,6 +77,7 @@ sequelize.addModels([
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
+	HubOptOut,
 	CustomScript,
 	DepositTarget,
 	Discussion,
@@ -89,6 +96,11 @@ sequelize.addModels([
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
+	CommunityTemplate,
+	Hub,
+	HubCommunity,
+	HubManager,
+	HubPub,
 	Page,
 	Pub,
 	PubAttribution,
@@ -164,6 +176,7 @@ export {
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
+	HubOptOut,
 	CustomScript,
 	DepositTarget,
 	Discussion,
@@ -180,6 +193,11 @@ export {
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
+	Hub,
+	HubCommunity,
+	HubManager,
+	HubPub,
+	CommunityTemplate,
 	Page,
 	Pub,
 	PubAttribution,

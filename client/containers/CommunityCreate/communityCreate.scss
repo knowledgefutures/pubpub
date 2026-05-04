@@ -32,6 +32,138 @@ $bp: vendor.$bp-namespace;
 		border-radius: 2px;
 	}
 
+	// ---- Hub-branded variant ----
+	&.hub-branded {
+		padding-top: 0;
+		background-image: none;
+		background-color: #f7f8fa;
+		min-height: 100vh;
+
+		.container .col-12 {
+			border-radius: 8px;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+		}
+
+		// Use the wider container
+		.container.wide {
+			max-width: 960px;
+		}
+	}
+
+	// ---- Two-column hub create layout ----
+	.hub-create-layout {
+		display: flex;
+		gap: 40px;
+		align-items: flex-start;
+
+		@media (max-width: 768px) {
+			flex-direction: column;
+			gap: 24px;
+		}
+	}
+
+	.hub-create-left {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.hub-create-right {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.hub-create-form-heading {
+		font-size: 18px;
+		font-weight: 600;
+		margin: 0 0 16px;
+		padding-bottom: 12px;
+		border-bottom: 1px solid #e8ecf0;
+		color: #182026;
+	}
+
+	.hub-branded-header {
+		padding: 0 24px;
+		margin-bottom: 32px;
+
+		.hub-branded-header-inner {
+			max-width: 1200px;
+			margin: 0 auto;
+			height: 52px;
+			display: flex;
+			align-items: center;
+		}
+
+		.hub-branded-back {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 14px;
+			opacity: 0.9;
+			transition: opacity 0.15s;
+
+			&:hover {
+				opacity: 1;
+				text-decoration: none;
+			}
+
+			.back-arrow {
+				font-size: 18px;
+				margin-right: 2px;
+			}
+
+			.hub-branded-avatar {
+				width: 24px;
+				height: 24px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+
+			.hub-branded-name {
+				white-space: nowrap;
+			}
+		}
+	}
+
+	.hub-context-banner {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 14px 18px;
+		background: #f7f8fa;
+		border-left: 4px solid #2D2E2F;
+		border-radius: 4px;
+		margin-bottom: 20px;
+
+		.hub-context-avatar {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+
+		.hub-context-text {
+			display: flex;
+			flex-direction: column;
+			gap: 1px;
+
+			.hub-context-label {
+				font-size: 12px;
+				color: #8a9ba8;
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
+			}
+
+			.hub-context-name {
+				font-size: 15px;
+				color: #182026;
+			}
+		}
+	}
+
+	// ---- Post-creation layout ----
 	.community-created-layout {
 		display: flex;
 		gap: 40px;

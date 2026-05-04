@@ -1,0 +1,254 @@
+/* ── Card-based template picker ── */
+.template-picker-cards {
+	margin-bottom: 24px;
+
+	.template-picker-cards-label {
+		display: block;
+		font-weight: 600;
+		margin-bottom: 10px;
+		font-size: 15px;
+		color: #182026;
+	}
+
+	.template-picker-cards-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: 10px;
+	}
+}
+
+.template-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px 14px;
+	border: 2px solid #dce1e6;
+	border-radius: 8px;
+	background: #fff;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+	font-family: inherit;
+	width: 100%;
+
+	&:hover {
+		border-color: #a7b6c2;
+		background: #f9fafb;
+	}
+
+	&.selected {
+		border-color: #106ba3;
+		background: #f0f6fc;
+		box-shadow: 0 0 0 1px #106ba3;
+	}
+
+	.template-card-icon {
+		flex-shrink: 0;
+		width: 36px;
+		height: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 6px;
+		background: #f0f2f5;
+		color: #5c7080;
+
+		img {
+			width: 36px;
+			height: 36px;
+			border-radius: 6px;
+			object-fit: cover;
+		}
+	}
+
+	.template-card-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.template-card-title {
+		font-size: 14px;
+		font-weight: 600;
+		color: #182026;
+		line-height: 1.3;
+		margin-bottom: 2px;
+	}
+
+	.template-card-desc {
+		font-size: 12px;
+		color: #5c7080;
+		line-height: 1.4;
+	}
+
+	.template-card-radio {
+		flex-shrink: 0;
+		margin-top: 2px;
+	}
+
+	.radio-dot {
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		border: 2px solid #a7b6c2;
+		position: relative;
+		transition: border-color 0.15s;
+
+		&.checked {
+			border-color: #106ba3;
+
+			&::after {
+				content: '';
+				position: absolute;
+				top: 3px;
+				left: 3px;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: #106ba3;
+			}
+		}
+	}
+}
+
+/* Legacy support */
+.template-option-avatar {
+	width: 16px;
+	height: 16px;
+	border-radius: 2px;
+	object-fit: cover;
+}
+
+.clone-community-select {
+	margin-top: 12px;
+	padding: 12px 14px;
+	background: #f5f8fa;
+	border-radius: 8px;
+	border: 1px solid #dce1e6;
+	max-width: 360px;
+
+	.clone-select-label {
+		display: block;
+		font-weight: 600;
+		font-size: 13px;
+		color: #182026;
+		margin-bottom: 6px;
+	}
+
+	.clone-trigger-button {
+		max-width: 360px;
+
+		.clone-trigger-content {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			min-width: 0;
+		}
+
+		.clone-trigger-icon {
+			flex-shrink: 0;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				width: 28px;
+				height: 28px;
+				border-radius: 4px;
+				object-fit: cover;
+			}
+		}
+
+		.clone-trigger-text {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			line-height: 1.3;
+		}
+
+		.clone-trigger-title {
+			font-size: 13px;
+			font-weight: 500;
+			color: #182026;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.clone-trigger-slug {
+			font-size: 11px;
+			color: #5c7080;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+/* Clone community popover dropdown */
+.clone-community-popover {
+	.bp3-menu {
+		max-height: 260px;
+		overflow-y: auto;
+		max-width: 360px;
+		padding: 4px;
+	}
+}
+
+.clone-community-item {
+	&.bp3-menu-item {
+		padding: 6px 8px;
+	}
+
+	&.selected {
+		background: #d8e1e8;
+	}
+
+	.clone-item-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.clone-item-icon {
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #f0f2f5;
+		border-radius: 4px;
+		color: #5c7080;
+
+		img {
+			width: 32px;
+			height: 32px;
+			border-radius: 4px;
+			object-fit: cover;
+		}
+	}
+
+	.clone-item-text {
+		min-width: 0;
+		line-height: 1.3;
+	}
+
+	.clone-item-title {
+		font-size: 13px;
+		font-weight: 500;
+		color: #182026;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.clone-item-slug {
+		font-size: 11px;
+		color: #5c7080;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}

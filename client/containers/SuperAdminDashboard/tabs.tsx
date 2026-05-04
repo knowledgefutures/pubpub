@@ -3,10 +3,13 @@ import type { SuperAdminTabKind } from 'utils/superAdmin';
 import React from 'react';
 
 import CommunitySpam from './CommunitySpam';
+import CommunityTemplates from './CommunityTemplates';
 import CustomDomains from './CustomDomains';
 import ExploreCommunities from './ExploreCommunities';
+import Hubs from './Hubs';
 import LandingPageFeatures from './LandingPageFeatures';
 import PlatformAnalytics from './PlatformAnalytics';
+import SuggestedHubs from './SuggestedHubs';
 import UserSpam from './UserSpam';
 
 type SuperAdminTab = {
@@ -30,6 +33,18 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	landingPageFeatures: {
 		title: 'Landing Page features',
 		component: LandingPageFeatures,
+	},
+	hubs: {
+		title: 'Hubs',
+		component: Hubs,
+	},
+	suggestedHubs: {
+		title: 'Suggested Hubs',
+		component: SuggestedHubs,
+	},
+	templates: {
+		title: 'Templates',
+		component: CommunityTemplates,
 	},
 	spam: {
 		title: 'Spam Communities',

@@ -48,7 +48,7 @@ module.exports = {
 			{
 				test: /\.(m|c)?js$/,
 				// this module includes nullish coalescing and optional chaining, which are not supported by webpack 4
-				include: /node_modules\/@marsidev\/react-turnstile|node_modules\/(.pnpm\/)?altcha.*/,
+				include: /node_modules\/@marsidev\/react-turnstile|node_modules\/(.pnpm\/)?altcha.*|node_modules\/(.pnpm\/)?react-kapsule.*|node_modules\/(.pnpm\/)?react-force-graph.*|node_modules\/(.pnpm\/)?force-graph.*|node_modules\/(.pnpm\/)?float-tooltip.*/,
 				type: 'javascript/auto',
 				loader: 'esbuild-loader',
 				/** @type {import('esbuild-loader').LoaderOptions} */

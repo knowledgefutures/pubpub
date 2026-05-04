@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { User } from 'server/models';
+import { Community, SpamTag, User } from 'server/models';
 
 export const getSearchUsers = async (searchString: string, limit = 5) => {
 	if (searchString.length === 0) {
@@ -17,6 +17,40 @@ export const getSearchUsers = async (searchString: string, limit = 5) => {
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
 		limit,
 	});
+};
+
+export const getSearchCommunities = async (searchString: string, limit = 8) => {
+	if (searchString.length === 0) {
+		return [];
+	}
+	const results = await Community.findAll({
+		where: {
+			[Op.or]: [
+				{ title: { [Op.iLike]: `%${searchString}%` } },
+				{ subdomain: { [Op.iLike]: `%${searchString}%` } },
+				{ domain: { [Op.iLike]: `%${searchString}%` } },
+			],
+		},
+		attributes: [
+			'id',
+			'title',
+			'subdomain',
+			'domain',
+			'description',
+			'heroLogo',
+			'accentColorDark',
+		],
+		include: [
+			{
+				model: SpamTag,
+				as: 'spamTag',
+				attributes: ['status'],
+				required: false,
+			},
+		],
+		limit: limit + 5, // fetch extra to account for spam filtering
+	});
+	return results.filter((c: any) => c.spamTag?.status !== 'confirmed').slice(0, limit);
 };
 
 /**

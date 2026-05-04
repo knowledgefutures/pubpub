@@ -8,6 +8,8 @@ import {
 	Discussion,
 	EmailChangeToken,
 	FeatureFlagUser,
+	Hub,
+	HubManager,
 	Member,
 	PubAttribution,
 	Release,
@@ -71,6 +73,32 @@ export const getUserDeletionAudit = async (userId: string) => {
 				).map((c) => ({ id: c.id, title: c.title, subdomain: c.subdomain }))
 			: [];
 
+	// Find hubs where this user is the only manager
+	const hubManagerships = await HubManager.findAll({
+		where: { userId },
+		attributes: ['hubId'],
+	});
+
+	const otherManagerCounts = await Promise.all(
+		hubManagerships.map((hm) =>
+			HubManager.count({
+				where: { hubId: (hm as any).hubId, userId: { [Op.ne]: userId } },
+			}).then((count) => ({ hubId: (hm as any).hubId, count })),
+		),
+	);
+
+	const soleManagerHubIds = otherManagerCounts.filter((r) => r.count === 0).map((r) => r.hubId);
+
+	const soleManagerHubs =
+		soleManagerHubIds.length > 0
+			? (
+					await Hub.findAll({
+						where: { id: soleManagerHubIds },
+						attributes: ['id', 'title', 'slug'],
+					})
+				).map((h) => ({ id: h.id, title: (h as any).title, slug: (h as any).slug }))
+			: [];
+
 	return {
 		userId,
 		fullName: user.fullName,
@@ -79,6 +107,7 @@ export const getUserDeletionAudit = async (userId: string) => {
 		collectionAttributionCount,
 		commentCount,
 		soleAdminCommunities,
+		soleManagerHubs,
 	};
 };
 
@@ -190,7 +219,7 @@ export const destroyUser = async (userId: string) => {
 		// ---------------------------------------------------------------
 		// 4. Let CASCADE handle: Member, AuthToken, EmailChangeToken,
 		//    UserNotification, UserSubscription, UserNotificationPreferences,
-		//    FeatureFlagUser, CommunityBan (userId side)
+		//    FeatureFlagUser, CommunityBan (userId side), HubManager
 		// ---------------------------------------------------------------
 
 		// ActivityItem.actorId has no FK — leave orphaned.

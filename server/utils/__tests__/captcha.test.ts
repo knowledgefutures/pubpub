@@ -1,8 +1,7 @@
-import { createChallenge, solveChallenge } from 'altcha-lib';
-
 import { getAltchaHmacKey, verifyCaptchaPayload } from '../captcha';
 
 const createValidPayload = async (): Promise<string> => {
+	const { createChallenge, solveChallenge } = await import('altcha-lib');
 	const hmacKey = getAltchaHmacKey();
 	const challenge = await createChallenge({ hmacKey, maxNumber: 1000 });
 	const { promise } = solveChallenge(
@@ -50,6 +49,7 @@ describe('verifyCaptchaPayload', () => {
 
 	it('returns false for a payload with a wrong solution number', async () => {
 		const hmacKey = getAltchaHmacKey();
+		const { createChallenge } = await import('altcha-lib');
 		const challenge = await createChallenge({ hmacKey, maxNumber: 1000 });
 		const tampered = btoa(
 			JSON.stringify({

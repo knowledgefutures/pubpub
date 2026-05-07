@@ -23,12 +23,15 @@ services:
             PORT: 3000
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            # KF_AUTH_URL: http://kf-auth:3000
+            # KF_AUTH_WEBHOOK_SECRET: dev-webhook-secret
         depends_on:
             - db
             - rabbitmq
+            # - kf-auth
         ports:
             - "${WEB_PORT:-9876}:3000"
-        networks: [appnet]
+        networks: [ appnet ]
         volumes:
             - ..:/app
 
@@ -42,8 +45,10 @@ services:
         environment:
             NODE_ENV: development
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            # KF_AUTH_URL: http://kf-auth:3000
+            # KF_AUTH_WEBHOOK_SECRET: dev-webhook-secret
 
-        command: ["pnpm", "run", "workers-dev"]
+        command: [ "pnpm", "run", "workers-dev" ]
         depends_on:
             db:
                 condition: service_started
@@ -51,7 +56,7 @@ services:
                 condition: service_started
             # app:
             #     condition: service_healthy
-        networks: [appnet]
+        networks: [ appnet ]
         volumes:
             - ..:/app
 
@@ -63,7 +68,7 @@ services:
             RABBITMQ_DEFAULT_VHOST: appvhost
         volumes:
             - rabbitmqdata:/var/lib/rabbitmq
-        networks: [appnet]
+        networks: [ appnet ]
         ports:
             - "${RABBITMQ_PORT:-5672}:5672"
 
@@ -76,17 +81,49 @@ services:
             - POSTGRES_PASSWORD=apppassword
             - POSTGRES_DB=appdb
         command: >
-            -c shared_buffers=2GB
-            -c effective_cache_size=6GB
-            -c work_mem=16MB
+            -c shared_buffers=2GB -c effective_cache_size=6GB -c work_mem=16MB
             -c maintenance_work_mem=512MB
         volumes:
             - pgdata:/var/lib/postgresql/data
         ports:
             - "${DB_PORT:-5439}:5432"
-        networks: [appnet]
+        networks: [ appnet ]
+    # kf-auth-db:
+    #     image: postgres:16-alpine
+    #     environment:
+    #         POSTGRES_USER: kfauth
+    #         POSTGRES_PASSWORD: kfauth
+    #         POSTGRES_DB: kfauth_dev
+    #     volumes:
+    #         - kfauthdata:/var/lib/postgresql/data
+    #     networks: [appnet]
 
+    # kf-auth:
+    #     build:
+    #         context: ../../kf-auth
+    #         dockerfile: docker/Dockerfile
+    #     environment:
+    #         DATABASE_URL: postgres://kfauth:kfauth@knowledgefutures-auth-db:5432/kfauth_dev
+    #         BETTER_AUTH_SECRET: dev-secret-change-me
+    #         BETTER_AUTH_URL: http://localhost:3456
+    #         SMTP_HOST: inbucket
+    #         SMTP_PORT: "2500"
+    #         SMTP_FROM: noreply@knowledgefuturesauth.dev
+    #         SEED_ADMIN_EMAIL: admin@knowledgefuturesauth.dev
+    #         SEED_ADMIN_PASSWORD: changeme123
+    #         PORT: "3000"
+    #     depends_on:
+    #         - kf-auth-db
+    #         - inbucket
+    #     ports:
+    #         - "${KF_AUTH_PORT:-3456}:3000"
+    #     networks: [appnet]
 
+    # inbucket:
+    #     image: inbucket/inbucket:latest
+    #     ports:
+    #         - "9999:9000"
+    #     networks: [appnet]
 
     # cron:
     #     build:
@@ -113,4 +150,5 @@ networks:
 volumes:
     pgdata:
     rabbitmqdata:
+    kfauthdata:
 

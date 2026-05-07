@@ -72,7 +72,7 @@ describe('generateMetaComponents', () => {
 			};
 		});
 
-		const ssrModule = await import('../ssr');
+		const ssrModule = await import('../ssr.js');
 
 		expect(ssrModule.generateMetaComponents(props as any)).toMatchInlineSnapshot(`
 		[
@@ -226,7 +226,7 @@ describe('generateMetaComponents', () => {
 			};
 		});
 
-		const ssrModule = await import('../ssr');
+		const ssrModule = await import('../ssr.js');
 		expect(ssrModule.generateMetaComponents(props as any)).toContainEqual(
 			<meta key="un1" name="robots" content="noindex,nofollow" />,
 		);

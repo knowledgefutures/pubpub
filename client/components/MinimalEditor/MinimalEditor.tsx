@@ -62,6 +62,7 @@ const MinimalEditor = (props: Props) => {
 	}, []);
 
 	useEffect(() => {
+		// @ts-expect-error webpack does not like the correct /index.js path
 		import('../FormattingBar').then(({ buttons, FormattingBar: FormattingBarComponent }) => {
 			setFormattingBar(() => (innerProps) => (
 				<FormattingBarComponent {...innerProps} buttons={getButtons(buttons as any)} />

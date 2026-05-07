@@ -1,5 +1,3 @@
-import { verifySolution } from 'altcha-lib';
-
 import { env } from 'server/env';
 import { isProd } from 'utils/environment';
 
@@ -36,5 +34,6 @@ export const verifyCaptchaPayload = async (payload: unknown): Promise<boolean> =
 	if (isCaptchaBypassed()) return true;
 	if (!payload || typeof payload !== 'string') return false;
 	const hmacKey = getAltchaHmacKey();
+	const { verifySolution } = await import('altcha-lib');
 	return verifySolution(payload, hmacKey);
 };

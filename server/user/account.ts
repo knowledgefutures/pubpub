@@ -1,9 +1,8 @@
 import { initServer } from '@ts-rest/express';
 import { Op } from 'sequelize';
-import { promisify } from 'util';
 
+import { getKfSdk } from 'server/kfAuth';
 import { EmailChangeToken, User, WorkerTask } from 'server/models';
-import { authenticate } from 'server/utils/authenticate';
 import { sendEmailChangeEmail } from 'server/utils/email';
 import { logout } from 'server/utils/logout';
 import { addWorkerTask } from 'server/utils/workers';
@@ -29,8 +28,9 @@ export const accountServer = s.router(contract.account, {
 		}
 
 		const userData = await User.findOne({ where: { id: userId } });
+		const hasAuthId = userData?.authId;
 
-		if (!userData) {
+		if (!userData || !hasAuthId) {
 			return {
 				status: 403,
 				body: { message: 'User not found' },
@@ -38,25 +38,18 @@ export const accountServer = s.router(contract.account, {
 		}
 
 		try {
-			await authenticate(userData, body.currentPassword);
-		} catch (_error) {
-			return { status: 403, body: { message: 'Current password is incorrect' } };
-		}
+			const kf = getKfSdk();
 
-		try {
-			const setPassword = promisify(userData.setPassword.bind(userData));
-			const updatedUser = await setPassword(body.newPassword);
+			const result = await kf.changePassword({
+				currentPassword: body.currentPassword,
+				newPassword: body.newPassword,
+				sessionToken: req.kfSession?.token || '',
+			});
 
-			await User.update(
-				{
-					hash: updatedUser?.dataValues.hash,
-					salt: updatedUser?.dataValues.salt,
-					passwordDigest: 'sha512',
-				},
-				{ where: { id: userId } },
-			);
+			if (result.error) {
+				return { status: 403, body: { message: 'Current password is incorrect' } };
+			}
 
-			// force logout after password change
 			logout(req, res);
 
 			return { status: 200, body: { success: true } };
@@ -94,8 +87,17 @@ export const accountServer = s.router(contract.account, {
 			};
 		}
 
+		// verify password via kf-auth sign-in
 		try {
-			await authenticate(userData, body.password);
+			const kf = getKfSdk();
+			const authResult = await kf.signIn.email({
+				email: userData.email,
+				password: body.password,
+			});
+
+			if (authResult.error) {
+				return { status: 403, body: { message: 'Password is incorrect' } };
+			}
 		} catch (_error) {
 			return { status: 403, body: { message: 'Password is incorrect' } };
 		}
@@ -214,14 +216,22 @@ export const accountServer = s.router(contract.account, {
 			};
 		}
 
-		// Require password confirmation
+		// verify password via kf-auth sign-in
 		try {
-			await authenticate(userData, body.password);
+			const kf = getKfSdk();
+			const authResult = await kf.signIn.email({
+				email: userData.email,
+				password: body.password,
+			});
+
+			if (authResult.error) {
+				return { status: 403, body: { message: 'Password is incorrect' } };
+			}
 		} catch (_error) {
 			return { status: 403, body: { message: 'Password is incorrect' } };
 		}
 
-		// Block deletion if user is sole admin of any community
+		// block deletion if user is sole admin of any community
 		const audit = await getUserDeletionAudit(userId);
 		if (audit.soleAdminCommunities.length > 0) {
 			return {
@@ -232,8 +242,18 @@ export const accountServer = s.router(contract.account, {
 			};
 		}
 
-		// Destroy the account first so logout only happens after successful deletion
 		await destroyUser(userId);
+
+		// also delete the user from kf-auth
+		if (userData.authId) {
+			try {
+				const kf = getKfSdk();
+				await kf.deleteUser(userData.authId);
+			} catch (err) {
+				console.error('Failed to delete user from kf-auth:', err);
+			}
+		}
+
 		logout(req, res);
 
 		return { status: 200, body: { success: true } };

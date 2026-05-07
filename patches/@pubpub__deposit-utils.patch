@@ -1,0 +1,17 @@
+diff --git a/package.json b/package.json
+index ff9f6ae0f025e5528dd1448730e4f25c10284efb..d022c3ed4245e1b153cddab1b0eccef8e84fa86d 100644
+--- a/package.json
++++ b/package.json
+@@ -21,10 +21,12 @@
+   "exports": {
+     ".": "./index.js",
+     "./crossref": {
++      "types": "./dist/dts/crossref/index.d.ts",
+       "import": "./dist/esm/crossref/index.js",
+       "require": "./dist/cjs/crossref/index.js"
+     },
+     "./datacite": {
++      "types": "./dist/dts/datacite/index.d.ts",
+       "import": "./dist/esm/datacite/index.js",
+       "require": "./dist/cjs/datacite/index.js"
+     }

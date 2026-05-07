@@ -27,9 +27,7 @@ export default async () => {
 	const dotenv = require('dotenv');
 	dotenv.config({ path: path.join(__dirname, '..', '..', 'infra', '.env.test') });
 
-	console.log(process.env);
-	const { env, refreshEnv } = await import('server/env');
-	console.log(env);
+	const { env, refreshEnv } = await import('server/env.js');
 
 	if (!process.env.DATABASE_URL) {
 		console.log('\nSit tight while a local test database is created...');
@@ -51,7 +49,7 @@ export default async () => {
 	 * create the tables in the test db, leading to "relation does not exist" errors when running
 	 * tests
 	 */
-	const { sequelize } = await import('../../server/models');
+	const { sequelize } = await import('../../server/models.js');
 	// Install pg_trgm before sync so the User model's GIN trigram indexes can be created
 	await sequelize.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
 	await sequelize.sync();
@@ -62,7 +60,7 @@ export default async () => {
 	 *
 	 * If this is not here, then the tests will fail.
 	 */
-	const { FeatureFlag } = await import('../../server/models');
+	const { FeatureFlag } = await import('../../server/models.js');
 
 	await FeatureFlag.findOrCreate({
 		where: {

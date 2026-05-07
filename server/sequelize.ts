@@ -128,7 +128,7 @@ export const sequelizeSyncPromise: Promise<void> =
 					installSearchTriggers,
 					backfillPubSearchVectors,
 					backfillCommunitySearchVectors,
-				} = await import('server/search2/searchTriggers');
+				} = await import('./search2/searchTriggers.js');
 				await installSearchTriggers();
 
 				// Run backfill in the background so it doesn't block app startup.
@@ -144,7 +144,7 @@ export const sequelizeSyncPromise: Promise<void> =
 				// Create analytics materialized views (idempotent — no-ops if they exist).
 				// Refresh is handled by the nightly cron, not at startup, because it can
 				// take several minutes and would delay deploys.
-				const { createSummaryViews } = await import('server/analytics/summaryViews');
+				const { createSummaryViews } = await import('./analytics/summaryViews.js');
 				await createSummaryViews();
 			})()
 		: Promise.resolve();

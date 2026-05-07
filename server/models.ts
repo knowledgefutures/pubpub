@@ -1,5 +1,3 @@
-import passportLocalSequelize from 'passport-local-sequelize';
-
 /* Import and create all models. */
 /* Also import them to make them available to other modules */
 import { ActivityItem } from './activityItem/model';
@@ -131,14 +129,6 @@ sequelize.addModels([
 ]);
 
 export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
-
-passportLocalSequelize.attachToUser(User, {
-	usernameField: 'email',
-	hashField: 'hash',
-	saltField: 'salt',
-	digest: 'sha512',
-	iterations: 25000,
-});
 
 export const attributesPublicUser = [
 	'id',

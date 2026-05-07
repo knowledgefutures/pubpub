@@ -5,7 +5,7 @@ import cors from 'cors';
 import express, { type ErrorRequestHandler, Router } from 'express';
 import enforce from 'express-sslify';
 import noSlash from 'no-slash';
-import passport from 'passport';
+import passport from 'passport'; // kept only for zotero oauth
 import path from 'path';
 
 import { env } from './env';
@@ -107,7 +107,6 @@ import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 
 import { abortStorage } from './abort';
 import { authTokenMiddleware } from './authToken/authTokenMiddleware';
-import { bearerStrategy } from './authToken/strategy';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
@@ -151,14 +150,29 @@ appRouter.use((req, res, next) => {
 /* ------------------- */
 /* Configure app login */
 /* ------------------- */
-appRouter.use(passport.initialize());
-appRouter.use(passport.session());
-passport.use(User.createStrategy());
-passport.use('zotero', zoteroAuthStrategy());
-passport.use('bearer', bearerStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// session deserialization: load the pubpub user from req.session.userId
+// this replaces passport's deserializeUser and keeps req.user as the full User model instance
+appRouter.use(async (req, _res, next) => {
+	/** @ts-expect-error */
+	const id = req.session?.userId;
+	console.log('id', req.session);
+	if (!id) {
+		return next();
+	}
+
+	const user = await User.findByPk(id);
+
+	if (user) {
+		req.user = user;
+	}
+
+	next();
+});
+
+// passport is only used for zotero oauth, not for user auth
+appRouter.use(passport.initialize());
+passport.use('zotero', zoteroAuthStrategy());
 /* ---------------- */
 /* Server Endpoints */
 /* ---------------- */

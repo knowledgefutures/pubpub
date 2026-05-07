@@ -8,5 +8,5 @@ export const logout = (req: Request, res: Response) => {
 		...(isProd() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
 		...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 	});
-	req.logout();
+	req.session.destroy(() => {});
 };

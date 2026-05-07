@@ -9,8 +9,6 @@ import type {
 	UserWithPrivateFields as UserType,
 } from 'types';
 
-import encHex from 'crypto-js/enc-hex';
-import SHA3 from 'crypto-js/sha3';
 import uuid from 'uuid';
 
 import { getEmptyDoc } from 'client/components/Editor';
@@ -75,15 +73,6 @@ export const builders = {
 		},
 	): Promise<User> => {
 		const uniqueness = uuid.v4();
-		const defaults = {
-			firstName: 'Test',
-			lastName: 'Testington',
-			email: `testuser-${uniqueness}@email.su`,
-			slug: uniqueness,
-			password: 'password123',
-		};
-
-		const input = { ...defaults, ...args };
 
 		const {
 			firstName = 'Test',
@@ -95,33 +84,30 @@ export const builders = {
 			password = 'password123',
 			id,
 			isSuperAdmin = false,
-		} = input;
+			...rest
+		} = { ...args } as any;
 
-		const sha3hashedPassword = SHA3(password).toString(encHex);
-		return new Promise((resolve, reject) => {
-			User.register(
-				{
-					...(id && { id }),
-					firstName,
-					lastName,
-					fullName,
-					email,
-					slug,
-					initials,
-					isSuperAdmin,
-					passwordDigest: 'sha512',
-				},
-				sha3hashedPassword,
-				(err, user) => {
-					if (err || !user) {
-						return reject(err);
-					}
+		const authId = uuid.v4();
 
-					user.sha3hashedPassword = sha3hashedPassword;
-					return resolve(user);
-				},
-			);
+		const user = await User.create({
+			...(id && { id }),
+			firstName,
+			lastName,
+			fullName,
+			email,
+			slug,
+			initials,
+			isSuperAdmin,
+			authId,
+			hash: '',
+			salt: '',
+			...rest,
 		});
+
+		// store the plain password so the login helper can use it
+		(user as any).plainPassword = password;
+
+		return user;
 	},
 
 	Community: async (

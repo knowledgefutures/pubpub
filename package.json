@@ -81,6 +81,7 @@
 		"@codemirror/state": "^0.20.0",
 		"@codemirror/view": "^0.20.0",
 		"@google-cloud/storage": "^7.9.0",
+		"@knowledgefutures/sdk": "file:/Users/thomas/Projects/kf/pubpub/knowledgefutures-sdk-0.1.0.tgz",
 		"@lezer/common": "^1.0.1",
 		"@lezer/cpp": "^1.0.0",
 		"@lezer/css": "^1.1.0",
@@ -378,7 +379,8 @@
 			"validate-with-xmllint"
 		],
 		"patchedDependencies": {
-			"reakit": "patches/reakit.patch"
+			"reakit": "patches/reakit.patch",
+			"@pubpub/deposit-utils": "patches/@pubpub__deposit-utils.patch"
 		}
 	}
 }

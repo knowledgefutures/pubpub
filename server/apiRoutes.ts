@@ -44,9 +44,11 @@ import { router as userDismissableRouter } from './userDismissable/api';
 import { router as userNotificationRouter } from './userNotification/api';
 import { router as userNotificationPreferencesRouter } from './userNotificationPreferences/api';
 import { userSubscriptionRouter } from './userSubscription/api';
+import { router as kfAuthWebhookRouter } from './kfAuthWebhook/api';
 import { router as zoteroIntegrationRouter } from './zoteroIntegration/api';
 
 const apiRouter = Router()
+	.use(kfAuthWebhookRouter)
 	.use(activityItemRouter)
 	.use(captchaRouter)
 	.use(citationRouter)

@@ -205,6 +205,13 @@ export const envSchema = z.object({
 			'JSON array of search terms for the "By Content" tab. Each element is a string or [name, ...aliases]',
 		),
 
+	// ── kf-auth ─────────────────────────────────────────────────────────
+	KF_AUTH_URL: z.string().url().optional().describe('Base URL of the kf-auth service'),
+	KF_AUTH_WEBHOOK_SECRET: z
+		.string()
+		.optional()
+		.describe('HMAC secret for verifying kf-auth webhook signatures'),
+
 	// ── Testing ──────────────────────────────────────────────────────────
 	INTEGRATION_TESTING: booleanish.describe('Signals that integration tests are running'),
 	TEST_FASTLY_PURGE: booleanish.describe('Enable Fastly purge calls during tests'),

@@ -1,30 +1,28 @@
-import type { User } from 'types';
-
 import { Router } from 'express';
 
+import { getKfSdk } from 'server/kfAuth';
 import { wrap } from 'server/wrap';
 import { sleep } from 'utils/promises';
-
-import { createPasswordReset, updatePasswordReset } from './queries';
 
 export const router = Router();
 
 router.post(
 	'/api/password-reset',
 	wrap(async (req, res) => {
-		const user = req.user || {};
 		try {
-			await createPasswordReset(req.body, user as User, req.hostname);
+			const kf = getKfSdk();
+			const redirectTo = `https://${req.hostname}/password-reset`;
+
+			await kf.forgetPassword({
+				email: req.body.email,
+				redirectTo,
+			});
+
 			return res.status(200).json('success');
 		} catch (err: any) {
-			// do not leak user information
-			if (err.message === "User doesn't exist") {
-				// fake sleep to simulate delay
-				await sleep(1000 + Math.random() * 1000);
-				return res.status(200).json('success');
-			}
-			console.error('Error in postPasswordReset: ', err);
-			return res.status(500).json(err.message);
+			// do not leak user information, always return success
+			await sleep(1000 + Math.random() * 1000);
+			return res.status(200).json('success');
 		}
 	}),
 );
@@ -32,12 +30,21 @@ router.post(
 router.put(
 	'/api/password-reset',
 	wrap(async (req, res) => {
-		const user = req.user || {};
 		try {
-			await updatePasswordReset(req.body, user as User);
+			const kf = getKfSdk();
+
+			const result = await kf.resetPassword({
+				newPassword: req.body.password,
+				token: req.body.token,
+			});
+
+			if (result.error) {
+				return res.status(400).json(result.error.message);
+			}
+
 			return res.status(200).json('success');
 		} catch (err: any) {
-			console.error('Error in putPasswordReset: ', err);
+			console.error('Error in putPasswordReset:', err);
 			return res.status(500).json(err.message);
 		}
 	}),

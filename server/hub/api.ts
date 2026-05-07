@@ -120,7 +120,7 @@ router.get('/api/hubs/brand-helper', async (req, res, next) => {
 			// Check if user is a manager of any hub
 			const userId = initialData.loginData.id;
 			if (!userId) throw new ForbiddenError();
-			const { HubManager } = await import('server/hubManager/model');
+			const { HubManager } = await import('server/hubManager/model.js');
 			const mgr = await HubManager.findOne({ where: { userId } });
 			if (!mgr) throw new ForbiddenError();
 		}
@@ -142,7 +142,7 @@ router.get('/api/hubs/brand-helper/proxy-image', async (req, res, next) => {
 		if (!initialData.loginData.isSuperAdmin) {
 			const userId = initialData.loginData.id;
 			if (!userId) throw new ForbiddenError();
-			const { HubManager } = await import('server/hubManager/model');
+			const { HubManager } = await import('server/hubManager/model.js');
 			const mgr = await HubManager.findOne({ where: { userId } });
 			if (!mgr) throw new ForbiddenError();
 		}
@@ -768,7 +768,7 @@ const requirePubManager = async (req, pubId: string) => {
 router.get('/api/pubs/:pubId/curating-hubs', async (req, res, next) => {
 	try {
 		await requirePubManager(req, req.params.pubId);
-		const { getHubsForPub } = await import('server/hubPub/queries');
+		const { getHubsForPub } = await import('server/hubPub/queries.js');
 		const orgs = await getHubsForPub(req.params.pubId);
 		return res.status(200).json(orgs);
 	} catch (err) {
@@ -780,7 +780,7 @@ router.get('/api/pubs/:pubId/curating-hubs', async (req, res, next) => {
 router.delete('/api/pubs/:pubId/curating-hubs/:hubId', async (req, res, next) => {
 	try {
 		await requirePubManager(req, req.params.pubId);
-		const { removePubFromHub } = await import('server/hubPub/queries');
+		const { removePubFromHub } = await import('server/hubPub/queries.js');
 		await removePubFromHub(req.params.hubId, req.params.pubId);
 		return res.status(200).json({ success: true });
 	} catch (err) {

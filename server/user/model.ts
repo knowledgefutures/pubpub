@@ -246,6 +246,10 @@ export class User extends ModelWithPassport<InferAttributes<User>, InferCreation
 	@Column(DataType.TEXT)
 	declare salt: CreationOptional<string>;
 
+	@Unique
+	@Column(DataType.TEXT)
+	declare authId: string | null;
+
 	@Default(null)
 	@Column(DataType.BOOLEAN)
 	declare gdprConsent: CreationOptional<boolean | null>;

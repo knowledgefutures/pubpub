@@ -1,4 +1,3 @@
-import { createChallenge } from 'altcha-lib';
 import { Router } from 'express';
 
 import { getAltchaHmacKey } from 'server/utils/captcha';
@@ -10,6 +9,7 @@ const MAX_NUMBER = 100000;
 router.get('/api/captcha/challenge', async (_req, res) => {
 	try {
 		const hmacKey = getAltchaHmacKey();
+		const { createChallenge } = await import('altcha-lib');
 		const challenge = await createChallenge({
 			hmacKey,
 			maxNumber: MAX_NUMBER,

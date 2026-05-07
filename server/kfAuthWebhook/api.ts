@@ -1,9 +1,8 @@
 import { createHmac, timingSafeEqual } from 'crypto';
-
 import { Router } from 'express';
 
-import { User } from 'server/models';
 import { env } from 'server/env';
+import { User } from 'server/models';
 
 export const router = Router();
 
@@ -48,6 +47,7 @@ function deriveFullName(firstName?: string, lastName?: string, name?: string): s
 
 router.post('/api/webhooks/kf-auth', async (req, res) => {
 	const secret = env.KF_AUTH_WEBHOOK_SECRET;
+	console.log('secret', secret, 'body', req.body);
 
 	if (!secret) {
 		console.error('[kf-auth webhook] KF_AUTH_WEBHOOK_SECRET not configured');
@@ -106,7 +106,12 @@ async function handleUserCreated(data: WebhookPayload['data']) {
 	const initials = deriveInitials(firstName, lastName);
 
 	// generate a slug from the auth slug or the name
-	const baseSlug = data.slug || fullName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+	const baseSlug =
+		data.slug ||
+		fullName
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '-')
+			.replace(/-+/g, '-');
 	const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
 
 	await User.create({

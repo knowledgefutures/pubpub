@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import passport from 'passport';
 import { z } from 'zod';
 
 import { verifyCaptchaPayload } from 'server/utils/captcha';
@@ -70,6 +69,7 @@ router.post('/api/users', async (req, res) => {
 		});
 
 		const newUser = await createUser(body);
+
 		if (fastHoneypotSignal || _honeypot) {
 			await handleHoneypotTriggered(
 				newUser.id,
@@ -80,19 +80,21 @@ router.post('/api/users', async (req, res) => {
 					content: req.body.fullName ? `name: ${req.body.fullName}` : undefined,
 				},
 			);
+
 			return res.status(403).json(ACCOUNT_RESTRICTED_MESSAGE);
 		}
-		passport.authenticate('local')(req, res, () => {
-			const hashedUserId = getHashedUserId(newUser);
-			res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
-				...(isProd() &&
-					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
-				...(isDuqDuq() &&
-					req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
-				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days to match login cookies
-			});
-			return res.status(201).json(newUser);
+
+		// @ts-ignore
+		req.session.userId = newUser.id;
+
+		const hashedUserId = getHashedUserId(newUser);
+		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
+			...(isProd() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
+			...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
+			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
+
+		return res.status(201).json(newUser);
 	} catch (err) {
 		console.error('Error in postUser: ', err);
 		return res.status(500).json(err instanceof Error ? err.message : 'Error');

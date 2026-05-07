@@ -7,9 +7,8 @@
 
 import sinon from 'sinon';
 
-import { User } from '../server/models';
-
 import * as kfAuthModule from '../server/kfAuth';
+import { User } from '../server/models';
 
 let restoreFn: (() => void) | null = null;
 
@@ -61,6 +60,7 @@ export function stubKfAuth() {
 		resetPassword: async () => ({ data: {} }),
 
 		changePassword: async () => ({ data: {} }),
+		setPassword: async () => ({ success: true }),
 
 		importUsers: async (users: any[]) => ({
 			results: users.map((u) => ({

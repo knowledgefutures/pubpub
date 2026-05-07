@@ -1,4 +1,4 @@
-import { stubKfAuth, restoreKfAuth } from '../stubstub/kfAuth';
+import { restoreKfAuth, stubKfAuth } from '../stubstub/kfAuth';
 
 beforeAll(() => {
 	stubKfAuth();

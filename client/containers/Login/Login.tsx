@@ -3,8 +3,6 @@ import type { AltchaRef } from 'components';
 import React, { useRef, useState } from 'react';
 
 import { AnchorButton, Button, Classes, NonIdealState } from '@blueprintjs/core';
-import encHex from 'crypto-js/enc-hex';
-import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { Altcha, Avatar, GridWrapper, InputField } from 'components';
@@ -44,7 +42,7 @@ const Login = () => {
 					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 					email: emailRef.current.value.toLowerCase(),
 					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-					password: SHA3(passwordRef.current.value).toString(encHex),
+					password: passwordRef.current.value,
 					altcha: altchaPayload,
 				}),
 			})

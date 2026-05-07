@@ -24,6 +24,7 @@ services:
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
             # KF_AUTH_URL: http://kf-auth:3000
+            # KF_AUTH_ADMIN_API_KEY: dev-admin-api-key-change-me
             # KF_AUTH_WEBHOOK_SECRET: dev-webhook-secret
         depends_on:
             - db
@@ -46,6 +47,7 @@ services:
             NODE_ENV: development
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
             # KF_AUTH_URL: http://kf-auth:3000
+            # KF_AUTH_ADMIN_API_KEY: dev-admin-api-key-change-me
             # KF_AUTH_WEBHOOK_SECRET: dev-webhook-secret
 
         command: [ "pnpm", "run", "workers-dev" ]
@@ -111,6 +113,7 @@ services:
     #         SMTP_FROM: noreply@knowledgefuturesauth.dev
     #         SEED_ADMIN_EMAIL: admin@knowledgefuturesauth.dev
     #         SEED_ADMIN_PASSWORD: changeme123
+    #         ADMIN_API_KEY: dev-admin-api-key-change-me
     #         PORT: "3000"
     #     depends_on:
     #         - kf-auth-db

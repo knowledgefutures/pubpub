@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react';
 
 import { Button, Checkbox, Classes, NonIdealState } from '@blueprintjs/core';
-import encHex from 'crypto-js/enc-hex';
-import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { gdprCookiePersistsSignup, getGdprConsentElection } from 'client/utils/legal/gdprConsent';
@@ -57,7 +55,7 @@ const UserCreate = (props: Props) => {
 				subscribed,
 				firstName,
 				lastName,
-				password: SHA3(password).toString(encHex),
+				password,
 				avatar,
 				title,
 				bio,

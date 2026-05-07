@@ -21,6 +21,7 @@ import { router as exploreFeaturedRouter } from './exploreFeatured/api';
 import { router as hubRouter } from './hub/api';
 import { router as impact2Router } from './impact2/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
+import { router as kfAuthWebhookRouter } from './kfAuthWebhook/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
 import { router as openSearchRouter } from './openSearch/api';
@@ -44,7 +45,6 @@ import { router as userDismissableRouter } from './userDismissable/api';
 import { router as userNotificationRouter } from './userNotification/api';
 import { router as userNotificationPreferencesRouter } from './userNotificationPreferences/api';
 import { userSubscriptionRouter } from './userSubscription/api';
-import { router as kfAuthWebhookRouter } from './kfAuthWebhook/api';
 import { router as zoteroIntegrationRouter } from './zoteroIntegration/api';
 
 const apiRouter = Router()

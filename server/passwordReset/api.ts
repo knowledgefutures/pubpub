@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import { getKfSdk } from 'server/kfAuth';
 import { wrap } from 'server/wrap';
+import { isDevelopment } from 'utils/environment';
 import { sleep } from 'utils/promises';
 
 export const router = Router();
@@ -11,7 +12,9 @@ router.post(
 	wrap(async (req, res) => {
 		try {
 			const kf = getKfSdk();
-			const redirectTo = `https://${req.hostname}/password-reset`;
+			const redirectTo = isDevelopment()
+				? `http://localhost:9876/password-reset`
+				: `https://${req.hostname}/password-reset`;
 
 			await kf.forgetPassword({
 				email: req.body.email,
@@ -19,7 +22,7 @@ router.post(
 			});
 
 			return res.status(200).json('success');
-		} catch (err: any) {
+		} catch (_err: any) {
 			// do not leak user information, always return success
 			await sleep(1000 + Math.random() * 1000);
 			return res.status(200).json('success');

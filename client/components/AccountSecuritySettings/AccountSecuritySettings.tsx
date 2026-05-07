@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 import { Button, Callout, Card } from '@blueprintjs/core';
-import encHex from 'crypto-js/enc-hex';
-import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { InputField } from 'components';
@@ -47,8 +45,8 @@ const AccountSecuritySettings = ({ userEmail }: { userEmail: string }) => {
 		apiFetch('/api/account/password', {
 			method: 'PUT',
 			body: JSON.stringify({
-				currentPassword: SHA3(currentPassword).toString(encHex),
-				newPassword: SHA3(newPassword).toString(encHex),
+				currentPassword,
+				newPassword,
 			}),
 		})
 			.then(() => {
@@ -82,7 +80,7 @@ const AccountSecuritySettings = ({ userEmail }: { userEmail: string }) => {
 			method: 'POST',
 			body: JSON.stringify({
 				newEmail: submittedEmailValue,
-				password: SHA3(emailPassword).toString(encHex),
+				password: emailPassword,
 			}),
 		})
 			.then(() => {

@@ -30,7 +30,10 @@ export function getKfSdk(): KfServerSdk {
 			throw new Error('KF_AUTH_URL is not configured');
 		}
 
-		instance = createKfServerSdk({ serverUrl: url });
+		instance = createKfServerSdk({
+			serverUrl: url,
+			adminApiKey: env.KF_AUTH_ADMIN_API_KEY,
+		});
 	}
 
 	return instance;

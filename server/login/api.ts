@@ -3,8 +3,8 @@ import type { AppRouteImplementation } from '@ts-rest/express';
 import type { UserSpamTagFields } from 'types';
 import type { contract } from 'utils/api/contract';
 
-import { User } from 'server/models';
 import { getKfSdk } from 'server/kfAuth';
+import { User } from 'server/models';
 import { getSpamTagForUser } from 'server/spamTag/userQueries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
@@ -24,12 +24,34 @@ const performLogin = async (req: any, res: any): Promise<LoginResult> => {
 			email: req.body.email,
 			password: req.body.password,
 		});
+		console.log('result', result);
 
 		if (result.error || !result.data) {
 			return { status: 401, body: 'Login attempt failed' };
 		}
 
 		const user = await User.findOne({ where: { authId: result.data.user.id } });
+
+		// #region agen
+		fetch('http://host.docker.internal:7793/ingest/abc63da8-c89f-470d-8bd8-f55a69b41fa7', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5f95ae' },
+			body: JSON.stringify({
+				sessionId: '5f95ae',
+				location: 'login/api.ts:afterUserLookup',
+				message: 'pubpub user lookup',
+				data: {
+					authIdSearched: result.data.user.id,
+					foundUser: !!user,
+					userEmail: user?.email,
+				},
+				timestamp: Date.now(),
+				hypothesisId: 'H2',
+			}),
+		}).catch((e) => {
+			console.error('Error in agent log:', e);
+		});
+		// #endregion
 
 		if (!user) {
 			return { status: 401, body: 'Login attempt failed' };
@@ -54,10 +76,8 @@ const performLogin = async (req: any, res: any): Promise<LoginResult> => {
 
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
-			...(isProd() &&
-				req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
-			...(isDuqDuq() &&
-				req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
+			...(isProd() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.pubpub.org' }),
+			...(isDuqDuq() && req.hostname.indexOf('pubpub.org') > -1 && { domain: '.duqduq.org' }),
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 

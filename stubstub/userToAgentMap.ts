@@ -8,9 +8,7 @@ const userToAgentMap = new Map();
 
 let server: Server | null = null;
 
-export const login = async (
-	user?: any,
-): Promise<supertest.SuperAgentTest> => {
+export const login = async (user?: any): Promise<supertest.SuperAgentTest> => {
 	server ??= __appImmutableListenOnly.listen();
 
 	if (!user) {

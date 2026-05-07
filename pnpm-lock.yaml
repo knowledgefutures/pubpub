@@ -2810,7 +2810,7 @@ packages:
       tslib: '2'
 
   '@knowledgefutures/sdk@file:knowledgefutures-sdk-0.1.0.tgz':
-    resolution: {integrity: sha512-u0b83SAlCSc+1LsyvkekKgNzw0rADMVXFVnQe+CzAUk5Zo+VUoo67qhP1J1fZTfmnRcQL20Ns7UV5FBVR0OBWw==, tarball: file:knowledgefutures-sdk-0.1.0.tgz}
+    resolution: {integrity: sha512-JPMDWiNanY3H6/gLY5WcfCCAWb5yGh3jF2M2pkbd2K4lcyd/BtVWh0bXaG7owN7r2E2GOJdPfkk+Fgl2C7KqKA==, tarball: file:knowledgefutures-sdk-0.1.0.tgz}
     version: 0.1.0
     peerDependencies:
       express: '>=4.0.0'

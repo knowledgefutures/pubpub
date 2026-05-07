@@ -207,6 +207,10 @@ export const envSchema = z.object({
 
 	// ── kf-auth ─────────────────────────────────────────────────────────
 	KF_AUTH_URL: z.string().url().optional().describe('Base URL of the kf-auth service'),
+	KF_AUTH_ADMIN_API_KEY: z
+		.string()
+		.optional()
+		.describe('API key for authenticating admin calls to kf-auth (import, delete)'),
 	KF_AUTH_WEBHOOK_SECRET: z
 		.string()
 		.optional()

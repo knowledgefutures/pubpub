@@ -3,6 +3,7 @@ import React from 'react';
 import { Router } from 'express';
 
 import Html from 'server/Html';
+import { getKfSdk } from 'server/kfAuth';
 import { User } from 'server/models';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -18,6 +19,10 @@ router.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, n
 	return Promise.all([getInitialData(req), findUser])
 		.then(([initialData, userData]) => {
 			let hashIsValid = true;
+			console.log('userData', userData);
+
+			const token = req.params.token || req.query.token;
+
 			if (!userData) {
 				hashIsValid = false;
 			}
@@ -37,7 +42,7 @@ router.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, n
 				<Html
 					chunkName="PasswordReset"
 					initialData={initialData}
-					viewData={{ passwordResetData: { hashIsValid } }}
+					viewData={{ passwordResetData: { hashIsValid, token } }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: 'Password Reset',

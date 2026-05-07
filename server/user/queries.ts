@@ -1,7 +1,6 @@
 import { type CreationAttributes, Op } from 'sequelize';
-import { promisify } from 'util';
 
-import { Signup, User } from 'server/models';
+import { User } from 'server/models';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { expect } from 'utils/assert';
 import { ORCID_PATTERN } from 'utils/orcid';
@@ -9,8 +8,13 @@ import { slugifyString } from 'utils/strings';
 
 type InputValues = CreationAttributes<User> & {
 	subscribed?: boolean;
-	password: string;
 };
+
+/**
+ * completes a user's profile after signup. at this point the user already
+ * exists in pubpub (created by the kf-auth webhook), so we update the
+ * existing record with the profile fields.
+ */
 export const createUser = async (inputValues: InputValues) => {
 	const email = inputValues.email.toLowerCase().trim();
 	const firstName = inputValues.firstName.trim();
@@ -18,18 +22,26 @@ export const createUser = async (inputValues: InputValues) => {
 	const fullName = `${firstName} ${lastName}`;
 	const initials = `${firstName[0]}${lastName[0]}`;
 	const newSlug = slugifyString(fullName);
+
+	const existingUser = await User.findOne({ where: { email } });
+
+	if (!existingUser) {
+		throw new Error('User not found. Please complete signup first.');
+	}
+
 	const existingSlugCount = await User.count({
 		where: {
 			slug: { [Op.like]: `${newSlug}%` },
+			id: { [Op.ne]: existingUser.id },
 		},
 	});
-	const newUser = {
+
+	await existingUser.update({
 		slug: `${newSlug}${existingSlugCount ? `-${existingSlugCount + 1}` : ''}`,
 		firstName,
 		lastName,
 		fullName,
 		initials,
-		email,
 		avatar: inputValues.avatar,
 		title: inputValues.title,
 		bio: inputValues.bio,
@@ -41,23 +53,13 @@ export const createUser = async (inputValues: InputValues) => {
 		facebook: inputValues.facebook,
 		googleScholar: inputValues.googleScholar,
 		gdprConsent: inputValues.gdprConsent,
-		passwordDigest: 'sha512',
-	};
-
-	const userRegister = promisify(User.register.bind(User));
-	const registeredUser = (await userRegister(newUser, inputValues.password)) as User;
+	});
 
 	if (inputValues.subscribed) {
-		subscribeUser(inputValues.email, 'be26e45660', ['Users']);
+		subscribeUser(email, 'be26e45660', ['Users']);
 	}
-	await Signup.update(
-		{ completed: true },
-		{
-			where: { email, hash: inputValues.hash, completed: false },
-		},
-	);
 
-	return registeredUser;
+	return existingUser;
 };
 
 export const getSuggestedEditsUserInfo = async (suggestionUserId: string) => {

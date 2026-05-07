@@ -28,9 +28,8 @@ export const accountServer = s.router(contract.account, {
 		}
 
 		const userData = await User.findOne({ where: { id: userId } });
-		const hasAuthId = userData?.authId;
 
-		if (!userData || !hasAuthId) {
+		if (!userData?.authId) {
 			return {
 				status: 403,
 				body: { message: 'User not found' },
@@ -40,14 +39,23 @@ export const accountServer = s.router(contract.account, {
 		try {
 			const kf = getKfSdk();
 
-			const result = await kf.changePassword({
-				currentPassword: body.currentPassword,
-				newPassword: body.newPassword,
-				sessionToken: req.kfSession?.token || '',
+			// verify current password by attempting a sign-in
+			const verifyResult = await kf.signIn.email({
+				email: userData.email,
+				password: body.currentPassword,
 			});
 
-			if (result.error) {
+			if (verifyResult.error) {
 				return { status: 403, body: { message: 'Current password is incorrect' } };
+			}
+
+			const setResult = await kf.setPassword({
+				userId: userData.authId,
+				newPassword: body.newPassword,
+			});
+
+			if (!setResult.success) {
+				return { status: 403, body: { message: 'Failed to update password' } };
 			}
 
 			logout(req, res);

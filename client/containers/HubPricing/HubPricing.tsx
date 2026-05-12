@@ -8,8 +8,8 @@ const HubCta = () => (
 	<section className="hp-section hp-cta-section">
 		<h2 className="hp-cta-title">Start your Hub</h2>
 		<p className="hp-cta-description">
-			Tell us about your organization and what you're trying to coordinate.
-			We'll help you figure out the right tier and get your Hub running.
+			Tell us about your organization and what you're trying to coordinate. We'll help you
+			figure out the right tier and get your Hub running.
 		</p>
 		<a href="mailto:partnerships@pubpub.org" className="hp-cta-button">
 			Get in touch →
@@ -63,7 +63,10 @@ const HubPricing = () => {
 							</div>
 							<div className="hp-feature-card">
 								<h3>Curation</h3>
-								<p>Private and public organization and curation across all your Communities</p>
+								<p>
+									Private and public organization and curation across all your
+									Communities
+								</p>
 							</div>
 							<div className="hp-feature-card">
 								<h3>Analytics</h3>
@@ -79,7 +82,10 @@ const HubPricing = () => {
 							</div>
 							<div className="hp-feature-card">
 								<h3>Discovery</h3>
-								<p>Find Communities on your campus or by keyword and invite them into your Hub</p>
+								<p>
+									Find Communities on your campus or by keyword and invite them
+									into your Hub
+								</p>
 							</div>
 						</div>
 					</section>

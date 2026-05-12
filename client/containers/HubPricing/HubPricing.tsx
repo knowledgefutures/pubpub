@@ -4,6 +4,19 @@ import { GridWrapper } from 'components';
 
 import './hubPricing.scss';
 
+const HubCta = () => (
+	<section className="hp-section hp-cta-section">
+		<h2 className="hp-cta-title">Start your Hub</h2>
+		<p className="hp-cta-description">
+			Tell us about your organization and what you're trying to coordinate.
+			We'll help you figure out the right tier and get your Hub running.
+		</p>
+		<a href="mailto:partnerships@pubpub.org" className="hp-cta-button">
+			Get in touch →
+		</a>
+	</section>
+);
+
 const HubPricing = () => {
 	return (
 		<div className="hub-pricing-component">
@@ -14,7 +27,8 @@ const HubPricing = () => {
 					<h1 className="hp-hero-title">Pricing</h1>
 					<p className="hp-hero-subtitle">
 						Publishing on PubPub is free. Anyone, anywhere, can create a Community and
-						publish their work at no cost. Hubs help organize and present those
+						publish their work at no cost. For those who manage multiple Communities on
+						PubPub, Hubs is a paid feature that helps organize and present those
 						communities.
 					</p>
 				</div>
@@ -38,9 +52,48 @@ const HubPricing = () => {
 						</p>
 					</section>
 
+					{/* Features */}
+					<section className="hp-section">
+						<h2 className="hp-section-title">Features</h2>
+						<p>Every Hub includes:</p>
+						<div className="hp-features-grid">
+							<div className="hp-feature-card">
+								<h3>Public Hub Landing Page</h3>
+								<p>A dedicated home for your curated Communities and pubs</p>
+							</div>
+							<div className="hp-feature-card">
+								<h3>Curation</h3>
+								<p>Private and public organization and curation across all your Communities</p>
+							</div>
+							<div className="hp-feature-card">
+								<h3>Analytics</h3>
+								<p>Usage analytics and reporting across publications</p>
+							</div>
+							<div className="hp-feature-card">
+								<h3>Custom branding</h3>
+								<p>Dedicated URL, Hubs homepage, and institutional branding</p>
+							</div>
+							<div className="hp-feature-card">
+								<h3>Templates</h3>
+								<p>Create templates for common use cases</p>
+							</div>
+							<div className="hp-feature-card">
+								<h3>Discovery</h3>
+								<p>Find Communities on your campus or by keyword and invite them into your Hub</p>
+							</div>
+						</div>
+					</section>
+
+					<HubCta />
+
 					{/* Annual pricing */}
 					<section className="hp-section">
 						<h2 className="hp-section-title">Annual pricing</h2>
+						<p>
+							Hub pricing supports PubPub's ability to remain free and to keep
+							building open scholarly infrastructure that isn't captured by
+							proprietary interests. Every paying Hub helps sustain our mission.
+						</p>
 						<div className="hp-table-wrapper">
 							<table className="hp-pricing-table">
 								<thead>
@@ -236,7 +289,7 @@ const HubPricing = () => {
 					</section>
 
 					{/* What's included */}
-					<section className="hp-section">
+					{/* <section className="hp-section">
 						<h2 className="hp-section-title">What's included</h2>
 						<p>Every Hub includes:</p>
 						<div className="hp-features-grid">
@@ -257,7 +310,9 @@ const HubPricing = () => {
 								<p>Dedicated URL and institutional branding</p>
 							</div>
 						</div>
-					</section>
+					</section> */}
+
+					<HubCta />
 
 					{/* FAQ */}
 					<section className="hp-section">
@@ -348,16 +403,7 @@ const HubPricing = () => {
 					</section>
 
 					{/* CTA */}
-					<section className="hp-section hp-cta-section">
-						<h2 className="hp-cta-title">Start your Hub</h2>
-						<p className="hp-cta-description">
-							Tell us about your organization and what you're trying to coordinate.
-							We'll help you figure out the right tier and get your Hub running.
-						</p>
-						<a href="mailto:partnerships@pubpub.org" className="hp-cta-button">
-							Get in touch →
-						</a>
-					</section>
+					<HubCta />
 				</div>
 			</GridWrapper>
 		</div>

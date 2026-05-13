@@ -44,6 +44,7 @@ import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { isProd } from 'utils/environment';
 import { getAssetUrlFromResizedUrl } from 'utils/images';
 import { licenseDetailsByKind } from 'utils/licenses';
+import { normalizeOrcid } from 'utils/orcid';
 import { getTextAbstract } from 'utils/pub/metadata';
 
 // for some reason when imported from utils/notes, it tries to import the client/utils/notes.ts file instead
@@ -96,18 +97,22 @@ const renderPubFooter = (metadata: PubMetadata) => {
 				<section className="pub-attributions">
 					<h2>Authors</h2>
 					<ul>
-						{authors.map((a: any) => (
-							<li key={a.id}>
-								{a.user?.fullName || a.name}
-								{a.affiliation && <span> ({a.affiliation})</span>}
-								{a.orcid && (
-									<span>
-										{' — '}
-										<a href={`https://orcid.org/${a.orcid}`}>ORCID</a>
-									</span>
-								)}
-							</li>
-						))}
+						{authors.map((a: any) => {
+							const orcid = normalizeOrcid(a.orcid);
+
+							return (
+								<li key={a.id}>
+									{a.user?.fullName || a.name}
+									{a.affiliation && <span> ({a.affiliation})</span>}
+									{orcid && (
+										<span>
+											{' — '}
+											<a href={`https://orcid.org/${orcid}`}>ORCID</a>
+										</span>
+									)}
+								</li>
+							);
+						})}
 					</ul>
 				</section>
 			)}
@@ -115,19 +120,23 @@ const renderPubFooter = (metadata: PubMetadata) => {
 				<section className="pub-attributions">
 					<h2>Contributors</h2>
 					<ul>
-						{contributors.map((a: any) => (
-							<li key={a.id}>
-								{a.user?.fullName || a.name}
-								{a.roles?.length > 0 && <span> — {a.roles.join(', ')}</span>}
-								{a.affiliation && <span> ({a.affiliation})</span>}
-								{a.orcid && (
-									<span>
-										{' — '}
-										<a href={`https://orcid.org/${a.orcid}`}>ORCID</a>
-									</span>
-								)}
-							</li>
-						))}
+						{contributors.map((a: any) => {
+							const orcid = normalizeOrcid(a.orcid);
+
+							return (
+								<li key={a.id}>
+									{a.user?.fullName || a.name}
+									{a.roles?.length > 0 && <span> — {a.roles.join(', ')}</span>}
+									{a.affiliation && <span> ({a.affiliation})</span>}
+									{orcid && (
+										<span>
+											{' — '}
+											<a href={`https://orcid.org/${orcid}`}>ORCID</a>
+										</span>
+									)}
+								</li>
+							);
+						})}
 					</ul>
 				</section>
 			)}

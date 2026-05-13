@@ -21,6 +21,7 @@ import { exists, expect } from 'utils/assert';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { licenseDetailsByKind } from 'utils/licenses';
+import { normalizeOrcid } from 'utils/orcid';
 import { getWordAndCharacterCountsFromDoc } from 'utils/pub/metadata';
 import { RelationType, type relationTypeDefinitions } from 'utils/pubEdge';
 import { sortByRank } from 'utils/rank';
@@ -63,7 +64,7 @@ function transformPubAttributionToResourceContribution(
 	return {
 		contributor: {
 			name: attribution.user?.fullName ?? expect(attribution.name),
-			orcid: attribution.user?.orcid ?? attribution.orcid,
+			orcid: normalizeOrcid(attribution.user?.orcid ?? attribution.orcid),
 		},
 		contributorAffiliation: attribution.affiliation,
 		contributorRole: transformAttributionRoleToResourceContributorRole(role),

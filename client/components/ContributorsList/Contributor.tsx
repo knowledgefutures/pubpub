@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Avatar, Icon } from 'components';
+import { normalizeOrcid } from 'utils/orcid';
 
 import './contributor.scss';
 
@@ -38,20 +39,22 @@ const Contributor = function (props) {
 		return curr;
 	}, '');
 
+	const orcid = normalizeOrcid(user.orcid);
+
 	return (
 		<div className="contributors-list_contributor-component">
 			<div className="avatar-wrapper">{avatarElement}</div>
 			<div className="details-wrapper">
 				<div className="name">{nameElement}</div>
-				{user.orcid && (
+				{orcid && (
 					<div className="pub-header-themed-secondary orcid">
 						<Icon icon="orcid" />
 						<a
-							href={`https://orcid.org/${user.orcid}`}
+							href={`https://orcid.org/${orcid}`}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{user.orcid}
+							{orcid}
 						</a>
 					</div>
 				)}

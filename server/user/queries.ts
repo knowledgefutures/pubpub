@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import { Signup, User } from 'server/models';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { expect } from 'utils/assert';
-import { ORCID_PATTERN } from 'utils/orcid';
+import { normalizeOrcid } from 'utils/orcid';
 import { slugifyString } from 'utils/strings';
 
 type InputValues = CreationAttributes<User> & {
@@ -35,7 +35,7 @@ export const createUser = async (inputValues: InputValues) => {
 		bio: inputValues.bio,
 		location: inputValues.location,
 		website: inputValues.website,
-		orcid: inputValues.orcid,
+		orcid: normalizeOrcid(inputValues.orcid),
 		github: inputValues.github,
 		twitter: inputValues.twitter,
 		facebook: inputValues.facebook,
@@ -93,8 +93,14 @@ export const updateUser = (
 		filteredValues.initials = `${filteredValues.firstName[0]}${filteredValues.lastName[0]}`;
 	}
 
-	if (filteredValues.orcid && (filteredValues.orcid as string).match(ORCID_PATTERN) === null) {
-		throw new Error('Invalid ORCID');
+	if (filteredValues.orcid) {
+		const normalized = normalizeOrcid(filteredValues.orcid as string);
+
+		if (!normalized) {
+			throw new Error('Invalid ORCID');
+		}
+
+		filteredValues.orcid = normalized;
 	}
 
 	// A bit of extra paranoia

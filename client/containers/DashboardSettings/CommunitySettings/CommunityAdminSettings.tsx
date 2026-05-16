@@ -11,6 +11,7 @@ import { usePageContext } from 'utils/hooks';
 import DeleteCommunity from './DeleteCommunity';
 import DiscussionsSection from './DiscussionsSection';
 import { ExportCommunityDataButton } from './ExportCommunityDataButton';
+import TransferOwnership from './TransferOwnership';
 
 type PastExport = {
 	id: string;
@@ -97,6 +98,8 @@ const ExportAndDeleteSettings = (props: Props) => {
 			/>
 
 			<ExportDataSection settingsData={props.settingsData} />
+
+			<TransferOwnership communityData={communityData} />
 
 			<DeleteCommunity communityData={communityData} />
 		</>

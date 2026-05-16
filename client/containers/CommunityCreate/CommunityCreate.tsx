@@ -82,10 +82,19 @@ const CommunityCreatedView = ({ subdomain, hubName }: { subdomain: string; hubNa
 	);
 };
 
+type KFOrg = {
+	id: string;
+	name: string;
+	slug: string;
+	type: 'personal' | 'shared';
+	role: string;
+};
+
 type Props = {
 	hubData?: Hub | null;
 	templates?: CommunityTemplate[];
 	hubCommunities?: { id: string; title: string; subdomain: string; avatar?: string | null }[];
+	kfOrgs?: KFOrg[];
 };
 
 const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
@@ -109,7 +118,7 @@ const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
 };
 
 const CommunityCreate = (props: Props) => {
-	const { hubData, templates = [], hubCommunities = [] } = props;
+	const { hubData, templates = [], hubCommunities = [], kfOrgs = [] } = props;
 	const { loginData, locationData } = usePageContext();
 	const altchaRef = useRef<import('components').AltchaRef>(null);
 	const hubSlug = hubData?.slug || locationData?.query?.hub || null;
@@ -125,6 +134,12 @@ const CommunityCreate = (props: Props) => {
 	const [isCreated, setIsCreated] = useState(false);
 	const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 	const [cloneCommunityId, setCloneCommunityId] = useState<string | null>(null);
+
+	// KF org picker: default to personal org, or first available
+	const personalOrg = kfOrgs.find((o) => o.type === 'personal');
+	const [selectedKfOrgId, setSelectedKfOrgId] = useState<string | null>(
+		personalOrg?.id ?? kfOrgs[0]?.id ?? null,
+	);
 
 	const hasHub = !!hubData;
 	const hubAccentDark = hubData?.accentColorDark || '#2D2E2F';
@@ -163,6 +178,7 @@ const CommunityCreate = (props: Props) => {
 				...(selectedTemplateId === CLONE_MARKER && cloneCommunityId
 					? { cloneCommunityId }
 					: {}),
+				...(selectedKfOrgId ? { kfOrgId: selectedKfOrgId } : {}),
 			});
 			setCreateIsLoading(false);
 			setIsCreated(true);
@@ -308,6 +324,27 @@ const CommunityCreate = (props: Props) => {
 									onChange={onDescriptionChange}
 									helperText={`${description.length}/280 characters`}
 								/>
+								{kfOrgs.length > 1 && (
+									<InputField label="Organization">
+										<div className={Classes.HTML_SELECT}>
+											<select
+												value={selectedKfOrgId ?? ''}
+												onChange={(e) =>
+													setSelectedKfOrgId(e.target.value || null)
+												}
+											>
+												{kfOrgs.map((org) => (
+													<option key={org.id} value={org.id}>
+														{org.name}
+														{org.type === 'personal'
+															? ' (Personal)'
+															: ''}
+													</option>
+												))}
+											</select>
+										</div>
+									</InputField>
+								)}
 								{selectedTemplateId ? (
 									<Callout
 										intent="none"

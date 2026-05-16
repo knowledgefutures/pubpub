@@ -241,6 +241,10 @@ export class Community extends Model<
 	@Column(DataType.UUID)
 	declare templateId: string | null;
 
+	/** KF Auth organization that owns this community (for billing/ownership) */
+	@Column(DataType.TEXT)
+	declare kfOrgId: string | null;
+
 	@BelongsTo(() => CommunityTemplate, {
 		as: 'template',
 		foreignKey: 'templateId',

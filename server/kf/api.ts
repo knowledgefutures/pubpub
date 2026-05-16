@@ -799,10 +799,11 @@ router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any,
 		communityIds.forEach((id, i) => { idReplacements[`cid${i}`] = id; });
 
 		const communityRows = (await sequelize.query(
-			`SELECT "id", "title", "subdomain", "domain", "description", "heroLogo", "accentColorDark", "accentColorLight"
-			FROM "Communities"
-			WHERE "id" IN (${idPlaceholders})
-			ORDER BY "title" ASC`,
+			`SELECT c."id", c."title", c."subdomain", c."domain", c."description", c."heroLogo", c."accentColorDark", c."accentColorLight", c."createdAt",
+				(SELECT COUNT(*)::int FROM "Pubs" p INNER JOIN "Releases" r ON r."pubId" = p."id" WHERE p."communityId" = c."id") AS "pubCount"
+			FROM "Communities" c
+			WHERE c."id" IN (${idPlaceholders})
+			ORDER BY c."title" ASC`,
 			{ replacements: idReplacements, type: 'SELECT' as any },
 		)) as any[];
 
@@ -817,6 +818,8 @@ router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any,
 				heroLogo: c.heroLogo,
 				accentColorDark: c.accentColorDark,
 				accentColorLight: c.accentColorLight,
+				createdAt: c.createdAt,
+				pubCount: c.pubCount ?? 0,
 				managerCount: counts.managerCount,
 				authorCount: counts.authorCount,
 			};
@@ -843,8 +846,16 @@ router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: a
 
 		const excludeList = excludeCommunityIds.split(',').filter(Boolean);
 
-		// Build tsquery from terms (OR them together)
-		const tsQuery = terms.map((t) => t.split(/\s+/).join(' & ')).join(' | ');
+		// Build tsquery from terms — use adjacency operator (<->) for exact phrase matching
+		// e.g. "Mellon Foundation" → "mellon <-> foundation", single words get prefix match
+		const tsQuery = terms.map((t) => {
+			const words = t.trim().toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean);
+			if (words.length === 0) return null;
+			if (words.length === 1) return `${words[0]}:*`;
+			return `(${words.join(' <-> ')})`;
+		}).filter(Boolean).join(' | ');
+
+		if (!tsQuery) return res.json([]);
 
 		let excludeClause = '';
 		const replacements: Record<string, any> = { tsQuery, limit };
@@ -861,11 +872,22 @@ router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: a
 				p."slug",
 				p."description",
 				p."avatar",
+				p."customPublishedAt",
 				p."communityId",
 				c."title" AS "communityTitle",
 				c."subdomain" AS "communitySubdomain",
 				c."domain" AS "communityDomain",
-				ts_rank(p."searchVector", to_tsquery('english', :tsQuery)) AS "rank"
+				ts_rank(p."searchVector", to_tsquery('english', :tsQuery)) AS "rank",
+				CASE WHEN p."description" IS NOT NULL AND p."description" != ''
+					THEN ts_headline('english', p."description", to_tsquery('english', :tsQuery), 'StartSel=<mark>,StopSel=</mark>,MaxWords=60,MinWords=20,MaxFragments=2,FragmentDelimiter= … ')
+					ELSE NULL
+				END AS "snippet",
+				(
+					SELECT string_agg(COALESCE(u2."fullName", pa2."name"), ', ' ORDER BY pa2."order" ASC)
+					FROM "PubAttributions" pa2
+					LEFT JOIN "Users" u2 ON u2."id" = pa2."userId"
+					WHERE pa2."pubId" = p."id" AND pa2."isAuthor" = true
+				) AS "byline"
 			FROM "Pubs" p
 			INNER JOIN "Communities" c ON c."id" = p."communityId"
 			INNER JOIN "Releases" r ON r."pubId" = p."id"
@@ -887,6 +909,9 @@ router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: a
 			communityTitle: r.communityTitle,
 			communitySubdomain: r.communitySubdomain,
 			communityDomain: r.communityDomain,
+			byline: r.byline ?? null,
+			snippet: r.snippet ?? null,
+			publishedAt: r.customPublishedAt ?? null,
 			rank: parseFloat(r.rank),
 		})));
 	} catch (err) {

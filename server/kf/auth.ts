@@ -75,6 +75,7 @@ export function generateCodeChallenge(verifier: string): string {
 export function buildAuthorizeUrl(
 	state: string,
 	existingVerifier?: string,
+	context?: string,
 ): {
 	url: string;
 	codeVerifier: string;
@@ -89,6 +90,7 @@ export function buildAuthorizeUrl(
 		state,
 		code_challenge: codeChallenge,
 		code_challenge_method: 'S256',
+		...(context && { context }),
 	});
 	return { url: `${KF_AUTH_URL}${AUTHORIZE_PATH}?${params}`, codeVerifier };
 }

@@ -107,7 +107,7 @@ router.get('/auth/login', (req: any, res: any) => {
 	const codeVerifier = generateCodeVerifier();
 	const stateToken = encryptPayload({ v: codeVerifier, h: communityHost, r: returnTo });
 
-	const { url } = buildAuthorizeUrl(stateToken, codeVerifier);
+	const { url } = buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
 
 	return res.redirect(url);
 });
@@ -329,6 +329,29 @@ router.post('/api/kf/profile-sync', requireInternalKey, async (req: any, res: an
 	}
 });
 
+// ─── Context listing (for KF Auth playground) ───────────────────────
+
+router.get('/api/kf/contexts', requireInternalKey, async (req: any, res: any) => {
+	try {
+		const communities = await Community.findAll({
+			attributes: ['subdomain', 'title', 'avatar'],
+			order: [['title', 'ASC']],
+			limit: 200,
+		});
+
+		return res.json(
+			communities.map((c: any) => ({
+				slug: c.subdomain,
+				title: c.title,
+				avatar: c.avatar || null,
+			})),
+		);
+	} catch (err) {
+		console.error('Contexts listing error:', err);
+		return res.status(500).json({ error: 'Internal error' });
+	}
+});
+
 // ─── Branding API (for KF Auth login page) ───────────────────────────
 
 router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) => {
@@ -357,11 +380,12 @@ router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) =>
 		}
 
 		return res.json({
-			communityName: community.title,
-			logoUrl: community.avatar || community.headerLogo,
-			accentColorLight: community.accentColorLight,
-			accentColorDark: community.accentColorDark,
-			headerLogo: community.headerLogo,
+			// Fields expected by kf-auth's loadAppContext()
+			display_name: community.title,
+			logo_url: community.avatar || community.headerLogo || null,
+			brand_color: community.accentColorDark || null,
+			background_color: community.accentColorLight || null,
+			// Extra fields for backwards compat / debugging
 			subdomain: community.subdomain,
 		});
 	} catch (err) {

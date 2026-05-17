@@ -18,6 +18,7 @@ import {
 	DefaultScope,
 	ForeignKey,
 	HasMany,
+	Index,
 	Is,
 	IsLowercase,
 	Length,
@@ -242,6 +243,7 @@ export class Community extends Model<
 	declare templateId: string | null;
 
 	/** KF Auth organization that owns this community (for billing/ownership) */
+	@Index
 	@Column(DataType.TEXT)
 	declare kfOrgId: string | null;
 

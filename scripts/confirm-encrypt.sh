@@ -9,6 +9,10 @@ if [ "${1:-}" = "dev" ]; then
   ENC_FILE="infra/.env.dev.enc"
   PLAIN_FILE="infra/.env.dev"
   LABEL="dev"
+elif [ "${1:-}" = "local" ]; then
+  ENC_FILE="infra/.env.local.enc"
+  PLAIN_FILE="infra/.env.local"
+  LABEL="local"
 else
   ENC_FILE="infra/.env.enc"
   PLAIN_FILE="infra/.env"

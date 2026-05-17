@@ -1,17 +1,13 @@
 /**
  * Lightweight OIDC client for KF Auth (PubPub edition).
  *
- * Two base URLs:
- *   KF_AUTH_INTERNAL_URL — server-to-server (e.g. kf-auth:3000 on Hetzner internal network)
- *   KF_AUTH_URL          — browser-facing  (e.g. https://auth.knowledgefutures.org)
+ * KF_AUTH_URL is used for both browser redirects and server-side calls
+ * (token exchange, userinfo).
  */
 
 import crypto from 'node:crypto';
 
-/** Browser-facing URL for auth redirects. */
 const KF_AUTH_URL = process.env.KF_AUTH_URL ?? 'http://localhost:3000';
-/** Server-side URL for token exchange / userinfo. Falls back to KF_AUTH_URL. */
-const KF_AUTH_INTERNAL_URL = process.env.KF_AUTH_INTERNAL_URL ?? KF_AUTH_URL;
 const KF_AUTH_CLIENT_ID = process.env.KF_AUTH_CLIENT_ID ?? 'kf_pubpub';
 const KF_AUTH_CLIENT_SECRET = process.env.KF_AUTH_CLIENT_SECRET ?? '';
 const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
@@ -79,7 +75,7 @@ export async function exchangeCode(
 		code_verifier: codeVerifier,
 	});
 
-	const res = await fetch(`${KF_AUTH_INTERNAL_URL}${TOKEN_PATH}`, {
+	const res = await fetch(`${KF_AUTH_URL}${TOKEN_PATH}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body,
@@ -114,7 +110,7 @@ export interface KFUserInfo {
 }
 
 export async function fetchUserInfo(accessToken: string): Promise<KFUserInfo> {
-	const res = await fetch(`${KF_AUTH_INTERNAL_URL}${USERINFO_PATH}`, {
+	const res = await fetch(`${KF_AUTH_URL}${USERINFO_PATH}`, {
 		headers: { Authorization: `Bearer ${accessToken}` },
 	});
 
@@ -136,7 +132,7 @@ export async function fetchUserOrgs(
 	if (!key) return [];
 
 	const res = await fetch(
-		`${KF_AUTH_INTERNAL_URL}/api/internal/users/${userId}/orgs`,
+		`${KF_AUTH_URL}/api/internal/users/${userId}/orgs`,
 		{
 			headers: { Authorization: `Bearer ${key}` },
 		},

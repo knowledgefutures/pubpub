@@ -40,6 +40,7 @@ yarn-error.log*
 .env.*
 !.env.enc
 !.env.dev.enc
+!.env.local.enc
 !infra/.env.test
 
 

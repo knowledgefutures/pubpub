@@ -7,7 +7,7 @@ services:
             dockerfile: Dockerfile
             target: dev
         env_file:
-            - .env.dev
+            - .env.local
         # healthcheck:
         #     test:
         #         - CMD-SHELL
@@ -38,7 +38,7 @@ services:
             dockerfile: Dockerfile
             target: dev
         env_file:
-            - .env.dev
+            - .env.local
         environment:
             NODE_ENV: development
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost

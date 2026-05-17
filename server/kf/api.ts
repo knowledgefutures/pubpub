@@ -84,7 +84,9 @@ export const router = Router();
 
 router.get('/auth/login', (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
-	const returnTo = req.query.return_to || '/';
+	const rawReturn = req.query.return_to || '/';
+	// Validate return_to is a safe relative path (prevent open redirect)
+	const returnTo = typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//') ? rawReturn : '/';
 
 	// Encode the community hostname + return path in state so we can
 	// redirect back after the OIDC callback.
@@ -177,7 +179,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 					domain: '.pubpub.org',
 				}),
 			...(isDuqDuq() &&
-				req.hostname.indexOf('pubpub.org') > -1 && {
+				req.hostname.indexOf('duqduq.org') > -1 && {
 					domain: '.duqduq.org',
 				}),
 			maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -190,7 +192,9 @@ router.get('/auth/callback', async (req: any, res: any) => {
 				Buffer.from(state, 'base64url').toString(),
 			);
 			const host = statePayload.host || '';
-			const returnTo = statePayload.returnTo || '/';
+			const rawReturn = statePayload.returnTo || '/';
+			// Validate returnTo is a safe relative path
+			const returnTo = typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//') ? rawReturn : '/';
 
 			if (host && host !== req.hostname) {
 				// Redirect back to the community the user came from
@@ -460,7 +464,7 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 		const analyticsStart = startDate || new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 		const analyticsEnd = endDate || new Date().toISOString().slice(0, 10);
 		const pubsMonthsBack = startDate
-			? Math.max(Math.ceil((Date.now() - new Date(startDate).getTime()) / (30 * 24 * 60 * 60 * 1000)), 3)
+			? Math.max(Math.ceil((Date.now() - new Date(startDate).getTime()) / (30 * 24 * 60 * 60 * 1000)), 3) || 24
 			: 24;
 
 		const community = await Community.findByPk(communityId, {
@@ -539,10 +543,10 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 				FROM "Pubs" p
 				INNER JOIN "Releases" r ON r."pubId" = p.id
 				WHERE p."communityId" = :communityId
-					AND p."createdAt" >= NOW() - INTERVAL '${pubsMonthsBack} months'
+					AND p."createdAt" >= :pubsCutoff
 				GROUP BY 1 ORDER BY 1`,
 				{
-					replacements: { communityId },
+					replacements: { communityId, pubsCutoff: new Date(Date.now() - pubsMonthsBack * 30 * 24 * 60 * 60 * 1000).toISOString() },
 					type: 'SELECT' as any,
 				},
 			),

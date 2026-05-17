@@ -107,6 +107,8 @@ router.get('/auth/login', (req: any, res: any) => {
 	const codeVerifier = generateCodeVerifier();
 	const stateToken = encryptPayload({ v: codeVerifier, h: communityHost, r: returnTo });
 
+	// Pass the community hostname as context for per-community branding.
+	// The branding endpoint resolves hostnames → slugs.
 	const { url } = buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
 
 	return res.redirect(url);
@@ -357,14 +359,22 @@ router.get('/api/kf/contexts', requireInternalKey, async (req: any, res: any) =>
 router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) => {
 	try {
 		const { subdomain, context } = req.query;
-		const slug = context || subdomain;
+		let identifier = context || subdomain;
 
-		if (!slug) {
+		if (!identifier) {
 			return res.status(400).json({ error: 'subdomain or context param required' });
 		}
 
-		const community = await Community.findOne({
-			where: { subdomain: slug },
+		// If the identifier looks like a platform hostname, extract the subdomain slug.
+		// e.g. "mycommunity.duqduq.org" → "mycommunity", "mycommunity.pubpub.org" → "mycommunity"
+		const platformMatch = identifier.match(/^([^.]+)\.(pubpub\.org|duqduq\.org)$/);
+		if (platformMatch && platformMatch[1] !== 'www') {
+			identifier = platformMatch[1];
+		}
+
+		// Try by subdomain slug first
+		let community = await Community.findOne({
+			where: { subdomain: identifier },
 			attributes: [
 				'title',
 				'avatar',
@@ -374,6 +384,21 @@ router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) =>
 				'subdomain',
 			],
 		});
+
+		// If not found and identifier looks like a hostname, try as custom domain
+		if (!community && identifier.includes('.')) {
+			community = await Community.findOne({
+				where: { domain: identifier },
+				attributes: [
+					'title',
+					'avatar',
+					'headerLogo',
+					'accentColorLight',
+					'accentColorDark',
+					'subdomain',
+				],
+			});
+		}
 
 		if (!community) {
 			return res.status(404).json({ error: 'Community not found' });

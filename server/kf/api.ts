@@ -2,7 +2,7 @@
  * KF Auth integration routes for PubPub.
  *
  * OIDC login/callback:
- *   GET  /auth/login       — redirect to KF Auth
+docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authorize\|token" *   GET  /auth/login       — redirect to KF Auth
  *   GET  /auth/callback    — handle OIDC callback, create session
  *   GET  /auth/session-set — establish session on custom domains (via encrypted token)
  *   POST /auth/logout      — clear session + redirect to KF Auth logout
@@ -160,7 +160,20 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			const existingSlugCount = await User.count({
 				where: { slug: { [Op.like]: `${baseSlug}%` } },
 			});
-			const slug = existingSlugCount ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug;
+			const slug = existingSlugCount
+				? `${baseSlug}-${existingSlugCount + 1}`
+				: baseSlug;
+
+			// Use KF Auth email if available and not already taken
+			let email = `${kfUserId}@placeholder.invalid`;
+			if (userInfo.email) {
+				const emailTaken = await User.findOne({
+					where: { email: userInfo.email.toLowerCase() },
+				});
+				if (!emailTaken) {
+					email = userInfo.email.toLowerCase();
+				}
+			}
 
 			user = await User.create({
 				id: kfUserId,
@@ -169,8 +182,10 @@ router.get('/auth/callback', async (req: any, res: any) => {
 				lastName,
 				fullName,
 				initials,
-				email: userInfo.email || `${kfUserId}@placeholder.invalid`,
+				email,
 				avatar: userInfo.picture || null,
+				hash: '',
+				salt: '',
 			} as any);
 			console.log(`Auto-created PubPub user ${user.id} (${user.slug}) from KF Auth`);
 		}
@@ -204,9 +219,10 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			return res.redirect(`${protocol}://${host}${returnTo}`);
 		}
 		return res.redirect(returnTo);
-	} catch (err) {
+	} catch (err: any) {
 		console.error('OIDC callback error:', err);
-		return res.status(500).send('Login failed. Please try again.');
+		const detail = isDuqDuq() ? ` (${err?.message || err})` : '';
+		return res.status(500).send(`Login failed. Please try again.${detail}`);
 	}
 });
 

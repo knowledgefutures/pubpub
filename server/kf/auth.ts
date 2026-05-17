@@ -62,10 +62,7 @@ interface TokenResponse {
 	refresh_token?: string;
 }
 
-export async function exchangeCode(
-	code: string,
-	codeVerifier: string,
-): Promise<TokenResponse> {
+export async function exchangeCode(code: string, codeVerifier: string): Promise<TokenResponse> {
 	const body = new URLSearchParams({
 		grant_type: 'authorization_code',
 		code,
@@ -125,18 +122,13 @@ export async function fetchUserInfo(accessToken: string): Promise<KFUserInfo> {
  * Fetch a user's current KF orgs from KF Auth's internal API.
  * Used for the ownership picker when creating communities.
  */
-export async function fetchUserOrgs(
-	userId: string,
-): Promise<KFOrg[]> {
+export async function fetchUserOrgs(userId: string): Promise<KFOrg[]> {
 	const key = process.env.KF_INTERNAL_API_KEY;
 	if (!key) return [];
 
-	const res = await fetch(
-		`${KF_AUTH_URL}/api/internal/users/${userId}/orgs`,
-		{
-			headers: { Authorization: `Bearer ${key}` },
-		},
-	);
+	const res = await fetch(`${KF_AUTH_URL}/api/internal/users/${userId}/orgs`, {
+		headers: { Authorization: `Bearer ${key}` },
+	});
 
 	if (!res.ok) return [];
 	const data = (await res.json()) as { orgs?: KFOrg[] };

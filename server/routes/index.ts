@@ -1,5 +1,7 @@
 import { Router } from 'express';
 
+// KF Auth integration (OIDC + internal API)
+import { router as kfAuthRouter } from '../kf/api';
 /* import { router as picingRouter} from './picing'); // Route: '/pricing' */
 import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin' (redirect to superadmin)
 import { router as authenticateRouter } from './authenticate'; // Route: '/auth'
@@ -7,9 +9,6 @@ import { router as collectionRouter } from './collection'; // Route: /collection
 /* Routes for PubPub */
 import { router as communityCreateRouter } from './communityCreate'; // Route: '/community/create'
 import { router as dashboardActivityRouter } from './dashboardActivity';
-
-// KF Auth integration (OIDC + internal API)
-import { router as kfAuthRouter } from '../kf/api';
 import { router as dashboardCollectionLayoutRouter } from './dashboardCollectionLayout';
 import { router as dashboardCollectionOverviewRouter } from './dashboardCollectionOverview';
 import { router as dashboardCommunityOverviewRouter } from './dashboardCommunityOverview';

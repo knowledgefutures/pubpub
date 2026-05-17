@@ -7,7 +7,7 @@
 
 import { Router } from 'express';
 
-import { KF_AUTH_URL, KF_AUTH_CLIENT_ID, APP_URL } from 'server/kf/auth';
+import { APP_URL, KF_AUTH_CLIENT_ID, KF_AUTH_URL } from 'server/kf/auth';
 
 export const router = Router();
 

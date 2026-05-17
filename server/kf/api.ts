@@ -17,34 +17,23 @@
  *   POST /api/kf/transfer-community   — transfer community ownership to a different KF Account
  */
 
-import { promisify } from 'util';
 import { timingSafeEqual } from 'crypto';
-
 import { Router } from 'express';
+import { promisify } from 'util';
 
-import { Community, Collection, Member, Pub, PubAttribution, Release, User } from 'server/models';
+import { Collection, Community, Member, Pub, PubAttribution, Release, User } from 'server/models';
 import { sequelize } from 'server/sequelize';
-import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
-import { isProd, isDuqDuq } from 'utils/environment';
+import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
+import { isDuqDuq, isProd } from 'utils/environment';
 
-import {
-	buildAuthorizeUrl,
-	exchangeCode,
-	fetchUserInfo,
-	fetchUserOrgs,
-	KF_AUTH_URL,
-} from './auth';
+import { buildAuthorizeUrl, exchangeCode, fetchUserInfo, fetchUserOrgs, KF_AUTH_URL } from './auth';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
 const KF_INTERNAL_API_KEY = process.env.KF_INTERNAL_API_KEY;
 
-function requireInternalKey(
-	req: any,
-	res: any,
-	next: () => void,
-): void {
+function requireInternalKey(req: any, res: any, next: () => void): void {
 	if (!KF_INTERNAL_API_KEY) {
 		res.status(500).json({ error: 'KF_INTERNAL_API_KEY not configured' });
 		return;
@@ -86,7 +75,10 @@ router.get('/auth/login', (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
 	const rawReturn = req.query.return_to || '/';
 	// Validate return_to is a safe relative path (prevent open redirect)
-	const returnTo = typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//') ? rawReturn : '/';
+	const returnTo =
+		typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
+			? rawReturn
+			: '/';
 
 	// Encode the community hostname + return path in state so we can
 	// redirect back after the OIDC callback.
@@ -188,13 +180,16 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// Parse state to get the community host + return path
 		let redirectUrl = '/';
 		try {
-			const statePayload = JSON.parse(
-				Buffer.from(state, 'base64url').toString(),
-			);
+			const statePayload = JSON.parse(Buffer.from(state, 'base64url').toString());
 			const host = statePayload.host || '';
 			const rawReturn = statePayload.returnTo || '/';
 			// Validate returnTo is a safe relative path
-			const returnTo = typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//') ? rawReturn : '/';
+			const returnTo =
+				typeof rawReturn === 'string' &&
+				rawReturn.startsWith('/') &&
+				!rawReturn.startsWith('//')
+					? rawReturn
+					: '/';
 
 			if (host && host !== req.hostname) {
 				// Redirect back to the community the user came from
@@ -241,8 +236,7 @@ router.post('/auth/logout', (req: any, res: any) => {
 
 router.post('/api/kf/profile-sync', requireInternalKey, async (req: any, res: any) => {
 	try {
-		const { userId, givenName, familyName, displayName, email, image } =
-			req.body;
+		const { userId, givenName, familyName, displayName, email, image } = req.body;
 
 		if (!userId) {
 			return res.status(400).json({ error: 'userId is required' });
@@ -383,9 +377,7 @@ router.get('/api/kf/billing/usage', requireInternalKey, async (req: any, res: an
 		// Placeholder — just return community count for now
 		return res.json({
 			kf_org_id,
-			line_items: [
-				{ key: 'communities', quantity: communityCount },
-			],
+			line_items: [{ key: 'communities', quantity: communityCount }],
 		});
 	} catch (err) {
 		console.error('Billing usage API error:', err);
@@ -432,14 +424,13 @@ router.post('/api/kf/transfer-community', async (req: any, res: any) => {
 		const userOrgs = await fetchUserOrgs(req.user.id);
 		const targetOrg = userOrgs.find((o) => o.id === kfOrgId);
 		if (!targetOrg) {
-			return res.status(403).json({ error: 'You are not a member of the target organization' });
+			return res
+				.status(403)
+				.json({ error: 'You are not a member of the target organization' });
 		}
 
 		// Update the community's kfOrgId
-		const [updatedCount] = await Community.update(
-			{ kfOrgId },
-			{ where: { id: communityId } },
-		);
+		const [updatedCount] = await Community.update({ kfOrgId }, { where: { id: communityId } });
 
 		if (updatedCount === 0) {
 			return res.status(404).json({ error: 'Community not found' });
@@ -461,14 +452,33 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 		const startDate = req.query.startDate || null;
 		const endDate = req.query.endDate || null;
 		// Determine analytics date range
-		const analyticsStart = startDate || new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+		const analyticsStart =
+			startDate || new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 		const analyticsEnd = endDate || new Date().toISOString().slice(0, 10);
 		const pubsMonthsBack = startDate
-			? Math.max(Math.ceil((Date.now() - new Date(startDate).getTime()) / (30 * 24 * 60 * 60 * 1000)), 3) || 24
+			? Math.max(
+					Math.ceil(
+						(Date.now() - new Date(startDate).getTime()) / (30 * 24 * 60 * 60 * 1000),
+					),
+					3,
+				) || 24
 			: 24;
 
 		const community = await Community.findByPk(communityId, {
-			attributes: ['id', 'title', 'subdomain', 'domain', 'avatar', 'accentColorDark', 'accentColorLight', 'headerLogo', 'heroLogo', 'description', 'heroBackgroundImage', 'heroImage'],
+			attributes: [
+				'id',
+				'title',
+				'subdomain',
+				'domain',
+				'avatar',
+				'accentColorDark',
+				'accentColorLight',
+				'headerLogo',
+				'heroLogo',
+				'description',
+				'heroBackgroundImage',
+				'heroImage',
+			],
 		});
 
 		if (!community) {
@@ -501,26 +511,38 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 			Pub.count({ where: { communityId }, include: [hasReleaseInclude] }),
 			Member.count({ where: { communityId } }),
 			Collection.count({ where: { communityId } }),
-			sequelize.query(
-				`SELECT COUNT(*)::int AS count FROM "Releases" r INNER JOIN "Pubs" p ON r."pubId" = p.id WHERE p."communityId" = :communityId`,
-				{ replacements: { communityId }, type: 'SELECT' as any },
-			).then((rows: any) => rows[0]?.count ?? 0),
+			sequelize
+				.query(
+					`SELECT COUNT(*)::int AS count FROM "Releases" r INNER JOIN "Pubs" p ON r."pubId" = p.id WHERE p."communityId" = :communityId`,
+					{ replacements: { communityId }, type: 'SELECT' as any },
+				)
+				.then((rows: any) => rows[0]?.count ?? 0),
 			// Members with user details
 			Member.findAll({
 				where: { communityId },
 				attributes: ['id', 'userId', 'permissions', 'isOwner', 'createdAt'],
-				include: [{
-					model: User,
-					as: 'user',
-					attributes: ['fullName', 'avatar', 'slug'],
-				}],
+				include: [
+					{
+						model: User,
+						as: 'user',
+						attributes: ['fullName', 'avatar', 'slug'],
+					},
+				],
 				order: [['createdAt', 'ASC']],
 				limit: 500,
 			}),
 			// Recent pubs (released only)
 			Pub.findAll({
 				where: { communityId },
-				attributes: ['id', 'title', 'slug', 'description', 'avatar', 'customPublishedAt', 'createdAt'],
+				attributes: [
+					'id',
+					'title',
+					'slug',
+					'description',
+					'avatar',
+					'customPublishedAt',
+					'createdAt',
+				],
 				include: [
 					hasReleaseInclude,
 					{
@@ -529,7 +551,9 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 						attributes: ['name', 'avatar', 'order', 'isAuthor'],
 						where: { isAuthor: true },
 						required: false,
-					include: [{ model: User, as: 'user', attributes: ['fullName', 'avatar', 'slug'] }],
+						include: [
+							{ model: User, as: 'user', attributes: ['fullName', 'avatar', 'slug'] },
+						],
 					},
 				],
 				order: [['createdAt', 'DESC']],
@@ -546,7 +570,12 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 					AND p."createdAt" >= :pubsCutoff
 				GROUP BY 1 ORDER BY 1`,
 				{
-					replacements: { communityId, pubsCutoff: new Date(Date.now() - pubsMonthsBack * 30 * 24 * 60 * 60 * 1000).toISOString() },
+					replacements: {
+						communityId,
+						pubsCutoff: new Date(
+							Date.now() - pubsMonthsBack * 30 * 24 * 60 * 60 * 1000,
+						).toISOString(),
+					},
 					type: 'SELECT' as any,
 				},
 			),
@@ -621,7 +650,10 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 		});
 
 		// Aggregate top authors
-		const authorMap = new Map<string, { name: string; avatar: string | null; slug: string | null; count: number }>();
+		const authorMap = new Map<
+			string,
+			{ name: string; avatar: string | null; slug: string | null; count: number }
+		>();
 		for (const attr of topAuthorsRaw) {
 			const a = (attr as any).toJSON();
 			const key = a.userId || `name:${a.name}`;
@@ -637,8 +669,7 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 				});
 			}
 		}
-		const topAuthors = [...authorMap.values()]
-			.sort((a, b) => b.count - a.count);
+		const topAuthors = [...authorMap.values()].sort((a, b) => b.count - a.count);
 
 		// Try to get analytics (daily views for selected range) from matview
 		let dailyViews: Array<{ date: string; views: number }> = [];
@@ -732,10 +763,13 @@ router.get('/api/kf/community/:id/detail', requireInternalKey, async (req: any, 
 router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any, res: any) => {
 	try {
 		const domainsParam = req.query.domains as string;
-		const excludeIds = req.query.excludeIds as string || '';
+		const excludeIds = (req.query.excludeIds as string) || '';
 		if (!domainsParam) return res.json([]);
 
-		const domains = domainsParam.split(',').map((d: string) => d.trim().toLowerCase()).filter(Boolean);
+		const domains = domainsParam
+			.split(',')
+			.map((d: string) => d.trim().toLowerCase())
+			.filter(Boolean);
 		if (domains.length === 0) return res.json([]);
 
 		const excludeList = excludeIds.split(',').filter(Boolean);
@@ -786,7 +820,10 @@ router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any,
 			communityMap.set(row.communityId, { managerCount: row.managerCount, authorCount: 0 });
 		}
 		for (const row of authorRows) {
-			const existing = communityMap.get(row.communityId) || { managerCount: 0, authorCount: 0 };
+			const existing = communityMap.get(row.communityId) || {
+				managerCount: 0,
+				authorCount: 0,
+			};
 			existing.authorCount = row.authorCount;
 			communityMap.set(row.communityId, existing);
 		}
@@ -800,7 +837,9 @@ router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any,
 		const communityIds = [...communityMap.keys()];
 		const idPlaceholders = communityIds.map((_, i) => `:cid${i}`).join(', ');
 		const idReplacements: Record<string, string> = {};
-		communityIds.forEach((id, i) => { idReplacements[`cid${i}`] = id; });
+		communityIds.forEach((id, i) => {
+			idReplacements[`cid${i}`] = id;
+		});
 
 		const communityRows = (await sequelize.query(
 			`SELECT c."id", c."title", c."subdomain", c."domain", c."description", c."heroLogo", c."accentColorDark", c."accentColorLight", c."createdAt",
@@ -841,23 +880,36 @@ router.get('/api/kf/suggested-communities', requireInternalKey, async (req: any,
 router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: any) => {
 	try {
 		const termsParam = req.query.terms as string;
-		const excludeCommunityIds = req.query.excludeCommunityIds as string || '';
+		const excludeCommunityIds = (req.query.excludeCommunityIds as string) || '';
 		const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
 		if (!termsParam) return res.json([]);
 
-		const terms = termsParam.split(',').map((t: string) => t.trim()).filter(Boolean);
+		const terms = termsParam
+			.split(',')
+			.map((t: string) => t.trim())
+			.filter(Boolean);
 		if (terms.length === 0) return res.json([]);
 
 		const excludeList = excludeCommunityIds.split(',').filter(Boolean);
 
 		// Build tsquery from terms — use adjacency operator (<->) for exact phrase matching
 		// e.g. "Mellon Foundation" → "mellon <-> foundation", single words get prefix match
-		const tsQuery = terms.map((t) => {
-			const words = t.trim().toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean);
-			if (words.length === 0) return null;
-			if (words.length === 1) return `${words[0]}:*`;
-			return `(${words.join(' <-> ')})`;
-		}).filter(Boolean).join(' | ');
+		const tsQuery = terms
+			.map((t) => {
+				const words = t
+					.trim()
+					.toLowerCase()
+					.replace(/[^\w\s]/g, ' ')
+					.replace(/\s+/g, ' ')
+					.trim()
+					.split(/\s+/)
+					.filter(Boolean);
+				if (words.length === 0) return null;
+				if (words.length === 1) return `${words[0]}:*`;
+				return `(${words.join(' <-> ')})`;
+			})
+			.filter(Boolean)
+			.join(' | ');
 
 		if (!tsQuery) return res.json([]);
 
@@ -865,7 +917,9 @@ router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: a
 		const replacements: Record<string, any> = { tsQuery, limit };
 		if (excludeList.length > 0) {
 			const excludePlaceholders = excludeList.map((_, i) => `:excl${i}`).join(', ');
-			excludeList.forEach((id, i) => { replacements[`excl${i}`] = id; });
+			excludeList.forEach((id, i) => {
+				replacements[`excl${i}`] = id;
+			});
 			excludeClause = `AND p."communityId" NOT IN (${excludePlaceholders})`;
 		}
 
@@ -903,21 +957,23 @@ router.get('/api/kf/suggested-pubs', requireInternalKey, async (req: any, res: a
 			{ replacements, type: 'SELECT' as any },
 		)) as any[];
 
-		return res.json(rows.map((r: any) => ({
-			id: r.id,
-			title: r.title,
-			slug: r.slug,
-			description: r.description,
-			avatar: r.avatar,
-			communityId: r.communityId,
-			communityTitle: r.communityTitle,
-			communitySubdomain: r.communitySubdomain,
-			communityDomain: r.communityDomain,
-			byline: r.byline ?? null,
-			snippet: r.snippet ?? null,
-			publishedAt: r.customPublishedAt ?? null,
-			rank: parseFloat(r.rank),
-		})));
+		return res.json(
+			rows.map((r: any) => ({
+				id: r.id,
+				title: r.title,
+				slug: r.slug,
+				description: r.description,
+				avatar: r.avatar,
+				communityId: r.communityId,
+				communityTitle: r.communityTitle,
+				communitySubdomain: r.communitySubdomain,
+				communityDomain: r.communityDomain,
+				byline: r.byline ?? null,
+				snippet: r.snippet ?? null,
+				publishedAt: r.customPublishedAt ?? null,
+				rank: parseFloat(r.rank),
+			})),
+		);
 	} catch (err) {
 		console.error('Suggested pubs API error:', err);
 		return res.status(500).json({ error: 'Internal error' });
@@ -936,7 +992,9 @@ router.get('/api/kf/graph-data', requireInternalKey, async (req: any, res: any) 
 
 		const idPlaceholders = communityIds.map((_: string, i: number) => `:cid${i}`).join(', ');
 		const replacements: Record<string, string> = {};
-		communityIds.forEach((id: string, i: number) => { replacements[`cid${i}`] = id; });
+		communityIds.forEach((id: string, i: number) => {
+			replacements[`cid${i}`] = id;
+		});
 
 		// Get communities
 		const communities = (await sequelize.query(
@@ -980,7 +1038,13 @@ router.get('/api/kf/graph-data', requireInternalKey, async (req: any, res: any) 
 		})) as any[];
 
 		// Build graph nodes and links
-		type GraphNode = { id: string; label: string; type: 'community' | 'person'; color?: string; avatar?: string };
+		type GraphNode = {
+			id: string;
+			label: string;
+			type: 'community' | 'person';
+			color?: string;
+			avatar?: string;
+		};
 		type GraphLink = { source: string; target: string; roles: string[] };
 
 		const nodes: GraphNode[] = [

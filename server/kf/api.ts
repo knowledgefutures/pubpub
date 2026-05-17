@@ -18,9 +18,9 @@
  *   POST /api/kf/transfer-community   — transfer community ownership to a different KF Account
  */
 
-import { Op } from 'sequelize';
 import { timingSafeEqual } from 'crypto';
 import { Router } from 'express';
+import { Op } from 'sequelize';
 import { promisify } from 'util';
 
 import { Collection, Community, Member, Pub, PubAttribution, Release, User } from 'server/models';
@@ -135,7 +135,9 @@ router.get('/auth/callback', async (req: any, res: any) => {
 
 		const { v: codeVerifier, h: host, r: rawReturn } = stateData;
 		const returnTo =
-			typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
+			typeof rawReturn === 'string' &&
+			rawReturn.startsWith('/') &&
+			!rawReturn.startsWith('//')
 				? rawReturn
 				: '/';
 

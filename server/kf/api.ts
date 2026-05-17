@@ -160,9 +160,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			const existingSlugCount = await User.count({
 				where: { slug: { [Op.like]: `${baseSlug}%` } },
 			});
-			const slug = existingSlugCount
-				? `${baseSlug}-${existingSlugCount + 1}`
-				: baseSlug;
+			const slug = existingSlugCount ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug;
 
 			// Use KF Auth email if available and not already taken
 			let email = `${kfUserId}@placeholder.invalid`;

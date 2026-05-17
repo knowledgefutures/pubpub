@@ -2,9 +2,10 @@
  * KF Auth integration routes for PubPub.
  *
  * OIDC login/callback:
- *   GET  /auth/login     — redirect to KF Auth
- *   GET  /auth/callback  — handle OIDC callback, create session
- *   POST /auth/logout    — clear session + redirect to KF Auth logout
+ *   GET  /auth/login       — redirect to KF Auth
+ *   GET  /auth/callback    — handle OIDC callback, create session
+ *   GET  /auth/session-set — establish session on custom domains (via encrypted token)
+ *   POST /auth/logout      — clear session + redirect to KF Auth logout
  *
  * Internal service-to-service endpoints (KF_INTERNAL_API_KEY):
  *   POST /api/kf/profile-sync         — receive profile updates from KF Auth
@@ -17,6 +18,7 @@
  *   POST /api/kf/transfer-community   — transfer community ownership to a different KF Account
  */
 
+import { Op } from 'sequelize';
 import { timingSafeEqual } from 'crypto';
 import { Router } from 'express';
 import { promisify } from 'util';
@@ -25,9 +27,19 @@ import { Collection, Community, Member, Pub, PubAttribution, Release, User } fro
 import { sequelize } from 'server/sequelize';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
-import { isDuqDuq, isProd } from 'utils/environment';
+import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
+import { slugifyString } from 'utils/strings';
 
-import { buildAuthorizeUrl, exchangeCode, fetchUserInfo, fetchUserOrgs, KF_AUTH_URL } from './auth';
+import {
+	buildAuthorizeUrl,
+	decryptPayload,
+	encryptPayload,
+	exchangeCode,
+	fetchUserInfo,
+	fetchUserOrgs,
+	generateCodeVerifier,
+	KF_AUTH_URL,
+} from './auth';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -55,15 +67,24 @@ function requireInternalKey(req: any, res: any, next: () => void): void {
 /**
  * Derive the community hostname the user came from.
  * Needed because the OIDC callback always hits the main domain.
+ * Note: PubPub's hostname middleware rewrites duqduq.org → pubpub.org
+ * for community resolution, so we reverse that here.
  */
 function getCommunityHost(req: any): string {
-	// Use the communityHostname header if set by the reverse proxy,
-	// otherwise fall back to the raw hostname.
-	return req.headers.communityhostname || req.hostname;
+	const host: string = req.headers.communityhostname || req.hostname;
+	if (isDuqDuq() && host.includes('pubpub.org')) {
+		return host.replace('pubpub.org', 'duqduq.org');
+	}
+	return host;
 }
 
-// Cookie name for OIDC state (verifier stored in session for custom domain compat)
-const STATE_COOKIE = 'kf_oauth_state';
+/**
+ * Returns true if the host is a platform subdomain (*.pubpub.org or *.duqduq.org)
+ * where the shared session cookie works across subdomains.
+ */
+function isPlatformSubdomain(host: string): boolean {
+	return host.endsWith('.pubpub.org') || host.endsWith('.duqduq.org');
+}
 
 // ── Router ───────────────────────────────────────────────────────────
 
@@ -80,35 +101,15 @@ router.get('/auth/login', (req: any, res: any) => {
 			? rawReturn
 			: '/';
 
-	// Encode the community hostname + return path in state so we can
-	// redirect back after the OIDC callback.
-	const statePayload = JSON.stringify({ host: communityHost, returnTo });
-	const stateToken = Buffer.from(statePayload).toString('base64url');
+	// Generate verifier first, then encrypt it with routing info into state.
+	// This avoids cookies/session for OIDC state, so it works across
+	// domains (custom domains → callback on www.duqduq.org).
+	const codeVerifier = generateCodeVerifier();
+	const stateToken = encryptPayload({ v: codeVerifier, h: communityHost, r: returnTo });
 
-	const { url, codeVerifier } = buildAuthorizeUrl(stateToken);
+	const { url } = buildAuthorizeUrl(stateToken, codeVerifier);
 
-	const cookieOpts = {
-		httpOnly: true,
-		secure: isProd(),
-		sameSite: 'lax' as const,
-		path: '/',
-		maxAge: 600_000, // 10 minutes
-		// Set on .pubpub.org so the callback (on www.pubpub.org) can read it
-		...(isProd() &&
-			communityHost.indexOf('pubpub.org') > -1 && {
-				domain: '.pubpub.org',
-			}),
-	};
-
-	res.cookie(STATE_COOKIE, stateToken, cookieOpts);
-
-	// Store verifier in session (not cookie) so it works across domains.
-	// Custom domain sessions are scoped to their domain, and the callback
-	// hits the same domain since PubPub proxies all requests.
-	req.session.kfOauthVerifier = codeVerifier;
-	req.session.save(() => {
-		return res.redirect(url);
-	});
+	return res.redirect(url);
 });
 
 // ─── OIDC callback ───────────────────────────────────────────────────
@@ -119,30 +120,24 @@ router.get('/auth/callback', async (req: any, res: any) => {
 
 		if (error) {
 			console.error('KF Auth error:', error, req.query.error_description);
-			return res.redirect('/login?error=auth_failed');
+			return res.status(400).send('Authentication failed. Please try again.');
 		}
 
 		if (!code || !state) {
-			return res.redirect('/login?error=missing_params');
+			return res.status(400).send('Missing authentication parameters.');
 		}
 
-		// Validate state
-		const savedState = req.cookies[STATE_COOKIE];
-		const codeVerifier = req.session?.kfOauthVerifier;
-
-		// Clear OIDC state
-		res.clearCookie(STATE_COOKIE, { path: '/' });
-		if (req.session) {
-			delete req.session.kfOauthVerifier;
+		// Decrypt state → {v: codeVerifier, h: host, r: returnTo}
+		const stateData = decryptPayload<{ v: string; h: string; r: string }>(state);
+		if (!stateData || !stateData.v) {
+			return res.status(400).send('Invalid or expired authentication state.');
 		}
 
-		if (!savedState || savedState !== state) {
-			return res.redirect('/login?error=invalid_state');
-		}
-
-		if (!codeVerifier) {
-			return res.redirect('/login?error=missing_verifier');
-		}
+		const { v: codeVerifier, h: host, r: rawReturn } = stateData;
+		const returnTo =
+			typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
+				? rawReturn
+				: '/';
 
 		// Exchange authorization code for tokens
 		const tokens = await exchangeCode(code, codeVerifier);
@@ -151,62 +146,106 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const userInfo = await fetchUserInfo(tokens.access_token);
 		const kfUserId = userInfo.sub;
 
-		// Look up PubPub user by ID (PubPub ID = KF Auth ID after seeding)
-		const user = await User.findOne({ where: { id: kfUserId } });
+		// Look up PubPub user by ID, or auto-create on first login
+		let user = await User.findOne({ where: { id: kfUserId } });
 
 		if (!user) {
-			console.error(`No PubPub user found for KF Auth ID: ${kfUserId}`);
-			return res.redirect('/login?error=user_not_found');
+			const firstName = (userInfo.given_name || userInfo.name || 'New').trim();
+			const lastName = (userInfo.family_name || 'User').trim();
+			const fullName = `${firstName} ${lastName}`;
+			const initials = `${firstName[0] || '?'}${lastName[0] || '?'}`;
+			const baseSlug = slugifyString(fullName) || 'user';
+			const existingSlugCount = await User.count({
+				where: { slug: { [Op.like]: `${baseSlug}%` } },
+			});
+			const slug = existingSlugCount ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug;
+
+			user = await User.create({
+				id: kfUserId,
+				slug,
+				firstName,
+				lastName,
+				fullName,
+				initials,
+				email: userInfo.email || `${kfUserId}@placeholder.invalid`,
+				avatar: userInfo.picture || null,
+			} as any);
+			console.log(`Auto-created PubPub user ${user.id} (${user.slug}) from KF Auth`);
 		}
 
-		// Create a standard Passport session (indistinguishable from old login)
+		const protocol = isDevelopment() ? 'http' : 'https';
+
+		// For custom domains, we can't set a session here (different domain).
+		// Create a one-time encrypted token and redirect to session-set on the origin.
+		if (host && !isPlatformSubdomain(host)) {
+			const sessionToken = encryptPayload({
+				u: user.id,
+				r: returnTo,
+				exp: Date.now() + 60_000, // 60 seconds
+			});
+			const sessionSetUrl = `${protocol}://${host}/auth/session-set?token=${encodeURIComponent(sessionToken)}`;
+			return res.redirect(sessionSetUrl);
+		}
+
+		// For platform subdomains: create session directly (shared cookie on .pubpub.org / .duqduq.org)
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
 
-		// Set the CDN cache cookie
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
-			...(isProd() &&
-				req.hostname.indexOf('pubpub.org') > -1 && {
-					domain: '.pubpub.org',
-				}),
-			...(isDuqDuq() &&
-				req.hostname.indexOf('duqduq.org') > -1 && {
-					domain: '.duqduq.org',
-				}),
+			...(isProd() && { domain: '.pubpub.org' }),
+			...(isDuqDuq() && { domain: '.duqduq.org' }),
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 
-		// Parse state to get the community host + return path
-		let redirectUrl = '/';
-		try {
-			const statePayload = JSON.parse(Buffer.from(state, 'base64url').toString());
-			const host = statePayload.host || '';
-			const rawReturn = statePayload.returnTo || '/';
-			// Validate returnTo is a safe relative path
-			const returnTo =
-				typeof rawReturn === 'string' &&
-				rawReturn.startsWith('/') &&
-				!rawReturn.startsWith('//')
-					? rawReturn
-					: '/';
-
-			if (host && host !== req.hostname) {
-				// Redirect back to the community the user came from
-				const protocol = isProd() ? 'https' : 'http';
-				redirectUrl = `${protocol}://${host}${returnTo}`;
-			} else {
-				redirectUrl = returnTo;
-			}
-		} catch {
-			// If state parsing fails, just go to root
-			redirectUrl = '/';
+		if (host && host !== req.hostname) {
+			return res.redirect(`${protocol}://${host}${returnTo}`);
 		}
-
-		return res.redirect(redirectUrl);
+		return res.redirect(returnTo);
 	} catch (err) {
 		console.error('OIDC callback error:', err);
-		return res.redirect('/login?error=callback_failed');
+		return res.status(500).send('Login failed. Please try again.');
+	}
+});
+
+// ─── Session transfer for custom domains ─────────────────────────────
+
+router.get('/auth/session-set', async (req: any, res: any) => {
+	try {
+		const { token } = req.query;
+		if (!token) {
+			return res.status(400).send('Missing session token.');
+		}
+
+		const data = decryptPayload<{ u: string; r: string; exp: number }>(token);
+		if (!data || !data.u) {
+			return res.status(400).send('Invalid session token.');
+		}
+
+		if (Date.now() > data.exp) {
+			return res.status(400).send('Session token expired. Please log in again.');
+		}
+
+		const user = await User.findOne({ where: { id: data.u } });
+		if (!user) {
+			return res.status(400).send('User not found.');
+		}
+
+		// Create Passport session on this domain
+		const logIn = promisify(req.logIn.bind(req));
+		await logIn(user);
+
+		// Set the CDN cache cookie on this domain
+		const hashedUserId = getHashedUserId(user);
+		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
+
+		const returnTo = data.r || '/';
+		return res.redirect(returnTo);
+	} catch (err) {
+		console.error('Session-set error:', err);
+		return res.status(500).send('Failed to establish session. Please try again.');
 	}
 });
 

@@ -9,11 +9,13 @@
 
 import crypto from 'node:crypto';
 
-const KF_AUTH_URL = process.env.KF_AUTH_URL ?? 'http://localhost:3000';
-const KF_AUTH_INTERNAL_URL = process.env.KF_AUTH_INTERNAL_URL ?? KF_AUTH_URL;
-const KF_AUTH_CLIENT_ID = process.env.KF_AUTH_CLIENT_ID ?? 'kf_pubpub';
-const KF_AUTH_CLIENT_SECRET = process.env.KF_AUTH_CLIENT_SECRET ?? '';
-const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
+import { env } from 'server/env';
+
+const KF_AUTH_URL = env.KF_AUTH_URL;
+const KF_AUTH_INTERNAL_URL = env.KF_AUTH_INTERNAL_URL ?? KF_AUTH_URL;
+const KF_AUTH_CLIENT_ID = env.KF_AUTH_CLIENT_ID;
+const KF_AUTH_CLIENT_SECRET = env.KF_AUTH_CLIENT_SECRET;
+const APP_URL = env.APP_URL;
 const REDIRECT_URI = `${APP_URL}/auth/callback`;
 
 // ── Symmetric encryption (AES-256-GCM) ──────────────────────────────

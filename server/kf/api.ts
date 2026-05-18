@@ -86,14 +86,35 @@ function isPlatformSubdomain(host: string): boolean {
 	return host.endsWith('.pubpub.org') || host.endsWith('.duqduq.org');
 }
 
+/**
+ * Whether a host is a legitimate PubPub origin: a platform subdomain or a
+ * registered custom community domain. Used to guard against Host-header
+ * injection sending session-set tokens to attacker-controlled hosts.
+ */
+async function isValidCommunityHost(host: string): Promise<boolean> {
+	if (!host) return false;
+	if (isDevelopment() && (host === 'localhost' || host.startsWith('localhost:'))) {
+		return true;
+	}
+	if (isPlatformSubdomain(host)) return true;
+	const community = await Community.findOne({
+		where: { domain: host },
+		attributes: ['id'],
+	});
+	return !!community;
+}
+
 // ── Router ───────────────────────────────────────────────────────────
 
 export const router = Router();
 
 // ─── OIDC login ──────────────────────────────────────────────────────
 
-router.get('/auth/login', (req: any, res: any) => {
+router.get('/auth/login', async (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
+	if (!(await isValidCommunityHost(communityHost))) {
+		return res.status(400).send('Unknown login host.');
+	}
 	const rawReturn = req.query.return_to || '/';
 	// Validate return_to is a safe relative path (prevent open redirect)
 	const returnTo =
@@ -195,6 +216,12 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// For custom domains, we can't set a session here (different domain).
 		// Create a one-time encrypted token and redirect to session-set on the origin.
 		if (host && !isPlatformSubdomain(host)) {
+			// Re-validate against the Community whitelist: even though `host`
+			// arrived inside an AES-GCM-sealed state, this guards against any
+			// future bug or key compromise leaking session tokens off-platform.
+			if (!(await isValidCommunityHost(host))) {
+				return res.status(400).send('Unknown login host.');
+			}
 			const sessionToken = encryptPayload({
 				u: user.id,
 				r: returnTo,

@@ -209,6 +209,14 @@ export const envSchema = z.object({
 	INTEGRATION_TESTING: booleanish.describe('Signals that integration tests are running'),
 	TEST_FASTLY_PURGE: booleanish.describe('Enable Fastly purge calls during tests'),
 	USE_LOCAL_DB: booleanish.describe('Force use of local PostgreSQL in development'),
+
+	// ── KF Auth ──────────────────────────────────────────────────────────
+	KF_AUTH_URL: z.string().url().describe('KF Auth URL'),
+	KF_AUTH_INTERNAL_URL: z.string().url().optional().describe('KF Auth internal URL'),
+	KF_AUTH_CLIENT_ID: z.string().describe('KF Auth client ID'),
+	KF_AUTH_CLIENT_SECRET: z.string().min(1).describe('KF Auth client secret'),
+	KF_INTERNAL_API_KEY: z.string().min(1).describe('KF internal API key'),
+	APP_URL: z.string().url().describe('PubPub app URL'),
 });
 
 export type Env = z.infer<typeof envSchema>;

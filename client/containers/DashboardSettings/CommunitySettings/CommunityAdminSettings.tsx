@@ -8,6 +8,7 @@ import { SettingsSection } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
+import CommunityAuthTokens from './CommunityAuthTokens';
 import DeleteCommunity from './DeleteCommunity';
 import DiscussionsSection from './DiscussionsSection';
 import { ExportCommunityDataButton } from './ExportCommunityDataButton';
@@ -98,6 +99,8 @@ const ExportAndDeleteSettings = (props: Props) => {
 			/>
 
 			<ExportDataSection settingsData={props.settingsData} />
+
+			{communityData && <CommunityAuthTokens communityData={communityData} />}
 
 			<TransferOwnership communityData={communityData} />
 

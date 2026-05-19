@@ -15,6 +15,12 @@ import Terms from './Terms';
 
 import './legal.scss';
 
+export type AdminCommunityRef = {
+	id: string;
+	title: string;
+	subdomain: string;
+};
+
 type Props = {
 	integrations: Integration[];
 	userNotificationPreferences?: UserNotificationPreferences;
@@ -26,6 +32,7 @@ type Props = {
 		output: string | null;
 		error: string | null;
 	}[];
+	adminCommunities?: AdminCommunityRef[];
 };
 
 const Legal = (props: Props) => {
@@ -92,6 +99,7 @@ const Legal = (props: Props) => {
 								integrations={props.integrations}
 								userEmail={props.userEmail}
 								accountExports={props.accountExports}
+								adminCommunities={props.adminCommunities}
 								userNotificationPreferences={userNotificationPreferences}
 								onUpdateUserNotificationPreferences={
 									updateUserNotificationPreferences

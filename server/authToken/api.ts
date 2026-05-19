@@ -1,5 +1,6 @@
 import { initServer } from '@ts-rest/express';
 
+import { Community, User } from 'server/models';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { contract } from 'utils/api/contract';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
@@ -45,6 +46,55 @@ export const authTokenServer = s.router(contract.authToken, {
 			body: authToken.toJSON(),
 		};
 	},
+	getForUser: async ({ req }) => {
+		if (!req.user) {
+			throw new BadRequestError(new Error('User not found'));
+		}
+
+		const tokens = await AuthToken.findAll({
+			where: { userId: req.user.id },
+			attributes: { exclude: ['token'] },
+			include: [
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain'],
+				},
+			],
+			order: [['createdAt', 'DESC']],
+		});
+
+		return {
+			status: 200,
+			body: tokens.map((t) => t.toJSON()) as any,
+		};
+	},
+
+	getForCommunity: async ({ params, req }) => {
+		await ensureUserIsCommunityAdmin({
+			user: req.user,
+			id: params.communityId,
+		});
+
+		const tokens = await AuthToken.findAll({
+			where: { communityId: params.communityId },
+			attributes: { exclude: ['token'] },
+			include: [
+				{
+					model: User,
+					as: 'user',
+					attributes: ['id', 'fullName', 'slug', 'avatar', 'initials'],
+				},
+			],
+			order: [['createdAt', 'DESC']],
+		});
+
+		return {
+			status: 200,
+			body: tokens.map((t) => t.toJSON()) as any,
+		};
+	},
+
 	remove: async ({ params, req }) => {
 		if (!req.user) {
 			throw new BadRequestError(new Error('User not found'));
@@ -65,6 +115,28 @@ export const authTokenServer = s.router(contract.authToken, {
 		return {
 			status: 200,
 			body: tokenId,
+		};
+	},
+
+	removeForCommunity: async ({ params, req }) => {
+		await ensureUserIsCommunityAdmin({
+			user: req.user,
+			id: params.communityId,
+		});
+
+		const authToken = await AuthToken.findOne({
+			where: { id: params.id, communityId: params.communityId },
+		});
+
+		if (!authToken) {
+			throw new NotFoundError(new Error('Token not found'));
+		}
+
+		await authToken.destroy();
+
+		return {
+			status: 200,
+			body: params.id,
 		};
 	},
 

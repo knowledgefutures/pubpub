@@ -92,7 +92,7 @@ export const router = Router();
 
 // ─── OIDC login ──────────────────────────────────────────────────────
 
-router.get('/auth/login', (req: any, res: any) => {
+router.get('/auth/login', async (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
 	const rawReturn = req.query.return_to || '/';
 	// Validate return_to is a safe relative path (prevent open redirect)
@@ -109,7 +109,7 @@ router.get('/auth/login', (req: any, res: any) => {
 
 	// Pass the community hostname as context for per-community branding.
 	// The branding endpoint resolves hostnames → slugs.
-	const { url } = buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
+	const { url } = await buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
 
 	return res.redirect(url);
 });

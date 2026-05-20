@@ -339,6 +339,13 @@ app.use(appRouter);
 /* ------------ */
 const port = env.PORT;
 export const startServer = async () => {
+	// Verify OIDC provider is reachable before accepting requests
+	const { initOidc } = await import('./kf/oidc.server.js');
+	await initOidc().catch((err) => {
+		console.error('[OIDC] Failed to discover provider:', err.message);
+		process.exit(1);
+	});
+
 	await sequelizeSyncPromise;
 	return app.listen(
 		port,

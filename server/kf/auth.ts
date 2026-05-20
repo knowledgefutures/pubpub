@@ -4,6 +4,7 @@
  */
 
 export {
+	APP_URL,
 	buildAuthorizeUrl,
 	decryptPayload,
 	encryptPayload,
@@ -14,12 +15,10 @@ export {
 	generateCodeChallenge,
 	generateCodeVerifier,
 	initOidc,
-	APP_URL,
 	KF_AUTH_CLIENT_ID,
 	KF_AUTH_URL,
-	REDIRECT_URI,
 	type OIDCOrg as KFOrg,
 	type OIDCUserInfo as KFUserInfo,
+	REDIRECT_URI,
 	type TokenResponse,
 } from './oidc.server.js';
-

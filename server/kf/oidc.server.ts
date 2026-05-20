@@ -20,18 +20,14 @@ const OIDC_ISSUER_URL =
 	process.env.OIDC_ISSUER_URL ?? process.env.KF_AUTH_URL ?? 'http://localhost:3000';
 
 const OIDC_ISSUER_INTERNAL_URL =
-	process.env.OIDC_ISSUER_INTERNAL_URL ??
-	process.env.KF_AUTH_INTERNAL_URL ??
-	OIDC_ISSUER_URL;
+	process.env.OIDC_ISSUER_INTERNAL_URL ?? process.env.KF_AUTH_INTERNAL_URL ?? OIDC_ISSUER_URL;
 
-const OIDC_CLIENT_ID =
-	process.env.OIDC_CLIENT_ID ?? process.env.KF_AUTH_CLIENT_ID ?? 'kf_pubpub';
+const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID ?? process.env.KF_AUTH_CLIENT_ID ?? 'kf_pubpub';
 
 const OIDC_CLIENT_SECRET =
 	process.env.OIDC_CLIENT_SECRET ?? process.env.KF_AUTH_CLIENT_SECRET ?? '';
 
-const OIDC_ORGS_CLAIM =
-	process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures.org/orgs';
+const OIDC_ORGS_CLAIM = process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures.org/orgs';
 
 const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
 const REDIRECT_URI = `${APP_URL}/auth/callback`;
@@ -288,7 +284,4 @@ export {
 };
 
 // Legacy aliases
-export {
-	OIDC_ISSUER_URL as KF_AUTH_URL,
-	OIDC_CLIENT_ID as KF_AUTH_CLIENT_ID,
-};
+export { OIDC_ISSUER_URL as KF_AUTH_URL, OIDC_CLIENT_ID as KF_AUTH_CLIENT_ID };

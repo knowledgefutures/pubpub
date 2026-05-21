@@ -20,7 +20,6 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
 
 import { timingSafeEqual } from 'crypto';
 import { Router } from 'express';
-import { Op } from 'sequelize';
 import { promisify } from 'util';
 
 import { Collection, Community, Member, Pub, PubAttribution, Release, User } from 'server/models';
@@ -28,7 +27,6 @@ import { sequelize } from 'server/sequelize';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
-import { slugifyString } from 'utils/strings';
 
 import {
 	buildAuthorizeUrl,
@@ -40,6 +38,7 @@ import {
 	generateCodeVerifier,
 	OIDC_ISSUER_URL,
 } from './auth';
+import { provisionLocalUser } from './provisionLocalUser';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -150,45 +149,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const userInfo = await fetchUserInfo(tokens.access_token);
 		const kfUserId = userInfo.sub;
 
-		// Look up PubPub user by ID, or auto-create on first login
-		let user = await User.findOne({ where: { id: kfUserId } });
-
-		if (!user) {
-			const firstName = (userInfo.given_name || userInfo.name || 'New').trim();
-			const lastName = (userInfo.family_name || 'User').trim();
-			const fullName = `${firstName} ${lastName}`;
-			const initials = `${firstName[0] || '?'}${lastName[0] || '?'}`;
-			const baseSlug = slugifyString(fullName) || 'user';
-			const existingSlugCount = await User.count({
-				where: { slug: { [Op.like]: `${baseSlug}%` } },
-			});
-			const slug = existingSlugCount ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug;
-
-			// Use KF Auth email if available and not already taken
-			let email = `${kfUserId}@placeholder.invalid`;
-			if (userInfo.email) {
-				const emailTaken = await User.findOne({
-					where: { email: userInfo.email.toLowerCase() },
-				});
-				if (!emailTaken) {
-					email = userInfo.email.toLowerCase();
-				}
-			}
-
-			user = await User.create({
-				id: kfUserId,
-				slug,
-				firstName,
-				lastName,
-				fullName,
-				initials,
-				email,
-				avatar: userInfo.picture || null,
-				hash: '',
-				salt: '',
-			} as any);
-			console.log(`Auto-created PubPub user ${user.id} (${user.slug}) from KF Auth`);
-		}
+		const user = await provisionLocalUser(kfUserId, userInfo);
 
 		const protocol = isDevelopment() ? 'http' : 'https';
 

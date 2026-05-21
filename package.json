@@ -161,7 +161,7 @@
 		"install": "^0.12.2",
 		"is-url": "^1.2.4",
 		"js-beautify": "^1.11.0",
-		"js-cookie": "^2.2.0",
+		"js-cookie": "^3.0.7",
 		"json-stable-stringify": "^1.0.1",
 		"jsonpath-plus": "^10.3.0",
 		"jsonwebtoken": "^9.0.0",

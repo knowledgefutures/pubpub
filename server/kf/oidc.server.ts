@@ -61,12 +61,16 @@ async function discover(): Promise<OIDCDiscovery> {
 		const config = (await res.json()) as OIDCDiscovery;
 		discoveryCache = config;
 		return config;
-	})();
+	})().catch((err) => {
+		// Clear the cached promise so subsequent calls can retry
+		discoveryPromise = null;
+		throw err;
+	});
 
 	return discoveryPromise;
 }
 
-/** Initialize OIDC — call at app startup to fail fast if provider is unreachable. */
+/** Pre-warm OIDC discovery cache. Non-fatal — discovery will be retried on demand. */
 export async function initOidc(): Promise<void> {
 	await discover();
 }

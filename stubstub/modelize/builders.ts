@@ -14,12 +14,14 @@ import SHA3 from 'crypto-js/sha3';
 import uuid from 'uuid';
 
 import { getEmptyDoc } from 'client/components/Editor';
+import { generateAuthToken } from 'server/authToken/tokenGenerator';
 import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { createCommunity } from 'server/community/queries';
 import { createDoc } from 'server/doc/queries';
 import {
 	ActivityItem,
+	AuthToken,
 	Community,
 	FacetBinding,
 	Member,
@@ -298,6 +300,21 @@ export const builders = {
 		applyHooks?: boolean;
 	} & ActivityItemType) => {
 		return ActivityItem.create(activityItem, { hooks: applyHooks });
+	},
+
+	AuthToken: async (
+		args: WithOptional<CreationAttributes<AuthToken>, 'hashedToken' | 'lastFour'>,
+	) => {
+		// Mirror the production minting flow: persist only the hash, but expose
+		// the raw token on the returned instance so tests can use it as a Bearer.
+		const { raw, hashedToken, lastFour } = generateAuthToken();
+		const authToken = await AuthToken.create({
+			...args,
+			hashedToken,
+			lastFour,
+		});
+		(authToken as any).token = raw;
+		return authToken;
 	},
 
 	UserSubscription: (

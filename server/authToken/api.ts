@@ -6,8 +6,11 @@ import { contract } from 'utils/api/contract';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 
 import { AuthToken } from './model';
+import { generateAuthToken, hashAuthToken } from './tokenGenerator';
 
 const s = initServer();
+
+const PUBLIC_ATTRIBUTES = ['id', 'userId', 'communityId', 'lastFour', 'expiresAt', 'createdAt'];
 
 export const authTokenServer = s.router(contract.authToken, {
 	create: async ({ body, req }) => {
@@ -35,15 +38,27 @@ export const authTokenServer = s.router(contract.authToken, {
 			}
 		})();
 
+		const { raw, hashedToken, lastFour } = generateAuthToken();
+
 		const authToken = await AuthToken.create({
 			userId: req.user.id,
 			communityId: community.id,
+			hashedToken,
+			lastFour,
 			expiresAt,
 		});
 
+		// The raw token is shown to the user exactly once; we never persist it.
 		return {
 			status: 201,
-			body: authToken.toJSON(),
+			body: {
+				id: authToken.id,
+				userId: authToken.userId,
+				communityId: authToken.communityId,
+				lastFour: authToken.lastFour,
+				expiresAt: authToken.expiresAt ? authToken.expiresAt.toISOString() : null,
+				token: raw,
+			},
 		};
 	},
 	getForUser: async ({ req }) => {
@@ -53,7 +68,7 @@ export const authTokenServer = s.router(contract.authToken, {
 
 		const tokens = await AuthToken.findAll({
 			where: { userId: req.user.id },
-			attributes: { exclude: ['token'] },
+			attributes: PUBLIC_ATTRIBUTES,
 			include: [
 				{
 					model: Community,
@@ -78,7 +93,7 @@ export const authTokenServer = s.router(contract.authToken, {
 
 		const tokens = await AuthToken.findAll({
 			where: { communityId: params.communityId },
-			attributes: { exclude: ['token'] },
+			attributes: PUBLIC_ATTRIBUTES,
 			include: [
 				{
 					model: User,
@@ -146,7 +161,7 @@ export const authTokenServer = s.router(contract.authToken, {
 		}
 
 		const destroyed = await AuthToken.destroy({
-			where: { token },
+			where: { hashedToken: hashAuthToken(token) },
 		});
 
 		if (destroyed === 0) {

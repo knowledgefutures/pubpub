@@ -9,6 +9,7 @@ const authTokenMetadata = z.object({
 	id: z.string().uuid(),
 	userId: z.string().uuid(),
 	communityId: z.string().uuid(),
+	lastFour: z.string(),
 	expiresAt: z.string().datetime().nullable(),
 	createdAt: z.string().datetime(),
 });
@@ -47,7 +48,11 @@ export const authTokenRouter = {
 				id: z.string().uuid(),
 				userId: z.string().uuid(),
 				communityId: z.string().uuid(),
-				token: z.string(),
+				lastFour: z.string(),
+				token: z.string().openapi({
+					description:
+						'The raw token. Shown exactly once at creation. It is hashed before being persisted and cannot be retrieved later.',
+				}),
 				expiresAt: z.string().datetime().nullable(),
 			}),
 		},

@@ -36,10 +36,14 @@ export class AuthToken extends Model<
 	@Column(DataType.UUID)
 	declare communityId: string;
 
+	@AllowNull(false)
 	@Unique
-	@Default(DataType.UUIDV4)
 	@Column(DataType.TEXT)
-	declare token: CreationOptional<string>;
+	declare hashedToken: string;
+
+	@AllowNull(false)
+	@Column(DataType.STRING(8))
+	declare lastFour: string;
 
 	@Column(DataType.DATE)
 	declare expiresAt: Date | null;

@@ -4,11 +4,11 @@
  * Reads endpoints from the provider's .well-known/openid-configuration.
  * Works with any standards-compliant OIDC provider (KF Auth, Keycloak, Auth0, etc.).
  *
- * Env vars (new canonical names with backward-compat fallbacks):
- *   OIDC_ISSUER_URL          — browser-facing issuer URL (fallback: KF_AUTH_URL)
- *   OIDC_ISSUER_INTERNAL_URL — server-to-server URL for Docker (fallback: KF_AUTH_INTERNAL_URL, then OIDC_ISSUER_URL)
- *   OIDC_CLIENT_ID           — OAuth client ID (fallback: KF_AUTH_CLIENT_ID)
- *   OIDC_CLIENT_SECRET       — OAuth client secret (fallback: KF_AUTH_CLIENT_SECRET)
+ * Env vars:
+ *   OIDC_ISSUER_URL          — browser-facing issuer URL
+ *   OIDC_ISSUER_INTERNAL_URL — server-to-server URL for Docker (falls back to OIDC_ISSUER_URL)
+ *   OIDC_CLIENT_ID           — OAuth client ID
+ *   OIDC_CLIENT_SECRET       — OAuth client secret
  *   OIDC_ORGS_CLAIM          — custom claim key for org memberships (default: https://knowledgefutures.org/orgs)
  */
 
@@ -16,16 +16,13 @@ import * as crypto from 'node:crypto';
 
 // --- Config (with backward-compat fallbacks) ---
 
-const OIDC_ISSUER_URL =
-	process.env.OIDC_ISSUER_URL ?? process.env.KF_AUTH_URL ?? 'http://localhost:3000';
+const OIDC_ISSUER_URL = process.env.OIDC_ISSUER_URL ?? 'http://localhost:3000';
 
-const OIDC_ISSUER_INTERNAL_URL =
-	process.env.OIDC_ISSUER_INTERNAL_URL ?? process.env.KF_AUTH_INTERNAL_URL ?? OIDC_ISSUER_URL;
+const OIDC_ISSUER_INTERNAL_URL = process.env.OIDC_ISSUER_INTERNAL_URL ?? OIDC_ISSUER_URL;
 
-const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID ?? process.env.KF_AUTH_CLIENT_ID ?? 'kf_pubpub';
+const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID ?? 'kf_pubpub';
 
-const OIDC_CLIENT_SECRET =
-	process.env.OIDC_CLIENT_SECRET ?? process.env.KF_AUTH_CLIENT_SECRET ?? '';
+const OIDC_CLIENT_SECRET = process.env.OIDC_CLIENT_SECRET ?? '';
 
 const OIDC_ORGS_CLAIM = process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures.org/orgs';
 
@@ -55,7 +52,7 @@ async function discover(): Promise<OIDCDiscovery> {
 		if (!res.ok) {
 			throw new Error(
 				`OIDC discovery failed: ${res.status} from ${url}. ` +
-					`Ensure OIDC_ISSUER_URL or KF_AUTH_URL points to a valid OIDC provider.`,
+					`Ensure OIDC_ISSUER_URL points to a valid OIDC provider.`,
 			);
 		}
 		const config = (await res.json()) as OIDCDiscovery;
@@ -247,14 +244,9 @@ export function extractOrgs(userInfo: OIDCUserInfo): OIDCOrg[] {
 
 // --- Internal API (optional, for KF Auth specific features) ---
 
-const AUTH_INTERNAL_API_URL =
-	process.env.AUTH_INTERNAL_API_URL ??
-	process.env.KF_AUTH_INTERNAL_URL ??
-	process.env.KF_AUTH_URL ??
-	OIDC_ISSUER_INTERNAL_URL;
+const AUTH_INTERNAL_API_URL = process.env.AUTH_INTERNAL_API_URL ?? OIDC_ISSUER_INTERNAL_URL;
 
-const AUTH_INTERNAL_API_KEY =
-	process.env.AUTH_INTERNAL_API_KEY ?? process.env.KF_INTERNAL_API_KEY ?? '';
+const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY ?? '';
 
 /** Whether the internal API is configured and available. */
 export const hasInternalApi = Boolean(AUTH_INTERNAL_API_KEY);
@@ -286,6 +278,3 @@ export {
 	APP_URL,
 	REDIRECT_URI,
 };
-
-// Legacy aliases
-export { OIDC_ISSUER_URL as KF_AUTH_URL, OIDC_CLIENT_ID as KF_AUTH_CLIENT_ID };

@@ -7,11 +7,11 @@
 
 import { Router } from 'express';
 
-import { KF_AUTH_URL } from 'server/kf/auth';
+import { OIDC_ISSUER_URL } from 'server/kf/auth';
 
 export const router = Router();
 
 router.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res) => {
 	// Old reset links won't work; redirect to KF Auth's password reset flow
-	return res.redirect(`${KF_AUTH_URL}/forgot-password`);
+	return res.redirect(`${OIDC_ISSUER_URL}/forgot-password`);
 });

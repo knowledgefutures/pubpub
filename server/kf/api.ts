@@ -7,7 +7,7 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  *   GET  /auth/session-set — establish session on custom domains (via encrypted token)
  *   POST /auth/logout      — clear session + redirect to KF Auth logout
  *
- * Internal service-to-service endpoints (KF_INTERNAL_API_KEY):
+ * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
  *   POST /api/kf/profile-sync         — receive profile updates from KF Auth
  *   GET  /api/kf/branding             — return community branding for login page
  *   GET  /api/kf/summary              — return community list for a KF org
@@ -38,20 +38,20 @@ import {
 	fetchUserInfo,
 	fetchUserOrgs,
 	generateCodeVerifier,
-	KF_AUTH_URL,
+	OIDC_ISSUER_URL,
 } from './auth';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-const KF_INTERNAL_API_KEY = process.env.KF_INTERNAL_API_KEY;
+const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY;
 
 function requireInternalKey(req: any, res: any, next: () => void): void {
-	if (!KF_INTERNAL_API_KEY) {
-		res.status(500).json({ error: 'KF_INTERNAL_API_KEY not configured' });
+	if (!AUTH_INTERNAL_API_KEY) {
+		res.status(500).json({ error: 'AUTH_INTERNAL_API_KEY not configured' });
 		return;
 	}
 	const auth = req.headers.authorization;
-	const expected = `Bearer ${KF_INTERNAL_API_KEY}`;
+	const expected = `Bearer ${AUTH_INTERNAL_API_KEY}`;
 	// Use timing-safe comparison to prevent timing attacks on the API key
 	if (
 		!auth ||
@@ -284,7 +284,7 @@ router.post('/auth/logout', (req: any, res: any) => {
 		// Redirect to KF Auth's logout endpoint so the SSO session is also cleared
 		const returnUrl = `${process.env.APP_URL || 'http://localhost:9876'}/`;
 		return res.redirect(
-			`${KF_AUTH_URL}/api/auth/sign-out?callbackURL=${encodeURIComponent(returnUrl)}`,
+			`${OIDC_ISSUER_URL}/api/auth/sign-out?callbackURL=${encodeURIComponent(returnUrl)}`,
 		);
 	});
 });

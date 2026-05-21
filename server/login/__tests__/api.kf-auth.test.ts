@@ -79,9 +79,14 @@ describe('/api/login (kf-auth handshake)', () => {
 			const call = fetchSpy.mock.calls.find(([u]) => String(u).endsWith(ENDPOINT));
 			expect(call).toBeDefined();
 			const init = call![1] as RequestInit;
-			expect((init.headers as Record<string, string>).Authorization).toBe(`Bearer ${AUTH_KEY}`);
+			expect((init.headers as Record<string, string>).Authorization).toBe(
+				`Bearer ${AUTH_KEY}`,
+			);
 			const body = JSON.parse(String(init.body));
-			expect(body).toEqual({ email: legacyUser.email, prehashedPassword: 'sha3-hex-payload' });
+			expect(body).toEqual({
+				email: legacyUser.email,
+				prehashedPassword: 'sha3-hex-payload',
+			});
 		} finally {
 			server.close();
 		}

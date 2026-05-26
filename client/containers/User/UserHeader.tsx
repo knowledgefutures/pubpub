@@ -10,6 +10,7 @@ import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
 import SpamStatusMenu from 'components/SpamStatusMenu';
 import { usePageContext } from 'utils/hooks';
+import { normalizeOrcid } from 'utils/orcid';
 
 import './userHeader.scss';
 
@@ -43,6 +44,8 @@ const UserHeader = function (props) {
 		setSpamStatus(status);
 	}, []);
 
+	const orcid = normalizeOrcid(props.userData.orcid);
+
 	const links = [
 		{ value: props.userData.location, icon: 'map-marker' as const, url: '' },
 		{
@@ -51,9 +54,9 @@ const UserHeader = function (props) {
 			url: props.userData.website,
 		},
 		{
-			value: props.userData.orcid,
+			value: orcid as string,
 			icon: 'orcid' as const,
-			url: `https://www.orcid.org/${props.userData.orcid}`,
+			url: orcid ? `https://orcid.org/${orcid}` : '',
 		},
 		{
 			value: props.userData.github,

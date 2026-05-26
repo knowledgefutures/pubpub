@@ -1,5 +1,7 @@
 /** Renders a list of contributors */
 
+import { normalizeOrcid } from 'utils/orcid';
+
 const roleList = {
 	'Writing – Review & Editing': 'editor',
 	Editor: 'editor',
@@ -16,9 +18,12 @@ export default (attributions) => {
 	if (attributions.length === 0) {
 		return {};
 	}
+
 	return {
 		contributors: {
 			person_name: attributions.map((attribution, attributionIndex) => {
+				const orcid = normalizeOrcid(attribution.user.orcid);
+
 				const personNameOutput = {
 					'@contributor_role': attribution.isAuthor ? checkRole(attribution) : 'reader',
 					'@sequence': attributionIndex === 0 ? 'first' : 'additional',
@@ -27,17 +32,21 @@ export default (attributions) => {
 						? attribution.user.lastName
 						: attribution.user.firstName,
 					affiliation: attribution.affiliation,
-					ORCID: `https://orcid.org/${attribution.user.orcid}`,
+					ORCID: orcid ? `https://orcid.org/${orcid}` : undefined,
 				};
+
 				if (!personNameOutput.affiliation) {
 					delete personNameOutput.affiliation;
 				}
+
 				if (!personNameOutput.given_name) {
 					delete personNameOutput.given_name;
 				}
-				if (!attribution.user.orcid) {
+
+				if (!personNameOutput.ORCID) {
 					delete personNameOutput.ORCID;
 				}
+
 				return personNameOutput;
 			}),
 		},

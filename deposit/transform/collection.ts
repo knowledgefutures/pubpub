@@ -12,6 +12,7 @@ import { fetchFacetsForScope } from 'server/facets';
 import { expect } from 'utils/assert';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { licenseDetailsByKind } from 'utils/licenses';
+import { normalizeOrcid } from 'utils/orcid';
 
 const attributionRoleToResourceContributorRole: Record<string, ResourceContributorRole> = {
 	'Writing – Review & Editing': 'Editor',
@@ -46,7 +47,7 @@ function transformCollectionAttributionToResourceContribution(
 	return {
 		contributor: {
 			name: attribution.user?.fullName ?? expect(attribution.name),
-			orcid: attribution.orcid,
+			orcid: normalizeOrcid(attribution.orcid),
 		},
 		contributorAffiliation: attribution.affiliation,
 		contributorRole: transformAttributionRoleToResourceContributorRole(role),

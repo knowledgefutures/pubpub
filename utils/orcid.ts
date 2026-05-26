@@ -1,4 +1,4 @@
-export const ORCID_PATTERN = /(\d{4}-){3}\d{3}(\d|X)/g;
+export const ORCID_PATTERN = /(\d{4}-){3}\d{3}(\d|X)/;
 
 export const ORCID_ID_OR_URL_PATTERN =
 	/^(?:(?:https?:\/\/)?(?:www\.)?orcid\.org\/)?(\d{4}-){3}\d{3}(\d|X)$/g;
@@ -11,6 +11,6 @@ export const ORCID_ID_OR_URL_PATTERN =
 export const normalizeOrcid = (value: string | null | undefined): string | null => {
 	if (!value) return null;
 
-	const match = value.match(/(\d{4}-){3}\d{3}(\d|X)/);
+	const match = value.match(ORCID_PATTERN);
 	return match?.[0] ?? null;
 };

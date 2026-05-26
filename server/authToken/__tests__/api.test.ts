@@ -134,6 +134,26 @@ describe('authToken', () => {
 			.expect(404);
 	});
 
+	it('a bearer token should not be able to list tokens for a different community', async () => {
+		const { adminToken, community, anotherCommunity } = models;
+
+		await (await login())
+			.get(`/api/authTokens/community/${anotherCommunity.id}`)
+			.set('Authorization', `Bearer ${adminToken.token}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
+	});
+
+	it('a bearer token should not be able to revoke tokens for a different community', async () => {
+		const { adminToken, community, anotherAuthToken, anotherCommunity } = models;
+
+		await (await login())
+			.delete(`/api/authTokens/community/${anotherCommunity.id}/${anotherAuthToken.id}`)
+			.set('Authorization', `Bearer ${adminToken.token}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
+	});
+
 	it('should be possible for an admin to delete a token', async () => {
 		const { adminToken, community } = models;
 

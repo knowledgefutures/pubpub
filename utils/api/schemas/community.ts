@@ -98,6 +98,7 @@ export const communitySchema = baseSchema.extend({
 	spamTagId: z.string().uuid().nullable(),
 	scopeSummaryId: z.string().uuid().nullable(),
 	templateId: z.string().uuid().nullable(),
+	kfOrgId: z.string().nullable(),
 	accentTextColor: z.string(),
 	analyticsSettings: analyticsSettingsSchema,
 }) satisfies z.ZodType<types.Community, any, any>;
@@ -125,6 +126,7 @@ export const communityCreateSchema = communitySchema
 		altcha: z.string().optional(),
 		_honeypot: z.string().optional(),
 		templateId: z.string().uuid().nullish(),
+		kfOrgId: z.string().nullish(),
 	});
 
 export const communityUpdateSchema = communitySchema

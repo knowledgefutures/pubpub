@@ -12,6 +12,7 @@ import CommunityAuthTokens from './CommunityAuthTokens';
 import DeleteCommunity from './DeleteCommunity';
 import DiscussionsSection from './DiscussionsSection';
 import { ExportCommunityDataButton } from './ExportCommunityDataButton';
+import TransferOwnership from './TransferOwnership';
 
 type PastExport = {
 	id: string;
@@ -100,6 +101,8 @@ const ExportAndDeleteSettings = (props: Props) => {
 			<ExportDataSection settingsData={props.settingsData} />
 
 			{communityData && <CommunityAuthTokens communityData={communityData} />}
+
+			<TransferOwnership communityData={communityData} />
 
 			<DeleteCommunity communityData={communityData} />
 		</>

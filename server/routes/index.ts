@@ -1,5 +1,7 @@
 import { Router } from 'express';
 
+// KF Auth integration (OIDC + internal API)
+import { router as kfAuthRouter } from '../kf/api';
 /* import { router as picingRouter} from './picing'); // Route: '/pricing' */
 import { router as adminDashboardRouter } from './adminDashboard'; // Route: '/admin' (redirect to superadmin)
 import { router as authenticateRouter } from './authenticate'; // Route: '/auth'
@@ -40,10 +42,10 @@ import { router as hubPricingRouter } from './hubPricing';
 import { router as landingRouter } from './landing'; // Route: '/'
 import { router as legalRouter } from './legal'; // Route: '/legal'
 /* Routes for all */
-import { router as loginRouter } from './login'; // Route: '/login'
+import { router as loginRouter } from './login.kf'; // Route: '/login' → redirect to KF Auth
 import { router as noMatchRouter } from './noMatch';
 import { router as pageRouter } from './page'; // Route: ['/', '/:slug']
-import { router as passwordResetRouter } from './passwordReset'; // Route: ['/password-reset', '/password-reset/:resetHash/:slug']
+import { router as passwordResetRouter } from './passwordReset.kf'; // Route: '/password-reset' → redirect to KF Auth
 /* Routes for Communities */
 import { router as pubDocumentRouter } from './pubDocument';
 import { router as pubDownloadsRouter } from './pubDownloads';
@@ -51,12 +53,11 @@ import { router as pubRedirectsRouter } from './pubRedirects';
 import { router as redirectsRouter } from './redirects'; // Redirect needed v3 routes;
 import { router as robotsRouter } from './robots'; // Route: /robots.txt
 import { router as search2Router } from './search2'; // Route: '/search'
-import { router as signupRouter } from './signup'; // Route: '/signup'
+import { router as signupRouter } from './signup.kf'; // Route: '/signup' → redirect to KF Auth
 import { router as sitemapRouter } from './sitemap'; // Route: /sitemap-*.xml
 import { router as submitRouter } from './submit';
 import { router as superAdminDashboardRouter } from './superAdminDashboard'; // Route: /superadmin
 import { router as userRouter } from './user'; // Route: ['/user/:slug', '/user/:slug/:mode']
-import { router as userCreateRouter } from './userCreate'; // Route: '/user/create/:hash'
 
 const rootRouter = Router(); // Route: '/*'
 
@@ -96,6 +97,7 @@ rootRouter
 	.use(hubLandingRouter)
 	.use(adminDashboardRouter)
 	.use(landingRouter)
+	.use(kfAuthRouter)
 	.use(loginRouter)
 	.use(authenticateRouter)
 	.use(legalRouter)
@@ -103,7 +105,6 @@ rootRouter
 	.use(signupRouter)
 	.use(superAdminDashboardRouter)
 	.use(passwordResetRouter)
-	.use(userCreateRouter)
 	.use(userRouter)
 	.use(pageRouter)
 	.use(sitemapRouter)

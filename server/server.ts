@@ -339,6 +339,12 @@ app.use(appRouter);
 /* ------------ */
 const port = env.PORT;
 export const startServer = async () => {
+	// Pre-warm OIDC discovery (non-fatal — will retry on first auth request)
+	const { initOidc } = await import('./kf/oidc.server.js');
+	await initOidc().catch((err) => {
+		console.warn('[OIDC] Discovery failed at startup (will retry on demand):', err.message);
+	});
+
 	await sequelizeSyncPromise;
 	return app.listen(
 		port,

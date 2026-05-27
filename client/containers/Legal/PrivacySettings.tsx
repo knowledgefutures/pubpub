@@ -10,6 +10,7 @@ import AccountSecuritySettings from 'components/AccountSecuritySettings';
 import UserNotificationPreferences from 'components/UserNotifications/UserNotificationPreferences';
 import { usePageContext } from 'utils/hooks';
 
+import AuthTokensCard from './AuthTokensCard';
 import DeleteAccount from './DeleteAccount';
 import ExportAccountData from './ExportAccountData';
 
@@ -24,6 +25,7 @@ type PrivacySettingsProps = {
 		output: string | null;
 		error: string | null;
 	}[];
+	adminCommunities?: { id: string; title: string; subdomain: string }[];
 	userNotificationPreferences?: types.UserNotificationPreferences;
 	onUpdateUserNotificationPreferences: (
 		preferences: Partial<types.UserNotificationPreferences>,
@@ -147,6 +149,7 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 							/>
 						</Card>
 					)}
+					<AuthTokensCard adminCommunities={props.adminCommunities} />
 					<AccountSecuritySettings userEmail={props.userEmail} />
 					<DeleteAccount />
 				</React.Fragment>

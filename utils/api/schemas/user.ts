@@ -2,6 +2,8 @@ import type { MinimalUser, User, UserWithPrivateFields } from 'types';
 
 import { z } from 'zod';
 
+import { ORCID_ID_OR_URL_PATTERN, ORCID_PATTERN } from 'utils/orcid';
+
 export const privateUserSchema = z.object({
 	id: z.string().uuid(),
 	slug: z.string(),
@@ -20,7 +22,12 @@ export const privateUserSchema = z.object({
 	facebook: z.string().nullable(),
 	twitter: z.string().nullable(),
 	github: z.string().nullable(),
-	orcid: z.string().nullable(),
+	orcid: z
+		.string()
+		.regex(ORCID_ID_OR_URL_PATTERN)
+		.transform((orcid) => orcid.match(ORCID_PATTERN)?.[0]!)
+		.nullable()
+		.or(z.literal('')),
 	googleScholar: z.string().nullable(),
 	resetHashExpiration: z.coerce
 		.date()

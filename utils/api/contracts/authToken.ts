@@ -5,6 +5,29 @@ import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
+const authTokenMetadata = z.object({
+	id: z.string().uuid(),
+	userId: z.string().uuid(),
+	communityId: z.string().uuid(),
+	lastFour: z.string(),
+	expiresAt: z.string().datetime().nullable(),
+	createdAt: z.string().datetime(),
+});
+
+const authTokenCommunityRef = z.object({
+	id: z.string().uuid(),
+	title: z.string(),
+	subdomain: z.string(),
+});
+
+const authTokenUserRef = z.object({
+	id: z.string().uuid(),
+	fullName: z.string().nullable().optional(),
+	slug: z.string().nullable().optional(),
+	avatar: z.string().nullable().optional(),
+	initials: z.string().nullable().optional(),
+});
+
 export const authTokenRouter = {
 	create: {
 		path: '/api/authTokens',
@@ -25,9 +48,44 @@ export const authTokenRouter = {
 				id: z.string().uuid(),
 				userId: z.string().uuid(),
 				communityId: z.string().uuid(),
-				token: z.string(),
+				lastFour: z.string(),
+				token: z.string().openapi({
+					description:
+						'The raw token. Shown exactly once at creation. It is hashed before being persisted and cannot be retrieved later.',
+				}),
 				expiresAt: z.string().datetime().nullable(),
 			}),
+		},
+	},
+	getForUser: {
+		path: '/api/authTokens',
+		method: 'GET',
+		summary: 'List the current user’s authentication tokens',
+		description:
+			'List authentication tokens owned by the current user. The token secret is never returned by this endpoint — only metadata.',
+		responses: {
+			200: z.array(
+				authTokenMetadata.extend({
+					community: authTokenCommunityRef.nullable().optional(),
+				}),
+			),
+		},
+	},
+	getForCommunity: {
+		path: '/api/authTokens/community/:communityId',
+		method: 'GET',
+		summary: 'List authentication tokens scoped to a community',
+		description:
+			'List authentication tokens scoped to a community. Only accessible to admins of that community. The token secret is never returned.',
+		pathParams: z.object({
+			communityId: z.string().uuid(),
+		}),
+		responses: {
+			200: z.array(
+				authTokenMetadata.extend({
+					user: authTokenUserRef.nullable().optional(),
+				}),
+			),
 		},
 	},
 	remove: {
@@ -36,6 +94,21 @@ export const authTokenRouter = {
 		summary: 'Delete an authentication token',
 		description: 'Delete an authentication token. Only accessible to admins.',
 		pathParams: z.object({
+			id: z.string().uuid(),
+		}),
+		body: z.union([z.null(), z.object({})]).optional(),
+		responses: {
+			200: z.string().uuid(),
+		},
+	},
+	removeForCommunity: {
+		path: '/api/authTokens/community/:communityId/:id',
+		method: 'DELETE',
+		summary: 'Revoke a token scoped to a community',
+		description:
+			'Revoke an authentication token scoped to a community. Accessible to any admin of that community, regardless of whether they minted the token.',
+		pathParams: z.object({
+			communityId: z.string().uuid(),
 			id: z.string().uuid(),
 		}),
 		body: z.union([z.null(), z.object({})]).optional(),

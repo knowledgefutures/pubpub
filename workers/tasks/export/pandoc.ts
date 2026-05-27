@@ -14,6 +14,7 @@ import YAML from 'yaml';
 
 import { editorSchema, getReactedDocFromJson } from 'components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
+import { normalizeOrcid } from 'utils/orcid';
 
 import { rules } from '../import/rules';
 import {
@@ -94,11 +95,13 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 			const affiliationIds = getAffiliations(attr).map((aff) => {
 				return dedupedAffiliations.indexOf(aff);
 			});
+			const orcid = normalizeOrcid(attr.user.orcid);
+
 			return {
 				...(attr.user.lastName && { surname: attr.user.lastName }),
 				...(attr.user.firstName && { 'given-names': attr.user.firstName }),
 				...(publicEmail && { email: publicEmail }),
-				...(attr.user.orcid && { orcid: attr.user.orcid }),
+				...(orcid && { orcid }),
 				...(attr.affiliation && { affiliation: affiliationIds }),
 			};
 		}

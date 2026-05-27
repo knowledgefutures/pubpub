@@ -3,6 +3,7 @@ import React from 'react';
 import { Router } from 'express';
 
 import { Legal } from 'containers';
+import { getAdminCommunitiesForUser } from 'server/community/queries';
 import Html from 'server/Html';
 import { getAccountExports } from 'server/user/account';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
@@ -35,13 +36,19 @@ router.get('/legal/:tab', async (req, res, next) => {
 		const userId = req.user?.id;
 		const isSettingsTab = req.params.tab === 'settings';
 
-		const [initialData, integrations, userNotificationPreferences, accountExports] =
-			await Promise.all([
-				getInitialData(req),
-				userId ? getIntegrations(userId) : [],
-				userId ? getOrCreateUserNotificationPreferences(userId) : undefined,
-				isSettingsTab && userId ? getAccountExports(userId) : undefined,
-			]);
+		const [
+			initialData,
+			integrations,
+			userNotificationPreferences,
+			accountExports,
+			adminCommunities,
+		] = await Promise.all([
+			getInitialData(req),
+			userId ? getIntegrations(userId) : [],
+			userId ? getOrCreateUserNotificationPreferences(userId) : undefined,
+			isSettingsTab && userId ? getAccountExports(userId) : undefined,
+			isSettingsTab && userId ? getAdminCommunitiesForUser(userId) : undefined,
+		]);
 
 		const title = tabToTitle[req.params.tab as keyof typeof tabToTitle];
 
@@ -56,6 +63,7 @@ router.get('/legal/:tab', async (req, res, next) => {
 					userNotificationPreferences,
 					userEmail: isSettingsTab ? req.user?.email : undefined,
 					accountExports: isSettingsTab ? accountExports : undefined,
+					adminCommunities: isSettingsTab ? adminCommunities : undefined,
 				}}
 				headerComponents={generateMetaComponents({
 					initialData,

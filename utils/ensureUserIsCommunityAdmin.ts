@@ -68,7 +68,7 @@ export const ensureUserIsCommunityAdmin = async (
 	}
 
 	if ('id' in req) {
-		if (req.user.isSuperAdmin || req.user.isAdminOfThisCommunity) {
+		if (req.user.isSuperAdmin) {
 			return expect(await Community.findByPk(req.id));
 		}
 
@@ -87,8 +87,6 @@ export const ensureUserIsCommunityAdmin = async (
 		if (!autherMember) {
 			throw new ForbiddenError(new Error('User is not an admin of this community'));
 		}
-
-		req.user.isAdminOfThisCommunity = true;
 
 		return expect(autherMember.community);
 	}

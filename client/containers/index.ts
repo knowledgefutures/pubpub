@@ -24,7 +24,6 @@ export { default as DashboardReviews } from './DashboardReviews/DashboardReviews
 export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';
 export { default as DashboardSubmissions } from './DashboardSubmissions/DashboardSubmissions';
 export { default as DashboardSubmissionWorkflow } from './DashboardSubmissionWorkflow/DashboardSubmissionWorkflow';
-export { default as EmailChange } from './EmailChange/EmailChange';
 export { default as Explore } from './Explore/Explore';
 export { default as HubData } from './HubData/HubData';
 export { default as HubDirectory } from './HubDirectory/HubDirectory';

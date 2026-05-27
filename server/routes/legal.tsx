@@ -5,6 +5,7 @@ import { Router } from 'express';
 import { Legal } from 'containers';
 import { getAdminCommunitiesForUser } from 'server/community/queries';
 import Html from 'server/Html';
+import { OIDC_ACCOUNT_URL } from 'server/kf/auth';
 import { getAccountExports } from 'server/user/account';
 import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 import { handleErrors } from 'server/utils/errors';
@@ -62,6 +63,7 @@ router.get('/legal/:tab', async (req, res, next) => {
 					integrations,
 					userNotificationPreferences,
 					userEmail: isSettingsTab ? req.user?.email : undefined,
+					accountUrl: OIDC_ACCOUNT_URL,
 					accountExports: isSettingsTab ? accountExports : undefined,
 					adminCommunities: isSettingsTab ? adminCommunities : undefined,
 				}}

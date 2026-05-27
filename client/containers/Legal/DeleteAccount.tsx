@@ -73,7 +73,7 @@ const DeleteAccount = () => {
 				</p>
 				{isLoadingAudit && <Spinner size={20} />}
 				{audit && audit.soleAdminCommunities.length > 0 && (
-					<Callout intent="warning" style={{ marginBottom: 15 }}>
+					<>
 						<p>
 							You cannot delete your account because you are the only admin of{' '}
 							<b>{audit.soleAdminCommunities.length}</b>{' '}
@@ -100,7 +100,7 @@ const DeleteAccount = () => {
 							, or delete {audit.soleAdminCommunities.length === 1 ? 'it' : 'them'}{' '}
 							first.
 						</p>
-					</Callout>
+					</>
 				)}
 				{audit && audit.soleManagerHubs.length > 0 && (
 					<Callout intent="warning" style={{ marginBottom: 15 }}>

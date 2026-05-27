@@ -25,6 +25,7 @@ type Props = {
 	integrations: Integration[];
 	userNotificationPreferences?: UserNotificationPreferences;
 	userEmail: string;
+	accountUrl: string;
 	accountExports?: {
 		id: string;
 		createdAt: string;
@@ -98,6 +99,7 @@ const Legal = (props: Props) => {
 								isLoggedIn={!!loginData.id}
 								integrations={props.integrations}
 								userEmail={props.userEmail}
+								accountUrl={props.accountUrl}
 								accountExports={props.accountExports}
 								adminCommunities={props.adminCommunities}
 								userNotificationPreferences={userNotificationPreferences}

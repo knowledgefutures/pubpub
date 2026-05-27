@@ -17,6 +17,7 @@ import ExportAccountData from './ExportAccountData';
 type PrivacySettingsProps = {
 	integrations: types.Integration[];
 	userEmail: string;
+	accountUrl: string;
 	isLoggedIn: boolean;
 	accountExports?: {
 		id: string;
@@ -150,7 +151,10 @@ const PrivacySettings = (props: PrivacySettingsProps) => {
 						</Card>
 					)}
 					<AuthTokensCard adminCommunities={props.adminCommunities} />
-					<AccountSecuritySettings userEmail={props.userEmail} />
+					<AccountSecuritySettings
+						userEmail={props.userEmail}
+						accountUrl={props.accountUrl}
+					/>
 					<DeleteAccount />
 				</React.Fragment>
 			)}

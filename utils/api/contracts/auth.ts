@@ -9,7 +9,13 @@ export const authRouter = {
 	/**
 	 * `POST /api/login`
 	 *
-	 * Login and returns authentication cookie
+	 * Login and returns authentication cookie.
+	 *
+	 * @deprecated The SHA3-prehashed password flow is being retired in favour
+	 * of API tokens (`/dashboard/settings/tokens`). The endpoint continues to
+	 * work during the deprecation window, but accounts whose password has been
+	 * reset through KF Auth will receive 410 Gone — those clients must
+	 * migrate. Responses include `Deprecation`, `Sunset`, and `Link` headers.
 	 *
 	 * @access You need to be **logged in** and have access to this resource.
 	 *
@@ -19,8 +25,8 @@ export const authRouter = {
 	login: {
 		path: '/api/login',
 		method: 'POST',
-		summary: 'Login',
-		description: 'Login and returns authentication cookie',
+		summary: 'Login (deprecated)',
+		description: 'Login and returns authentication cookie. Deprecated: prefer API tokens.',
 		body: z
 			.object({
 				email: z.string().email(),
@@ -39,6 +45,10 @@ export const authRouter = {
 			403: z.string().openapi({
 				description:
 					'Account restricted (e.g. marked as spam). Message is shown to the user.',
+			}),
+			410: z.string().openapi({
+				description:
+					'Account password has been migrated past the legacy SHA3 path. Switch to an API token.',
 			}),
 			500: z.string().openapi({}),
 		},
@@ -64,6 +74,7 @@ export const authRouter = {
 			400: z.string(),
 			401: z.literal('Login attempt failed'),
 			403: z.string(),
+			410: z.string(),
 			500: z.string(),
 		},
 	},

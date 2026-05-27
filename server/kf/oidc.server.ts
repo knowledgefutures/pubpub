@@ -29,6 +29,10 @@ const OIDC_ORGS_CLAIM = process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures
 const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
 const REDIRECT_URI = `${APP_URL}/auth/callback`;
 
+// Browser-facing URL of the KF Account app, where users manage their
+// profile, email, and password. Distinct from the OIDC issuer.
+const OIDC_ACCOUNT_URL = process.env.OIDC_ACCOUNT_URL ?? 'http://localhost:3001';
+
 // --- OIDC Discovery ---
 
 interface OIDCDiscovery {
@@ -275,6 +279,7 @@ export {
 	OIDC_CLIENT_ID,
 	OIDC_CLIENT_SECRET,
 	OIDC_ORGS_CLAIM,
+	OIDC_ACCOUNT_URL,
 	APP_URL,
 	REDIRECT_URI,
 };

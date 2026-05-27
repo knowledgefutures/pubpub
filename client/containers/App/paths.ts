@@ -23,7 +23,6 @@ import {
 	DashboardSettings,
 	DashboardSubmissions,
 	DashboardSubmissionWorkflow,
-	EmailChange,
 	Explore,
 	HubData,
 	HubDirectory,
@@ -196,11 +195,6 @@ export default (viewData, locationData, chunkName) => {
 		},
 		PasswordReset: {
 			ActiveComponent: PasswordReset,
-			hideNav: true,
-			hideFooter: true,
-		},
-		EmailChange: {
-			ActiveComponent: EmailChange,
 			hideNav: true,
 			hideFooter: true,
 		},

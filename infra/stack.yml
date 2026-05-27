@@ -133,6 +133,14 @@ services:
         networks: [appnet]
         deploy:
             replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 5s
+                order: start-first
+                failure_action: rollback
+            rollback_config:
+                parallelism: 1
+                order: stop-first
             restart_policy:
                 condition: any
 
@@ -157,6 +165,14 @@ services:
             start_period: 30s
         deploy:
             replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 5s
+                order: start-first
+                failure_action: rollback
+            rollback_config:
+                parallelism: 1
+                order: stop-first
             resources:
                 limits:
                     memory: 2G

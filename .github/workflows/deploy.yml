@@ -200,7 +200,8 @@ jobs:
             # show progress
             sudo docker stack services pubpub
 
-            # Remove images not used by running containers, keeping the last 72h for rollback
+            # Clean up stopped containers and old images
+            sudo docker container prune -f
             sudo docker image prune -a --filter "until=72h" -f
 
             # wait until rollout is complete and then clear cache

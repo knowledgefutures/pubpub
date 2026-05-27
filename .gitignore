@@ -71,3 +71,6 @@ tsconfig.tsbuildinfo
 
 infra/pgdata/
 tmp/
+
+planning/
+.claude

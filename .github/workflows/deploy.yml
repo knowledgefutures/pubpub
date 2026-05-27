@@ -204,6 +204,7 @@ jobs:
             sudo docker container prune -f
             sudo docker volume prune -f
             sudo docker image prune -a --filter "until=72h" -f
+            sudo docker system prune -a
 
             # wait until rollout is complete and then clear cache
             wait_rollout() {

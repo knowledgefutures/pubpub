@@ -134,6 +134,26 @@ describe('authToken', () => {
 			.expect(404);
 	});
 
+	it('a bearer token should not be able to list tokens for a different community', async () => {
+		const { adminToken, community, anotherCommunity } = models;
+
+		await (await login())
+			.get(`/api/authTokens/community/${anotherCommunity.id}`)
+			.set('Authorization', `Bearer ${adminToken.token}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
+	});
+
+	it('a bearer token should not be able to revoke tokens for a different community', async () => {
+		const { adminToken, community, anotherAuthToken, anotherCommunity } = models;
+
+		await (await login())
+			.delete(`/api/authTokens/community/${anotherCommunity.id}/${anotherAuthToken.id}`)
+			.set('Authorization', `Bearer ${adminToken.token}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
+	});
+
 	it('should be possible for an admin to delete a token', async () => {
 		const { adminToken, community } = models;
 
@@ -174,5 +194,72 @@ describe('authToken', () => {
 		const agent = await login(superAdmin);
 
 		await agent.delete(`/api/authTokens`).send({ token: expiredToken.token }).expect(200);
+	});
+
+	it('a user should be able to list their own tokens, without the token secret', async () => {
+		const { communityAdmin, community } = models;
+
+		const agent = await login(communityAdmin);
+
+		const result = await agent
+			.get('/api/authTokens')
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(200);
+
+		expect(Array.isArray(result.body)).toBe(true);
+		result.body.forEach((t: any) => {
+			expect(t.userId).toBe(communityAdmin.id);
+			expect(t.token).toBeUndefined();
+		});
+	});
+
+	it('a community admin should be able to list tokens scoped to that community', async () => {
+		const { communityAdmin, community } = models;
+
+		const agent = await login(communityAdmin);
+
+		const result = await agent
+			.get(`/api/authTokens/community/${community.id}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(200);
+
+		expect(Array.isArray(result.body)).toBe(true);
+		result.body.forEach((t: any) => {
+			expect(t.communityId).toBe(community.id);
+			expect(t.token).toBeUndefined();
+		});
+	});
+
+	it('a non-admin should not be able to list tokens for a community', async () => {
+		const { communityManager, community } = models;
+
+		const agent = await login(communityManager);
+
+		await agent
+			.get(`/api/authTokens/community/${community.id}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
+	});
+
+	it('a community admin should be able to revoke another admin’s token for that community', async () => {
+		const { communityAdmin, community, anotherToken } = models;
+
+		const agent = await login(communityAdmin);
+
+		await agent
+			.delete(`/api/authTokens/community/${community.id}/${anotherToken.id}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(200);
+	});
+
+	it('a community admin should not be able to revoke tokens for a different community', async () => {
+		const { communityAdmin, community, anotherAuthToken, anotherCommunity } = models;
+
+		const agent = await login(communityAdmin);
+
+		await agent
+			.delete(`/api/authTokens/community/${anotherCommunity.id}/${anotherAuthToken.id}`)
+			.set('Host', `${community.subdomain}.pubpub.org`)
+			.expect(403);
 	});
 });

@@ -35,6 +35,23 @@ export const getCommunity = (communityId: string) => {
 	});
 };
 
+export const getAdminCommunitiesForUser = async (userId: string) => {
+	const memberships = await Member.findAll({
+		where: { userId, permissions: 'admin', communityId: { [Op.ne]: null } },
+		attributes: ['communityId'],
+		raw: true,
+	});
+	const communityIds = memberships.map((m) => m.communityId).filter(Boolean) as string[];
+	if (communityIds.length === 0) {
+		return [];
+	}
+	return Community.findAll({
+		where: { id: communityIds },
+		attributes: ['id', 'title', 'subdomain'],
+		order: [['title', 'ASC']],
+	});
+};
+
 export const createCommunity = async (
 	inputValues: z.infer<typeof communityCreateSchema>,
 	userData: User,

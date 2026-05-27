@@ -8,6 +8,7 @@ import { ForbiddenError } from 'server/utils/errors';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 
 import { AuthToken, includeUserModel } from '../models';
+import { hashAuthToken } from './tokenGenerator';
 
 export const bearerStrategy = () => {
 	return new BearerStrategy(
@@ -28,7 +29,7 @@ export const bearerStrategy = () => {
 			}
 
 			const authToken = await AuthToken.findOne({
-				where: { token },
+				where: { hashedToken: hashAuthToken(token) },
 				include: [
 					includeUserModel({
 						as: 'user',

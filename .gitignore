@@ -74,3 +74,4 @@ infra/pgdata/
 tmp/
 
 planning/
+.claude

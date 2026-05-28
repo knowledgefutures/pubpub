@@ -132,5 +132,9 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 };
 
 export const getTypicalPubLabels = (pub: Pub) => {
+	if (!pub.scopeSummary) {
+		console.error(`No scope summary for pub "${pub.title}" (${pub.slug})`);
+		return [getPubReleasedStateLabel(pub)];
+	}
 	return [...getScopeSummaryLabels(expect(pub.scopeSummary)), getPubReleasedStateLabel(pub)];
 };

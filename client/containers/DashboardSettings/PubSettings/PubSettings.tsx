@@ -184,6 +184,7 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderDoi = () => {
+		console.log('BBBBBBBB');
 		return (
 			<SettingsSection title="DOI" showTitle={false}>
 				<Deposit

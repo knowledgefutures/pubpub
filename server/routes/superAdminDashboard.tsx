@@ -357,6 +357,14 @@ router.post('/api/superadmin/deposit-targets', async (req, res, next) => {
 		}
 
 		const community = await resolveCommmunity(communityId);
+		const existingTarget = await DepositTarget.findOne({
+			where: { communityId: community.id },
+		});
+		if (existingTarget) {
+			throw new BadRequestError(
+				new Error('A deposit target already exists for this community'),
+			);
+		}
 
 		const createData: Record<string, any> = {
 			communityId: community.id,

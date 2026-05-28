@@ -100,12 +100,12 @@ const DepositTargets = (props: Props) => {
 	const [createUsername, setCreateUsername] = useState('');
 	const [createPassword, setCreatePassword] = useState('');
 
-	// Edit dialog
+	// Edit dialog — undefined means "untouched", '' means "user cleared the field"
 	const [editTarget, setEditTarget] = useState<DepositTargetRow | null>(null);
 	const [editDoiPrefix, setEditDoiPrefix] = useState('');
 	const [editService, setEditService] = useState<'crossref' | 'datacite'>('crossref');
-	const [editUsername, setEditUsername] = useState('');
-	const [editPassword, setEditPassword] = useState('');
+	const [editUsername, setEditUsername] = useState<string | undefined>(undefined);
+	const [editPassword, setEditPassword] = useState<string | undefined>(undefined);
 
 	// Copy dialog
 	const [copySource, setCopySource] = useState<DepositTargetRow | null>(null);
@@ -166,8 +166,8 @@ const DepositTargets = (props: Props) => {
 		setEditTarget(target);
 		setEditDoiPrefix(target.doiPrefix ?? '');
 		setEditService((target.service as 'crossref' | 'datacite') ?? 'crossref');
-		setEditUsername('');
-		setEditPassword('');
+		setEditUsername(undefined);
+		setEditPassword(undefined);
 	}, []);
 
 	const handleEdit = useCallback(async () => {
@@ -180,10 +180,10 @@ const DepositTargets = (props: Props) => {
 				doiPrefix: editDoiPrefix.trim(),
 				service: editService,
 			};
-			if (editUsername !== '') {
+			if (editUsername !== undefined) {
 				body.username = editUsername.trim();
 			}
-			if (editPassword !== '') {
+			if (editPassword !== undefined) {
 				body.password = editPassword;
 			}
 			const result = await apiFetch.put<DepositTargetRow>(
@@ -479,7 +479,7 @@ const DepositTargets = (props: Props) => {
 					>
 						<InputGroup
 							placeholder={editTarget?.hasCredentials ? '(unchanged)' : 'Optional'}
-							value={editUsername}
+							value={editUsername ?? ''}
 							onChange={(e) => setEditUsername(e.target.value)}
 						/>
 					</FormGroup>
@@ -495,7 +495,7 @@ const DepositTargets = (props: Props) => {
 						<InputGroup
 							type="password"
 							placeholder={editTarget?.hasCredentials ? '(unchanged)' : 'Optional'}
-							value={editPassword}
+							value={editPassword ?? ''}
 							onChange={(e) => setEditPassword(e.target.value)}
 						/>
 					</FormGroup>

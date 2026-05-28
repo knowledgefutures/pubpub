@@ -68,7 +68,10 @@ export const postToCrossref = async (opts: {
 
 	const body = await response.text();
 	if (!response.ok) {
-		const stripped = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+		const stripped = body
+			.replace(/<[^>]*>/g, ' ')
+			.replace(/\s+/g, ' ')
+			.trim();
 		const message = stripped.length > 300 ? `${stripped.slice(0, 300)}…` : stripped;
 		throw new Error(
 			`Crossref submission failed (${response.status}): ${message || 'Unknown error'}`,

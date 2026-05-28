@@ -210,9 +210,7 @@ const DepositTargets = (props: Props) => {
 				`/api/superadmin/deposit-targets/${target.id}`,
 			);
 			setTargets((prev) => prev.map((t) => (t.id === target.id ? result : t)));
-			setSuccess(
-				`Credentials cleared for "${target.communityTitle}" (${target.doiPrefix}).`,
-			);
+			setSuccess(`Credentials cleared for "${target.communityTitle}" (${target.doiPrefix}).`);
 		} catch (err: any) {
 			setError(err?.message || 'Failed to clear credentials.');
 		} finally {
@@ -603,8 +601,8 @@ const DepositTargets = (props: Props) => {
 						<code>{pendingDelete?.doiPrefix}</code>)?
 					</p>
 					<p>
-						The deposit target will remain but the community will no longer
-						be able to mint DOIs until new credentials are set.
+						The deposit target will remain but the community will no longer be able to
+						mint DOIs until new credentials are set.
 					</p>
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
@@ -612,9 +610,7 @@ const DepositTargets = (props: Props) => {
 						<Button onClick={() => setPendingDelete(null)}>Cancel</Button>
 						<Button
 							intent={Intent.WARNING}
-							onClick={() =>
-								pendingDelete && handleClearCredentials(pendingDelete)
-							}
+							onClick={() => pendingDelete && handleClearCredentials(pendingDelete)}
 							loading={isLoading}
 						>
 							Clear Credentials

@@ -200,19 +200,21 @@ const DepositTargets = (props: Props) => {
 		}
 	}, [editTarget, editDoiPrefix, editService, editUsername, editPassword]);
 
-	const handleDelete = useCallback(async (target: DepositTargetRow) => {
+	const handleClearCredentials = useCallback(async (target: DepositTargetRow) => {
 		setPendingDelete(null);
 		setIsLoading(true);
 		setError(null);
 		setSuccess(null);
 		try {
-			await apiFetch.delete(`/api/superadmin/deposit-targets/${target.id}`);
-			setTargets((prev) => prev.filter((t) => t.id !== target.id));
+			const result = await apiFetch.delete<DepositTargetRow>(
+				`/api/superadmin/deposit-targets/${target.id}`,
+			);
+			setTargets((prev) => prev.map((t) => (t.id === target.id ? result : t)));
 			setSuccess(
-				`Deposit target for "${target.communityTitle}" (${target.doiPrefix}) deleted.`,
+				`Credentials cleared for "${target.communityTitle}" (${target.doiPrefix}).`,
 			);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to delete deposit target.');
+			setError(err?.message || 'Failed to clear credentials.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -423,14 +425,17 @@ const DepositTargets = (props: Props) => {
 											onClick={() => setCopySource(t)}
 											disabled={isLoading}
 										/>
-										<Button
-											small
-											minimal
-											intent={Intent.DANGER}
-											icon="trash"
-											onClick={() => setPendingDelete(t)}
-											disabled={isLoading}
-										/>
+										{t.hasCredentials && (
+											<Button
+												small
+												minimal
+												intent={Intent.WARNING}
+												icon="lock"
+												title="Clear credentials"
+												onClick={() => setPendingDelete(t)}
+												disabled={isLoading}
+											/>
+										)}
 									</td>
 								</tr>
 							))}
@@ -584,30 +589,35 @@ const DepositTargets = (props: Props) => {
 				</div>
 			</Dialog>
 
-			{/* Delete Confirmation Dialog */}
+			{/* Clear Credentials Confirmation Dialog */}
 			<Dialog
 				isOpen={!!pendingDelete}
 				onClose={() => setPendingDelete(null)}
-				title="Delete Deposit Target"
+				title="Clear Credentials"
 				icon="warning-sign"
 			>
 				<div className={Classes.DIALOG_BODY}>
 					<p>
-						Delete the deposit target for{' '}
+						Clear credentials for the deposit target on{' '}
 						<strong>{pendingDelete?.communityTitle}</strong> (
 						<code>{pendingDelete?.doiPrefix}</code>)?
 					</p>
-					<p>This will remove DOI minting configuration for this community.</p>
+					<p>
+						The deposit target will remain but the community will no longer
+						be able to mint DOIs until new credentials are set.
+					</p>
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
 						<Button onClick={() => setPendingDelete(null)}>Cancel</Button>
 						<Button
-							intent={Intent.DANGER}
-							onClick={() => pendingDelete && handleDelete(pendingDelete)}
+							intent={Intent.WARNING}
+							onClick={() =>
+								pendingDelete && handleClearCredentials(pendingDelete)
+							}
 							loading={isLoading}
 						>
-							Delete
+							Clear Credentials
 						</Button>
 					</div>
 				</div>

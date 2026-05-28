@@ -462,8 +462,11 @@ router.delete('/api/superadmin/deposit-targets/:id', async (req, res, next) => {
 			throw new NotFoundError(new Error('Deposit target not found'));
 		}
 
-		await target.destroy();
-		return res.json({ success: true });
+		await target.update({ username: null, password: null, passwordInitVec: null });
+		const reloaded = await DepositTarget.findByPk(target.id, {
+			include: [{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] }],
+		});
+		return res.json(sanitizeDepositTarget(reloaded!));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

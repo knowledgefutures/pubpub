@@ -101,6 +101,9 @@ router.post(
 					error: parentToSupplementNeedsDoiError.message,
 				});
 			}
+			if (err instanceof Error && err.message) {
+				return res.status(400).json({ error: err.message });
+			}
 			throw err;
 		}
 	}),
@@ -122,6 +125,9 @@ router.get(
 		} catch (err) {
 			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({ error: parentToSupplementNeedsDoiError.message });
+			}
+			if (err instanceof Error && err.message) {
+				return res.status(400).json({ error: err.message });
 			}
 			throw err;
 		}

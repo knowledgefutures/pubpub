@@ -2,7 +2,15 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import { BelongsTo, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+	BelongsTo,
+	Column,
+	DataType,
+	Default,
+	Model,
+	PrimaryKey,
+	Table,
+} from 'sequelize-typescript';
 
 import { Community } from '../community/model';
 

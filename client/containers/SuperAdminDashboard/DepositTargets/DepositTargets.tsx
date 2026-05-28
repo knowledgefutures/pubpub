@@ -200,26 +200,23 @@ const DepositTargets = (props: Props) => {
 		}
 	}, [editTarget, editDoiPrefix, editService, editUsername, editPassword]);
 
-	const handleDelete = useCallback(
-		async (target: DepositTargetRow) => {
-			setPendingDelete(null);
-			setIsLoading(true);
-			setError(null);
-			setSuccess(null);
-			try {
-				await apiFetch.delete(`/api/superadmin/deposit-targets/${target.id}`);
-				setTargets((prev) => prev.filter((t) => t.id !== target.id));
-				setSuccess(
-					`Deposit target for "${target.communityTitle}" (${target.doiPrefix}) deleted.`,
-				);
-			} catch (err: any) {
-				setError(err?.message || 'Failed to delete deposit target.');
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[],
-	);
+	const handleDelete = useCallback(async (target: DepositTargetRow) => {
+		setPendingDelete(null);
+		setIsLoading(true);
+		setError(null);
+		setSuccess(null);
+		try {
+			await apiFetch.delete(`/api/superadmin/deposit-targets/${target.id}`);
+			setTargets((prev) => prev.filter((t) => t.id !== target.id));
+			setSuccess(
+				`Deposit target for "${target.communityTitle}" (${target.doiPrefix}) deleted.`,
+			);
+		} catch (err: any) {
+			setError(err?.message || 'Failed to delete deposit target.');
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
 
 	const handleCopy = useCallback(async () => {
 		if (!copySource || !copySearch.selected) {
@@ -365,8 +362,7 @@ const DepositTargets = (props: Props) => {
 							onChange={(e) => setFilterText(e.target.value)}
 						/>
 						<span className="target-count">
-							{filterText &&
-							filteredTargets.length !== targets.length
+							{filterText && filteredTargets.length !== targets.length
 								? `Showing ${filteredTargets.length} of ${targets.length}`
 								: `Total: ${targets.length}`}{' '}
 							target{targets.length !== 1 ? 's' : ''}

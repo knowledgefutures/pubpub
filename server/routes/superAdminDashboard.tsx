@@ -20,6 +20,7 @@ import {
 	getEduDomainSummaries,
 } from 'server/community/eduQueries';
 import { getAllTemplates } from 'server/communityTemplate/queries';
+import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
@@ -275,7 +276,7 @@ router.delete('/api/superadmin/custom-domains', async (req, res, next) => {
 
 // ── Deposit Targets API ────────────────────────────────────────────────────
 
-const resolveCommmunity = async (identifier: string) => {
+const resolveCommunity = async (identifier: string) => {
 	const trimmed = String(identifier).trim();
 	const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed);
 	const community = isUuid
@@ -356,7 +357,7 @@ router.post('/api/superadmin/deposit-targets', async (req, res, next) => {
 			throw new BadRequestError(new Error('service must be "crossref" or "datacite"'));
 		}
 
-		const community = await resolveCommmunity(communityId);
+		const community = await resolveCommunity(communityId);
 
 		const createData: Record<string, any> = {
 			communityId: community.id,
@@ -365,10 +366,7 @@ router.post('/api/superadmin/deposit-targets', async (req, res, next) => {
 		};
 
 		if (username && password) {
-			const { encryptedText, initVec } = aes256Encrypt(
-				password,
-				process.env.AES_ENCRYPTION_KEY!,
-			);
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
 			createData.username = username;
 			createData.password = encryptedText;
 			createData.passwordInitVec = initVec;
@@ -422,17 +420,14 @@ router.put('/api/superadmin/deposit-targets/:id', async (req, res, next) => {
 				if (password) {
 					const { encryptedText, initVec } = aes256Encrypt(
 						password,
-						process.env.AES_ENCRYPTION_KEY!,
+						env.AES_ENCRYPTION_KEY!,
 					);
 					updates.password = encryptedText;
 					updates.passwordInitVec = initVec;
 				}
 			}
 		} else if (password) {
-			const { encryptedText, initVec } = aes256Encrypt(
-				password,
-				process.env.AES_ENCRYPTION_KEY!,
-			);
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
 			updates.password = encryptedText;
 			updates.passwordInitVec = initVec;
 		}
@@ -464,7 +459,9 @@ router.delete('/api/superadmin/deposit-targets/:id', async (req, res, next) => {
 
 		await target.update({ username: null, password: null, passwordInitVec: null });
 		const reloaded = await DepositTarget.findByPk(target.id, {
-			include: [{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] }],
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
 		});
 		return res.json(sanitizeDepositTarget(reloaded!));
 	} catch (err) {
@@ -489,7 +486,7 @@ router.post('/api/superadmin/deposit-targets/:id/copy', async (req, res, next) =
 			throw new BadRequestError(new Error('communityId is required'));
 		}
 
-		const destCommunity = await resolveCommmunity(communityId);
+		const destCommunity = await resolveCommunity(communityId);
 
 		const existing = await DepositTarget.findOne({
 			where: { communityId: destCommunity.id },
@@ -509,13 +506,10 @@ router.post('/api/superadmin/deposit-targets/:id/copy', async (req, res, next) =
 		if (copyCredentials && source.username && source.password && source.passwordInitVec) {
 			const plaintext = aes256Decrypt(
 				source.password,
-				process.env.AES_ENCRYPTION_KEY!,
+				env.AES_ENCRYPTION_KEY!,
 				source.passwordInitVec,
 			);
-			const { encryptedText, initVec } = aes256Encrypt(
-				plaintext,
-				process.env.AES_ENCRYPTION_KEY!,
-			);
+			const { encryptedText, initVec } = aes256Encrypt(plaintext, env.AES_ENCRYPTION_KEY!);
 			createData.username = source.username;
 			createData.password = encryptedText;
 			createData.passwordInitVec = initVec;

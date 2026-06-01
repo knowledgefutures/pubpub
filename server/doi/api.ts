@@ -96,6 +96,9 @@ router.post(
 			});
 			return res.status(201).json(depositJson);
 		} catch (err) {
+			if (err instanceof ForbiddenError) {
+				throw err;
+			}
 			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({
 					error: parentToSupplementNeedsDoiError.message,
@@ -123,6 +126,9 @@ router.get(
 				depositXml,
 			});
 		} catch (err) {
+			if (err instanceof ForbiddenError) {
+				throw err;
+			}
 			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({ error: parentToSupplementNeedsDoiError.message });
 			}

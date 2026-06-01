@@ -8,7 +8,7 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  *   POST /auth/logout      — clear session + redirect to KF Auth logout
  *
  * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
- *   POST /api/kf/profile-sync         — receive profile updates from KF Auth
+ *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
  *   GET  /api/kf/summary              — return community list for a KF org
  *   GET  /api/kf/billing/usage        — return usage stats for billing (placeholder)
@@ -39,6 +39,12 @@ import {
 	OIDC_ISSUER_URL,
 } from './auth';
 import { provisionLocalUser } from './provisionLocalUser';
+import {
+	handleUserBanned,
+	handleUserSessionsRevoked,
+	handleUserUnbanned,
+	handleUserUpdated,
+} from './webhookHandlers';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -250,44 +256,31 @@ router.post('/auth/logout', (req: any, res: any) => {
 	});
 });
 
-// ─── Profile sync (webhook from KF Auth) ─────────────────────────────
+// ─── Webhooks from KF Auth ──────────────────────────────────────────
 
-router.post('/api/kf/profile-sync', requireInternalKey, async (req: any, res: any) => {
+router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) => {
+	const event = req.headers['x-kf-webhook-event'];
+	const { data } = req.body;
+
+	if (!event || !data) {
+		return res.status(400).json({ error: 'Missing event header or data' });
+	}
+
 	try {
-		const { userId, givenName, familyName, displayName, email, image } = req.body;
-
-		if (!userId) {
-			return res.status(400).json({ error: 'userId is required' });
+		switch (event) {
+			case 'user.updated':
+				return await handleUserUpdated(data, res);
+			case 'user.banned':
+				return await handleUserBanned(data, res);
+			case 'user.unbanned':
+				return await handleUserUnbanned(data, res);
+			case 'user.sessions-revoked':
+				return await handleUserSessionsRevoked(data, res);
+			default:
+				return res.status(200).json({ ok: true, ignored: true });
 		}
-
-		const user = await User.findOne({ where: { id: userId } });
-		if (!user) {
-			return res.status(404).json({ error: 'User not found' });
-		}
-
-		const updates: Record<string, any> = {};
-		if (displayName !== undefined) updates.fullName = displayName;
-		if (givenName !== undefined) updates.firstName = givenName;
-		if (familyName !== undefined) updates.lastName = familyName;
-		if (email !== undefined) updates.email = email.toLowerCase();
-		if (image !== undefined) updates.avatar = image;
-
-		// Recalculate initials when name changes
-		if (givenName !== undefined || familyName !== undefined || displayName !== undefined) {
-			const first = givenName ?? user.firstName ?? '';
-			const last = familyName ?? user.lastName ?? '';
-			if (first || last) {
-				updates.initials = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
-			}
-		}
-
-		if (Object.keys(updates).length > 0) {
-			await user.update(updates);
-		}
-
-		return res.status(200).json({ ok: true });
 	} catch (err) {
-		console.error('Profile sync error:', err);
+		console.error(`Webhook handler error [${event}]:`, err);
 		return res.status(500).json({ error: 'Internal error' });
 	}
 });

@@ -14,6 +14,8 @@ import {
 	SpamTag,
 	User,
 } from 'server/models';
+import { syncBanToKfAuth, syncUnbanToKfAuth } from 'server/kf/oidc.server';
+import { defer } from 'server/utils/deferred';
 import { deleteSessionsForUser } from 'server/utils/session';
 import { expect } from 'utils/assert';
 import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
@@ -40,6 +42,7 @@ type UpsertSpamTagOptions = {
 	userId: string;
 	fields?: UserSpamTagFields;
 	status?: types.SpamStatus;
+	skipKfAuthSync?: boolean;
 };
 
 type UpsertResult = { spamTag: SpamTag; user: User };
@@ -82,12 +85,13 @@ const schedulePurgesForUser = async (userId: string) => {
 };
 
 export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<UpsertResult> => {
-	const { userId, fields, status } = options;
+	const { userId, fields, status, skipKfAuthSync } = options;
 	const user = await fetchUserWithSpamTag(userId);
 	const verdict = getSuspectedUserSpamVerdict(user);
 	const existingTag = user.spamTag;
 
 	if (existingTag) {
+		const previousStatus = existingTag.status;
 		const data = buildSpamTagData(
 			verdict,
 			existingTag.fields as UserSpamTagFields,
@@ -95,8 +99,14 @@ export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<Upse
 			status,
 		);
 		await existingTag.update(data as types.SpamVerdict<SpamTag>);
-		if (status === 'confirmed-spam' && existingTag.status !== status) {
+		if (status === 'confirmed-spam' && previousStatus !== status) {
 			await Promise.all([invalidateUserSessions(user), schedulePurgesForUser(userId)]);
+			if (!skipKfAuthSync) {
+				defer(async () => syncBanToKfAuth(userId));
+			}
+		}
+		if (status === 'confirmed-not-spam' && previousStatus !== status && !skipKfAuthSync) {
+			defer(async () => syncUnbanToKfAuth(userId));
 		}
 		return { spamTag: existingTag, user };
 	}
@@ -109,6 +119,12 @@ export const upsertSpamTag = async (options: UpsertSpamTagOptions): Promise<Upse
 	);
 	if (status === 'confirmed-spam') {
 		await Promise.all([invalidateUserSessions(user), schedulePurgesForUser(userId)]);
+		if (!skipKfAuthSync) {
+			defer(async () => syncBanToKfAuth(userId));
+		}
+	}
+	if (status === 'confirmed-not-spam' && !skipKfAuthSync) {
+		defer(async () => syncUnbanToKfAuth(userId));
 	}
 	return { spamTag, user };
 };
@@ -123,14 +139,18 @@ export const getSpamTagForUser = async (userId: string) => {
 	return u.spamTag ?? null;
 };
 
-export const removeSpamTagFromUser = async (userId: string) => {
+export const removeSpamTagFromUser = async (userId: string, skipKfAuthSync?: boolean) => {
 	const spamTag = await getSpamTagForUser(userId);
 	if (!spamTag) return;
+	const wasBanned = spamTag.status === 'confirmed-spam';
 	await User.update(
 		{ spamTagId: null },
 		{ where: { id: userId }, limit: 1, individualHooks: false },
 	);
 	await spamTag.destroy();
+	if (wasBanned && !skipKfAuthSync) {
+		defer(async () => syncUnbanToKfAuth(userId));
+	}
 };
 
 const communityInclude = [

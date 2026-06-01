@@ -271,6 +271,50 @@ export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
 	return data.orgs ?? [];
 }
 
+// --- Outbound ban sync ---
+
+export async function syncBanToKfAuth(userId: string, reason?: string): Promise<void> {
+	if (!AUTH_INTERNAL_API_KEY) return;
+
+	try {
+		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/ban`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+			},
+			body: JSON.stringify({ reason: reason ?? 'banned via PubPub spam system' }),
+		});
+		if (!res.ok) {
+			const text = await res.text();
+			console.error(`syncBanToKfAuth failed for ${userId}: HTTP ${res.status} ${text}`);
+		}
+	} catch (err) {
+		console.error(`syncBanToKfAuth failed for ${userId}:`, err);
+	}
+}
+
+export async function syncUnbanToKfAuth(userId: string): Promise<void> {
+	if (!AUTH_INTERNAL_API_KEY) return;
+
+	try {
+		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/unban`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+			},
+			body: JSON.stringify({}),
+		});
+		if (!res.ok) {
+			const text = await res.text();
+			console.error(`syncUnbanToKfAuth failed for ${userId}: HTTP ${res.status} ${text}`);
+		}
+	} catch (err) {
+		console.error(`syncUnbanToKfAuth failed for ${userId}:`, err);
+	}
+}
+
 // --- Exports ---
 
 export {

@@ -20,12 +20,13 @@ import {
 	getEduDomainSummaries,
 } from 'server/community/eduQueries';
 import { getAllTemplates } from 'server/communityTemplate/queries';
+import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community } from 'server/models';
+import { Community, DepositTarget } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -36,6 +37,7 @@ import {
 import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
 	getSuperAdminTabUrl,
 	isSuperAdminTabKind,
@@ -73,6 +75,29 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			raw: true,
 		});
 		return { communities, cloudflareConfigured: isCloudflareConfigured() };
+	}
+	if (tabKind === 'depositTargets') {
+		const targets = await DepositTarget.findAll({
+			include: [
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain'],
+				},
+			],
+			order: [['createdAt', 'DESC']],
+		});
+		return {
+			depositTargets: targets.map((t) => ({
+				id: t.id,
+				communityId: t.communityId,
+				doiPrefix: t.doiPrefix,
+				service: t.service,
+				hasCredentials: Boolean(t.username),
+				communityTitle: t.community?.title ?? '(unknown)',
+				communitySubdomain: t.community?.subdomain ?? '(unknown)',
+			})),
+		};
 	}
 	if (tabKind === 'exploreCommunities') {
 		return { communities: await getExploreCommunities() };
@@ -244,6 +269,268 @@ router.delete('/api/superadmin/custom-domains', async (req, res, next) => {
 		await community.update({ domain: null });
 
 		return res.json({ success: true });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── Deposit Targets API ────────────────────────────────────────────────────
+
+const resolveCommunity = async (identifier: string) => {
+	const trimmed = String(identifier).trim();
+	const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed);
+	const community = isUuid
+		? await Community.findByPk(trimmed)
+		: await Community.findOne({ where: { subdomain: trimmed } });
+	if (!community) {
+		throw new NotFoundError(new Error('Community not found'));
+	}
+	return community;
+};
+
+const sanitizeDepositTarget = (t: DepositTarget) => ({
+	id: t.id,
+	communityId: t.communityId,
+	doiPrefix: t.doiPrefix,
+	service: t.service,
+	hasCredentials: Boolean(t.username),
+	communityTitle: t.community?.title ?? '(unknown)',
+	communitySubdomain: t.community?.subdomain ?? '(unknown)',
+});
+
+router.get('/api/superadmin/communities/search', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const q = String(req.query.q ?? '')
+			.trim()
+			.toLowerCase();
+		if (!q) {
+			return res.json([]);
+		}
+
+		const excludeWithDepositTarget = req.query.excludeWithDepositTarget === 'true';
+
+		const communities = await Community.findAll({
+			where: {
+				[Op.or]: [
+					{ title: { [Op.iLike]: `%${q}%` } },
+					{ subdomain: { [Op.iLike]: `%${q}%` } },
+				],
+			},
+			attributes: ['id', 'title', 'subdomain'],
+			limit: 20,
+			order: [['title', 'ASC']],
+		});
+
+		if (!excludeWithDepositTarget) {
+			return res.json(communities);
+		}
+
+		const communityIds = communities.map((c) => c.id);
+		const existingTargets = await DepositTarget.findAll({
+			where: { communityId: communityIds },
+			attributes: ['communityId'],
+		});
+		const idsWithTarget = new Set(existingTargets.map((t) => t.communityId));
+		return res.json(communities.filter((c) => !idsWithTarget.has(c.id)));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/deposit-targets', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const { communityId, doiPrefix, service, username, password } = req.body;
+		if (!communityId || !doiPrefix) {
+			throw new BadRequestError(new Error('communityId and doiPrefix are required'));
+		}
+		if (service && !['crossref', 'datacite'].includes(service)) {
+			throw new BadRequestError(new Error('service must be "crossref" or "datacite"'));
+		}
+
+		const community = await resolveCommunity(communityId);
+		const existingTarget = await DepositTarget.findOne({
+			where: { communityId: community.id },
+		});
+		if (existingTarget) {
+			throw new BadRequestError(
+				new Error('A deposit target already exists for this community'),
+			);
+		}
+
+		const createData: Record<string, any> = {
+			communityId: community.id,
+			doiPrefix: String(doiPrefix).trim(),
+			service: service || 'crossref',
+		};
+
+		if (username && password) {
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
+			createData.username = username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const target = await DepositTarget.create(createData as any);
+		const reloaded = await DepositTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeDepositTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.put('/api/superadmin/deposit-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await DepositTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('Deposit target not found'));
+		}
+
+		const { doiPrefix, service, username, password } = req.body;
+		const updates: Record<string, any> = {};
+
+		if (doiPrefix !== undefined) {
+			updates.doiPrefix = String(doiPrefix).trim();
+		}
+		if (service !== undefined) {
+			if (!['crossref', 'datacite'].includes(service)) {
+				throw new BadRequestError(new Error('service must be "crossref" or "datacite"'));
+			}
+			updates.service = service;
+		}
+
+		if (username !== undefined) {
+			if (username === '') {
+				updates.username = null;
+				updates.password = null;
+				updates.passwordInitVec = null;
+			} else {
+				updates.username = username;
+				if (password) {
+					const { encryptedText, initVec } = aes256Encrypt(
+						password,
+						env.AES_ENCRYPTION_KEY!,
+					);
+					updates.password = encryptedText;
+					updates.passwordInitVec = initVec;
+				}
+			}
+		} else if (password) {
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
+			updates.password = encryptedText;
+			updates.passwordInitVec = initVec;
+		}
+
+		await target.update(updates);
+		const reloaded = await DepositTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeDepositTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.delete('/api/superadmin/deposit-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await DepositTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('Deposit target not found'));
+		}
+
+		await target.update({ username: null, password: null, passwordInitVec: null });
+		const reloaded = await DepositTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+		return res.json(sanitizeDepositTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/deposit-targets/:id/copy', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const source = await DepositTarget.findByPk(req.params.id);
+		if (!source) {
+			throw new NotFoundError(new Error('Source deposit target not found'));
+		}
+
+		const { communityId, copyCredentials } = req.body;
+		if (!communityId) {
+			throw new BadRequestError(new Error('communityId is required'));
+		}
+
+		const destCommunity = await resolveCommunity(communityId);
+
+		const existing = await DepositTarget.findOne({
+			where: { communityId: destCommunity.id },
+		});
+		if (existing) {
+			throw new BadRequestError(
+				new Error('Destination community already has a deposit target'),
+			);
+		}
+
+		const createData: Record<string, any> = {
+			communityId: destCommunity.id,
+			doiPrefix: source.doiPrefix,
+			service: source.service,
+		};
+
+		if (copyCredentials && source.username && source.password && source.passwordInitVec) {
+			const plaintext = aes256Decrypt(
+				source.password,
+				env.AES_ENCRYPTION_KEY!,
+				source.passwordInitVec,
+			);
+			const { encryptedText, initVec } = aes256Encrypt(plaintext, env.AES_ENCRYPTION_KEY!);
+			createData.username = source.username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const newTarget = await DepositTarget.create(createData as any);
+		const reloaded = await DepositTarget.findByPk(newTarget.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeDepositTarget(reloaded!));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

@@ -5,6 +5,7 @@ import React from 'react';
 import CommunitySpam from './CommunitySpam';
 import CommunityTemplates from './CommunityTemplates';
 import CustomDomains from './CustomDomains';
+import DepositTargets from './DepositTargets';
 import ExploreCommunities from './ExploreCommunities';
 import Hubs from './Hubs';
 import LandingPageFeatures from './LandingPageFeatures';
@@ -25,6 +26,10 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	customDomains: {
 		title: 'Custom Domains',
 		component: CustomDomains,
+	},
+	depositTargets: {
+		title: 'Deposit Targets',
+		component: DepositTargets,
 	},
 	exploreCommunities: {
 		title: 'Explore Page',

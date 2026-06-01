@@ -132,5 +132,8 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 };
 
 export const getTypicalPubLabels = (pub: Pub) => {
+	if (!pub.scopeSummary) {
+		return [getPubReleasedStateLabel(pub)];
+	}
 	return [...getScopeSummaryLabels(expect(pub.scopeSummary)), getPubReleasedStateLabel(pub)];
 };

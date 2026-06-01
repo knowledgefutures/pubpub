@@ -17,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 		{ title: 'HDSR', subdomain: 'hdsr', icon: 'regression-chart' },
 		{ title: 'BAAS', subdomain: 'baas', icon: 'moon' },
 		{ title: 'Cursor', subdomain: 'cursor', icon: 'book' },
+		{ title: 'JOTE', subdomain: 'jtrialerror', icon: 'lab-test' },
 	];
 }
 

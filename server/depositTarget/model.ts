@@ -2,7 +2,17 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import { Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+	BelongsTo,
+	Column,
+	DataType,
+	Default,
+	Model,
+	PrimaryKey,
+	Table,
+} from 'sequelize-typescript';
+
+import { Community } from '../community/model';
 
 @Table
 export class DepositTarget extends Model<
@@ -18,6 +28,9 @@ export class DepositTarget extends Model<
 
 	@Column(DataType.UUID)
 	declare communityId: string | null;
+
+	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
+	declare community?: Community;
 
 	@Column(DataType.STRING)
 	declare doiPrefix: string | null;

@@ -145,6 +145,7 @@ export async function buildAuthorizeUrl(
 	state: string,
 	existingVerifier?: string,
 	context?: string,
+	prompt?: string,
 ): Promise<{ url: string; codeVerifier: string }> {
 	const config = await discover();
 	const codeVerifier = existingVerifier ?? generateCodeVerifier();
@@ -165,6 +166,7 @@ export async function buildAuthorizeUrl(
 		code_challenge: codeChallenge,
 		code_challenge_method: 'S256',
 		...(context && { context }),
+		...(prompt && { prompt }),
 	});
 
 	return { url: `${authorizeUrl.toString()}?${params}`, codeVerifier };

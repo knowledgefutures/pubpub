@@ -35,6 +35,8 @@ if (env.NODE_ENV !== 'test') {
 
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
+import { platformBanGuard } from './middleware/platformBanGuard';
+import { silentReauthMiddleware } from './middleware/silentReauth';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
@@ -117,19 +119,16 @@ appRouter.use('/api/health', (req, res) => {
 
 appRouter.use(
 	session({
-		secret: 'sessionsecret',
+		secret: env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
+		rolling: true,
 		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',
-			/* These are necessary for */
-			/* the api cookie to set */
-			/* ------- */
-			httpOnly: false,
-			secure: false,
-			/* ------- */
-			maxAge: 30 * 24 * 60 * 60 * 1000, // = 30 days.
+			httpOnly: true,
+			secure: env.NODE_ENV === 'production',
+			maxAge: env.NODE_ENV === 'production' ? 4 * 60 * 60 * 1000 : 60 * 1000, // 4 hours, rolling, 1 min in dev to test
 		},
 	}),
 );
@@ -254,6 +253,8 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
+appRouter.use(silentReauthMiddleware());
+appRouter.use(platformBanGuard());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

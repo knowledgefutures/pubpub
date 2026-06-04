@@ -205,6 +205,9 @@ export const envSchema = z.object({
 			'JSON array of search terms for the "By Content" tab. Each element is a string or [name, ...aliases]',
 		),
 
+	// ── Session ─────────────────────────────────────────────────────────
+	SESSION_SECRET: z.string().min(1).describe('Secret for signing session cookies'),
+
 	// ── Testing ──────────────────────────────────────────────────────────
 	INTEGRATION_TESTING: booleanish.describe('Signals that integration tests are running'),
 	TEST_FASTLY_PURGE: booleanish.describe('Enable Fastly purge calls during tests'),

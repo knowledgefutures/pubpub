@@ -100,21 +100,27 @@ export const router = Router();
 router.get('/auth/login', async (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
 	const rawReturn = req.query.return_to || '/';
-	// Validate return_to is a safe relative path (prevent open redirect)
 	const returnTo =
 		typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
 			? rawReturn
 			: '/';
 
-	// Generate verifier first, then encrypt it with routing info into state.
-	// This avoids cookies/session for OIDC state, so it works across
-	// domains (custom domains → callback on www.duqduq.org).
-	const codeVerifier = generateCodeVerifier();
-	const stateToken = encryptPayload({ v: codeVerifier, h: communityHost, r: returnTo });
+	const isRenew = req.query.renew === 'true';
 
-	// Pass the community hostname as context for per-community branding.
-	// The branding endpoint resolves hostnames → slugs.
-	const { url } = await buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
+	const codeVerifier = generateCodeVerifier();
+	const stateToken = encryptPayload({
+		v: codeVerifier,
+		h: communityHost,
+		r: returnTo,
+		...(isRenew && { renew: true }),
+	});
+
+	const { url } = await buildAuthorizeUrl(
+		stateToken,
+		codeVerifier,
+		communityHost,
+		isRenew ? 'none' : undefined,
+	);
 
 	return res.redirect(url);
 });
@@ -126,6 +132,34 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const { code, state, error } = req.query;
 
 		if (error) {
+			// All prompt=none error types mean "silent re-auth can't complete"
+			const isPromptNoneError =
+				error === 'login_required' ||
+				error === 'interaction_required' ||
+				error === 'account_selection_required' ||
+				error === 'consent_required';
+			if (isPromptNoneError && state) {
+				try {
+					const renewState = decryptPayload<{
+						v: string;
+						h: string;
+						r: string;
+						renew?: boolean;
+					}>(state);
+					if (renewState?.renew) {
+						const protocol = isDevelopment() ? 'http' : 'https';
+						const host = renewState.h || req.hostname;
+						const returnTo = renewState.r || '/';
+						res.cookie('pp-renew-failed', '1', {
+							maxAge: 60 * 60 * 1000,
+							httpOnly: true,
+						});
+						return res.redirect(`${protocol}://${host}${returnTo}`);
+					}
+				} catch {
+					/* fall through to generic error */
+				}
+			}
 			console.error('KF Auth error:', error, req.query.error_description);
 			return res.status(400).send('Authentication failed. Please try again.');
 		}
@@ -134,8 +168,12 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			return res.status(400).send('Missing authentication parameters.');
 		}
 
-		// Decrypt state → {v: codeVerifier, h: host, r: returnTo}
-		const stateData = decryptPayload<{ v: string; h: string; r: string }>(state);
+		const stateData = decryptPayload<{
+			v: string;
+			h: string;
+			r: string;
+			renew?: boolean;
+		}>(state);
 		if (!stateData || !stateData.v) {
 			return res.status(400).send('Invalid or expired authentication state.');
 		}
@@ -174,6 +212,9 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// For platform subdomains: create session directly (shared cookie on .pubpub.org / .duqduq.org)
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
+
+		// Clear silent re-auth circuit breaker on successful login
+		res.clearCookie('pp-renew-failed');
 
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
@@ -219,6 +260,8 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		// Create Passport session on this domain
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
+
+		res.clearCookie('pp-renew-failed');
 
 		// Set the CDN cache cookie on this domain
 		const hashedUserId = getHashedUserId(user);

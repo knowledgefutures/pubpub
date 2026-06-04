@@ -696,6 +696,19 @@ router.post('/api/superadmin/scam-files/purge-cloudflare', async (req, res, next
 	}
 });
 
+// Keys follow the pattern: c{communityId}/p{pubId}/u{userId}/filename
+// The /p{pubId} segment is optional.
+const parseIdsFromKey = (key: string) => {
+	const communityMatch = key.match(/^(?:_testing\/)?c([0-9a-f-]{36})\//i);
+	const userMatch = key.match(/\/u([0-9a-f-]{36})\//i);
+	const pubMatch = key.match(/\/p([0-9a-f-]{36})\//i);
+	return {
+		communityId: communityMatch?.[1] ?? null,
+		userId: userMatch?.[1] ?? null,
+		pubId: pubMatch?.[1] ?? null,
+	};
+};
+
 router.post('/api/superadmin/scam-files/check', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
@@ -704,44 +717,36 @@ router.post('/api/superadmin/scam-files/check', async (req, res, next) => {
 		}
 		const key = parseAssetKey(req.body.url);
 		const fullUrl = `https://assets.pubpub.org/${key}`;
+		const { communityId, userId } = parseIdsFromKey(key);
 
-		const keyPattern = `%${key}%`;
-		const [s3Assets, s3Scam, associatedUsers, associatedCommunities] = await Promise.all([
+		const lookups: Promise<any>[] = [
 			assetsClient.checkIfFileExists(key),
 			scamClient.checkIfFileExists(key),
-			User.findAll({
-				where: { avatar: { [Op.like]: keyPattern } },
-				attributes: ['id', 'fullName', 'slug', 'email', 'avatar', 'spamTagId'],
-				include: [{ model: SpamTag, as: 'spamTag', required: false }],
-				limit: 5,
-			}),
-			Community.findAll({
-				where: {
-					[Op.or]: [
-						{ avatar: { [Op.like]: keyPattern } },
-						{ favicon: { [Op.like]: keyPattern } },
-						{ headerLogo: { [Op.like]: keyPattern } },
-						{ heroLogo: { [Op.like]: keyPattern } },
-						{ heroImage: { [Op.like]: keyPattern } },
-						{ heroBackgroundImage: { [Op.like]: keyPattern } },
-					],
-				},
-				attributes: [
-					'id',
-					'title',
-					'subdomain',
-					'avatar',
-					'favicon',
-					'headerLogo',
-					'heroLogo',
-					'heroImage',
-					'heroBackgroundImage',
-					'spamTagId',
-				],
-				include: [{ model: SpamTag, as: 'spamTag', required: false }],
-				limit: 5,
-			}),
-		]);
+		];
+
+		if (userId) {
+			lookups.push(
+				User.findByPk(userId, {
+					attributes: ['id', 'fullName', 'slug', 'email', 'spamTagId'],
+					include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				}),
+			);
+		} else {
+			lookups.push(Promise.resolve(null));
+		}
+
+		if (communityId) {
+			lookups.push(
+				Community.findByPk(communityId, {
+					attributes: ['id', 'title', 'subdomain', 'spamTagId'],
+					include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				}),
+			);
+		} else {
+			lookups.push(Promise.resolve(null));
+		}
+
+		const [s3Assets, s3Scam, user, community] = await Promise.all(lookups);
 
 		let cdnStatus: {
 			httpStatus: number;
@@ -770,19 +775,27 @@ router.post('/api/superadmin/scam-files/check', async (req, res, next) => {
 			s3Scam,
 			cdn: cdnStatus,
 			associations: {
-				users: associatedUsers.map((u) => ({
-					id: u.id,
-					fullName: u.fullName,
-					slug: u.slug,
-					email: u.email,
-					spamStatus: u.spamTag?.status ?? null,
-				})),
-				communities: associatedCommunities.map((c) => ({
-					id: c.id,
-					title: c.title,
-					subdomain: c.subdomain,
-					spamStatus: c.spamTag?.status ?? null,
-				})),
+				users: user
+					? [
+							{
+								id: user.id,
+								fullName: user.fullName,
+								slug: user.slug,
+								email: user.email,
+								spamStatus: user.spamTag?.status ?? null,
+							},
+						]
+					: [],
+				communities: community
+					? [
+							{
+								id: community.id,
+								title: community.title,
+								subdomain: community.subdomain,
+								spamStatus: community.spamTag?.status ?? null,
+							},
+						]
+					: [],
 			},
 		});
 	} catch (err) {

@@ -1,6 +1,8 @@
 import type { Readable, Stream } from 'stream';
 
 import {
+	CopyObjectCommand,
+	DeleteObjectCommand,
 	GetObjectCommand,
 	HeadObjectCommand,
 	type HeadObjectCommandOutput,
@@ -55,6 +57,9 @@ type PubPubS3Client = {
 	checkIfFileExists: (key: string) => Promise<boolean>;
 	waitForFileToExist: (key: string, maxWaitTimeSeconds?: number) => Promise<void>;
 	getPresignedUrl: (key: string, expiresInSeconds?: number) => Promise<string>;
+	deleteObject: (key: string) => Promise<void>;
+	copyObjectTo: (key: string, destBucket: string) => Promise<void>;
+	bucket: string;
 };
 
 const bufferStream = async (stream: Stream): Promise<Buffer> => {
@@ -180,6 +185,20 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 			);
 	};
 
+	const deleteObject = async (key: string) => {
+		await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+	};
+
+	const copyObjectTo = async (key: string, destBucket: string) => {
+		await s3Client.send(
+			new CopyObjectCommand({
+				Bucket: destBucket,
+				Key: key,
+				CopySource: `${bucket}/${key}`,
+			}),
+		);
+	};
+
 	return {
 		uploadFile,
 		uploadFileSplit,
@@ -188,6 +207,9 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 		waitForFileToExist,
 		retrieveFileHead,
 		getPresignedUrl,
+		deleteObject,
+		copyObjectTo,
+		bucket,
 	};
 };
 
@@ -207,4 +229,10 @@ export const exportsClient = createPubPubS3Client({
 	accessKeyId: env.AWS_ACCESS_KEY_ID,
 	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 	bucket: 'assets.pubpub.org',
+});
+
+export const scamClient = createPubPubS3Client({
+	accessKeyId: env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+	bucket: 'reported-scams',
 });

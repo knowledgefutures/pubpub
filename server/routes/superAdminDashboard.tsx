@@ -26,15 +26,21 @@ import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget } from 'server/models';
+import { Community, DepositTarget, SpamTag, User } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
+import {
+	isCachePurgeConfigured,
+	purgeByUrls as cfPurgeByUrls,
+} from 'server/utils/cloudflareCachePurge';
 import {
 	addCustomHostname,
 	isCloudflareConfigured,
 	removeCustomHostname,
 } from 'server/utils/cloudflareCustomHostnames';
 import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
+import { purgeByUrl as fastlyPurgeByUrl } from 'server/utils/fastlyPurge';
+import { assetsClient, scamClient } from 'server/utils/s3';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
@@ -128,6 +134,9 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			communities,
 			totalCount,
 		};
+	}
+	if (tabKind === 'scamFiles') {
+		return { cachePurgeConfigured: isCachePurgeConfigured() };
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
@@ -606,6 +615,176 @@ router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req
 		const { domain } = req.params;
 		const mentions = await getContentMentionsForDomain(domain);
 		return res.json(mentions);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── Scam Files API ────────────────────────────────────────────────────────
+
+const parseAssetKey = (rawUrl: string): string => {
+	let url = rawUrl.trim();
+	url = url.replace(/hxxps?/gi, 'https').replace(/\[.\]/g, '.');
+	const match = url.match(/assets\.pubpub\.org\/(.+)/);
+	if (!match?.[1]) {
+		throw new BadRequestError(new Error('Could not parse asset key from URL'));
+	}
+	return match[1];
+};
+
+router.post('/api/superadmin/scam-files/copy', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const exists = await assetsClient.checkIfFileExists(key);
+		if (!exists) {
+			throw new BadRequestError(new Error(`File not found in assets bucket: ${key}`));
+		}
+		await assetsClient.copyObjectTo(key, scamClient.bucket);
+		const copiedExists = await scamClient.checkIfFileExists(key);
+		return res.json({ key, copied: copiedExists });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/delete', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		await assetsClient.deleteObject(key);
+		const stillExists = await assetsClient.checkIfFileExists(key);
+		return res.json({ key, deleted: !stillExists });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/purge-fastly', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+		const result = await fastlyPurgeByUrl(fullUrl);
+		return res.json({ key, purged: true, fastlyId: result.id });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/purge-cloudflare', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+		await cfPurgeByUrls([fullUrl]);
+		return res.json({ key, purged: true });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/check', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+
+		const keyPattern = `%${key}%`;
+		const [s3Assets, s3Scam, associatedUsers, associatedCommunities] = await Promise.all([
+			assetsClient.checkIfFileExists(key),
+			scamClient.checkIfFileExists(key),
+			User.findAll({
+				where: { avatar: { [Op.like]: keyPattern } },
+				attributes: ['id', 'fullName', 'slug', 'email', 'avatar', 'spamTagId'],
+				include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				limit: 5,
+			}),
+			Community.findAll({
+				where: {
+					[Op.or]: [
+						{ avatar: { [Op.like]: keyPattern } },
+						{ favicon: { [Op.like]: keyPattern } },
+						{ headerLogo: { [Op.like]: keyPattern } },
+						{ heroLogo: { [Op.like]: keyPattern } },
+						{ heroImage: { [Op.like]: keyPattern } },
+						{ heroBackgroundImage: { [Op.like]: keyPattern } },
+					],
+				},
+				attributes: [
+					'id',
+					'title',
+					'subdomain',
+					'avatar',
+					'favicon',
+					'headerLogo',
+					'heroLogo',
+					'heroImage',
+					'heroBackgroundImage',
+					'spamTagId',
+				],
+				include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				limit: 5,
+			}),
+		]);
+
+		let cdnStatus: {
+			httpStatus: number;
+			cfCacheStatus: string | null;
+			fastlyCacheStatus: string | null;
+			servedBy: string | null;
+			age: string | null;
+		} | null = null;
+
+		try {
+			const cdnRes = await fetch(fullUrl, { method: 'HEAD', redirect: 'follow' });
+			cdnStatus = {
+				httpStatus: cdnRes.status,
+				cfCacheStatus: cdnRes.headers.get('cf-cache-status'),
+				fastlyCacheStatus: cdnRes.headers.get('x-cache'),
+				servedBy: cdnRes.headers.get('x-served-by'),
+				age: cdnRes.headers.get('age'),
+			};
+		} catch {
+			cdnStatus = null;
+		}
+
+		return res.json({
+			key,
+			s3Assets,
+			s3Scam,
+			cdn: cdnStatus,
+			associations: {
+				users: associatedUsers.map((u) => ({
+					id: u.id,
+					fullName: u.fullName,
+					slug: u.slug,
+					email: u.email,
+					spamStatus: u.spamTag?.status ?? null,
+				})),
+				communities: associatedCommunities.map((c) => ({
+					id: c.id,
+					title: c.title,
+					subdomain: c.subdomain,
+					spamStatus: c.spamTag?.status ?? null,
+				})),
+			},
+		});
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

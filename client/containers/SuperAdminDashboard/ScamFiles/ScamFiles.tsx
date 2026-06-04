@@ -171,10 +171,9 @@ const ScamFiles = (props: Props) => {
 		setCheckLoading(true);
 		setError(null);
 		try {
-			const result = await apiFetch.post<CheckResult>(
-				'/api/superadmin/scam-files/check',
-				{ url },
-			);
+			const result = await apiFetch.post<CheckResult>('/api/superadmin/scam-files/check', {
+				url,
+			});
 			setCheckResult(result);
 			const assocCount =
 				result.associations.users.length + result.associations.communities.length;
@@ -498,10 +497,7 @@ const ScamFiles = (props: Props) => {
 										))}
 
 										{checkResult.associations.communities.map((community) => (
-											<div
-												className="association-row"
-												key={community.id}
-											>
+											<div className="association-row" key={community.id}>
 												<div className="association-info">
 													<strong>{community.title}</strong>
 													<span className="association-detail">
@@ -511,8 +507,8 @@ const ScamFiles = (props: Props) => {
 															rel="noopener noreferrer"
 														>
 															{community.subdomain}.pubpub.org
-														</a>
-														{' '}&middot;{' '}
+														</a>{' '}
+														&middot;{' '}
 														<a
 															href={`/superadmin/spam?q=${encodeURIComponent(community.subdomain)}`}
 														>
@@ -521,9 +517,7 @@ const ScamFiles = (props: Props) => {
 													</span>
 												</div>
 												<Tag
-													intent={spamStatusIntent(
-														community.spamStatus,
-													)}
+													intent={spamStatusIntent(community.spamStatus)}
 													minimal
 												>
 													{spamStatusLabel(community.spamStatus)}
@@ -577,8 +571,11 @@ const ScamFiles = (props: Props) => {
 					{log.length > 0 && (
 						<div className="history-section">
 							<h4>Activity Log</h4>
-							{log.map((entry, i) => (
-								<div className="history-entry" key={i}>
+							{log.map((entry) => (
+								<div
+									className="history-entry"
+									key={`${entry.time}-${entry.message}`}
+								>
 									<span className="history-time">{entry.time}</span>
 									{entry.message}
 								</div>

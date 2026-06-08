@@ -15,15 +15,17 @@ const SKIP_PREFIXES = ['/api', '/auth', '/dist', '/static', '/service-worker', '
 export const silentReauthMiddleware = () => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		if (req.method !== 'GET') return next();
-		if (SKIP_PREFIXES.some((p) => req.path.startsWith(p))) return next();
+		if (SKIP_PREFIXES.some((p) => req.path.startsWith(p))) {
+			return next();
+		}
 
-		// User is logged in — nothing to do
 		if (req.user) return next();
 
-		// User was never logged in (no CDN cookie) — skip
-		if (!req.cookies?.['pp-lic']) return next();
+		// After logout it's set to 'pp-lo' - renewing would resurrect the session the user just deliberately ended.
+		const lic = req.cookies?.['pp-lic'];
+		if (typeof lic !== 'string' || !lic.startsWith('pp-li-')) return next();
 
-		// Circuit breaker: recently tried and failed — skip
+		// Circuit breaker: recently tried and failed - skip
 		if (req.cookies?.['pp-renew-failed']) return next();
 
 		const returnTo = req.originalUrl;

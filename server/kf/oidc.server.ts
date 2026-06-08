@@ -181,6 +181,28 @@ export interface TokenResponse {
 }
 
 /**
+ * Extract claims from the ID token without signature verification —
+ * the token came straight from the token endpoint over a trusted
+ * server-to-server channel, so its contents are already authentic.
+ * `sid` is the kf-auth session id (requires enableEndSession on the
+ * OAuth client); it lets us correlate local sessions with kf-auth
+ * sessions for the session.revoked webhook.
+ */
+export function decodeIdTokenClaims(idToken: string): { sub?: string; sid?: string } {
+	try {
+		const payloadPart = idToken.split('.')[1];
+		if (!payloadPart) return {};
+		const payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8'));
+		return {
+			sub: typeof payload.sub === 'string' ? payload.sub : undefined,
+			sid: typeof payload.sid === 'string' ? payload.sid : undefined,
+		};
+	} catch {
+		return {};
+	}
+}
+
+/**
  * Exchange an authorization code for tokens (server-to-server).
  */
 export async function exchangeCode(code: string, codeVerifier: string): Promise<TokenResponse> {

@@ -1,6 +1,6 @@
 import { User } from 'server/models';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
-import { deleteSessionsForUser } from 'server/utils/session';
+import { deleteSessionsByKfSessionId, deleteSessionsForUser } from 'server/utils/session';
 
 export async function handleUserUpdated(data: any, res: any) {
 	const { userId, givenName, familyName, displayName, email, image } = data;
@@ -104,4 +104,22 @@ export async function handleUserSessionsRevoked(data: any, res: any) {
 	}
 
 	return res.status(200).json({ ok: true });
+}
+
+/**
+ * A single kf-auth session was revoked (user revoked a device from the
+ * Security page, signed out, etc.). Delete exactly the local sessions
+ * that were minted from it — they're stamped with the kf-auth session
+ * id (the ID token's `sid` claim) at login.
+ */
+export async function handleSessionRevoked(data: any, res: any) {
+	const { sessionId } = data;
+
+	if (!sessionId) {
+		return res.status(400).json({ error: 'sessionId is required' });
+	}
+
+	const deleted = await deleteSessionsByKfSessionId(sessionId);
+
+	return res.status(200).json({ ok: true, deleted });
 }

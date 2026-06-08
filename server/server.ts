@@ -35,6 +35,8 @@ if (env.NODE_ENV !== 'test') {
 
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
+import { platformBanGuard } from './middleware/platformBanGuard';
+import { silentReauthMiddleware } from './middleware/silentReauth';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
@@ -117,19 +119,19 @@ appRouter.use('/api/health', (req, res) => {
 
 appRouter.use(
 	session({
-		secret: 'sessionsecret',
+		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
+		// Deliberately NOT rolling: the fixed expiry forces a silent
+		// prompt=none re-auth against kf-auth every maxAge, so revoked
+		// kf-auth sessions can't outlive this window even for active users.
 		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',
-			/* These are necessary for */
-			/* the api cookie to set */
-			/* ------- */
-			httpOnly: false,
-			secure: false,
-			/* ------- */
-			maxAge: 30 * 24 * 60 * 60 * 1000, // = 30 days.
+			httpOnly: true,
+			secure: env.NODE_ENV === 'production',
+			// maxAge: env.NODE_ENV === 'production' ? 4 * 60 * 60 * 1000 : 60_000, // 4h prod, 60s dev for testing
+			maxAge: 10_000, // 10s dev for testing
 		},
 	}),
 );
@@ -254,6 +256,8 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
+appRouter.use(silentReauthMiddleware());
+appRouter.use(platformBanGuard());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

@@ -30,6 +30,7 @@ import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 
 import {
 	buildAuthorizeUrl,
+	decodeIdTokenClaims,
 	decryptPayload,
 	encryptPayload,
 	exchangeCode,
@@ -37,9 +38,10 @@ import {
 	fetchUserOrgs,
 	generateCodeVerifier,
 	OIDC_ISSUER_URL,
-} from './auth';
+} from './oidc.server';
 import { provisionLocalUser } from './provisionLocalUser';
 import {
+	handleSessionRevoked,
 	handleUserBanned,
 	handleUserSessionsRevoked,
 	handleUserUnbanned,
@@ -107,12 +109,22 @@ router.get('/auth/login', async (req: any, res: any) => {
 
 	const isRenew = req.query.renew === 'true';
 
+	// Pin silent renewals to the account the expired session belonged to.
+	// The pp-lic cookie carries the hashed user id of the last login on
+	// this domain; the callback compares it against the renewed identity.
+	const currentLic = req.cookies?.['pp-lic'];
+	const expectedLic =
+		isRenew && typeof currentLic === 'string' && currentLic.startsWith('pp-li-')
+			? currentLic
+			: undefined;
+
 	const codeVerifier = generateCodeVerifier();
 	const stateToken = encryptPayload({
 		v: codeVerifier,
 		h: communityHost,
 		r: returnTo,
 		...(isRenew && { renew: true }),
+		...(expectedLic && { e: expectedLic }),
 	});
 
 	const { url } = await buildAuthorizeUrl(
@@ -154,7 +166,14 @@ router.get('/auth/callback', async (req: any, res: any) => {
 							maxAge: 60 * 60 * 1000,
 							httpOnly: true,
 						});
-						return res.redirect(`${protocol}://${host}${returnTo}`);
+						// Mirror the success path: in dev the hostname middleware
+						// rewrites localhost → demo.pubpub.org, so an absolute
+						// redirect would send the user to production. Relative
+						// redirects keep the browser on its current origin.
+						if (host && host !== req.hostname) {
+							return res.redirect(`${protocol}://${host}${returnTo}`);
+						}
+						return res.redirect(returnTo);
 					}
 				} catch {
 					/* fall through to generic error */
@@ -173,6 +192,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			h: string;
 			r: string;
 			renew?: boolean;
+			e?: string;
 		}>(state);
 		if (!stateData || !stateData.v) {
 			return res.status(400).send('Invalid or expired authentication state.');
@@ -195,7 +215,33 @@ router.get('/auth/callback', async (req: any, res: any) => {
 
 		const user = await provisionLocalUser(kfUserId, userInfo);
 
+		// kf-auth session id from the ID token's sid claim — stored on the
+		// local session so the session.revoked webhook can target it.
+		const kfSessionId = tokens.id_token
+			? (decodeIdTokenClaims(tokens.id_token).sid ?? null)
+			: null;
+
 		const protocol = isDevelopment() ? 'http' : 'https';
+
+		// Silent renewals must come back as the SAME account the expired
+		// session belonged to. With kf-auth multi-session, the active account
+		// there may have changed since — switching identities must be a
+		// deliberate user choice (via interactive login + account picker),
+		// never a side effect of background renewal. On mismatch, bail out
+		// and leave the user logged out.
+		if (stateData.renew && stateData.e) {
+			const renewedLic = `pp-li-${getHashedUserId(user)}`;
+			if (renewedLic !== stateData.e) {
+				res.cookie('pp-renew-failed', '1', {
+					maxAge: 60 * 60 * 1000,
+					httpOnly: true,
+				});
+				if (host && host !== req.hostname) {
+					return res.redirect(`${protocol}://${host}${returnTo}`);
+				}
+				return res.redirect(returnTo);
+			}
+		}
 
 		// For custom domains, we can't set a session here (different domain).
 		// Create a one-time encrypted token and redirect to session-set on the origin.
@@ -203,6 +249,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			const sessionToken = encryptPayload({
 				u: user.id,
 				r: returnTo,
+				s: kfSessionId,
 				exp: Date.now() + 60_000, // 60 seconds
 			});
 			const sessionSetUrl = `${protocol}://${host}/auth/session-set?token=${encodeURIComponent(sessionToken)}`;
@@ -212,6 +259,10 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// For platform subdomains: create session directly (shared cookie on .pubpub.org / .duqduq.org)
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
+
+		if (kfSessionId) {
+			req.session.kfSessionId = kfSessionId;
+		}
 
 		// Clear silent re-auth circuit breaker on successful login
 		res.clearCookie('pp-renew-failed');
@@ -243,7 +294,9 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 			return res.status(400).send('Missing session token.');
 		}
 
-		const data = decryptPayload<{ u: string; r: string; exp: number }>(token);
+		const data = decryptPayload<{ u: string; r: string; s?: string | null; exp: number }>(
+			token,
+		);
 		if (!data || !data.u) {
 			return res.status(400).send('Invalid session token.');
 		}
@@ -260,6 +313,10 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		// Create Passport session on this domain
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
+
+		if (data.s) {
+			req.session.kfSessionId = data.s;
+		}
 
 		res.clearCookie('pp-renew-failed');
 
@@ -291,10 +348,12 @@ router.post('/auth/logout', (req: any, res: any) => {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 
-		// Redirect to KF Auth's logout endpoint so the SSO session is also cleared
+		// Redirect to KF Auth's signout relay so the SSO session is also
+		// cleared. (The relay POSTs to better-auth's sign-out — a plain GET
+		// redirect to /api/auth/sign-out would be rejected as POST-only.)
 		const returnUrl = `${process.env.APP_URL || 'http://localhost:9876'}/`;
 		return res.redirect(
-			`${OIDC_ISSUER_URL}/api/auth/sign-out?callbackURL=${encodeURIComponent(returnUrl)}`,
+			`${OIDC_ISSUER_URL}/auth/signout?redirect_uri=${encodeURIComponent(returnUrl)}`,
 		);
 	});
 });
@@ -319,6 +378,8 @@ router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) =
 				return await handleUserUnbanned(data, res);
 			case 'user.sessions-revoked':
 				return await handleUserSessionsRevoked(data, res);
+			case 'session.revoked':
+				return await handleSessionRevoked(data, res);
 			default:
 				return res.status(200).json({ ok: true, ignored: true });
 		}

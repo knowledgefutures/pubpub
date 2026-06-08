@@ -27,9 +27,7 @@ export default async () => {
 	const dotenv = require('dotenv');
 	dotenv.config({ path: path.join(__dirname, '..', '..', 'infra', '.env.test') });
 
-	console.log(process.env);
 	const { env, refreshEnv } = await import('server/env');
-	console.log(env);
 
 	if (!process.env.DATABASE_URL) {
 		console.log('\nSit tight while a local test database is created...');

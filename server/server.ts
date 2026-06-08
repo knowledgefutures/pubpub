@@ -137,15 +137,21 @@ appRouter.use(
 );
 
 appRouter.use((req, res, next) => {
-	/* If on *.pubpub.org domain, set cookie to be accessible across */
-	/* all subdomains to maintain login. Especially important when */
+	/* If on a platform domain, set the session cookie to be accessible */
+	/* across all subdomains to maintain login. Especially important when */
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
-	if (hostname.indexOf('.pubpub.org') > -1) {
-		req.session.cookie.domain = '.pubpub.org';
-	}
-	if (hostname.indexOf('.duqduq.org') > -1) {
-		req.session.cookie.domain = '.duqduq.org';
+	const onPlatformDomain =
+		hostname.indexOf('.pubpub.org') > -1 || hostname.indexOf('.duqduq.org') > -1;
+	if (onPlatformDomain) {
+		/* Fastly maps *.duqduq.org → *.pubpub.org at the edge, so the */
+		/* hostname seen here can read ".pubpub.org" even on the duqduq */
+		/* deployment. Pick the parent domain from the deployment env (the */
+		/* same way the pp-lic cookie does) rather than the rewritten */
+		/* hostname — otherwise the session cookie gets pinned to */
+		/* .pubpub.org and is never sent back to *.duqduq.org, which traps */
+		/* the user in an infinite silent re-auth loop. */
+		req.session.cookie.domain = isDuqDuq() ? '.duqduq.org' : '.pubpub.org';
 	}
 	next();
 });

@@ -35,7 +35,6 @@ if (env.NODE_ENV !== 'test') {
 
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
-import { platformBanGuard } from './middleware/platformBanGuard';
 import { silentReauthMiddleware } from './middleware/silentReauth';
 import { blocklistMiddleware } from './utils/blocklist';
 
@@ -258,7 +257,6 @@ appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
 appRouter.use(silentReauthMiddleware());
-appRouter.use(platformBanGuard());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

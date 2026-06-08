@@ -13,6 +13,13 @@ import { resolveAppCommit } from './utils/appCommit';
 
 const app = express();
 
+// Trust the edge proxy (Fastly / load balancer). TLS is terminated at the
+// edge and forwarded as plain HTTP to the origin, so without this Express
+// sees req.secure === false and express-session silently refuses to set the
+// `secure` session cookie — leaving the user in an endless silent re-auth
+// loop. Trusting the proxy lets req.secure honor X-Forwarded-Proto.
+app.set('trust proxy', true);
+
 const appRouter = Router();
 
 import { getAppCommit, isDuqDuq, isProd, setAppCommit, setEnvironment } from 'utils/environment';

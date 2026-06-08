@@ -4,6 +4,7 @@ import type { UserSpamTagFields } from 'types';
 import mergeWith from 'lodash.mergewith';
 import { Op } from 'sequelize';
 
+import { syncBanToKfAuth, syncUnbanToKfAuth } from 'server/kf/oidc.server';
 import {
 	Collection,
 	CollectionAttribution,
@@ -14,7 +15,6 @@ import {
 	SpamTag,
 	User,
 } from 'server/models';
-import { syncBanToKfAuth, syncUnbanToKfAuth } from 'server/kf/oidc.server';
 import { defer } from 'server/utils/deferred';
 import { deleteSessionsForUser } from 'server/utils/session';
 import { expect } from 'utils/assert';

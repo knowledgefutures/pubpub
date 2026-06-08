@@ -13,13 +13,6 @@ import { resolveAppCommit } from './utils/appCommit';
 
 const app = express();
 
-// Trust the edge proxy (Fastly / load balancer). TLS is terminated at the
-// edge and forwarded as plain HTTP to the origin, so without this Express
-// sees req.secure === false and express-session silently refuses to set the
-// `secure` session cookie — leaving the user in an endless silent re-auth
-// loop. Trusting the proxy lets req.secure honor X-Forwarded-Proto.
-app.set('trust proxy', true);
-
 const appRouter = Router();
 
 import { getAppCommit, isDuqDuq, isProd, setAppCommit, setEnvironment } from 'utils/environment';
@@ -128,6 +121,13 @@ appRouter.use(
 		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
+		// TLS is terminated at the edge (Fastly) and forwarded as plain HTTP,
+		// so without trusting the proxy express-session sees an insecure
+		// connection and silently drops the `secure` cookie. This honors
+		// X-Forwarded-Proto for the secure-cookie decision ONLY — unlike a
+		// global `app.set('trust proxy')`, it leaves req.hostname untouched
+		// so community routing keeps working.
+		proxy: true,
 		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',

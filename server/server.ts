@@ -15,7 +15,7 @@ const app = express();
 
 const appRouter = Router();
 
-import { getAppCommit, isProd, setAppCommit, setEnvironment } from 'utils/environment';
+import { getAppCommit, isDuqDuq, isProd, setAppCommit, setEnvironment } from 'utils/environment';
 
 // ACHTUNG: These calls must appear before we import any more of our own code to ensure that
 // the environment, and in particular the choice of dev vs. prod, is configured correctly!
@@ -122,16 +122,17 @@ appRouter.use(
 		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
-		// Deliberately NOT rolling: the fixed expiry forces a silent
-		// prompt=none re-auth against kf-auth every maxAge, so revoked
-		// kf-auth sessions can't outlive this window even for active users.
 		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',
 			httpOnly: true,
 			secure: env.NODE_ENV === 'production',
-			// maxAge: env.NODE_ENV === 'production' ? 4 * 60 * 60 * 1000 : 60_000, // 4h prod, 60s dev for testing
-			maxAge: 10_000, // 10s dev for testing
+			maxAge:
+				env.NODE_ENV === 'production'
+					? isDuqDuq()
+						? 1 * 60 * 1000
+						: 15 * 60 * 1000
+					: 10_000, // 1min duqduq, 15m prod, 10s dev for testing
 		},
 	}),
 );

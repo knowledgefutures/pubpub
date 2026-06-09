@@ -1,7 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { isDuqDuq } from 'utils/environment';
-
 const SKIP_PREFIXES = ['/api', '/auth', '/dist', '/static', '/service-worker', '/favicon'];
 
 /**
@@ -40,17 +38,6 @@ export const silentReauthMiddleware = () => {
 		res.set('Surrogate-Control', 'no-store');
 
 		const returnTo = req.originalUrl;
-		if (isDuqDuq()) {
-			// biome-ignore lint/suspicious/noConsole: temporary auth-flow tracing
-			console.log(
-				`[auth-debug] silentReauth:redirect ${JSON.stringify({
-					path: req.path,
-					host: req.headers.host,
-					lic,
-					returnTo,
-				})}`,
-			);
-		}
 		return res.redirect(`/auth/login?renew=true&return_to=${encodeURIComponent(returnTo)}`);
 	};
 };

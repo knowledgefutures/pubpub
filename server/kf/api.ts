@@ -94,26 +94,27 @@ function isPlatformSubdomain(host: string): boolean {
 }
 
 /**
- * Verbose, env-gated tracing for the OIDC auth flow. Only emits on the duqduq
- * (staging) deploy — see the isDuqDuq()-gated error detail below. Prefixed
- * `[auth-debug]` so it's easy to grep/remove once the loop is confirmed fixed.
+ * Set the silent-reauth circuit breaker. It MUST be visible on the community
+ * origin where silentReauthMiddleware checks it. On platform subdomains we
+ * scope it to the parent domain (like pp-lic) so a breaker set on www.* is
+ * also sent to the community subdomain; on custom domains it's host-only
+ * (and must be set on that origin — see failRenew / /auth/renew-failed).
  */
-function authDebug(req: any, label: string, extra: Record<string, unknown> = {}): void {
-	if (!isDuqDuq()) return;
-	const fields = {
-		host: req.headers.host,
-		hostname: req.hostname,
-		communityhostname: req.headers.communityhostname,
-		xfp: req.headers['x-forwarded-proto'],
-		fastlySsl: req.headers['fastly-ssl'],
-		secure: req.secure,
-		user: req.user?.id ?? null,
-		ppLic: req.cookies?.['pp-lic'],
-		renewFailed: req.cookies?.['pp-renew-failed'],
-		...extra,
-	};
-	// biome-ignore lint/suspicious/noConsole: temporary auth-flow tracing
-	console.log(`[auth-debug] ${label} ${JSON.stringify(fields)}`);
+function setRenewFailedCookie(req: any, res: any): void {
+	const onPlatformSubdomain = (isProd() || isDuqDuq()) && isPlatformSubdomain(req.hostname);
+	res.cookie('pp-renew-failed', '1', {
+		maxAge: 60 * 60 * 1000,
+		httpOnly: true,
+		...(onPlatformSubdomain && { domain: isDuqDuq() ? '.duqduq.org' : '.pubpub.org' }),
+	});
+}
+
+/** Clear the breaker — matching whatever domain scope setRenewFailedCookie used. */
+function clearRenewFailedCookie(req: any, res: any): void {
+	res.clearCookie('pp-renew-failed');
+	if ((isProd() || isDuqDuq()) && isPlatformSubdomain(req.hostname)) {
+		res.clearCookie('pp-renew-failed', { domain: isDuqDuq() ? '.duqduq.org' : '.pubpub.org' });
+	}
 }
 
 /**
@@ -125,11 +126,20 @@ function authDebug(req: any, label: string, extra: Record<string, unknown> = {})
  * re-redeem the one-time OIDC code (→ invalid_grant).
  */
 function failRenew(req: any, res: any, host: string | undefined, returnTo: string): void {
-	res.cookie('pp-renew-failed', '1', {
-		maxAge: 60 * 60 * 1000,
-		httpOnly: true,
-	});
 	const protocol = isDevelopment() ? 'http' : 'https';
+	// Custom domains: this callback runs on the platform domain (www.*), which
+	// can't set a cookie for the custom origin. Bounce through /auth/renew-failed
+	// on that origin so the breaker lands where silentReauthMiddleware checks it.
+	if (host && !isPlatformSubdomain(host) && host !== req.hostname) {
+		res.redirect(
+			`${protocol}://${host}/auth/renew-failed?return_to=${encodeURIComponent(returnTo)}`,
+		);
+		return;
+	}
+	// Platform subdomains (and same-origin): a parent-domain-scoped breaker set
+	// here is visible across *.duqduq.org / *.pubpub.org, including the community
+	// subdomain the user is actually on.
+	setRenewFailedCookie(req, res);
 	if (host && host !== req.hostname) {
 		res.redirect(`${protocol}://${host}${returnTo}`);
 		return;
@@ -178,8 +188,6 @@ router.get('/auth/login', async (req: any, res: any) => {
 		isRenew ? 'none' : undefined,
 	);
 
-	authDebug(req, 'login', { communityHost, isRenew, expectedLic, returnTo });
-
 	return res.redirect(url);
 });
 
@@ -190,7 +198,6 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const { code, state, error } = req.query;
 
 		if (error) {
-			authDebug(req, 'callback:error', { error, desc: req.query.error_description });
 			// All prompt=none error types mean "silent re-auth can't complete"
 			const isPromptNoneError =
 				error === 'login_required' ||
@@ -264,24 +271,10 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// and leave the user logged out.
 		if (stateData.renew && stateData.e) {
 			const renewedLic = `pp-li-${getHashedUserId(user)}`;
-			authDebug(req, 'callback:pin', {
-				host,
-				match: renewedLic === stateData.e,
-				expected: stateData.e,
-			});
 			if (renewedLic !== stateData.e) {
 				return failRenew(req, res, host, returnTo);
 			}
 		}
-
-		authDebug(req, 'callback:authed', {
-			host,
-			isPlatformSubdomain: host ? isPlatformSubdomain(host) : null,
-			branch: host && !isPlatformSubdomain(host) ? 'session-set' : 'direct',
-			renew: !!stateData.renew,
-			sessionCookieDomain: req.session?.cookie?.domain,
-			sessionCookieSecure: req.session?.cookie?.secure,
-		});
 
 		// For custom domains, we can't set a session here (different domain).
 		// Create a one-time encrypted token and redirect to session-set on the origin.
@@ -305,7 +298,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		}
 
 		// Clear silent re-auth circuit breaker on successful login
-		res.clearCookie('pp-renew-failed');
+		clearRenewFailedCookie(req, res);
 
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
@@ -320,7 +313,6 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		return res.redirect(returnTo);
 	} catch (err: any) {
 		console.error('OIDC callback error:', err);
-		authDebug(req, 'callback:exception', { message: err?.message || String(err) });
 		// If this was a silent renewal, never surface a 500: Fastly restarts
 		// 500s on GET (vcl_fetch), which re-redeems the one-time code and
 		// produces a confusing `invalid_grant`. Trip the breaker and bounce
@@ -369,7 +361,7 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 			req.session.kfSessionId = data.s;
 		}
 
-		res.clearCookie('pp-renew-failed');
+		clearRenewFailedCookie(req, res);
 
 		// Set the CDN cache cookie on this domain
 		const hashedUserId = getHashedUserId(user);
@@ -378,23 +370,29 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		});
 
 		const returnTo = data.r || '/';
-		authDebug(req, 'session-set:authed', {
-			user: user.id,
-			returnTo,
-			sessionCookieDomain: req.session?.cookie?.domain,
-			sessionCookieSecure: req.session?.cookie?.secure,
-		});
 		return res.redirect(returnTo);
 	} catch (err) {
 		console.error('Session-set error:', err);
-		authDebug(req, 'session-set:exception', {
-			message: (err as any)?.message || String(err),
-		});
 		// Trip the breaker so a failed transfer falls back to the anonymous
 		// page instead of looping (and avoid a 500, which Fastly would retry).
-		res.cookie('pp-renew-failed', '1', { maxAge: 60 * 60 * 1000, httpOnly: true });
+		setRenewFailedCookie(req, res);
 		return res.status(500).send('Failed to establish session. Please try again.');
 	}
+});
+
+// ─── Silent re-auth circuit breaker for cross-origin communities ─────
+// When a renewal fails, the breaker must be set on the community origin (where
+// silentReauthMiddleware checks it). For custom domains the OIDC callback runs
+// on a different origin and can't set that cookie, so it bounces the browser
+// here on the community origin to set it, then returns the user to their page.
+router.get('/auth/renew-failed', (req: any, res: any) => {
+	const rawReturn = req.query.return_to;
+	const returnTo =
+		typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
+			? rawReturn
+			: '/';
+	setRenewFailedCookie(req, res);
+	return res.redirect(returnTo);
 });
 
 // ─── Logout ──────────────────────────────────────────────────────────
@@ -402,12 +400,14 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 router.post('/auth/logout', (req: any, res: any) => {
 	// Clear local session
 	req.logout(() => {
-		// Set pp-lic to logged-out state
+		// Set pp-lic to logged-out state. Must use the SAME domain scope the
+		// login marker was set with (callback/session-set), otherwise on the
+		// duqduq deploy (where isProd() is false) this 'pp-lo' is host-only and
+		// fails to overwrite the .duqduq.org-scoped 'pp-li-…' — leaving the user
+		// looking logged-in to silentReauthMiddleware, which then loops.
 		res.cookie('pp-lic', 'pp-lo', {
-			...(isProd() &&
-				req.hostname.indexOf('pubpub.org') > -1 && {
-					domain: '.pubpub.org',
-				}),
+			...(isProd() && { domain: '.pubpub.org' }),
+			...(isDuqDuq() && { domain: '.duqduq.org' }),
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 

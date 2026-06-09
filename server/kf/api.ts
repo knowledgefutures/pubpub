@@ -93,6 +93,50 @@ function isPlatformSubdomain(host: string): boolean {
 	return host.endsWith('.pubpub.org') || host.endsWith('.duqduq.org');
 }
 
+/**
+ * Verbose, env-gated tracing for the OIDC auth flow. Only emits on the duqduq
+ * (staging) deploy — see the isDuqDuq()-gated error detail below. Prefixed
+ * `[auth-debug]` so it's easy to grep/remove once the loop is confirmed fixed.
+ */
+function authDebug(req: any, label: string, extra: Record<string, unknown> = {}): void {
+	if (!isDuqDuq()) return;
+	const fields = {
+		host: req.headers.host,
+		hostname: req.hostname,
+		communityhostname: req.headers.communityhostname,
+		xfp: req.headers['x-forwarded-proto'],
+		fastlySsl: req.headers['fastly-ssl'],
+		secure: req.secure,
+		user: req.user?.id ?? null,
+		ppLic: req.cookies?.['pp-lic'],
+		renewFailed: req.cookies?.['pp-renew-failed'],
+		...extra,
+	};
+	// biome-ignore lint/suspicious/noConsole: temporary auth-flow tracing
+	console.log(`[auth-debug] ${label} ${JSON.stringify(fields)}`);
+}
+
+/**
+ * Bail out of a silent renewal without a session: trip the circuit breaker so
+ * silentReauthMiddleware stops redirecting, then send the user back to where
+ * they came from (anonymous). Used on every renewal failure path so a single
+ * failure degrades to "anonymous page for 1h" instead of an infinite loop.
+ * Crucially never returns a 500 — Fastly restarts 500s on GET, which would
+ * re-redeem the one-time OIDC code (→ invalid_grant).
+ */
+function failRenew(req: any, res: any, host: string | undefined, returnTo: string): void {
+	res.cookie('pp-renew-failed', '1', {
+		maxAge: 60 * 60 * 1000,
+		httpOnly: true,
+	});
+	const protocol = isDevelopment() ? 'http' : 'https';
+	if (host && host !== req.hostname) {
+		res.redirect(`${protocol}://${host}${returnTo}`);
+		return;
+	}
+	res.redirect(returnTo);
+}
+
 // ── Router ───────────────────────────────────────────────────────────
 
 export const router = Router();
@@ -134,6 +178,8 @@ router.get('/auth/login', async (req: any, res: any) => {
 		isRenew ? 'none' : undefined,
 	);
 
+	authDebug(req, 'login', { communityHost, isRenew, expectedLic, returnTo });
+
 	return res.redirect(url);
 });
 
@@ -144,6 +190,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const { code, state, error } = req.query;
 
 		if (error) {
+			authDebug(req, 'callback:error', { error, desc: req.query.error_description });
 			// All prompt=none error types mean "silent re-auth can't complete"
 			const isPromptNoneError =
 				error === 'login_required' ||
@@ -151,32 +198,18 @@ router.get('/auth/callback', async (req: any, res: any) => {
 				error === 'account_selection_required' ||
 				error === 'consent_required';
 			if (isPromptNoneError && state) {
-				try {
-					const renewState = decryptPayload<{
-						v: string;
-						h: string;
-						r: string;
-						renew?: boolean;
-					}>(state);
-					if (renewState?.renew) {
-						const protocol = isDevelopment() ? 'http' : 'https';
-						const host = renewState.h || req.hostname;
-						const returnTo = renewState.r || '/';
-						res.cookie('pp-renew-failed', '1', {
-							maxAge: 60 * 60 * 1000,
-							httpOnly: true,
-						});
-						// Mirror the success path: in dev the hostname middleware
-						// rewrites localhost → demo.pubpub.org, so an absolute
-						// redirect would send the user to production. Relative
-						// redirects keep the browser on its current origin.
-						if (host && host !== req.hostname) {
-							return res.redirect(`${protocol}://${host}${returnTo}`);
-						}
-						return res.redirect(returnTo);
-					}
-				} catch {
-					/* fall through to generic error */
+				const renewState = decryptPayload<{
+					v: string;
+					h: string;
+					r: string;
+					renew?: boolean;
+				}>(state);
+				if (renewState?.renew) {
+					// Mirror the success path: in dev the hostname middleware
+					// rewrites localhost → demo.pubpub.org, so an absolute
+					// redirect would send the user to production. Relative
+					// redirects keep the browser on its current origin.
+					return failRenew(req, res, renewState.h || req.hostname, renewState.r || '/');
 				}
 			}
 			console.error('KF Auth error:', error, req.query.error_description);
@@ -231,17 +264,24 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// and leave the user logged out.
 		if (stateData.renew && stateData.e) {
 			const renewedLic = `pp-li-${getHashedUserId(user)}`;
+			authDebug(req, 'callback:pin', {
+				host,
+				match: renewedLic === stateData.e,
+				expected: stateData.e,
+			});
 			if (renewedLic !== stateData.e) {
-				res.cookie('pp-renew-failed', '1', {
-					maxAge: 60 * 60 * 1000,
-					httpOnly: true,
-				});
-				if (host && host !== req.hostname) {
-					return res.redirect(`${protocol}://${host}${returnTo}`);
-				}
-				return res.redirect(returnTo);
+				return failRenew(req, res, host, returnTo);
 			}
 		}
+
+		authDebug(req, 'callback:authed', {
+			host,
+			isPlatformSubdomain: host ? isPlatformSubdomain(host) : null,
+			branch: host && !isPlatformSubdomain(host) ? 'session-set' : 'direct',
+			renew: !!stateData.renew,
+			sessionCookieDomain: req.session?.cookie?.domain,
+			sessionCookieSecure: req.session?.cookie?.secure,
+		});
 
 		// For custom domains, we can't set a session here (different domain).
 		// Create a one-time encrypted token and redirect to session-set on the origin.
@@ -280,6 +320,17 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		return res.redirect(returnTo);
 	} catch (err: any) {
 		console.error('OIDC callback error:', err);
+		authDebug(req, 'callback:exception', { message: err?.message || String(err) });
+		// If this was a silent renewal, never surface a 500: Fastly restarts
+		// 500s on GET (vcl_fetch), which re-redeems the one-time code and
+		// produces a confusing `invalid_grant`. Trip the breaker and bounce
+		// the user back anonymously instead — they retry in an hour.
+		const renewState = decryptPayload<{ h: string; r: string; renew?: boolean }>(
+			req.query.state,
+		);
+		if (renewState?.renew) {
+			return failRenew(req, res, renewState.h || req.hostname, renewState.r || '/');
+		}
 		const detail = isDuqDuq() ? ` (${err?.message || err})` : '';
 		return res.status(500).send(`Login failed. Please try again.${detail}`);
 	}
@@ -327,9 +378,21 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		});
 
 		const returnTo = data.r || '/';
+		authDebug(req, 'session-set:authed', {
+			user: user.id,
+			returnTo,
+			sessionCookieDomain: req.session?.cookie?.domain,
+			sessionCookieSecure: req.session?.cookie?.secure,
+		});
 		return res.redirect(returnTo);
 	} catch (err) {
 		console.error('Session-set error:', err);
+		authDebug(req, 'session-set:exception', {
+			message: (err as any)?.message || String(err),
+		});
+		// Trip the breaker so a failed transfer falls back to the anonymous
+		// page instead of looping (and avoid a 500, which Fastly would retry).
+		res.cookie('pp-renew-failed', '1', { maxAge: 60 * 60 * 1000, httpOnly: true });
 		return res.status(500).send('Failed to establish session. Please try again.');
 	}
 });

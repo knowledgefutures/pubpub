@@ -71,6 +71,23 @@ import { server } from 'utils/api/server';
 // set BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
 appRouter.use(blocklistMiddleware);
 
+// Fastly terminates TLS at the edge and forwards plain HTTP to the origin,
+// marking TLS requests with the `Fastly-SSL` header (see vcl_recv). Both
+// express-session (`proxy: true`) and express-sslify (`trustProtoHeader`)
+// decide "is this secure?" from `X-Forwarded-Proto` only — if that header
+// never reaches us the `Secure` session cookie is silently dropped and the
+// user is trapped in a silent re-auth loop. Normalize the proto signal here,
+// before any of those run. This only touches the header used for the secure
+// decision; req.hostname/req.protocol (and community routing) are untouched.
+if (isProd() || isDuqDuq()) {
+	appRouter.use((req, _res, next) => {
+		if (req.headers['fastly-ssl'] && !req.headers['x-forwarded-proto']) {
+			req.headers['x-forwarded-proto'] = 'https';
+		}
+		next();
+	});
+}
+
 if (env.NODE_ENV === 'production') {
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',

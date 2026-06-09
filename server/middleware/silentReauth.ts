@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { isDuqDuq } from 'utils/environment';
+
 const SKIP_PREFIXES = ['/api', '/auth', '/dist', '/static', '/service-worker', '/favicon'];
 
 /**
@@ -28,7 +30,27 @@ export const silentReauthMiddleware = () => {
 		// Circuit breaker: recently tried and failed - skip
 		if (req.cookies?.['pp-renew-failed']) return next();
 
+		// This 302 carries no Set-Cookie, so Fastly would otherwise cache it
+		// under the per-`pp-lic` cache key (vcl_hash only mixes connect.sid in
+		// for /api routes). A cached "go reauth" redirect would then be served
+		// even after the user has a valid session again — an infinite loop the
+		// session cookie can't bust. Mark it private/no-store so the edge
+		// passes it through (Fastly return(pass)es on `Cache-Control ~ private`).
+		res.set('Cache-Control', 'private, no-store');
+		res.set('Surrogate-Control', 'no-store');
+
 		const returnTo = req.originalUrl;
+		if (isDuqDuq()) {
+			// biome-ignore lint/suspicious/noConsole: temporary auth-flow tracing
+			console.log(
+				`[auth-debug] silentReauth:redirect ${JSON.stringify({
+					path: req.path,
+					host: req.headers.host,
+					lic,
+					returnTo,
+				})}`,
+			);
+		}
 		return res.redirect(`/auth/login?renew=true&return_to=${encodeURIComponent(returnTo)}`);
 	};
 };

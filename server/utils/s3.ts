@@ -190,11 +190,12 @@ export const createPubPubS3Client = (config: PubPubS3ClientConfig): PubPubS3Clie
 	};
 
 	const copyObjectTo = async (key: string, destBucket: string) => {
+		const encodedKey = encodeURIComponent(key).replace(/%2F/g, '/');
 		await s3Client.send(
 			new CopyObjectCommand({
 				Bucket: destBucket,
 				Key: key,
-				CopySource: `${bucket}/${key}`,
+				CopySource: `${bucket}/${encodedKey}`,
 			}),
 		);
 	};

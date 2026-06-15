@@ -271,7 +271,8 @@ const ScamFiles = (props: Props) => {
 			{!props.cachePurgeConfigured && (
 				<Callout intent={Intent.WARNING} style={{ marginBottom: 20 }}>
 					Cloudflare cache purge is not configured. Set{' '}
-					<code>CLOUDFLARE_CACHE_PURGE_API_TOKEN</code> in environment variables.
+					<code>CLOUDFLARE_CACHE_PURGE_API_TOKEN</code> and{' '}
+					<code>CLOUDFLARE_ZONE_TAG</code> in environment variables.
 				</Callout>
 			)}
 

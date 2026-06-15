@@ -1,4 +1,4 @@
-import { purgeSurrogateTag } from './purgeSurrogateTag';
+import { purgeSurrogateTag } from './purge';
 
 /**
  * Creates a cache purge debouncer function.

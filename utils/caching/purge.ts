@@ -59,3 +59,50 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 
 	return id;
 };
+
+export async function purgeFastlyUrl(url: string) {
+	const res = await fetch(`https://api.fastly.com/purge/${url}`, {
+		method: 'POST',
+		headers: {
+			'Fastly-Key': env.FASTLY_PURGE_TOKEN,
+			Accept: 'application/json',
+		},
+	});
+	const json = await res.json();
+	if (!res.ok) {
+		throw new Error(`Fastly purge failed: ${json?.msg || res.statusText}`);
+	}
+	return json;
+}
+
+const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
+
+export function isCachePurgeConfigured() {
+	return Boolean(env.CLOUDFLARE_CACHE_PURGE_API_TOKEN && env.CLOUDFLARE_ZONE_TAG);
+}
+
+export async function purgeCloudflareUrls(urls: string[]) {
+	const apiToken = env.CLOUDFLARE_CACHE_PURGE_API_TOKEN;
+	const zoneId = env.CLOUDFLARE_ZONE_TAG;
+	if (!apiToken || !zoneId) {
+		throw new Error(
+			'Cloudflare cache purge not configured. Set CLOUDFLARE_CACHE_PURGE_API_TOKEN and CLOUDFLARE_ZONE_TAG.',
+		);
+	}
+
+	const res = await fetch(`${CF_API_BASE}/zones/${zoneId}/purge_cache`, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${apiToken}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ files: urls }),
+	});
+
+	const json = await res.json();
+	if (!json.success) {
+		const msgs = (json.errors ?? []).map((e: any) => e.message).join('; ');
+		throw new Error(`Cloudflare cache purge failed: ${msgs || res.statusText}`);
+	}
+	return json;
+}

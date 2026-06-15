@@ -30,19 +30,19 @@ import { Community, DepositTarget, SpamTag, User } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
-	purgeByUrls as cfPurgeByUrls,
-	isCachePurgeConfigured,
-} from 'server/utils/cloudflareCachePurge';
-import {
 	addCustomHostname,
 	isCloudflareConfigured,
 	removeCustomHostname,
 } from 'server/utils/cloudflareCustomHostnames';
 import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
-import { purgeByUrl as fastlyPurgeByUrl } from 'server/utils/fastlyPurge';
 import { getInitialData } from 'server/utils/initData';
 import { assetsClient, scamClient } from 'server/utils/s3';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import {
+	purgeCloudflareUrls as cfPurgeByUrls,
+	purgeFastlyUrl as fastlyPurgeByUrl,
+	isCachePurgeConfigured,
+} from 'utils/caching/purge';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
 	getSuperAdminTabUrl,

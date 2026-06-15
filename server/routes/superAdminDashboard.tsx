@@ -622,14 +622,36 @@ router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req
 
 // ── Scam Files API ────────────────────────────────────────────────────────
 
-const parseAssetKey = (rawUrl: string): string => {
+const parseAssetKey = (rawUrl: unknown): string => {
+	if (typeof rawUrl !== 'string' || !rawUrl.trim()) {
+		throw new BadRequestError(new Error('Missing URL'));
+	}
 	let url = rawUrl.trim();
-	url = url.replace(/hxxps?/gi, 'https').replace(/\[.\]/g, '.');
-	const match = url.match(/assets\.pubpub\.org\/(.+)/);
-	if (!match?.[1]) {
+	url = url.replace(/hxxps?/gi, 'https').replace(/\[\.\]/g, '.');
+	if (!/^https?:\/\//i.test(url)) {
+		url = `https://${url}`;
+	}
+
+	let parsed: URL;
+	try {
+		parsed = new URL(url);
+	} catch {
+		throw new BadRequestError(new Error('Invalid URL'));
+	}
+	if (parsed.hostname !== 'assets.pubpub.org') {
+		throw new BadRequestError(new Error('URL must be on assets.pubpub.org'));
+	}
+
+	let key: string;
+	try {
+		key = decodeURIComponent(parsed.pathname.replace(/^\/+/, ''));
+	} catch {
+		throw new BadRequestError(new Error('Could not decode asset key from URL'));
+	}
+	if (!key) {
 		throw new BadRequestError(new Error('Could not parse asset key from URL'));
 	}
-	return match[1];
+	return key;
 };
 
 router.post('/api/superadmin/scam-files/copy', async (req, res, next) => {

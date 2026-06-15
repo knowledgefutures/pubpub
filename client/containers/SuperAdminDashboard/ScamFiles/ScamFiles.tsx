@@ -286,7 +286,15 @@ const ScamFiles = (props: Props) => {
 					<InputGroup
 						placeholder="hxxps://assets.pubpub[.]org/gc76xhm9/instafollowers-31760624050613.html"
 						value={url}
-						onChange={(e) => setUrl(e.target.value)}
+						onChange={(e) => {
+							setUrl(e.target.value);
+							setParsedKey(null);
+							setCheckResult(null);
+							setCopyState('idle');
+							setDeleteState('idle');
+							setFastlyState('idle');
+							setCloudflareState('idle');
+						}}
 						onKeyDown={(e) => e.key === 'Enter' && handleParse()}
 						large
 					/>

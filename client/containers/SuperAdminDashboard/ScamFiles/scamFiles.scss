@@ -1,0 +1,146 @@
+.scam-files-component {
+	.url-input-form {
+		display: flex;
+		gap: 10px;
+		align-items: flex-end;
+		margin-bottom: 20px;
+
+		.bp3-form-group {
+			flex: 1;
+			margin-bottom: 0;
+		}
+	}
+
+	.parsed-key {
+		margin-bottom: 20px;
+		padding: 8px 12px;
+		background: #f5f5f5;
+		border-radius: 4px;
+		font-family: monospace;
+		font-size: 13px;
+		word-break: break-all;
+	}
+
+	.steps-section {
+		margin-bottom: 30px;
+
+		.step {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 10px 0;
+			border-bottom: 1px solid #eee;
+
+			.step-number {
+				flex-shrink: 0;
+				width: 28px;
+				height: 28px;
+				border-radius: 50%;
+				background: #e0e0e0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: 600;
+				font-size: 13px;
+			}
+
+			.step-label {
+				flex: 1;
+				font-size: 14px;
+			}
+
+			.step-status {
+				font-size: 13px;
+				margin-left: 8px;
+				min-width: 80px;
+			}
+		}
+	}
+
+	.status-section {
+		margin-top: 20px;
+
+		.status-grid {
+			display: grid;
+			grid-template-columns: 200px 1fr;
+			gap: 8px 16px;
+			padding: 12px 16px;
+			background: #f8f9fa;
+			border-radius: 6px;
+			font-size: 13px;
+			margin-top: 10px;
+
+			.status-label {
+				font-weight: 600;
+				color: #555;
+			}
+
+			.status-value {
+				font-family: monospace;
+				word-break: break-all;
+			}
+
+			.status-found {
+				color: #d32f2f;
+			}
+
+			.status-not-found {
+				color: #2e7d32;
+			}
+		}
+	}
+
+	.associations-section {
+		margin-top: 16px;
+
+		h4 {
+			margin-bottom: 8px;
+		}
+
+		.association-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 8px 12px;
+			background: #f8f9fa;
+			border-radius: 4px;
+			margin-bottom: 6px;
+
+			.association-info {
+				flex: 1;
+				min-width: 0;
+
+				strong {
+					display: block;
+					font-size: 14px;
+				}
+
+				.association-detail {
+					font-size: 12px;
+					color: #666;
+
+					a {
+						color: #137cbd;
+					}
+				}
+			}
+		}
+	}
+
+	.history-section {
+		margin-top: 30px;
+		border-top: 1px solid #ddd;
+		padding-top: 20px;
+
+		.history-entry {
+			padding: 8px 0;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 13px;
+
+			.history-time {
+				color: #888;
+				margin-right: 8px;
+			}
+		}
+	}
+}

@@ -10,6 +10,7 @@ import ExploreCommunities from './ExploreCommunities';
 import Hubs from './Hubs';
 import LandingPageFeatures from './LandingPageFeatures';
 import PlatformAnalytics from './PlatformAnalytics';
+import ScamFiles from './ScamFiles';
 import SuggestedHubs from './SuggestedHubs';
 import UserSpam from './UserSpam';
 
@@ -58,5 +59,9 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	spamUsers: {
 		title: 'Spam Users',
 		component: UserSpam,
+	},
+	scamFiles: {
+		title: 'Scam Files',
+		component: ScamFiles,
 	},
 };

@@ -26,7 +26,7 @@ import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget } from 'server/models';
+import { Community, DepositTarget, SpamTag, User } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -36,7 +36,13 @@ import {
 } from 'server/utils/cloudflareCustomHostnames';
 import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { assetsClient, scamClient } from 'server/utils/s3';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import {
+	purgeCloudflareUrls as cfPurgeByUrls,
+	purgeFastlyUrl as fastlyPurgeByUrl,
+	isCachePurgeConfigured,
+} from 'utils/caching/purge';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
 	getSuperAdminTabUrl,
@@ -128,6 +134,9 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			communities,
 			totalCount,
 		};
+	}
+	if (tabKind === 'scamFiles') {
+		return { cachePurgeConfigured: isCachePurgeConfigured() };
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
@@ -606,6 +615,211 @@ router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req
 		const { domain } = req.params;
 		const mentions = await getContentMentionsForDomain(domain);
 		return res.json(mentions);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── Scam Files API ────────────────────────────────────────────────────────
+
+const parseAssetKey = (rawUrl: unknown): string => {
+	if (typeof rawUrl !== 'string' || !rawUrl.trim()) {
+		throw new BadRequestError(new Error('Missing URL'));
+	}
+	let url = rawUrl.trim();
+	url = url.replace(/hxxps?/gi, 'https').replace(/\[\.\]/g, '.');
+	if (!/^https?:\/\//i.test(url)) {
+		url = `https://${url}`;
+	}
+
+	let parsed: URL;
+	try {
+		parsed = new URL(url);
+	} catch {
+		throw new BadRequestError(new Error('Invalid URL'));
+	}
+	if (parsed.hostname !== 'assets.pubpub.org') {
+		throw new BadRequestError(new Error('URL must be on assets.pubpub.org'));
+	}
+
+	let key: string;
+	try {
+		key = decodeURIComponent(parsed.pathname.replace(/^\/+/, ''));
+	} catch {
+		throw new BadRequestError(new Error('Could not decode asset key from URL'));
+	}
+	if (!key) {
+		throw new BadRequestError(new Error('Could not parse asset key from URL'));
+	}
+	return key;
+};
+
+router.post('/api/superadmin/scam-files/copy', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const exists = await assetsClient.checkIfFileExists(key);
+		if (!exists) {
+			throw new BadRequestError(new Error(`File not found in assets bucket: ${key}`));
+		}
+		await assetsClient.copyObjectTo(key, scamClient.bucket);
+		const copiedExists = await scamClient.checkIfFileExists(key);
+		return res.json({ key, copied: copiedExists });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/delete', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		await assetsClient.deleteObject(key);
+		const stillExists = await assetsClient.checkIfFileExists(key);
+		return res.json({ key, deleted: !stillExists });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/purge-fastly', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+		const result = await fastlyPurgeByUrl(fullUrl);
+		return res.json({ key, purged: true, fastlyId: result.id });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/purge-cloudflare', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+		await cfPurgeByUrls([fullUrl]);
+		return res.json({ key, purged: true });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// Keys follow the pattern: c{communityId}/p{pubId}/u{userId}/filename
+// The /p{pubId} segment is optional.
+const parseIdsFromKey = (key: string) => {
+	const communityMatch = key.match(/^(?:_testing\/)?c([0-9a-f-]{36})\//i);
+	const userMatch = key.match(/\/u([0-9a-f-]{36})\//i);
+	const pubMatch = key.match(/\/p([0-9a-f-]{36})\//i);
+	return {
+		communityId: communityMatch?.[1] ?? null,
+		userId: userMatch?.[1] ?? null,
+		pubId: pubMatch?.[1] ?? null,
+	};
+};
+
+router.post('/api/superadmin/scam-files/check', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const fullUrl = `https://assets.pubpub.org/${key}`;
+		const { communityId, userId } = parseIdsFromKey(key);
+
+		const lookups: Promise<any>[] = [
+			assetsClient.checkIfFileExists(key),
+			scamClient.checkIfFileExists(key),
+		];
+
+		if (userId) {
+			lookups.push(
+				User.findByPk(userId, {
+					attributes: ['id', 'fullName', 'slug', 'email', 'spamTagId'],
+					include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				}),
+			);
+		} else {
+			lookups.push(Promise.resolve(null));
+		}
+
+		if (communityId) {
+			lookups.push(
+				Community.findByPk(communityId, {
+					attributes: ['id', 'title', 'subdomain', 'spamTagId'],
+					include: [{ model: SpamTag, as: 'spamTag', required: false }],
+				}),
+			);
+		} else {
+			lookups.push(Promise.resolve(null));
+		}
+
+		const [s3Assets, s3Scam, user, community] = await Promise.all(lookups);
+
+		let cdnStatus: {
+			httpStatus: number;
+			cfCacheStatus: string | null;
+			fastlyCacheStatus: string | null;
+			servedBy: string | null;
+			age: string | null;
+		} | null = null;
+
+		try {
+			const cdnRes = await fetch(fullUrl, { method: 'HEAD', redirect: 'follow' });
+			cdnStatus = {
+				httpStatus: cdnRes.status,
+				cfCacheStatus: cdnRes.headers.get('cf-cache-status'),
+				fastlyCacheStatus: cdnRes.headers.get('x-cache'),
+				servedBy: cdnRes.headers.get('x-served-by'),
+				age: cdnRes.headers.get('age'),
+			};
+		} catch {
+			cdnStatus = null;
+		}
+
+		return res.json({
+			key,
+			s3Assets,
+			s3Scam,
+			cdn: cdnStatus,
+			associations: {
+				users: user
+					? [
+							{
+								id: user.id,
+								fullName: user.fullName,
+								slug: user.slug,
+								email: user.email,
+								spamStatus: user.spamTag?.status ?? null,
+							},
+						]
+					: [],
+				communities: community
+					? [
+							{
+								id: community.id,
+								title: community.title,
+								subdomain: community.subdomain,
+								spamStatus: community.spamTag?.status ?? null,
+							},
+						]
+					: [],
+			},
+		});
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

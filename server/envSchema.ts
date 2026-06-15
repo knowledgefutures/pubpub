@@ -162,6 +162,12 @@ export const envSchema = z.object({
 		.optional()
 		.describe('Cloudflare API token with SSL & Hostnames:Edit permission'),
 
+	// ── Cloudflare Cache Purge ──────────────────────────────────────────
+	CLOUDFLARE_CACHE_PURGE_API_TOKEN: z
+		.string()
+		.optional()
+		.describe('Cloudflare API token with Zone:Cache Purge:Edit permission'),
+
 	// ── Spam / Security ─────────────────────────────────────────────────
 	BLOCKLIST_IP_ADDRESSES: z
 		.string()

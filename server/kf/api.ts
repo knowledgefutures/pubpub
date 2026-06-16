@@ -8,7 +8,7 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  *   POST /auth/logout      — clear session + redirect to KF Auth logout
  *
  * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
- *   POST /api/kf/profile-sync         — receive profile updates from KF Auth
+ *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
  *   GET  /api/kf/summary              — return community list for a KF org
  *   GET  /api/kf/billing/usage        — return usage stats for billing (placeholder)
@@ -30,6 +30,7 @@ import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 
 import {
 	buildAuthorizeUrl,
+	decodeIdTokenClaims,
 	decryptPayload,
 	encryptPayload,
 	exchangeCode,
@@ -37,8 +38,15 @@ import {
 	fetchUserOrgs,
 	generateCodeVerifier,
 	OIDC_ISSUER_URL,
-} from './auth';
+} from './oidc.server';
 import { provisionLocalUser } from './provisionLocalUser';
+import {
+	handleSessionRevoked,
+	handleUserBanned,
+	handleUserSessionsRevoked,
+	handleUserUnbanned,
+	handleUserUpdated,
+} from './webhookHandlers';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -85,6 +93,60 @@ function isPlatformSubdomain(host: string): boolean {
 	return host.endsWith('.pubpub.org') || host.endsWith('.duqduq.org');
 }
 
+/**
+ * Set the silent-reauth circuit breaker. It MUST be visible on the community
+ * origin where silentReauthMiddleware checks it. On platform subdomains we
+ * scope it to the parent domain (like pp-lic) so a breaker set on www.* is
+ * also sent to the community subdomain; on custom domains it's host-only
+ * (and must be set on that origin — see failRenew / /auth/renew-failed).
+ */
+function setRenewFailedCookie(req: any, res: any): void {
+	const onPlatformSubdomain = (isProd() || isDuqDuq()) && isPlatformSubdomain(req.hostname);
+	res.cookie('pp-renew-failed', '1', {
+		maxAge: 60 * 60 * 1000,
+		httpOnly: true,
+		...(onPlatformSubdomain && { domain: isDuqDuq() ? '.duqduq.org' : '.pubpub.org' }),
+	});
+}
+
+/** Clear the breaker — matching whatever domain scope setRenewFailedCookie used. */
+function clearRenewFailedCookie(req: any, res: any): void {
+	res.clearCookie('pp-renew-failed');
+	if ((isProd() || isDuqDuq()) && isPlatformSubdomain(req.hostname)) {
+		res.clearCookie('pp-renew-failed', { domain: isDuqDuq() ? '.duqduq.org' : '.pubpub.org' });
+	}
+}
+
+/**
+ * Bail out of a silent renewal without a session: trip the circuit breaker so
+ * silentReauthMiddleware stops redirecting, then send the user back to where
+ * they came from (anonymous). Used on every renewal failure path so a single
+ * failure degrades to "anonymous page for 1h" instead of an infinite loop.
+ * Crucially never returns a 500 — Fastly restarts 500s on GET, which would
+ * re-redeem the one-time OIDC code (→ invalid_grant).
+ */
+function failRenew(req: any, res: any, host: string | undefined, returnTo: string): void {
+	const protocol = isDevelopment() ? 'http' : 'https';
+	// Custom domains: this callback runs on the platform domain (www.*), which
+	// can't set a cookie for the custom origin. Bounce through /auth/renew-failed
+	// on that origin so the breaker lands where silentReauthMiddleware checks it.
+	if (host && !isPlatformSubdomain(host) && host !== req.hostname) {
+		res.redirect(
+			`${protocol}://${host}/auth/renew-failed?return_to=${encodeURIComponent(returnTo)}`,
+		);
+		return;
+	}
+	// Platform subdomains (and same-origin): a parent-domain-scoped breaker set
+	// here is visible across *.duqduq.org / *.pubpub.org, including the community
+	// subdomain the user is actually on.
+	setRenewFailedCookie(req, res);
+	if (host && host !== req.hostname) {
+		res.redirect(`${protocol}://${host}${returnTo}`);
+		return;
+	}
+	res.redirect(returnTo);
+}
+
 // ── Router ───────────────────────────────────────────────────────────
 
 export const router = Router();
@@ -94,21 +156,37 @@ export const router = Router();
 router.get('/auth/login', async (req: any, res: any) => {
 	const communityHost = getCommunityHost(req);
 	const rawReturn = req.query.return_to || '/';
-	// Validate return_to is a safe relative path (prevent open redirect)
 	const returnTo =
 		typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
 			? rawReturn
 			: '/';
 
-	// Generate verifier first, then encrypt it with routing info into state.
-	// This avoids cookies/session for OIDC state, so it works across
-	// domains (custom domains → callback on www.duqduq.org).
-	const codeVerifier = generateCodeVerifier();
-	const stateToken = encryptPayload({ v: codeVerifier, h: communityHost, r: returnTo });
+	const isRenew = req.query.renew === 'true';
 
-	// Pass the community hostname as context for per-community branding.
-	// The branding endpoint resolves hostnames → slugs.
-	const { url } = await buildAuthorizeUrl(stateToken, codeVerifier, communityHost);
+	// Pin silent renewals to the account the expired session belonged to.
+	// The pp-lic cookie carries the hashed user id of the last login on
+	// this domain; the callback compares it against the renewed identity.
+	const currentLic = req.cookies?.['pp-lic'];
+	const expectedLic =
+		isRenew && typeof currentLic === 'string' && currentLic.startsWith('pp-li-')
+			? currentLic
+			: undefined;
+
+	const codeVerifier = generateCodeVerifier();
+	const stateToken = encryptPayload({
+		v: codeVerifier,
+		h: communityHost,
+		r: returnTo,
+		...(isRenew && { renew: true }),
+		...(expectedLic && { e: expectedLic }),
+	});
+
+	const { url } = await buildAuthorizeUrl(
+		stateToken,
+		codeVerifier,
+		communityHost,
+		isRenew ? 'none' : undefined,
+	);
 
 	return res.redirect(url);
 });
@@ -120,6 +198,27 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		const { code, state, error } = req.query;
 
 		if (error) {
+			// All prompt=none error types mean "silent re-auth can't complete"
+			const isPromptNoneError =
+				error === 'login_required' ||
+				error === 'interaction_required' ||
+				error === 'account_selection_required' ||
+				error === 'consent_required';
+			if (isPromptNoneError && state) {
+				const renewState = decryptPayload<{
+					v: string;
+					h: string;
+					r: string;
+					renew?: boolean;
+				}>(state);
+				if (renewState?.renew) {
+					// Mirror the success path: in dev the hostname middleware
+					// rewrites localhost → demo.pubpub.org, so an absolute
+					// redirect would send the user to production. Relative
+					// redirects keep the browser on its current origin.
+					return failRenew(req, res, renewState.h || req.hostname, renewState.r || '/');
+				}
+			}
 			console.error('KF Auth error:', error, req.query.error_description);
 			return res.status(400).send('Authentication failed. Please try again.');
 		}
@@ -128,8 +227,13 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			return res.status(400).send('Missing authentication parameters.');
 		}
 
-		// Decrypt state → {v: codeVerifier, h: host, r: returnTo}
-		const stateData = decryptPayload<{ v: string; h: string; r: string }>(state);
+		const stateData = decryptPayload<{
+			v: string;
+			h: string;
+			r: string;
+			renew?: boolean;
+			e?: string;
+		}>(state);
 		if (!stateData || !stateData.v) {
 			return res.status(400).send('Invalid or expired authentication state.');
 		}
@@ -151,7 +255,26 @@ router.get('/auth/callback', async (req: any, res: any) => {
 
 		const user = await provisionLocalUser(kfUserId, userInfo);
 
+		// kf-auth session id from the ID token's sid claim — stored on the
+		// local session so the session.revoked webhook can target it.
+		const kfSessionId = tokens.id_token
+			? (decodeIdTokenClaims(tokens.id_token).sid ?? null)
+			: null;
+
 		const protocol = isDevelopment() ? 'http' : 'https';
+
+		// Silent renewals must come back as the SAME account the expired
+		// session belonged to. With kf-auth multi-session, the active account
+		// there may have changed since — switching identities must be a
+		// deliberate user choice (via interactive login + account picker),
+		// never a side effect of background renewal. On mismatch, bail out
+		// and leave the user logged out.
+		if (stateData.renew && stateData.e) {
+			const renewedLic = `pp-li-${getHashedUserId(user)}`;
+			if (renewedLic !== stateData.e) {
+				return failRenew(req, res, host, returnTo);
+			}
+		}
 
 		// For custom domains, we can't set a session here (different domain).
 		// Create a one-time encrypted token and redirect to session-set on the origin.
@@ -159,6 +282,7 @@ router.get('/auth/callback', async (req: any, res: any) => {
 			const sessionToken = encryptPayload({
 				u: user.id,
 				r: returnTo,
+				s: kfSessionId,
 				exp: Date.now() + 60_000, // 60 seconds
 			});
 			const sessionSetUrl = `${protocol}://${host}/auth/session-set?token=${encodeURIComponent(sessionToken)}`;
@@ -168,6 +292,13 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		// For platform subdomains: create session directly (shared cookie on .pubpub.org / .duqduq.org)
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
+
+		if (kfSessionId) {
+			req.session.kfSessionId = kfSessionId;
+		}
+
+		// Clear silent re-auth circuit breaker on successful login
+		clearRenewFailedCookie(req, res);
 
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
@@ -182,6 +313,16 @@ router.get('/auth/callback', async (req: any, res: any) => {
 		return res.redirect(returnTo);
 	} catch (err: any) {
 		console.error('OIDC callback error:', err);
+		// If this was a silent renewal, never surface a 500: Fastly restarts
+		// 500s on GET (vcl_fetch), which re-redeems the one-time code and
+		// produces a confusing `invalid_grant`. Trip the breaker and bounce
+		// the user back anonymously instead — they retry in an hour.
+		const renewState = decryptPayload<{ h: string; r: string; renew?: boolean }>(
+			req.query.state,
+		);
+		if (renewState?.renew) {
+			return failRenew(req, res, renewState.h || req.hostname, renewState.r || '/');
+		}
 		const detail = isDuqDuq() ? ` (${err?.message || err})` : '';
 		return res.status(500).send(`Login failed. Please try again.${detail}`);
 	}
@@ -196,7 +337,9 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 			return res.status(400).send('Missing session token.');
 		}
 
-		const data = decryptPayload<{ u: string; r: string; exp: number }>(token);
+		const data = decryptPayload<{ u: string; r: string; s?: string | null; exp: number }>(
+			token,
+		);
 		if (!data || !data.u) {
 			return res.status(400).send('Invalid session token.');
 		}
@@ -214,6 +357,12 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		const logIn = promisify(req.logIn.bind(req));
 		await logIn(user);
 
+		if (data.s) {
+			req.session.kfSessionId = data.s;
+		}
+
+		clearRenewFailedCookie(req, res);
+
 		// Set the CDN cache cookie on this domain
 		const hashedUserId = getHashedUserId(user);
 		res.cookie('pp-lic', `pp-li-${hashedUserId}`, {
@@ -224,8 +373,26 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 		return res.redirect(returnTo);
 	} catch (err) {
 		console.error('Session-set error:', err);
+		// Trip the breaker so a failed transfer falls back to the anonymous
+		// page instead of looping (and avoid a 500, which Fastly would retry).
+		setRenewFailedCookie(req, res);
 		return res.status(500).send('Failed to establish session. Please try again.');
 	}
+});
+
+// ─── Silent re-auth circuit breaker for cross-origin communities ─────
+// When a renewal fails, the breaker must be set on the community origin (where
+// silentReauthMiddleware checks it). For custom domains the OIDC callback runs
+// on a different origin and can't set that cookie, so it bounces the browser
+// here on the community origin to set it, then returns the user to their page.
+router.get('/auth/renew-failed', (req: any, res: any) => {
+	const rawReturn = req.query.return_to;
+	const returnTo =
+		typeof rawReturn === 'string' && rawReturn.startsWith('/') && !rawReturn.startsWith('//')
+			? rawReturn
+			: '/';
+	setRenewFailedCookie(req, res);
+	return res.redirect(returnTo);
 });
 
 // ─── Logout ──────────────────────────────────────────────────────────
@@ -233,61 +400,54 @@ router.get('/auth/session-set', async (req: any, res: any) => {
 router.post('/auth/logout', (req: any, res: any) => {
 	// Clear local session
 	req.logout(() => {
-		// Set pp-lic to logged-out state
+		// Set pp-lic to logged-out state. Must use the SAME domain scope the
+		// login marker was set with (callback/session-set), otherwise on the
+		// duqduq deploy (where isProd() is false) this 'pp-lo' is host-only and
+		// fails to overwrite the .duqduq.org-scoped 'pp-li-…' — leaving the user
+		// looking logged-in to silentReauthMiddleware, which then loops.
 		res.cookie('pp-lic', 'pp-lo', {
-			...(isProd() &&
-				req.hostname.indexOf('pubpub.org') > -1 && {
-					domain: '.pubpub.org',
-				}),
+			...(isProd() && { domain: '.pubpub.org' }),
+			...(isDuqDuq() && { domain: '.duqduq.org' }),
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 
-		// Redirect to KF Auth's logout endpoint so the SSO session is also cleared
+		// Redirect to KF Auth's signout relay so the SSO session is also
+		// cleared. (The relay POSTs to better-auth's sign-out — a plain GET
+		// redirect to /api/auth/sign-out would be rejected as POST-only.)
 		const returnUrl = `${process.env.APP_URL || 'http://localhost:9876'}/`;
 		return res.redirect(
-			`${OIDC_ISSUER_URL}/api/auth/sign-out?callbackURL=${encodeURIComponent(returnUrl)}`,
+			`${OIDC_ISSUER_URL}/auth/signout?redirect_uri=${encodeURIComponent(returnUrl)}`,
 		);
 	});
 });
 
-// ─── Profile sync (webhook from KF Auth) ─────────────────────────────
+// ─── Webhooks from KF Auth ──────────────────────────────────────────
 
-router.post('/api/kf/profile-sync', requireInternalKey, async (req: any, res: any) => {
+router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) => {
+	const event = req.headers['x-kf-webhook-event'];
+	const { data } = req.body;
+
+	if (!event || !data) {
+		return res.status(400).json({ error: 'Missing event header or data' });
+	}
+
 	try {
-		const { userId, givenName, familyName, displayName, email, image } = req.body;
-
-		if (!userId) {
-			return res.status(400).json({ error: 'userId is required' });
+		switch (event) {
+			case 'user.updated':
+				return await handleUserUpdated(data, res);
+			case 'user.banned':
+				return await handleUserBanned(data, res);
+			case 'user.unbanned':
+				return await handleUserUnbanned(data, res);
+			case 'user.sessions-revoked':
+				return await handleUserSessionsRevoked(data, res);
+			case 'session.revoked':
+				return await handleSessionRevoked(data, res);
+			default:
+				return res.status(200).json({ ok: true, ignored: true });
 		}
-
-		const user = await User.findOne({ where: { id: userId } });
-		if (!user) {
-			return res.status(404).json({ error: 'User not found' });
-		}
-
-		const updates: Record<string, any> = {};
-		if (displayName !== undefined) updates.fullName = displayName;
-		if (givenName !== undefined) updates.firstName = givenName;
-		if (familyName !== undefined) updates.lastName = familyName;
-		if (email !== undefined) updates.email = email.toLowerCase();
-		if (image !== undefined) updates.avatar = image;
-
-		// Recalculate initials when name changes
-		if (givenName !== undefined || familyName !== undefined || displayName !== undefined) {
-			const first = givenName ?? user.firstName ?? '';
-			const last = familyName ?? user.lastName ?? '';
-			if (first || last) {
-				updates.initials = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
-			}
-		}
-
-		if (Object.keys(updates).length > 0) {
-			await user.update(updates);
-		}
-
-		return res.status(200).json({ ok: true });
 	} catch (err) {
-		console.error('Profile sync error:', err);
+		console.error(`Webhook handler error [${event}]:`, err);
 		return res.status(500).json({ error: 'Internal error' });
 	}
 });

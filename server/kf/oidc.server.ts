@@ -145,6 +145,7 @@ export async function buildAuthorizeUrl(
 	state: string,
 	existingVerifier?: string,
 	context?: string,
+	prompt?: string,
 ): Promise<{ url: string; codeVerifier: string }> {
 	const config = await discover();
 	const codeVerifier = existingVerifier ?? generateCodeVerifier();
@@ -165,6 +166,7 @@ export async function buildAuthorizeUrl(
 		code_challenge: codeChallenge,
 		code_challenge_method: 'S256',
 		...(context && { context }),
+		...(prompt && { prompt }),
 	});
 
 	return { url: `${authorizeUrl.toString()}?${params}`, codeVerifier };
@@ -176,6 +178,28 @@ export interface TokenResponse {
 	expires_in: number;
 	id_token?: string;
 	refresh_token?: string;
+}
+
+/**
+ * Extract claims from the ID token without signature verification —
+ * the token came straight from the token endpoint over a trusted
+ * server-to-server channel, so its contents are already authentic.
+ * `sid` is the kf-auth session id (requires enableEndSession on the
+ * OAuth client); it lets us correlate local sessions with kf-auth
+ * sessions for the session.revoked webhook.
+ */
+export function decodeIdTokenClaims(idToken: string): { sub?: string; sid?: string } {
+	try {
+		const payloadPart = idToken.split('.')[1];
+		if (!payloadPart) return {};
+		const payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8'));
+		return {
+			sub: typeof payload.sub === 'string' ? payload.sub : undefined,
+			sid: typeof payload.sid === 'string' ? payload.sid : undefined,
+		};
+	} catch {
+		return {};
+	}
 }
 
 /**
@@ -269,6 +293,50 @@ export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
 	if (!res.ok) return [];
 	const data = (await res.json()) as { orgs?: OIDCOrg[] };
 	return data.orgs ?? [];
+}
+
+// --- Outbound ban sync ---
+
+export async function syncBanToKfAuth(userId: string, reason?: string): Promise<void> {
+	if (!AUTH_INTERNAL_API_KEY) return;
+
+	try {
+		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/ban`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+			},
+			body: JSON.stringify({ reason: reason ?? 'banned via PubPub spam system' }),
+		});
+		if (!res.ok) {
+			const text = await res.text();
+			console.error(`syncBanToKfAuth failed for ${userId}: HTTP ${res.status} ${text}`);
+		}
+	} catch (err) {
+		console.error(`syncBanToKfAuth failed for ${userId}:`, err);
+	}
+}
+
+export async function syncUnbanToKfAuth(userId: string): Promise<void> {
+	if (!AUTH_INTERNAL_API_KEY) return;
+
+	try {
+		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/unban`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+			},
+			body: JSON.stringify({}),
+		});
+		if (!res.ok) {
+			const text = await res.text();
+			console.error(`syncUnbanToKfAuth failed for ${userId}: HTTP ${res.status} ${text}`);
+		}
+	} catch (err) {
+		console.error(`syncUnbanToKfAuth failed for ${userId}:`, err);
+	}
 }
 
 // --- Exports ---

@@ -77,24 +77,42 @@ function rawFetch(path: string, opts?: RequestInit): Promise<Response> {
 	});
 }
 
+/**
+ * Like fetch, but transparently handles an expired-but-renewable session:
+ * on a `401 {error: 'sessionExpired'}` it silently renews (hidden iframe →
+ * OIDC prompt=none) and retries once, returning the resolved Response. Returns
+ * credentials with every request. Use this for callers that need a raw
+ * Response and the renewal behaviour — e.g. the Altcha widget's customfetch,
+ * which otherwise issues a plain fetch that dies on the 401.
+ */
+export async function apiFetchRaw(path: string, opts?: RequestInit): Promise<Response> {
+	const response = await rawFetch(path, opts);
+	if (response.status === 401) {
+		// Peek the body without consuming it for the caller.
+		const err = await response
+			.clone()
+			.json()
+			.catch(() => null);
+		if (err?.error === 'sessionExpired') {
+			const renewed = await renewSession();
+			if (renewed) {
+				return rawFetch(path, opts);
+			}
+			// Renewal failed — full page reload so the page-level reauth kicks in
+			window.location.reload();
+			// Never resolves — the reload navigates away
+			return new Promise<Response>(() => {
+				/* page is reloading */
+			});
+		}
+	}
+	return response;
+}
+
 export const apiFetch = ((path, opts) => {
-	return rawFetch(path, opts).then(async (response) => {
+	return apiFetchRaw(path, opts).then(async (response) => {
 		if (!response.ok) {
 			const err = await response.json();
-
-			// Session expired but was previously logged in — try silent renewal
-			if (response.status === 401 && err?.error === 'sessionExpired') {
-				const renewed = await renewSession();
-				if (renewed) {
-					const retry = await rawFetch(path, opts);
-					if (retry.ok) return retry.json();
-					throw await retry.json();
-				}
-				// Renewal failed — full page reload so the page-level reauth kicks in
-				window.location.reload();
-				// Never resolves — the reload navigates away
-				return new Promise(() => {});
-			}
 
 			if (response.status === 423 && err?.error === 'readOnly') {
 				window.dispatchEvent(new CustomEvent('pubpub:readOnly'));

@@ -395,6 +395,19 @@ router.get('/auth/renew-failed', (req: any, res: any) => {
 	return res.redirect(returnTo);
 });
 
+// ─── Iframe renew completion (postMessage to parent) ────────────────
+// The frontend opens a hidden iframe to /auth/login?renew=true&return_to=/auth/renew-done
+// After the OIDC prompt=none dance, the iframe lands here and signals the parent.
+router.get('/auth/renew-done', (req: any, res: any) => {
+	const success = !!req.user;
+	res.set('Cache-Control', 'no-store');
+	return res.send(
+		`<!DOCTYPE html><html><head><script>` +
+			`window.parent.postMessage({type:"pubpub:session-renewed",success:${success}},window.location.origin);` +
+			`</script></head><body></body></html>`,
+	);
+});
+
 // ─── Logout ──────────────────────────────────────────────────────────
 
 router.post('/auth/logout', (req: any, res: any) => {

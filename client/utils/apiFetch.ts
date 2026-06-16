@@ -23,7 +23,50 @@ type HttpMethod = (typeof httpMethods)[number];
 
 type ApiFetch = ApiFetchFn & { [K in HttpMethod]: HttpMethodApiFetchWrapper };
 
-export const apiFetch = ((path, opts) => {
+// ── Silent session renewal via hidden iframe ──
+
+let renewalInFlight: Promise<boolean> | null = null;
+
+function renewSession(): Promise<boolean> {
+	if (renewalInFlight) return renewalInFlight;
+
+	renewalInFlight = new Promise<boolean>((resolve) => {
+		const iframe = document.createElement('iframe');
+		iframe.style.display = 'none';
+
+		const cleanup = () => {
+			window.removeEventListener('message', onMessage);
+			clearTimeout(timeout);
+			iframe.remove();
+			renewalInFlight = null;
+		};
+
+		const onMessage = (event: MessageEvent) => {
+			if (
+				event.origin === window.location.origin &&
+				event.data?.type === 'pubpub:session-renewed'
+			) {
+				cleanup();
+				resolve(!!event.data.success);
+			}
+		};
+
+		const timeout = setTimeout(() => {
+			cleanup();
+			resolve(false);
+		}, 15_000);
+
+		window.addEventListener('message', onMessage);
+		iframe.src = '/auth/login?renew=true&return_to=/auth/renew-done';
+		document.body.appendChild(iframe);
+	});
+
+	return renewalInFlight;
+}
+
+// ── Core fetch wrapper ──
+
+function rawFetch(path: string, opts?: RequestInit): Promise<Response> {
 	return fetch(path, {
 		...opts,
 		headers: {
@@ -31,14 +74,32 @@ export const apiFetch = ((path, opts) => {
 			'Content-Type': 'application/json',
 		},
 		credentials: 'include',
-	}).then((response) => {
+	});
+}
+
+export const apiFetch = ((path, opts) => {
+	return rawFetch(path, opts).then(async (response) => {
 		if (!response.ok) {
-			return response.json().then((err) => {
-				if (response.status === 423 && err?.error === 'readOnly') {
-					window.dispatchEvent(new CustomEvent('pubpub:readOnly'));
+			const err = await response.json();
+
+			// Session expired but was previously logged in — try silent renewal
+			if (response.status === 401 && err?.error === 'sessionExpired') {
+				const renewed = await renewSession();
+				if (renewed) {
+					const retry = await rawFetch(path, opts);
+					if (retry.ok) return retry.json();
+					throw await retry.json();
 				}
-				throw err;
-			});
+				// Renewal failed — full page reload so the page-level reauth kicks in
+				window.location.reload();
+				// Never resolves — the reload navigates away
+				return new Promise(() => {});
+			}
+
+			if (response.status === 423 && err?.error === 'readOnly') {
+				window.dispatchEvent(new CustomEvent('pubpub:readOnly'));
+			}
+			throw err;
 		}
 		return response.json();
 	});

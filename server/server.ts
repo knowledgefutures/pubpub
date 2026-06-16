@@ -138,6 +138,10 @@ appRouter.use(
 		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
+		// Reset cookie maxAge on every response so the session expires after
+		// N minutes of *inactivity* rather than N minutes since login. The
+		// store's touch() keeps the DB row in sync without a full resave.
+		rolling: true,
 		// TLS is terminated at the edge (Fastly) and forwarded as plain HTTP,
 		// so without trusting the proxy express-session sees an insecure
 		// connection and silently drops the `secure` cookie. This honors

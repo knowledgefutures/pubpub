@@ -26,7 +26,7 @@ const DashboardCustomScripts = (props: Props) => {
 		import(
 			/* webpackChunkName: "@monaco-editor/react" */
 			'@monaco-editor/react'
-		).then(({ default: EditorComponent }) => setEditor(EditorComponent));
+		).then(({ default: EditorComponent }) => setEditor(EditorComponent as any));
 	}, []);
 
 	const renderLoading = () => {

@@ -151,7 +151,7 @@ export const getLocalHighlightText = (editorView, highlightId) => {
 	};
 };
 
-export const reanchorDiscussion = (editorView, firebaseRef, discussionId) => {
+export const reanchorDiscussion = (editorView, pubId: string, discussionId: string) => {
 	const collabPlugin = editorView.state.collaborative$ || {};
 	const newCurrentKey = collabPlugin.mostRecentRemoteKey;
 	const selection = editorView.state.selection;
@@ -161,17 +161,19 @@ export const reanchorDiscussion = (editorView, firebaseRef, discussionId) => {
 	const transaction = editorView.state.tr;
 	transaction.setMeta('removeDiscussion', { id: discussionId });
 	editorView.dispatch(transaction);
-	firebaseRef
-		.child('discussions')
-		.child(discussionId)
-		.update({
-			currentKey: newCurrentKey,
-			selection: {
-				a: newAnchor,
-				h: newHead,
-				t: 'text',
+
+	fetch(`/api/pubs/${pubId}/discussions/positions`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			[discussionId]: {
+				currentKey: newCurrentKey,
+				selection: { type: 'text', anchor: newAnchor, head: newHead },
 			},
-		});
+		}),
+	}).catch((err) => {
+		console.error('Failed to reanchor discussion:', err);
+	});
 };
 
 export const focus = (editorView) => {

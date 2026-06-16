@@ -1,5 +1,5 @@
 import type { NoteManager } from 'client/utils/notes';
-import type { NodeLabelMap } from 'components/Editor';
+import type { NodeLabelMap } from 'components/Editor/types';
 import type { AttributionWithUser, Collection, Maybe, RenderedLicense } from 'types';
 import type { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 import type { Note, RenderedStructuredValues } from 'utils/notes';

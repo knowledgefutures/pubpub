@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import ReactDOMServer from 'react-dom/server';
 
-import { editorSchema, renderStatic } from 'components/Editor';
+import { editorSchema, renderStatic } from 'components/Editor/utils';
 import { intersperse, unique } from 'utils/arrays';
 
 import { renderNotesForListing } from '../../../utils/notes';

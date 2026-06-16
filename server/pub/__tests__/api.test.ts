@@ -588,7 +588,7 @@ describe('GET /api/pubs', () => {
 
 vi.mock('utils/import/uploadAndConvertImages', async () => {
 	if (process.env.INTEGRATION) {
-		return import('utils/import/uploadAndConvertImages');
+		return import('utils/import/uploadAndConvertImages.js');
 	}
 	return {
 		uploadAndConvertImages: (files) => files,

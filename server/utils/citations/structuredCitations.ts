@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
-import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
+import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor/utils';
 import {
 	type CitationInlineStyleKind,
 	type CitationStyleKind,

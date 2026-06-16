@@ -3,7 +3,6 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 import type { SerializedModel } from 'types';
 
 import {
-	AllowNull,
 	Column,
 	DataType,
 	Default,
@@ -11,7 +10,6 @@ import {
 	PrimaryKey,
 	Table,
 } from 'sequelize-typescript';
-// import { Pub } from '../models';
 
 @Table
 export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes<Draft>> {
@@ -25,7 +23,11 @@ export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes
 	@Column(DataType.DATE)
 	declare latestKeyAt: Date | null;
 
-	@AllowNull(false)
+	// kept nullable during Firebase→PitterPatter migration; will be removed after full cutover
 	@Column(DataType.STRING)
-	declare firebasePath: string;
+	declare firebasePath: string | null;
+
+	@Default(0)
+	@Column(DataType.INTEGER)
+	declare version: CreationOptional<number>;
 }

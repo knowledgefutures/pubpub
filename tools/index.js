@@ -81,6 +81,7 @@ const commandFiles = {
 	migration2020_06_24: "./migration2020_06_24",
 	migrationCommunityTemplates: "./migrationCommunityTemplates",
 	migrationsDeprecated: "./migrationsDeprecated",
+	migrateFirebaseToPostgres: "./migrateFirebaseToPostgres",
 	movePubs: "./movePubs",
 	pubCrawl: "./pubCrawl",
 	purgeNotifications: "./purgeNotifications",

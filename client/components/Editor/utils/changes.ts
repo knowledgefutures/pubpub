@@ -1,11 +1,11 @@
-import type firebase from 'firebase';
 import type { Node, Schema } from 'prosemirror-model';
 
 import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
 import { Step } from 'prosemirror-transform';
 
+/** @deprecated legacy firebase utility, only used by migration tools */
 export const getStepsInChangeRange = async (
-	draftRef: firebase.database.Reference,
+	draftRef: any,
 	schema: Schema,
 	startIndex: number,
 	endIndex: number,

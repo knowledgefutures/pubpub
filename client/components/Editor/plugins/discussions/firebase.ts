@@ -1,89 +1,85 @@
-import type firebase from 'firebase';
-
 import type {
-	CompressedDiscussionInfo,
-	DiscussionInfo,
 	Discussions,
 	DiscussionsHandler,
+	NullableDiscussions,
 	RemoteDiscussions,
 } from './types';
 
-import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
-
-type Reference = firebase.database.Reference;
-type DataSnapshot = firebase.database.DataSnapshot;
-
-const uncompressDiscussionInfo = (compressed: CompressedDiscussionInfo): DiscussionInfo => {
-	const { selection: compressedSelection } = compressed;
-	const selection = compressedSelection && uncompressSelectionJSON(compressedSelection);
-	return { ...compressed, selection: selection ?? null };
-};
-
-const compressDiscussionInfo = (uncompressed: DiscussionInfo): CompressedDiscussionInfo => {
-	const { selection: uncompressedSelection } = uncompressed;
-	const selection = uncompressedSelection && compressSelectionJSON(uncompressedSelection);
-	return { ...uncompressed, selection: selection ?? null };
-};
-
-export const connectToFirebaseDiscussions = (discussionsRef: Reference): RemoteDiscussions => {
+/**
+ * Connects to the server-side discussion position sync via polling.
+ * Replaces the previous Firebase-based implementation.
+ *
+ * Discussion positions are stored in Postgres and broadcast via Valkey pub/sub.
+ * This client polls the server endpoint for updates and posts local changes.
+ */
+export const connectToRemoteDiscussions = (pubId: string): RemoteDiscussions => {
 	let onDiscussions: null | DiscussionsHandler = null;
-	let disconnect: null | (() => void) = null;
+	let pollInterval: ReturnType<typeof setInterval> | null = null;
+	let lastKnownDiscussions: NullableDiscussions = {};
 
-	const childAddedHandler = (snapshot: DataSnapshot) => {
-		const discussion = snapshot.val();
-		if (discussion) {
-			onDiscussions?.({ [snapshot.key!]: uncompressDiscussionInfo(discussion) });
+	const fetchDiscussions = async () => {
+		try {
+			const response = await fetch(`/api/pubs/${pubId}/discussions/positions`);
+
+			if (!response.ok) {
+				return;
+			}
+
+			const discussions = (await response.json()) as NullableDiscussions;
+
+			const hasChanges = Object.keys(discussions).some((id) => {
+				const remote = discussions[id];
+				const local = lastKnownDiscussions[id];
+
+				if (!remote && !local) return false;
+				if (!remote || !local) return true;
+
+				return (
+					remote.currentKey !== local.currentKey ||
+					remote.selection?.anchor !== local.selection?.anchor ||
+					remote.selection?.head !== local.selection?.head
+				);
+			});
+
+			if (hasChanges) {
+				lastKnownDiscussions = discussions;
+				onDiscussions?.(discussions);
+			}
+		} catch (_err) {
+			// non-fatal, will retry on next poll
 		}
-	};
-
-	const childRemovedHandler = (snapshot: DataSnapshot) => {
-		onDiscussions?.({ [snapshot.key!]: null });
 	};
 
 	const sendDiscussions = (discussions: Discussions) => {
-		Object.entries(discussions).forEach(([id, discussion]) => {
-			discussionsRef
-				.child(id)
-				.transaction((existingDiscussion: null | CompressedDiscussionInfo) => {
-					if (
-						!existingDiscussion ||
-						discussion.currentKey > existingDiscussion.currentKey
-					) {
-						return compressDiscussionInfo(discussion);
-					}
-					return undefined;
-				});
+		fetch(`/api/pubs/${pubId}/discussions/positions`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(discussions),
+		}).catch(() => {
+			// non-fatal
 		});
 	};
 
-	const connectHandler = (handler: DiscussionsHandler) => {
+	const receiveDiscussions = (handler: DiscussionsHandler) => {
 		onDiscussions = handler;
 	};
 
-	const connect = () => {
-		discussionsRef.on('child_added', childAddedHandler);
-		discussionsRef.on('child_removed', childRemovedHandler);
-		return () => {
-			discussionsRef.off('child_added', childAddedHandler);
-			discussionsRef.off('child_removed', childRemovedHandler);
-		};
-	};
+	// start polling
+	fetchDiscussions();
+	pollInterval = setInterval(fetchDiscussions, 3000);
 
-	discussionsRef.once('value').then((snapshot) => {
-		const discussionsById = snapshot.val();
-		if (discussionsById) {
-			const uncompressedDiscussionsById: Discussions = {};
-			Object.entries(discussionsById).forEach(([id, discussion]) => {
-				uncompressedDiscussionsById[id] = uncompressDiscussionInfo(discussion as any);
-			});
-			onDiscussions?.(uncompressedDiscussionsById);
+	const disconnect = () => {
+		if (pollInterval) {
+			clearInterval(pollInterval);
+			pollInterval = null;
 		}
-		disconnect = connect();
-	});
+
+		onDiscussions = null;
+	};
 
 	return {
 		sendDiscussions,
-		receiveDiscussions: connectHandler,
-		disconnect: () => disconnect?.(),
+		receiveDiscussions,
+		disconnect,
 	};
 };

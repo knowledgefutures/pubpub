@@ -1,11 +1,8 @@
-import type firebase from 'firebase';
-
 import type { EditorChangeObject } from 'components/Editor';
 import type { LoginData, Maybe, PubPageData } from 'types';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
-import { initFirebase } from 'client/utils/firebaseClient';
 import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 import { getRandomColor } from 'utils/colors';
 import { usePageContext } from 'utils/hooks';
@@ -27,7 +24,6 @@ export type PubCollabState = {
 	status: PubCollabStatus;
 	localCollabUser: CollabUser;
 	remoteCollabUsers: CollabUser[];
-	firebaseDraftRef: null | firebase.database.Reference;
 };
 
 type Options = {
@@ -49,7 +45,6 @@ const getLocalCollabUser = (canEdit: boolean, loginData: LoginData) => {
 
 export const usePubCollabState = (options: Options) => {
 	const { pubData } = options;
-	const { draft, firebaseToken } = pubData;
 	const {
 		loginData,
 		scopeData: {
@@ -59,40 +54,12 @@ export const usePubCollabState = (options: Options) => {
 
 	const [collabState, updateCollabState] = useIdlyUpdatedState<PubCollabState>(() => {
 		return {
-			// TODO(ian): Verify that there are no unchecked property accesses on this
-			// editorChangeObject and then remove this cast.
 			editorChangeObject: {} as unknown as null,
 			status: 'connecting',
 			localCollabUser: getLocalCollabUser(canEdit || canEditDraft, loginData),
 			remoteCollabUsers: [],
-			firebaseDraftRef: null,
 		};
 	});
-
-	const syncRemoteCollabUsers = useCallback(
-		(snapshot: firebase.database.DataSnapshot) => {
-			const users = snapshot.val() as null | CollabUser[];
-			if (users) {
-				const remoteCollabUsers = Object.values(users).filter(
-					(user: any) => user.id !== loginData.id,
-				);
-				updateCollabState({ remoteCollabUsers });
-			}
-		},
-		[updateCollabState, loginData],
-	);
-
-	useEffect(() => {
-		if (draft && firebaseToken) {
-			initFirebase(draft.firebasePath, firebaseToken).then((firebaseDraftRef) => {
-				if (!firebaseDraftRef) {
-					return;
-				}
-				updateCollabState({ firebaseDraftRef });
-				firebaseDraftRef?.child('cursors').on('value', syncRemoteCollabUsers);
-			});
-		}
-	}, [draft, firebaseToken, updateCollabState, syncRemoteCollabUsers]);
 
 	return [collabState, updateCollabState] as const;
 };

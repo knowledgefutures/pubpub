@@ -22,8 +22,6 @@
  *   (Prod/dev is determined by env vars: DATABASE_URL, FIREBASE_SERVICE_ACCOUNT_BASE64)
  */
 
-import type firebase from 'firebase';
-
 import firebaseAdmin from 'firebase-admin';
 import { uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
 import { Op, QueryTypes } from 'sequelize';
@@ -139,7 +137,7 @@ const firebaseRest = async <T = any>(
  * List child keys at a Firebase path using REST API with ?shallow=true.
  * Never downloads the actual content, so safe for huge nodes.
  */
-const getShallowKeys = async (ref: firebase.database.Reference): Promise<string[]> => {
+const getShallowKeys = async (ref: any): Promise<string[]> => {
 	const refPath = ref.toString().replace(/^https:\/\/[^/]+\//, '');
 	const data = await firebaseRest<Record<string, true> | null>('GET', refPath, undefined, {
 		shallow: 'true',
@@ -266,6 +264,12 @@ const formatBytes = (bytes: number): string => {
 const freezeDraft = async (draft: Draft, pubId: string): Promise<void> => {
 	const { id: draftId, firebasePath } = draft;
 	const prefix = `[${draftId.slice(0, 8)}]`;
+
+	if (!firebasePath) {
+		verbose(`${prefix} No firebase path, skipping`);
+		stats.draftsAlreadyCold++;
+		return;
+	}
 
 	try {
 		const draftRef = getDatabaseRef(firebasePath);

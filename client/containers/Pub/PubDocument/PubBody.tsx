@@ -37,7 +37,7 @@ const PubBody = (props: Props) => {
 		noteManager,
 		updateCollabData,
 		historyData: { setLatestHistoryKey },
-		collabData: { status, firebaseDraftRef, localCollabUser },
+		collabData: { status, localCollabUser },
 		pubBodyState: {
 			editorKey,
 			initialContent,
@@ -83,18 +83,16 @@ const PubBody = (props: Props) => {
 		[updateCollabData],
 	);
 
-	const collaborativeOptions = includeCollabPlugin &&
-		!!firebaseDraftRef && {
-			pubId: pubData.id,
-			initialDocKey: initialHistoryKey,
-			firebaseRef: firebaseDraftRef,
-			clientData: localCollabUser,
-			onStatusChange: handleStatusChange,
-			onUpdateLatestKey: setLatestHistoryKey,
-		};
+	const collaborativeOptions = includeCollabPlugin && {
+		pubId: pubData.id,
+		initialDocKey: initialHistoryKey,
+		clientData: localCollabUser,
+		onStatusChange: handleStatusChange,
+		onUpdateLatestKey: setLatestHistoryKey,
+	};
 
 	const discussionOptions = includeDiscussionsPlugin && {
-		draftRef: firebaseDraftRef,
+		pubId: pubData.id,
 		initialHistoryKey,
 		discussionAnchors: discussionAnchors || [],
 	};

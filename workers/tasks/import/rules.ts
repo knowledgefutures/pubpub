@@ -1,7 +1,7 @@
 import { pandocUtils, RuleSet, transformers, transformUtils } from '@pubpub/prosemirror-pandoc';
 import md5 from 'crypto-js/md5';
 
-import { editorSchema } from 'components/Editor';
+import { editorSchema } from 'components/Editor/utils';
 import { renderToKatexString } from 'utils/katex';
 
 const { createAttr, flatten, intersperse, textFromStrSpace, textToStrSpace } = transformUtils;

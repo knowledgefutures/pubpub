@@ -9,8 +9,7 @@ import { DecorationSet, type EditorView } from 'prosemirror-view';
 import { getDiscussionsFromAnchors } from './anchors';
 import { getDecorationsForDiscussions, getDecorationsForUpdateResult } from './decorations';
 import { createDiscussionsState } from './discussionsState';
-import { createFastForwarder } from './fastForward';
-import { connectToFirebaseDiscussions } from './firebase';
+import { connectToRemoteDiscussions } from './firebase';
 
 export const discussionsPluginKey = new PluginKey('discussions');
 
@@ -22,10 +21,8 @@ type PluginState = {
 };
 
 const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) => {
-	const { discussionAnchors, draftRef, initialHistoryKey } = discussionsOptions;
-	const discussionsRef = draftRef?.child('discussions');
-	const remote = discussionsRef && connectToFirebaseDiscussions(discussionsRef);
-	const fastForward = draftRef && createFastForwarder(draftRef);
+	const { discussionAnchors, pubId, initialHistoryKey } = discussionsOptions;
+	const remote = pubId ? connectToRemoteDiscussions(pubId) : null;
 	const initialDiscussions = getDiscussionsFromAnchors(discussionAnchors);
 
 	let editorView: null | EditorView = null;
@@ -35,7 +32,7 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 		initialHistoryKey,
 		initialDoc,
 		remoteDiscussions: remote || null,
-		fastForwardDiscussions: fastForward || null,
+		fastForwardDiscussions: null,
 		onUpdateDiscussions: (updateResult: DiscussionsUpdateResult) => {
 			if (editorView) {
 				const { tr } = editorView.state;

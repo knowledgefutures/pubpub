@@ -7,7 +7,6 @@ const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
  * this is run once per build to generate the export CSS
  */
 export const buildExportCss = async () => {
-	// @ts-expect-error shh
 	const stylesDir = path.join(new URL('.', import.meta.url).pathname);
 	const entrypoint = path.join(stylesDir, 'printDocument.scss');
 	const cssPath = path.join(stylesDir, 'printDocument.css');
@@ -39,7 +38,6 @@ export const buildExportCss = async () => {
 	return cssPath;
 };
 
-// @ts-expect-error shh
 if (import.meta.main) {
 	buildExportCss();
 }

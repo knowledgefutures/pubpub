@@ -1,5 +1,3 @@
-import type firebase from 'firebase';
-
 import { uncompressStateJSON, uncompressStepJSON } from 'prosemirror-compress-pubpub';
 import { Node, type Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
@@ -7,8 +5,9 @@ import { Step } from 'prosemirror-transform';
 import { getEmptyDoc } from './doc';
 import { flattenKeyables } from './firebase';
 
-type Reference = firebase.database.Reference;
-type Query = firebase.database.Query;
+// legacy firebase types -- these files are only used by migration tools
+type Reference = any;
+type Query = any;
 
 type CheckpointMap = Record<string, number>;
 

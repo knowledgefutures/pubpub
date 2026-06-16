@@ -19,8 +19,6 @@
  *   pnpm run tools cleanupFirebase --pubId=<uuid> --execute
  */
 
-import type firebase from 'firebase';
-
 import type { DiscussionInfo } from 'components/Editor/plugins/discussions/types';
 
 import firebaseAdmin from 'firebase-admin';
@@ -204,7 +202,7 @@ const stats: CleanupStats = {
 /**
  * Get all checkpoint keys for a draft
  */
-const getCheckpointKeys = async (draftRef: firebase.database.Reference): Promise<number[]> => {
+const getCheckpointKeys = async (draftRef: any): Promise<number[]> => {
 	const checkpointMapSnapshot = await draftRef.child('checkpointMap').once('value');
 	const checkpointMap = checkpointMapSnapshot.val();
 
@@ -225,7 +223,7 @@ const getCheckpointKeys = async (draftRef: firebase.database.Reference): Promise
  * Get the highest checkpoint key for a draft
  */
 const getLatestCheckpointKey = async (
-	draftRef: firebase.database.Reference,
+	draftRef: any,
 ): Promise<number | null> => {
 	const keys = await getCheckpointKeys(draftRef);
 	if (keys.length === 0) return null;
@@ -236,7 +234,7 @@ const getLatestCheckpointKey = async (
  * Get the highest checkpoint key at or before a threshold
  */
 // const _getCheckpointKeyAtOrBefore = async (
-// 	draftRef: firebase.database.Reference,
+// 	draftRef: any,
 // 	threshold: number,
 // ): Promise<number | null> => {
 // 	const keys = await getCheckpointKeys(draftRef);
@@ -292,7 +290,7 @@ const batchGetLatestReleaseKeys = async (pubIds: string[]): Promise<Map<string, 
  */
 const tryRepairFromRelease = async (
 	pubId: string,
-	draftRef: firebase.database.Reference,
+	draftRef: any,
 	targetKey: number,
 	prefix: string = '',
 	localStats: CleanupStats = stats,
@@ -354,7 +352,7 @@ const tryRepairFromRelease = async (
  * Get discussions from Firebase and uncompress them
  */
 const getFirebaseDiscussions = async (
-	draftRef: firebase.database.Reference,
+	draftRef: any,
 ): Promise<Record<string, DiscussionInfo>> => {
 	const discussionsSnapshot = await draftRef.child('discussions').once('value');
 	const discussionsData = discussionsSnapshot.val();
@@ -380,7 +378,7 @@ const getFirebaseDiscussions = async (
  * Fast-forward all outdated discussions to the target key
  */
 const fastForwardDiscussions = async (
-	draftRef: firebase.database.Reference,
+	draftRef: any,
 	targetKey: number,
 ): Promise<number> => {
 	const discussions = await getFirebaseDiscussions(draftRef);
@@ -449,7 +447,7 @@ const fastForwardDiscussions = async (
  * Falls back to individual deletes if batch update fails with WRITE_TOO_BIG.
  */
 const pruneKeysBefore = async (
-	parentRef: firebase.database.Reference,
+	parentRef: any,
 	childName: string,
 	thresholdKey: number,
 ): Promise<number> => {
@@ -776,7 +774,7 @@ const deleteOrphanedDraft = async (draft: Draft): Promise<void> => {
 
 	if (!isDryRun) {
 		// Delete from Firebase first (using deleteFirebasePath to handle large drafts)
-		await deleteFirebasePath(firebasePath);
+		if (firebasePath) await deleteFirebasePath(firebasePath);
 
 		// Then delete from Postgres
 		await draft.destroy();
@@ -811,7 +809,7 @@ const getValidFirebasePaths = async (): Promise<Set<string>> => {
 	const drafts = await Draft.findAll({
 		attributes: ['firebasePath'],
 	});
-	return new Set(drafts.map((d) => d.firebasePath));
+	return new Set(drafts.map((d) => d.firebasePath).filter((p): p is string => p !== null));
 };
 
 /**
@@ -1082,8 +1080,8 @@ const processPubDraft = async (pubId: string): Promise<void> => {
 		return;
 	}
 
-	if (!pub.draft) {
-		log(`Pub ${pubId} has no draft`);
+	if (!pub.draft || !pub.draft.firebasePath) {
+		log(`Pub ${pubId} has no draft or no firebase path`);
 		return;
 	}
 
@@ -1107,8 +1105,8 @@ const processPubDraft = async (pubId: string): Promise<void> => {
 const processDraftById = async (draftId: string): Promise<void> => {
 	const draft = await Draft.findOne({ where: { id: draftId } });
 
-	if (!draft) {
-		log(`Draft not found: ${draftId}`);
+	if (!draft || !draft.firebasePath) {
+		log(`Draft not found or has no firebase path: ${draftId}`);
 		return;
 	}
 
@@ -1195,6 +1193,8 @@ const processAllDrafts = async (): Promise<void> => {
 	const pubQueue = pubsWithFirebaseData.filter((pub) => {
 		if (!pub.draft) return false;
 		const { firebasePath } = pub.draft;
+		if (!firebasePath) return false;
+
 		// Modern format: drafts/draft-{draftId}
 		if (firebasePath.startsWith('drafts/draft-')) {
 			return firebaseDraftIdSet.has(pub.draft.id);
@@ -1238,14 +1238,14 @@ const processAllDrafts = async (): Promise<void> => {
 				const releaseKey = releaseKeyCache.get(pub.id) ?? null;
 				// biome-ignore lint/performance/noAwaitInLoops: worker pool pattern requires sequential processing
 				await pruneDraft(
-					pub.draft!.firebasePath,
+					pub.draft!.firebasePath!,
 					pub.id,
 					releaseKey,
 					pubLabel,
 					localStats,
 					pub.draft!.id,
 				);
-				await cleanupOrphanedBranchesForPub(pub.id, pub.draft!.firebasePath, localStats);
+				await cleanupOrphanedBranchesForPub(pub.id, pub.draft!.firebasePath!, localStats);
 				localStats.draftsProcessed++;
 				totalProcessed++;
 

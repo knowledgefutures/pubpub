@@ -23,9 +23,11 @@ services:
             PORT: 3000
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            VALKEY_URL: redis://valkey:6379
         depends_on:
             - db
             - rabbitmq
+            - valkey
         ports:
             - "${WEB_PORT:-9876}:3000"
         networks: [appnet]
@@ -86,7 +88,13 @@ services:
             - "${DB_PORT:-5439}:5432"
         networks: [appnet]
 
-
+    valkey:
+        image: valkey/valkey:9-alpine
+        volumes:
+            - valkeydata:/data
+        ports:
+            - "${VALKEY_PORT:-6380}:6379"
+        networks: [appnet]
 
     # cron:
     #     build:
@@ -113,4 +121,4 @@ networks:
 volumes:
     pgdata:
     rabbitmqdata:
-
+    valkeydata:

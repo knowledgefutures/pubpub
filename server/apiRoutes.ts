@@ -7,6 +7,8 @@ import { router as analyticsImpactRouter } from './analytics/impactApi';
 import { router as apiDocsRouter } from './apiDocs/api';
 import { router as captchaRouter } from './captcha/api';
 import { router as citationRouter } from './citation/api';
+import { router as collabRouter } from './collab/api';
+import { router as collabDiscussionPositionsRouter } from './collab/discussionPositions';
 import { router as communityBanRouter } from './communityBan/api';
 import { router as communityServicesRouter } from './communityServices/api';
 import { router as communityTemplateRouter } from './communityTemplate/api';
@@ -50,6 +52,8 @@ const apiRouter = Router()
 	.use(activityItemRouter)
 	.use(captchaRouter)
 	.use(citationRouter)
+	.use(collabRouter)
+	.use(collabDiscussionPositionsRouter)
 	.use(communityServicesRouter)
 	.use(customScriptRouter)
 	.use(discussionRouter)

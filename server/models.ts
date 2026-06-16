@@ -19,6 +19,7 @@ import { DepositTarget } from './depositTarget/model';
 import { Discussion } from './discussion/model';
 import { DiscussionAnchor } from './discussionAnchor/model';
 import { Doc } from './doc/model';
+import { CollabCommit } from './collabCommit/model';
 import { Draft } from './draft/model';
 import { DraftCheckpoint } from './draftCheckpoint/model';
 import { EmailChangeToken } from './emailChangeToken/model';
@@ -74,6 +75,7 @@ sequelize.addModels([
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
+	CollabCommit,
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
@@ -173,6 +175,7 @@ export {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
+	CollabCommit,
 	Commenter,
 	Community,
 	CrossrefDepositRecord,

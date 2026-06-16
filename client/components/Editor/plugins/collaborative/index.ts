@@ -1,4 +1,4 @@
-import { collab } from 'prosemirror-collab';
+import { collab } from '@pitter-patter/collab-client';
 import { PluginKey } from 'prosemirror-state';
 
 import { generateHash } from 'utils/hashes';
@@ -9,14 +9,14 @@ import buildDocument from './document';
 export const collabDocPluginKey = new PluginKey('collaborative');
 
 export default (schema, props) => {
-	if (!props.collaborativeOptions?.firebaseRef) {
+	if (!props.collaborativeOptions) {
 		return [];
 	}
 
 	const localClientId = `${props.collaborativeOptions.clientData.id}-${generateHash(6)}`;
 
 	return [
-		collab({ clientID: localClientId }),
+		collab({ version: props.collaborativeOptions.initialDocKey }),
 		buildDocument(schema, props, collabDocPluginKey, localClientId),
 		buildCursors(schema, props, collabDocPluginKey),
 	];

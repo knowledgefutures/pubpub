@@ -445,7 +445,7 @@ async function main() {
 
 	log('[7/7] creating & refreshing summary materialized views...');
 	const { createSummaryViews, refreshSummaryViews } = await import(
-		'server/analytics/summaryViews'
+		'server/analytics/summaryViews.js'
 	);
 	await createSummaryViews();
 	await refreshSummaryViews();

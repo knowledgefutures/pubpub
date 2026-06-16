@@ -12,7 +12,7 @@ import { Op } from 'sequelize';
 
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
-import { getFirebaseToken, getPubDraftDoc } from 'server/utils/firebaseAdmin';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { expect } from 'utils/assert';
 
 import { getPubEdgeIncludes } from './pubEdgeOptions';
@@ -63,16 +63,13 @@ export const getPubRelease = async (
 	};
 };
 
-export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData: InitialData) => {
-	const { canView, canViewDraft, canEdit, canEditDraft } =
-		initialData.scopeData.activePermissions;
-	const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {
-		canEdit: canEdit || canEditDraft,
-		canView: canView || canViewDraft,
-		draftPath: pubData.draft?.firebasePath!,
-	});
+/**
+ * @deprecated Firebase token is no longer needed. Collab uses Pitter Patter with Postgres.
+ * Kept as a stub for any callers that haven't been updated yet.
+ */
+export const getPubFirebaseToken = async (_pubData: SanitizedPubData, _initialData: InitialData) => {
 	return {
-		firebaseToken,
+		firebaseToken: null,
 	};
 };
 

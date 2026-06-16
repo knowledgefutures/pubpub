@@ -1,4 +1,3 @@
-import type firebase from 'firebase';
 import type { Node } from 'prosemirror-model';
 import type { Step } from 'prosemirror-transform';
 
@@ -9,7 +8,7 @@ import { flattenOnce } from 'utils/arrays';
 import { getStepsInChangeRange } from '../../utils';
 import { mapDiscussionThroughSteps } from './util';
 
-type Reference = firebase.database.Reference;
+type Reference = any;
 
 const getFastForwardedDiscussion = (
 	discussion: DiscussionInfo,

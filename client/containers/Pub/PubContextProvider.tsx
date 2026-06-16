@@ -49,7 +49,6 @@ const shimPubContextProps = {
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},
-	firebaseDraftRef: null,
 	updateLocalData: null as any,
 	updatePubData: null as any,
 	submissionState: {},

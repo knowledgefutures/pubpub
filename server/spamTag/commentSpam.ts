@@ -2,7 +2,7 @@ import type { DocJson, NewAccountLinkCommentTriggerSource, UserSpamTagFields } f
 
 import { type Mark, Node } from 'prosemirror-model';
 
-import { editorSchema } from 'client/components/Editor';
+import { editorSchema } from 'client/components/Editor/utils';
 import { env } from 'server/env';
 import { SpamTag, User } from 'server/models';
 import { contextFromUser, notify } from 'server/spamTag/notifications';

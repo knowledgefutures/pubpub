@@ -7,7 +7,7 @@ import type { NotesData } from './types';
 import sanitizeHtml from 'sanitize-html';
 
 import { NoteManager } from 'client/utils/notes';
-import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor';
+import { getNotesByKindFromDoc, jsonToNode } from 'components/Editor/utils';
 import { getStructuredCitations } from 'server/utils/citations';
 
 export type PandocNote = {

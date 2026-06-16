@@ -28,8 +28,8 @@ services:
             NODE_ENV: production
             PORT: '3000'
             APP_COMMIT: '${APP_COMMIT:-}'
-            # Reuse the existing env var name, but point it at the in-swarm broker:
             CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
+            VALKEY_URL: 'redis://valkey:6379'
         networks: [appnet]
         depends_on: [db] # note: ignored by swarm, fix later?
         healthcheck:
@@ -63,6 +63,7 @@ services:
             NODE_ENV: production
             APP_COMMIT: '${APP_COMMIT:-}'
             CLOUDAMQP_URL: 'amqp://appuser:apppassword@rabbitmq:5672/appvhost'
+            VALKEY_URL: 'redis://valkey:6379'
         command: ['pnpm', 'run', 'workers-prod']
         networks: [appnet]
         deploy:
@@ -93,6 +94,16 @@ services:
                     memory: 512M
                 reservations:
                     memory: 256M
+            restart_policy:
+                condition: any
+
+    valkey:
+        image: valkey/valkey:9-alpine
+        volumes:
+            - valkeydata:/data
+        networks: [appnet]
+        deploy:
+            replicas: 1
             restart_policy:
                 condition: any
 
@@ -190,5 +201,6 @@ networks:
 volumes:
     pgdata:
     rabbitmqdata:
+    valkeydata:
     caddy_data:
     caddy_config:

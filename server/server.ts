@@ -219,13 +219,15 @@ process.on('uncaughtException', (err) => {
 /** Same as Heroku's default timeout */
 const TIMEOUT_MS = env.REQUEST_TIMEOUT_MS;
 
+const ignoredPaths = /\/api\/analytics|\/api\/ev|\/api\/pubs\/.*?\/presence/;
 appRouter.use((req, res, next) => {
 	// don't abort requests in test environment
 	if (env.NODE_ENV === 'test') {
 		return next();
 	}
 
-	if (req.path.includes('/api/analytics')) {
+	if (ignoredPaths.test(req.path)) {
+		console.log('ignoring path', req.path);
 		return next();
 	}
 
@@ -376,6 +378,15 @@ export const startServer = async () => {
 	const { initOidc } = await import('./kf/oidc.server.js');
 	await initOidc().catch((err) => {
 		console.warn('[OIDC] Discovery failed at startup (will retry on demand):', err.message);
+	});
+
+	// connect collab redis clients
+	const { connectCollabRedis } = await import('./collab/authority.js');
+	const { connectPresenceRedis } = await import('./collab/presence.js');
+
+	await Promise.all([connectCollabRedis(), connectPresenceRedis()]).catch((err) => {
+		console.error('[collab] Failed to connect to Redis/Valkey:', err.message);
+		console.error('[collab] Collaborative editing will not work until Redis is available.');
 	});
 
 	await sequelizeSyncPromise;

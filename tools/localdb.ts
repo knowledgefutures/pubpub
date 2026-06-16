@@ -2,7 +2,7 @@ import { setupLocalDatabase } from '../localDatabase';
 
 const main = async () => {
 	await setupLocalDatabase(true);
-	const { modelize } = await import('stubstub');
+	const { modelize } = await import('stubstub/index.js');
 	const models = modelize`
         Community {
             createFullCommunity: true

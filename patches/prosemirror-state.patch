@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -7,7 +7,7 @@
+   "module": "dist/index.js",
+   "types": "dist/index.d.ts",
+   "exports": {
+-    "import": "./dist/index.js",
++    "import": "./dist/index.cjs",
+     "require": "./dist/index.cjs"
+   },
+   "sideEffects": false,

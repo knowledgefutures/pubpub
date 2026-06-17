@@ -3,7 +3,7 @@ import type { Transaction } from 'sequelize';
 import { CollabAuthority, RedisBroadcastManager } from '@pitter-patter/collab-server';
 import { Op } from 'sequelize';
 
-import { editorSchema } from 'client/components/Editor/utils';
+import { editorSchema } from 'client/components/Editor/utils/schema';
 import { env } from 'server/env';
 import { CollabCommit, Draft, DraftCheckpoint } from 'server/models';
 import { sequelize } from 'server/sequelize';
@@ -25,6 +25,7 @@ export const collabAuthority = new CollabAuthority<Transaction>({
 		return sequelize.transaction((tr) => callback(tr));
 	},
 
+	//
 	getDoc: async (tr, docId) => {
 		const draft = await Draft.findOne({
 			where: { id: docId },

@@ -1,7 +1,5 @@
-import type { CollabState } from '@stepwisehq/prosemirror-collab-commit/collab-commit';
-
 import { collab } from '@pitter-patter/collab-client';
-import { type Plugin, PluginKey } from 'prosemirror-state';
+import { PluginKey } from 'prosemirror-state';
 
 import { generateHash } from 'utils/hashes';
 
@@ -10,7 +8,7 @@ import buildDocument from './document';
 
 export const collabDocPluginKey = new PluginKey('collaborative');
 
-export default (schema, props) => {
+export default (schema: any, props: any) => {
 	if (!props.collaborativeOptions) {
 		return [];
 	}
@@ -18,10 +16,7 @@ export default (schema, props) => {
 	const localClientId = `${props.collaborativeOptions.clientData.id}-${generateHash(6)}`;
 
 	return [
-		collab({
-			version: props.collaborativeOptions.initialDocKey,
-		}),
-		//as unknown as Plugin<CollabState>,
+		collab({ version: props.collaborativeOptions.initialDocKey }),
 		buildDocument(schema, props, collabDocPluginKey, localClientId),
 		buildCursors(schema, props, collabDocPluginKey),
 	];

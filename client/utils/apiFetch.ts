@@ -72,6 +72,7 @@ function rawFetch(path: string, opts?: RequestInit): Promise<Response> {
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
+			...opts?.headers,
 		},
 		credentials: 'include',
 	});

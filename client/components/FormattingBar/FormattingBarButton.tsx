@@ -55,7 +55,7 @@ const getIndicatorStyle = (accentColor) => {
 
 const popoverModifiers = { preventOverflow: { enabled: false }, flip: { enabled: false } };
 
-const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, ref) => {
+const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
 	const {
 		disabled = false,
 		formattingItem,
@@ -73,7 +73,6 @@ const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, r
 	} = props;
 
 	let button = (
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 		<Button
 			ref={ref}
 			{...restProps}

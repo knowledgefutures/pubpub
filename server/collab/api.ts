@@ -25,6 +25,7 @@ const getDraftIdForPub = async (pubId: string): Promise<string | null> => {
 router.post(
 	'/api/pubs/:pubId/commits',
 	wrap(async (req, res) => {
+		console.log('receiveCommit', req.body);
 		const draftId = await getDraftIdForPub(req.params.pubId);
 
 		if (!draftId) {
@@ -35,6 +36,7 @@ router.post(
 			await collabAuthority.receiveCommit(draftId, req.body);
 		} catch (e) {
 			if (e instanceof TooMuchContentionError) {
+				console.log('TooMuchContentionError', e);
 				return res.status(409).json(null);
 			}
 			throw e;

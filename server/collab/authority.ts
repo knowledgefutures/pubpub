@@ -83,6 +83,7 @@ export const collabAuthority = new CollabAuthority<Transaction>({
 	},
 
 	saveCommit: async (tr, docId, commitRef, commitVersion, commitSteps) => {
+		console.log('saveCommit', docId, commitRef, commitVersion, commitSteps);
 		await CollabCommit.create(
 			{
 				draftId: docId,

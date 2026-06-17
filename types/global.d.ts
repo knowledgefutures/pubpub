@@ -1,4 +1,4 @@
-import { UserWithPrivateFields } from './user';
+import type { UserWithPrivateFields } from './user';
 
 export {};
 
@@ -8,4 +8,8 @@ declare global {
 			user?: UserWithPrivateFields;
 		}
 	}
+}
+
+declare module '*.scss' {
+	const content: string;
 }

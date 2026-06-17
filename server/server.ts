@@ -308,6 +308,10 @@ appRouter.use((req, res, next) => {
 		const userId = req.user?.id ?? 'anon';
 		const ip = req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? 'unknown';
 
+		if (req.path.includes('/discussions/positions') || req.path.includes('/commits')) {
+			return;
+		}
+
 		console.log(
 			`${req.method} ${res.statusCode} ${req.path} ${durationMs}ms | host=${host} | user=${userId} | ip=${ip} | size=${contentLength} | ua=${userAgent} | origin=${req.headers.origin}`,
 		);

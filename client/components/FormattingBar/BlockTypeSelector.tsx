@@ -83,65 +83,67 @@ const blockTypeDefinitions = [
 	},
 ];
 
-const BlockTypeSelector = React.forwardRef((props: Props, ref) => {
-	const { editorChangeObject, isSmall, ...restProps } = props;
+const BlockTypeSelector = React.forwardRef(
+	(props: Props, ref: React.ForwardedRef<HTMLButtonElement>) => {
+		const { editorChangeObject, isSmall, ...restProps } = props;
 
-	const renderDisclosure = (disclosureProps: CommandMenuDisclosureProps) => {
-		const { commands, commandStates, disclosureElementProps } = disclosureProps;
-		const { ref: innerRef, ...restDisclosureElementProps } = disclosureElementProps;
-		const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
+		const renderDisclosure = (disclosureProps: CommandMenuDisclosureProps) => {
+			const { commands, commandStates, disclosureElementProps } = disclosureProps;
+			const { ref: innerRef, ...restDisclosureElementProps } = disclosureElementProps;
+			const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
 
-		const activeCommandEntry = commandsFlat.reduce(
-			(found, entry) => {
-				if (found) {
-					return found;
-				}
-				const commandState = commandStates[entry.key];
-				if (commandState?.isActive && 'command' in entry) {
-					return entry;
-				}
-				return null;
-			},
-			null as null | CommandDefinition,
-		);
+			const activeCommandEntry = commandsFlat.reduce(
+				(found, entry) => {
+					if (found) {
+						return found;
+					}
+					const commandState = commandStates[entry.key];
+					if (commandState?.isActive && 'command' in entry) {
+						return entry;
+					}
+					return null;
+				},
+				null as null | CommandDefinition,
+			);
 
-		const matchingBlockType = blockTypeDefinitions.find(
-			(def) => def.command === activeCommandEntry?.command,
-		);
+			const matchingBlockType = blockTypeDefinitions.find(
+				(def) => def.command === activeCommandEntry?.command,
+			);
 
-		const runnableCommandEntries = commandsFlat.filter((command) => {
-			const commandState = commandStates[command.key];
-			return commandState?.canRun;
-		});
+			const runnableCommandEntries = commandsFlat.filter((command) => {
+				const commandState = commandStates[command.key];
+				return commandState?.canRun;
+			});
 
-		const effectiveBlockType = matchingBlockType || paragraphBlockType;
+			const effectiveBlockType = matchingBlockType || paragraphBlockType;
+
+			return (
+				<Button
+					minimal
+					className="block-type-selector-component"
+					rightIcon="caret-down"
+					elementRef={innerRef}
+					{...restDisclosureElementProps}
+					disabled={runnableCommandEntries.length < 2}
+					small={isSmall}
+				>
+					{effectiveBlockType.label}
+				</Button>
+			);
+		};
 
 		return (
-			<Button
-				minimal
-				className="block-type-selector-component"
-				rightIcon="caret-down"
-				elementRef={innerRef}
-				{...restDisclosureElementProps}
-				disabled={runnableCommandEntries.length < 2}
-				small={isSmall}
-			>
-				{effectiveBlockType.label}
-			</Button>
+			<CommandMenu
+				className="block-type-selector-menu pub-body-styles"
+				aria-label="Choose text formatting"
+				ref={ref}
+				commands={[blockTypeDefinitions]}
+				disclosure={renderDisclosure}
+				editorChangeObject={editorChangeObject}
+				{...restProps}
+			/>
 		);
-	};
-
-	return (
-		<CommandMenu
-			className="block-type-selector-menu pub-body-styles"
-			aria-label="Choose text formatting"
-			ref={ref}
-			commands={[blockTypeDefinitions]}
-			disclosure={renderDisclosure}
-			editorChangeObject={editorChangeObject}
-			{...restProps}
-		/>
-	);
-});
+	},
+);
 
 export default BlockTypeSelector;

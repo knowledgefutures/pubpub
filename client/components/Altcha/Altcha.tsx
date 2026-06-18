@@ -42,12 +42,7 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 		const w = widgetRef.current;
 		if (!w) return;
 		// Route the widget's challenge fetch through apiFetchRaw so it carries
-		// credentials and, crucially, survives an expired session: a logged-in
-		// user whose short session has lapsed gets `401 sessionExpired` from
-		// silentReauthMiddleware on /api/* — the widget's own plain fetch can't
-		// handle that and the captcha (and thus pub creation) silently fails.
-		// apiFetchRaw renews via the hidden iframe and retries.
-
+		// credentials (the widget's own plain fetch would not).
 		// needs to be done like this, doesnt work when just passing it to altcha-widget
 		(w as unknown as { customfetch?: typeof apiFetchRaw }).customfetch = apiFetchRaw;
 		const handleStateChange = (ev: Event) => {

@@ -23,50 +23,15 @@ type HttpMethod = (typeof httpMethods)[number];
 
 type ApiFetch = ApiFetchFn & { [K in HttpMethod]: HttpMethodApiFetchWrapper };
 
-// ── Silent session renewal via hidden iframe ──
-
-let renewalInFlight: Promise<boolean> | null = null;
-
-function renewSession(): Promise<boolean> {
-	if (renewalInFlight) return renewalInFlight;
-
-	renewalInFlight = new Promise<boolean>((resolve) => {
-		const iframe = document.createElement('iframe');
-		iframe.style.display = 'none';
-
-		const cleanup = () => {
-			window.removeEventListener('message', onMessage);
-			clearTimeout(timeout);
-			iframe.remove();
-			renewalInFlight = null;
-		};
-
-		const onMessage = (event: MessageEvent) => {
-			if (
-				event.origin === window.location.origin &&
-				event.data?.type === 'pubpub:session-renewed'
-			) {
-				cleanup();
-				resolve(!!event.data.success);
-			}
-		};
-
-		const timeout = setTimeout(() => {
-			cleanup();
-			resolve(false);
-		}, 15_000);
-
-		window.addEventListener('message', onMessage);
-		iframe.src = '/auth/login?renew=true&return_to=/auth/renew-done';
-		document.body.appendChild(iframe);
-	});
-
-	return renewalInFlight;
-}
-
 // ── Core fetch wrapper ──
 
-function rawFetch(path: string, opts?: RequestInit): Promise<Response> {
+/**
+ * Like fetch, but always sends credentials and JSON headers and returns the raw
+ * Response. Use this for callers that need the Response object rather than the
+ * parsed JSON — e.g. the Altcha widget's `customfetch`, which needs the
+ * credentialed request but its own response handling.
+ */
+export function apiFetchRaw(path: string, opts?: RequestInit): Promise<Response> {
 	return fetch(path, {
 		...opts,
 		headers: {
@@ -76,38 +41,6 @@ function rawFetch(path: string, opts?: RequestInit): Promise<Response> {
 		},
 		credentials: 'include',
 	});
-}
-
-/**
- * Like fetch, but transparently handles an expired-but-renewable session:
- * on a `401 {error: 'sessionExpired'}` it silently renews (hidden iframe →
- * OIDC prompt=none) and retries once, returning the resolved Response. Returns
- * credentials with every request. Use this for callers that need a raw
- * Response and the renewal behaviour — e.g. the Altcha widget's customfetch,
- * which otherwise issues a plain fetch that dies on the 401.
- */
-export async function apiFetchRaw(path: string, opts?: RequestInit): Promise<Response> {
-	const response = await rawFetch(path, opts);
-	if (response.status === 401) {
-		// Peek the body without consuming it for the caller.
-		const err = await response
-			.clone()
-			.json()
-			.catch(() => null);
-		if (err?.error === 'sessionExpired') {
-			const renewed = await renewSession();
-			if (renewed) {
-				return rawFetch(path, opts);
-			}
-			// Renewal failed — full page reload so the page-level reauth kicks in
-			window.location.reload();
-			// Never resolves — the reload navigates away
-			return new Promise<Response>(() => {
-				/* page is reloading */
-			});
-		}
-	}
-	return response;
 }
 
 export const apiFetch = ((path, opts) => {

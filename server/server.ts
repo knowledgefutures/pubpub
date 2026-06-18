@@ -35,7 +35,7 @@ if (env.NODE_ENV !== 'test') {
 
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
-import { silentReauthMiddleware } from './middleware/silentReauth';
+import { kfSessionCheckMiddleware } from './middleware/kfSessionCheck';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
@@ -156,16 +156,14 @@ appRouter.use(
 			secure: env.NODE_ENV === 'production',
 			maxAge:
 				env.NODE_ENV === 'production'
-					? isDuqDuq()
-						? 1 * 60 * 1000
-						: 15 * 60 * 1000
-					: 10_000, // 1min duqduq, 15m prod, 10s dev for testing
+					? 30 * 24 * 60 * 60 * 1000 // 30d prod + duqduq
+					: 24 * 60 * 60 * 1000, // 1d dev
 		},
 	}),
 );
 
 appRouter.use((req, res, next) => {
-	/* If on a platform domain, set the session cookie to be accessible */
+	/* If on a pubpub/duqduq domain, set the session cookie to be accessible */
 	/* across all subdomains to maintain login. Especially important when */
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
@@ -189,6 +187,7 @@ appRouter.use((req, res, next) => {
 /* ------------------- */
 appRouter.use(passport.initialize());
 appRouter.use(passport.session());
+
 passport.use(User.createStrategy());
 passport.use('zotero', zoteroAuthStrategy());
 passport.use('bearer', bearerStrategy());
@@ -290,7 +289,7 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
-appRouter.use(silentReauthMiddleware());
+appRouter.use(kfSessionCheckMiddleware());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

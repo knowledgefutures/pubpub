@@ -35,7 +35,7 @@ if (env.NODE_ENV !== 'test') {
 
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
-import { silentReauthMiddleware } from './middleware/silentReauth';
+import { kfSessionCheckMiddleware } from './middleware/kfSessionCheck';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
@@ -138,6 +138,10 @@ appRouter.use(
 		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
+		// Reset cookie maxAge on every response so the session expires after
+		// N minutes of *inactivity* rather than N minutes since login. The
+		// store's touch() keeps the DB row in sync without a full resave.
+		rolling: true,
 		// TLS is terminated at the edge (Fastly) and forwarded as plain HTTP,
 		// so without trusting the proxy express-session sees an insecure
 		// connection and silently drops the `secure` cookie. This honors
@@ -152,16 +156,14 @@ appRouter.use(
 			secure: env.NODE_ENV === 'production',
 			maxAge:
 				env.NODE_ENV === 'production'
-					? isDuqDuq()
-						? 1 * 60 * 1000
-						: 15 * 60 * 1000
-					: 10_000, // 1min duqduq, 15m prod, 10s dev for testing
+					? 30 * 24 * 60 * 60 * 1000 // 30d prod + duqduq
+					: 24 * 60 * 60 * 1000, // 1d dev
 		},
 	}),
 );
 
 appRouter.use((req, res, next) => {
-	/* If on a platform domain, set the session cookie to be accessible */
+	/* If on a pubpub/duqduq domain, set the session cookie to be accessible */
 	/* across all subdomains to maintain login. Especially important when */
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
@@ -185,6 +187,7 @@ appRouter.use((req, res, next) => {
 /* ------------------- */
 appRouter.use(passport.initialize());
 appRouter.use(passport.session());
+
 passport.use(User.createStrategy());
 passport.use('zotero', zoteroAuthStrategy());
 passport.use('bearer', bearerStrategy());
@@ -288,7 +291,7 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
-appRouter.use(silentReauthMiddleware());
+appRouter.use(kfSessionCheckMiddleware());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

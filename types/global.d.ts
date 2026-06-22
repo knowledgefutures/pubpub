@@ -13,3 +13,11 @@ declare global {
 declare module '*.scss' {
 	const content: string;
 }
+
+declare module 'express-session' {
+	interface SessionData {
+		kfSessionId?: string;
+		kfRefreshToken?: string;
+		kfNextCheck?: number;
+	}
+}

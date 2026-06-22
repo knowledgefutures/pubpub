@@ -23,22 +23,35 @@ type HttpMethod = (typeof httpMethods)[number];
 
 type ApiFetch = ApiFetchFn & { [K in HttpMethod]: HttpMethodApiFetchWrapper };
 
-export const apiFetch = ((path, opts) => {
+// ── Core fetch wrapper ──
+
+/**
+ * Like fetch, but always sends credentials and JSON headers and returns the raw
+ * Response. Use this for callers that need the Response object rather than the
+ * parsed JSON — e.g. the Altcha widget's `customfetch`, which needs the
+ * credentialed request but its own response handling.
+ */
+export function apiFetchRaw(path: string, opts?: RequestInit): Promise<Response> {
 	return fetch(path, {
 		...opts,
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
+			...opts?.headers,
 		},
 		credentials: 'include',
-	}).then((response) => {
+	});
+}
+
+export const apiFetch = ((path, opts) => {
+	return apiFetchRaw(path, opts).then(async (response) => {
 		if (!response.ok) {
-			return response.json().then((err) => {
-				if (response.status === 423 && err?.error === 'readOnly') {
-					window.dispatchEvent(new CustomEvent('pubpub:readOnly'));
-				}
-				throw err;
-			});
+			const err = await response.json();
+
+			if (response.status === 423 && err?.error === 'readOnly') {
+				window.dispatchEvent(new CustomEvent('pubpub:readOnly'));
+			}
+			throw err;
 		}
 		return response.json();
 	});

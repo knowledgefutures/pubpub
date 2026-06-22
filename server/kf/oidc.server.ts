@@ -40,6 +40,7 @@ interface OIDCDiscovery {
 	authorization_endpoint: string;
 	token_endpoint: string;
 	userinfo_endpoint: string;
+	introspection_endpoint?: string;
 	jwks_uri?: string;
 }
 
@@ -52,7 +53,7 @@ async function discover(): Promise<OIDCDiscovery> {
 
 	discoveryPromise = (async () => {
 		const url = `${OIDC_ISSUER_INTERNAL_URL}/.well-known/openid-configuration`;
-		const res = await fetch(url);
+		const res = await fetchWithTimeout(url);
 		if (!res.ok) {
 			throw new Error(
 				`OIDC discovery failed: ${res.status} from ${url}. ` +
@@ -87,6 +88,25 @@ function internalEndpoint(discoveredUrl: string): string {
 	url.protocol = base.protocol;
 	url.host = base.host;
 	return url.toString();
+}
+
+// Server-to-server calls to kf-auth MUST be bounded: without a timeout a slow
+// or unreachable kf-auth hangs the request indefinitely (and, on the session
+// refresh path, the in-process single-flight makes every other request for that
+// session hang on the same pending promise). 8s is generous for a token call.
+const KF_FETCH_TIMEOUT_MS = 8000;
+
+async function fetchWithTimeout(
+	input: string,
+	init?: Parameters<typeof fetch>[1],
+): Promise<Response> {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), KF_FETCH_TIMEOUT_MS);
+	try {
+		return await fetch(input, { ...init, signal: controller.signal });
+	} finally {
+		clearTimeout(timer);
+	}
 }
 
 // --- Symmetric encryption (AES-256-GCM) ---
@@ -161,7 +181,11 @@ export async function buildAuthorizeUrl(
 		client_id: OIDC_CLIENT_ID,
 		redirect_uri: REDIRECT_URI,
 		response_type: 'code',
-		scope: 'openid profile email',
+		// offline_access makes kf-auth issue a refresh token (Better Auth gates
+		// refresh-token issuance on this scope). PubPub is a confidential,
+		// server-side client, so it renews the session via the refresh_token
+		// grant server-to-server — no browser redirect / third-party-cookie dance.
+		scope: 'openid profile email offline_access',
 		state,
 		code_challenge: codeChallenge,
 		code_challenge_method: 'S256',
@@ -216,7 +240,7 @@ export async function exchangeCode(code: string, codeVerifier: string): Promise<
 		code_verifier: codeVerifier,
 	});
 
-	const res = await fetch(internalEndpoint(config.token_endpoint), {
+	const res = await fetchWithTimeout(internalEndpoint(config.token_endpoint), {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body,
@@ -228,6 +252,51 @@ export async function exchangeCode(code: string, codeVerifier: string): Promise<
 	}
 
 	return res.json() as Promise<TokenResponse>;
+}
+
+export interface IntrospectionResult {
+	/** kf-auth says the token (and its session) is live. */
+	active: boolean;
+	/** kf-auth session id, present only while the session itself is live. */
+	sid?: string;
+}
+
+/**
+ * RFC 7662 token introspection of a refresh token (server-to-server).
+ *
+ * This is a READ-ONLY liveness check — unlike the refresh_token grant it does
+ * NOT rotate the token, so it's idempotent and safe to call concurrently from
+ * any number of instances. kf-auth returns `active: false` once the refresh
+ * token is revoked (our session.delete hook revokes it when the kf-auth session
+ * is revoked / the user is banned) or expired, and nulls `sid` when the backing
+ * session is gone. We treat "not active" OR "no sid" as dead.
+ *
+ * Throws on transient failure (network / timeout / non-2xx) — the caller keeps
+ * the session and retries on the next cycle (fail-open on a kf-auth blip).
+ */
+export async function introspectRefreshToken(refreshToken: string): Promise<IntrospectionResult> {
+	const config = await discover();
+	const endpoint =
+		config.introspection_endpoint ?? config.token_endpoint.replace(/\/token$/, '/introspect');
+	const body = new URLSearchParams({
+		token: refreshToken,
+		token_type_hint: 'refresh_token',
+		client_id: OIDC_CLIENT_ID,
+		client_secret: OIDC_CLIENT_SECRET,
+	});
+
+	const res = await fetchWithTimeout(internalEndpoint(endpoint), {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body,
+	});
+
+	if (!res.ok) {
+		throw new Error(`Introspection failed: ${res.status} ${await res.text()}`);
+	}
+
+	const json = (await res.json()) as { active?: boolean; sid?: string };
+	return { active: json.active === true, sid: json.sid };
 }
 
 // --- UserInfo ---
@@ -252,7 +321,7 @@ export interface OIDCUserInfo {
 
 export async function fetchUserInfo(accessToken: string): Promise<OIDCUserInfo> {
 	const config = await discover();
-	const res = await fetch(internalEndpoint(config.userinfo_endpoint), {
+	const res = await fetchWithTimeout(internalEndpoint(config.userinfo_endpoint), {
 		headers: { Authorization: `Bearer ${accessToken}` },
 	});
 

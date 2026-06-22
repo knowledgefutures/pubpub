@@ -56,6 +56,7 @@ export const upsertDraftCheckpoint = async (
 export const getDraftCheckpoint = async (draftId: string, sequelizeTransaction: any = null) => {
 	return DraftCheckpoint.findOne({
 		where: { draftId },
+		order: [['historyKey', 'DESC']],
 		transaction: sequelizeTransaction,
 	});
 };

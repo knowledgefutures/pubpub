@@ -8,9 +8,10 @@ import { env } from 'server/env';
 
 let presenceAuthority: PresenceAuthority | null = null;
 
-export const getPresenceAuthority = () => {
+export const getPresenceAuthority = async () => {
 	if (!presenceAuthority) {
-		throw new Error('[collab] Presence Redis not connected. Call connectPresenceRedis() first.');
+		// throw new Error('[collab] Presence Redis not connected. Call connectPresenceRedis() first.');
+		return await connectPresenceRedis();
 	}
 	return presenceAuthority;
 };
@@ -25,4 +26,5 @@ export const connectPresenceRedis = async () => {
 		broadcastManager: broadcaster,
 	});
 	console.log('[collab] presence redis connected');
+	return presenceAuthority;
 };

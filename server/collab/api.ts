@@ -26,7 +26,6 @@ const getDraftIdForPub = async (pubId: string): Promise<string | null> => {
 router.post(
 	'/api/pubs/:pubId/commits',
 	wrap(async (req, res) => {
-		console.log('receiveCommit', req.body);
 		const draftId = await getDraftIdForPub(req.params.pubId);
 
 		if (!draftId) {
@@ -34,7 +33,7 @@ router.post(
 		}
 
 		try {
-			await getCollabAuthority().receiveCommit(draftId, req.body);
+			await (await getCollabAuthority()).receiveCommit(draftId, req.body);
 		} catch (e) {
 			if (e instanceof TooMuchContentionError) {
 				console.log('TooMuchContentionError', e);
@@ -63,7 +62,7 @@ router.get(
 			return res.status(400).json({ error: 'Missing or invalid version query parameter' });
 		}
 
-		const commits = await getCollabAuthority().listenForCommit(draftId, version);
+		const commits = await (await getCollabAuthority()).listenForCommit(draftId, version);
 		return res.status(200).json(commits);
 	}),
 );
@@ -93,9 +92,9 @@ router.get(
 			order: [['version', 'ASC']],
 		});
 
-		return res.status(200).json(
-			commits.map((c: any) => ({ version: c.version, steps: c.steps })),
-		);
+		return res
+			.status(200)
+			.json(commits.map((c: any) => ({ version: c.version, steps: c.steps })));
 	}),
 );
 
@@ -104,7 +103,8 @@ router.post(
 	'/api/pubs/:pubId/presence/:clientId',
 	wrap(async (req, res) => {
 		const indicator = req.body as PresenceIndicator;
-		await getPresenceAuthority().updatePresence(req.params.pubId, indicator);
+		await (await getPresenceAuthority()).updatePresence(req.params.pubId, indicator);
+
 		return res.status(204).send(null);
 	}),
 );
@@ -118,7 +118,7 @@ router.post(
 			clientId: string;
 		};
 
-		const presence = await getPresenceAuthority().listenForPresence(
+		const presence = await (await getPresenceAuthority()).listenForPresence(
 			req.params.pubId,
 			clientId,
 			refs,

@@ -2,14 +2,9 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import {
-	Column,
-	DataType,
-	Default,
-	Model,
-	PrimaryKey,
-	Table,
-} from 'sequelize-typescript';
+import { Column, DataType, Default, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
+
+import { DraftCheckpoint } from 'server/draftCheckpoint/model';
 
 @Table
 export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes<Draft>> {
@@ -30,4 +25,7 @@ export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes
 	@Default(0)
 	@Column(DataType.INTEGER)
 	declare version: CreationOptional<number>;
+
+	@HasOne(() => DraftCheckpoint, { as: 'checkpoint', foreignKey: 'draftId' })
+	declare checkpoint?: DraftCheckpoint;
 }

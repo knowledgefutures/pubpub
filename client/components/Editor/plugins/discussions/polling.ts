@@ -51,6 +51,10 @@ export const connectToRemoteDiscussions = (pubId: string): RemoteDiscussions => 
 	};
 
 	const sendDiscussions = (discussions: Discussions) => {
+		if (Object.keys(discussions).length === 0) {
+			return;
+		}
+
 		fetch(`/api/pubs/${pubId}/discussions/positions`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

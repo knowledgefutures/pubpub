@@ -1,14 +1,41 @@
 import type { Transaction } from 'sequelize';
+import type { DocJson } from 'types';
 
 import { CollabAuthority, RedisBroadcastManager } from '@pitter-patter/collab-server';
+import { Node } from 'prosemirror-model';
+import { Step } from 'prosemirror-transform';
 import { Op } from 'sequelize';
 
 import { editorSchema } from 'client/components/Editor/utils/schema';
+import { upsertDraftCheckpoint } from 'server/draftCheckpoint/queries';
 import { env } from 'server/env';
 import { CollabCommit, Draft, DraftCheckpoint } from 'server/models';
 import { sequelize } from 'server/sequelize';
+import { createLogger } from 'server/utils/queryHelpers/communityGet';
 
 let authority: CollabAuthority<Transaction> | null = null;
+
+const CHECKPOINT_INTERVAL = 50;
+
+export const replayCommitsOntoDoc = (
+	docJSON: Record<string, any>,
+	commits: { steps: Record<string, any>[] }[],
+): Node => {
+	let doc = Node.fromJSON(editorSchema, docJSON);
+
+	for (const commit of commits) {
+		for (const stepJSON of commit.steps) {
+			const step = Step.fromJSON(editorSchema, stepJSON);
+			const result = step.apply(doc);
+
+			if (result.doc) {
+				doc = result.doc;
+			}
+		}
+	}
+
+	return doc;
+};
 
 const createAuthority = (bm: RedisBroadcastManager) =>
 	new CollabAuthority<Transaction>({
@@ -20,20 +47,27 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 		},
 
 		getDoc: async (tr, docId) => {
-			const draft = await Draft.findOne({
-				where: { id: docId },
-				...(tr && { lock: tr.LOCK.UPDATE }),
-				transaction: tr ?? undefined,
-			});
+			const logger = createLogger('getDoc');
+
+			const [draft, checkpoint] = await logger.log(
+				'getDocAndCheckpoint',
+				Promise.all([
+					Draft.findOne({
+						where: { id: docId },
+						...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
+						transaction: tr ?? undefined,
+					}),
+					DraftCheckpoint.findOne({
+						where: { draftId: docId },
+						order: [['historyKey', 'DESC']],
+						transaction: tr ?? undefined,
+					}),
+				]),
+			);
 
 			if (!draft) {
 				throw new Error(`Draft not found: ${docId}`);
 			}
-
-			const checkpoint = await DraftCheckpoint.findOne({
-				where: { draftId: docId },
-				transaction: tr ?? undefined,
-			});
 
 			if (!checkpoint) {
 				const emptyDoc = editorSchema.topNodeType.createAndFill()!;
@@ -45,6 +79,33 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 				};
 			}
 
+			const checkpointVersion = checkpoint.historyKey ?? 0;
+
+			if (checkpointVersion < draft.version) {
+				const missedCommits = await logger.log(
+					'getMissedCommits',
+					CollabCommit.findAll({
+						where: {
+							draftId: docId,
+							version: { [Op.gt]: checkpointVersion, [Op.lte]: draft.version },
+						},
+						order: [['version', 'ASC']],
+						transaction: tr ?? undefined,
+					}),
+				);
+
+				const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
+				logger.end();
+
+				return {
+					docJSON: reconstructedDoc.toJSON(),
+					version: draft.version,
+					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+				};
+			}
+
+			logger.end();
+
 			return {
 				docJSON: checkpoint.doc,
 				version: draft.version,
@@ -53,46 +114,59 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 		},
 
 		saveDoc: async (tr, docId, docJSON, version) => {
-			await Draft.update(
-				{ version, latestKeyAt: new Date() },
-				{ where: { id: docId }, transaction: tr },
-			);
-
-			const existing = await DraftCheckpoint.findOne({
-				where: { draftId: docId },
-				transaction: tr,
-			});
-
-			if (existing) {
-				await existing.update(
-					{ doc: docJSON, historyKey: version, timestamp: Date.now() },
-					{ transaction: tr },
+			try {
+				await Draft.update(
+					{ version, latestKeyAt: new Date() },
+					{ where: { id: docId }, transaction: tr },
 				);
-			} else {
-				await DraftCheckpoint.create(
-					{ draftId: docId, doc: docJSON, historyKey: version, timestamp: Date.now() },
-					{ transaction: tr },
-				);
+
+				const shouldCheckpoint = version % CHECKPOINT_INTERVAL === 0 || version <= 1;
+
+				if (!shouldCheckpoint) {
+					return;
+				}
+
+				const truncateBelow = version - CHECKPOINT_INTERVAL;
+
+				await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
+
+				if (truncateBelow > 0) {
+					await CollabCommit.destroy({
+						where: {
+							draftId: docId,
+							version: { [Op.lt]: truncateBelow },
+						},
+						transaction: tr,
+					});
+				}
+			} catch (error) {
+				console.error('Error saving doc', error);
+				throw error;
 			}
 		},
 
 		saveCommit: async (tr, docId, commitRef, commitVersion, commitSteps) => {
-			console.log('saveCommit', docId, commitRef, commitVersion, commitSteps);
-			await CollabCommit.create(
-				{
-					draftId: docId,
-					ref: commitRef,
-					version: commitVersion,
-					steps: commitSteps,
-				},
-				{ transaction: tr },
-			);
+			try {
+				await CollabCommit.create(
+					{
+						draftId: docId,
+						ref: commitRef,
+						version: commitVersion,
+						steps: commitSteps,
+					},
+					{ transaction: tr },
+				);
+			} catch (error) {
+				console.error('Error saving commit', error);
+				throw error;
+			}
 		},
 
 		getCommit: async (tr, docId, commitRef) => {
 			const commit = await CollabCommit.findOne({
 				where: { draftId: docId, ref: commitRef },
 				transaction: tr ?? undefined,
+				plain: true,
 			});
 
 			if (!commit) {
@@ -107,14 +181,15 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 		},
 
 		getCommits: async (tr, docId, version) => {
-			const commits = await CollabCommit.findAll({
-				where: {
-					draftId: docId,
-					version: { [Op.gt]: version },
-				},
-				order: [['version', 'ASC']],
-				transaction: tr ?? undefined,
-			});
+			const commits =
+				(await CollabCommit.findAll({
+					where: {
+						draftId: docId,
+						version: { [Op.gt]: version },
+					},
+					order: [['version', 'ASC']],
+					transaction: tr ?? undefined,
+				})) ?? [];
 
 			return commits.map((c) => ({
 				ref: c.ref,
@@ -124,9 +199,9 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 		},
 	});
 
-export const getCollabAuthority = () => {
+export const getCollabAuthority = async () => {
 	if (!authority) {
-		throw new Error('[collab] Collab Redis not connected. Call connectCollabRedis() first.');
+		return await connectCollabRedis();
 	}
 	return authority;
 };
@@ -138,4 +213,5 @@ export const connectCollabRedis = async () => {
 	await broadcastManager.connect();
 	authority = createAuthority(broadcastManager);
 	console.log('[collab] collab broadcast redis connected');
+	return authority;
 };

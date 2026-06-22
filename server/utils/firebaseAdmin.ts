@@ -7,6 +7,7 @@ import { Step, Transform } from 'prosemirror-transform';
 import { Op } from 'sequelize';
 
 import { editorSchema } from 'components/Editor/utils';
+import { replayCommitsOntoDoc } from 'server/collab/authority';
 import { getDraftCheckpoint } from 'server/draftCheckpoint/queries';
 import { CollabCommit, Draft, Pub } from 'server/models';
 import { expect } from 'utils/assert';
@@ -56,8 +57,6 @@ const applyCommitsOnDoc = async (
 		order: [['version', 'ASC']],
 	});
 
-	const allStepsJson = commits.flatMap((commit) => commit.steps);
-
 	const currentKey = commits.length > 0 ? commits[commits.length - 1].version : checkpointKey;
 
 	const currentTimestamp =
@@ -65,18 +64,7 @@ const applyCommitsOnDoc = async (
 			? (commits[commits.length - 1].createdAt?.valueOf() ?? checkpointTimestamp)
 			: checkpointTimestamp;
 
-	let doc = Node.fromJSON(editorSchema, checkpointDoc);
-
-	for (const stepJson of allStepsJson) {
-		const step = Step.fromJSON(editorSchema, stepJson);
-		const { failed, doc: nextDoc } = step.apply(doc);
-
-		if (failed) {
-			console.error(`Failed with: ${failed}`);
-		} else if (nextDoc) {
-			doc = nextDoc;
-		}
-	}
+	const doc = replayCommitsOntoDoc(checkpointDoc, commits);
 
 	return {
 		doc,
@@ -198,14 +186,14 @@ export const editDraft = async (pubId: string, clientId: string, schema: Schema 
 			const { getCollabAuthority } = await import('server/collab/authority.js');
 
 			try {
-			const commitData = {
-				steps: pendingSteps.map((s) => s.toJSON()),
-				version: currentVersion,
-				clientId,
-				ref: `server-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-			};
+				const commitData = {
+					steps: pendingSteps.map((s) => s.toJSON()),
+					version: currentVersion,
+					clientId,
+					ref: `server-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				};
 
-				await getCollabAuthority().receiveCommit(draft.id, commitData);
+				await (await getCollabAuthority()).receiveCommit(draft.id, commitData);
 				currentVersion++;
 				pendingSteps = [];
 				return true;

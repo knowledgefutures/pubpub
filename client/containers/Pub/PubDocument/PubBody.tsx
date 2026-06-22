@@ -1,11 +1,12 @@
 import type { CollaborativeEditorStatus, EditorChangeObject } from 'client/components/Editor';
 
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import * as Sentry from '@sentry/react';
 import { useBeforeUnload } from 'react-use';
 import { useDebouncedCallback } from 'use-debounce/lib';
 
+import { apiFetch } from 'client/utils/apiFetch';
 import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
 import buildSuggestedEdits from 'client/components/Editor/plugins/suggestedEdits';
 import { useFacetsQuery } from 'client/utils/useFacets';
@@ -36,6 +37,7 @@ const PubBody = (props: Props) => {
 		pubData,
 		noteManager,
 		updateCollabData,
+		updateLocalData,
 		historyData: { setLatestHistoryKey },
 		collabData: { status, localCollabUser },
 		pubBodyState: {
@@ -83,18 +85,64 @@ const PubBody = (props: Props) => {
 		[updateCollabData],
 	);
 
+	const handlePresenceChange = useCallback(
+		(users: any[]) => {
+			updateCollabData({ remoteCollabUsers: users });
+		},
+		[updateCollabData],
+	);
+
+	const fetchedDiscussionIds = useRef(new Set<string>());
+
+	const handleNewDiscussionIds = useCallback(
+		(ids: string[]) => {
+			const unfetched = ids.filter((id) => !fetchedDiscussionIds.current.has(id));
+			if (unfetched.length === 0) return;
+			unfetched.forEach((id) => fetchedDiscussionIds.current.add(id));
+
+			apiFetch(`/api/pubs/${pubData.id}/discussions?ids=${unfetched.join(',')}`)
+				.then((newDiscussions: any[]) => {
+					if (newDiscussions.length > 0) {
+						updateLocalData('pub', {
+							discussions: [...pubData.discussions, ...newDiscussions],
+						});
+					}
+				})
+				.catch(() => {});
+		},
+		[pubData.id, pubData.discussions, updateLocalData],
+	);
+
+	const updateLocalDataRef = useRef(updateLocalData);
+	updateLocalDataRef.current = updateLocalData;
+
+	useEffect(() => {
+		if (!includeCollabPlugin || !includeDiscussionsPlugin) return undefined;
+		const pubId = pubData.id;
+		const interval = setInterval(() => {
+			apiFetch(`/api/pubs/${pubId}/discussions`)
+				.then((discussions: any[]) => {
+					updateLocalDataRef.current('pub', { discussions });
+				})
+				.catch(() => {});
+		}, 5000);
+		return () => clearInterval(interval);
+	}, [pubData.id, includeCollabPlugin, includeDiscussionsPlugin]);
+
 	const collaborativeOptions = includeCollabPlugin && {
 		pubId: pubData.id,
 		initialDocKey: initialHistoryKey,
 		clientData: localCollabUser,
 		onStatusChange: handleStatusChange,
 		onUpdateLatestKey: setLatestHistoryKey,
+		onPresenceChange: handlePresenceChange,
 	};
 
 	const discussionOptions = includeDiscussionsPlugin && {
-		pubId: pubData.id,
+		pubId: includeCollabPlugin ? pubData.id : null,
 		initialHistoryKey,
 		discussionAnchors: discussionAnchors || [],
+		onNewDiscussionIds: handleNewDiscussionIds,
 	};
 
 	return (

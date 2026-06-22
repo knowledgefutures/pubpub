@@ -45,12 +45,14 @@ export type CollaborativeOptions = {
 	initialDocKey: number;
 	onStatusChange?: (status: CollaborativeEditorStatus) => unknown;
 	onUpdateLatestKey?: (key: number) => unknown;
+	onPresenceChange?: (users: any[]) => unknown;
 };
 
 export type DiscussionsOptions = {
 	pubId?: string | null;
 	initialHistoryKey: number;
 	discussionAnchors: DiscussionAnchor[];
+	onNewDiscussionIds?: (ids: string[]) => void;
 };
 
 export type MediaUploadInstance = {

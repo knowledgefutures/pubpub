@@ -2,12 +2,13 @@ import type { PresenceIndicator } from '@pitter-patter/presence-server';
 
 import { TooMuchContentionError } from '@pitter-patter/collab-server';
 import { Router } from 'express';
+import { Op } from 'sequelize';
 
-import { Draft, Pub } from 'server/models';
+import { CollabCommit, Draft, Pub } from 'server/models';
 import { wrap } from 'server/wrap';
 
-import { collabAuthority } from './authority';
-import { presenceAuthority } from './presence';
+import { getCollabAuthority } from './authority';
+import { getPresenceAuthority } from './presence';
 
 export const router = Router();
 
@@ -33,7 +34,7 @@ router.post(
 		}
 
 		try {
-			await collabAuthority.receiveCommit(draftId, req.body);
+			await getCollabAuthority().receiveCommit(draftId, req.body);
 		} catch (e) {
 			if (e instanceof TooMuchContentionError) {
 				console.log('TooMuchContentionError', e);
@@ -62,8 +63,39 @@ router.get(
 			return res.status(400).json({ error: 'Missing or invalid version query parameter' });
 		}
 
-		const commits = await collabAuthority.listenForCommit(draftId, version);
+		const commits = await getCollabAuthority().listenForCommit(draftId, version);
 		return res.status(200).json(commits);
+	}),
+);
+
+// get steps between two versions (non-blocking, for discussion fast-forwarding)
+router.get(
+	'/api/pubs/:pubId/commits/steps',
+	wrap(async (req, res) => {
+		const draftId = await getDraftIdForPub(req.params.pubId);
+
+		if (!draftId) {
+			return res.status(404).json({ error: 'Pub or draft not found' });
+		}
+
+		const from = parseInt(req.query.from as string, 10);
+		const to = parseInt(req.query.to as string, 10);
+
+		if (Number.isNaN(from) || Number.isNaN(to)) {
+			return res.status(400).json({ error: 'Missing or invalid from/to' });
+		}
+
+		const commits = await CollabCommit.findAll({
+			where: {
+				draftId,
+				version: { [Op.gt]: from, [Op.lte]: to },
+			},
+			order: [['version', 'ASC']],
+		});
+
+		return res.status(200).json(
+			commits.map((c: any) => ({ version: c.version, steps: c.steps })),
+		);
 	}),
 );
 
@@ -72,7 +104,7 @@ router.post(
 	'/api/pubs/:pubId/presence/:clientId',
 	wrap(async (req, res) => {
 		const indicator = req.body as PresenceIndicator;
-		await presenceAuthority.updatePresence(req.params.pubId, indicator);
+		await getPresenceAuthority().updatePresence(req.params.pubId, indicator);
 		return res.status(204).send(null);
 	}),
 );
@@ -86,7 +118,7 @@ router.post(
 			clientId: string;
 		};
 
-		const presence = await presenceAuthority.listenForPresence(
+		const presence = await getPresenceAuthority().listenForPresence(
 			req.params.pubId,
 			clientId,
 			refs,

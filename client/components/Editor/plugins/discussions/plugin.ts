@@ -1,15 +1,23 @@
 import type { Node } from 'prosemirror-model';
 
 import type { DiscussionsOptions, PluginsOptions } from '../../types';
-import type { DiscussionDecoration, DiscussionSelection, DiscussionsUpdateResult } from './types';
+import type {
+	DiscussionDecoration,
+	DiscussionSelection,
+	DiscussionsFastForwardFn,
+	DiscussionsUpdateResult,
+	NullableDiscussions,
+} from './types';
 
 import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { Step } from 'prosemirror-transform';
 import { DecorationSet, type EditorView } from 'prosemirror-view';
 
 import { getDiscussionsFromAnchors } from './anchors';
 import { getDecorationsForDiscussions, getDecorationsForUpdateResult } from './decorations';
 import { createDiscussionsState } from './discussionsState';
-import { connectToRemoteDiscussions } from './firebase';
+import { connectToRemoteDiscussions } from './polling';
+import { mapDiscussionThroughSteps } from './util';
 
 export const discussionsPluginKey = new PluginKey('discussions');
 
@@ -20,8 +28,43 @@ type PluginState = {
 	addDiscussion: SyncDraftDiscussions['addDiscussion'];
 };
 
+const createFastForward = (pubId: string, schema: any): DiscussionsFastForwardFn => {
+	return async (discussions: NullableDiscussions, _fromDoc: Node, toKey: number) => {
+		const lowestKey = Object.values(discussions).reduce((min, d) => {
+			if (d && d.currentKey < min) return d.currentKey;
+			return min;
+		}, toKey);
+
+		if (lowestKey >= toKey) return {};
+
+		try {
+			const response = await fetch(
+				`/api/pubs/${pubId}/commits/steps?from=${lowestKey}&to=${toKey}`,
+			);
+			if (!response.ok) return {};
+			const commits = (await response.json()) as { version: number; steps: any[] }[];
+
+			const result: Record<string, any> = {};
+			for (const [id, discussion] of Object.entries(discussions)) {
+				if (!discussion) continue;
+				const relevantCommits = commits.filter((c) => c.version > discussion.currentKey);
+				const steps = relevantCommits.flatMap((c) =>
+					c.steps.map((s: any) => Step.fromJSON(schema, s)),
+				);
+				if (steps.length > 0) {
+					const mapped = mapDiscussionThroughSteps(discussion, steps);
+					result[id] = { ...mapped, currentKey: toKey };
+				}
+			}
+			return result;
+		} catch {
+			return {};
+		}
+	};
+};
+
 const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) => {
-	const { discussionAnchors, pubId, initialHistoryKey } = discussionsOptions;
+	const { discussionAnchors, pubId, initialHistoryKey, onNewDiscussionIds } = discussionsOptions;
 	const remote = pubId ? connectToRemoteDiscussions(pubId) : null;
 	const initialDiscussions = getDiscussionsFromAnchors(discussionAnchors);
 
@@ -32,7 +75,8 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 		initialHistoryKey,
 		initialDoc,
 		remoteDiscussions: remote || null,
-		fastForwardDiscussions: null,
+		fastForwardDiscussions: pubId ? createFastForward(pubId, initialDoc.type.schema) : null,
+		onNewDiscussionIds,
 		onUpdateDiscussions: (updateResult: DiscussionsUpdateResult) => {
 			if (editorView) {
 				const { tr } = editorView.state;
@@ -61,8 +105,8 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 		};
 	};
 
-	const apply = (tr: Transaction, pluginState: PluginState, editorState: EditorState) => {
-		const updateResult = getUpdateResult(tr, editorState);
+	const apply = (tr: Transaction, pluginState: PluginState, _oldState: EditorState, newState: EditorState) => {
+		const updateResult = getUpdateResult(tr, newState);
 		if (updateResult) {
 			return {
 				...pluginState,

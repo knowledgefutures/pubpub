@@ -37,10 +37,15 @@ export default (
 		}
 
 		onStatusChange('saving');
-		collabClient.send(newState).catch((e) => {
-			console.error('Error sending collab commit:', e);
-			onError(e);
-		});
+		collabClient
+			.send(newState)
+			.then(() => {
+				onStatusChange('saved');
+			})
+			.catch((e) => {
+				console.error('Error sending collab commit:', e);
+				onError(e);
+			});
 	};
 
 	const startCollab = (initialState: any) => {

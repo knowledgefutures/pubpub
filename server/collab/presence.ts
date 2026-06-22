@@ -6,17 +6,23 @@ import {
 
 import { env } from 'server/env';
 
-const redisUrl = env.VALKEY_URL ?? 'redis://localhost:6379';
+let presenceAuthority: PresenceAuthority | null = null;
 
-const presenceBroadcaster = new RedisPresenceBroadcastManager({ redisUrl });
-const presencePersister = new RedisPresencePersistenceManager({ redisUrl });
-
-export const presenceAuthority = new PresenceAuthority({
-	persistenceManager: presencePersister,
-	broadcastManager: presenceBroadcaster,
-});
+export const getPresenceAuthority = () => {
+	if (!presenceAuthority) {
+		throw new Error('[collab] Presence Redis not connected. Call connectPresenceRedis() first.');
+	}
+	return presenceAuthority;
+};
 
 export const connectPresenceRedis = async () => {
-	await Promise.all([presenceBroadcaster.connect(), presencePersister.connect()]);
+	const redisUrl = env.VALKEY_URL ?? 'redis://localhost:6379';
+	const broadcaster = new RedisPresenceBroadcastManager({ redisUrl });
+	const persister = new RedisPresencePersistenceManager({ redisUrl });
+	await Promise.all([broadcaster.connect(), persister.connect()]);
+	presenceAuthority = new PresenceAuthority({
+		persistenceManager: persister,
+		broadcastManager: broadcaster,
+	});
 	console.log('[collab] presence redis connected');
 };

@@ -5,6 +5,8 @@ import type { DocJson } from 'types';
 import { Node, Slice } from 'prosemirror-model';
 import { type EditorState, Selection } from 'prosemirror-state';
 
+import { getVersion } from '@pitter-patter/collab-client';
+
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';
 import { isEmptyDocNode } from './doc';
@@ -152,11 +154,8 @@ export const getLocalHighlightText = (editorView, highlightId) => {
 };
 
 export const reanchorDiscussion = (editorView, pubId: string, discussionId: string) => {
-	const collabPlugin = editorView.state.collaborative$ || {};
-	const newCurrentKey = collabPlugin.mostRecentRemoteKey;
-	const selection = editorView.state.selection;
-	const newAnchor = selection.anchor;
-	const newHead = selection.head;
+	const currentKey = getVersion(editorView.state) ?? 0;
+	const { anchor, head } = editorView.state.selection;
 
 	const transaction = editorView.state.tr;
 	transaction.setMeta('removeDiscussion', { id: discussionId });
@@ -167,8 +166,11 @@ export const reanchorDiscussion = (editorView, pubId: string, discussionId: stri
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			[discussionId]: {
-				currentKey: newCurrentKey,
-				selection: { type: 'text', anchor: newAnchor, head: newHead },
+				initKey: currentKey,
+				currentKey,
+				initAnchor: anchor,
+				initHead: head,
+				selection: { type: 'text', anchor, head },
 			},
 		}),
 	}).catch((err) => {

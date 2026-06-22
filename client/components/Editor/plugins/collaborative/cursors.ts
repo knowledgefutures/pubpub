@@ -5,7 +5,7 @@ import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 export const cursorsPluginKey = new PluginKey('cursors');
 
 const generateCursorDecorations = (cursorData: any, editorState: any, localClientId: string) => {
-	if (cursorData.id === localClientId) {
+	if (cursorData.clientId === localClientId) {
 		return [];
 	}
 
@@ -21,7 +21,7 @@ const generateCursorDecorations = (cursorData: any, editorState: any, localClien
 		return [];
 	}
 
-	const formattedDataId = `c-${cursorData.id}`;
+	const formattedDataId = `c-${cursorData.clientId}`;
 	const elem = document.createElement('span');
 	elem.className = `collab-cursor ${formattedDataId}`;
 
@@ -191,8 +191,10 @@ export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 
 			const pollPresence = async () => {
 				let refs: Record<string, string> = {};
+				const MIN_POLL_INTERVAL = 1000;
 
 				while (polling && !abortController!.signal.aborted) {
+					const pollStart = Date.now();
 					try {
 						const response = await fetch(`/api/pubs/${pubId}/presence`, {
 							method: 'POST',
@@ -209,16 +211,44 @@ export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 						const indicators = await response.json();
 
 						if (indicators && typeof indicators === 'object') {
-							for (const [id, indicator] of Object.entries(indicators) as any) {
-								if (id !== localClientId && indicator) {
-									currentIndicators.set(id, { id, ...indicator });
-									refs[id] = indicator.ref ?? '';
+							const localUserId = localClientData?.id;
+							for (const [clientId, indicator] of Object.entries(indicators) as any) {
+								if (clientId === localClientId) continue;
+								if (indicator) {
+									const userId = indicator.id;
+									if (localUserId && userId === localUserId) {
+										currentIndicators.delete(clientId);
+										delete refs[clientId];
+										continue;
+									}
+									if (userId) {
+										for (const [existingClientId, existing] of currentIndicators) {
+											if (existing.id === userId && existingClientId !== clientId) {
+												currentIndicators.delete(existingClientId);
+												delete refs[existingClientId];
+											}
+										}
+									}
+									currentIndicators.set(clientId, indicator);
+									refs[clientId] = indicator.ref ?? '';
+								} else {
+									currentIndicators.delete(clientId);
+									delete refs[clientId];
 								}
 							}
+
+							props.collaborativeOptions?.onPresenceChange?.(
+								Array.from(currentIndicators.values()),
+							);
 
 							const { tr } = view.state;
 							tr.setMeta('presenceIndicators', true);
 							view.dispatch(tr);
+						}
+
+						const elapsed = Date.now() - pollStart;
+						if (elapsed < MIN_POLL_INTERVAL) {
+							await new Promise((r) => setTimeout(r, MIN_POLL_INTERVAL - elapsed));
 						}
 					} catch (e: any) {
 						if (e.name === 'AbortError') break;

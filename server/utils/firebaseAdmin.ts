@@ -195,7 +195,7 @@ export const editDraft = async (pubId: string, clientId: string, schema: Schema 
 				return true;
 			}
 
-			const { collabAuthority } = await import('server/collab/authority.js');
+			const { getCollabAuthority } = await import('server/collab/authority.js');
 
 			try {
 			const commitData = {
@@ -205,7 +205,7 @@ export const editDraft = async (pubId: string, clientId: string, schema: Schema 
 				ref: `server-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 			};
 
-				await collabAuthority.receiveCommit(draft.id, commitData);
+				await getCollabAuthority().receiveCommit(draft.id, commitData);
 				currentVersion++;
 				pendingSteps = [];
 				return true;

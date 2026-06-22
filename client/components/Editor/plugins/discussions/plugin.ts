@@ -105,7 +105,12 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 		};
 	};
 
-	const apply = (tr: Transaction, pluginState: PluginState, _oldState: EditorState, newState: EditorState) => {
+	const apply = (
+		tr: Transaction,
+		pluginState: PluginState,
+		_oldState: EditorState,
+		newState: EditorState,
+	) => {
 		const updateResult = getUpdateResult(tr, newState);
 		if (updateResult) {
 			return {

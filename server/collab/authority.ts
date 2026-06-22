@@ -1,4 +1,5 @@
 import type { Transaction } from 'sequelize';
+
 import type { DocJson } from 'types';
 
 import { CollabAuthority, RedisBroadcastManager } from '@pitter-patter/collab-server';

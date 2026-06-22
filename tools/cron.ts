@@ -42,13 +42,9 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		timezone: 'UTC',
 	}); // Weekly on Sunday at 3 AM UTC
 
-	cron.schedule(
-		'0 5 * * 0',
-		() => run('Collab Cleanup', 'tools-prod cleanupCollab --execute'),
-		{
-			timezone: 'UTC',
-		},
-	); // Weekly on Sunday at 5 AM UTC
+	cron.schedule('0 5 * * 0', () => run('Collab Cleanup', 'tools-prod cleanupCollab --execute'), {
+		timezone: 'UTC',
+	}); // Weekly on Sunday at 5 AM UTC
 
 	cron.schedule(
 		'30 3 * * *',

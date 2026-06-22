@@ -16,6 +16,7 @@ import { getPubDraft, getPubDraftDoc, getStepsBetweenVersions } from 'server/uti
 
 type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';
 export class ReleaseQueryError extends Error {
+	// biome-ignore lint/complexity/noUselessConstructor: types
 	constructor(reason: ReleaseErrorReason) {
 		super(reason);
 	}

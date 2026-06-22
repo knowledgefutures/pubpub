@@ -6,9 +6,9 @@ import * as Sentry from '@sentry/react';
 import { useBeforeUnload } from 'react-use';
 import { useDebouncedCallback } from 'use-debounce/lib';
 
-import { apiFetch } from 'client/utils/apiFetch';
 import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
 import buildSuggestedEdits from 'client/components/Editor/plugins/suggestedEdits';
+import { apiFetch } from 'client/utils/apiFetch';
 import { useFacetsQuery } from 'client/utils/useFacets';
 import { Editor } from 'components';
 import discussionSchema from 'components/Editor/schemas/discussion';

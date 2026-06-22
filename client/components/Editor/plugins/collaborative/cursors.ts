@@ -12,9 +12,10 @@ const generateCursorDecorations = (cursorData: any, editorState: any, localClien
 	let selection: Selection;
 	try {
 		// handle both compressed (legacy) and uncompressed selection formats
-		const selJSON = cursorData.selection?.a !== undefined
-			? uncompressSelectionJSON(cursorData.selection)
-			: cursorData.selection;
+		const selJSON =
+			cursorData.selection?.a !== undefined
+				? uncompressSelectionJSON(cursorData.selection)
+				: cursorData.selection;
 
 		selection = Selection.fromJSON(editorState.doc, selJSON);
 	} catch (_err) {
@@ -109,7 +110,7 @@ const generateCursorDecorations = (cursorData: any, editorState: any, localClien
 
 export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 	let abortController: AbortController | null = null;
-	let currentIndicators: Map<string, any> = new Map();
+	const currentIndicators: Map<string, any> = new Map();
 
 	return new Plugin({
 		key: cursorsPluginKey,
@@ -119,7 +120,12 @@ export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 					cursorDecorations: DecorationSet.create(editorState.doc, []),
 				};
 			},
-			apply: (transaction: any, pluginState: any, _prevEditorState: any, editorState: any) => {
+			apply: (
+				transaction: any,
+				pluginState: any,
+				_prevEditorState: any,
+				editorState: any,
+			) => {
 				if (props.isReadOnly) {
 					return pluginState;
 				}
@@ -190,12 +196,13 @@ export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 			};
 
 			const pollPresence = async () => {
-				let refs: Record<string, string> = {};
+				const refs: Record<string, string> = {};
 				const MIN_POLL_INTERVAL = 1000;
 
 				while (polling && !abortController!.signal.aborted) {
 					const pollStart = Date.now();
 					try {
+						// biome-ignore lint/performance/noAwaitInLoops: shh
 						const response = await fetch(`/api/pubs/${pubId}/presence`, {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
@@ -222,8 +229,14 @@ export default (schema: any, props: any, collabDocPluginKey: PluginKey) => {
 										continue;
 									}
 									if (userId) {
-										for (const [existingClientId, existing] of currentIndicators) {
-											if (existing.id === userId && existingClientId !== clientId) {
+										for (const [
+											existingClientId,
+											existing,
+										] of currentIndicators) {
+											if (
+												existing.id === userId &&
+												existingClientId !== clientId
+											) {
 												currentIndicators.delete(existingClientId);
 												delete refs[existingClientId];
 											}

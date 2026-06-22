@@ -61,9 +61,7 @@ const filterDiscussionsUpdate = (
 	Object.entries(update).forEach(([id, next]) => {
 		if (next) {
 			if (next.currentKey <= currentKey) {
-				const adjusted = next.currentKey < currentKey
-					? { ...next, currentKey }
-					: next;
+				const adjusted = next.currentKey < currentKey ? { ...next, currentKey } : next;
 				const previous = discussions[id];
 				const hasKeyAdvanced = !previous || previous.currentKey < adjusted.currentKey;
 				const isKeyMonotonic = !previous || previous.currentKey <= adjusted.currentKey;
@@ -206,9 +204,7 @@ export const createDiscussionsState = (options: Options) => {
 		const update = sanitizeRemoteDiscussions(rawUpdate);
 		if (Object.keys(update).length === 0) return;
 
-		const newIds = Object.keys(update).filter(
-			(id) => update[id] && !discussions[id],
-		);
+		const newIds = Object.keys(update).filter((id) => update[id] && !discussions[id]);
 		if (newIds.length > 0) {
 			onNewDiscussionIds?.(newIds);
 		}

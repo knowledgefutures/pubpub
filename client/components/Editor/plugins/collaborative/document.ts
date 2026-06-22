@@ -6,8 +6,8 @@ import type { PluginsOptions } from '../../types';
 
 import {
 	CollabClient,
-	LongPollListener,
 	collab,
+	LongPollListener,
 	receiveCommitTransaction,
 } from '@pitter-patter/collab-client';
 import { Plugin, type PluginKey } from 'prosemirror-state';
@@ -94,14 +94,12 @@ export default (
 		collabClient = new CollabClient(collabConfig);
 		abortController = new AbortController();
 
-		collabClient
-			.listen(initialState, abortController.signal)
-			.catch((e) => {
-				if (e.name !== 'AbortError') {
-					console.error('Collab listener error:', e);
-					onError(e);
-				}
-			});
+		collabClient.listen(initialState, abortController.signal).catch((e) => {
+			if (e.name !== 'AbortError') {
+				console.error('Collab listener error:', e);
+				onError(e);
+			}
+		});
 
 		onStatusChange('connected');
 	};

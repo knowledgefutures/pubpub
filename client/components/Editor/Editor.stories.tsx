@@ -145,19 +145,19 @@ storiesOf('Editor', module)
 						onChange={(evt) => {
 							updatechangeObject(evt);
 						}}
-					collaborativeOptions={{
-						pubId: 'storybook-pub-id',
-						clientData,
-						initialDocKey: -1,
-						onStatusChange: (status) => console.info('collab status is', status),
-					}}
-				/>
-			</div>
-		);
-	};
-	return <Thing />;
-})
-.add('collaborative2', () => {
+						collaborativeOptions={{
+							pubId: 'storybook-pub-id',
+							clientData,
+							initialDocKey: -1,
+							onStatusChange: (status) => console.info('collab status is', status),
+						}}
+					/>
+				</div>
+			);
+		};
+		return <Thing />;
+	})
+	.add('collaborative2', () => {
 		const Thing = () => {
 			const [changeObject, _updatechangeObject] = useState({});
 			return (
@@ -219,12 +219,12 @@ storiesOf('Editor', module)
 								}, 1000);
 							}
 						}}
-					collaborativeOptions={{
-						pubId: 'storybook-pub-id',
-						clientData,
-						initialDocKey: -1,
-						onStatusChange: (status) => console.info('collab status is', status),
-					}}
+						collaborativeOptions={{
+							pubId: 'storybook-pub-id',
+							clientData,
+							initialDocKey: -1,
+							onStatusChange: (status) => console.info('collab status is', status),
+						}}
 					/>
 				</div>
 			);

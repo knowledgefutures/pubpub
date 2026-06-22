@@ -67,7 +67,10 @@ export const getPubRelease = async (
  * @deprecated Firebase token is no longer needed. Collab uses Pitter Patter with Postgres.
  * Kept as a stub for any callers that haven't been updated yet.
  */
-export const getPubFirebaseToken = async (_pubData: SanitizedPubData, _initialData: InitialData) => {
+export const getPubFirebaseToken = async (
+	_pubData: SanitizedPubData,
+	_initialData: InitialData,
+) => {
 	return {
 		firebaseToken: null,
 	};

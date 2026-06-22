@@ -197,6 +197,7 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 						uncompressStepJSON(compressed),
 					);
 
+					// biome-ignore lint/performance/noAwaitInLoops: shh
 					await CollabCommit.create(
 						{
 							draftId,
@@ -243,6 +244,7 @@ const main = async () => {
 	let offset = 0;
 
 	while (true) {
+		// biome-ignore lint/performance/noAwaitInLoops: shh
 		const batch = await getDraftBatch(offset);
 
 		if (batch.length === 0) {
@@ -251,9 +253,12 @@ const main = async () => {
 
 		const batchNum = Math.floor(offset / BATCH_SIZE) + 1;
 		const totalBatches = Math.ceil(totalDrafts / BATCH_SIZE);
-		log(`Processing batch ${batchNum}/${totalBatches} (${batch.length} drafts, offset ${offset})`);
+		log(
+			`Processing batch ${batchNum}/${totalBatches} (${batch.length} drafts, offset ${offset})`,
+		);
 
 		for (const draft of batch) {
+			// biome-ignore lint/performance/noAwaitInLoops: shh
 			const result = await migrateDraft(draft, firebaseApp);
 
 			if (result.skipped) {

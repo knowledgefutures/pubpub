@@ -1,10 +1,10 @@
+import type { Step } from 'prosemirror-transform';
+
 import type { DiscussionInfo } from 'components/Editor/plugins/discussions/types';
 import type * as types from 'types';
 
-import { Step } from 'prosemirror-transform';
-
-import { editorSchema, jsonToNode } from 'client/components/Editor/utils';
 import { mapDiscussionThroughSteps } from 'client/components/Editor/plugins/discussions/util';
+import { editorSchema, jsonToNode } from 'client/components/Editor/utils';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 import { Discussion, DiscussionAnchor, Doc, Release } from 'server/models';
 import { getPubDraft, getStepsBetweenVersions } from 'server/utils/firebaseAdmin';
@@ -76,7 +76,7 @@ export const createDiscussionAnchorsForLatestRelease = async (
 	pubId: string,
 	discussionIds: string[],
 ) => {
-	const { doc, historyKey } = await getLatestReleaseInfo(pubId);
+	const { historyKey } = await getLatestReleaseInfo(pubId);
 	const { draft } = await getPubDraft(pubId);
 	const discussions = await getDiscussions(discussionIds, pubId);
 

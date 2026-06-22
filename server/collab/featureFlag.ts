@@ -26,9 +26,7 @@ export const isPitterPatterEnabled = async (communityId: string): Promise<boolea
 	}
 
 	// check if the community is explicitly opted in
-	const communityOptedIn = flag.communities?.some(
-		(fc) => fc.communityId === communityId,
-	);
+	const communityOptedIn = flag.communities?.some((fc) => fc.communityId === communityId);
 
 	if (communityOptedIn) {
 		return true;

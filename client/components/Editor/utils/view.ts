@@ -2,10 +2,9 @@ import type { EditorView } from 'prosemirror-view';
 
 import type { DocJson } from 'types';
 
+import { getVersion } from '@pitter-patter/collab-client';
 import { Node, Slice } from 'prosemirror-model';
 import { type EditorState, Selection } from 'prosemirror-state';
-
-import { getVersion } from '@pitter-patter/collab-client';
 
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';

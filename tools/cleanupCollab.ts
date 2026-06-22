@@ -109,7 +109,13 @@ const checkpointStaleDrafts = async () => {
 
 			if (!isDryRun) {
 				await sequelize.transaction(async (tr) => {
-					await upsertDraftCheckpoint(draftId, version, reconstructed.toJSON() as any, Date.now(), tr);
+					await upsertDraftCheckpoint(
+						draftId,
+						version,
+						reconstructed.toJSON() as any,
+						Date.now(),
+						tr,
+					);
 
 					await CollabCommit.destroy({
 						where: { draftId },

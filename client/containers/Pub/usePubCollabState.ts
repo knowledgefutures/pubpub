@@ -1,7 +1,5 @@
 import type { EditorChangeObject } from 'components/Editor';
-import type { LoginData, Maybe, PubPageData } from 'types';
-
-import { useCallback } from 'react';
+import type { LoginData, Maybe } from 'types';
 
 import { useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 import { getRandomColor } from 'utils/colors';
@@ -26,10 +24,6 @@ export type PubCollabState = {
 	remoteCollabUsers: CollabUser[];
 };
 
-type Options = {
-	pubData: PubPageData;
-};
-
 const getLocalCollabUser = (canEdit: boolean, loginData: LoginData) => {
 	const userColor = getRandomColor(loginData.id);
 	return {
@@ -43,8 +37,7 @@ const getLocalCollabUser = (canEdit: boolean, loginData: LoginData) => {
 	};
 };
 
-export const usePubCollabState = (options: Options) => {
-	const { pubData } = options;
+export const usePubCollabState = () => {
 	const {
 		loginData,
 		scopeData: {

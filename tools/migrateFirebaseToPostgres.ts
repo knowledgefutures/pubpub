@@ -17,6 +17,7 @@
  *   pnpm run tools migrateFirebaseToPostgres --execute         # Actually migrate
  *   pnpm run tools migrateFirebaseToPostgres --pubId=<uuid>    # Single pub
  *   pnpm run tools migrateFirebaseToPostgres --batchSize=100   # Custom batch size
+ *   pnpm run tools migrateFirebaseToPostgres --concurrency=20  # Parallel drafts
  *   pnpm run tools migrateFirebaseToPostgres --verbose         # Verbose output
  */
 
@@ -32,11 +33,33 @@ import { sequelize } from 'server/sequelize';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
 const {
-	argv: { execute, pubId: specificPubId, batchSize: batchSizeArg = 50, verbose: verboseFlag },
+	argv: {
+		execute,
+		pubId: specificPubId,
+		batchSize: batchSizeArg = 50,
+		concurrency: concurrencyArg = 20,
+		verbose: verboseFlag,
+	},
 } = require('yargs');
 
 const isDryRun = !execute;
 const BATCH_SIZE = Number(batchSizeArg);
+const CONCURRENCY = Number(concurrencyArg);
+
+const runWithConcurrency = async (tasks: (() => Promise<void>)[], limit: number) => {
+	let i = 0;
+
+	const run = async () => {
+		while (i < tasks.length) {
+			const idx = i++;
+			// biome-ignore lint/performance/noAwaitInLoops: concurrency pool worker
+			await tasks[idx]();
+		}
+	};
+
+	const workers = Array.from({ length: Math.min(limit, tasks.length) }, () => run());
+	await Promise.all(workers);
+};
 
 const log = (msg: string) => console.log(`[migrate] ${new Date().toISOString()} ${msg}`);
 const verbose = (msg: string) => verboseFlag && log(msg);
@@ -107,12 +130,6 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 		return { skipped: true };
 	}
 
-	const existingCommitCount = await CollabCommit.count({ where: { draftId } });
-	if (existingCommitCount > 0) {
-		verbose(`  [${draftId.slice(0, 8)}] already has ${existingCommitCount} commits, skipping`);
-		return { skipped: true };
-	}
-
 	const database = firebaseApp.database();
 	const ref = database.ref(firebasePath) as any;
 
@@ -154,17 +171,10 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 	const checkpointKey = checkpoint.historyKey;
 
 	try {
-		const changesSnapshot = await ref
-			.child('changes')
-			.orderByKey()
-			.startAt(String(checkpointKey + 1))
-			.once('value');
-
-		const mergesSnapshot = await ref
-			.child('merges')
-			.orderByKey()
-			.startAt(String(checkpointKey + 1))
-			.once('value');
+		const [changesSnapshot, mergesSnapshot] = await Promise.all([
+			ref.child('changes').orderByKey().startAt(String(checkpointKey + 1)).once('value'),
+			ref.child('merges').orderByKey().startAt(String(checkpointKey + 1)).once('value'),
+		]);
 
 		const allKeyables = {
 			...(changesSnapshot.val() || {}),
@@ -186,29 +196,24 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 			return { wouldMigrate: true, commits: keys.length };
 		}
 
-		await sequelize.transaction(async (txn) => {
-			for (const key of keys) {
-				const keyNum = parseInt(key, 10);
-				const changeData = allKeyables[key];
-				const changes = Array.isArray(changeData) ? changeData : [changeData];
+		const rows: { draftId: string; version: number; ref: string; steps: any[] }[] = [];
 
-				for (const change of changes) {
-					const stepsJson = change.s.map((compressed: any) =>
-						uncompressStepJSON(compressed),
-					);
+		for (const key of keys) {
+			const keyNum = parseInt(key, 10);
+			const changeData = allKeyables[key];
+			const changes = Array.isArray(changeData) ? changeData : [changeData];
 
-					// biome-ignore lint/performance/noAwaitInLoops: shh
-					await CollabCommit.create(
-						{
-							draftId,
-							version: keyNum,
-							ref: uuid(),
-							steps: stepsJson,
-						},
-						{ transaction: txn },
-					);
-				}
+			for (const change of changes) {
+				const stepsJson = change.s.map((compressed: any) =>
+					uncompressStepJSON(compressed),
+				);
+
+				rows.push({ draftId, version: keyNum, ref: uuid(), steps: stepsJson });
 			}
+		}
+
+		await sequelize.transaction(async (txn) => {
+			await CollabCommit.bulkCreate(rows, { transaction: txn });
 
 			const latestVersion = parseInt(keys[keys.length - 1], 10);
 			await Draft.update(
@@ -229,7 +234,7 @@ const main = async () => {
 	const startTime = Date.now();
 
 	log(isDryRun ? 'DRY RUN (pass --execute to apply)' : 'EXECUTING migration');
-	log(`Batch size: ${BATCH_SIZE}`);
+	log(`Batch size: ${BATCH_SIZE}, concurrency: ${CONCURRENCY}`);
 
 	const firebaseApp = getFirebaseApp();
 	const totalDrafts = await getTotalDraftCount();
@@ -244,7 +249,7 @@ const main = async () => {
 	let offset = 0;
 
 	while (true) {
-		// biome-ignore lint/performance/noAwaitInLoops: shh
+		// biome-ignore lint/performance/noAwaitInLoops: outer batch loop
 		const batch = await getDraftBatch(offset);
 
 		if (batch.length === 0) {
@@ -257,38 +262,60 @@ const main = async () => {
 			`Processing batch ${batchNum}/${totalBatches} (${batch.length} drafts, offset ${offset})`,
 		);
 
-		for (const draft of batch) {
-			// biome-ignore lint/performance/noAwaitInLoops: shh
-			const result = await migrateDraft(draft, firebaseApp);
+		// pre-filter: find which drafts in this batch already have commits
+		const batchIds = batch.map((d) => d.id);
 
-			if (result.skipped) {
-				skipped++;
-			} else if (result.error) {
-				errors++;
-			} else {
-				migrated++;
-				totalCommits += (result as any).commits ?? 0;
-			}
+		const alreadyMigrated = await sequelize.query<{ draftId: string }>(
+			`SELECT DISTINCT "draftId" FROM "CollabCommits" WHERE "draftId" IN (:ids)`,
+			{ replacements: { ids: batchIds }, type: QueryTypes.SELECT },
+		);
 
-			processed++;
+		const migratedSet = new Set(alreadyMigrated.map((r) => r.draftId));
+		const toMigrate = batch.filter((d) => !migratedSet.has(d.id));
+		const batchSkipped = batch.length - toMigrate.length;
 
-			if (processed % 100 === 0) {
-				const elapsed = Date.now() - startTime;
-				const rate = processed / (elapsed / 1000);
-				const remaining = totalDrafts - processed;
-				const eta = remaining / rate;
+		skipped += batchSkipped;
+		processed += batchSkipped;
 
-				log(
-					`  Progress: ${processed}/${totalDrafts} (${Math.round((processed / totalDrafts) * 100)}%) ` +
-						`| migrated=${migrated} skipped=${skipped} errors=${errors} ` +
-						`| ${rate.toFixed(1)} drafts/sec, ETA ${formatDuration(eta * 1000)}`,
-				);
-			}
+		if (batchSkipped > 0) {
+			verbose(`  Skipped ${batchSkipped} already-migrated drafts`);
 		}
+
+		await runWithConcurrency(
+			toMigrate.map(
+				(draft) => async () => {
+					const result = await migrateDraft(draft, firebaseApp);
+
+					if (result.skipped) {
+						skipped++;
+					} else if (result.error) {
+						errors++;
+					} else {
+						migrated++;
+						totalCommits += (result as any).commits ?? 0;
+					}
+
+					processed++;
+
+					if (processed % 100 === 0) {
+						const elapsed = Date.now() - startTime;
+						const rate = processed / (elapsed / 1000);
+						const remaining = totalDrafts - processed;
+						const eta = remaining / rate;
+
+						log(
+							`  Progress: ${processed}/${totalDrafts} (${Math.round((processed / totalDrafts) * 100)}%) ` +
+								`| migrated=${migrated} skipped=${skipped} errors=${errors} ` +
+								`| ${rate.toFixed(1)} drafts/sec, ETA ${formatDuration(eta * 1000)}`,
+						);
+					}
+				},
+			),
+			CONCURRENCY,
+		);
 
 		offset += batch.length;
 
-		// for a single pub, one iteration is enough
 		if (specificPubId) {
 			break;
 		}

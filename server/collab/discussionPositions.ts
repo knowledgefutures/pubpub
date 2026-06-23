@@ -1,12 +1,7 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 
-import {
-	Commenter,
-	Discussion,
-	DiscussionAnchor,
-	DraftCheckpoint,
-} from 'server/models';
+import { Commenter, Discussion, DiscussionAnchor, DraftCheckpoint } from 'server/models';
 import { authorIncludes, baseVisibility, threadIncludes } from 'server/utils/queryHelpers/util';
 import { wrap } from 'server/wrap';
 

@@ -172,8 +172,16 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 
 	try {
 		const [changesSnapshot, mergesSnapshot] = await Promise.all([
-			ref.child('changes').orderByKey().startAt(String(checkpointKey + 1)).once('value'),
-			ref.child('merges').orderByKey().startAt(String(checkpointKey + 1)).once('value'),
+			ref
+				.child('changes')
+				.orderByKey()
+				.startAt(String(checkpointKey + 1))
+				.once('value'),
+			ref
+				.child('merges')
+				.orderByKey()
+				.startAt(String(checkpointKey + 1))
+				.once('value'),
 		]);
 
 		const allKeyables = {
@@ -204,9 +212,7 @@ const migrateDraft = async (draft: Draft, firebaseApp: firebaseAdmin.app.App) =>
 			const changes = Array.isArray(changeData) ? changeData : [changeData];
 
 			for (const change of changes) {
-				const stepsJson = change.s.map((compressed: any) =>
-					uncompressStepJSON(compressed),
-				);
+				const stepsJson = change.s.map((compressed: any) => uncompressStepJSON(compressed));
 
 				rows.push({ draftId, version: keyNum, ref: uuid(), steps: stepsJson });
 			}
@@ -282,35 +288,33 @@ const main = async () => {
 		}
 
 		await runWithConcurrency(
-			toMigrate.map(
-				(draft) => async () => {
-					const result = await migrateDraft(draft, firebaseApp);
+			toMigrate.map((draft) => async () => {
+				const result = await migrateDraft(draft, firebaseApp);
 
-					if (result.skipped) {
-						skipped++;
-					} else if (result.error) {
-						errors++;
-					} else {
-						migrated++;
-						totalCommits += (result as any).commits ?? 0;
-					}
+				if (result.skipped) {
+					skipped++;
+				} else if (result.error) {
+					errors++;
+				} else {
+					migrated++;
+					totalCommits += (result as any).commits ?? 0;
+				}
 
-					processed++;
+				processed++;
 
-					if (processed % 100 === 0) {
-						const elapsed = Date.now() - startTime;
-						const rate = processed / (elapsed / 1000);
-						const remaining = totalDrafts - processed;
-						const eta = remaining / rate;
+				if (processed % 100 === 0) {
+					const elapsed = Date.now() - startTime;
+					const rate = processed / (elapsed / 1000);
+					const remaining = totalDrafts - processed;
+					const eta = remaining / rate;
 
-						log(
-							`  Progress: ${processed}/${totalDrafts} (${Math.round((processed / totalDrafts) * 100)}%) ` +
-								`| migrated=${migrated} skipped=${skipped} errors=${errors} ` +
-								`| ${rate.toFixed(1)} drafts/sec, ETA ${formatDuration(eta * 1000)}`,
-						);
-					}
-				},
-			),
+					log(
+						`  Progress: ${processed}/${totalDrafts} (${Math.round((processed / totalDrafts) * 100)}%) ` +
+							`| migrated=${migrated} skipped=${skipped} errors=${errors} ` +
+							`| ${rate.toFixed(1)} drafts/sec, ETA ${formatDuration(eta * 1000)}`,
+					);
+				}
+			}),
 			CONCURRENCY,
 		);
 

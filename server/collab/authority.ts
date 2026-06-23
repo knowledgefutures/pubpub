@@ -130,7 +130,10 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 						transaction: tr ?? undefined,
 					});
 
-					const reconstructedDoc = replayCommitsOntoDoc(freshCheckpoint.doc, freshCommits);
+					const reconstructedDoc = replayCommitsOntoDoc(
+						freshCheckpoint.doc,
+						freshCommits,
+					);
 					logger.end();
 
 					return {

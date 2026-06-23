@@ -1,0 +1,14 @@
+diff --git a/dist/index.js b/dist/index.js
+index 3647c143c60bf5cd28c34ef5687e42856aa65dab..05b206e11102a655e94f941c7b728fa834d01fc8 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -41,7 +41,8 @@ export class CollabAuthority {
+             try {
+                 return await this.runWithTransaction(callback);
+             }
+-            catch {
++            catch (e) {
++                console.error("Error in runWithTransactionRetries", e);
+                 retries--;
+             }
+         }

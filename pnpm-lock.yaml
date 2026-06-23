@@ -13,6 +13,9 @@ overrides:
   '@pitter-patter/collab-server@0>prosemirror-model': 1.25.4
 
 patchedDependencies:
+  '@pitter-patter/collab-server':
+    hash: b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c
+    path: patches/@pitter-patter__collab-server.patch
   '@pubpub/deposit-utils':
     hash: 6fef8933046b7751abda1bd2ed0422094c79d7828b07f7d5afba26a47c696d89
     path: patches/@pubpub__deposit-utils.patch
@@ -170,7 +173,7 @@ importers:
         version: 0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
       '@pitter-patter/collab-server':
         specifier: ^0.1.3
-        version: 0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
+        version: 0.1.3(patch_hash=b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
       '@pitter-patter/presence-client':
         specifier: ^0.2.1
         version: 0.2.1(@handlewithcare/react-prosemirror@3.1.6(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0))(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0)
@@ -14766,7 +14769,7 @@ snapshots:
       prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
-  '@pitter-patter/collab-server@0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))':
+  '@pitter-patter/collab-server@0.1.3(patch_hash=b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))':
     dependencies:
       '@stepwisehq/prosemirror-collab-commit': 1.0.5
       prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)

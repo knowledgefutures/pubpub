@@ -12,14 +12,28 @@ import { getPresenceAuthority } from './presence';
 
 export const router = Router();
 
-const getDraftIdForPub = async (pubId: string): Promise<string | null> => {
+const draftIdCache = new Map<string, string>();
+
+export const getDraftIdForPub = async (pubId: string): Promise<string | null> => {
+	const cached = draftIdCache.get(pubId);
+
+	if (cached) {
+		return cached;
+	}
+
 	const pub = await Pub.findOne({
 		where: { id: pubId },
 		include: [{ model: Draft, as: 'draft' }],
 		attributes: ['id'],
 	});
 
-	return pub?.draft?.id ?? null;
+	const draftId = pub?.draft?.id ?? null;
+
+	if (draftId) {
+		draftIdCache.set(pubId, draftId);
+	}
+
+	return draftId;
 };
 
 // receive a commit from a client

@@ -5,12 +5,12 @@ import {
 	Commenter,
 	Discussion,
 	DiscussionAnchor,
-	Draft,
 	DraftCheckpoint,
-	Pub,
 } from 'server/models';
 import { authorIncludes, baseVisibility, threadIncludes } from 'server/utils/queryHelpers/util';
 import { wrap } from 'server/wrap';
+
+import { getDraftIdForPub } from './api';
 
 export const router = Router();
 
@@ -25,18 +25,14 @@ const isValidPositionEntry = (entry: any) =>
 router.get(
 	'/api/pubs/:pubId/discussions/positions',
 	wrap(async (req, res) => {
-		const pub = await Pub.findOne({
-			where: { id: req.params.pubId },
-			include: [{ model: Draft, as: 'draft' }],
-			attributes: ['id'],
-		});
+		const draftId = await getDraftIdForPub(req.params.pubId);
 
-		if (!pub?.draft) {
+		if (!draftId) {
 			return res.status(404).json({});
 		}
 
 		const checkpoint = await DraftCheckpoint.findOne({
-			where: { draftId: pub.draft.id },
+			where: { draftId },
 		});
 
 		if (!checkpoint?.discussions) {
@@ -93,13 +89,9 @@ router.get(
 router.post(
 	'/api/pubs/:pubId/discussions/positions',
 	wrap(async (req, res) => {
-		const pub = await Pub.findOne({
-			where: { id: req.params.pubId },
-			include: [{ model: Draft, as: 'draft' }],
-			attributes: ['id'],
-		});
+		const draftId = await getDraftIdForPub(req.params.pubId);
 
-		if (!pub?.draft) {
+		if (!draftId) {
 			return res.status(404).json({});
 		}
 
@@ -110,7 +102,7 @@ router.post(
 		}
 
 		const checkpoint = await DraftCheckpoint.findOne({
-			where: { draftId: pub.draft.id },
+			where: { draftId },
 		});
 
 		if (checkpoint) {

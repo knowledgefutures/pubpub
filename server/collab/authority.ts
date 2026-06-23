@@ -20,6 +20,13 @@ let authority: CollabAuthority<Transaction> | null = null;
 
 const CHECKPOINT_INTERVAL = 50;
 
+interface CachedCheckpoint {
+	historyKey: number;
+	doc: Record<string, any>;
+}
+
+const checkpointCache = new Map<string, CachedCheckpoint>();
+
 const createAuthority = (bm: RedisBroadcastManager) =>
 	new CollabAuthority<Transaction>({
 		schema: editorSchema,
@@ -32,6 +39,8 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 		getDoc: async (tr, docId) => {
 			const logger = createLogger('getDoc');
 
+			const cached = checkpointCache.get(docId);
+
 			const [draft, checkpoint] = await logger.log(
 				'getDocAndCheckpoint',
 				Promise.all([
@@ -40,11 +49,21 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 						...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
 						transaction: tr ?? undefined,
 					}),
-					DraftCheckpoint.findOne({
-						where: { draftId: docId },
-						order: [['historyKey', 'DESC']],
-						transaction: tr ?? undefined,
-					}),
+					cached
+						? Promise.resolve(cached)
+						: DraftCheckpoint.findOne({
+								where: { draftId: docId },
+								order: [['historyKey', 'DESC']],
+								transaction: tr ?? undefined,
+							}).then((cp) => {
+								if (cp) {
+									const entry = { historyKey: cp.historyKey, doc: cp.doc };
+									checkpointCache.set(docId, entry);
+									return entry;
+								}
+
+								return null;
+							}),
 				]),
 			);
 
@@ -112,6 +131,7 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 				const truncateBelow = version - CHECKPOINT_INTERVAL;
 
 				await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
+				checkpointCache.set(docId, { historyKey: version, doc: docJSON as Record<string, any> });
 
 				if (truncateBelow > 0) {
 					await CollabCommit.destroy({

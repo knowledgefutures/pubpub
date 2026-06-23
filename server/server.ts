@@ -387,14 +387,16 @@ export const startServer = async () => {
 		console.warn('[OIDC] Discovery failed at startup (will retry on demand):', err.message);
 	});
 
-	// connect collab redis clients
-	const { connectCollabRedis } = await import('./collab/authority.js');
-	const { connectPresenceRedis } = await import('./collab/presence.js');
+	if (env.NODE_ENV !== 'test') {
+		// connect collab redis clients
+		const { connectCollabRedis } = await import('./collab/authority.js');
+		const { connectPresenceRedis } = await import('./collab/presence.js');
 
-	await Promise.all([connectCollabRedis(), connectPresenceRedis()]).catch((err) => {
-		console.error('[collab] Failed to connect to Redis/Valkey:', err.message);
-		console.error('[collab] Collaborative editing will not work until Redis is available.');
-	});
+		await Promise.all([connectCollabRedis(), connectPresenceRedis()]).catch((err) => {
+			console.error('[collab] Failed to connect to Redis/Valkey:', err.message);
+			console.error('[collab] Collaborative editing will not work until Redis is available.');
+		});
+	}
 
 	await sequelizeSyncPromise;
 	return app.listen(

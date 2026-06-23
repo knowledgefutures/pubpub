@@ -41,6 +41,21 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 
 			const cached = checkpointCache.get(docId);
 
+			const fetchCheckpointFromDb = () =>
+				DraftCheckpoint.findOne({
+					where: { draftId: docId },
+					order: [['historyKey', 'DESC']],
+					transaction: tr ?? undefined,
+				}).then((cp) => {
+					if (!cp) {
+						return null;
+					}
+
+					const entry = { historyKey: cp.historyKey, doc: cp.doc };
+					checkpointCache.set(docId, entry);
+					return entry;
+				});
+
 			const [draft, checkpoint] = await logger.log(
 				'getDocAndCheckpoint',
 				Promise.all([
@@ -49,21 +64,7 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 						...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
 						transaction: tr ?? undefined,
 					}),
-					cached
-						? Promise.resolve(cached)
-						: DraftCheckpoint.findOne({
-								where: { draftId: docId },
-								order: [['historyKey', 'DESC']],
-								transaction: tr ?? undefined,
-							}).then((cp) => {
-								if (cp) {
-									const entry = { historyKey: cp.historyKey, doc: cp.doc };
-									checkpointCache.set(docId, entry);
-									return entry;
-								}
-
-								return null;
-							}),
+					cached ? Promise.resolve(cached) : fetchCheckpointFromDb(),
 				]),
 			);
 
@@ -96,14 +97,48 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 					}),
 				);
 
-				const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
-				logger.end();
+				try {
+					const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
+					logger.end();
 
-				return {
-					docJSON: reconstructedDoc.toJSON(),
-					version: draft.version,
-					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-				};
+					return {
+						docJSON: reconstructedDoc.toJSON(),
+						version: draft.version,
+						lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+					};
+				} catch (err) {
+					// stale cache: checkpoint doc doesn't match the commits in the db.
+					// refetch the checkpoint from postgres and retry.
+					if (!cached) {
+						throw err;
+					}
+
+					checkpointCache.delete(docId);
+					const freshCheckpoint = await fetchCheckpointFromDb();
+
+					if (!freshCheckpoint) {
+						throw err;
+					}
+
+					const freshVersion = freshCheckpoint.historyKey ?? 0;
+					const freshCommits = await CollabCommit.findAll({
+						where: {
+							draftId: docId,
+							version: { [Op.gt]: freshVersion, [Op.lte]: draft.version },
+						},
+						order: [['version', 'ASC']],
+						transaction: tr ?? undefined,
+					});
+
+					const reconstructedDoc = replayCommitsOntoDoc(freshCheckpoint.doc, freshCommits);
+					logger.end();
+
+					return {
+						docJSON: reconstructedDoc.toJSON(),
+						version: draft.version,
+						lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+					};
+				}
 			}
 
 			logger.end();
@@ -131,7 +166,15 @@ const createAuthority = (bm: RedisBroadcastManager) =>
 				const truncateBelow = version - CHECKPOINT_INTERVAL;
 
 				await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
-				checkpointCache.set(docId, { historyKey: version, doc: docJSON as Record<string, any> });
+
+				if (tr) {
+					tr.afterCommit(() => {
+						checkpointCache.set(docId, {
+							historyKey: version,
+							doc: docJSON as Record<string, any>,
+						});
+					});
+				}
 
 				if (truncateBelow > 0) {
 					await CollabCommit.destroy({

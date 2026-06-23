@@ -141,7 +141,7 @@ const truncateActiveCommits = async () => {
 	log('Truncating old commits for active drafts...');
 
 	// single bulk query: delete commits where version < (checkpoint.historyKey - buffer)
-	const [results] = await sequelize.query<{ deleted: string }>(
+	const [results] = await sequelize.query<{ deleted: string } | { id: string }[]>(
 		isDryRun
 			? `
 			SELECT COUNT(*) AS deleted

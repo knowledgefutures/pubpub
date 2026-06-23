@@ -47,7 +47,7 @@ router.post(
 		}
 
 		try {
-			await (await getCollabAuthority()).receiveCommit(draftId, req.body);
+			await getCollabAuthority().receiveCommit(draftId, req.body);
 		} catch (e) {
 			if (e instanceof TooMuchContentionError) {
 				console.log('TooMuchContentionError', e);
@@ -76,7 +76,7 @@ router.get(
 			return res.status(400).json({ error: 'Missing or invalid version query parameter' });
 		}
 
-		const commits = await (await getCollabAuthority()).listenForCommit(draftId, version);
+		const commits = await getCollabAuthority().listenForCommit(draftId, version);
 		return res.status(200).json(commits);
 	}),
 );

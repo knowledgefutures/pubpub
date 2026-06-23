@@ -16,8 +16,6 @@ import { replayCommitsOntoDoc } from './replay';
 
 export { replayCommitsOntoDoc };
 
-let authority: CollabAuthority<Transaction> | null = null;
-
 const CHECKPOINT_INTERVAL = 50;
 
 interface CachedCheckpoint {
@@ -27,240 +25,233 @@ interface CachedCheckpoint {
 
 const checkpointCache = new Map<string, CachedCheckpoint>();
 
-const createAuthority = (bm: RedisBroadcastManager) =>
-	new CollabAuthority<Transaction>({
-		schema: editorSchema,
-		broadcastManager: bm,
+const broadcastManager = new RedisBroadcastManager({
+	redisUrl: env.VALKEY_URL ?? 'redis://localhost:6379',
+});
 
-		runWithTransaction: async (callback) => {
-			return sequelize.transaction((tr) => callback(tr));
-		},
+const authority = new CollabAuthority<Transaction>({
+	schema: editorSchema,
+	broadcastManager,
 
-		getDoc: async (tr, docId) => {
-			const logger = createLogger('getDoc');
+	runWithTransaction: async (callback) => {
+		return sequelize.transaction((tr) => callback(tr));
+	},
 
-			const cached = checkpointCache.get(docId);
+	getDoc: async (tr, docId) => {
+		const logger = createLogger('getDoc');
 
-			const fetchCheckpointFromDb = () =>
-				DraftCheckpoint.findOne({
-					where: { draftId: docId },
-					order: [['historyKey', 'DESC']],
-					transaction: tr ?? undefined,
-				}).then((cp) => {
-					if (!cp) {
-						return null;
-					}
+		const cached = checkpointCache.get(docId);
 
-					const entry = { historyKey: cp.historyKey, doc: cp.doc };
-					checkpointCache.set(docId, entry);
-					return entry;
-				});
-
-			const [draft, checkpoint] = await logger.log(
-				'getDocAndCheckpoint',
-				Promise.all([
-					Draft.findOne({
-						where: { id: docId },
-						...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
-						transaction: tr ?? undefined,
-					}),
-					cached ? Promise.resolve(cached) : fetchCheckpointFromDb(),
-				]),
-			);
-
-			if (!draft) {
-				throw new Error(`Draft not found: ${docId}`);
-			}
-
-			if (!checkpoint) {
-				const emptyDoc = editorSchema.topNodeType.createAndFill()!;
-
-				return {
-					docJSON: emptyDoc.toJSON(),
-					version: 0,
-					lastUpdatedTimestamp: Date.now(),
-				};
-			}
-
-			const checkpointVersion = checkpoint.historyKey ?? 0;
-
-			if (checkpointVersion < draft.version) {
-				const missedCommits = await logger.log(
-					'getMissedCommits',
-					CollabCommit.findAll({
-						where: {
-							draftId: docId,
-							version: { [Op.gt]: checkpointVersion, [Op.lte]: draft.version },
-						},
-						order: [['version', 'ASC']],
-						transaction: tr ?? undefined,
-					}),
-				);
-
-				try {
-					const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
-					logger.end();
-
-					return {
-						docJSON: reconstructedDoc.toJSON(),
-						version: draft.version,
-						lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-					};
-				} catch (err) {
-					// stale cache: checkpoint doc doesn't match the commits in the db.
-					// refetch the checkpoint from postgres and retry.
-					if (!cached) {
-						throw err;
-					}
-
-					checkpointCache.delete(docId);
-					const freshCheckpoint = await fetchCheckpointFromDb();
-
-					if (!freshCheckpoint) {
-						throw err;
-					}
-
-					const freshVersion = freshCheckpoint.historyKey ?? 0;
-					const freshCommits = await CollabCommit.findAll({
-						where: {
-							draftId: docId,
-							version: { [Op.gt]: freshVersion, [Op.lte]: draft.version },
-						},
-						order: [['version', 'ASC']],
-						transaction: tr ?? undefined,
-					});
-
-					const reconstructedDoc = replayCommitsOntoDoc(
-						freshCheckpoint.doc,
-						freshCommits,
-					);
-					logger.end();
-
-					return {
-						docJSON: reconstructedDoc.toJSON(),
-						version: draft.version,
-						lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-					};
-				}
-			}
-
-			logger.end();
-
-			return {
-				docJSON: checkpoint.doc,
-				version: draft.version,
-				lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-			};
-		},
-
-		saveDoc: async (tr, docId, docJSON, version) => {
-			try {
-				await Draft.update(
-					{ version, latestKeyAt: new Date() },
-					{ where: { id: docId }, transaction: tr },
-				);
-
-				const shouldCheckpoint = version % CHECKPOINT_INTERVAL === 0 || version <= 1;
-
-				if (!shouldCheckpoint) {
-					return;
-				}
-
-				const truncateBelow = version - CHECKPOINT_INTERVAL;
-
-				await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
-
-				if (tr) {
-					tr.afterCommit(() => {
-						checkpointCache.set(docId, {
-							historyKey: version,
-							doc: docJSON as Record<string, any>,
-						});
-					});
-				}
-
-				if (truncateBelow > 0) {
-					await CollabCommit.destroy({
-						where: {
-							draftId: docId,
-							version: { [Op.lt]: truncateBelow },
-						},
-						transaction: tr,
-					});
-				}
-			} catch (error) {
-				console.error('Error saving doc', error);
-				throw error;
-			}
-		},
-
-		saveCommit: async (tr, docId, commitRef, commitVersion, commitSteps) => {
-			try {
-				await CollabCommit.create(
-					{
-						draftId: docId,
-						ref: commitRef,
-						version: commitVersion,
-						steps: commitSteps,
-					},
-					{ transaction: tr },
-				);
-			} catch (error) {
-				console.error('Error saving commit', error);
-				throw error;
-			}
-		},
-
-		getCommit: async (tr, docId, commitRef) => {
-			const commit = await CollabCommit.findOne({
-				where: { draftId: docId, ref: commitRef },
+		const fetchCheckpointFromDb = () =>
+			DraftCheckpoint.findOne({
+				where: { draftId: docId },
+				order: [['historyKey', 'DESC']],
 				transaction: tr ?? undefined,
-				plain: true,
+			}).then((cp) => {
+				if (!cp) {
+					return null;
+				}
+
+				const entry = { historyKey: cp.historyKey, doc: cp.doc };
+				checkpointCache.set(docId, entry);
+				return entry;
 			});
 
-			if (!commit) {
-				return null;
-			}
+		const [draft, checkpoint] = await logger.log(
+			'getDocAndCheckpoint',
+			Promise.all([
+				Draft.findOne({
+					where: { id: docId },
+					...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
+					transaction: tr ?? undefined,
+				}),
+				cached ? Promise.resolve(cached) : fetchCheckpointFromDb(),
+			]),
+		);
+
+		if (!draft) {
+			throw new Error(`Draft not found: ${docId}`);
+		}
+
+		if (!checkpoint) {
+			const emptyDoc = editorSchema.topNodeType.createAndFill()!;
 
 			return {
-				ref: commit.ref,
-				version: commit.version,
-				steps: commit.steps,
+				docJSON: emptyDoc.toJSON(),
+				version: 0,
+				lastUpdatedTimestamp: Date.now(),
 			};
-		},
+		}
 
-		getCommits: async (tr, docId, version) => {
-			const commits =
-				(await CollabCommit.findAll({
+		const checkpointVersion = checkpoint.historyKey ?? 0;
+
+		if (checkpointVersion < draft.version) {
+			const missedCommits = await logger.log(
+				'getMissedCommits',
+				CollabCommit.findAll({
 					where: {
 						draftId: docId,
-						version: { [Op.gt]: version },
+						version: { [Op.gt]: checkpointVersion, [Op.lte]: draft.version },
 					},
 					order: [['version', 'ASC']],
 					transaction: tr ?? undefined,
-				})) ?? [];
+				}),
+			);
 
-			return commits.map((c) => ({
-				ref: c.ref,
-				version: c.version,
-				steps: c.steps,
-			}));
-		},
-	});
+			try {
+				const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
+				logger.end();
 
-export const getCollabAuthority = async () => {
-	if (!authority) {
-		return await connectCollabRedis();
-	}
-	return authority;
-};
+				return {
+					docJSON: reconstructedDoc.toJSON(),
+					version: draft.version,
+					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+				};
+			} catch (err) {
+				// stale cache: checkpoint doc doesn't match the commits in the db.
+				// refetch the checkpoint from postgres and retry.
+				if (!cached) {
+					throw err;
+				}
+
+				checkpointCache.delete(docId);
+				const freshCheckpoint = await fetchCheckpointFromDb();
+
+				if (!freshCheckpoint) {
+					throw err;
+				}
+
+				const freshVersion = freshCheckpoint.historyKey ?? 0;
+				const freshCommits = await CollabCommit.findAll({
+					where: {
+						draftId: docId,
+						version: { [Op.gt]: freshVersion, [Op.lte]: draft.version },
+					},
+					order: [['version', 'ASC']],
+					transaction: tr ?? undefined,
+				});
+
+				const reconstructedDoc = replayCommitsOntoDoc(
+					freshCheckpoint.doc,
+					freshCommits,
+				);
+				logger.end();
+
+				return {
+					docJSON: reconstructedDoc.toJSON(),
+					version: draft.version,
+					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+				};
+			}
+		}
+
+		logger.end();
+
+		return {
+			docJSON: checkpoint.doc,
+			version: draft.version,
+			lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+		};
+	},
+
+	saveDoc: async (tr, docId, docJSON, version) => {
+		try {
+			await Draft.update(
+				{ version, latestKeyAt: new Date() },
+				{ where: { id: docId }, transaction: tr },
+			);
+
+			const shouldCheckpoint = version % CHECKPOINT_INTERVAL === 0 || version <= 1;
+
+			if (!shouldCheckpoint) {
+				return;
+			}
+
+			const truncateBelow = version - CHECKPOINT_INTERVAL;
+
+			await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
+
+			if (tr) {
+				tr.afterCommit(() => {
+					checkpointCache.set(docId, {
+						historyKey: version,
+						doc: docJSON as Record<string, any>,
+					});
+				});
+			}
+
+			if (truncateBelow > 0) {
+				await CollabCommit.destroy({
+					where: {
+						draftId: docId,
+						version: { [Op.lt]: truncateBelow },
+					},
+					transaction: tr,
+				});
+			}
+		} catch (error) {
+			console.error('Error saving doc', error);
+			throw error;
+		}
+	},
+
+	saveCommit: async (tr, docId, commitRef, commitVersion, commitSteps) => {
+		try {
+			await CollabCommit.create(
+				{
+					draftId: docId,
+					ref: commitRef,
+					version: commitVersion,
+					steps: commitSteps,
+				},
+				{ transaction: tr },
+			);
+		} catch (error) {
+			console.error('Error saving commit', error);
+			throw error;
+		}
+	},
+
+	getCommit: async (tr, docId, commitRef) => {
+		const commit = await CollabCommit.findOne({
+			where: { draftId: docId, ref: commitRef },
+			transaction: tr ?? undefined,
+			plain: true,
+		});
+
+		if (!commit) {
+			return null;
+		}
+
+		return {
+			ref: commit.ref,
+			version: commit.version,
+			steps: commit.steps,
+		};
+	},
+
+	getCommits: async (tr, docId, version) => {
+		const commits =
+			(await CollabCommit.findAll({
+				where: {
+					draftId: docId,
+					version: { [Op.gt]: version },
+				},
+				order: [['version', 'ASC']],
+				transaction: tr ?? undefined,
+			})) ?? [];
+
+		return commits.map((c) => ({
+			ref: c.ref,
+			version: c.version,
+			steps: c.steps,
+		}));
+	},
+});
+
+export const getCollabAuthority = () => authority;
 
 export const connectCollabRedis = async () => {
-	const broadcastManager = new RedisBroadcastManager({
-		redisUrl: env.VALKEY_URL ?? 'redis://localhost:6379',
-	});
 	await broadcastManager.connect();
-	authority = createAuthority(broadcastManager);
 	console.log('[collab] collab broadcast redis connected');
-	return authority;
 };

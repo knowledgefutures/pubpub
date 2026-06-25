@@ -18,13 +18,6 @@ export { replayCommitsOntoDoc };
 
 const CHECKPOINT_INTERVAL = 50;
 
-interface CachedCheckpoint {
-	historyKey: number;
-	doc: Record<string, any>;
-}
-
-const checkpointCache = new Map<string, CachedCheckpoint>();
-
 const broadcastManager = new RedisBroadcastManager({
 	redisUrl: env.VALKEY_URL ?? 'redis://localhost:6379',
 });
@@ -40,23 +33,6 @@ const authority = new CollabAuthority<Transaction>({
 	getDoc: async (tr, docId) => {
 		const logger = createLogger('getDoc');
 
-		const cached = checkpointCache.get(docId);
-
-		const fetchCheckpointFromDb = () =>
-			DraftCheckpoint.findOne({
-				where: { draftId: docId },
-				order: [['historyKey', 'DESC']],
-				transaction: tr ?? undefined,
-			}).then((cp) => {
-				if (!cp) {
-					return null;
-				}
-
-				const entry = { historyKey: cp.historyKey, doc: cp.doc };
-				checkpointCache.set(docId, entry);
-				return entry;
-			});
-
 		const [draft, checkpoint] = await logger.log(
 			'getDocAndCheckpoint',
 			Promise.all([
@@ -65,7 +41,11 @@ const authority = new CollabAuthority<Transaction>({
 					...(tr && { lock: tr.LOCK.NO_KEY_UPDATE }),
 					transaction: tr ?? undefined,
 				}),
-				cached ? Promise.resolve(cached) : fetchCheckpointFromDb(),
+				DraftCheckpoint.findOne({
+					where: { draftId: docId },
+					order: [['historyKey', 'DESC']],
+					transaction: tr ?? undefined,
+				}),
 			]),
 		);
 
@@ -98,51 +78,14 @@ const authority = new CollabAuthority<Transaction>({
 				}),
 			);
 
-			try {
-				const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
-				logger.end();
+			const reconstructedDoc = replayCommitsOntoDoc(checkpoint.doc, missedCommits);
+			logger.end();
 
-				return {
-					docJSON: reconstructedDoc.toJSON(),
-					version: draft.version,
-					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-				};
-			} catch (err) {
-				// stale cache: checkpoint doc doesn't match the commits in the db.
-				// refetch the checkpoint from postgres and retry.
-				if (!cached) {
-					throw err;
-				}
-
-				checkpointCache.delete(docId);
-				const freshCheckpoint = await fetchCheckpointFromDb();
-
-				if (!freshCheckpoint) {
-					throw err;
-				}
-
-				const freshVersion = freshCheckpoint.historyKey ?? 0;
-				const freshCommits = await CollabCommit.findAll({
-					where: {
-						draftId: docId,
-						version: { [Op.gt]: freshVersion, [Op.lte]: draft.version },
-					},
-					order: [['version', 'ASC']],
-					transaction: tr ?? undefined,
-				});
-
-				const reconstructedDoc = replayCommitsOntoDoc(
-					freshCheckpoint.doc,
-					freshCommits,
-				);
-				logger.end();
-
-				return {
-					docJSON: reconstructedDoc.toJSON(),
-					version: draft.version,
-					lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
-				};
-			}
+			return {
+				docJSON: reconstructedDoc.toJSON(),
+				version: draft.version,
+				lastUpdatedTimestamp: draft.latestKeyAt?.valueOf() ?? Date.now(),
+			};
 		}
 
 		logger.end();
@@ -170,15 +113,6 @@ const authority = new CollabAuthority<Transaction>({
 			const truncateBelow = version - CHECKPOINT_INTERVAL;
 
 			await upsertDraftCheckpoint(docId, version, docJSON as DocJson, Date.now(), tr);
-
-			if (tr) {
-				tr.afterCommit(() => {
-					checkpointCache.set(docId, {
-						historyKey: version,
-						doc: docJSON as Record<string, any>,
-					});
-				});
-			}
 
 			if (truncateBelow > 0) {
 				await CollabCommit.destroy({

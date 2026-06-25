@@ -230,7 +230,6 @@ appRouter.use((req, res, next) => {
 	}
 
 	if (ignoredPaths.test(req.path)) {
-		console.log('ignoring path', req.path);
 		return next();
 	}
 

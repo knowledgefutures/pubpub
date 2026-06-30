@@ -1,5 +1,15 @@
+import { vi } from 'vitest';
+
 import { FtpTarget } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
+
+const SftpClient = vi.fn().mockImplementation(() => ({
+	connect: vi.fn().mockResolvedValue(undefined),
+	exists: vi.fn().mockResolvedValue('d'),
+	end: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('ssh2-sftp-client', () => ({ default: SftpClient }));
 
 const models = modelize`
 	Community communityA {
@@ -168,6 +178,25 @@ describe('/api/superadmin/ftp-targets', () => {
 			.put(`/api/superadmin/ftp-targets/${existing!.id}`)
 			.send({ host: 'evil.example.com' })
 			.expect(403);
+	});
+
+	it('rejects create when SFTP connection fails', async () => {
+		const { communityC, superAdmin } = models;
+		SftpClient.mockImplementationOnce(() => ({
+			connect: vi.fn().mockRejectedValue(new Error('Authentication failed')),
+			end: vi.fn().mockResolvedValue(undefined),
+		}));
+		const agent = await login(superAdmin);
+		await agent
+			.post('/api/superadmin/ftp-targets')
+			.send({
+				communityId: communityC.id,
+				host: 'sftp.example.com',
+				ftpType: 'sftp',
+				username: 'user',
+				password: 'wrongpassword',
+			})
+			.expect(400);
 	});
 
 	it('validates ftpType on create', async () => {

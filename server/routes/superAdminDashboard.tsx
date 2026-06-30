@@ -38,6 +38,7 @@ import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'se
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
+import { testSftpConnection } from 'server/utils/sftp';
 import {
 	getSuperAdminTabUrl,
 	isSuperAdminTabKind,
@@ -615,6 +616,12 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 		};
 
 		if (username && password) {
+			await testSftpConnection(
+				{ host: createData.host, port: createData.port, username, password },
+				createData.filePath,
+			).catch((err) => {
+				throw new BadRequestError(new Error(err.message));
+			});
 			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
 			createData.username = username;
 			createData.password = encryptedText;
@@ -671,8 +678,17 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 				updates.password = null;
 				updates.passwordInitVec = null;
 			} else {
-				updates.username = username;
 				if (password) {
+					const effectiveHost = updates.host ?? target.host;
+					const effectivePort = port !== undefined ? updates.port : target.port;
+					const effectivePath =
+						filePath !== undefined ? updates.filePath : target.filePath;
+					await testSftpConnection(
+						{ host: effectiveHost, port: effectivePort, username, password },
+						effectivePath,
+					).catch((err) => {
+						throw new BadRequestError(new Error(err.message));
+					});
 					const { encryptedText, initVec } = aes256Encrypt(
 						password,
 						env.AES_ENCRYPTION_KEY!,
@@ -680,6 +696,7 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 					updates.password = encryptedText;
 					updates.passwordInitVec = initVec;
 				}
+				updates.username = username;
 			}
 		} else if (password) {
 			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);

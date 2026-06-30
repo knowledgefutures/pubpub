@@ -26,7 +26,7 @@ import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget } from 'server/models';
+import { Community, DepositTarget, FtpTarget } from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -93,6 +93,31 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 				communityId: t.communityId,
 				doiPrefix: t.doiPrefix,
 				service: t.service,
+				hasCredentials: Boolean(t.username),
+				communityTitle: t.community?.title ?? '(unknown)',
+				communitySubdomain: t.community?.subdomain ?? '(unknown)',
+			})),
+		};
+	}
+	if (tabKind === 'ftpTargets') {
+		const targets = await FtpTarget.findAll({
+			include: [
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain'],
+				},
+			],
+			order: [['createdAt', 'DESC']],
+		});
+		return {
+			ftpTargets: targets.map((t) => ({
+				id: t.id,
+				communityId: t.communityId,
+				ftpType: t.ftpType,
+				port: t.port,
+				host: t.host,
+				filePath: t.filePath,
 				hasCredentials: Boolean(t.username),
 				communityTitle: t.community?.title ?? '(unknown)',
 				communitySubdomain: t.community?.subdomain ?? '(unknown)',
@@ -288,6 +313,18 @@ const resolveCommunity = async (identifier: string) => {
 	return community;
 };
 
+const sanitizeFtpTarget = (t: FtpTarget) => ({
+	id: t.id,
+	communityId: t.communityId,
+	ftpType: t.ftpType,
+	port: t.port,
+	host: t.host,
+	filePath: t.filePath,
+	hasCredentials: Boolean(t.username),
+	communityTitle: t.community?.title ?? '(unknown)',
+	communitySubdomain: t.community?.subdomain ?? '(unknown)',
+});
+
 const sanitizeDepositTarget = (t: DepositTarget) => ({
 	id: t.id,
 	communityId: t.communityId,
@@ -313,6 +350,7 @@ router.get('/api/superadmin/communities/search', async (req, res, next) => {
 		}
 
 		const excludeWithDepositTarget = req.query.excludeWithDepositTarget === 'true';
+		const excludeWithFtpTarget = req.query.excludeWithFtpTarget === 'true';
 
 		const communities = await Community.findAll({
 			where: {
@@ -326,17 +364,30 @@ router.get('/api/superadmin/communities/search', async (req, res, next) => {
 			order: [['title', 'ASC']],
 		});
 
-		if (!excludeWithDepositTarget) {
+		if (!excludeWithDepositTarget && !excludeWithFtpTarget) {
 			return res.json(communities);
 		}
 
 		const communityIds = communities.map((c) => c.id);
-		const existingTargets = await DepositTarget.findAll({
-			where: { communityId: communityIds },
-			attributes: ['communityId'],
-		});
-		const idsWithTarget = new Set(existingTargets.map((t) => t.communityId));
-		return res.json(communities.filter((c) => !idsWithTarget.has(c.id)));
+		let excludedIds = new Set<string | null>();
+
+		if (excludeWithDepositTarget) {
+			const existingTargets = await DepositTarget.findAll({
+				where: { communityId: communityIds },
+				attributes: ['communityId'],
+			});
+			existingTargets.forEach((t) => excludedIds.add(t.communityId));
+		}
+
+		if (excludeWithFtpTarget) {
+			const existingFtpTargets = await FtpTarget.findAll({
+				where: { communityId: communityIds },
+				attributes: ['communityId'],
+			});
+			existingFtpTargets.forEach((t) => excludedIds.add(t.communityId));
+		}
+
+		return res.json(communities.filter((c) => !excludedIds.has(c.id)));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}
@@ -531,6 +582,190 @@ router.post('/api/superadmin/deposit-targets/:id/copy', async (req, res, next) =
 		});
 
 		return res.json(sanitizeDepositTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── FTP Targets API ────────────────────────────────────────────────────────
+
+router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const { communityId, ftpType, port, host, filePath, username, password } = req.body;
+		if (!communityId || !host) {
+			throw new BadRequestError(new Error('communityId and host are required'));
+		}
+		if (!ftpType || !['sftp', 'ftps'].includes(ftpType)) {
+			throw new BadRequestError(new Error('ftpType must be "sftp" or "ftps"'));
+		}
+
+		const community = await resolveCommunity(communityId);
+
+		const createData: Record<string, any> = {
+			communityId: community.id,
+			ftpType,
+			host: String(host).trim(),
+			port: port != null ? Number(port) : null,
+			filePath: filePath ? String(filePath).trim() : null,
+		};
+
+		if (username && password) {
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
+			createData.username = username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const target = await FtpTarget.create(createData as any);
+		const reloaded = await FtpTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.status(201).json(sanitizeFtpTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await FtpTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('FTP target not found'));
+		}
+
+		const { ftpType, port, host, filePath, username, password } = req.body;
+		const updates: Record<string, any> = {};
+
+		if (ftpType !== undefined) {
+			if (!['sftp', 'ftps'].includes(ftpType)) {
+				throw new BadRequestError(new Error('ftpType must be "sftp" or "ftps"'));
+			}
+			updates.ftpType = ftpType;
+		}
+		if (host !== undefined) {
+			updates.host = String(host).trim();
+		}
+		if (port !== undefined) {
+			updates.port = port !== null ? Number(port) : null;
+		}
+		if (filePath !== undefined) {
+			updates.filePath = filePath ? String(filePath).trim() : null;
+		}
+
+		if (username !== undefined) {
+			if (username === '') {
+				updates.username = null;
+				updates.password = null;
+				updates.passwordInitVec = null;
+			} else {
+				updates.username = username;
+				if (password) {
+					const { encryptedText, initVec } = aes256Encrypt(
+						password,
+						env.AES_ENCRYPTION_KEY!,
+					);
+					updates.password = encryptedText;
+					updates.passwordInitVec = initVec;
+				}
+			}
+		} else if (password) {
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
+			updates.password = encryptedText;
+			updates.passwordInitVec = initVec;
+		}
+
+		await target.update(updates);
+		const reloaded = await FtpTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeFtpTarget(reloaded!));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.delete('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await FtpTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('FTP target not found'));
+		}
+
+		await target.destroy();
+		return res.json({ id: req.params.id });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const source = await FtpTarget.findByPk(req.params.id);
+		if (!source) {
+			throw new NotFoundError(new Error('Source FTP target not found'));
+		}
+
+		const { communityId, copyCredentials } = req.body;
+		if (!communityId) {
+			throw new BadRequestError(new Error('communityId is required'));
+		}
+
+		const destCommunity = await resolveCommunity(communityId);
+
+		const createData: Record<string, any> = {
+			communityId: destCommunity.id,
+			ftpType: source.ftpType,
+			port: source.port,
+			host: source.host,
+			filePath: source.filePath,
+		};
+
+		if (copyCredentials && source.username && source.password && source.passwordInitVec) {
+			const plaintext = aes256Decrypt(
+				source.password,
+				env.AES_ENCRYPTION_KEY!,
+				source.passwordInitVec,
+			);
+			const { encryptedText, initVec } = aes256Encrypt(plaintext, env.AES_ENCRYPTION_KEY!);
+			createData.username = source.username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const newTarget = await FtpTarget.create(createData as any);
+		const reloaded = await FtpTarget.findByPk(newTarget.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeFtpTarget(reloaded!));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

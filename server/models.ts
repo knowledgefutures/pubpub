@@ -16,6 +16,7 @@ import { CommunityTemplate } from './communityTemplate/model';
 import { CrossrefDepositRecord } from './crossrefDepositRecord/model';
 import { CustomScript } from './customScript/model';
 import { DepositTarget } from './depositTarget/model';
+import { FtpTarget } from './ftpTarget/model';
 import { Discussion } from './discussion/model';
 import { DiscussionAnchor } from './discussionAnchor/model';
 import { Doc } from './doc/model';
@@ -80,6 +81,7 @@ sequelize.addModels([
 	HubOptOut,
 	CustomScript,
 	DepositTarget,
+	FtpTarget,
 	Discussion,
 	DiscussionAnchor,
 	Doc,
@@ -179,6 +181,7 @@ export {
 	HubOptOut,
 	CustomScript,
 	DepositTarget,
+	FtpTarget,
 	Discussion,
 	DiscussionAnchor,
 	EmailChangeToken,

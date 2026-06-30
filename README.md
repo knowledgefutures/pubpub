@@ -26,28 +26,85 @@ At the moment, PubPub isn't particularly well setup for outside contributors. Ho
 
 User-facing documentation is a work in progress, and can be found at https://help.pubpub.org. If you're interested in helping contribute to documentation, we'd love to hear from you. Please send a note to [hello@pubpub.org](mailto:hello@pubpub.org?subject=Documentation%20Contribution) introducing yourself and describing how you'd like to contribute.
 
-## To Install
+## Local Development
 
-```
+### Prerequisites
+
+- **Docker & Docker Compose**
+- **pnpm** (see `packageManager` in `package.json`; `corepack enable` to activate)
+- **SOPS + age** for decrypting environment secrets:
+  ```
+  brew install sops age
+  ```
+- **Age key** — ask a team member for the private key, then place it at:
+  ```
+  ~/.config/sops/age/keys.txt
+  ```
+- **pandoc + poppler** (macOS):
+  ```
+  brew install pandoc poppler
+  ```
+  (See `Aptfile` for equivalent Debian packages)
+
+### Quick Start
+
+PubPub requires [KF Auth](https://github.com/knowledgefutures/kf-auth-v3) for authentication. Start it first:
+
+```bash
+# Terminal 1: Start KF Auth
+cd ../kf-auth-v3
 pnpm install
-
-```
-
-To run locally on a Mac, use [Homebrew](https://brew.sh/) to install a handful of dependencies:
-
-```
-brew install pandoc poppler
-```
-
-(See `Aptfile` for a list of equivalent Debian packages to install)
-
-## To Run Dev Mode
-
-```
 pnpm dev
 ```
 
-Navigate to `localhost:9876`
+```bash
+# Terminal 2: Start PubPub
+pnpm install
+pnpm dev
+```
+
+On first run, `pnpm dev` will:
+1. Auto-decrypt `infra/.env.local.enc` into `infra/.env.local` (requires age key)
+2. Start PostgreSQL, RabbitMQ, app server, and worker via Docker
+3. Seed a demo community if the database is empty
+
+Navigate to `http://localhost:9876`
+
+### Default Credentials
+
+Sign in at http://localhost:9876 using the KF Auth seed admin account:
+- **Email:** `admin@kfauth.org`
+- **Password:** `admin123`
+
+### Useful URLs
+
+| URL | Service |
+|-----|---------|
+| http://localhost:9876 | PubPub |
+| http://localhost:3000 | KF Auth (sign-in) |
+| http://localhost:3001 | KF Auth account dashboard |
+| http://localhost:9999 | Inbucket (email inbox for dev) |
+
+### Secrets
+
+Environment secrets are encrypted with SOPS + age. Decryption happens automatically
+on `pnpm dev`, but you can also run manually:
+
+```bash
+pnpm secrets:decrypt:local   # infra/.env.local.enc → infra/.env.local
+pnpm secrets:encrypt:local   # infra/.env.local → infra/.env.local.enc (after changes)
+```
+
+### Troubleshooting
+
+**`env file infra/.env.local not found`**
+Auto-decrypt may have failed. Ensure your age key is at `~/.config/sops/age/keys.txt`, then run `pnpm secrets:decrypt:local`.
+
+**Every page returns 404**
+The demo community may not have been seeded. Check Docker logs for `[seed]` messages. To reset from scratch: `docker compose -f infra/docker-compose.dev.yml down -v && pnpm dev`
+
+**Cannot log in / redirect loop**
+Make sure KF Auth is running on port 3000. PubPub expects the OIDC issuer at `http://localhost:3000`.
 
 ## Fonts
 

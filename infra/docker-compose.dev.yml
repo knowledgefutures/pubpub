@@ -23,6 +23,7 @@ services:
             PORT: 3000
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
+            PUBPUB_LOCAL_COMMUNITY: demo
         depends_on:
             - db
             - rabbitmq
@@ -81,12 +82,10 @@ services:
             -c work_mem=16MB
             -c maintenance_work_mem=512MB
         volumes:
-            - pgdata:/var/lib/postgresql/data
+            - pgdata3:/var/lib/postgresql/data
         ports:
             - "${DB_PORT:-5439}:5432"
         networks: [appnet]
-
-
 
     # cron:
     #     build:
@@ -112,5 +111,5 @@ networks:
 
 volumes:
     pgdata:
+    pgdata3:
     rabbitmqdata:
-

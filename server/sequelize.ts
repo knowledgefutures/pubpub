@@ -146,5 +146,12 @@ export const sequelizeSyncPromise: Promise<void> =
 				// take several minutes and would delay deploys.
 				const { createSummaryViews } = await import('server/analytics/summaryViews');
 				await createSummaryViews();
+
+				if (process.env.NODE_ENV !== 'production') {
+					const { seedDevData } = await import('server/seed');
+					await seedDevData().catch((err) =>
+						console.error('[seed] Failed to seed dev data:', err),
+					);
+				}
 			})()
 		: Promise.resolve();

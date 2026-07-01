@@ -231,7 +231,10 @@ export const collectionExportTask = async ({
 					);
 					return { id: targetId, host: ftpTarget.host, uploaded: true };
 				} catch (err) {
-					console.error(`[collectionExport] FTP upload failed for ${ftpTarget.host}:`, err);
+					console.error(
+						`[collectionExport] FTP upload failed for ${ftpTarget.host}:`,
+						err,
+					);
 					return {
 						id: targetId,
 						host: ftpTarget.host,

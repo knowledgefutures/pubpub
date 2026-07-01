@@ -227,7 +227,16 @@ const FtpTargets = (props: Props) => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [editTarget, editName, editFtpType, editPort, editHost, editFilePath, editUsername, editPassword]);
+	}, [
+		editTarget,
+		editName,
+		editFtpType,
+		editPort,
+		editHost,
+		editFilePath,
+		editUsername,
+		editPassword,
+	]);
 
 	const handleDelete = useCallback(async (target: FtpTargetRow) => {
 		setPendingDelete(null);

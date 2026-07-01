@@ -28,6 +28,7 @@ type PastExport = {
 type FtpTargetOption = {
 	id: string;
 	host: string;
+	name: string | null;
 	filePath: string | null;
 	ftpType: string;
 };

@@ -3,11 +3,14 @@ import { vi } from 'vitest';
 import { FtpTarget } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
 
-const SftpClient = vi.fn().mockImplementation(() => ({
-	connect: vi.fn().mockResolvedValue(undefined),
-	exists: vi.fn().mockResolvedValue('d'),
-	end: vi.fn().mockResolvedValue(undefined),
-}));
+const { SftpClient } = vi.hoisted(() => {
+	const SftpClient = vi.fn().mockImplementation(() => ({
+		connect: vi.fn().mockResolvedValue(undefined),
+		exists: vi.fn().mockResolvedValue('d'),
+		end: vi.fn().mockResolvedValue(undefined),
+	}));
+	return { SftpClient };
+});
 
 vi.mock('ssh2-sftp-client', () => ({ default: SftpClient }));
 

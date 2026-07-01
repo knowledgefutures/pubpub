@@ -156,6 +156,17 @@ const CollectionSettings = (props: Props) => {
 			hideSaveButton: true,
 			sections: [
 				<SettingsSection title="Export Collection" id="export-collection">
+					<p>
+						Creates a zip export for the collection containing the PDF and JATS files
+						for each Pub in the collection.
+						{ftpTargets && (
+							<span>
+								{` `}If an FTP target is selected, the zip file will be uploaded to
+								that target.
+							</span>
+						)}
+					</p>
+
 					<ExportCollectionButton
 						pastExports={collectionExports ?? []}
 						ftpTargets={ftpTargets ?? []}

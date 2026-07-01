@@ -98,7 +98,8 @@ export const collectionExportTask = async ({
 	const pubsWithReleases = pubs.filter((p) => p.releases && p.releases.length > 0);
 
 	const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-	const zipName = `${community.subdomain}-${collection.slug}-${timestamp}.zip`;
+	const folderName = `${community.subdomain}-${collection.slug}-${timestamp}`;
+	const zipName = `${folderName}.zip`;
 
 	const archiveStream = archiver('zip', { zlib: { level: 6 } });
 	const chunks: Buffer[] = [];
@@ -127,10 +128,10 @@ export const collectionExportTask = async ({
 
 			const fileResults = await Promise.allSettled([
 				pdfUrl
-					? fetchFile(pdfUrl, `${pub.slug}/${pub.slug}.pdf`)
+					? fetchFile(pdfUrl, `${folderName}/${pub.slug}/${pub.slug}.pdf`)
 					: Promise.reject(new Error('no pdf export')),
 				jatsUrl
-					? fetchFile(jatsUrl, `${pub.slug}/${pub.slug}.xml`)
+					? fetchFile(jatsUrl, `${folderName}/${pub.slug}/${pub.slug}.xml`)
 					: Promise.reject(new Error('no jats export')),
 			]);
 

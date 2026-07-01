@@ -76,7 +76,7 @@ export const collectionServer = s.router(contract.collection, {
 		return { status: 200, body: body.id };
 	},
 	export: async ({ req, body }) => {
-		const { collectionId, ftpTargetId } = body;
+		const { collectionId, ftpTargetIds } = body;
 		const collection = await findCollection(collectionId);
 		if (!collection) {
 			throw new NotFoundError();
@@ -109,7 +109,7 @@ export const collectionServer = s.router(contract.collection, {
 			input: {
 				collectionId,
 				communityId: collection.communityId,
-				ftpTargetId: ftpTargetId ?? null,
+				ftpTargetIds: ftpTargetIds ?? [],
 			},
 		});
 		return { status: 200, body: { workerTaskId: workerTask.id } };

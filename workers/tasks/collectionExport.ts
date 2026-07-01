@@ -61,12 +61,12 @@ const waitForExportUrl = async (
 export const collectionExportTask = async ({
 	collectionId,
 	communityId,
-	ftpTargetId,
+	ftpTargetIds = [],
 	workerTaskId,
 }: {
 	collectionId: string;
 	communityId: string;
-	ftpTargetId?: string | null;
+	ftpTargetIds?: string[];
 	workerTaskId?: string;
 }) => {
 	const [collection, community] = await Promise.all([
@@ -194,46 +194,60 @@ export const collectionExportTask = async ({
 
 	const downloadUrl = await exportsClient.getPresignedUrl(s3Key);
 
-	let ftpUploaded = false;
-	if (ftpTargetId) {
-		const ftpTarget = await FtpTarget.findByPk(ftpTargetId);
-		if (
-			ftpTarget?.host &&
-			ftpTarget.username &&
-			ftpTarget.password &&
-			ftpTarget.passwordInitVec
-		) {
-			const password = aes256Decrypt(
-				ftpTarget.password,
-				env.AES_ENCRYPTION_KEY!,
-				ftpTarget.passwordInitVec,
-			);
-			const baseDir = ftpTarget.filePath?.replace(/\/$/, '') ?? '';
-			const remotePath = baseDir ? `${baseDir}/${zipName}` : zipName;
-			try {
-				await uploadFileViaSftp(
-					{
-						host: ftpTarget.host,
-						port: ftpTarget.port ?? undefined,
-						username: ftpTarget.username,
-						password,
-					},
-					remotePath,
-					zipBuffer,
+	const ftpTargetResults: { id: string; host: string; uploaded: boolean; error?: string }[] =
+		await Promise.all(
+			ftpTargetIds.map(async (targetId) => {
+				const ftpTarget = await FtpTarget.findByPk(targetId);
+				if (
+					!ftpTarget?.host ||
+					!ftpTarget.username ||
+					!ftpTarget.password ||
+					!ftpTarget.passwordInitVec
+				) {
+					return {
+						id: targetId,
+						host: ftpTarget?.host ?? 'unknown',
+						uploaded: false,
+						error: 'Invalid FTP target configuration',
+					};
+				}
+				const password = aes256Decrypt(
+					ftpTarget.password,
+					env.AES_ENCRYPTION_KEY!,
+					ftpTarget.passwordInitVec,
 				);
-				ftpUploaded = true;
-			} catch (err) {
-				console.error('[collectionExport] FTP upload failed:', err);
-			}
-		}
-	}
+				const baseDir = ftpTarget.filePath?.replace(/\/$/, '') ?? '';
+				const remotePath = baseDir ? `${baseDir}/${zipName}` : zipName;
+				try {
+					await uploadFileViaSftp(
+						{
+							host: ftpTarget.host,
+							port: ftpTarget.port ?? undefined,
+							username: ftpTarget.username,
+							password,
+						},
+						remotePath,
+						zipBuffer,
+					);
+					return { id: targetId, host: ftpTarget.host, uploaded: true };
+				} catch (err) {
+					console.error(`[collectionExport] FTP upload failed for ${ftpTarget.host}:`, err);
+					return {
+						id: targetId,
+						host: ftpTarget.host,
+						uploaded: false,
+						error: String((err as any)?.message ?? err),
+					};
+				}
+			}),
+		);
 
 	if (workerTaskId) {
 		await updateWorkerTask({
 			id: workerTaskId,
-			body: { output: { downloadUrl, ftpUploaded, skippedPubs, partialPubs } },
+			body: { output: { downloadUrl, ftpTargetResults, skippedPubs, partialPubs } },
 		});
 	}
 
-	return { downloadUrl, ftpUploaded, skippedPubs, partialPubs };
+	return { downloadUrl, ftpTargetResults, skippedPubs, partialPubs };
 };

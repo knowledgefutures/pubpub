@@ -158,7 +158,7 @@ const FtpTargets = (props: Props) => {
 			setCreatePassword('');
 			setSuccess(`FTP target created for "${result.communityTitle}" (${result.host}).`);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to create FTP target.');
+			setError(err?.error ?? err?.message ?? 'Failed to create FTP target.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -212,7 +212,7 @@ const FtpTargets = (props: Props) => {
 			setEditTarget(null);
 			setSuccess(`FTP target for "${result.communityTitle}" updated.`);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to update FTP target.');
+			setError(err?.error ?? err?.message ?? 'Failed to update FTP target.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -228,7 +228,7 @@ const FtpTargets = (props: Props) => {
 			setTargets((prev) => prev.filter((t) => t.id !== target.id));
 			setSuccess(`FTP target deleted for "${target.communityTitle}" (${target.host}).`);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to delete FTP target.');
+			setError(err?.error ?? err?.message ?? 'Failed to delete FTP target.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -256,7 +256,7 @@ const FtpTargets = (props: Props) => {
 			setCopyCredentials(true);
 			setSuccess(`FTP target copied to "${result.communityTitle}" (${result.host}).`);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to copy FTP target.');
+			setError(err?.error ?? err?.message ?? 'Failed to copy FTP target.');
 		} finally {
 			setIsLoading(false);
 		}

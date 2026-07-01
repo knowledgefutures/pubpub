@@ -203,7 +203,7 @@ export const collectionRouter = {
 		description: 'Export a collection as a ZIP of PDFs and JATS XML for all released pubs.',
 		body: z.object({
 			collectionId: z.string().uuid(),
-			ftpTargetId: z.string().uuid().optional(),
+			ftpTargetIds: z.string().uuid().array().optional(),
 		}),
 		responses: {
 			200: z.object({

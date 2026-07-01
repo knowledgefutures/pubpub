@@ -34,7 +34,7 @@ import {
 	isCloudflareConfigured,
 	removeCustomHostname,
 } from 'server/utils/cloudflareCustomHostnames';
-import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
+import { BadRequestError, ForbiddenError, handleErrors, HTTPStatusError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -637,7 +637,10 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 
 		return res.status(201).json(sanitizeFtpTarget(reloaded!));
 	} catch (err) {
-		return handleErrors(req, res, next)(err);
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
 	}
 });
 
@@ -713,7 +716,10 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 
 		return res.json(sanitizeFtpTarget(reloaded!));
 	} catch (err) {
-		return handleErrors(req, res, next)(err);
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
 	}
 });
 
@@ -732,7 +738,10 @@ router.delete('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 		await target.destroy();
 		return res.json({ id: req.params.id });
 	} catch (err) {
-		return handleErrors(req, res, next)(err);
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
 	}
 });
 
@@ -784,7 +793,10 @@ router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
 
 		return res.json(sanitizeFtpTarget(reloaded!));
 	} catch (err) {
-		return handleErrors(req, res, next)(err);
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
 	}
 });
 

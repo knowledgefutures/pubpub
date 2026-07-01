@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Button,
 	Callout,
+	Checkbox,
 	Collapse,
-	HTMLSelect,
 	HTMLTable,
 	Spinner,
 	Tag,
@@ -25,7 +25,7 @@ type PastExport = {
 	isProcessing: boolean;
 	output: {
 		downloadUrl: string;
-		ftpUploaded: boolean;
+		ftpTargetResults?: { id: string; host: string; uploaded: boolean; error?: string }[];
 		skippedPubs?: string[];
 		partialPubs?: { slug: string; missingFormats: string[] }[];
 	} | null;
@@ -68,7 +68,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 	const [exports, setExports] = useState<PastExport[]>(initialExports ?? []);
 	const [error, setError] = useState<string | null>(null);
 	const [warning, setWarning] = useState<React.ReactNode | null>(null);
-	const [selectedFtpTargetId, setSelectedFtpTargetId] = useState<string>('');
+	const [selectedFtpTargetIds, setSelectedFtpTargetIds] = useState<Set<string>>(new Set());
 	const [historyOpen, setHistoryOpen] = useState(false);
 	const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const pollErrorCountRef = useRef(0);
@@ -107,7 +107,10 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 						const skipped: string[] = task.output?.skippedPubs ?? [];
 						const partial: { slug: string; missingFormats: string[] }[] =
 							task.output?.partialPubs ?? [];
-						if (skipped.length > 0 || partial.length > 0) {
+						const failedFtp = (
+							task.output?.ftpTargetResults ?? []
+						).filter((r: { uploaded: boolean }) => !r.uploaded);
+						if (skipped.length > 0 || partial.length > 0 || failedFtp.length > 0) {
 							setWarning(
 								<>
 									{skipped.length > 0 && (
@@ -134,6 +137,29 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 														`${slug} (missing ${missingFormats.join(', ')})`,
 												)
 												.join('; ')}
+										</p>
+									)}
+									{failedFtp.length > 0 && (
+										<p
+											style={{
+												margin:
+													skipped.length > 0 || partial.length > 0
+														? '6px 0 0'
+														: 0,
+											}}
+										>
+											<strong>
+												{failedFtp.length === 1
+													? '1 FTP upload failed'
+													: `${failedFtp.length} FTP uploads failed`}
+											</strong>
+											:{' '}
+											{failedFtp
+												.map(
+													(r: { host: string; error?: string }) =>
+														`${r.host}${r.error ? ` (${r.error})` : ''}`,
+												)
+												.join(', ')}
 										</p>
 									)}
 								</>,
@@ -186,8 +212,11 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 		setError(null);
 		setWarning(null);
 		try {
-			const body: Record<string, string> = { collectionId: activeCollection.id };
-			if (selectedFtpTargetId) body.ftpTargetId = selectedFtpTargetId;
+			const body: { collectionId: string; ftpTargetIds?: string[] } = {
+				collectionId: activeCollection.id,
+			};
+			if (selectedFtpTargetIds.size > 0)
+				body.ftpTargetIds = Array.from(selectedFtpTargetIds);
 			const response = await apiFetch('/api/collections/export', {
 				method: 'POST',
 				body: JSON.stringify(body),
@@ -208,7 +237,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 		} finally {
 			setIsRequesting(false);
 		}
-	}, [activeCollection, selectedFtpTargetId]);
+	}, [activeCollection, selectedFtpTargetIds]);
 
 	const hasInProgress = exports.some((e) => e.isProcessing);
 	const isButtonDisabled = isRequesting || hasInProgress || !activeCollection;
@@ -217,18 +246,26 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 		<div className="export-collection-button-component">
 			<div className="export-controls">
 				{ftpTargets.length > 0 && (
-					<HTMLSelect
-						value={selectedFtpTargetId}
-						onChange={(e) => setSelectedFtpTargetId(e.target.value)}
-					>
-						<option value="">No FTP upload (download only)</option>
+					<div className="ftp-target-selection">
+						<span className="ftp-target-label">Upload to FTP:</span>
 						{ftpTargets.map((t) => (
-							<option key={t.id} value={t.id}>
-								{t.host}
-								{t.filePath ? ` (${t.filePath})` : ''}
-							</option>
+							<Checkbox
+								key={t.id}
+								label={`${t.host}${t.filePath ? ` (${t.filePath})` : ''}`}
+								checked={selectedFtpTargetIds.has(t.id)}
+								disabled={isButtonDisabled}
+								onChange={(e) => {
+									const checked = (e.target as HTMLInputElement).checked;
+									setSelectedFtpTargetIds((prev) => {
+										const next = new Set(prev);
+										if (checked) next.add(t.id);
+										else next.delete(t.id);
+										return next;
+									});
+								}}
+							/>
 						))}
-					</HTMLSelect>
+					</div>
 				)}
 				<Button
 					disabled={isButtonDisabled}
@@ -372,13 +409,43 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 											<td>{createdAt.toLocaleString()}</td>
 											<td>{status}</td>
 											<td>
-												{exportItem.output?.ftpUploaded ? (
-													<Tag minimal intent="success">
-														Uploaded
-													</Tag>
-												) : (
-													'—'
-												)}
+												{(() => {
+													const results =
+														exportItem.output?.ftpTargetResults ?? [];
+													if (results.length === 0) return '—';
+													const failed = results.filter(
+														(r) => !r.uploaded,
+													);
+													const tooltipContent = (
+														<>
+															{results.map((r) => (
+																<div key={r.id}>
+																	{r.uploaded ? '✓' : '✗'} {r.host}
+																	{r.error ? `: ${r.error}` : ''}
+																</div>
+															))}
+														</>
+													);
+													return (
+														<Tooltip content={tooltipContent}>
+															<Tag
+																minimal
+																intent={
+																	failed.length === 0
+																		? 'success'
+																		: failed.length <
+																			  results.length
+																			? 'warning'
+																			: 'danger'
+																}
+															>
+																{failed.length === 0
+																	? `${results.length} uploaded`
+																	: `${failed.length}/${results.length} failed`}
+															</Tag>
+														</Tooltip>
+													);
+												})()}
 											</td>
 											<td>
 												{hasFileWarnings ? (

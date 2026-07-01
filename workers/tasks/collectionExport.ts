@@ -6,7 +6,7 @@ import { env } from 'server/env';
 import { getOrStartExportTask } from 'server/export/queries';
 import { Collection, Community, Export, FtpTarget, Pub, Release, WorkerTask } from 'server/models';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
-import { exportsClient } from 'server/utils/s3';
+import { assetsClient, exportsClient } from 'server/utils/s3';
 import { uploadFileViaSftp } from 'server/utils/sftp';
 import { updateWorkerTask } from 'server/workerTask/queries';
 import { aes256Decrypt } from 'utils/crypto';
@@ -111,10 +111,9 @@ export const collectionExportTask = async ({
 	});
 
 	const fetchFile = async (url: string, name: string) => {
-		const response = await fetch(url);
-		if (!response.ok) throw new Error(`HTTP ${response.status}`);
-		const buffer = Buffer.from(await response.arrayBuffer());
-		archiveStream.append(buffer, { name });
+		const key = new URL(url).pathname.slice(1);
+		const stream = await assetsClient.downloadFile(key);
+		archiveStream.append(stream, { name });
 	};
 
 	const pubOutcomes = await Promise.allSettled(
@@ -145,19 +144,32 @@ export const collectionExportTask = async ({
 				}
 			});
 
+			const missingFormats = fileResults.flatMap((r, i) =>
+				r.status === 'rejected' ? [i === 0 ? 'PDF' : 'JATS XML'] : [],
+			);
+
 			return {
 				slug: pub.slug,
 				filesAdded: fileResults.filter((r) => r.status === 'fulfilled').length,
+				missingFormats,
 			};
 		}),
 	);
 
 	const skippedPubs: string[] = [];
+	const partialPubs: { slug: string; missingFormats: string[] }[] = [];
 	let filesAdded = 0;
 	for (const outcome of pubOutcomes) {
 		if (outcome.status === 'fulfilled') {
 			filesAdded += outcome.value.filesAdded;
-			if (outcome.value.filesAdded === 0) skippedPubs.push(outcome.value.slug);
+			if (outcome.value.filesAdded === 0) {
+				skippedPubs.push(outcome.value.slug);
+			} else if (outcome.value.missingFormats.length > 0) {
+				partialPubs.push({
+					slug: outcome.value.slug,
+					missingFormats: outcome.value.missingFormats,
+				});
+			}
 		}
 	}
 
@@ -218,7 +230,7 @@ export const collectionExportTask = async ({
 	if (workerTaskId) {
 		await updateWorkerTask({
 			id: workerTaskId,
-			body: { output: { downloadUrl, ftpUploaded, skippedPubs } },
+			body: { output: { downloadUrl, ftpUploaded, skippedPubs, partialPubs } },
 		});
 	}
 

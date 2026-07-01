@@ -1,6 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, Callout, Collapse, HTMLSelect, HTMLTable, Spinner, Tag } from '@blueprintjs/core';
+import {
+	Button,
+	Callout,
+	Collapse,
+	HTMLSelect,
+	HTMLTable,
+	Spinner,
+	Tag,
+	Tooltip,
+} from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
@@ -14,7 +23,12 @@ type PastExport = {
 	id: string;
 	createdAt: string;
 	isProcessing: boolean;
-	output: { downloadUrl: string; ftpUploaded: boolean; skippedPubs?: string[] } | null;
+	output: {
+		downloadUrl: string;
+		ftpUploaded: boolean;
+		skippedPubs?: string[];
+		partialPubs?: { slug: string; missingFormats: string[] }[];
+	} | null;
 	error: string | null;
 };
 
@@ -53,7 +67,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 	const [activeWorkerTaskId, setActiveWorkerTaskId] = useState<string | null>(null);
 	const [exports, setExports] = useState<PastExport[]>(initialExports ?? []);
 	const [error, setError] = useState<string | null>(null);
-	const [warning, setWarning] = useState<string | null>(null);
+	const [warning, setWarning] = useState<React.ReactNode | null>(null);
 	const [selectedFtpTargetId, setSelectedFtpTargetId] = useState<string>('');
 	const [historyOpen, setHistoryOpen] = useState(false);
 	const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -91,9 +105,38 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 						setError(errMsg);
 					} else {
 						const skipped: string[] = task.output?.skippedPubs ?? [];
-						if (skipped.length > 0) {
+						const partial: { slug: string; missingFormats: string[] }[] =
+							task.output?.partialPubs ?? [];
+						if (skipped.length > 0 || partial.length > 0) {
 							setWarning(
-								`${skipped.length} pub${skipped.length === 1 ? ' was' : 's were'} skipped because no export files could be found: ${skipped.join(', ')}`,
+								<>
+									{skipped.length > 0 && (
+										<p style={{ margin: 0 }}>
+											<strong>
+												{skipped.length === 1
+													? '1 pub was skipped'
+													: `${skipped.length} pubs were skipped`}
+											</strong>{' '}
+											(no files found): {skipped.join(', ')}
+										</p>
+									)}
+									{partial.length > 0 && (
+										<p style={{ margin: skipped.length > 0 ? '6px 0 0' : 0 }}>
+											<strong>
+												{partial.length === 1
+													? '1 pub is missing files'
+													: `${partial.length} pubs are missing files`}
+											</strong>
+											:{' '}
+											{partial
+												.map(
+													({ slug, missingFormats }) =>
+														`${slug} (missing ${missingFormats.join(', ')})`,
+												)
+												.join('; ')}
+										</p>
+									)}
+								</>,
 							);
 						}
 					}
@@ -252,6 +295,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 									<th>Date</th>
 									<th>Status</th>
 									<th>FTP</th>
+									<th>Files</th>
 									<th />
 								</tr>
 							</thead>
@@ -297,6 +341,32 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 										);
 									}
 
+									const itemSkipped = exportItem.output?.skippedPubs ?? [];
+									const itemPartial = exportItem.output?.partialPubs ?? [];
+									const hasFileWarnings =
+										itemSkipped.length > 0 || itemPartial.length > 0;
+									const fileWarningContent = hasFileWarnings ? (
+										<>
+											{itemSkipped.length > 0 && (
+												<div>
+													<strong>Skipped (no files):</strong>{' '}
+													{itemSkipped.join(', ')}
+												</div>
+											)}
+											{itemPartial.length > 0 && (
+												<div>
+													<strong>Missing files:</strong>{' '}
+													{itemPartial
+														.map(
+															({ slug, missingFormats }) =>
+																`${slug} (${missingFormats.join(', ')})`,
+														)
+														.join('; ')}
+												</div>
+											)}
+										</>
+									) : null;
+
 									return (
 										<tr key={exportItem.id}>
 											<td>{createdAt.toLocaleString()}</td>
@@ -308,6 +378,26 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 													</Tag>
 												) : (
 													'—'
+												)}
+											</td>
+											<td>
+												{hasFileWarnings ? (
+													<Tooltip content={fileWarningContent ?? undefined}>
+														<Tag minimal intent="warning">
+															{itemSkipped.length + itemPartial.length}{' '}
+															{itemSkipped.length + itemPartial.length ===
+															1
+																? 'pub'
+																: 'pubs'}{' '}
+															with issues
+														</Tag>
+													</Tooltip>
+												) : exportItem.isProcessing || exportItem.error ? (
+													'—'
+												) : (
+													<Tag minimal intent="success">
+														OK
+													</Tag>
 												)}
 											</td>
 											<td style={{ textAlign: 'right' }}>

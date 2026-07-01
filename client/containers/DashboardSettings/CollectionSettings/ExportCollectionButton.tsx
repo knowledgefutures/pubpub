@@ -44,7 +44,6 @@ type Props = {
 
 export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets }: Props) => {
 	const {
-		communityData,
 		scopeData: {
 			elements: { activeCollection },
 		},
@@ -82,9 +81,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 		pollErrorCountRef.current = 0;
 		pollRef.current = setInterval(async () => {
 			try {
-				const task = await apiFetch(
-					`/api/workerTasks?workerTaskId=${activeWorkerTaskId}`,
-				);
+				const task = await apiFetch(`/api/workerTasks?workerTaskId=${activeWorkerTaskId}`);
 				pollErrorCountRef.current = 0;
 				if (!task.isProcessing) {
 					clearPoll();
@@ -199,14 +196,26 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 					{isRequesting ? (
 						<>
 							Starting...{' '}
-							<span style={{ display: 'inline-block', marginLeft: 4, verticalAlign: 'middle' }}>
+							<span
+								style={{
+									display: 'inline-block',
+									marginLeft: 4,
+									verticalAlign: 'middle',
+								}}
+							>
 								<Spinner size={16} />
 							</span>
 						</>
 					) : hasInProgress ? (
 						<>
 							Export in progress...{' '}
-							<span style={{ display: 'inline-block', marginLeft: 4, verticalAlign: 'middle' }}>
+							<span
+								style={{
+									display: 'inline-block',
+									marginLeft: 4,
+									verticalAlign: 'middle',
+								}}
+							>
 								<Spinner size={16} />
 							</span>
 						</>
@@ -249,9 +258,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 							<tbody>
 								{exports.map((exportItem) => {
 									const createdAt = new Date(exportItem.createdAt);
-									const expiresAt = new Date(
-										createdAt.getTime() + SEVEN_DAYS_MS,
-									);
+									const expiresAt = new Date(createdAt.getTime() + SEVEN_DAYS_MS);
 									const isExpired = Date.now() > expiresAt.getTime();
 									const downloadUrl = exportItem.output?.downloadUrl ?? null;
 									const hasUrl =

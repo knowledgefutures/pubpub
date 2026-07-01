@@ -2,12 +2,12 @@ import archiver from 'archiver';
 import { Op } from 'sequelize';
 import { PassThrough } from 'stream';
 
-import { Collection, Community, Export, FtpTarget, Pub, Release, WorkerTask } from 'server/models';
 import { env } from 'server/env';
 import { getOrStartExportTask } from 'server/export/queries';
+import { Collection, Community, Export, FtpTarget, Pub, Release, WorkerTask } from 'server/models';
+import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { exportsClient } from 'server/utils/s3';
 import { uploadFileViaSftp } from 'server/utils/sftp';
-import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { updateWorkerTask } from 'server/workerTask/queries';
 import { aes256Decrypt } from 'utils/crypto';
 
@@ -112,48 +112,54 @@ export const collectionExportTask = async ({
 		archiveStream.on('error', reject);
 	});
 
+	const fetchFile = async (url: string, name: string) => {
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`HTTP ${response.status}`);
+		const buffer = Buffer.from(await response.arrayBuffer());
+		archiveStream.append(buffer, { name });
+	};
+
+	const pubOutcomes = await Promise.allSettled(
+		pubsWithReleases.map(async (pub) => {
+			const { historyKey } = pub.releases![0];
+
+			const [pdfUrl, jatsUrl] = await Promise.all([
+				waitForExportUrl(pub.id, 'pdf', historyKey),
+				waitForExportUrl(pub.id, 'jats', historyKey),
+			]);
+
+			const fileResults = await Promise.allSettled([
+				pdfUrl
+					? fetchFile(pdfUrl, `${pub.slug}/${pub.slug}.pdf`)
+					: Promise.reject(new Error('no pdf export')),
+				jatsUrl
+					? fetchFile(jatsUrl, `${pub.slug}/${pub.slug}.xml`)
+					: Promise.reject(new Error('no jats export')),
+			]);
+
+			fileResults.forEach((r, i) => {
+				if (r.status === 'rejected') {
+					const label = i === 0 ? 'PDF' : 'JATS XML';
+					console.error(
+						`[collectionExport] Failed to fetch ${label} for ${pub.slug}:`,
+						r.reason,
+					);
+				}
+			});
+
+			return {
+				slug: pub.slug,
+				filesAdded: fileResults.filter((r) => r.status === 'fulfilled').length,
+			};
+		}),
+	);
+
 	const skippedPubs: string[] = [];
 	let filesAdded = 0;
-
-	for (const pub of pubsWithReleases) {
-		const latestRelease = pub.releases![0];
-		const { historyKey } = latestRelease;
-
-		const [pdfUrl, jatsUrl] = await Promise.all([
-			waitForExportUrl(pub.id, 'pdf', historyKey),
-			waitForExportUrl(pub.id, 'jats', historyKey),
-		]);
-
-		let pubFilesAdded = 0;
-
-		if (pdfUrl) {
-			try {
-				const response = await fetch(pdfUrl);
-				if (!response.ok) throw new Error(`HTTP ${response.status}`);
-				const buffer = Buffer.from(await response.arrayBuffer());
-				archiveStream.append(buffer, { name: `${pub.slug}/${pub.slug}.pdf` });
-				pubFilesAdded++;
-				filesAdded++;
-			} catch (err) {
-				console.error(`[collectionExport] Failed to fetch PDF for ${pub.slug}:`, err);
-			}
-		}
-
-		if (jatsUrl) {
-			try {
-				const response = await fetch(jatsUrl);
-				if (!response.ok) throw new Error(`HTTP ${response.status}`);
-				const buffer = Buffer.from(await response.arrayBuffer());
-				archiveStream.append(buffer, { name: `${pub.slug}/${pub.slug}.xml` });
-				pubFilesAdded++;
-				filesAdded++;
-			} catch (err) {
-				console.error(`[collectionExport] Failed to fetch JATS XML for ${pub.slug}:`, err);
-			}
-		}
-
-		if (pubFilesAdded === 0) {
-			skippedPubs.push(pub.slug);
+	for (const outcome of pubOutcomes) {
+		if (outcome.status === 'fulfilled') {
+			filesAdded += outcome.value.filesAdded;
+			if (outcome.value.filesAdded === 0) skippedPubs.push(outcome.value.slug);
 		}
 	}
 
@@ -180,7 +186,12 @@ export const collectionExportTask = async ({
 	let ftpUploaded = false;
 	if (ftpTargetId) {
 		const ftpTarget = await FtpTarget.findByPk(ftpTargetId);
-		if (ftpTarget?.host && ftpTarget.username && ftpTarget.password && ftpTarget.passwordInitVec) {
+		if (
+			ftpTarget?.host &&
+			ftpTarget.username &&
+			ftpTarget.password &&
+			ftpTarget.passwordInitVec
+		) {
 			const password = aes256Decrypt(
 				ftpTarget.password,
 				env.AES_ENCRYPTION_KEY!,

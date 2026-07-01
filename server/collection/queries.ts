@@ -3,7 +3,13 @@ import type { CollectionLayout } from 'utils/layout';
 
 import type { collectionUpdatePremission } from './permissions';
 
-import { Collection, CollectionAttribution, Community, WorkerTask, includeUserModel } from 'server/models';
+import {
+	Collection,
+	CollectionAttribution,
+	Community,
+	includeUserModel,
+	WorkerTask,
+} from 'server/models';
 import { PubPubError } from 'server/utils/errors';
 import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { expect } from 'utils/assert';

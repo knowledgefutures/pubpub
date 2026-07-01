@@ -29,7 +29,16 @@ import {
 } from 'sequelize-typescript';
 
 import { CommunityTemplate } from '../communityTemplate/model';
-import { Collection, DepositTarget, FtpTarget, Member, Page, Pub, ScopeSummary, SpamTag } from '../models';
+import {
+	Collection,
+	DepositTarget,
+	FtpTarget,
+	Member,
+	Page,
+	Pub,
+	ScopeSummary,
+	SpamTag,
+} from '../models';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table

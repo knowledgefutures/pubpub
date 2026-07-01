@@ -162,7 +162,15 @@ const FtpTargets = (props: Props) => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [createSearch, createFtpType, createPort, createHost, createFilePath, createUsername, createPassword]);
+	}, [
+		createSearch,
+		createFtpType,
+		createPort,
+		createHost,
+		createFilePath,
+		createUsername,
+		createPassword,
+	]);
 
 	const openEdit = useCallback((target: FtpTargetRow) => {
 		setEditTarget(target);
@@ -630,8 +638,7 @@ const FtpTargets = (props: Props) => {
 			>
 				<div className={Classes.DIALOG_BODY}>
 					<p>
-						Delete the FTP target for{' '}
-						<strong>{pendingDelete?.communityTitle}</strong> (
+						Delete the FTP target for <strong>{pendingDelete?.communityTitle}</strong> (
 						<code>{pendingDelete?.host}</code>)?
 					</p>
 					<p>This cannot be undone.</p>

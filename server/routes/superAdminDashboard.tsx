@@ -36,9 +36,9 @@ import {
 } from 'server/utils/cloudflareCustomHostnames';
 import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
-import { testSftpConnection } from 'server/utils/sftp';
 import {
 	getSuperAdminTabUrl,
 	isSuperAdminTabKind,
@@ -370,7 +370,7 @@ router.get('/api/superadmin/communities/search', async (req, res, next) => {
 		}
 
 		const communityIds = communities.map((c) => c.id);
-		let excludedIds = new Set<string | null>();
+		const excludedIds = new Set<string | null>();
 
 		if (excludeWithDepositTarget) {
 			const existingTargets = await DepositTarget.findAll({

@@ -4,11 +4,11 @@ import React from 'react';
 
 import { Router } from 'express';
 
-import { getCommunityExports } from 'server/community/queries';
 import { getCollectionExports } from 'server/collection/queries';
+import { getCommunityExports } from 'server/community/queries';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
-import { FtpTarget } from 'server/models';
 import Html from 'server/Html';
+import { FtpTarget } from 'server/models';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getPubForRequest } from 'server/utils/queryHelpers';

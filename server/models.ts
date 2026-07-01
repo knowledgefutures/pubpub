@@ -16,7 +16,6 @@ import { CommunityTemplate } from './communityTemplate/model';
 import { CrossrefDepositRecord } from './crossrefDepositRecord/model';
 import { CustomScript } from './customScript/model';
 import { DepositTarget } from './depositTarget/model';
-import { FtpTarget } from './ftpTarget/model';
 import { Discussion } from './discussion/model';
 import { DiscussionAnchor } from './discussionAnchor/model';
 import { Doc } from './doc/model';
@@ -30,6 +29,7 @@ import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding'
 import { FeatureFlag } from './featureFlag/model';
 import { FeatureFlagCommunity } from './featureFlagCommunity/model';
 import { FeatureFlagUser } from './featureFlagUser/model';
+import { FtpTarget } from './ftpTarget/model';
 import { Hub } from './hub/model';
 import { HubCommunity } from './hubCommunity/model';
 import { HubManager } from './hubManager/model';

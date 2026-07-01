@@ -24,6 +24,7 @@ import './ftpTargets.scss';
 type FtpTargetRow = {
 	id: string;
 	communityId: string | null;
+	name: string;
 	ftpType: 'sftp' | 'ftps' | null;
 	port: number | null;
 	host: string | null;
@@ -90,6 +91,7 @@ const FtpTargets = (props: Props) => {
 
 	// Create form
 	const createSearch = useCommunitySearch();
+	const [createName, setCreateName] = useState('');
 	const [createFtpType, setCreateFtpType] = useState<'sftp' | 'ftps'>('sftp');
 	const [createPort, setCreatePort] = useState('');
 	const [createHost, setCreateHost] = useState('');
@@ -99,6 +101,7 @@ const FtpTargets = (props: Props) => {
 
 	// Edit dialog — undefined means "untouched", '' means "user cleared the field"
 	const [editTarget, setEditTarget] = useState<FtpTargetRow | null>(null);
+	const [editName, setEditName] = useState('');
 	const [editFtpType, setEditFtpType] = useState<'sftp' | 'ftps'>('sftp');
 	const [editPort, setEditPort] = useState('');
 	const [editHost, setEditHost] = useState('');
@@ -119,6 +122,7 @@ const FtpTargets = (props: Props) => {
 		if (!q) return targets;
 		return targets.filter(
 			(t) =>
+				(t.name ?? '').toLowerCase().includes(q) ||
 				(t.host ?? '').toLowerCase().includes(q) ||
 				(t.ftpType ?? '').toLowerCase().includes(q) ||
 				t.communityTitle.toLowerCase().includes(q) ||
@@ -141,6 +145,7 @@ const FtpTargets = (props: Props) => {
 		try {
 			const result = await apiFetch.post<FtpTargetRow>('/api/superadmin/ftp-targets', {
 				communityId: createSearch.selected.id,
+				name: createName.trim() || undefined,
 				ftpType: createFtpType,
 				port: createPort.trim() ? parseInt(createPort.trim(), 10) : undefined,
 				host: createHost.trim(),
@@ -150,13 +155,16 @@ const FtpTargets = (props: Props) => {
 			});
 			setTargets((prev) => [result, ...prev]);
 			createSearch.reset();
+			setCreateName('');
 			setCreateFtpType('sftp');
 			setCreatePort('');
 			setCreateHost('');
 			setCreateFilePath('');
 			setCreateUsername('');
 			setCreatePassword('');
-			setSuccess(`FTP target created for "${result.communityTitle}" (${result.host}).`);
+			setSuccess(
+				`FTP target${result.name ? ` "${result.name}"` : ''} created for "${result.communityTitle}" (${result.host}).`,
+			);
 		} catch (err: any) {
 			setError(err?.error ?? err?.message ?? 'Failed to create FTP target.');
 		} finally {
@@ -164,6 +172,7 @@ const FtpTargets = (props: Props) => {
 		}
 	}, [
 		createSearch,
+		createName,
 		createFtpType,
 		createPort,
 		createHost,
@@ -174,6 +183,7 @@ const FtpTargets = (props: Props) => {
 
 	const openEdit = useCallback((target: FtpTargetRow) => {
 		setEditTarget(target);
+		setEditName(target.name ?? '');
 		setEditFtpType((target.ftpType as 'sftp' | 'ftps') ?? 'sftp');
 		setEditPort(target.port != null ? String(target.port) : '');
 		setEditHost(target.host ?? '');
@@ -193,6 +203,7 @@ const FtpTargets = (props: Props) => {
 		setSuccess(null);
 		try {
 			const body: Record<string, any> = {
+				name: editName.trim(),
 				ftpType: editFtpType,
 				host: editHost.trim(),
 				port: editPort.trim() ? parseInt(editPort.trim(), 10) : null,
@@ -216,7 +227,7 @@ const FtpTargets = (props: Props) => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [editTarget, editFtpType, editPort, editHost, editFilePath, editUsername, editPassword]);
+	}, [editTarget, editName, editFtpType, editPort, editHost, editFilePath, editUsername, editPassword]);
 
 	const handleDelete = useCallback(async (target: FtpTargetRow) => {
 		setPendingDelete(null);
@@ -315,6 +326,14 @@ const FtpTargets = (props: Props) => {
 						}}
 					/>
 				</FormGroup>
+				<FormGroup label="Name" style={{ flex: 0.8 }}>
+					<InputGroup
+						placeholder="e.g. CLOCKSS SFTP"
+						value={createName}
+						onChange={(e) => setCreateName(e.target.value)}
+						disabled={isLoading}
+					/>
+				</FormGroup>
 				<FormGroup label="Type">
 					<HTMLSelect
 						value={createFtpType}
@@ -397,6 +416,7 @@ const FtpTargets = (props: Props) => {
 					<table className="targets-table">
 						<thead>
 							<tr>
+								<th>Name</th>
 								<th>Community</th>
 								<th>Subdomain</th>
 								<th>Type</th>
@@ -410,6 +430,7 @@ const FtpTargets = (props: Props) => {
 						<tbody>
 							{filteredTargets.map((t) => (
 								<tr key={t.id}>
+									<td>{t.name || <span style={{ color: '#888' }}>—</span>}</td>
 									<td>{t.communityTitle}</td>
 									<td>
 										<code>{t.communitySubdomain}</code>
@@ -483,6 +504,13 @@ const FtpTargets = (props: Props) => {
 						Community: <strong>{editTarget?.communityTitle}</strong> (
 						<code>{editTarget?.communitySubdomain}</code>)
 					</p>
+					<FormGroup label="Name" className="dialog-field">
+						<InputGroup
+							placeholder="e.g. CLOCKSS SFTP"
+							value={editName}
+							onChange={(e) => setEditName(e.target.value)}
+						/>
+					</FormGroup>
 					<FormGroup label="Type" className="dialog-field">
 						<HTMLSelect
 							value={editFtpType}

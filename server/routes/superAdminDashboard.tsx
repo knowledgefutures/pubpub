@@ -112,17 +112,7 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			order: [['createdAt', 'DESC']],
 		});
 		return {
-			ftpTargets: targets.map((t) => ({
-				id: t.id,
-				communityId: t.communityId,
-				ftpType: t.ftpType,
-				port: t.port,
-				host: t.host,
-				filePath: t.filePath,
-				hasCredentials: Boolean(t.username),
-				communityTitle: t.community?.title ?? '(unknown)',
-				communitySubdomain: t.community?.subdomain ?? '(unknown)',
-			})),
+			ftpTargets: targets.map(sanitizeFtpTarget),
 		};
 	}
 	if (tabKind === 'exploreCommunities') {
@@ -317,6 +307,7 @@ const resolveCommunity = async (identifier: string) => {
 const sanitizeFtpTarget = (t: FtpTarget) => ({
 	id: t.id,
 	communityId: t.communityId,
+	name: t.name ?? '',
 	ftpType: t.ftpType,
 	port: t.port,
 	host: t.host,
@@ -597,7 +588,7 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 			throw new ForbiddenError();
 		}
 
-		const { communityId, ftpType, port, host, filePath, username, password } = req.body;
+		const { communityId, name, ftpType, port, host, filePath, username, password } = req.body;
 		if (!communityId || !host) {
 			throw new BadRequestError(new Error('communityId and host are required'));
 		}
@@ -609,6 +600,7 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 
 		const createData: Record<string, any> = {
 			communityId: community.id,
+			name: name ? String(name).trim() : '',
 			ftpType,
 			host: String(host).trim(),
 			port: port != null ? Number(port) : null,
@@ -656,9 +648,12 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 			throw new NotFoundError(new Error('FTP target not found'));
 		}
 
-		const { ftpType, port, host, filePath, username, password } = req.body;
+		const { name, ftpType, port, host, filePath, username, password } = req.body;
 		const updates: Record<string, any> = {};
 
+		if (name !== undefined) {
+			updates.name = String(name).trim();
+		}
 		if (ftpType !== undefined) {
 			if (!['sftp', 'ftps'].includes(ftpType)) {
 				throw new BadRequestError(new Error('ftpType must be "sftp" or "ftps"'));

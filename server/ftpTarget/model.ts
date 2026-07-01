@@ -29,6 +29,9 @@ export class FtpTarget extends Model<
 	@Column(DataType.UUID)
 	declare communityId: string | null;
 
+	@Column(DataType.STRING)
+	declare name: string | null;
+
 	@BelongsTo(() => Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' })
 	declare community?: Community;
 

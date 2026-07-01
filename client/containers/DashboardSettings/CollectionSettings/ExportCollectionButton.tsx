@@ -46,6 +46,7 @@ const normalizeError = (err: unknown): string => {
 
 type FtpTargetOption = {
 	id: string;
+	name: string | null;
 	host: string;
 	filePath: string | null;
 	ftpType: string;
@@ -107,9 +108,9 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 						const skipped: string[] = task.output?.skippedPubs ?? [];
 						const partial: { slug: string; missingFormats: string[] }[] =
 							task.output?.partialPubs ?? [];
-						const failedFtp = (
-							task.output?.ftpTargetResults ?? []
-						).filter((r: { uploaded: boolean }) => !r.uploaded);
+						const failedFtp = (task.output?.ftpTargetResults ?? []).filter(
+							(r: { uploaded: boolean }) => !r.uploaded,
+						);
 						if (skipped.length > 0 || partial.length > 0 || failedFtp.length > 0) {
 							setWarning(
 								<>
@@ -215,8 +216,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 			const body: { collectionId: string; ftpTargetIds?: string[] } = {
 				collectionId: activeCollection.id,
 			};
-			if (selectedFtpTargetIds.size > 0)
-				body.ftpTargetIds = Array.from(selectedFtpTargetIds);
+			if (selectedFtpTargetIds.size > 0) body.ftpTargetIds = Array.from(selectedFtpTargetIds);
 			const response = await apiFetch('/api/collections/export', {
 				method: 'POST',
 				body: JSON.stringify(body),
@@ -245,28 +245,6 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 	return (
 		<div className="export-collection-button-component">
 			<div className="export-controls">
-				{ftpTargets.length > 0 && (
-					<div className="ftp-target-selection">
-						<span className="ftp-target-label">Upload to FTP:</span>
-						{ftpTargets.map((t) => (
-							<Checkbox
-								key={t.id}
-								label={`${t.host}${t.filePath ? ` (${t.filePath})` : ''}`}
-								checked={selectedFtpTargetIds.has(t.id)}
-								disabled={isButtonDisabled}
-								onChange={(e) => {
-									const checked = (e.target as HTMLInputElement).checked;
-									setSelectedFtpTargetIds((prev) => {
-										const next = new Set(prev);
-										if (checked) next.add(t.id);
-										else next.delete(t.id);
-										return next;
-									});
-								}}
-							/>
-						))}
-					</div>
-				)}
 				<Button
 					disabled={isButtonDisabled}
 					onClick={startExport}
@@ -303,6 +281,28 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 						'Export Collection'
 					)}
 				</Button>
+				{ftpTargets.length > 0 && (
+					<div className="ftp-target-selection">
+						<span className="ftp-target-label">Also upload to FTP:</span>
+						{ftpTargets.map((t) => (
+							<Checkbox
+								key={t.id}
+								label={t.name || `${t.host}${t.filePath ? ` (${t.filePath})` : ''}`}
+								checked={selectedFtpTargetIds.has(t.id)}
+								disabled={isButtonDisabled}
+								onChange={(e) => {
+									const checked = (e.target as HTMLInputElement).checked;
+									setSelectedFtpTargetIds((prev) => {
+										const next = new Set(prev);
+										if (checked) next.add(t.id);
+										else next.delete(t.id);
+										return next;
+									});
+								}}
+							/>
+						))}
+					</div>
+				)}
 			</div>
 
 			{error && (
@@ -420,7 +420,8 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 														<>
 															{results.map((r) => (
 																<div key={r.id}>
-																	{r.uploaded ? '✓' : '✗'} {r.host}
+																	{r.uploaded ? '✓' : '✗'}{' '}
+																	{r.host}
 																	{r.error ? `: ${r.error}` : ''}
 																</div>
 															))}
@@ -434,7 +435,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 																	failed.length === 0
 																		? 'success'
 																		: failed.length <
-																			  results.length
+																				results.length
 																			? 'warning'
 																			: 'danger'
 																}
@@ -449,10 +450,14 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 											</td>
 											<td>
 												{hasFileWarnings ? (
-													<Tooltip content={fileWarningContent ?? undefined}>
+													<Tooltip
+														content={fileWarningContent ?? undefined}
+													>
 														<Tag minimal intent="warning">
-															{itemSkipped.length + itemPartial.length}{' '}
-															{itemSkipped.length + itemPartial.length ===
+															{itemSkipped.length +
+																itemPartial.length}{' '}
+															{itemSkipped.length +
+																itemPartial.length ===
 															1
 																? 'pub'
 																: 'pubs'}{' '}

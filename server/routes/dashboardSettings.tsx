@@ -40,7 +40,7 @@ const getSettingsData = async (
 		isAdmin && collectionSlug
 			? FtpTarget.findAll({
 					where: { communityId: initialData.communityData.id },
-					attributes: ['id', 'host', 'filePath', 'ftpType'],
+					attributes: ['id', 'host', 'filePath', 'ftpType', 'name'],
 				})
 			: null,
 	]);

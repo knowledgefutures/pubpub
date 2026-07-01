@@ -35,12 +35,10 @@ const waitForExportUrl = async (
 		while (Date.now() - start < timeoutMs) {
 			// biome-ignore lint/performance/noAwaitInLoops: intentional polling loop
 			await sleep(3000);
-			// biome-ignore lint/performance/noAwaitInLoops: intentional polling loop
 			const exp = await Export.findOne({
 				where: { pubId, format, historyKey, url: { [Op.ne]: null } },
 			});
 			if (exp?.url) return exp.url;
-			// biome-ignore lint/performance/noAwaitInLoops: intentional polling loop
 			const task = await WorkerTask.findByPk(result.taskId, {
 				attributes: ['isProcessing', 'error'],
 			});

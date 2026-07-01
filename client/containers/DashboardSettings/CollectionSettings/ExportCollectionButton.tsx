@@ -71,7 +71,7 @@ export const ExportCollectionButton = ({ pastExports: initialExports, ftpTargets
 		if (inProgress) {
 			setActiveWorkerTaskId(inProgress.id);
 		}
-	}, []);
+	}, [initialExports]);
 
 	useEffect(() => {
 		if (!activeWorkerTaskId) {

@@ -190,6 +190,29 @@ export const collectionRouter = {
 		},
 	},
 	/**
+	 * `POST /api/collections/export`
+	 *
+	 * Export a collection as a ZIP of PDFs and JATS XML
+	 *
+	 * @access You need to be **logged in** and have access to this resource.
+	 */
+	export: {
+		path: '/api/collections/export',
+		method: 'POST',
+		summary: 'Export a collection as a ZIP',
+		description: 'Export a collection as a ZIP of PDFs and JATS XML for all released pubs.',
+		body: z.object({
+			collectionId: z.string().uuid(),
+			ftpTargetId: z.string().uuid().optional(),
+		}),
+		responses: {
+			200: z.object({
+				workerTaskId: z.string().uuid(),
+				message: z.string().optional(),
+			}),
+		},
+	},
+	/**
 	 * `GET /api/collections/:collectionId/resource`
 	 *
 	 * Get collection as a resource

@@ -5,7 +5,9 @@ import React from 'react';
 import { Router } from 'express';
 
 import { getCommunityExports } from 'server/community/queries';
+import { getCollectionExports } from 'server/collection/queries';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
+import { FtpTarget } from 'server/models';
 import Html from 'server/Html';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -15,8 +17,14 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 export const router = Router();
 
-const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdmin?: boolean) => {
-	const [depositTarget, pubData, archives] = await Promise.all([
+const getSettingsData = async (
+	initialData: InitialData,
+	pubSlug?: string,
+	isAdmin?: boolean,
+	collectionSlug?: string,
+) => {
+	const activeCollection = initialData.scopeData.elements.activeCollection;
+	const [depositTarget, pubData, archives, collectionExports, ftpTargets] = await Promise.all([
 		getCommunityDepositTarget(initialData.communityData.id),
 		pubSlug
 			? getPubForRequest({
@@ -26,10 +34,21 @@ const getSettingsData = async (initialData: InitialData, pubSlug?: string, isAdm
 				})
 			: null,
 		isAdmin ? getCommunityExports(initialData.communityData.id) : null,
+		isAdmin && collectionSlug && activeCollection
+			? getCollectionExports(activeCollection.id)
+			: null,
+		isAdmin && collectionSlug
+			? FtpTarget.findAll({
+					where: { communityId: initialData.communityData.id },
+					attributes: ['id', 'host', 'filePath', 'ftpType'],
+				})
+			: null,
 	]);
 	const baseSettingsData = {
 		depositTarget,
 		archives,
+		collectionExports,
+		ftpTargets,
 	};
 	if (pubSlug) {
 		return {
@@ -67,6 +86,7 @@ router.get(
 				initialData,
 				req.params.pubSlug,
 				initialData.scopeData.activePermissions.canAdmin,
+				req.params.collectionSlug,
 			);
 
 			return renderToNodeStream(

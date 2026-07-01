@@ -1,0 +1,26 @@
+.export-collection-button-component {
+	.export-controls {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	.export-history {
+		margin-top: 20px;
+
+		.history-toggle {
+			background: none;
+			border: none;
+			cursor: pointer;
+			font-size: 13px;
+			font-weight: 600;
+			padding: 0;
+			color: inherit;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}

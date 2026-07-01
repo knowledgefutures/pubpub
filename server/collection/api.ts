@@ -6,7 +6,9 @@ import { prepareResource, submitResource } from 'deposit/datacite/deposit';
 import { transformCollectionToResource } from 'deposit/transform/collection';
 import { assertCommunityApprovedForDoi } from 'server/doi/permissions';
 import { generateDoi } from 'server/doi/queries';
+import { WorkerTask } from 'server/models';
 import { ForbiddenError, NotFoundError } from 'server/utils/errors';
+import { addWorkerTask } from 'server/utils/workers';
 import { contract } from 'utils/api/contract';
 import { expect } from 'utils/assert';
 import { createGetRequestIds } from 'utils/getRequestIds';
@@ -73,6 +75,46 @@ export const collectionServer = s.router(contract.collection, {
 		);
 		return { status: 200, body: body.id };
 	},
+	export: async ({ req, body }) => {
+		const { collectionId, ftpTargetId } = body;
+		const collection = await findCollection(collectionId);
+		if (!collection) {
+			throw new NotFoundError();
+		}
+		const permissions = await getPermissions({
+			userId: req.user.id,
+			collectionId,
+			communityId: collection.communityId,
+		});
+		if (!permissions.collectionExport) {
+			throw new ForbiddenError();
+		}
+
+		const runningTask = await WorkerTask.findOne({
+			where: {
+				type: 'collectionExport',
+				input: { collectionId },
+				isProcessing: true,
+			},
+		});
+		if (runningTask) {
+			return {
+				status: 200,
+				body: { workerTaskId: runningTask.id, message: 'Export already in progress' },
+			};
+		}
+
+		const workerTask = await addWorkerTask({
+			type: 'collectionExport',
+			input: {
+				collectionId,
+				communityId: collection.communityId,
+				ftpTargetId: ftpTargetId ?? null,
+			},
+		});
+		return { status: 200, body: { workerTaskId: workerTask.id } };
+	},
+
 	doi: {
 		deposit: async ({ req, params }) => {
 			const { collectionId } = params;

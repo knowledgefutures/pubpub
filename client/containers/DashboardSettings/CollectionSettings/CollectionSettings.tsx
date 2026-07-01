@@ -15,16 +15,34 @@ import CommunityOrCollectionLevelPubSettings from '../CommunitySettings/Communit
 import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
+import { ExportCollectionButton } from './ExportCollectionButton';
+
+type PastExport = {
+	id: string;
+	createdAt: string;
+	isProcessing: boolean;
+	output: { downloadUrl: string; ftpUploaded: boolean } | null;
+	error: string | null;
+};
+
+type FtpTargetOption = {
+	id: string;
+	host: string;
+	filePath: string | null;
+	ftpType: string;
+};
 
 type Props = {
 	settingsData: {
 		depositTarget?: DepositTarget | null;
+		collectionExports?: PastExport[] | null;
+		ftpTargets?: FtpTargetOption[] | null;
 	};
 };
 
 const CollectionSettings = (props: Props) => {
 	const {
-		settingsData: { depositTarget },
+		settingsData: { depositTarget, collectionExports, ftpTargets },
 	} = props;
 	const {
 		communityData,
@@ -131,6 +149,20 @@ const CollectionSettings = (props: Props) => {
 					/>,
 				],
 			},
+		collection.kind !== 'tag' && {
+			id: 'export',
+			title: 'Export',
+			icon: 'export',
+			hideSaveButton: true,
+			sections: [
+				<SettingsSection title="Export Collection" id="export-collection">
+					<ExportCollectionButton
+						pastExports={collectionExports ?? []}
+						ftpTargets={ftpTargets ?? []}
+					/>
+				</SettingsSection>,
+			],
+		},
 	]);
 
 	return (

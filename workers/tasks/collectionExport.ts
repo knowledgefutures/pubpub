@@ -234,5 +234,5 @@ export const collectionExportTask = async ({
 		});
 	}
 
-	return { downloadUrl, ftpUploaded, skippedPubs };
+	return { downloadUrl, ftpUploaded, skippedPubs, partialPubs };
 };

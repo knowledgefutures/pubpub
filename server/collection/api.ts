@@ -104,6 +104,22 @@ export const collectionServer = s.router(contract.collection, {
 			};
 		}
 
+		const safeFtpTargetIds = Array.from(new Set(ftpTargetIds ?? []));
+		if (safeFtpTargetIds.length > 0) {
+			const { FtpTarget } = await import('server/models');
+			const targets = await FtpTarget.findAll({
+				where: { id: safeFtpTargetIds, communityId: collection.communityId },
+				attributes: ['id'],
+			});
+			if (targets.length !== safeFtpTargetIds.length) {
+				throw new ForbiddenError(
+					new Error(
+						`Invalid FTP target IDs: ${ftpTargetIds?.filter((id) => !safeFtpTargetIds.includes(id))?.join(', ')}`,
+					),
+				);
+			}
+		}
+
 		const workerTask = await addWorkerTask({
 			type: 'collectionExport',
 			input: {

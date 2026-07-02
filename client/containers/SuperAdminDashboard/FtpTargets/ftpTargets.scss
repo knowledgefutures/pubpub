@@ -44,28 +44,31 @@
 		}
 
 		th:nth-child(1),
-		td:nth-child(1) { width: 20%; }
+		td:nth-child(1) { width: 12%; } // Name
 
 		th:nth-child(2),
-		td:nth-child(2) { width: 14%; }
+		td:nth-child(2) { width: 13%; } // Community
 
 		th:nth-child(3),
-		td:nth-child(3) { width: 7%; }
+		td:nth-child(3) { width: 7%; } // Subdomain
 
 		th:nth-child(4),
-		td:nth-child(4) { width: 22%; }
+		td:nth-child(4) { width: 5%; } // Type
 
 		th:nth-child(5),
-		td:nth-child(5) { width: 7%; }
+		td:nth-child(5) { width: 15%; } // Host
 
 		th:nth-child(6),
-		td:nth-child(6) { width: 16%; }
+		td:nth-child(6) { width: 5%; } // Port
 
 		th:nth-child(7),
-		td:nth-child(7) { width: 10%; }
+		td:nth-child(7) { width: 9%; } // Credentials
 
 		th:nth-child(8),
-		td:nth-child(8) { width: 100px; text-align: right; overflow: visible; }
+		td:nth-child(8) { width: 10%; } // File Path
+
+		th:nth-child(9),
+		td:nth-child(9) { width: 100px; text-align: right; overflow: visible; } // Actions
 
 		th {
 			font-weight: 600;

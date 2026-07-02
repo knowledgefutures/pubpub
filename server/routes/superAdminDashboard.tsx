@@ -682,17 +682,8 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 				updates.password = null;
 				updates.passwordInitVec = null;
 			} else {
+				// Encrypt any new password first (before the connection test).
 				if (password) {
-					const effectiveHost = updates.host ?? target.host;
-					const effectivePort = port !== undefined ? updates.port : target.port;
-					const effectivePath =
-						filePath !== undefined ? updates.filePath : target.filePath;
-					await testSftpConnection(
-						{ host: effectiveHost, port: effectivePort, username, password },
-						effectivePath,
-					).catch((err) => {
-						throw new BadRequestError(new Error(err.message));
-					});
 					const { encryptedText, initVec } = aes256Encrypt(
 						password,
 						env.AES_ENCRYPTION_KEY!,
@@ -700,12 +691,49 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 					updates.password = encryptedText;
 					updates.passwordInitVec = initVec;
 				}
-				updates.username = username;
+				if (username !== undefined) {
+					updates.username = username;
+				}
+
+				// Test connection if any connection-relevant field changed and credentials exist.
+				const connectionFieldChanged =
+					host !== undefined ||
+					port !== undefined ||
+					filePath !== undefined ||
+					ftpType !== undefined ||
+					username !== undefined ||
+					password !== undefined;
+
+				const effectiveUsername = username ?? target.username;
+				const hasCredentials =
+					Boolean(effectiveUsername) && Boolean(password ?? target.password);
+
+				if (connectionFieldChanged && hasCredentials) {
+					const effectiveHost = updates.host ?? target.host;
+					const effectivePort = updates.port !== undefined ? updates.port : target.port;
+					const effectivePath =
+						updates.filePath !== undefined ? updates.filePath : target.filePath;
+					const effectivePassword = password
+						? password
+						: aes256Decrypt(
+								target.password!,
+								env.AES_ENCRYPTION_KEY!,
+								target.passwordInitVec!,
+							);
+
+					await testSftpConnection(
+						{
+							host: effectiveHost,
+							port: effectivePort,
+							username: effectiveUsername,
+							password: effectivePassword,
+						},
+						effectivePath,
+					).catch((err) => {
+						throw new BadRequestError(new Error(err.message));
+					});
+				}
 			}
-		} else if (password) {
-			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
-			updates.password = encryptedText;
-			updates.passwordInitVec = initVec;
 		}
 
 		await target.update(updates);

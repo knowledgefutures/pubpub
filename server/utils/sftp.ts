@@ -1,3 +1,5 @@
+import type { Readable } from 'stream';
+
 import SftpClient from 'ssh2-sftp-client';
 
 export type SftpConnectionParams = {
@@ -46,7 +48,7 @@ export const testSftpConnection = async (
 export const uploadFileViaSftp = async (
 	params: SftpConnectionParams,
 	remotePath: string,
-	content: Buffer,
+	content: Buffer | Readable,
 ): Promise<void> => {
 	const client = new SftpClient();
 	try {

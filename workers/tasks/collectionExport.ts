@@ -1,6 +1,5 @@
 import archiver from 'archiver';
 import { Op } from 'sequelize';
-import { PassThrough } from 'stream';
 
 import { env } from 'server/env';
 import { getOrStartExportTask } from 'server/export/queries';
@@ -102,14 +101,6 @@ export const collectionExportTask = async ({
 	const zipName = `${folderName}.zip`;
 
 	const archiveStream = archiver('zip', { zlib: { level: 6 } });
-	const chunks: Buffer[] = [];
-
-	archiveStream.on('data', (chunk: Buffer) => chunks.push(chunk));
-
-	const archiveFinished = new Promise<void>((resolve, reject) => {
-		archiveStream.on('end', resolve);
-		archiveStream.on('error', reject);
-	});
 
 	const fetchFile = async (url: string, name: string) => {
 		const key = new URL(url).pathname.slice(1);
@@ -174,10 +165,8 @@ export const collectionExportTask = async ({
 		}
 	}
 
-	archiveStream.finalize();
-	await archiveFinished;
-
 	if (filesAdded === 0) {
+		archiveStream.abort();
 		const reason =
 			pubsWithReleases.length === 0
 				? 'This collection has no published pubs to export.'
@@ -185,12 +174,10 @@ export const collectionExportTask = async ({
 		throw new Error(reason);
 	}
 
-	const zipBuffer = Buffer.concat(chunks);
 	const s3Key = `exports/collections/${collectionId}/${zipName}`;
 
-	const passthrough = new PassThrough();
-	passthrough.end(zipBuffer);
-	await exportsClient.uploadFileSplit(s3Key, passthrough, { queueSize: 4 });
+	archiveStream.finalize();
+	await exportsClient.uploadFileSplit(s3Key, archiveStream, { queueSize: 4 });
 
 	const downloadUrl = await exportsClient.getPresignedUrl(s3Key);
 
@@ -219,6 +206,7 @@ export const collectionExportTask = async ({
 				const baseDir = ftpTarget.filePath?.replace(/\/$/, '') ?? '';
 				const remotePath = baseDir ? `${baseDir}/${zipName}` : zipName;
 				try {
+					const stream = await exportsClient.downloadFile(s3Key);
 					await uploadFileViaSftp(
 						{
 							host: ftpTarget.host,
@@ -227,7 +215,7 @@ export const collectionExportTask = async ({
 							password,
 						},
 						remotePath,
-						zipBuffer,
+						stream,
 					);
 					return { id: targetId, host: ftpTarget.host, uploaded: true };
 				} catch (err) {

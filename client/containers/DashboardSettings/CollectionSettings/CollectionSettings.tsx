@@ -150,7 +150,7 @@ const CollectionSettings = (props: Props) => {
 					/>,
 				],
 			},
-		collection.kind !== 'tag' && {
+		{
 			id: 'export',
 			title: 'Export',
 			icon: 'export',

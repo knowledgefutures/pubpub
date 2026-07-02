@@ -1,3 +1,4 @@
+import { PassThrough } from 'node:stream';
 import archiver from 'archiver';
 import { Op } from 'sequelize';
 
@@ -177,7 +178,10 @@ export const collectionExportTask = async ({
 	const s3Key = `exports/collections/${collectionId}/${zipName}`;
 
 	archiveStream.finalize();
-	await exportsClient.uploadFileSplit(s3Key, archiveStream, { queueSize: 4 });
+
+	const collectionExportStream = new PassThrough();
+	archiveStream.pipe(collectionExportStream);
+	await exportsClient.uploadFileSplit(s3Key, collectionExportStream, { queueSize: 4 });
 
 	const downloadUrl = await exportsClient.getPresignedUrl(s3Key);
 

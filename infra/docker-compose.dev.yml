@@ -82,7 +82,7 @@ services:
             -c work_mem=16MB
             -c maintenance_work_mem=512MB
         volumes:
-            - pgdata3:/var/lib/postgresql/data
+            - pgdata:/var/lib/postgresql/data
         ports:
             - "${DB_PORT:-5439}:5432"
         networks: [appnet]
@@ -111,5 +111,4 @@ networks:
 
 volumes:
     pgdata:
-    pgdata3:
     rabbitmqdata:

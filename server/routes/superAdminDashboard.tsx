@@ -795,6 +795,7 @@ router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
 
 		const createData: Record<string, any> = {
 			communityId: destCommunity.id,
+			name: source.name ?? '',
 			ftpType: source.ftpType,
 			port: source.port,
 			host: source.host,

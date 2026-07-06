@@ -127,6 +127,15 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 		// Accumulate per-page box data from paged.js events
 		const collectedPages: PageBoxes[] = [];
 
+		page.on('console', (msg) => {
+			if (msg.type() === 'error' || msg.type() === 'warning') {
+				console.error(`[pubstash] browser ${msg.type()}: ${msg.text()}`);
+			}
+		});
+		page.on('pageerror', (err) => {
+			console.error(`[pubstash] browser uncaught error:`, err.message);
+		});
+
 		// Expose callbacks that paged.js will invoke from the browser context.
 		// Playwright's exposeFunction bridges browser→Node.
 		await page.exposeFunction('__pubstashOnPage', (pageData: any) => {
@@ -158,6 +167,14 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 				);
 
 				const polyfill = (window as any).PagedPolyfill;
+				if (!polyfill) {
+					clearTimeout(timeout);
+					return reject(
+						new Error(
+							'PagedPolyfill is not defined — polyfill script may not have executed',
+						),
+					);
+				}
 
 				polyfill.on('page', (pg: any) => {
 					const mediabox = pg.element.getBoundingClientRect();
@@ -190,7 +207,10 @@ async function convertHtmlToPdf(html: string): Promise<Buffer> {
 					resolve();
 				});
 
-				polyfill.preview();
+				polyfill.preview().catch((err: any) => {
+					clearTimeout(timeout);
+					reject(new Error(`paged.js preview() failed: ${err?.message ?? err}`));
+				});
 			});
 		});
 

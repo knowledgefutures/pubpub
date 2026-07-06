@@ -5,6 +5,14 @@ import { Op } from 'sequelize';
 import { User } from 'server/models';
 import { slugifyString } from 'utils/strings';
 
+import { OIDC_ROLE_CLAIM } from './oidc.server';
+
+type UserInfoFields = Partial<
+	Pick<OIDCUserInfo, 'name' | 'email' | 'picture' | 'given_name' | 'family_name'> & {
+		[key: string]: unknown;
+	}
+>;
+
 /**
  * Look up the local PubPub `User` row that corresponds to a kf-auth subject,
  * auto-creating it from kf-auth userinfo on first contact.
@@ -18,12 +26,17 @@ import { slugifyString } from 'utils/strings';
  */
 export async function provisionLocalUser(
 	kfUserId: string,
-	userInfo: Partial<
-		Pick<OIDCUserInfo, 'name' | 'email' | 'picture' | 'given_name' | 'family_name'>
-	>,
+	userInfo: UserInfoFields,
 ): Promise<InstanceType<typeof User>> {
+	const isSuperAdmin = userInfo[OIDC_ROLE_CLAIM] === 'admin';
+
 	const existing = await User.findOne({ where: { id: kfUserId } });
-	if (existing) return existing;
+	if (existing) {
+		if (existing.isSuperAdmin !== isSuperAdmin) {
+			await existing.update({ isSuperAdmin });
+		}
+		return existing;
+	}
 
 	const firstName = (userInfo.given_name || userInfo.name || 'New').trim();
 	const lastName = (userInfo.family_name || 'User').trim();
@@ -57,6 +70,7 @@ export async function provisionLocalUser(
 		initials,
 		email,
 		avatar: userInfo.picture || null,
+		isSuperAdmin,
 		hash: '',
 		salt: '',
 	} as any);

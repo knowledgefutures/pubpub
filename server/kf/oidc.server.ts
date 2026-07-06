@@ -25,6 +25,7 @@ const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID ?? 'kf_pubpub';
 const OIDC_CLIENT_SECRET = process.env.OIDC_CLIENT_SECRET ?? '';
 
 const OIDC_ORGS_CLAIM = process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures.org/orgs';
+const OIDC_ROLE_CLAIM = process.env.OIDC_ROLE_CLAIM ?? 'https://knowledgefutures.org/role';
 
 const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
 const REDIRECT_URI = `${APP_URL}/auth/callback`;
@@ -416,6 +417,7 @@ export {
 	OIDC_CLIENT_ID,
 	OIDC_CLIENT_SECRET,
 	OIDC_ORGS_CLAIM,
+	OIDC_ROLE_CLAIM,
 	OIDC_ACCOUNT_URL,
 	APP_URL,
 	REDIRECT_URI,

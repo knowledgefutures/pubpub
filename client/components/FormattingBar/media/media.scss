@@ -38,6 +38,12 @@ $bp: vendor.$bp-namespace;
 				padding-top: 1em;
 				font-size: 16px;
 			}
+			.drag-error {
+				padding-top: 1em;
+				font-size: 16px;
+				font-weight: 600;
+				color: #db3737;
+			}
 		}
 		.top-input {
 			display: flex;

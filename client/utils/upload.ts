@@ -41,7 +41,9 @@ const checkForAsset = (url): Promise<void> => {
 							return setTimeout(checkUrl, checkInterval);
 						}
 						return reject(
-							new Error(`Uploaded file could not be verified (status ${response.status})`),
+							new Error(
+								`Uploaded file could not be verified (status ${response.status})`,
+							),
 						);
 					}
 					return resolve();
@@ -131,17 +133,26 @@ export const s3Upload = (
 			'load',
 			(evt) => {
 				if (sendFile.status < 200 || sendFile.status >= 300) {
-					onError(new Error(`Upload was rejected by the server (status ${sendFile.status})`));
+					onError(
+						new Error(`Upload was rejected by the server (status ${sendFile.status})`),
+					);
 					return;
 				}
 				checkForAsset(`${baseUrl}/${fileName}`).then(
 					() => onFinish(evt, index, file.type, fileName, file.name),
-					(err) => onError(err instanceof Error ? err : new Error('Upload verification failed')),
+					(err) =>
+						onError(
+							err instanceof Error ? err : new Error('Upload verification failed'),
+						),
 				);
 			},
 			false,
 		);
-		sendFile.addEventListener('error', () => onError(new Error('Network error during upload')), false);
+		sendFile.addEventListener(
+			'error',
+			() => onError(new Error('Network error during upload')),
+			false,
+		);
 		sendFile.addEventListener('abort', () => onError(new Error('Upload was aborted')), false);
 		sendFile.open('POST', baseUrl, true);
 		sendFile.send(formData);

@@ -60,6 +60,7 @@ const ExportDataSection = (props: Props) => {
 			<ExportCommunityDataButton
 				disabled={remainingExports === 0}
 				pastExports={props.settingsData.archives}
+				isSuperAdmin={isSuperAdmin}
 			/>
 		</SettingsSection>
 	);

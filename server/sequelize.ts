@@ -69,7 +69,9 @@ export const poolOptions = {
 	min: 2,
 	idle: env.SEQUELIZE_IDLE_TIMEOUT ?? 60_000,
 	acquire: env.SEQUELIZE_ACQUIRE_TIMEOUT ?? 10_000,
-	maxUses: env.SEQUELIZE_MAX_USES ?? Infinity,
+	// Recycle connections after a finite number of uses rather than reusing them
+	// forever, so a long-lived socket that has gone stale is retired gracefully.
+	maxUses: env.SEQUELIZE_MAX_USES ?? 7500,
 } satisfies PoolOptions;
 
 // this is to avoid thundering herd
@@ -87,7 +89,11 @@ export const sequelize = new SequelizeWithId(database_url, {
 	// logQueryParameters: true,
 	logging: false,
 
-	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
+	dialectOptions: {
+		ssl: useSSL ? { rejectUnauthorized: false } : false,
+		// helps maybe fix some connection issues w worker
+		keepAlive: true,
+	},
 	dialect: 'postgres',
 	pool: poolOptions,
 	hooks: {
@@ -103,7 +109,13 @@ export const sequelize = new SequelizeWithId(database_url, {
 	},
 	retry: {
 		max: 3,
-		match: [/Deadlock/i, ConnectionError],
+		match: [
+			/Deadlock/i,
+			ConnectionError,
+			/Connection terminated unexpectedly/i,
+			/Connection terminated/i,
+			/ECONNRESET/,
+		],
 	},
 });
 

@@ -11,6 +11,7 @@ import { isMainThread, parentPort, workerData } from 'worker_threads';
 import { sequelizeSyncPromise } from 'server/sequelize';
 
 import { accountExportTask } from './tasks/accountExport';
+import { collectionExportTask } from './tasks/collectionExport';
 import { communityExportTask } from './tasks/communityExport';
 import { exportTask } from './tasks/export';
 import { importTask } from './tasks/import';
@@ -25,6 +26,7 @@ const taskMap = {
 	import: importTask,
 	communityExport: communityExportTask,
 	accountExport: accountExportTask,
+	collectionExport: collectionExportTask,
 };
 
 export type TaskType = keyof typeof taskMap;

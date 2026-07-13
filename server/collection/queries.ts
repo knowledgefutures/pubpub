@@ -3,7 +3,13 @@ import type { CollectionLayout } from 'utils/layout';
 
 import type { collectionUpdatePremission } from './permissions';
 
-import { Collection, CollectionAttribution, Community, includeUserModel } from 'server/models';
+import {
+	Collection,
+	CollectionAttribution,
+	Community,
+	includeUserModel,
+	WorkerTask,
+} from 'server/models';
 import { PubPubError } from 'server/utils/errors';
 import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { expect } from 'utils/assert';
@@ -150,3 +156,11 @@ export const findCollection = (collectionId: string) =>
 	Collection.findOne({ where: { id: collectionId }, ...findCollectionOptions }) as Promise<
 		types.DefinitelyHas<Collection, 'community' | 'attributions'>
 	>;
+
+export const getCollectionExports = (collectionId: string) =>
+	WorkerTask.findAll({
+		where: { type: 'collectionExport', input: { collectionId } },
+		attributes: ['id', 'createdAt', 'isProcessing', 'output', 'error'],
+		order: [['createdAt', 'DESC']],
+		limit: 20,
+	});

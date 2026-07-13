@@ -29,7 +29,16 @@ import {
 } from 'sequelize-typescript';
 
 import { CommunityTemplate } from '../communityTemplate/model';
-import { Collection, DepositTarget, Member, Page, Pub, ScopeSummary, SpamTag } from '../models';
+import {
+	Collection,
+	DepositTarget,
+	FtpTarget,
+	Member,
+	Page,
+	Pub,
+	ScopeSummary,
+	SpamTag,
+} from '../models';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table
@@ -276,6 +285,13 @@ export class Community extends Model<
 		foreignKey: 'communityId',
 	})
 	declare depositTargets?: DepositTarget[];
+
+	@HasMany(() => FtpTarget, {
+		onDelete: 'CASCADE',
+		as: 'ftpTargets',
+		foreignKey: 'communityId',
+	})
+	declare ftpTargets?: FtpTarget[];
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',

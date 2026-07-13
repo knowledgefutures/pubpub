@@ -24,6 +24,7 @@ services:
             DATABASE_URL: postgres://appuser:apppassword@db:5432/appdb
             CLOUDAMQP_URL: amqp://appuser:apppassword@rabbitmq:5672/appvhost
             VALKEY_URL: redis://valkey:6379
+            PUBPUB_LOCAL_COMMUNITY: demo
         depends_on:
             - db
             - rabbitmq
@@ -95,6 +96,41 @@ services:
         ports:
             - "${VALKEY_PORT:-6380}:6379"
         networks: [appnet]
+
+    sftp:
+        image: atmoz/sftp
+        volumes:
+            - ./sftp/upload:/home/sftpuser/upload
+        ports:
+            - "2222:22"
+        command: sftpuser:sftppassword:1001
+        networks: [appnet]
+
+    pubstash:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+            target: dev
+        env_file:
+            - .env.local
+        environment:
+            NODE_ENV: development
+            PORT: "8080"
+            MAX_CONCURRENCY: "4"
+            CHROMIUM_PATH: "/usr/bin/chromium"
+            CLOUDAMQP_URL: "amqp://appuser:apppassword@rabbitmq:5672/appvhost"
+        command: ["pnpm", "run", "pubstash-dev"]
+        networks: [appnet]
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - "curl -sf http://127.0.0.1:8080/ || exit 1"
+            interval: 15s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+        volumes:
+            - ..:/app
 
     # cron:
     #     build:

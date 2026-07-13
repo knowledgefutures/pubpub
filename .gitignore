@@ -75,3 +75,6 @@ tmp/
 
 planning/
 .claude
+
+infra/sftp/
+!infra/sftp/upload/.gitkeep

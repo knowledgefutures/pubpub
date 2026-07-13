@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { Button, Callout, HTMLTable, Spinner, Tag } from '@blueprintjs/core';
+import { Button, Callout, HTMLTable, Icon, Spinner, Tag, Tooltip } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 
@@ -17,9 +17,10 @@ type PastExport = {
 type Props = {
 	disabled?: boolean;
 	pastExports?: PastExport[];
+	isSuperAdmin?: boolean;
 };
 
-export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
+export const ExportCommunityDataButton = ({ disabled, pastExports, isSuperAdmin }: Props) => {
 	const [isRequesting, setIsRequesting] = useState(false);
 	const [requestedAt, setRequestedAt] = useState<Date | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
@@ -115,10 +116,15 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 								const createdAt = new Date(exportItem.createdAt);
 								const expiresAt = new Date(createdAt.getTime() + SEVEN_DAYS_MS);
 								const isExpired = Date.now() > expiresAt.getTime();
+								// The worker sometimes fails to write the final result back to
+								// the database (intermittent connection issue) even though the
+								// export itself succeeded and produced a download URL. When a URL
+								// is present we treat the export as successful, regardless of any
+								// error recorded alongside it.
 								const hasUrl =
 									!exportItem.isProcessing &&
-									!exportItem.error &&
-									typeof exportItem.output === 'string';
+									typeof exportItem.output === 'string' &&
+									exportItem.output.length > 0;
 
 								let status: React.ReactNode;
 								if (exportItem.isProcessing) {
@@ -126,6 +132,32 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 										<Tag minimal intent="primary">
 											Processing
 										</Tag>
+									);
+								} else if (hasUrl) {
+									status = (
+										<span
+											style={{
+												display: 'inline-flex',
+												alignItems: 'center',
+												gap: 4,
+											}}
+										>
+											<Tag minimal intent={isExpired ? 'warning' : 'success'}>
+												{isExpired ? 'Expired' : 'Ready'}
+											</Tag>
+											{/* Surface the underlying error to super admins so the
+											    intermittent worker failure stays visible, while
+											    still presenting the export as successful. */}
+											{isSuperAdmin && exportItem.error && (
+												<Tooltip content={exportItem.error}>
+													<Icon
+														icon="info-sign"
+														intent="warning"
+														iconSize={12}
+													/>
+												</Tooltip>
+											)}
+										</span>
 									);
 								} else if (exportItem.error) {
 									status = (
@@ -152,7 +184,7 @@ export const ExportCommunityDataButton = ({ disabled, pastExports }: Props) => {
 										<td>{createdAt.toLocaleString()}</td>
 										<td>{status}</td>
 										<td>
-											{!exportItem.isProcessing && !exportItem.error
+											{hasUrl
 												? isExpired
 													? 'Expired'
 													: expiresAt.toLocaleDateString()

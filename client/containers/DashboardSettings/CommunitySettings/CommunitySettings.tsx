@@ -21,6 +21,7 @@ import HomepageBannerSettings from './HomepageBannerSettings';
 import NavSettings from './NavSettings';
 import PublicNewPubs from './PublicNewPubsSettings';
 import SocialSettings from './SocialSettings';
+import UnderlaySettings from './UnderlaySettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -183,6 +184,17 @@ const CommunitySettings = (props: Props) => {
 					} as const,
 				]
 			: ([] as Subtab[])),
+			...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+			pageContext.scopeData.activePermissions.isSuperAdmin
+				? [
+						{
+							id: 'underlay-settings',
+							title: 'Underlay',
+							icon: 'globe-network',
+							sections: [<UnderlaySettings communityData={communityData} />],
+						} as const,
+					]
+				: ([] as Subtab[])),
 	].filter((x): x is Subtab => Boolean(x)) satisfies Subtab[];
 
 	return (

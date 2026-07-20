@@ -15,6 +15,7 @@ import { collectionExportTask } from './tasks/collectionExport';
 import { communityExportTask } from './tasks/communityExport';
 import { exportTask } from './tasks/export';
 import { importTask } from './tasks/import';
+import { pushToUnderlayTask } from './tasks/pushToUnderlay';
 
 if (isMainThread) {
 	// Don't run outside of a thread spawned by worker_threads in queue.js
@@ -27,6 +28,7 @@ const taskMap = {
 	communityExport: communityExportTask,
 	accountExport: accountExportTask,
 	collectionExport: collectionExportTask,
+	pushToUnderlay: pushToUnderlayTask,
 };
 
 export type TaskType = keyof typeof taskMap;

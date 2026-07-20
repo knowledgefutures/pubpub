@@ -137,7 +137,13 @@ export const addWorkerTask = async ({
 	input,
 	priority = getDefaultTaskPriority(),
 }: {
-	type: 'import' | 'export' | 'communityExport' | 'accountExport' | 'collectionExport';
+	type:
+		| 'import'
+		| 'export'
+		| 'communityExport'
+		| 'accountExport'
+		| 'collectionExport'
+		| 'pushToUnderlay';
 	input: any;
 	priority?: number;
 }) => {

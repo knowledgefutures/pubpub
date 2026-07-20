@@ -83,6 +83,7 @@ const commandFiles = {
 	migrationsDeprecated: "./migrationsDeprecated",
 	movePubs: "./movePubs",
 	pubCrawl: "./pubCrawl",
+	pushToUnderlay: "./pushToUnderlay",
 	purgeNotifications: "./purgeNotifications",
 	rerankCollections: "./rerankCollections",
 	rerunExport: "./rerunExport",

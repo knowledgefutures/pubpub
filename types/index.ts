@@ -37,6 +37,8 @@ export * from './submission';
 export * from './submission';
 export * from './submissionWorkflow';
 export * from './thread';
+export * from './underlayIntegration';
+export * from './underlayPushEntry';
 export * from './user';
 export * from './userNotification';
 export * from './userSubscription';

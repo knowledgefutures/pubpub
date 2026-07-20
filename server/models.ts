@@ -64,6 +64,8 @@ import { UserScopeVisit } from './userScopeVisit/model';
 import { UserSubscription } from './userSubscription/model';
 import { Visibility } from './visibility/model';
 import { VisibilityUser } from './visibilityUser/model';
+import { UnderlayIntegration } from './underlayIntegration/model';
+import { UnderlayPushEntry } from './underlayPushEntry/model';
 import { WorkerTask } from './workerTask/model';
 import { ZoteroIntegration } from './zoteroIntegration/model';
 
@@ -130,6 +132,8 @@ sequelize.addModels([
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayIntegration,
+	UnderlayPushEntry,
 ]);
 
 export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
@@ -228,6 +232,8 @@ export {
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayIntegration,
+	UnderlayPushEntry,
 	ZoteroIntegration,
 };
 

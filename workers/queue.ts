@@ -20,6 +20,7 @@ let currentWorkerThreads = 0;
 const customTimeouts = {
 	communityExport: 14_400, // 4 hours
 	import: 300, // 5 minutes
+	pushToUnderlay: 14_400, // 4 hours
 } satisfies Partial<Record<TaskType, number>>;
 
 if (env.NODE_ENV === 'production') {

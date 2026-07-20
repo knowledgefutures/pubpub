@@ -19,7 +19,9 @@ const isDue = (integration: UnderlayIntegration, now: number): boolean => {
 	if (!integration.lastPushedAt) {
 		return true;
 	}
-	const dueAt = new Date(integration.lastPushedAt).getTime() + integration.scheduleDays * 24 * 60 * 60 * 1000;
+	const dueAt =
+		new Date(integration.lastPushedAt).getTime() +
+		integration.scheduleDays * 24 * 60 * 60 * 1000;
 	return dueAt <= now;
 };
 
@@ -50,11 +52,16 @@ async function main() {
 			enqueued += 1;
 			console.log(`Enqueued Underlay push for community ${integration.communityId}`);
 		} catch (err) {
-			console.error(`Failed to enqueue Underlay push for community ${integration.communityId}:`, err);
+			console.error(
+				`Failed to enqueue Underlay push for community ${integration.communityId}:`,
+				err,
+			);
 			Sentry.captureException(err);
 		}
 	}
-	console.log(`Enqueued ${enqueued} Underlay push task(s) of ${integrations.length} scheduled integration(s).`);
+	console.log(
+		`Enqueued ${enqueued} Underlay push task(s) of ${integrations.length} scheduled integration(s).`,
+	);
 }
 
 main()

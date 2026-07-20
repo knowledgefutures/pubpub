@@ -50,7 +50,9 @@ export const hashRecord = (record: {
  * JSON, using the same rules as records.
  */
 export const hashSchema = (schemaBody: unknown): string =>
-	createHash('sha256').update(JSON.stringify(canonicalize(schemaBody))).digest('hex');
+	createHash('sha256')
+		.update(JSON.stringify(canonicalize(schemaBody)))
+		.digest('hex');
 
 /**
  * Hash an arbitrary buffer of bytes (used for file references `{"$file":"sha256:<hex>"}`).

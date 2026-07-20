@@ -28,7 +28,9 @@ const toClientConfig = (integration: UnderlayIntegration): UnderlayIntegrationCl
 	includeAssets: integration.includeAssets,
 	includePdfs: integration.includePdfs,
 	scheduleDays: integration.scheduleDays,
-	lastPushedAt: integration.lastPushedAt ? new Date(integration.lastPushedAt).toISOString() : null,
+	lastPushedAt: integration.lastPushedAt
+		? new Date(integration.lastPushedAt).toISOString()
+		: null,
 	lastPushSemver: integration.lastPushSemver,
 	lastPushStatus: integration.lastPushStatus,
 	lastPushError: integration.lastPushError,
@@ -70,7 +72,11 @@ export const getUnderlayIntegrationWithKey = async (
 	}
 	let apiKey: string | null = null;
 	if (integration.apiKey && integration.apiKeyInitVec) {
-		apiKey = aes256Decrypt(integration.apiKey, env.AES_ENCRYPTION_KEY, integration.apiKeyInitVec);
+		apiKey = aes256Decrypt(
+			integration.apiKey,
+			env.AES_ENCRYPTION_KEY,
+			integration.apiKeyInitVec,
+		);
 	}
 	return { integration, apiKey };
 };
@@ -86,8 +92,10 @@ export const upsertUnderlayIntegration = async (
 
 	const patch: Partial<UnderlayIntegration> = {};
 	if (update.underlayOrg !== undefined) patch.underlayOrg = update.underlayOrg;
-	if (update.underlayCollection !== undefined) patch.underlayCollection = update.underlayCollection;
-	if (update.includeReleaseHtml !== undefined) patch.includeReleaseHtml = update.includeReleaseHtml;
+	if (update.underlayCollection !== undefined)
+		patch.underlayCollection = update.underlayCollection;
+	if (update.includeReleaseHtml !== undefined)
+		patch.includeReleaseHtml = update.includeReleaseHtml;
 	if (update.includeAssets !== undefined) patch.includeAssets = update.includeAssets;
 	if (update.includePdfs !== undefined) patch.includePdfs = update.includePdfs;
 	if (update.scheduleDays !== undefined) patch.scheduleDays = update.scheduleDays;

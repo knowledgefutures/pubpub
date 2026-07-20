@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 
 import { Button, Callout, Checkbox, Classes, HTMLSelect } from '@blueprintjs/core';
 
-import { InputField, SettingsSection } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
+import { InputField, SettingsSection } from 'components';
 
 type Props = {
 	communityData: Community;
@@ -68,7 +68,10 @@ const UnderlaySettings = (_props: Props) => {
 			if (apiKeyInput) {
 				body.apiKey = apiKeyInput;
 			}
-			const updated = await apiFetch.put<UnderlayIntegration>('/api/underlayIntegration', body);
+			const updated = await apiFetch.put<UnderlayIntegration>(
+				'/api/underlayIntegration',
+				body,
+			);
 			applyConfig(updated);
 			setApiKeyInput('');
 		} catch (e: any) {
@@ -80,10 +83,10 @@ const UnderlaySettings = (_props: Props) => {
 
 	const pollTask = async (workerTaskId: string) => {
 		for (let i = 0; i < 240; i += 1) {
-			// eslint-disable-next-line no-await-in-loop
+			// biome-ignore lint/performance/noAwaitInLoops: intentional 5s poll interval between status checks
 			await new Promise((r) => setTimeout(r, 5000));
 			try {
-				// eslint-disable-next-line no-await-in-loop
+				// biome-ignore lint/performance/noAwaitInLoops: sequential status poll, bounded by iteration cap
 				const task = await apiFetch.get<{ isProcessing: boolean | null; error: unknown }>(
 					`/api/workerTasks?workerTaskId=${workerTaskId}`,
 				);
@@ -130,9 +133,9 @@ const UnderlaySettings = (_props: Props) => {
 	return (
 		<SettingsSection title="Push to Underlay">
 			<p className={Classes.TEXT_MUTED}>
-				Push this community&rsquo;s releases and metadata to an Underlay collection. Underlay
-				stores content-addressed snapshots, so pushes with no changes are a no-op and only new
-				or changed content is transferred.
+				Push this community&rsquo;s releases and metadata to an Underlay collection.
+				Underlay stores content-addressed snapshots, so pushes with no changes are a no-op
+				and only new or changed content is transferred.
 			</p>
 
 			<InputField
@@ -148,7 +151,11 @@ const UnderlaySettings = (_props: Props) => {
 				onChange={(e) => setCollection(e.target.value)}
 			/>
 			<InputField
-				label={config?.hasApiKey ? 'Underlay API key (set — enter a new one to replace)' : 'Underlay API key'}
+				label={
+					config?.hasApiKey
+						? 'Underlay API key (set — enter a new one to replace)'
+						: 'Underlay API key'
+				}
 				type="password"
 				placeholder={config?.hasApiKey ? '••••••••' : 'ul_…'}
 				value={apiKeyInput}

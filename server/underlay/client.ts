@@ -83,6 +83,7 @@ export class UnderlayClient {
 				if (auth) {
 					headers.set('Authorization', `Bearer ${this.apiKey}`);
 				}
+				// biome-ignore lint/performance/noAwaitInLoops: sequential retry loop, bounded by MAX_RETRIES
 				const response = await fetch(url, {
 					...rest,
 					// Buffer is a valid BodyInit at runtime; cast to satisfy the DOM fetch typings.
@@ -93,9 +94,10 @@ export class UnderlayClient {
 
 				if (response.status === 429 || response.status >= 500) {
 					const retryAfter = Number(response.headers.get('Retry-After'));
-					const delay = Number.isFinite(retryAfter) && retryAfter > 0
-						? retryAfter * 1000
-						: Math.min(8_000, 500 * 2 ** attempt);
+					const delay =
+						Number.isFinite(retryAfter) && retryAfter > 0
+							? retryAfter * 1000
+							: Math.min(8_000, 500 * 2 ** attempt);
 					lastError = new UnderlayPushError(
 						`Underlay responded ${response.status}`,
 						response.status,
@@ -129,9 +131,13 @@ export class UnderlayClient {
 
 	/** Returns the latest version semver, or null if the collection has no versions yet. */
 	async getBaseVersion(): Promise<string | null> {
-		const response = await this.request(`${this.collectionPath()}/versions/latest`, {
-			method: 'GET',
-		}, { auth: false });
+		const response = await this.request(
+			`${this.collectionPath()}/versions/latest`,
+			{
+				method: 'GET',
+			},
+			{ auth: false },
+		);
 		if (response.status === 404) {
 			return null;
 		}
@@ -144,7 +150,11 @@ export class UnderlayClient {
 
 	/** Ensure the collection exists, creating it under the org if missing. */
 	async ensureCollection(): Promise<void> {
-		const response = await this.request(this.collectionPath(), { method: 'GET' }, { auth: false });
+		const response = await this.request(
+			this.collectionPath(),
+			{ method: 'GET' },
+			{ auth: false },
+		);
 		if (response.ok) {
 			return;
 		}
@@ -173,7 +183,11 @@ export class UnderlayClient {
 		});
 		if (!response.ok) {
 			const detail = await response.text();
-			throw new UnderlayPushError(`Failed to upload file ${file.hash}`, response.status, detail);
+			throw new UnderlayPushError(
+				`Failed to upload file ${file.hash}`,
+				response.status,
+				detail,
+			);
 		}
 	}
 
@@ -193,7 +207,9 @@ export class UnderlayClient {
 				rec = (await resolveRecordByHash(hash)) ?? undefined;
 			}
 			if (!rec) {
-				throw new UnderlayPushError(`Server requested a record we cannot produce (hash ${hash})`);
+				throw new UnderlayPushError(
+					`Server requested a record we cannot produce (hash ${hash})`,
+				);
 			}
 			toSend.push(rec);
 		}
@@ -237,19 +253,22 @@ export class UnderlayClient {
 		}
 
 		const negotiateOnce = async (base: string | null): Promise<PushResult> => {
-			const negotiateResponse = await this.request(`${this.collectionPath()}/versions/negotiate`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					base_version: base,
-					message,
-					app_id: this.appId,
-					actor_id: this.actorId,
-					schemas: payload.schemas,
-					manifest,
-					files: payload.files.map((f) => f.hash),
-				}),
-			});
+			const negotiateResponse = await this.request(
+				`${this.collectionPath()}/versions/negotiate`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						base_version: base,
+						message,
+						app_id: this.appId,
+						actor_id: this.actorId,
+						schemas: payload.schemas,
+						manifest,
+						files: payload.files.map((f) => f.hash),
+					}),
+				},
+			);
 
 			if (negotiateResponse.status === 409) {
 				throw new UnderlayPushError('Version conflict', 409);
@@ -291,7 +310,11 @@ export class UnderlayClient {
 			}
 
 			// Commit, retrying once for late-uploaded files.
-			const commit = await this.commit(session.session_id, filesByHash, payload.resolveFileByHash);
+			const commit = await this.commit(
+				session.session_id,
+				filesByHash,
+				payload.resolveFileByHash,
+			);
 			return commit;
 		};
 
@@ -321,9 +344,11 @@ export class UnderlayClient {
 
 		// 422 with missing files → upload them and retry once.
 		if (response.status === 422) {
-			const body = await this.json<{ error?: string; filesNeeded?: string[]; extraFields?: string[] }>(
-				response,
-			);
+			const body = await this.json<{
+				error?: string;
+				filesNeeded?: string[];
+				extraFields?: string[];
+			}>(response);
 			if (body.filesNeeded && body.filesNeeded.length > 0) {
 				for (const ref of body.filesNeeded) {
 					const hash = ref.replace(/^sha256:/, '');

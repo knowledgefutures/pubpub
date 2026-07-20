@@ -27,9 +27,15 @@ export const underlayIntegrationServer = s.router(contract.underlayIntegration, 
 		const community = await ensureUserIsCommunityAdmin(req);
 
 		const integration = await getUnderlayIntegration(community.id);
-		if (!integration?.underlayOrg || !integration?.underlayCollection || !integration.hasApiKey) {
+		if (
+			!integration?.underlayOrg ||
+			!integration?.underlayCollection ||
+			!integration.hasApiKey
+		) {
 			throw new ForbiddenError(
-				new Error('Underlay integration is not fully configured (org, collection, API key).'),
+				new Error(
+					'Underlay integration is not fully configured (org, collection, API key).',
+				),
 			);
 		}
 

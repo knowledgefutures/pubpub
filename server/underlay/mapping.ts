@@ -120,7 +120,11 @@ export type PubEdgeInput = {
 	relationType: string;
 	pubIsParent?: boolean | null;
 	targetPubId?: string | null;
-	externalPublication?: { title?: string | null; url?: string | null; doi?: string | null } | null;
+	externalPublication?: {
+		title?: string | null;
+		url?: string | null;
+		doi?: string | null;
+	} | null;
 };
 
 export type PubInput = {
@@ -312,7 +316,8 @@ const mapContributor = (attribution: AttributionInput): UnderlayRecord => ({
 		orcid: attribution.user?.orcid ?? attribution.orcid ?? undefined,
 		affiliation: attribution.affiliation ?? undefined,
 		isAuthor: attribution.isAuthor ?? undefined,
-		roles: attribution.roles && attribution.roles.length > 0 ? [...attribution.roles] : undefined,
+		roles:
+			attribution.roles && attribution.roles.length > 0 ? [...attribution.roles] : undefined,
 	}),
 });
 
@@ -346,7 +351,9 @@ export const mapCommunityScopeRecords = (
 	}
 	const seen = new Set<string>();
 	for (const pub of pubs) {
-		const attributions = (pub.attributions ?? []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+		const attributions = (pub.attributions ?? [])
+			.slice()
+			.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 		for (const attribution of attributions) {
 			if (!seen.has(attribution.id)) {
 				seen.add(attribution.id);
@@ -366,11 +373,16 @@ export const mapCommunityScopeRecords = (
  * these records. Rendering (the expensive part) happens only here, so skipping it for unchanged pubs
  * is what makes incremental pushes cheap.
  */
-export const mapPubRecords = async (pub: PubInput, ctx: PubMapContext): Promise<UnderlayRecord[]> => {
+export const mapPubRecords = async (
+	pub: PubInput,
+	ctx: PubMapContext,
+): Promise<UnderlayRecord[]> => {
 	const { community, options, addFile, renderReleaseHtml, fetchAsset } = ctx;
 	const out: UnderlayRecord[] = [];
 
-	const attributions = (pub.attributions ?? []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+	const attributions = (pub.attributions ?? [])
+		.slice()
+		.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 	const releases = (pub.releases ?? []).slice().sort((a, b) => a.historyKey - b.historyKey);
 	const latestRelease = releases[releases.length - 1];
 
@@ -489,7 +501,9 @@ export const buildUnderlayPush = async (params: {
 	}
 
 	// Stable ordering: by type, then id.
-	records.sort((a, b) => (a.type === b.type ? a.id.localeCompare(b.id) : a.type.localeCompare(b.type)));
+	records.sort((a, b) =>
+		a.type === b.type ? a.id.localeCompare(b.id) : a.type.localeCompare(b.type),
+	);
 
 	// Only include schemas for types actually present.
 	const presentTypes = new Set(records.map((r) => r.type));
@@ -511,7 +525,9 @@ export const buildUnderlayPush = async (params: {
 export const buildManifest = (records: UnderlayRecord[]): ManifestEntry[] =>
 	records.map((r) => {
 		const { hash } = hashRecord(r);
-		return r.private ? { id: r.id, type: r.type, hash, private: true } : { id: r.id, type: r.type, hash };
+		return r.private
+			? { id: r.id, type: r.type, hash, private: true }
+			: { id: r.id, type: r.type, hash };
 	});
 
 /**
@@ -528,7 +544,10 @@ export const computeSignatureFromParts = (
 		records: manifest.map((m) => `${m.type}:${m.id}:${m.hash}:${m.private ? 1 : 0}`).sort(),
 		files: [...new Set(fileHashes)].sort(),
 		schemas: Object.fromEntries(
-			Object.entries(schemas).map(([type, schema]) => [type, hashBytes(Buffer.from(JSON.stringify(schema)))]),
+			Object.entries(schemas).map(([type, schema]) => [
+				type,
+				hashBytes(Buffer.from(JSON.stringify(schema))),
+			]),
 		),
 	};
 	return hashBytes(Buffer.from(JSON.stringify(signatureBody)));

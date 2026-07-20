@@ -184,17 +184,17 @@ const CommunitySettings = (props: Props) => {
 					} as const,
 				]
 			: ([] as Subtab[])),
-			...(pageContext.scopeData.activePermissions.canAdminCommunity ||
-			pageContext.scopeData.activePermissions.isSuperAdmin
-				? [
-						{
-							id: 'underlay-settings',
-							title: 'Underlay',
-							icon: 'globe-network',
-							sections: [<UnderlaySettings communityData={communityData} />],
-						} as const,
-					]
-				: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+		pageContext.scopeData.activePermissions.isSuperAdmin
+			? [
+					{
+						id: 'underlay-settings',
+						title: 'Underlay',
+						icon: 'globe-network',
+						sections: [<UnderlaySettings communityData={communityData} />],
+					} as const,
+				]
+			: ([] as Subtab[])),
 	].filter((x): x is Subtab => Boolean(x)) satisfies Subtab[];
 
 	return (

@@ -56,6 +56,8 @@ import { SubmissionWorkflow } from './submissionWorkflow/model';
 import { Thread } from './thread/model';
 import { ThreadComment } from './threadComment/model';
 import { ThreadEvent } from './threadEvent/model';
+import { UnderlayIntegration } from './underlayIntegration/model';
+import { UnderlayPushEntry } from './underlayPushEntry/model';
 import { User } from './user/model';
 import { UserDismissable } from './userDismissable/model';
 import { UserNotification } from './userNotification/model';
@@ -64,8 +66,6 @@ import { UserScopeVisit } from './userScopeVisit/model';
 import { UserSubscription } from './userSubscription/model';
 import { Visibility } from './visibility/model';
 import { VisibilityUser } from './visibilityUser/model';
-import { UnderlayIntegration } from './underlayIntegration/model';
-import { UnderlayPushEntry } from './underlayPushEntry/model';
 import { WorkerTask } from './workerTask/model';
 import { ZoteroIntegration } from './zoteroIntegration/model';
 

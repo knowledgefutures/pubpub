@@ -57,7 +57,8 @@ export const underlayIntegrationRouter = {
 		path: '/api/underlayIntegration',
 		method: 'PUT',
 		summary: 'Update the Underlay integration config',
-		description: 'Create or update the integration config for the current community. Admin only.',
+		description:
+			'Create or update the integration config for the current community. Admin only.',
 		body: underlayIntegrationUpdateSchema,
 		responses: {
 			200: underlayIntegrationSchema,

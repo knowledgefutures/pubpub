@@ -126,12 +126,27 @@ import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 import { abortStorage } from './abort';
 import { authTokenMiddleware } from './authToken/authTokenMiddleware';
 import { bearerStrategy } from './authToken/strategy';
+import { router as collabRouter } from './collab/api';
+import { router as collabDiscussionPositionsRouter } from './collab/discussionPositions';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
 appRouter.use('/api/health', (req, res) => {
 	res.status(200).json({ status: 'ok' });
 });
+
+/* --------------------------------------------------------------------- */
+/* Collab + presence hot-path routes.                                     */
+/*                                                                        */
+/* These fire on ~every keystroke-batch and have no authorization of      */
+/* their own (they only resolve pubId -> draftId and read req.body). We   */
+/* mount them HERE, before the session/passport/authToken/ban middleware, */
+/* so a commit doesn't pay for the session SELECT+UPDATE, the Users       */
+/* deserialize SELECT, and the CommunityBans SELECT+JOIN it never reads.  */
+/* readOnlyMiddleware is kept in front so maintenance mode still blocks    */
+/* these writes; blocklist + body parsing already ran above.              */
+/* --------------------------------------------------------------------- */
+appRouter.use(readOnlyMiddleware(), collabRouter, collabDiscussionPositionsRouter);
 
 appRouter.use(
 	session({

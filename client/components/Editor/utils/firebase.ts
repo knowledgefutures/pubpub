@@ -1,4 +1,3 @@
-import type firebase from 'firebase';
 import type { Node } from 'prosemirror-model';
 import type { Step } from 'prosemirror-transform';
 
@@ -55,6 +54,7 @@ export const createFirebaseChange = (
 	};
 };
 
-export const getFirebaseConnectionMonitorRef = (ref: firebase.database.Reference) => {
+/** @deprecated legacy firebase utility */
+export const getFirebaseConnectionMonitorRef = (ref: any) => {
 	return ref.root.child('.info/connected');
 };

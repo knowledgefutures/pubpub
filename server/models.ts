@@ -6,6 +6,7 @@ import { ActivityItem } from './activityItem/model';
 import { AnalyticsEvent } from './analytics/model';
 import { AnalyticsCloudflareCache } from './analyticsCloudflareCache/model';
 import { AuthToken } from './authToken/model';
+import { CollabCommit } from './collabCommit/model';
 import { Collection } from './collection/model';
 import { CollectionAttribution } from './collectionAttribution/model';
 import { CollectionPub } from './collectionPub/model';
@@ -75,6 +76,7 @@ sequelize.addModels([
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
+	CollabCommit,
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
@@ -175,6 +177,7 @@ export {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
+	CollabCommit,
 	Commenter,
 	Community,
 	CrossrefDepositRecord,

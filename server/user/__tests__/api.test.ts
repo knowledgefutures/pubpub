@@ -50,14 +50,14 @@ const { deleteSessionsForUser } = vitest.hoisted(() => {
 	};
 });
 
-vitest.mock(import('server/utils/session'), async (importOriginal) => {
+vitest.mock(import('server/utils/session.js'), async (importOriginal) => {
 	const og = await importOriginal();
 	return {
 		...og,
 		deleteSessionsForUser: deleteSessionsForUser,
 	};
 });
-vitest.mock(import('server/spamTag/notifications'), async (importOriginal) => {
+vitest.mock(import('server/spamTag/notifications/index.js'), async (importOriginal) => {
 	const og = await importOriginal();
 	return {
 		...og,
@@ -115,7 +115,7 @@ describe('/api/users', () => {
 			.expect(403);
 		const createdUser = await User.findOne({ where: { email: spamSignup.email } });
 		expect(createdUser).toBeDefined();
-		const { getSpamTagForUser } = await import('server/spamTag/userQueries');
+		const { getSpamTagForUser } = await import('server/spamTag/userQueries.js');
 		const spamTag = await getSpamTagForUser(createdUser!.id);
 		expect(spamTag?.status).toBe('confirmed-spam');
 		await agent
@@ -143,7 +143,7 @@ describe('/api/users', () => {
 		if (!createdUser) {
 			throw new Error('Expected user to be created');
 		}
-		const { getSpamTagForUser } = await import('server/spamTag/userQueries');
+		const { getSpamTagForUser } = await import('server/spamTag/userQueries.js');
 		const spamTag = await getSpamTagForUser(createdUser.id);
 		expect(spamTag).toBeNull();
 		await agent
@@ -169,7 +169,7 @@ describe('/api/users', () => {
 			.expect(403);
 		const createdUser = await User.findOne({ where: { email: restrictedSignup.email } });
 		expect(createdUser).toBeDefined();
-		const { getSpamTagForUser } = await import('server/spamTag/userQueries');
+		const { getSpamTagForUser } = await import('server/spamTag/userQueries.js');
 		const spamTag = await getSpamTagForUser(createdUser!.id);
 		expect(spamTag?.status).toEqual('confirmed-spam');
 

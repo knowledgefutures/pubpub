@@ -1,7 +1,7 @@
 import type { Node } from 'prosemirror-model';
 import type { EditorState, Transaction } from 'prosemirror-state';
 
-import { collabDocPluginKey } from '../collaborative';
+import { getVersion } from '@pitter-patter/collab-client';
 
 type Callback = () => unknown;
 
@@ -49,8 +49,7 @@ export const createHistoryState = (initialDoc: Node, initialHistoryKey: number) 
 		const previousHistoryKey = historyKey;
 		const previousDoc = doc;
 
-		const collabState = collabDocPluginKey.getState(nextState);
-		const nextHistoryKey: number = collabState?.mostRecentRemoteKey ?? -1;
+		const nextHistoryKey: number = getVersion(nextState) ?? historyKey;
 		const nextDoc = tr.doc;
 
 		if (nextHistoryKey >= historyKey) {

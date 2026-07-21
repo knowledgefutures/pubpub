@@ -48,9 +48,16 @@ const getDecorationsForDiscussion = (discussionId: string, discussion: Discussio
 };
 
 const getNewDecorations = (updateResult: DiscussionsUpdateResult): DiscussionDecoration[] => {
+	const docSize = updateResult.doc.content.size;
 	return flattenOnce(
 		[...updateResult.addedDiscussionIds].map((id) => {
 			const discussion = updateResult.discussions[id];
+			if (discussion.selection) {
+				const { anchor, head } = discussion.selection;
+				if (anchor > docSize || head > docSize || anchor < 0 || head < 0) {
+					return [];
+				}
+			}
 			return getDecorationsForDiscussion(id, discussion);
 		}),
 	);

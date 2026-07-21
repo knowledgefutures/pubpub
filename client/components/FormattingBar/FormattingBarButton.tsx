@@ -55,79 +55,82 @@ const getIndicatorStyle = (accentColor) => {
 
 const popoverModifiers = { preventOverflow: { enabled: false }, flip: { enabled: false } };
 
-const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, ref) => {
-	const {
-		disabled = false,
-		formattingItem,
-		isActive = false,
-		isIndicated = false,
-		isDetached = false,
-		isOpen = false,
-		isSmall = false,
-		label = null,
-		onClick,
-		accentColor = 'white',
-		outerRef,
-		popoverContent,
-		...restProps
-	} = props;
+const FormattingBarButton = React.forwardRef(
+	(props: FormattingBarButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+		const {
+			disabled = false,
+			formattingItem,
+			isActive = false,
+			isIndicated = false,
+			isDetached = false,
+			isOpen = false,
+			isSmall = false,
+			label = null,
+			onClick,
+			accentColor = 'white',
+			outerRef,
+			popoverContent,
+			...restProps
+		} = props;
 
-	let button = (
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-		<Button
-			ref={ref}
-			{...restProps}
-			role="button"
-			disabled={disabled}
-			focusable
-			title={formattingItem.title}
-			aria-label={formattingItem.ariaTitle || formattingItem.title}
-			aria-pressed={formattingItem.isToggle ? isActive : undefined}
-			className={classNames(
-				Classes.BUTTON,
-				Classes.MINIMAL,
-				!isOpen && !isIndicated && isActive && Classes.ACTIVE,
-				isSmall && Classes.SMALL,
-				!isOpen && !isIndicated && disabled && Classes.DISABLED,
-			)}
-			style={getInnerStyle(accentColor, isOpen, isDetached)}
-			onClick={() => onClick(formattingItem)}
-		>
-			<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />
-			{label}
-		</Button>
-	);
+		let button = (
+			<Button
+				ref={ref}
+				{...restProps}
+				role="button"
+				disabled={disabled}
+				focusable
+				title={formattingItem.title}
+				aria-label={formattingItem.ariaTitle || formattingItem.title}
+				aria-pressed={formattingItem.isToggle ? isActive : undefined}
+				className={classNames(
+					Classes.BUTTON,
+					Classes.MINIMAL,
+					!isOpen && !isIndicated && isActive && Classes.ACTIVE,
+					isSmall && Classes.SMALL,
+					!isOpen && !isIndicated && disabled && Classes.DISABLED,
+				)}
+				style={getInnerStyle(accentColor, isOpen, isDetached)}
+				onClick={() => onClick(formattingItem)}
+			>
+				<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />
+				{label}
+			</Button>
+		);
 
-	if (popoverContent) {
-		button = (
-			<Popover
-				content={popoverContent}
-				interactionKind={PopoverInteractionKind.HOVER}
-				modifiers={popoverModifiers}
-				openOnTargetFocus
-				minimal
-				position={Position.BOTTOM}
+		if (popoverContent) {
+			button = (
+				<Popover
+					content={popoverContent}
+					interactionKind={PopoverInteractionKind.HOVER}
+					modifiers={popoverModifiers}
+					openOnTargetFocus
+					minimal
+					position={Position.BOTTOM}
+				>
+					{button}
+				</Popover>
+			);
+		}
+
+		return (
+			<span
+				ref={outerRef}
+				className={classNames(
+					'formatting-bar-button',
+					isOpen && 'open',
+					isDetached && 'detached',
+					!!label && 'has-label',
+				)}
+				style={getOuterStyle(accentColor, isOpen, isDetached)}
 			>
 				{button}
-			</Popover>
+				{isIndicated && (
+					<div className="indicator" style={getIndicatorStyle(accentColor)} />
+				)}
+			</span>
 		);
-	}
-
-	return (
-		<span
-			ref={outerRef}
-			className={classNames(
-				'formatting-bar-button',
-				isOpen && 'open',
-				isDetached && 'detached',
-				!!label && 'has-label',
-			)}
-			style={getOuterStyle(accentColor, isOpen, isDetached)}
-		>
-			{button}
-			{isIndicated && <div className="indicator" style={getIndicatorStyle(accentColor)} />}
-		</span>
-	);
-});
+	},
+);
 
 export default FormattingBarButton;

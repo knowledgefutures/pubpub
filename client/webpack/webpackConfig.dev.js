@@ -32,6 +32,9 @@ module.exports = {
 			types: resolve(__dirname, '../../types'),
 			facets: resolve(__dirname, '../../facets'),
 			'prosemirror-state': require.resolve('prosemirror-state'),
+			'@pitter-patter/collab-client': resolve(__dirname, '../../node_modules/@pitter-patter/collab-client/dist/index.js'),
+			'@stepwisehq/prosemirror-collab-commit/collab-commit': resolve(__dirname, '../../node_modules/@stepwisehq/prosemirror-collab-commit/dist/collab-commit.js'),
+			'@stepwisehq/prosemirror-collab-commit': resolve(__dirname, '../../node_modules/@stepwisehq/prosemirror-collab-commit/dist/index.js'),
 		},
 	},
 	devtool: 'eval',
@@ -58,17 +61,16 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.(m|c)?js$/,
-				// this module includes nullish coalescing and optional chaining, which are not supported by webpack 4
-				include: /node_modules\/@marsidev\/react-turnstile|node_modules\/(.pnpm\/)?altcha.*|node_modules\/(.pnpm\/)?react-kapsule.*|node_modules\/(.pnpm\/)?react-force-graph.*|node_modules\/(.pnpm\/)?force-graph.*|node_modules\/(.pnpm\/)?float-tooltip.*/,
-				type: 'javascript/auto',
-				loader: 'esbuild-loader',
-				/** @type {import('esbuild-loader').LoaderOptions} */
-				options: {
-					target: 'es6'
-				},
+		{
+			test: /\.(m|c)?js$/,
+			include: /node_modules\/@marsidev\/react-turnstile|node_modules\/(.pnpm\/)?altcha.*|node_modules\/(.pnpm\/)?react-kapsule.*|node_modules\/(.pnpm\/)?react-force-graph.*|node_modules\/(.pnpm\/)?force-graph.*|node_modules\/(.pnpm\/)?float-tooltip.*|node_modules\/(.pnpm\/)?@pitter-patter.*|node_modules\/(.pnpm\/)?@stepwisehq.*/,
+			type: 'javascript/auto',
+			loader: 'esbuild-loader',
+			/** @type {import('esbuild-loader').LoaderOptions} */
+			options: {
+				target: 'es6'
 			},
+		},
 			{
 				test: /\.((c|m)?js|jsx|ts|tsx)$/,
 				include: [

@@ -23,8 +23,6 @@
  *   pnpm run tools bootstrapCheckpoints --execute --replaceErrors        # Write fallback docs for corrupted drafts
  */
 
-import type firebase from 'firebase';
-
 import firebaseAdmin from 'firebase-admin';
 import { Op, QueryTypes } from 'sequelize';
 
@@ -407,7 +405,7 @@ const deleteFirebasePath = async (path: string): Promise<void> => {
 
 const normalizePath = async (draft: Draft): Promise<void> => {
 	const { id, firebasePath } = draft;
-	if (!isLegacyPath(firebasePath)) {
+	if (!firebasePath || !isLegacyPath(firebasePath)) {
 		stats.pathsSkipped++;
 		return;
 	}
@@ -444,6 +442,11 @@ const normalizePath = async (draft: Draft): Promise<void> => {
 
 const extractCheckpoint = async (draft: Draft): Promise<void> => {
 	const { id: draftId, firebasePath } = draft;
+
+	if (!firebasePath) {
+		stats.checkpointsSkippedEmpty++;
+		return;
+	}
 
 	// Skip if a checkpoint already exists
 	const existing = await DraftCheckpoint.findOne({ where: { draftId } });
@@ -735,7 +738,7 @@ const main = async () => {
 
 	// Phase 1: Normalize legacy paths (rolling concurrency)
 	if (!skipPathNormalization) {
-		const legacyDrafts = drafts.filter((d) => isLegacyPath(d.firebasePath));
+		const legacyDrafts = drafts.filter((d) => d.firebasePath && isLegacyPath(d.firebasePath));
 		log('');
 		log(
 			`Phase 1: Path normalization (${legacyDrafts.length} legacy paths, concurrency=${CONCURRENCY})`,

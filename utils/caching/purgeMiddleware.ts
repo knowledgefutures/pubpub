@@ -31,6 +31,8 @@ const nonPurgeNonGetRoutes = {
 	'/api/spamTags/user': ['DELETE', 'PUT'],
 	'/api/spamTags/queryCommunitiesForSpam': ['POST'],
 	'/api/spamTags/userRecentDiscussions': ['POST'],
+	'/api/ev': ['POST'],
+	'/api/collabCommits': ['POST'],
 } satisfies {
 	[Path in `/api/${string}`]: AllowedMethods[];
 };
@@ -47,7 +49,8 @@ const userPaths = [
  * These are routes with path parameters that we don't want to purge They aren't easily caught in
  * the map above
  */
-const otherNonPurgeRoutes = /\/api\/(pubs|collections)\/[^/]+\/doi\/preview/;
+const otherNonPurgeRoutes =
+	/\/api\/(pubs|collections)\/[^/]+\/doi\/preview|\/api\/pubs\/[^/]+\/(presence|commits)/;
 
 async function getSurrogateTag(req: Request) {
 	/** We don't want to purge GET/CORS/HEAD etc requests, that's the whole point! */

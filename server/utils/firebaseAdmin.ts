@@ -1,69 +1,16 @@
-import type firebase from 'firebase';
 import type { Schema } from 'prosemirror-model';
 
 import type { DocJson, PubDraftInfo } from 'types';
 
-import firebaseAdmin from 'firebase-admin';
-import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
 import { Node } from 'prosemirror-model';
 import { Step, Transform } from 'prosemirror-transform';
+import { Op } from 'sequelize';
 
-import {
-	editorSchema,
-	getFirebaseDoc,
-	getFirstKeyAndTimestamp,
-	getLatestKeyAndTimestamp,
-} from 'components/Editor';
-import { createFirebaseChange, flattenKeyables } from 'components/Editor/utils';
+import { editorSchema } from 'components/Editor/utils';
+import { replayCommitsOntoDoc } from 'server/collab/authority';
 import { getDraftCheckpoint } from 'server/draftCheckpoint/queries';
-import { env } from 'server/env';
-import { Draft, Pub } from 'server/models';
+import { CollabCommit, Draft, Pub } from 'server/models';
 import { expect } from 'utils/assert';
-import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
-
-const getFirebaseApp = () => {
-	if (firebaseAdmin.apps.length > 0) {
-		return firebaseAdmin.apps[0];
-	}
-	if (env.NODE_ENV === 'test') {
-		if (env.FIREBASE_TEST_DB_URL) {
-			return firebaseAdmin.initializeApp({
-				databaseURL: env.FIREBASE_TEST_DB_URL,
-			});
-		}
-		return null;
-	}
-	const serviceAccount = JSON.parse(
-		Buffer.from(env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
-	);
-	// biome-ignore lint/suspicious/noConsole: shhhhhh
-	console.log(`Firebase App will use: ${getFirebaseConfig().databaseURL}`);
-	return firebaseAdmin.initializeApp(
-		{
-			credential: firebaseAdmin.credential.cert(serviceAccount),
-			databaseURL: getFirebaseConfig().databaseURL,
-		},
-		'firebase-pub-new',
-	);
-};
-
-const firebaseApp = getFirebaseApp();
-const database = firebaseApp && firebaseApp.database();
-
-export const getDatabaseRef = (key: string): firebase.database.Reference => {
-	return database?.ref(key) as unknown as firebase.database.Reference;
-};
-
-export const getPubDraftRef = async (pubId: string, sequelizeTransaction: any = null) => {
-	const pub = expect(
-		await Pub.findOne({
-			where: { id: pubId },
-			include: [{ model: Draft, as: 'draft' }],
-			transaction: sequelizeTransaction,
-		}),
-	);
-	return getDatabaseRef(expect(pub.draft).firebasePath);
-};
 
 export const getPubDraft = async (pubId: string, sequelizeTransaction: any = null) => {
 	const pub = expect(
@@ -73,23 +20,22 @@ export const getPubDraft = async (pubId: string, sequelizeTransaction: any = nul
 			transaction: sequelizeTransaction,
 		}),
 	);
-	const draft = expect(pub.draft);
-	return { draft, draftRef: getDatabaseRef(draft.firebasePath) };
+
+	return { draft: expect(pub.draft) };
 };
 
-const maybeAddKeyTimestampPair = (key, timestamp) => {
-	if (typeof key === 'number' && key >= 0) {
+const maybeAddKeyTimestampPair = (key: number, timestamp: number | null) => {
+	if (typeof key === 'number' && key >= 0 && timestamp) {
 		return { [key]: timestamp };
 	}
 	return null;
 };
 
 /**
- * Apply Firebase changes on top of a checkpoint doc to produce the current document.
- * Used when loading from a Postgres checkpoint with Firebase changes layered on top.
+ * Apply commits from Postgres on top of a checkpoint doc to produce the current document.
  */
-const applyFirebaseChangesOnDoc = async (
-	draftRef: firebase.database.Reference,
+const applyCommitsOnDoc = async (
+	draftId: string,
 	checkpointDoc: DocJson,
 	checkpointKey: number,
 	checkpointTimestamp: number | null,
@@ -97,172 +43,105 @@ const applyFirebaseChangesOnDoc = async (
 ) => {
 	const versionBound = historyKey ?? Infinity;
 
-	const getChanges = draftRef
-		.child('changes')
-		.orderByKey()
-		.startAt(String(checkpointKey + 1))
-		.endAt(String(versionBound))
-		.once('value');
-
-	const getMerges = draftRef
-		.child('merges')
-		.orderByKey()
-		.startAt(String(checkpointKey + 1))
-		.endAt(String(versionBound))
-		.once('value');
-
-	const [changesSnapshot, mergesSnapshot] = await Promise.all([getChanges, getMerges]);
-
-	const allKeyables = {
-		...changesSnapshot.val(),
-		...mergesSnapshot.val(),
+	const whereClause: any = {
+		draftId,
+		version: { [Op.gt]: checkpointKey },
 	};
 
-	const flattenedChanges = flattenKeyables(allKeyables);
-	const stepsJson = flattenedChanges.flatMap((change) => change.s.map(uncompressStepJSON));
+	if (versionBound !== Infinity) {
+		whereClause.version = { [Op.gt]: checkpointKey, [Op.lte]: versionBound };
+	}
 
-	const keys = Object.keys(allKeyables);
-	const currentKey = keys.length
-		? keys.map((k) => parseInt(k, 10)).reduce((a, b) => Math.max(a, b))
-		: checkpointKey;
+	const commits = await CollabCommit.findAll({
+		where: whereClause,
+		order: [['version', 'ASC']],
+	});
+
+	const currentKey = commits.length > 0 ? commits[commits.length - 1].version : checkpointKey;
 
 	const currentTimestamp =
-		flattenedChanges.length > 0
-			? flattenedChanges[flattenedChanges.length - 1].t
+		commits.length > 0
+			? (commits[commits.length - 1].createdAt?.valueOf() ?? checkpointTimestamp)
 			: checkpointTimestamp;
 
-	let doc = Node.fromJSON(editorSchema, checkpointDoc);
-	for (const stepJson of stepsJson) {
-		const step = Step.fromJSON(editorSchema, stepJson);
-		const { failed, doc: nextDoc } = step.apply(doc);
-		if (failed) {
-			console.error(`Failed with: ${failed}`);
-		} else if (nextDoc) {
-			doc = nextDoc;
-		}
-	}
+	const doc = replayCommitsOntoDoc(checkpointDoc, commits);
 
 	return {
 		doc,
 		key: currentKey,
 		timestamp: currentTimestamp as number,
-		hasFirebaseChanges: stepsJson.length > 0,
 	};
 };
 
 export const getPubDraftDoc = async (
-	pubIdOrRef: string | firebase.database.Reference,
+	pubId: string,
 	historyKey: null | number = null,
 ): Promise<PubDraftInfo> => {
-	// If called with a raw ref (no pub context), fall back to Firebase-only path
-	if (typeof pubIdOrRef !== 'string') {
-		return getPubDraftDocFromFirebase(pubIdOrRef, historyKey);
-	}
-
-	const pubId = pubIdOrRef;
-	const { draft, draftRef } = await getPubDraft(pubId);
-
-	// Always try Postgres checkpoint first — but only if the requested historyKey
-	// is at or after the checkpoint. If the user is browsing history before the
-	// checkpoint, we need the Firebase path which has older changes/checkpoints.
+	const { draft } = await getPubDraft(pubId);
 	const pgCheckpoint = await getDraftCheckpoint(draft.id);
-	if (pgCheckpoint && (historyKey === null || historyKey >= pgCheckpoint.historyKey)) {
-		// Sequelize returns BIGINT as string — coerce to number for Date use
-		const pgTimestamp = pgCheckpoint.timestamp ? Number(pgCheckpoint.timestamp) : null;
-		const {
-			doc,
-			key: currentKey,
-			timestamp: currentTimestamp,
-		} = await applyFirebaseChangesOnDoc(
-			draftRef,
-			pgCheckpoint.doc as DocJson,
-			pgCheckpoint.historyKey,
-			pgTimestamp,
-			historyKey,
-		);
 
-		// If the checkpoint has frozen discussions (from cold storage), thaw them
-		// back into Firebase so the collaborative discussions plugin works.
-		if (pgCheckpoint.discussions) {
-			const existingDiscussions = await draftRef.child('discussions').once('value');
-			if (!existingDiscussions.val()) {
-				await draftRef.child('discussions').set(pgCheckpoint.discussions);
-			}
-		}
-
-		// Gather timestamps for history UI
-		const [
-			{ timestamp: firstTimestamp, key: firstKey },
-			{ timestamp: latestTimestamp, key: latestKey },
-		] = await Promise.all([
-			getFirstKeyAndTimestamp(draftRef).catch(() => ({
-				timestamp: currentTimestamp,
-				key: currentKey,
-			})),
-			getLatestKeyAndTimestamp(draftRef).catch(() => ({
-				timestamp: currentTimestamp,
-				key: currentKey,
-			})),
-		]);
-
-		// Use the Postgres checkpoint key as the "first" if Firebase has nothing earlier
-		const effectiveFirstKey = firstKey >= 0 ? firstKey : pgCheckpoint.historyKey;
-		const effectiveFirstTimestamp = firstKey >= 0 ? firstTimestamp : pgCheckpoint.timestamp;
-		const effectiveLatestKey = latestKey >= 0 ? Math.max(latestKey, currentKey) : currentKey;
-		const effectiveLatestTimestamp = latestKey >= 0 ? latestTimestamp : currentTimestamp;
+	if (!pgCheckpoint) {
+		// no checkpoint exists, return empty doc at version 0
+		const emptyDoc = editorSchema.topNodeType.createAndFill()!;
 
 		return {
-			doc: doc.toJSON() as DocJson,
-			size: doc.content.size,
-			mostRecentRemoteKey: currentKey,
-			firstTimestamp: effectiveFirstTimestamp as number,
-			latestTimestamp: effectiveLatestTimestamp as number,
+			doc: emptyDoc.toJSON() as DocJson,
+			size: emptyDoc.content.size,
+			mostRecentRemoteKey: 0,
+			firstTimestamp: Date.now(),
+			latestTimestamp: Date.now(),
 			historyData: {
-				timestamps: {
-					...maybeAddKeyTimestampPair(effectiveFirstKey, effectiveFirstTimestamp),
-					...maybeAddKeyTimestampPair(currentKey, currentTimestamp),
-					...maybeAddKeyTimestampPair(effectiveLatestKey, effectiveLatestTimestamp),
-				},
-				currentKey,
-				latestKey: effectiveLatestKey,
+				timestamps: {},
+				currentKey: 0,
+				latestKey: 0,
 			},
 		};
 	}
 
-	// No PG checkpoint — fall back to Firebase-only path (legacy drafts)
-	return getPubDraftDocFromFirebase(draftRef, historyKey);
-};
+	const pgTimestamp = pgCheckpoint.timestamp ? Number(pgCheckpoint.timestamp) : null;
 
-/**
- * Original Firebase-only path for loading a draft doc.
- */
-const getPubDraftDocFromFirebase = async (
-	pubIdOrRef: string | firebase.database.Reference,
-	historyKey: null | number = null,
-): Promise<PubDraftInfo> => {
-	const draftRef = typeof pubIdOrRef === 'string' ? await getPubDraftRef(pubIdOrRef) : pubIdOrRef;
-	const [
-		{ doc, key: currentKey, timestamp: currentTimestamp, checkpointMap },
-		{ timestamp: firstTimestamp, key: firstKey },
-		{ timestamp: latestTimestamp, key: latestKey },
-	] = await Promise.all([
-		getFirebaseDoc(draftRef, editorSchema, historyKey),
-		getFirstKeyAndTimestamp(draftRef),
-		getLatestKeyAndTimestamp(draftRef),
+	const {
+		doc,
+		key: currentKey,
+		timestamp: currentTimestamp,
+	} = await applyCommitsOnDoc(
+		draft.id,
+		pgCheckpoint.doc as DocJson,
+		pgCheckpoint.historyKey,
+		pgTimestamp,
+		historyKey,
+	);
+
+	// get the first and latest commit timestamps for history UI
+	const [firstCommit, latestCommit] = await Promise.all([
+		CollabCommit.findOne({
+			where: { draftId: draft.id },
+			order: [['version', 'ASC']],
+			attributes: ['version', 'createdAt'],
+		}),
+		CollabCommit.findOne({
+			where: { draftId: draft.id },
+			order: [['version', 'DESC']],
+			attributes: ['version', 'createdAt'],
+		}),
 	]);
+
+	const firstKey = firstCommit?.version ?? pgCheckpoint.historyKey;
+	const firstTimestamp = firstCommit?.createdAt?.valueOf() ?? pgTimestamp ?? Date.now();
+	const latestKey = latestCommit?.version ?? currentKey;
+	const latestTimestamp = latestCommit?.createdAt?.valueOf() ?? currentTimestamp;
 
 	return {
 		doc: doc.toJSON() as DocJson,
 		size: doc.content.size,
 		mostRecentRemoteKey: currentKey,
-		firstTimestamp,
-		latestTimestamp,
+		firstTimestamp: firstTimestamp as number,
+		latestTimestamp: latestTimestamp as number,
 		historyData: {
 			timestamps: {
-				...checkpointMap,
-				...maybeAddKeyTimestampPair(firstKey, firstTimestamp),
+				...maybeAddKeyTimestampPair(firstKey, firstTimestamp as number),
 				...maybeAddKeyTimestampPair(currentKey, currentTimestamp),
-				...maybeAddKeyTimestampPair(latestKey, latestTimestamp),
+				...maybeAddKeyTimestampPair(latestKey, latestTimestamp as number),
 			},
 			currentKey,
 			latestKey,
@@ -275,45 +154,19 @@ export const getLatestKeyInPubDraft = async (pubId: string) => {
 	return Math.max(mostRecentRemoteKey, historyData.latestKey);
 };
 
-const getFirebaseDraftPathParts = (draftPath: string) => {
-	const draftPathMatch = draftPath.match(/drafts\/draft-(.*)/);
-	if (draftPathMatch) {
-		const draftId = draftPathMatch[1];
-		return { draftId: `draft-${draftId}` };
-	}
-	if (draftPath.includes('/')) {
-		const [pubIdPart, branchIdPart] = draftPath.split('/');
-		if (pubIdPart.startsWith('pub-') && branchIdPart.startsWith('branch-')) {
-			return { pubId: pubIdPart, branchId: branchIdPart };
-		}
-	}
-	return null;
-};
+/**
+ * Programmatically apply edits to a draft's document. Used by server-side operations
+ * like imports and migrations that need to modify the doc without a client.
+ */
+export const editDraft = async (pubId: string, clientId: string, schema: Schema = editorSchema) => {
+	const { draft } = await getPubDraft(pubId);
+	const checkpoint = await getDraftCheckpoint(draft.id);
 
-export const getFirebaseToken = (
-	clientId: string,
-	clientData: { canEdit: boolean; canView: boolean; draftPath: string },
-) => {
-	const { draftPath } = clientData;
-	const hasValidPrefix = ['pub-', 'drafts/'].some((prefix) => draftPath.startsWith(prefix));
-	if (!hasValidPrefix) {
-		throw new Error(
-			`Will not create Firebase token for potentially dangerous draft path ${draftPath}`,
-		);
-	}
-	const tokenData = { ...clientData, ...getFirebaseDraftPathParts(draftPath) };
-	return firebaseAdmin.auth(firebaseApp!).createCustomToken(clientId, tokenData);
-};
+	let doc = checkpoint
+		? Node.fromJSON(schema, checkpoint.doc)
+		: schema.topNodeType.createAndFill()!;
 
-export const editFirebaseDraftByRef = async (
-	ref: firebase.database.Reference,
-	clientId: string,
-	schema: Schema = editorSchema,
-	initialState?: { doc: Node; key: number },
-) => {
-	const fetchDoc = async () => getFirebaseDoc(ref, schema);
-
-	let { doc, key: currentKey } = initialState ?? (await fetchDoc());
+	let currentVersion = draft.version;
 	let pendingSteps: Step[] = [];
 
 	const api = {
@@ -324,42 +177,72 @@ export const editFirebaseDraftByRef = async (
 			pendingSteps.push(...tr.steps);
 			return api;
 		},
+
 		writeChange: async (): Promise<boolean> => {
-			const change = createFirebaseChange(pendingSteps, clientId);
-			const { committed } = await ref.child(`changes/${currentKey + 1}`).transaction(
-				(existingContent) => {
-					if (existingContent) {
-						// Don't overwrite -- bail instead
-						return undefined;
-					}
-					return change;
-				},
-				undefined,
-				false,
-			);
-			if (committed) {
-				++currentKey;
-				pendingSteps = [];
+			if (pendingSteps.length === 0) {
+				return true;
 			}
-			return committed;
+
+			const { getCollabAuthority } = await import('server/collab/authority.js');
+
+			try {
+				const commitData = {
+					steps: pendingSteps.map((s) => s.toJSON()),
+					version: currentVersion,
+					clientId,
+					ref: `server-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				};
+
+				await getCollabAuthority().receiveCommit(draft.id, commitData);
+				currentVersion++;
+				pendingSteps = [];
+				return true;
+			} catch (_err) {
+				return false;
+			}
 		},
-		clearChanges: async () => {
-			await ref.child(`changes`).remove();
-			const refetch = await fetchDoc();
-			doc = refetch.doc;
-			currentKey = refetch.key;
-			pendingSteps = [];
-		},
-		getDoc: () => {
-			return doc;
-		},
-		getKey: () => {
-			return currentKey;
-		},
-		getRef: () => {
-			return ref;
-		},
+
+		getDoc: () => doc,
+		getKey: () => currentVersion,
 	};
 
 	return api;
+};
+
+/**
+ * Get steps from the commit table between two versions (exclusive start, inclusive end).
+ */
+export const getStepsBetweenVersions = async (
+	draftId: string,
+	fromVersion: number,
+	toVersion: number,
+	schema: Schema = editorSchema,
+): Promise<Step[][]> => {
+	const commits = await CollabCommit.findAll({
+		where: {
+			draftId,
+			version: { [Op.gt]: fromVersion, [Op.lte]: toVersion },
+		},
+		order: [['version', 'ASC']],
+	});
+
+	return commits.map((commit) =>
+		commit.steps.map((stepJson: any) => Step.fromJSON(schema, stepJson)),
+	);
+};
+
+// legacy utility for migration tools that still interact with firebase-admin directly
+export const getDatabaseRef = (path: string) => {
+	try {
+		const firebaseAdmin = require('firebase-admin');
+		const app = firebaseAdmin.apps[0];
+
+		if (!app) {
+			return null;
+		}
+
+		return app.database().ref(path);
+	} catch {
+		return null;
+	}
 };

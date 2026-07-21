@@ -11,8 +11,9 @@ import { getAssetUrlFromResizedUrl } from 'utils/images';
 
 // https://stackoverflow.com/questions/76958222/how-to-pipe-response-from-nodejs-fetch-response-to-an-express-response#comment139165202_77589444
 declare global {
+	// @ts-ignore response type incompatibility with node 24 / ts 7
 	interface Response {
-		readonly body: streamWeb.ReadableStream<Uint8Array> | null;
+		readonly body: streamWeb.ReadableStream<Uint8Array<ArrayBuffer>> | null;
 	}
 }
 

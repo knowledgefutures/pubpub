@@ -10,7 +10,7 @@
 		/* Visit https://aka.ms/tsconfig.json to read more about this file */
 		/* Basic Options */
 		"target": "es6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
-		"module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
+		"module": "nodenext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
 		"lib": ["es2019", "dom"] /* Specify library files to be included in the compilation. */,
 		"allowJs": true /* Allow javascript files to be compiled. */,
 		// "checkJs": true,                       /* Report errors in .js files. */
@@ -26,7 +26,7 @@
 		// "removeComments": true,                /* Do not emit comments to output. */
 		"noEmit": true /* Do not emit outputs. */,
 		// "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
-		"downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
+		// "downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
 		// "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
 		/* Strict Type-Checking Options */
 		"strict": true /* Enable all strict type-checking options. */,
@@ -43,8 +43,8 @@
 		// "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 		/* Module Resolution Options */
-		// "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-		"baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
+		"moduleResolution": "nodenext" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
+		// "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
 		"paths": {
 			"client": ["./client"],
 			"client/*": ["./client/*"],
@@ -54,6 +54,10 @@
 			"containers/*": ["./client/containers/*"],
 			"server": ["./server"],
 			"server/*": ["./server/*"],
+			"deposit": ["./deposit"],
+			"deposit/*": ["./deposit/*"],
+			"workers": ["./workers"],
+			"workers/*": ["./workers/*"],
 			"stubstub": ["./stubstub"],
 			"stubstub/*": ["./stubstub/*"],
 			"types": ["./types"],

@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import YAML from 'yaml';
 
-import { editorSchema, getReactedDocFromJson } from 'components/Editor';
+import { editorSchema, getReactedDocFromJson } from 'components/Editor/utils';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
 import { normalizeOrcid } from 'utils/orcid';
 

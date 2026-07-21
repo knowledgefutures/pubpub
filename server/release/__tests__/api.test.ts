@@ -114,7 +114,6 @@ describe('/api/releases', () => {
 		const { community, pub, pubAdmin } = models;
 		const agent = await login(pubAdmin);
 		const pubEditor = await editPub(pub.id);
-		await pubEditor.clearChanges();
 		const { body: release } = await agent
 			.post('/api/releases')
 			.send(

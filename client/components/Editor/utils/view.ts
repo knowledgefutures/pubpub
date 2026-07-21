@@ -2,6 +2,7 @@ import type { EditorView } from 'prosemirror-view';
 
 import type { DocJson } from 'types';
 
+import { getVersion } from '@pitter-patter/collab-client';
 import { Node, Slice } from 'prosemirror-model';
 import { type EditorState, Selection } from 'prosemirror-state';
 
@@ -151,27 +152,29 @@ export const getLocalHighlightText = (editorView, highlightId) => {
 	};
 };
 
-export const reanchorDiscussion = (editorView, firebaseRef, discussionId) => {
-	const collabPlugin = editorView.state.collaborative$ || {};
-	const newCurrentKey = collabPlugin.mostRecentRemoteKey;
-	const selection = editorView.state.selection;
-	const newAnchor = selection.anchor;
-	const newHead = selection.head;
+export const reanchorDiscussion = (editorView, pubId: string, discussionId: string) => {
+	const currentKey = getVersion(editorView.state) ?? 0;
+	const { anchor, head } = editorView.state.selection;
 
 	const transaction = editorView.state.tr;
 	transaction.setMeta('removeDiscussion', { id: discussionId });
 	editorView.dispatch(transaction);
-	firebaseRef
-		.child('discussions')
-		.child(discussionId)
-		.update({
-			currentKey: newCurrentKey,
-			selection: {
-				a: newAnchor,
-				h: newHead,
-				t: 'text',
+
+	fetch(`/api/pubs/${pubId}/discussions/positions`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			[discussionId]: {
+				initKey: currentKey,
+				currentKey,
+				initAnchor: anchor,
+				initHead: head,
+				selection: { type: 'text', anchor, head },
 			},
-		});
+		}),
+	}).catch((err) => {
+		console.error('Failed to reanchor discussion:', err);
+	});
 };
 
 export const focus = (editorView) => {

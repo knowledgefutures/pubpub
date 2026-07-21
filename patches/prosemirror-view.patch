@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,7 @@
+   "types": "dist/index.d.ts",
+   "exports": {
+     ".": {
+-      "import": "./dist/index.js",
++      "import": "./dist/index.cjs",
+       "require": "./dist/index.cjs"
+     },
+     "./style/prosemirror.css": "./style/prosemirror.css"

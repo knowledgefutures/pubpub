@@ -27,7 +27,7 @@ type Props = {
 	markActiveItems?: boolean;
 };
 
-const CommandMenu = React.forwardRef((props: Props, ref) => {
+const CommandMenu = React.forwardRef((props: Props, ref: React.ForwardedRef<HTMLButtonElement>) => {
 	const {
 		editorChangeObject: { view },
 		className = '',

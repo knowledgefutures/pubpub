@@ -6,5 +6,5 @@ export const draftSchema = z.object({
 		.date()
 		.transform((d) => d.toString())
 		.nullable() as z.ZodType<string | null>,
-	firebasePath: z.string(),
+	firebasePath: z.string().nullable(),
 });

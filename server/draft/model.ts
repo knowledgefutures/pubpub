@@ -2,16 +2,9 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 
 import type { SerializedModel } from 'types';
 
-import {
-	AllowNull,
-	Column,
-	DataType,
-	Default,
-	Model,
-	PrimaryKey,
-	Table,
-} from 'sequelize-typescript';
-// import { Pub } from '../models';
+import { Column, DataType, Default, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
+
+import { DraftCheckpoint } from 'server/draftCheckpoint/model';
 
 @Table
 export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes<Draft>> {
@@ -25,7 +18,14 @@ export class Draft extends Model<InferAttributes<Draft>, InferCreationAttributes
 	@Column(DataType.DATE)
 	declare latestKeyAt: Date | null;
 
-	@AllowNull(false)
+	// kept nullable during Firebase→PitterPatter migration; will be removed after full cutover
 	@Column(DataType.STRING)
-	declare firebasePath: string;
+	declare firebasePath: string | null;
+
+	@Default(0)
+	@Column(DataType.INTEGER)
+	declare version: CreationOptional<number>;
+
+	@HasOne(() => DraftCheckpoint, { as: 'checkpoint', foreignKey: 'draftId' })
+	declare checkpoint?: DraftCheckpoint;
 }

@@ -71,11 +71,11 @@ export const envSchema = z.object({
 	// ── Auth / Signing ──────────────────────────────────────────────────
 	JWT_SIGNING_SECRET: z.string().min(1).describe('Secret used to sign JWT tokens'),
 
-	// ── Firebase ─────────────────────────────────────────────────────────
+	// ── Firebase (legacy, only needed for migration tooling) ─────────────
 	FIREBASE_SERVICE_ACCOUNT_BASE64: z
 		.string()
-		.min(1)
-		.describe('Base64-encoded Firebase service-account JSON'),
+		.optional()
+		.describe('Base64-encoded Firebase service-account JSON (only needed for migration)'),
 	FIREBASE_TEST_DB_URL: z
 		.string()
 		.url()
@@ -133,6 +133,12 @@ export const envSchema = z.object({
 
 	// ── Message Queues ──────────────────────────────────────────────────
 	CLOUDAMQP_URL: z.string().describe('CloudAMQP (RabbitMQ) connection URL'),
+
+	// ── Valkey / Redis ──────────────────────────────────────────────────
+	VALKEY_URL: z
+		.string()
+		.url()
+		.describe('Valkey (Redis-compatible) URL for collab broadcast and presence'),
 
 	// ── Zotero ──────────────────────────────────────────────────────────
 	ZOTERO_CLIENT_KEY: z.string().describe('Zotero OAuth1 consumer key'),

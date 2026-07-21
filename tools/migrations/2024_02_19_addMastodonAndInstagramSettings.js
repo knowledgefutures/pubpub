@@ -1,4 +1,3 @@
-// @ts-check
 
 const newCommunityColumns = ['instagram', 'mastodon', 'linkedin', 'bluesky', 'github'];
 const newUserColumns = ['mastodon', 'instagram', 'linkedin', 'bluesky'];

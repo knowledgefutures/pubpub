@@ -1,39 +1,16 @@
-import type firebase from 'firebase';
 import type { Schema } from 'prosemirror-model';
 
 import type { DefinitelyHas } from 'types';
 
 import type { PluginsOptions } from '../../types';
 
-import { receiveTransaction, sendableSteps } from 'prosemirror-collab';
-import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
-import { Plugin, type PluginKey } from 'prosemirror-state';
-import { Step } from 'prosemirror-transform';
-
 import {
-	createFirebaseChange,
-	getFirebaseConnectionMonitorRef,
-	storeCheckpoint,
-} from '../../utils';
-
-/*
-Rough pipeline:
-Client types changes
-Client sets ongoingTransaction=true and writes a transation
-if that transaction succeeds
-	set ongoingTransaction=false
-if that transaction fails because of error
-	throw error
-if that transaction fails beause there is already a keyable with that id
-	process pending stored keyables
-
-When a remote change is made and synced to client, store that keyable
-Attempt to process all stored keyables
-	don't process if there is an ongoing transaction
-
-If there is an ongoing transaction, it will eventually finish and trigger a new receiveCollabChanges
-	or, it will fail and that will cause processStoredKeyables to fire.
-*/
+	CollabClient,
+	collab,
+	LongPollListener,
+	receiveCommitTransaction,
+} from '@pitter-patter/collab-client';
+import { Plugin, type PluginKey } from 'prosemirror-state';
 
 const noop = () => {};
 
@@ -44,188 +21,87 @@ export default (
 	localClientId: string,
 ) => {
 	const { collaborativeOptions, isReadOnly, onError = noop } = options;
-	const {
-		pubId,
-		firebaseRef: ref,
-		onStatusChange = noop,
-		onUpdateLatestKey = noop,
-	} = collaborativeOptions;
-	let view;
-	let mostRecentRemoteKey = collaborativeOptions.initialDocKey;
-	let ongoingTransaction = false;
-	let hasLoadedChangesOnce = false;
-	let listeningOn: null | firebase.database.Query = null;
-	let pendingRemoteKeyables = [];
-	/* sendCollabChanges is called only from the main Editor */
-	/* disppatchTransaction view spec paramater. sendCollabChanges */
-	/* is called on every transaction, but it quickly exits if the */
-	/* transaction is not of the right type (meta), or if a firebase */
-	/* transaction is already in progress. */
+	const { pubId, onStatusChange = noop, onUpdateLatestKey = noop } = collaborativeOptions;
 
-	/* If the firebase transaction commit fails because the keyable key */
-	/* already exists, we either 1) have the transaction in pendingRemoteKeyables */
-	/* or we are about to receive a new firebase child. Both cases will result in  */
-	/* collab.receiveTransaction being called, which will dispatch a transaction */
-	/* triggering sendCollabChanges to be called again, thus syncing our local */
-	/* uncommitted steps. */
-	const sendCollabChanges = (newState) => {
-		const sendable = sendableSteps(newState);
+	let view: any;
+	let collabClient: CollabClient | null = null;
+	let abortController: AbortController | null = null;
 
-		if (isReadOnly || ongoingTransaction || !sendable) {
-			return null;
+	const commitListener = new LongPollListener(
+		new URL(`/api/pubs/${pubId}/commits`, window.location.origin),
+	);
+
+	const sendCollabChanges = (newState: any) => {
+		if (isReadOnly || !collabClient) {
+			return;
 		}
 
-		ongoingTransaction = true;
-		return ref
-			.child('changes')
-			.child(String(mostRecentRemoteKey + 1))
-			.transaction(
-				(existingRemoteSteps) => {
-					onStatusChange('saving');
-					if (existingRemoteSteps) {
-						/* Returning undefined causes firebase transaction to abort. */
-						/* https://firebase.google.com/docs/reference/js/firebase.database.Reference#transactionupdate:-function */
-						return undefined;
-					}
-					return createFirebaseChange(sendable.steps, localClientId);
-				},
-				undefined,
-				false,
-			)
-			.then((transactionResult) => {
-				const { committed, snapshot } = transactionResult;
-				ongoingTransaction = false;
-				if (committed) {
-					onStatusChange('saved');
-
-					/* If multiple of saveEveryNSteps, update checkpoint */
-					const saveEveryNSteps = 100;
-					if (snapshot.key && snapshot.key % saveEveryNSteps === 0) {
-						storeCheckpoint(pubId, newState.doc, snapshot.key);
-					}
-				}
-
-				processStoredKeyables();
+		onStatusChange('saving');
+		collabClient
+			.send(newState)
+			.then(() => {
+				onStatusChange('saved');
 			})
-			.catch((err) => {
-				console.error('Error in firebase transaction:', err);
-				onError(err);
+			.catch((e) => {
+				console.error('Error sending collab commit:', e);
+				onError(e);
 			});
 	};
 
-	const extractSnapshot = (snapshotVal) => {
-		const compressedStepsJSON = snapshotVal.s;
-		const newSteps = compressedStepsJSON.map((compressedStepJSON) => {
-			return Step.fromJSON(schema, uncompressStepJSON(compressedStepJSON));
-		});
-		const newClientIds = new Array(newSteps.length).fill(snapshotVal.cId);
-		return {
-			steps: newSteps,
-			clientIds: newClientIds,
+	const startCollab = (initialState: any) => {
+		const collabConfig = {
+			sendCommit: async (commit: any) => {
+				const response = await fetch(`/api/pubs/${pubId}/commits`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(commit.toJSON()),
+				});
+
+				if (response.status === 409) {
+					throw new Error('Too much contention');
+				}
+
+				if (!response.ok) {
+					throw new Error(`Commit failed: ${response.status}`);
+				}
+
+				onStatusChange('saved');
+				onUpdateLatestKey(commit.version);
+			},
+
+			receiveCommits: (commits: any[]) => {
+				if (!view) {
+					return;
+				}
+
+				let currentState = view.state;
+
+				for (const commit of commits) {
+					const tr = receiveCommitTransaction(currentState, commit);
+					view.dispatch(tr);
+					currentState = view.state;
+				}
+
+				if (commits.length > 0) {
+					const lastCommit = commits[commits.length - 1];
+					onUpdateLatestKey(lastCommit.version);
+				}
+			},
+
+			listener: commitListener,
 		};
-	};
 
-	/* Iterate over pendingRemoteKeyables if there is no ongoing */
-	/* firebase transaction. If there is an ongoing firebase transaction */
-	/* it will either fail, causing this function to be called again, or it */
-	/* will succeed, which will cause a new keyable child to sync, triggering */
-	/* receiveCollabChanges, and thus this function. */
-	const processStoredKeyables = () => {
-		if (ongoingTransaction) {
-			return null;
-		}
-		pendingRemoteKeyables.forEach((snapshot) => {
-			try {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'val' does not exist on type 'never'.
-				const { steps, clientIds } = extractSnapshot(snapshot.val());
-				const trans = receiveTransaction(view.state, steps, clientIds);
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'key' does not exist on type 'never'.
-				mostRecentRemoteKey = Number(snapshot.key);
-				view.dispatch(trans);
-				onUpdateLatestKey(mostRecentRemoteKey);
-			} catch (err) {
-				console.error('Error in recieveCollabChanges:', err);
-				onError(err as Error);
-			}
-		});
-		pendingRemoteKeyables = [];
-		const sendable = sendableSteps(view.state);
-		if (sendable) {
-			sendCollabChanges(view.state);
-		}
-		return null;
-	};
+		collabClient = new CollabClient(collabConfig);
+		abortController = new AbortController();
 
-	/* This is called everytime firebase has a new keyable child */
-	/* We store the new keyable in pendingRemoteKeyables, and then */
-	/* process all existing stored keyables. */
-	const receiveCollabChanges = (snapshot) => {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
-		pendingRemoteKeyables.push(snapshot);
-		processStoredKeyables();
-	};
-
-	const loadDocument = () => {
-		getFirebaseConnectionMonitorRef(ref).on('value', (snapshot) => {
-			const isConnected = snapshot.val();
-			if (isConnected) {
-				if (hasLoadedChangesOnce) {
-					onStatusChange('connected');
-				}
-			} else {
-				onStatusChange('disconnected');
+		collabClient.listen(initialState, abortController.signal).catch((e) => {
+			if (e.name !== 'AbortError') {
+				console.error('Collab listener error:', e);
+				onError(e);
 			}
 		});
 
-		return ref
-			.child('changes')
-			.orderByKey()
-			.startAt(String(mostRecentRemoteKey + 1))
-			.once('value')
-			.then((changesSnapshot) => {
-				const snapshotVal = changesSnapshot.val() || {};
-				const allSteps: any[] = [];
-				const allStepClientIds: any[] = [];
-				const keys = Object.keys(snapshotVal);
-
-				/* Uncompress steps and add stepClientIds */
-				Object.keys(snapshotVal).forEach((key) => {
-					const { steps, clientIds } = extractSnapshot(snapshotVal[key]);
-					allSteps.push(...steps);
-					allStepClientIds.push(...clientIds);
-				});
-
-				/* We have to use .reduce here rather than simply calling */
-				/* Math.max(keys) because sometimes the keys array is larger */
-				/* than the allowed input size of Math.max() */
-				mostRecentRemoteKey = keys.length
-					? keys.map((k) => Number(k)).reduce((a, b) => Math.max(a, b), 0)
-					: mostRecentRemoteKey;
-
-				const trans = receiveTransaction(view.state, allSteps, allStepClientIds);
-				view.dispatch(trans);
-				onUpdateLatestKey(mostRecentRemoteKey);
-
-				/* Set finishedLoading flag */
-				const finishedLoadingTrans = view.state.tr;
-				finishedLoadingTrans.setMeta('finishedLoading', true);
-				view.dispatch(finishedLoadingTrans);
-				onStatusChange('connected');
-				hasLoadedChangesOnce = true;
-
-				/* Listen to Changes */
-				listeningOn = ref
-					.child('changes')
-					.orderByKey()
-					.startAt(String(mostRecentRemoteKey + 1));
-
-				return listeningOn!.on('child_added', (snapshot) => {
-					receiveCollabChanges(snapshot);
-				});
-			})
-			.catch((err) => {
-				console.error('In loadDocument Error with ', err, err.message);
-			});
+		onStatusChange('connected');
 	};
 
 	return new Plugin({
@@ -242,7 +118,6 @@ export default (
 			apply: (transaction, pluginState) => {
 				return {
 					isLoaded: transaction.getMeta('finishedLoading') || pluginState.isLoaded,
-					mostRecentRemoteKey,
 					localClientId,
 					localClientData: collaborativeOptions.clientData,
 					sendCollabChanges,
@@ -251,12 +126,18 @@ export default (
 		},
 		view: (initView) => {
 			view = initView;
-			loadDocument();
+
+			// mark as loaded immediately since the doc comes from the server already
+			const finishedLoadingTrans = view.state.tr;
+			finishedLoadingTrans.setMeta('finishedLoading', true);
+			view.dispatch(finishedLoadingTrans);
+
+			startCollab(view.state);
+
 			return {
 				destroy: () => {
-					listeningOn?.off('child_added');
-					getFirebaseConnectionMonitorRef(ref).off('value');
-					pendingRemoteKeyables = [];
+					abortController?.abort();
+					collabClient = null;
 				},
 			};
 		},

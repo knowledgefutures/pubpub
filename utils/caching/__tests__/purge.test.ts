@@ -149,7 +149,7 @@ let serviceId: string;
 setup(beforeAll, async () => {
 	await models.resolve();
 
-	const { env } = await import('server/env');
+	const { env } = await import('server/env.js');
 	token = env.FASTLY_PURGE_TOKEN;
 	serviceId = env.FASTLY_SERVICE_ID;
 
@@ -165,7 +165,7 @@ setup(beforeAll, async () => {
 });
 
 teardown(afterAll, async () => {
-	const { env } = await import('server/env');
+	const { env } = await import('server/env.js');
 	env.TEST_FASTLY_PURGE = false;
 	setEnvironment(false, false, false);
 

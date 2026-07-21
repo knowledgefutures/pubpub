@@ -317,8 +317,8 @@ async function applyStarterPubs(
 	actorId: string,
 ) {
 	// Lazy import to avoid circular dependency (resolved once by Node.js module cache)
-	const { createPub } = await import('server/pub/queries');
-	const { upsertDraftCheckpoint } = await import('server/draftCheckpoint/queries');
+	const { createPub } = await import('server/pub/queries.js');
+	const { upsertDraftCheckpoint } = await import('server/draftCheckpoint/queries.js');
 
 	for (const pubDef of pubDefs) {
 		const collectionIds: string[] = [];

@@ -50,6 +50,10 @@ const apiRouter = Router()
 	.use(activityItemRouter)
 	.use(captchaRouter)
 	.use(citationRouter)
+	// collabRouter + collabDiscussionPositionsRouter are mounted earlier in
+	// server.ts (before the session/auth middleware) so their high-frequency
+	// commit/presence/position requests skip the unused session+user+ban
+	// Postgres lookups. Do not re-mount them here.
 	.use(communityServicesRouter)
 	.use(customScriptRouter)
 	.use(discussionRouter)

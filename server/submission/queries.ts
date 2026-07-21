@@ -1,4 +1,4 @@
-import { getEmptyDoc } from 'client/components/Editor';
+import { getEmptyDoc } from 'client/components/Editor/utils';
 import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { defer } from 'server/utils/deferred';

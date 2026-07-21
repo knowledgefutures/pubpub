@@ -1,4 +1,4 @@
-const zipArrays = (first, second) => {
+const zipArrays = (first, second): unknown[] => {
 	const length = Math.max(first.length, second.length);
 	const firstFilled = [...first, ...new Array(length - first.length).fill(null)];
 	const secondFilled = [...second, ...new Array(length - second.length).fill(null)];
@@ -18,9 +18,7 @@ export const pathMatchesPattern = (filePath, pattern) => {
 		if (pathPart === null || patternPart === null) {
 			return false;
 		}
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'split' does not exist on type 'never'.
 		const pathDotSegments = pathPart.split('.');
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'split' does not exist on type 'never'.
 		const patternDotSegments = patternPart.split('.');
 		return zipArrays(patternDotSegments, pathDotSegments).every(
 			// @ts-expect-error ts-migrate(2488) FIXME: Type 'never' must have a '[Symbol.iterator]()' met... Remove this comment to see the full error message

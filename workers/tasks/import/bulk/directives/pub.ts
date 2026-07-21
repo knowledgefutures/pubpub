@@ -8,13 +8,13 @@ import { Op } from 'sequelize';
 import tmp from 'tmp-promise';
 import YAML from 'yaml';
 
-import { buildSchema, createFirebaseChange } from 'components/Editor/utils';
+import { buildSchema } from 'components/Editor/utils';
 import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { Collection, PubAttribution } from 'server/models';
 import { createPub as createPubQuery } from 'server/pub/queries';
 import { setSummarizeParentScopesOnPubCreation } from 'server/scopeSummary';
-import { getPubDraftRef } from 'server/utils/firebaseAdmin';
+import { editDraft } from 'server/utils/firebaseAdmin';
 import { bibliographyFormats, extensionToPandocFormat } from 'utils/import/formats';
 
 import { getUrlForAssetKey, uploadFileToAssetStore } from '../../assetStore';
@@ -438,12 +438,15 @@ const addFileNodeToDocument = (document, fileNodeAttrs) => {
 };
 
 const writeDocumentToPubDraft = async (pubId, document) => {
-	const draftRef = await getPubDraftRef(pubId);
 	const hydratedDocument = Node.fromJSON(documentSchema, document);
 	const documentSlice = new Slice(Fragment.from(hydratedDocument.content), 0, 0);
 	const replaceStep = new ReplaceStep(0, 0, documentSlice);
-	const change = createFirebaseChange([replaceStep], 'bulk-importer');
-	await draftRef.child('changes').child('0').set(change);
+
+	const editor = await editDraft(pubId, 'bulk-importer');
+	editor.transform((tr) => {
+		tr.step(replaceStep);
+	});
+	await editor.writeChange();
 };
 
 export const resolvePubDirective = async ({ directive, targetPath, community, collection }) => {

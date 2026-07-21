@@ -32,8 +32,8 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 		},
 		submissionState,
 		historyData: { currentKey, isViewingHistory, historyDoc, historyDocEditorKey },
-		collabData: { firebaseDraftRef },
 	} = options;
+
 	const {
 		scopeData: {
 			activePermissions: { canEdit, canEditDraft },
@@ -79,6 +79,7 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 
 	if (submissionState) {
 		const submissionPreviewDoc = submissionState?.submissionPreviewDoc;
+
 		if (submissionPreviewDoc) {
 			return {
 				editorKey: `submission-preview-${currentKey}`,
@@ -91,6 +92,7 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 				canCreateAnchoredDiscussions: false,
 			};
 		}
+
 		if (submissionState.selectedTab === 'instructions') {
 			return {
 				editorKey: '',
@@ -133,11 +135,11 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 	}
 
 	return {
-		editorKey: firebaseDraftRef ? 'ready' : 'unready',
+		editorKey: 'ready',
 		isReadOnly: !(canEdit || canEditDraft),
 		initialContent: initialDoc,
 		initialHistoryKey: initialDocKey,
-		includeCollabPlugin: !!firebaseDraftRef,
+		includeCollabPlugin: true,
 		includeDiscussionsPlugin: true,
 		discussionAnchors,
 		canCreateAnchoredDiscussions: true,

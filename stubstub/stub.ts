@@ -89,10 +89,8 @@ export const stubFirebaseAdmin = () => {
 				size: 0,
 			}),
 		);
-		const getFirebaseTokenStub = sinon
-			.stub(firebaseAdmin, 'getFirebaseToken')
-			.returns(Promise.resolve(''));
-		stubs = [getPubDraftDocStub, getFirebaseTokenStub];
+
+		stubs = [getPubDraftDocStub];
 	});
 
 	afterAll(() => stubs.forEach((stub) => stub.restore()));

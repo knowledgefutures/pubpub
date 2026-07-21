@@ -113,6 +113,11 @@ const copyFirebaseData = async (sourcePath: string, destPath: string): Promise<b
  */
 const migrateDraft = async (draft: Draft): Promise<boolean> => {
 	const { id, firebasePath } = draft;
+
+	if (!firebasePath) {
+		return false;
+	}
+
 	const modernPath = getModernPath(id);
 
 	log(`  Migrating draft ${id}`);
@@ -201,7 +206,7 @@ const main = async () => {
 
 		// Process drafts
 		for (const draft of drafts) {
-			if (!isLegacyPath(draft.firebasePath)) {
+			if (!draft.firebasePath || !isLegacyPath(draft.firebasePath)) {
 				verbose(`  Skipping ${draft.id}: not a legacy path (${draft.firebasePath})`);
 				stats.skipped++;
 				continue;

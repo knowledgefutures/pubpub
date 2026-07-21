@@ -49,7 +49,6 @@ const shimPubContextProps = {
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},
-	firebaseDraftRef: null,
 	updateLocalData: null as any,
 	updatePubData: null as any,
 	submissionState: {},
@@ -62,7 +61,7 @@ export const ImmediatePubContext = React.createContext<PubContextType>(shimPubCo
 export const PubContextProvider = (props: Props) => {
 	const { children, pubData: initialPubData } = props;
 	const [pubData, updatePubData] = useIdlyUpdatedState(initialPubData);
-	const [collabData, updateCollabData] = usePubCollabState({ pubData });
+	const [collabData, updateCollabData] = usePubCollabState();
 	const historyData = usePubHistoryState({
 		pubData,
 		editorView: collabData.editorChangeObject?.view ?? null,

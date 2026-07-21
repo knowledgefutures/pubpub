@@ -4,7 +4,33 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  prosemirror-model: 1.25.4
+  prosemirror-state: 1.4.4
+  prosemirror-view: 1.41.6
+  '@pitter-patter/collab-server@0>prosemirror-state': 1.4.4
+  '@pitter-patter/collab-server@0>prosemirror-view': 1.41.6
+  '@pitter-patter/collab-server@0>prosemirror-model': 1.25.4
+
 patchedDependencies:
+  '@pitter-patter/collab-server':
+    hash: b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c
+    path: patches/@pitter-patter__collab-server.patch
+  '@pubpub/deposit-utils':
+    hash: 6fef8933046b7751abda1bd2ed0422094c79d7828b07f7d5afba26a47c696d89
+    path: patches/@pubpub__deposit-utils.patch
+  prosemirror-model:
+    hash: 8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8
+    path: patches/prosemirror-model.patch
+  prosemirror-state:
+    hash: 8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8
+    path: patches/prosemirror-state.patch
+  prosemirror-transform:
+    hash: 8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8
+    path: patches/prosemirror-transform.patch
+  prosemirror-view:
+    hash: ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5
+    path: patches/prosemirror-view.patch
   reakit:
     hash: 31488077229fe3d19a71c66458b888c58eab18010632a29e3b5c485df77242a8
     path: patches/reakit.patch
@@ -36,7 +62,7 @@ importers:
         version: 3.1032.0
       '@benrbray/prosemirror-math':
         specifier: git+https://github.com/pubpub/prosemirror-math#9e6722987690bfad58444d8edbd73294e255de17
-        version: https://codeload.github.com/pubpub/prosemirror-math/tar.gz/9e6722987690bfad58444d8edbd73294e255de17(katex@0.13.24)(prosemirror-commands@1.7.1)(prosemirror-gapcursor@1.4.0)(prosemirror-history@1.5.0)(prosemirror-inputrules@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-transform@1.11.0)(prosemirror-view@1.41.6)
+        version: https://codeload.github.com/pubpub/prosemirror-math/tar.gz/9e6722987690bfad58444d8edbd73294e255de17(katex@0.13.24)(prosemirror-commands@1.7.1)(prosemirror-gapcursor@1.4.0)(prosemirror-history@1.5.0)(prosemirror-inputrules@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))
       '@blueprintjs/core':
         specifier: 3.26.0
         version: 3.26.0(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -142,12 +168,24 @@ importers:
       '@monaco-editor/react':
         specifier: 4.1.1
         version: 4.1.1(monaco-editor@0.21.3)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@pitter-patter/collab-client':
+        specifier: ^0.1.3
+        version: 0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
+      '@pitter-patter/collab-server':
+        specifier: ^0.1.3
+        version: 0.1.3(patch_hash=b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
+      '@pitter-patter/presence-client':
+        specifier: ^0.2.1
+        version: 0.2.1(@handlewithcare/react-prosemirror@3.1.6(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0))(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0)
+      '@pitter-patter/presence-server':
+        specifier: ^0.1.3
+        version: 0.1.3
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
       '@pubpub/deposit-utils':
         specifier: ^0.1.10
-        version: 0.1.10
+        version: 0.1.10(patch_hash=6fef8933046b7751abda1bd2ed0422094c79d7828b07f7d5afba26a47c696d89)
       '@pubpub/prosemirror-pandoc':
         specifier: ^1.1.5
         version: 1.1.5
@@ -160,6 +198,9 @@ importers:
       '@sentry/react':
         specifier: ^7.77.0
         version: 7.120.4(react@16.14.0)
+      '@stepwisehq/prosemirror-collab-commit':
+        specifier: ^1.0.0
+        version: 1.0.5
       '@ts-rest/core':
         specifier: ^3.30.5
         version: 3.52.1(@types/node@24.11.0)(zod@3.22.4)
@@ -310,12 +351,9 @@ importers:
       filesize:
         specifier: ^4.1.2
         version: 4.2.1
-      firebase:
-        specifier: ^7.5.2
-        version: 7.24.0
       firebase-admin:
         specifier: ^9.4.2
-        version: 9.12.0(@firebase/app-compat@0.5.8)(@firebase/app-types@0.6.1)
+        version: 9.12.0(@firebase/app-compat@0.5.8)(@firebase/app-types@0.7.0)
       fs-extra:
         specifier: ^8.1.0
         version: 8.1.0
@@ -451,9 +489,6 @@ importers:
       prosemirror-changeset:
         specifier: ^2.2.0
         version: 2.4.0
-      prosemirror-collab:
-        specifier: ^1.2.2
-        version: 1.3.1
       prosemirror-commands:
         specifier: ^1.3.1
         version: 1.7.1
@@ -473,26 +508,26 @@ importers:
         specifier: ^1.1.3
         version: 1.2.3
       prosemirror-model:
-        specifier: ^1.18.3
-        version: 1.25.4
+        specifier: 1.25.4
+        version: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-schema-list:
         specifier: ^1.2.2
         version: 1.5.1
       prosemirror-state:
-        specifier: ^1.4.2
-        version: 1.4.4
+        specifier: 1.4.4
+        version: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-suggest:
         specifier: ^0.7.6
-        version: 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+        version: 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       prosemirror-tables:
         specifier: ^1.1.1
         version: 1.8.5
       prosemirror-transform:
         specifier: ^1.7.0
-        version: 1.11.0
+        version: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-view:
-        specifier: ^1.29.2
-        version: 1.41.6
+        specifier: 1.41.6
+        version: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
       query-string:
         specifier: ^6.4.0
         version: 6.14.1
@@ -573,7 +608,7 @@ importers:
         version: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.7(pg@8.18.0))
       sequelize-typescript-generator:
         specifier: ^10.1.2
-        version: 10.1.2(@types/node@24.11.0)(@types/validator@13.15.10)(pg@8.18.0)(reflect-metadata@0.1.14)(typescript@5.9.3)
+        version: 10.1.2(@types/node@24.11.0)(@types/validator@13.15.10)(pg@8.18.0)(reflect-metadata@0.1.14)(typescript@6.0.3)
       sitemap:
         specifier: ^6.2.0
         version: 6.4.0
@@ -600,7 +635,7 @@ importers:
         version: 2.1.1
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@24.11.0)(typescript@5.9.3)
+        version: 10.9.2(@types/node@24.11.0)(typescript@6.0.3)
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -624,7 +659,7 @@ importers:
         version: 1.0.9
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2))
+        version: 5.1.4(typescript@6.0.3)(vite@7.3.1(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2))
       xmlbuilder:
         specifier: ^13.0.2
         version: 13.0.2
@@ -670,7 +705,7 @@ importers:
         version: 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/react':
         specifier: ^6.4.0
-        version: 6.5.16(@babel/core@7.29.0)(@types/webpack@4.41.40)(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(require-from-string@2.0.2)(type-fest@0.21.3)(typescript@5.9.3)(webpack-cli@3.3.12)(webpack-dev-server@5.2.2(tslib@1.14.1)(webpack-cli@3.3.12)(webpack@4.47.0))(webpack-hot-middleware@2.26.1)
+        version: 6.5.16(@babel/core@7.29.0)(@types/webpack@4.41.40)(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(require-from-string@2.0.2)(type-fest@0.21.3)(typescript@6.0.3)(webpack-cli@3.3.12)(webpack-dev-server@5.2.2(tslib@1.14.1)(webpack-cli@3.3.12)(webpack@4.47.0))(webpack-hot-middleware@2.26.1)
       '@types/amqplib':
         specifier: ^0.5.3
         version: 0.5.17
@@ -809,6 +844,12 @@ importers:
       '@types/uuid':
         specifier: ^3.4.10
         version: 3.4.13
+      '@typescript/native-preview':
+        specifier: 7.0.0-dev.20260616.1
+        version: 7.0.0-dev.20260616.1
+      '@typescript/native-preview-linux-arm64':
+        specifier: 7.0.0-dev.20260616.1
+        version: 7.0.0-dev.20260616.1
       autoprefixer:
         specifier: ^9.5.0
         version: 9.8.8
@@ -898,13 +939,13 @@ importers:
         version: 1.4.6(webpack@4.47.0)
       ts-loader:
         specifier: ^8.0.11
-        version: 8.4.0(typescript@5.9.3)(webpack@4.47.0)
+        version: 8.4.0(typescript@6.0.3)(webpack@4.47.0)
       ts-morph:
         specifier: ^21.0.1
         version: 21.0.1
       typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^4.0.10
         version: 4.0.18(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
@@ -1870,10 +1911,10 @@ packages:
       prosemirror-history: ^1.1.3
       prosemirror-inputrules: '>=1.1.2'
       prosemirror-keymap: ^1.1.4
-      prosemirror-model: ^1.13.3
-      prosemirror-state: ^1.3.4
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
       prosemirror-transform: ^1.2.12
-      prosemirror-view: ^1.18.2
+      prosemirror-view: 1.41.6
 
   '@biomejs/biome@2.4.3':
     resolution: {integrity: sha512-cBrjf6PNF6yfL8+kcNl85AjiK2YHNsbU0EvDOwiZjBPbMbQ5QcgVGFpjD0O52p8nec5O8NYw7PKw3xUR7fPAkQ==}
@@ -2285,21 +2326,9 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@firebase/analytics-types@0.4.0':
-    resolution: {integrity: sha512-Jj2xW+8+8XPfWGkv9HPv/uR+Qrmq37NPYT352wf7MvE9LrstpLVmFg3LqG6MCRr5miLAom5sen2gZ+iOhVDeRA==}
-
-  '@firebase/analytics@0.6.0':
-    resolution: {integrity: sha512-6qYEOPUVYrMhqvJ46Z5Uf1S4uULd6d7vGpMP5Qz+u8kIWuOQGcPdJKQap+Hla6Rq164or9gC2HRXuYXKlgWfpw==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
   '@firebase/app-compat@0.5.8':
     resolution: {integrity: sha512-4De6SUZ36zozl9kh5rZSxKWULpgty27rMzZ6x+xkoo7+NWyhWyFdsdvhFsWhTw/9GGj0wXIcbTjwHYCUIUuHyg==}
     engines: {node: '>=20.0.0'}
-
-  '@firebase/app-types@0.6.1':
-    resolution: {integrity: sha512-L/ZnJRAq7F++utfuoTKX4CLBG5YR7tFO3PLzG1/oXXKEezJ0kRL3CMRoueBEmTCzVb/6SIs2Qlaw++uDgi5Xyg==}
 
   '@firebase/app-types@0.6.3':
     resolution: {integrity: sha512-/M13DPPati7FQHEQ9Minjk1HGLm/4K4gs9bR4rzLCWJg64yGtVC0zNg9gDpkw9yc2cvol/mNFxqTtd4geGrwdw==}
@@ -2311,34 +2340,11 @@ packages:
     resolution: {integrity: sha512-WiE9uCGRLUnShdjb9iP20sA3ToWrBbNXr14/N5mow7Nls9dmKgfGaGX5cynLvrltxq2OrDLh1VDNaUgsnS/k/g==}
     engines: {node: '>=20.0.0'}
 
-  '@firebase/app@0.6.11':
-    resolution: {integrity: sha512-FH++PaoyTzfTAVuJ0gITNYEIcjT5G+D0671La27MU8Vvr6MTko+5YUZ4xS9QItyotSeRF4rMJ1KR7G8LSyySiA==}
-
-  '@firebase/auth-interop-types@0.1.5':
-    resolution: {integrity: sha512-88h74TMQ6wXChPA6h9Q3E1Jg6TkTHep2+k63OWg3s0ozyGVMeY+TTOti7PFPzq5RhszQPQOoCi59es4MaRvgCw==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-      '@firebase/util': 0.x
-
   '@firebase/auth-interop-types@0.1.6':
     resolution: {integrity: sha512-etIi92fW3CctsmR9e3sYM3Uqnoq861M0Id9mdOPF6PWIg38BXL5k4upCNBggGUpLIS0H1grMOvy/wn1xymwe2g==}
     peerDependencies:
       '@firebase/app-types': 0.x
       '@firebase/util': 1.x
-
-  '@firebase/auth-types@0.10.1':
-    resolution: {integrity: sha512-/+gBHb1O9x/YlG7inXfxff/6X3BPZt4zgBv4kql6HEmdzNQCodIRlEYnI+/da+lN+dha7PjaFH7C7ewMmfV7rw==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-      '@firebase/util': 0.x
-
-  '@firebase/auth@0.15.0':
-    resolution: {integrity: sha512-IFuzhxS+HtOQl7+SZ/Mhaghy/zTU7CENsJFWbC16tv2wfLZbayKF5jYGdAU3VFLehgC8KjlcIWd10akc3XivfQ==}
-    peerDependencies:
-      '@firebase/app': 0.x
-
-  '@firebase/component@0.1.19':
-    resolution: {integrity: sha512-L0S3g8eqaerg8y0zox3oOHSTwn/FE8RbcRHiurnbESvDViZtP5S5WnhuAPd7FnFxa8ElWK0z1Tr3ikzWDv1xdQ==}
 
   '@firebase/component@0.5.13':
     resolution: {integrity: sha512-hxhJtpD8Ppf/VU2Rlos6KFCEV77TGIGD5bJlkPK1+B/WUe0mC6dTjW7KhZtXTc+qRBp9nFHWcsIORnT8liHP9w==}
@@ -2352,9 +2358,6 @@ packages:
     peerDependencies:
       '@firebase/app-compat': 0.x
 
-  '@firebase/database-types@0.5.2':
-    resolution: {integrity: sha512-ap2WQOS3LKmGuVFKUghFft7RxXTyZTDr0Xd8y2aqmWsbJVjgozi0huL/EUMgTjGFrATAjcf2A7aNs8AKKZ2a8g==}
-
   '@firebase/database-types@0.7.3':
     resolution: {integrity: sha512-dSOJmhKQ0nL8O4EQMRNGpSExWCXeHtH57gGg0BfNAdWcKhC8/4Y+qfKLfWXzyHvrSecpLmO0SmAi/iK2D5fp5A==}
 
@@ -2364,44 +2367,6 @@ packages:
   '@firebase/database@0.12.8':
     resolution: {integrity: sha512-JBQVfFLzfhxlQbl4OU6ov9fdsddkytBQdtSSR49cz48homj38ccltAhK6seum+BI7f28cV2LFHF9672lcN+qxA==}
 
-  '@firebase/database@0.6.13':
-    resolution: {integrity: sha512-NommVkAPzU7CKd1gyehmi3lz0K78q0KOfiex7Nfy7MBMwknLm7oNqKovXSgQV1PCLvKXvvAplDSFhDhzIf9obA==}
-
-  '@firebase/firestore-types@1.14.0':
-    resolution: {integrity: sha512-WF8IBwHzZDhwyOgQnmB0pheVrLNP78A8PGxk1nxb/Nrgh1amo4/zYvFMGgSsTeaQK37xMYS/g7eS948te/dJxw==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-
-  '@firebase/firestore@1.18.0':
-    resolution: {integrity: sha512-maMq4ltkrwjDRusR2nt0qS4wldHQMp+0IDSfXIjC+SNmjnWY/t/+Skn9U3Po+dB38xpz3i7nsKbs+8utpDnPSw==}
-    engines: {node: ^8.13.0 || >=10.10.0}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/functions-types@0.3.17':
-    resolution: {integrity: sha512-DGR4i3VI55KnYk4IxrIw7+VG7Q3gA65azHnZxo98Il8IvYLr2UTBlSh72dTLlDf25NW51HqvJgYJDKvSaAeyHQ==}
-
-  '@firebase/functions@0.5.1':
-    resolution: {integrity: sha512-yyjPZXXvzFPjkGRSqFVS5Hc2Y7Y48GyyMH+M3i7hLGe69r/59w6wzgXKqTiSYmyE1pxfjxU4a1YqBDHNkQkrYQ==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/installations-types@0.3.4':
-    resolution: {integrity: sha512-RfePJFovmdIXb6rYwtngyxuEcWnOrzdZd9m7xAW0gRxDIjBT20n3BOhjpmgRWXo/DAxRmS7bRjWAyTHY9cqN7Q==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-
-  '@firebase/installations@0.4.17':
-    resolution: {integrity: sha512-AE/TyzIpwkC4UayRJD419xTqZkKzxwk0FLht3Dci8WI2OEKHSwoZG9xv4hOBZebe+fDzoV2EzfatQY8c/6Avig==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/logger@0.2.6':
-    resolution: {integrity: sha512-KIxcUvW/cRGWlzK9Vd2KB864HlUnCfdTH0taHE0sXW5Xl7+W68suaeau1oKNEqmc3l45azkd4NzXTCWZRZdXrw==}
-
   '@firebase/logger@0.3.2':
     resolution: {integrity: sha512-lzLrcJp9QBWpo40OcOM9B8QEtBw2Fk1zOZQdvv+rWS6gKmhQBCEMc4SMABQfWdjsylBcDfniD1Q+fUX1dcBTXA==}
 
@@ -2409,62 +2374,12 @@ packages:
     resolution: {integrity: sha512-cGskaAvkrnh42b3BA3doDWeBmuHFO/Mx5A83rbRDYakPjO9bJtRL3dX7javzc2Rr/JHZf4HlterTW2lUkfeN4g==}
     engines: {node: '>=20.0.0'}
 
-  '@firebase/messaging-types@0.5.0':
-    resolution: {integrity: sha512-QaaBswrU6umJYb/ZYvjR5JDSslCGOH6D9P136PhabFAHLTR4TWjsaACvbBXuvwrfCXu10DtcjMxqfhdNIB1Xfg==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-
-  '@firebase/messaging@0.7.1':
-    resolution: {integrity: sha512-iev/ST9v0xd/8YpGYrZtDcqdD9J6ZWzSuceRn8EKy5vIgQvW/rk2eTQc8axzvDpQ36ZfphMYuhW6XuNrR3Pd2Q==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/performance-types@0.0.13':
-    resolution: {integrity: sha512-6fZfIGjQpwo9S5OzMpPyqgYAUZcFzZxHFqOyNtorDIgNXq33nlldTL/vtaUZA8iT9TT5cJlCrF/jthKU7X21EA==}
-
-  '@firebase/performance@0.4.2':
-    resolution: {integrity: sha512-irHTCVWJ/sxJo0QHg+yQifBeVu8ZJPihiTqYzBUz/0AGc51YSt49FZwqSfknvCN2+OfHaazz/ARVBn87g7Ex8g==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/polyfill@0.3.36':
-    resolution: {integrity: sha512-zMM9oSJgY6cT2jx3Ce9LYqb0eIpDE52meIzd/oe/y70F+v9u1LDqk5kUF5mf16zovGBWMNFmgzlsh6Wj0OsFtg==}
-
-  '@firebase/remote-config-types@0.1.9':
-    resolution: {integrity: sha512-G96qnF3RYGbZsTRut7NBX0sxyczxt1uyCgXQuH/eAfUCngxjEGcZQnBdy6mvSdqdJh5mC31rWPO4v9/s7HwtzA==}
-
-  '@firebase/remote-config@0.1.28':
-    resolution: {integrity: sha512-4zSdyxpt94jAnFhO8toNjG8oMKBD+xTuBIcK+Nw8BdQWeJhEamgXlupdBARUk1uf3AvYICngHH32+Si/dMVTbw==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/storage-types@0.3.13':
-    resolution: {integrity: sha512-pL7b8d5kMNCCL0w9hF7pr16POyKkb3imOW7w0qYrhBnbyJTdVxMWZhb0HxCFyQWC0w3EiIFFmxoz8NTFZDEFog==}
-    peerDependencies:
-      '@firebase/app-types': 0.x
-      '@firebase/util': 0.x
-
-  '@firebase/storage@0.3.43':
-    resolution: {integrity: sha512-Jp54jcuyimLxPhZHFVAhNbQmgTu3Sda7vXjXrNpPEhlvvMSq4yuZBR6RrZxe/OrNVprLHh/6lTCjwjOVSo3bWA==}
-    peerDependencies:
-      '@firebase/app': 0.x
-      '@firebase/app-types': 0.x
-
-  '@firebase/util@0.3.2':
-    resolution: {integrity: sha512-Dqs00++c8rwKky6KCKLLY2T1qYO4Q+X5t+lF7DInXDNF4ae1Oau35bkD+OpJ9u7l1pEv7KHowP6CUKuySCOc8g==}
-
   '@firebase/util@1.13.0':
     resolution: {integrity: sha512-0AZUyYUfpMNcztR5l09izHwXkZpghLgCUaAGjtMwXnCg3bj4ml5VgiwqOMOxJ+Nw4qN/zJAaOQBcJ7KGkWStqQ==}
     engines: {node: '>=20.0.0'}
 
   '@firebase/util@1.5.2':
     resolution: {integrity: sha512-YvBH2UxFcdWG2HdFnhxZptPl2eVFlpOyTH66iDo13JPEYraWzWToZ5AMTtkyRHVmu7sssUpQlU9igy1KET7TOw==}
-
-  '@firebase/webchannel-wrapper@0.4.0':
-    resolution: {integrity: sha512-8cUA/mg0S+BxIZ72TdZRsXKBP5n5uRcE3k29TZhZw6oIiHBt9JA7CTb/4pE1uKtE/q5NeTY2tBDcagoZ+1zjXQ==}
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -2505,17 +2420,9 @@ packages:
     resolution: {integrity: sha512-n2FjE7NAOYyshogdc7KQOl/VZb4sneqPjWouSyia9CMDdMhRX5+RIbqalNmC7LOLzuLAN89VlF2HvG8na9G+zQ==}
     engines: {node: '>=14'}
 
-  '@grpc/grpc-js@1.14.3':
-    resolution: {integrity: sha512-Iq8QQQ/7X3Sac15oB6p0FmUg/klxQvXLeileoqrTRGJYLV+/9tubbr9ipz0GKHjmXVsgFPo/+W+2cA8eNcR+XA==}
-    engines: {node: '>=12.10.0'}
-
   '@grpc/grpc-js@1.6.12':
     resolution: {integrity: sha512-JmvQ03OTSpVd9JTlj/K3IWHSz4Gk/JMLUTtW7Zb0KvO1LcOYGATh5cNuRYzCAeDR3O8wq+q8FZe97eO9MBrkUw==}
     engines: {node: ^8.13.0 || >=10.10.0}
-
-  '@grpc/proto-loader@0.5.6':
-    resolution: {integrity: sha512-DT14xgw3PSzPxwS13auTEwxhMMOoz33DPUKNtmYK/QYbBSpLXJy78FGGs5yVoxVobEqPm4iW9MOIoz0A3bLTRQ==}
-    engines: {node: '>=6'}
 
   '@grpc/proto-loader@0.6.13':
     resolution: {integrity: sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==}
@@ -2527,10 +2434,26 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@grpc/proto-loader@0.8.0':
-    resolution: {integrity: sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ==}
-    engines: {node: '>=6'}
-    hasBin: true
+  '@handlewithcare/react-prosemirror@3.1.6':
+    resolution: {integrity: sha512-j8vK5b7e5gphrgz8OGbZu2Q3rpITkbnFsiAqNL0IUXnwxc/VvgvneLsj9EeJGqGNe61v3CxZDP0G/Tj1CCU2Lg==}
+    engines: {node: '>=16.9'}
+    peerDependencies:
+      '@tiptap/core': ^3.15.3
+      '@tiptap/pm': ^3.15.3
+      '@tiptap/react': ^3.15.3
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
+      prosemirror-view: 1.41.6
+      react: '>=17 <20'
+      react-dom: '>=17 <20'
+      react-reconciler: '>=0.26.1 <=0.33.0'
+    peerDependenciesMeta:
+      '@tiptap/core':
+        optional: true
+      '@tiptap/pm':
+        optional: true
+      '@tiptap/react':
+        optional: true
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -2585,9 +2508,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@js-sdsl/ordered-map@4.4.2':
-    resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
 
   '@jsep-plugin/assignment@1.3.0':
     resolution: {integrity: sha512-VVgV+CXrhbMI3aSusQyclHkenWSAm95WaiKrMxRFam3JSUiIaQjoMIw2sEs/OX4XifnqeQUN4DYbJjlA8EfktQ==}
@@ -2866,6 +2786,47 @@ packages:
   '@pdf-lib/upng@1.0.1':
     resolution: {integrity: sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==}
 
+  '@pitter-patter/collab-client@0.1.3':
+    resolution: {integrity: sha512-3KdbZ6G42pKzDJgJfKI0ZZqYU1h2ddkJSuUCBi1ClZk1ymf9RNTvsBV+0fvwJuPvXy2nSuTRo7LyXOEdhlHe+g==}
+    peerDependencies:
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
+      prosemirror-transform: ^1.0.0
+
+  '@pitter-patter/collab-server@0.1.3':
+    resolution: {integrity: sha512-61KRuqQJTIzLKPDVwjmBJgZXMaagOmVMGbXoAxU9ymCDGPlTXBHleKMwsWsYdQ3r3ezio0wwttddaqZRYhPs/A==}
+    peerDependencies:
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
+      prosemirror-transform: ^1.0.0
+
+  '@pitter-patter/presence-client@0.2.1':
+    resolution: {integrity: sha512-088LDBR1/OwdfGnWblrtYeeXXi1tNIZbTgv9WN/pUEX0GANIYt0uuKABJ1riwJxhAEwaRpFr4aEZhSc+8kcqnA==}
+    peerDependencies:
+      '@handlewithcare/react-prosemirror': ^3.0.6
+      prosemirror-model: 1.25.4
+      prosemirror-state: 1.4.4
+      prosemirror-transform: ^1.0.0
+      prosemirror-view: 1.41.6
+      react: ^19.2.0
+      react-dom: ^19.2.0
+      react-reconciler: ^0.32.0
+    peerDependenciesMeta:
+      '@handlewithcare/react-prosemirror':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      react-reconciler:
+        optional: true
+
+  '@pitter-patter/presence-server@0.1.3':
+    resolution: {integrity: sha512-zDEbiIMXrH9qsC6YufVo/S0mWkwDX4PWqrWT4AjEGkXUUuJQdSrfq+zqb9F2+geUlFHKry5xPEjb/yPWftnWWw==}
+
+  '@pitter-patter/refs@0.1.3':
+    resolution: {integrity: sha512-uJDJpOgpcEtyapfhl7y7vXHIjdAd9pzSgX1rh4sLqEC33dnkamd5dH3I5MdiDzjek77S9Y1DhxP5tOvvNlCASA==}
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -2938,6 +2899,42 @@ packages:
   '@pubpub/prosemirror-reactive@0.2.0':
     resolution: {integrity: sha512-xwnlQbwFyvzUhxKvDwmPrR6Y2KH6G5GZTCh8JVypMeLrXzR4seDNjIGqDVa8APt5RCBjOOp1a3YRYcNuWdzbhg==}
 
+  '@redis/bloom@5.12.1':
+    resolution: {integrity: sha512-PUUfv+ms7jgPSBVoo/DN4AkPHj4D5TZSd6SbJX7egzBplkYUcKmHRE8RKia7UtZ8bSQbLguLvxVO+asKtQfZWA==}
+    engines: {node: '>= 18.19.0'}
+    peerDependencies:
+      '@redis/client': ^5.12.1
+
+  '@redis/client@5.12.1':
+    resolution: {integrity: sha512-7aPGWeqA3uFm43o19umzdl16CEjK/JQGtSXVPevplTaOU3VJA/rseBC1QvYUz9lLDIMBimc4SW/zrW4S89BaCA==}
+    engines: {node: '>= 18.19.0'}
+    peerDependencies:
+      '@node-rs/xxhash': ^1.1.0
+      '@opentelemetry/api': '>=1 <2'
+    peerDependenciesMeta:
+      '@node-rs/xxhash':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+
+  '@redis/json@5.12.1':
+    resolution: {integrity: sha512-eOze75esLve4vfqDel7aMX08CNaiLLQS2fV8mpRN9NxPe1rVR4vQyYiW/OgtGUysF6QOr9ANhfxABKNOJfXdKg==}
+    engines: {node: '>= 18.19.0'}
+    peerDependencies:
+      '@redis/client': ^5.12.1
+
+  '@redis/search@5.12.1':
+    resolution: {integrity: sha512-ItlxbxC9cKI6IU1TLWoczwJCRb6TdmkEpWv05UrPawqaAnWGRu3rcIqsc5vN483T2fSociuyV1UkWIL5I4//2w==}
+    engines: {node: '>= 18.19.0'}
+    peerDependencies:
+      '@redis/client': ^5.12.1
+
+  '@redis/time-series@5.12.1':
+    resolution: {integrity: sha512-c6JL6E3EcZJuNqKFz+KM+l9l5mpcQiKvTwgA3blt5glWJ8hjDk0yeHN3beE/MpqYIQ8UEX44ItQzgkE/gCBELQ==}
+    engines: {node: '>= 18.19.0'}
+    peerDependencies:
+      '@redis/client': ^5.12.1
+
   '@remirror/core-constants@0.7.4':
     resolution: {integrity: sha512-3fd7uzg3s9CiDmpSP8tZdhBxpIO5DGvxPSDSobZ7iJ6VgsQgw80dTmgK71eFh8l4Dx4QdPYqx9onrtXLjbIrdw==}
 
@@ -2950,7 +2947,7 @@ packages:
       '@emotion/core': ^10
       '@types/prosemirror-view': ^1.11.0
       '@types/react': ^16.8.0
-      prosemirror-view: ^1.11.3
+      prosemirror-view: 1.41.6
       react: ^16.8.0
 
   '@remirror/core-utils@0.8.0':
@@ -3591,6 +3588,9 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@stepwisehq/prosemirror-collab-commit@1.0.5':
+    resolution: {integrity: sha512-zuKaN4oSa5d7E7R2XTVK1vDEhq4yIW8k8eU7kv9zMqrUR5WvJsgkw58uAwVhRBDhDqPo+IUwxz4PwMGCelWKHA==}
 
   '@storybook/addon-knobs@6.4.0':
     resolution: {integrity: sha512-DiH1/5e2AFHoHrncl1qLu18ZHPHzRMMPvOLFz8AWvvmc+VCqTdIaE+tdxKr3e8rYylKllibgvDOzrLjfTNjF+Q==}
@@ -4427,6 +4427,52 @@ packages:
   '@typescript-eslint/visitor-keys@5.62.0':
     resolution: {integrity: sha512-07ny+LHRzQXepkGg6w0mFY41fVUNBrL2Roj/++7V1txKugfjm/Ci/qSND03r2RhlJhJYMcTn9AhhSSqQp0Ysyw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-9SwegwwE7fYutnZJjTi2PeUXhKGFg82MGjSpCFD2cj5v9YQcs5oO5QsmeeMit4fMG8Z83Jy8knOF97d9NaQ7Bg==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-gl7R8OiwEBNxzs5wjbM9XOibTs5b6/gAgu0+En9pLpYuWR/EITs8Eh0mNQui4JYTp1SkoHvn09aRZKTQf21XTg==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-CJjplWoE+EeYtbyNeP4fyuh0QcPiQBZJSLqPS07E3ugo3d9M/IG8WnL+3GFQ0g1p4c6QC/+OC0oTTQnGcNdd2Q==}
+    engines: {node: '>=16.20.0'}
+    os: [linux]
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-QWXQS2CrhSpXbng7vBtCVDszFgwVBuJU8MCFhxZL0hH6s+XjQDSNNkGO1oHueBr+7HbSkkyqfNYVNXvgVMUJLQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm]
+    os: [linux]
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-UVySBNnGTAnul2kO2/EhlVZl0CeTDcd6Lzi+WkvgyCgapTcU0BX1selQ4MEPtbVWKUbt9HBhxNku2dyaCcmKVw==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [linux]
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-kdX0QcDXiESH0o5DFdSWw15Hth0EtQobT9tX28ofqBUwGU1FFhwTKzA6qo7chaYUSW5MMd6XIME9rBwk+WizLw==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-EB0Pj/0+nXifS3+wN0HdR1mKu7IieSpjMXoDjdXtJAdiPGlmKazBgHj97qn6CBvXisgLx0Eyb7tLCEQNDG53cA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [win32]
+
+  '@typescript/native-preview@7.0.0-dev.20260616.1':
+    resolution: {integrity: sha512-+AuZUl7nkLPXL1rwsyZZF7iasu0HkrL5O6aWwUC0cObD5EvNgxz3hXbBhsSvuJ8tb2JRpVwFsE0BHPcYVe5GkA==}
+    engines: {node: '>=16.20.0'}
+    hasBin: true
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
@@ -5482,6 +5528,10 @@ packages:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
+  cluster-key-slot@1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
+    engines: {node: '>=0.10.0'}
+
   code-block-writer@12.0.0:
     resolution: {integrity: sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w==}
 
@@ -5682,10 +5732,6 @@ packages:
 
   core-js@3.48.0:
     resolution: {integrity: sha512-zpEHTy1fjTMZCKLHUZoVeylt9XrzaIN2rbPXEt0k+q7JE5CkCZdo6bNq55bn24a69CH7ErAVLKijxJja4fw+UQ==}
-
-  core-js@3.6.5:
-    resolution: {integrity: sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==}
-    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -6186,9 +6232,6 @@ packages:
   dom-serializer@2.0.0:
     resolution: {integrity: sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg==}
 
-  dom-storage@2.1.0:
-    resolution: {integrity: sha512-g6RpyWXzl0RR6OTElHKBl7nwnK87GUyZMYC7JWsB/IA73vpqK2K6LT39x4VepLxlSsWBFrPVLnsSR5Jyty0+2Q==}
-
   dom-walk@0.1.2:
     resolution: {integrity: sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==}
 
@@ -6671,10 +6714,6 @@ packages:
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
 
-  faye-websocket@0.11.3:
-    resolution: {integrity: sha512-D2y4bovYpzziGgbHYtGCMjlJM36vAl/y+xUyn1C+FVx8szd1E+86KwVw6XvYSzOP8iMpm1X0I4xJD+QtUb36OA==}
-    engines: {node: '>=0.8.0'}
-
   faye-websocket@0.11.4:
     resolution: {integrity: sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==}
     engines: {node: '>=0.8.0'}
@@ -6785,10 +6824,6 @@ packages:
   firebase-admin@9.12.0:
     resolution: {integrity: sha512-AtA7OH5RbIFGoc0gZOQgaYC6cdjdhZv4w3XgWoupkPKO1HY+0GzixOuXDa75kFeoVyhIyo4PkLg/GAC1dC1P6w==}
     engines: {node: '>=10.13.0'}
-
-  firebase@7.24.0:
-    resolution: {integrity: sha512-j6jIyGFFBlwWAmrlUg9HyQ/x+YpsPkc/TTkbTyeLwwAJrpAmmEHNPT6O9xtAnMV4g7d3RqLL/u9//aZlbY4rQA==}
-    engines: {node: ^8.13.0 || >=10.10.0}
 
   flat-cache@3.2.0:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
@@ -7432,9 +7467,6 @@ packages:
   icss-utils@4.1.1:
     resolution: {integrity: sha512-4aFq7wvWyMHKgxsH8QQtGpvbASCf+eM3wPRLI6R+MgAnTCZ6STYsRvttLvRWK0Nfif5piF394St3HeJDaljGPA==}
     engines: {node: '>= 6'}
-
-  idb@3.0.2:
-    resolution: {integrity: sha512-+FLa/0sTXqyux0o6C+i2lOR0VoS60LU/jzUo5xjfY6+7sEEgy4Gz1O7yFBXvjd7N0NyIGWIRg8DcQSLEG+VSPw==}
 
   idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
@@ -8857,10 +8889,6 @@ packages:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
     engines: {node: '>= 0.10.5'}
 
-  node-fetch@2.6.1:
-    resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
-    engines: {node: 4.x || >=6.0.0}
-
   node-fetch@2.6.13:
     resolution: {integrity: sha512-StxNAxh15zr77QvvkmveSQ8uCQ4+v5FkvNTj0OESmiHu+VRi/gXArXtkWMElOsOUNLtUEvI4yS+rdtOHZTwlQA==}
     engines: {node: 4.x || >=6.0.0}
@@ -9588,9 +9616,6 @@ packages:
       bluebird:
         optional: true
 
-  promise-polyfill@8.1.3:
-    resolution: {integrity: sha512-MG5r82wBzh7pSKDRa9y+vllNHz3e3d4CNj1PQE4BQYxLme0gKYYBm9YENq+UkEikyZ0XbiGWxYlVw3Rl9O/U8g==}
-
   promise.allsettled@1.0.7:
     resolution: {integrity: sha512-hezvKvQQmsFkOdrZfYxUxkyxl8mgFQeT259Ajj9PXdbg9VzBCWrItOev72JyWxkCD5VSSqAeHmlN3tWx4DlmsA==}
     engines: {node: '>= 0.4'}
@@ -9619,9 +9644,6 @@ packages:
 
   prosemirror-changeset@2.4.0:
     resolution: {integrity: sha512-LvqH2v7Q2SF6yxatuPP2e8vSUKS/L+xAU7dPDC4RMyHMhZoGDfBC74mYuyYF4gLqOEG758wajtyhNnsTkuhvng==}
-
-  prosemirror-collab@1.3.1:
-    resolution: {integrity: sha512-4SnynYR9TTYaQVXd/ieUvsVV4PDMBzrq2xPUWutHivDuOshZXqQ5rGbZM84HEaXKbLdItse7weMGOUdDVcLKEQ==}
 
   prosemirror-commands@1.7.1:
     resolution: {integrity: sha512-rT7qZnQtx5c0/y/KlYaGvtG411S97UaL6gdp6RIZ23DLHanMYLyfGBV5DtSnZdthQql7W+lEVbpSfwtO8T+L2w==}
@@ -9661,7 +9683,7 @@ packages:
     resolution: {integrity: sha512-byzffTO/uk8v0JRGIOO2H8h97u5fS01KcxmPXzuc0IDgxvcmrP55XsXerVORAoqJlJFlN0DGAPojQENkDLSXsA==}
     peerDependencies:
       '@types/prosemirror-view': ^1.11.0
-      prosemirror-view: ^1.11.1
+      prosemirror-view: 1.41.6
 
   prosemirror-tables@1.8.5:
     resolution: {integrity: sha512-V/0cDCsHKHe/tfWkeCmthNUcEp1IVO3p6vwN8XtwE9PZQLAZJigbw3QoraAdfJPir4NKJtNvOB8oYGKRl+t0Dw==}
@@ -9915,6 +9937,12 @@ packages:
     peerDependencies:
       react: ^16.0.0
 
+  react-reconciler@0.32.0:
+    resolution: {integrity: sha512-2NPMOzgTlG0ZWdIf3qG+dcbLSoAc/uLfOwckc3ofy5sSK0pLJqnQLpUFxvGcN2rlXSjnVtGeeFLNimCQEj5gOQ==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^19.1.0
+
   react-redux@7.2.9:
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
     peerDependencies:
@@ -10094,6 +10122,10 @@ packages:
   redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
+
+  redis@5.12.1:
+    resolution: {integrity: sha512-LDsoVvb/CpoV9EN3FXvgvSHNJWuCIzl9MiO3ppOevuGLpSGJhwfQjpEwfFJcQvNSddHADDdZaWx0HnmMxRXG7g==}
+    engines: {node: '>= 18.19.0'}
 
   redux@4.2.1:
     resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
@@ -10384,6 +10416,9 @@ packages:
 
   scheduler@0.19.1:
     resolution: {integrity: sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==}
+
+  scheduler@0.26.0:
+    resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
 
   schema-utils@1.0.0:
     resolution: {integrity: sha512-i27Mic4KovM/lnGsy8whRCHhc7VicJajAjTrYg11K9zfZXnYIt4k5F+kZkwjnrhKzLic/HLU4j11mjsz2G/75g==}
@@ -11378,8 +11413,8 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -11874,9 +11909,6 @@ packages:
     resolution: {integrity: sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==}
     engines: {node: '>=0.8.0'}
 
-  whatwg-fetch@2.0.4:
-    resolution: {integrity: sha512-dcQ1GWpOD/eEQ97k66aiEVpNnapVj90/+R+SXTPYGHpYBBypfKJEQjLrvMZ7YXbKm21gXd4NcuxUTjiv1YtLng==}
-
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
@@ -12030,10 +12062,6 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
-
-  xmlhttprequest@1.8.0:
-    resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
-    engines: {node: '>=0.4.0'}
 
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
@@ -13701,7 +13729,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@benrbray/prosemirror-math@https://codeload.github.com/pubpub/prosemirror-math/tar.gz/9e6722987690bfad58444d8edbd73294e255de17(katex@0.13.24)(prosemirror-commands@1.7.1)(prosemirror-gapcursor@1.4.0)(prosemirror-history@1.5.0)(prosemirror-inputrules@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-transform@1.11.0)(prosemirror-view@1.41.6)':
+  '@benrbray/prosemirror-math@https://codeload.github.com/pubpub/prosemirror-math/tar.gz/9e6722987690bfad58444d8edbd73294e255de17(katex@0.13.24)(prosemirror-commands@1.7.1)(prosemirror-gapcursor@1.4.0)(prosemirror-history@1.5.0)(prosemirror-inputrules@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))':
     dependencies:
       katex: 0.13.24
       prosemirror-commands: 1.7.1
@@ -13709,10 +13737,10 @@ snapshots:
       prosemirror-history: 1.5.0
       prosemirror-inputrules: 1.5.1
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
 
   '@biomejs/biome@2.4.3':
     optionalDependencies:
@@ -14134,19 +14162,6 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@firebase/analytics-types@0.4.0': {}
-
-  '@firebase/analytics@0.6.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/analytics-types': 0.4.0
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/installations': 0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/logger': 0.2.6
-      '@firebase/util': 0.3.2
-      tslib: 1.14.1
-
   '@firebase/app-compat@0.5.8':
     dependencies:
       '@firebase/app': 0.14.8
@@ -14154,8 +14169,6 @@ snapshots:
       '@firebase/logger': 0.5.0
       '@firebase/util': 1.13.0
       tslib: 2.8.1
-
-  '@firebase/app-types@0.6.1': {}
 
   '@firebase/app-types@0.6.3': {}
 
@@ -14169,43 +14182,10 @@ snapshots:
       idb: 7.1.1
       tslib: 2.8.1
 
-  '@firebase/app@0.6.11':
+  '@firebase/auth-interop-types@0.1.6(@firebase/app-types@0.7.0)(@firebase/util@1.5.2)':
     dependencies:
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/logger': 0.2.6
-      '@firebase/util': 0.3.2
-      dom-storage: 2.1.0
-      tslib: 1.14.1
-      xmlhttprequest: 1.8.0
-
-  '@firebase/auth-interop-types@0.1.5(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-      '@firebase/util': 0.3.2
-
-  '@firebase/auth-interop-types@0.1.6(@firebase/app-types@0.6.1)(@firebase/util@1.5.2)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
+      '@firebase/app-types': 0.7.0
       '@firebase/util': 1.5.2
-
-  '@firebase/auth-types@0.10.1(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-      '@firebase/util': 0.3.2
-
-  '@firebase/auth@0.15.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)(@firebase/util@0.3.2)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/auth-types': 0.10.1(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)
-    transitivePeerDependencies:
-      - '@firebase/app-types'
-      - '@firebase/util'
-
-  '@firebase/component@0.1.19':
-    dependencies:
-      '@firebase/util': 0.3.2
-      tslib: 1.14.1
 
   '@firebase/component@0.5.13':
     dependencies:
@@ -14217,21 +14197,17 @@ snapshots:
       '@firebase/util': 1.13.0
       tslib: 2.8.1
 
-  '@firebase/database-compat@0.1.8(@firebase/app-compat@0.5.8)(@firebase/app-types@0.6.1)':
+  '@firebase/database-compat@0.1.8(@firebase/app-compat@0.5.8)(@firebase/app-types@0.7.0)':
     dependencies:
       '@firebase/app-compat': 0.5.8
       '@firebase/component': 0.5.13
-      '@firebase/database': 0.12.8(@firebase/app-types@0.6.1)
+      '@firebase/database': 0.12.8(@firebase/app-types@0.7.0)
       '@firebase/database-types': 0.9.7
       '@firebase/logger': 0.3.2
       '@firebase/util': 1.5.2
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@firebase/app-types'
-
-  '@firebase/database-types@0.5.2':
-    dependencies:
-      '@firebase/app-types': 0.6.1
 
   '@firebase/database-types@0.7.3':
     dependencies:
@@ -14242,9 +14218,9 @@ snapshots:
       '@firebase/app-types': 0.7.0
       '@firebase/util': 1.5.2
 
-  '@firebase/database@0.12.8(@firebase/app-types@0.6.1)':
+  '@firebase/database@0.12.8(@firebase/app-types@0.7.0)':
     dependencies:
-      '@firebase/auth-interop-types': 0.1.6(@firebase/app-types@0.6.1)(@firebase/util@1.5.2)
+      '@firebase/auth-interop-types': 0.1.6(@firebase/app-types@0.7.0)(@firebase/util@1.5.2)
       '@firebase/component': 0.5.13
       '@firebase/logger': 0.3.2
       '@firebase/util': 1.5.2
@@ -14252,64 +14228,6 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@firebase/app-types'
-
-  '@firebase/database@0.6.13(@firebase/app-types@0.6.1)':
-    dependencies:
-      '@firebase/auth-interop-types': 0.1.5(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)
-      '@firebase/component': 0.1.19
-      '@firebase/database-types': 0.5.2
-      '@firebase/logger': 0.2.6
-      '@firebase/util': 0.3.2
-      faye-websocket: 0.11.3
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - '@firebase/app-types'
-
-  '@firebase/firestore-types@1.14.0(@firebase/app-types@0.6.1)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-
-  '@firebase/firestore@1.18.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/firestore-types': 1.14.0(@firebase/app-types@0.6.1)
-      '@firebase/logger': 0.2.6
-      '@firebase/util': 0.3.2
-      '@firebase/webchannel-wrapper': 0.4.0
-      '@grpc/grpc-js': 1.14.3
-      '@grpc/proto-loader': 0.5.6
-      node-fetch: 2.6.1
-      tslib: 1.14.1
-
-  '@firebase/functions-types@0.3.17': {}
-
-  '@firebase/functions@0.5.1(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/functions-types': 0.3.17
-      '@firebase/messaging-types': 0.5.0(@firebase/app-types@0.6.1)
-      node-fetch: 2.6.1
-      tslib: 1.14.1
-
-  '@firebase/installations-types@0.3.4(@firebase/app-types@0.6.1)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-
-  '@firebase/installations@0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/installations-types': 0.3.4(@firebase/app-types@0.6.1)
-      '@firebase/util': 0.3.2
-      idb: 3.0.2
-      tslib: 1.14.1
-
-  '@firebase/logger@0.2.6': {}
 
   '@firebase/logger@0.3.2':
     dependencies:
@@ -14319,71 +14237,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@firebase/messaging-types@0.5.0(@firebase/app-types@0.6.1)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-
-  '@firebase/messaging@0.7.1(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/installations': 0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/messaging-types': 0.5.0(@firebase/app-types@0.6.1)
-      '@firebase/util': 0.3.2
-      idb: 3.0.2
-      tslib: 1.14.1
-
-  '@firebase/performance-types@0.0.13': {}
-
-  '@firebase/performance@0.4.2(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/installations': 0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/logger': 0.2.6
-      '@firebase/performance-types': 0.0.13
-      '@firebase/util': 0.3.2
-      tslib: 1.14.1
-
-  '@firebase/polyfill@0.3.36':
-    dependencies:
-      core-js: 3.6.5
-      promise-polyfill: 8.1.3
-      whatwg-fetch: 2.0.4
-
-  '@firebase/remote-config-types@0.1.9': {}
-
-  '@firebase/remote-config@0.1.28(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/installations': 0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/logger': 0.2.6
-      '@firebase/remote-config-types': 0.1.9
-      '@firebase/util': 0.3.2
-      tslib: 1.14.1
-
-  '@firebase/storage-types@0.3.13(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)':
-    dependencies:
-      '@firebase/app-types': 0.6.1
-      '@firebase/util': 0.3.2
-
-  '@firebase/storage@0.3.43(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)':
-    dependencies:
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/component': 0.1.19
-      '@firebase/storage-types': 0.3.13(@firebase/app-types@0.6.1)(@firebase/util@0.3.2)
-      '@firebase/util': 0.3.2
-      tslib: 1.14.1
-
-  '@firebase/util@0.3.2':
-    dependencies:
-      tslib: 1.14.1
-
   '@firebase/util@1.13.0':
     dependencies:
       tslib: 2.8.1
@@ -14391,8 +14244,6 @@ snapshots:
   '@firebase/util@1.5.2':
     dependencies:
       tslib: 2.8.1
-
-  '@firebase/webchannel-wrapper@0.4.0': {}
 
   '@gar/promisify@1.1.3': {}
 
@@ -14479,21 +14330,11 @@ snapshots:
       - encoding
       - supports-color
 
-  '@grpc/grpc-js@1.14.3':
-    dependencies:
-      '@grpc/proto-loader': 0.8.0
-      '@js-sdsl/ordered-map': 4.4.2
-
   '@grpc/grpc-js@1.6.12':
     dependencies:
       '@grpc/proto-loader': 0.7.15
       '@types/node': 24.11.0
     optional: true
-
-  '@grpc/proto-loader@0.5.6':
-    dependencies:
-      lodash.camelcase: 4.3.0
-      protobufjs: 6.11.4
 
   '@grpc/proto-loader@0.6.13':
     dependencies:
@@ -14512,12 +14353,16 @@ snapshots:
       yargs: 17.7.2
     optional: true
 
-  '@grpc/proto-loader@0.8.0':
+  '@handlewithcare/react-prosemirror@3.1.6(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0)':
     dependencies:
-      lodash.camelcase: 4.3.0
-      long: 5.3.2
-      protobufjs: 7.5.4
-      yargs: 17.7.2
+      classnames: 2.5.1
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
+      react: 16.14.0
+      react-dom: 16.14.0(react@16.14.0)
+      react-reconciler: 0.32.0(react@16.14.0)
+    optional: true
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -14581,8 +14426,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@js-sdsl/ordered-map@4.4.2': {}
 
   '@jsep-plugin/assignment@1.3.0(jsep@1.4.0)':
     dependencies:
@@ -14957,6 +14800,48 @@ snapshots:
     dependencies:
       pako: 1.0.11
 
+  '@pitter-patter/collab-client@0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))':
+    dependencies:
+      '@stepwisehq/prosemirror-collab-commit': 1.0.5
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+
+  '@pitter-patter/collab-server@0.1.3(patch_hash=b1549b8792ceb2d79f51c93e26da54424e3ea417c727e40f326afca76d89cf5c)(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))':
+    dependencies:
+      '@stepwisehq/prosemirror-collab-commit': 1.0.5
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      redis: 5.12.1
+    transitivePeerDependencies:
+      - '@node-rs/xxhash'
+      - '@opentelemetry/api'
+
+  '@pitter-patter/presence-client@0.2.1(@handlewithcare/react-prosemirror@3.1.6(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0))(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0)':
+    dependencies:
+      '@pitter-patter/collab-client': 0.1.3(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))
+      '@pitter-patter/refs': 0.1.3
+      classnames: 2.5.1
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
+    optionalDependencies:
+      '@handlewithcare/react-prosemirror': 3.1.6(prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8))(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react-reconciler@0.32.0(react@16.14.0))(react@16.14.0)
+      react: 16.14.0
+      react-dom: 16.14.0(react@16.14.0)
+      react-reconciler: 0.32.0(react@16.14.0)
+
+  '@pitter-patter/presence-server@0.1.3':
+    dependencies:
+      redis: 5.12.1
+    transitivePeerDependencies:
+      - '@node-rs/xxhash'
+      - '@opentelemetry/api'
+
+  '@pitter-patter/refs@0.1.3': {}
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -14979,30 +14864,40 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@protobufjs/aspromise@1.1.2': {}
+  '@protobufjs/aspromise@1.1.2':
+    optional: true
 
-  '@protobufjs/base64@1.1.2': {}
+  '@protobufjs/base64@1.1.2':
+    optional: true
 
-  '@protobufjs/codegen@2.0.4': {}
+  '@protobufjs/codegen@2.0.4':
+    optional: true
 
-  '@protobufjs/eventemitter@1.1.0': {}
+  '@protobufjs/eventemitter@1.1.0':
+    optional: true
 
   '@protobufjs/fetch@1.1.0':
     dependencies:
       '@protobufjs/aspromise': 1.1.2
       '@protobufjs/inquire': 1.1.0
+    optional: true
 
-  '@protobufjs/float@1.0.2': {}
+  '@protobufjs/float@1.0.2':
+    optional: true
 
-  '@protobufjs/inquire@1.1.0': {}
+  '@protobufjs/inquire@1.1.0':
+    optional: true
 
-  '@protobufjs/path@1.1.2': {}
+  '@protobufjs/path@1.1.2':
+    optional: true
 
-  '@protobufjs/pool@1.1.0': {}
+  '@protobufjs/pool@1.1.0':
+    optional: true
 
-  '@protobufjs/utf8@1.1.0': {}
+  '@protobufjs/utf8@1.1.0':
+    optional: true
 
-  '@pubpub/deposit-utils@0.1.10':
+  '@pubpub/deposit-utils@0.1.10(patch_hash=6fef8933046b7751abda1bd2ed0422094c79d7828b07f7d5afba26a47c696d89)':
     dependencies:
       validate-with-xmllint: 1.2.1
 
@@ -15010,19 +14905,39 @@ snapshots:
 
   '@pubpub/prosemirror-reactive@0.2.0':
     dependencies:
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-view: 1.41.6
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
+
+  '@redis/bloom@5.12.1(@redis/client@5.12.1)':
+    dependencies:
+      '@redis/client': 5.12.1
+
+  '@redis/client@5.12.1':
+    dependencies:
+      cluster-key-slot: 1.1.2
+
+  '@redis/json@5.12.1(@redis/client@5.12.1)':
+    dependencies:
+      '@redis/client': 5.12.1
+
+  '@redis/search@5.12.1(@redis/client@5.12.1)':
+    dependencies:
+      '@redis/client': 5.12.1
+
+  '@redis/time-series@5.12.1(@redis/client@5.12.1)':
+    dependencies:
+      '@redis/client': 5.12.1
 
   '@remirror/core-constants@0.7.4':
     dependencies:
       '@babel/runtime': 7.28.6
 
-  '@remirror/core-helpers@0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@remirror/core-helpers@0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@remirror/core-constants': 0.7.4
-      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@types/object.omit': 3.0.3
       '@types/object.pick': 1.3.4
       '@types/throttle-debounce': 2.1.0
@@ -15042,7 +14957,7 @@ snapshots:
       - react
       - react-dom
 
-  '@remirror/core-types@0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@remirror/core-types@0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@emotion/core': 10.3.1(react@16.14.0)
@@ -15063,23 +14978,23 @@ snapshots:
       prosemirror-commands: 1.7.1
       prosemirror-inputrules: 1.5.1
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-schema-list: 1.5.1
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
       react: 16.14.0
       type-fest: 0.11.0
     transitivePeerDependencies:
       - '@types/react-dom'
       - react-dom
 
-  '@remirror/core-utils@0.8.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@remirror/core-utils@0.8.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@remirror/core-constants': 0.7.4
-      '@remirror/core-helpers': 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-helpers': 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@types/min-document': 2.19.2
       '@types/node': 24.11.0
       '@types/prosemirror-commands': 1.3.0
@@ -15090,9 +15005,9 @@ snapshots:
       min-document: 2.19.0
       prosemirror-commands: 1.7.1
       prosemirror-inputrules: 1.5.1
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       prosemirror-schema-list: 1.5.1
-      prosemirror-state: 1.4.4
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
     transitivePeerDependencies:
       - '@emotion/core'
       - '@types/prosemirror-view'
@@ -15903,6 +15818,10 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@stepwisehq/prosemirror-collab-commit@1.0.5':
+    dependencies:
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+
   '@storybook/addon-knobs@6.4.0(@storybook/addons@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0))(@storybook/api@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0))(@storybook/components@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0))(@storybook/core-events@6.5.16)(@storybook/theming@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
       '@storybook/addons': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -15982,7 +15901,7 @@ snapshots:
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
 
-  '@storybook/builder-webpack4@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)':
+  '@storybook/builder-webpack4@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)':
     dependencies:
       '@babel/core': 7.29.0
       '@storybook/addons': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -15992,7 +15911,7 @@ snapshots:
       '@storybook/client-api': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/client-logger': 6.5.16
       '@storybook/components': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@storybook/core-events': 6.5.16
       '@storybook/node-logger': 6.5.16
       '@storybook/preview-web': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -16010,12 +15929,12 @@ snapshots:
       css-loader: 3.6.0(webpack@4.47.0)
       file-loader: 6.2.0(webpack@4.47.0)
       find-up: 5.0.0
-      fork-ts-checker-webpack-plugin: 4.1.6(eslint@8.57.1)(typescript@5.9.3)(webpack@4.47.0)
+      fork-ts-checker-webpack-plugin: 4.1.6(eslint@8.57.1)(typescript@6.0.3)(webpack@4.47.0)
       glob: 7.2.3
       glob-promise: 3.4.0(glob@7.2.3)
       global: 4.4.0
       html-webpack-plugin: 4.5.2(webpack@4.47.0)
-      pnp-webpack-plugin: 1.6.4(typescript@5.9.3)
+      pnp-webpack-plugin: 1.6.4(typescript@6.0.3)
       postcss: 7.0.39
       postcss-flexbugs-fixes: 4.2.1
       postcss-loader: 4.3.0(postcss@7.0.39)(webpack@4.47.0)
@@ -16034,7 +15953,7 @@ snapshots:
       webpack-hot-middleware: 2.26.1
       webpack-virtual-modules: 0.2.2
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - bluebird
       - eslint
@@ -16110,7 +16029,7 @@ snapshots:
       regenerator-runtime: 0.13.11
       util-deprecate: 1.0.2
 
-  '@storybook/core-client@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack@4.47.0)':
+  '@storybook/core-client@6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack@4.47.0)':
     dependencies:
       '@storybook/addons': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/channel-postmessage': 6.5.16
@@ -16136,9 +16055,9 @@ snapshots:
       util-deprecate: 1.0.2
       webpack: 4.47.0(webpack-cli@3.3.12)
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
-  '@storybook/core-common@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)':
+  '@storybook/core-common@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.29.0)
@@ -16174,7 +16093,7 @@ snapshots:
       express: 4.22.1
       file-system-cache: 1.1.0
       find-up: 5.0.0
-      fork-ts-checker-webpack-plugin: 6.5.3(eslint@8.57.1)(typescript@5.9.3)(webpack@4.47.0)
+      fork-ts-checker-webpack-plugin: 6.5.3(eslint@8.57.1)(typescript@6.0.3)(webpack@4.47.0)
       fs-extra: 9.1.0
       glob: 7.2.3
       handlebars: 4.7.8
@@ -16193,7 +16112,7 @@ snapshots:
       util-deprecate: 1.0.2
       webpack: 4.47.0(webpack-cli@3.3.12)
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -16205,20 +16124,20 @@ snapshots:
     dependencies:
       core-js: 3.48.0
 
-  '@storybook/core-server@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)':
+  '@storybook/core-server@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)':
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@storybook/builder-webpack4': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
-      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack@4.47.0)
-      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/builder-webpack4': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
+      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack@4.47.0)
+      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@storybook/core-events': 6.5.16
       '@storybook/csf': 0.0.2--canary.4566f4d.1
       '@storybook/csf-tools': 6.5.16
-      '@storybook/manager-webpack4': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/manager-webpack4': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@storybook/node-logger': 6.5.16
       '@storybook/semver': 7.3.2
       '@storybook/store': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@storybook/telemetry': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/telemetry': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@types/node': 16.18.126
       '@types/node-fetch': 2.6.13
       '@types/pretty-hrtime': 1.0.3
@@ -16255,7 +16174,7 @@ snapshots:
       ws: 8.19.0
       x-default-browser: 0.4.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@storybook/mdx2-csf'
       - bluebird
@@ -16268,15 +16187,15 @@ snapshots:
       - webpack-cli
       - webpack-command
 
-  '@storybook/core@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)(webpack@4.47.0)':
+  '@storybook/core@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)(webpack@4.47.0)':
     dependencies:
-      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack@4.47.0)
-      '@storybook/core-server': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack@4.47.0)
+      '@storybook/core-server': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
       webpack: 4.47.0(webpack-cli@3.3.12)
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@storybook/mdx2-csf'
       - bluebird
@@ -16326,14 +16245,14 @@ snapshots:
       - react-dom
       - supports-color
 
-  '@storybook/manager-webpack4@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)':
+  '@storybook/manager-webpack4@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-template-literals': 7.27.1(@babel/core@7.29.0)
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@storybook/addons': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack@4.47.0)
-      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/core-client': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack@4.47.0)
+      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@storybook/node-logger': 6.5.16
       '@storybook/theming': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/ui': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -16350,7 +16269,7 @@ snapshots:
       fs-extra: 9.1.0
       html-webpack-plugin: 4.5.2(webpack@4.47.0)
       node-fetch: 2.7.0
-      pnp-webpack-plugin: 1.6.4(typescript@5.9.3)
+      pnp-webpack-plugin: 1.6.4(typescript@6.0.3)
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
       read-pkg-up: 7.0.1
@@ -16366,7 +16285,7 @@ snapshots:
       webpack-dev-middleware: 3.7.3(webpack@4.47.0)
       webpack-virtual-modules: 0.2.2
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - bluebird
       - encoding
@@ -16422,33 +16341,33 @@ snapshots:
       unfetch: 4.2.0
       util-deprecate: 1.0.2
 
-  '@storybook/react-docgen-typescript-plugin@1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0(typescript@5.9.3)(webpack@4.47.0)':
+  '@storybook/react-docgen-typescript-plugin@1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0(typescript@6.0.3)(webpack@4.47.0)':
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
       micromatch: 4.0.8
-      react-docgen-typescript: 2.4.0(typescript@5.9.3)
+      react-docgen-typescript: 2.4.0(typescript@6.0.3)
       tslib: 2.8.1
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 4.47.0(webpack-cli@3.3.12)
     transitivePeerDependencies:
       - supports-color
 
-  '@storybook/react@6.5.16(@babel/core@7.29.0)(@types/webpack@4.41.40)(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(require-from-string@2.0.2)(type-fest@0.21.3)(typescript@5.9.3)(webpack-cli@3.3.12)(webpack-dev-server@5.2.2(tslib@1.14.1)(webpack-cli@3.3.12)(webpack@4.47.0))(webpack-hot-middleware@2.26.1)':
+  '@storybook/react@6.5.16(@babel/core@7.29.0)(@types/webpack@4.41.40)(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(require-from-string@2.0.2)(type-fest@0.21.3)(typescript@6.0.3)(webpack-cli@3.3.12)(webpack-dev-server@5.2.2(tslib@1.14.1)(webpack-cli@3.3.12)(webpack@4.47.0))(webpack-hot-middleware@2.26.1)':
     dependencies:
       '@babel/preset-flow': 7.27.1(@babel/core@7.29.0)
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.17(@types/webpack@4.41.40)(react-refresh@0.11.0)(type-fest@0.21.3)(webpack-dev-server@5.2.2(tslib@1.14.1)(webpack-cli@3.3.12)(webpack@4.47.0))(webpack-hot-middleware@2.26.1)(webpack@4.47.0)
       '@storybook/addons': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/client-logger': 6.5.16
-      '@storybook/core': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)(webpack@4.47.0)
-      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/core': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)(webpack@4.47.0)
+      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       '@storybook/csf': 0.0.2--canary.4566f4d.1
       '@storybook/docs-tools': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@storybook/node-logger': 6.5.16
-      '@storybook/react-docgen-typescript-plugin': 1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0(typescript@5.9.3)(webpack@4.47.0)
+      '@storybook/react-docgen-typescript-plugin': 1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0(typescript@6.0.3)(webpack@4.47.0)
       '@storybook/semver': 7.3.2
       '@storybook/store': 6.5.16(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@types/estree': 0.0.51
@@ -16478,7 +16397,7 @@ snapshots:
       webpack: 4.47.0(webpack-cli@3.3.12)
     optionalDependencies:
       '@babel/core': 7.29.0
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@storybook/mdx2-csf'
       - '@types/webpack'
@@ -16532,10 +16451,10 @@ snapshots:
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
 
-  '@storybook/telemetry@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)':
+  '@storybook/telemetry@6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)':
     dependencies:
       '@storybook/client-logger': 6.5.16
-      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@5.9.3)(webpack-cli@3.3.12)
+      '@storybook/core-common': 6.5.16(eslint@8.57.1)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)(typescript@6.0.3)(webpack-cli@3.3.12)
       chalk: 4.1.2
       core-js: 3.48.0
       detect-package-manager: 2.0.1
@@ -16923,7 +16842,8 @@ snapshots:
 
   '@types/lodash@4.17.23': {}
 
-  '@types/long@4.0.2': {}
+  '@types/long@4.0.2':
+    optional: true
 
   '@types/mdast@3.0.15':
     dependencies:
@@ -17027,7 +16947,7 @@ snapshots:
 
   '@types/prosemirror-model@1.17.0':
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   '@types/prosemirror-schema-list@1.2.0':
     dependencies:
@@ -17035,15 +16955,15 @@ snapshots:
 
   '@types/prosemirror-state@1.4.0':
     dependencies:
-      prosemirror-state: 1.4.4
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   '@types/prosemirror-transform@1.5.0':
     dependencies:
-      prosemirror-transform: 1.11.0
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   '@types/prosemirror-view@1.24.0':
     dependencies:
-      prosemirror-view: 1.41.6
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
 
   '@types/qs@6.14.0': {}
 
@@ -17211,15 +17131,15 @@ snapshots:
 
   '@types/yoga-layout@1.9.2': {}
 
-  '@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.9.3)':
+  '@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 5.62.0(typescript@6.0.3)
       debug: 4.4.3(supports-color@5.5.0)
       eslint: 8.57.1
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -17230,7 +17150,7 @@ snapshots:
 
   '@typescript-eslint/types@5.62.0': {}
 
-  '@typescript-eslint/typescript-estree@5.62.0(typescript@5.9.3)':
+  '@typescript-eslint/typescript-estree@5.62.0(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
@@ -17238,9 +17158,9 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.4
-      tsutils: 3.21.0(typescript@5.9.3)
+      tsutils: 3.21.0(typescript@6.0.3)
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -17248,6 +17168,36 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260616.1': {}
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260616.1':
+    optional: true
+
+  '@typescript/native-preview@7.0.0-dev.20260616.1':
+    optionalDependencies:
+      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-linux-arm': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-linux-x64': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20260616.1
+      '@typescript/native-preview-win32-x64': 7.0.0-dev.20260616.1
 
   '@ungap/structured-clone@1.3.0': {}
 
@@ -18620,6 +18570,8 @@ snapshots:
 
   clsx@2.1.1: {}
 
+  cluster-key-slot@1.1.2: {}
+
   code-block-writer@12.0.0: {}
 
   code-point-at@1.1.0: {}
@@ -18834,8 +18786,6 @@ snapshots:
   core-js@2.6.12: {}
 
   core-js@3.48.0: {}
-
-  core-js@3.6.5: {}
 
   core-util-is@1.0.2: {}
 
@@ -19406,8 +19356,6 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
       entities: 4.5.0
-
-  dom-storage@2.1.0: {}
 
   dom-walk@0.1.2: {}
 
@@ -20169,10 +20117,6 @@ snapshots:
     dependencies:
       reusify: 1.1.0
 
-  faye-websocket@0.11.3:
-    dependencies:
-      websocket-driver: 0.7.4
-
   faye-websocket@0.11.4:
     dependencies:
       websocket-driver: 0.7.4
@@ -20293,9 +20237,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  firebase-admin@9.12.0(@firebase/app-compat@0.5.8)(@firebase/app-types@0.6.1):
+  firebase-admin@9.12.0(@firebase/app-compat@0.5.8)(@firebase/app-types@0.7.0):
     dependencies:
-      '@firebase/database-compat': 0.1.8(@firebase/app-compat@0.5.8)(@firebase/app-types@0.6.1)
+      '@firebase/database-compat': 0.1.8(@firebase/app-compat@0.5.8)(@firebase/app-types@0.7.0)
       '@firebase/database-types': 0.7.3
       '@types/node': 24.11.0
       dicer: 0.3.1
@@ -20310,23 +20254,6 @@ snapshots:
       - '@firebase/app-types'
       - encoding
       - supports-color
-
-  firebase@7.24.0:
-    dependencies:
-      '@firebase/analytics': 0.6.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/app': 0.6.11
-      '@firebase/app-types': 0.6.1
-      '@firebase/auth': 0.15.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)(@firebase/util@0.3.2)
-      '@firebase/database': 0.6.13(@firebase/app-types@0.6.1)
-      '@firebase/firestore': 1.18.0(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/functions': 0.5.1(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/installations': 0.4.17(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/messaging': 0.7.1(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/performance': 0.4.2(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/polyfill': 0.3.36
-      '@firebase/remote-config': 0.1.28(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/storage': 0.3.43(@firebase/app-types@0.6.1)(@firebase/app@0.6.11)
-      '@firebase/util': 0.3.2
 
   flat-cache@3.2.0:
     dependencies:
@@ -20386,7 +20313,7 @@ snapshots:
 
   forever-agent@0.6.1: {}
 
-  fork-ts-checker-webpack-plugin@4.1.6(eslint@8.57.1)(typescript@5.9.3)(webpack@4.47.0):
+  fork-ts-checker-webpack-plugin@4.1.6(eslint@8.57.1)(typescript@6.0.3)(webpack@4.47.0):
     dependencies:
       '@babel/code-frame': 7.29.0
       chalk: 2.4.2
@@ -20394,7 +20321,7 @@ snapshots:
       minimatch: 3.1.2
       semver: 5.7.2
       tapable: 1.1.3
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 4.47.0(webpack-cli@3.3.12)
       worker-rpc: 0.1.1
     optionalDependencies:
@@ -20402,7 +20329,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.1)(typescript@5.9.3)(webpack@4.47.0):
+  fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.1)(typescript@6.0.3)(webpack@4.47.0):
     dependencies:
       '@babel/code-frame': 7.29.0
       '@types/json-schema': 7.0.15
@@ -20417,7 +20344,7 @@ snapshots:
       schema-utils: 2.7.0
       semver: 7.7.4
       tapable: 1.1.3
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 4.47.0(webpack-cli@3.3.12)
     optionalDependencies:
       eslint: 8.57.1
@@ -21215,8 +21142,6 @@ snapshots:
   icss-utils@4.1.1:
     dependencies:
       postcss: 7.0.39
-
-  idb@3.0.2: {}
 
   idb@7.1.1: {}
 
@@ -22042,7 +21967,8 @@ snapshots:
 
   lodash-es@4.17.23: {}
 
-  lodash.camelcase@4.3.0: {}
+  lodash.camelcase@4.3.0:
+    optional: true
 
   lodash.clonedeep@4.5.0: {}
 
@@ -22102,9 +22028,11 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 1.8.6
 
-  long@4.0.0: {}
+  long@4.0.0:
+    optional: true
 
-  long@5.3.2: {}
+  long@5.3.2:
+    optional: true
 
   loose-envify@1.4.0:
     dependencies:
@@ -22662,8 +22590,6 @@ snapshots:
   node-dir@0.1.17:
     dependencies:
       minimatch: 3.1.2
-
-  node-fetch@2.6.1: {}
 
   node-fetch@2.6.13:
     dependencies:
@@ -23305,9 +23231,9 @@ snapshots:
 
   pluralize@8.0.0: {}
 
-  pnp-webpack-plugin@1.6.4(typescript@5.9.3):
+  pnp-webpack-plugin@1.6.4(typescript@6.0.3):
     dependencies:
-      ts-pnp: 1.2.0(typescript@5.9.3)
+      ts-pnp: 1.2.0(typescript@6.0.3)
     transitivePeerDependencies:
       - typescript
 
@@ -23425,8 +23351,6 @@ snapshots:
     optionalDependencies:
       bluebird: 3.7.2
 
-  promise-polyfill@8.1.3: {}
-
   promise.allsettled@1.0.7:
     dependencies:
       array.prototype.map: 1.0.8
@@ -23478,17 +23402,13 @@ snapshots:
 
   prosemirror-changeset@2.4.0:
     dependencies:
-      prosemirror-transform: 1.11.0
-
-  prosemirror-collab@1.3.1:
-    dependencies:
-      prosemirror-state: 1.4.4
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   prosemirror-commands@1.7.1:
     dependencies:
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   prosemirror-compress-pubpub@0.0.3: {}
 
@@ -23500,8 +23420,8 @@ snapshots:
       jotai: 1.13.1(@babel/core@7.29.0)(@babel/template@7.28.6)(react@16.14.0)
       jsondiffpatch: 0.4.1
       nanoid: 2.1.11
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       react: 16.14.0
       react-dock: 0.6.0(@types/react@16.14.69)(react@16.14.0)
       react-dom: 16.14.0(react@16.14.0)
@@ -23523,57 +23443,57 @@ snapshots:
   prosemirror-gapcursor@1.4.0:
     dependencies:
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-view: 1.41.6
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
 
   prosemirror-history@1.5.0:
     dependencies:
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
       rope-sequence: 1.3.4
 
   prosemirror-inputrules@1.5.1:
     dependencies:
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   prosemirror-keymap@1.2.3:
     dependencies:
-      prosemirror-state: 1.4.4
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
       w3c-keyname: 2.2.8
 
-  prosemirror-model@1.25.4:
+  prosemirror-model@1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8):
     dependencies:
       orderedmap: 2.1.1
 
   prosemirror-schema-list@1.5.1:
     dependencies:
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
-  prosemirror-state@1.4.4:
+  prosemirror-state@1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8):
     dependencies:
-      prosemirror-model: 1.25.4
-      prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
 
-  prosemirror-suggest@0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0):
+  prosemirror-suggest@0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0):
     dependencies:
       '@babel/runtime': 7.28.6
       '@remirror/core-constants': 0.7.4
-      '@remirror/core-helpers': 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@remirror/core-utils': 0.8.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-helpers': 0.7.6(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-types': 0.9.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@remirror/core-utils': 0.8.0(@emotion/core@10.3.1(react@16.14.0))(@types/prosemirror-view@1.24.0)(@types/react-dom@17.0.26(@types/react@16.14.69))(@types/react@16.14.69)(prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5))(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@types/prosemirror-keymap': 1.2.0
       '@types/prosemirror-state': 1.4.0
       '@types/prosemirror-view': 1.24.0
       escape-string-regexp: 2.0.0
       prosemirror-keymap: 1.2.3
-      prosemirror-state: 1.4.4
-      prosemirror-view: 1.41.6
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
     transitivePeerDependencies:
       - '@emotion/core'
       - '@types/react'
@@ -23584,20 +23504,20 @@ snapshots:
   prosemirror-tables@1.8.5:
     dependencies:
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-view: 1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5)
 
-  prosemirror-transform@1.11.0:
+  prosemirror-transform@1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8):
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
-  prosemirror-view@1.41.6:
+  prosemirror-view@1.41.6(patch_hash=ba6c92b133cd1be07cc7afe47f420e9f46e5da1f0516a281aeae92fd0f98bbf5):
     dependencies:
-      prosemirror-model: 1.25.4
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
+      prosemirror-model: 1.25.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-state: 1.4.4(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
+      prosemirror-transform: 1.11.0(patch_hash=8bb57c40eb270df7d5c07dca69a7563c1df164b1c8f92991dafcd88513cbaaf8)
 
   proto-list@1.2.4: {}
 
@@ -23638,6 +23558,7 @@ snapshots:
       '@types/long': 4.0.2
       '@types/node': 24.11.0
       long: 4.0.0
+    optional: true
 
   protobufjs@7.5.4:
     dependencies:
@@ -23653,6 +23574,7 @@ snapshots:
       '@protobufjs/utf8': 1.1.0
       '@types/node': 24.11.0
       long: 5.3.2
+    optional: true
 
   proxy-addr@2.0.7:
     dependencies:
@@ -23836,9 +23758,9 @@ snapshots:
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
 
-  react-docgen-typescript@2.4.0(typescript@5.9.3):
+  react-docgen-typescript@2.4.0(typescript@6.0.3):
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   react-docgen@5.4.3:
     dependencies:
@@ -23941,6 +23863,12 @@ snapshots:
       prop-types: 15.8.1
       react: 16.14.0
       scheduler: 0.18.0
+
+  react-reconciler@0.32.0(react@16.14.0):
+    dependencies:
+      react: 16.14.0
+      scheduler: 0.26.0
+    optional: true
 
   react-redux@7.2.9(react-dom@16.14.0(react@16.14.0))(react@16.14.0):
     dependencies:
@@ -24207,6 +24135,17 @@ snapshots:
     dependencies:
       indent-string: 4.0.0
       strip-indent: 3.0.0
+
+  redis@5.12.1:
+    dependencies:
+      '@redis/bloom': 5.12.1(@redis/client@5.12.1)
+      '@redis/client': 5.12.1
+      '@redis/json': 5.12.1(@redis/client@5.12.1)
+      '@redis/search': 5.12.1(@redis/client@5.12.1)
+      '@redis/time-series': 5.12.1(@redis/client@5.12.1)
+    transitivePeerDependencies:
+      - '@node-rs/xxhash'
+      - '@opentelemetry/api'
 
   redux@4.2.1:
     dependencies:
@@ -24601,6 +24540,9 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
 
+  scheduler@0.26.0:
+    optional: true
+
   schema-utils@1.0.0:
     dependencies:
       ajv: 6.12.6
@@ -24681,16 +24623,16 @@ snapshots:
 
   sequelize-pool@8.0.1: {}
 
-  sequelize-typescript-generator@10.1.2(@types/node@24.11.0)(@types/validator@13.15.10)(pg@8.18.0)(reflect-metadata@0.1.14)(typescript@5.9.3):
+  sequelize-typescript-generator@10.1.2(@types/node@24.11.0)(@types/validator@13.15.10)(pg@8.18.0)(reflect-metadata@0.1.14)(typescript@6.0.3):
     dependencies:
       '@types/eslint': 8.56.12
-      '@typescript-eslint/parser': 5.62.0(eslint@8.57.1)(typescript@5.9.3)
+      '@typescript-eslint/parser': 5.62.0(eslint@8.57.1)(typescript@6.0.3)
       change-case: 4.1.2
       eslint: 8.57.1
       pluralize: 8.0.0
       sequelize: 6.37.7(pg@8.18.0)
       sequelize-typescript: 2.1.6(@types/node@24.11.0)(@types/validator@13.15.10)(reflect-metadata@0.1.14)(sequelize@6.37.7(pg@8.18.0))
-      typescript: 5.9.3
+      typescript: 6.0.3
       yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
@@ -25659,14 +25601,14 @@ snapshots:
 
   ts-easing@0.2.0: {}
 
-  ts-loader@8.4.0(typescript@5.9.3)(webpack@4.47.0):
+  ts-loader@8.4.0(typescript@6.0.3)(webpack@4.47.0):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 4.5.0
       loader-utils: 2.0.4
       micromatch: 4.0.8
       semver: 7.7.4
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 4.47.0(webpack-cli@3.3.12)
 
   ts-morph@21.0.1:
@@ -25674,7 +25616,7 @@ snapshots:
       '@ts-morph/common': 0.22.0
       code-block-writer: 12.0.0
 
-  ts-node@10.9.2(@types/node@24.11.0)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@24.11.0)(typescript@6.0.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
@@ -25688,17 +25630,17 @@ snapshots:
       create-require: 1.1.1
       diff: 4.0.4
       make-error: 1.3.6
-      typescript: 5.9.3
+      typescript: 6.0.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
-  ts-pnp@1.2.0(typescript@5.9.3):
+  ts-pnp@1.2.0(typescript@6.0.3):
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
-  tsconfck@3.1.6(typescript@5.9.3):
+  tsconfck@3.1.6(typescript@6.0.3):
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   tslib@1.10.0: {}
 
@@ -25708,10 +25650,10 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsutils@3.21.0(typescript@5.9.3):
+  tsutils@3.21.0(typescript@6.0.3):
     dependencies:
       tslib: 1.14.1
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   tsx@4.21.0:
     dependencies:
@@ -25795,7 +25737,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typescript@5.9.3: {}
+  typescript@6.0.3: {}
 
   uglify-js@3.19.3: {}
 
@@ -26095,11 +26037,11 @@ snapshots:
       d3-time: 3.1.0
       d3-timer: 3.0.1
 
-  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)):
+  vite-tsconfig-paths@5.1.4(typescript@6.0.3)(vite@7.3.1(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       globrex: 0.1.2
-      tsconfck: 3.1.6(typescript@5.9.3)
+      tsconfck: 3.1.6(typescript@6.0.3)
     optionalDependencies:
       vite: 7.3.1(@types/node@24.11.0)(jiti@2.6.1)(sass@1.67.0)(terser@5.46.0)(tsx@4.21.0)(yaml@1.10.2)
     transitivePeerDependencies:
@@ -26387,8 +26329,6 @@ snapshots:
 
   websocket-extensions@0.1.4: {}
 
-  whatwg-fetch@2.0.4: {}
-
   whatwg-url@5.0.0:
     dependencies:
       tr46: 0.0.3
@@ -26563,8 +26503,6 @@ snapshots:
   xmlbuilder@13.0.2: {}
 
   xmlchars@2.2.0: {}
-
-  xmlhttprequest@1.8.0: {}
 
   xtend@4.0.2: {}
 

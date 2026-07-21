@@ -1,4 +1,3 @@
-// @ts-check
 
 const { asyncMap } = require('utils/async');
 const { Op } = require('sequelize');
@@ -6,7 +5,7 @@ const { Op } = require('sequelize');
 /**
  * @param {object} options
  * @param {import('sequelize').Sequelize} options.Sequelize
- * @param {import('server/sequelize').sequelize} options.sequelize
+ * @param {import('server/sequelize')} options.sequelize
  */
 export const up = async ({ sequelize }) => {
 	const communitiesWithLinkedin = await sequelize.models.Community.findAll({

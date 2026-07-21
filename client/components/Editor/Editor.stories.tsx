@@ -3,9 +3,6 @@
 import React, { useState } from 'react';
 
 import { storiesOf } from '@storybook/react';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
 
 import Editor from 'components/Editor';
 import {
@@ -17,7 +14,6 @@ import {
 	removeLocalHighlight,
 	setLocalHighlight,
 } from 'components/Editor/utils';
-import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import initialContent from 'utils/storybook/initialDocs/plainDoc';
 
 const editorWrapperStyle = {
@@ -39,19 +35,8 @@ const clientData = {
 	canEdit: true,
 };
 
-const initFirebase = (rootKey) => {
-	const firebaseAppName = `App-${rootKey}`;
-	/* Check if we've already initialized an Firebase App with the */
-	/* same name in this local environment */
-	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-	const existingApp = firebase.apps.reduce((prev, curr) => {
-		return curr.name === firebaseAppName ? curr : prev;
-	}, undefined);
-
-	/* Use the existing Firebase App or initialize a new one */
-	const firebaseApp = existingApp || firebase.initializeApp(getFirebaseConfig(), firebaseAppName);
-	const database = firebase.database(firebaseApp);
-	return database.ref(`${rootKey}`);
+const initFirebase = (_rootKey) => {
+	return null;
 };
 
 const cursorCommands = {
@@ -62,8 +47,7 @@ const cursorCommands = {
 };
 
 const rootKey = 'firebase-testing';
-// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 2.
-const draftRef = initFirebase(rootKey, '');
+const draftRef = initFirebase(rootKey);
 const newDiscussionId = String(Math.floor(Math.random() * 999999));
 
 const CursorOptionsDemoPub = () => {
@@ -163,10 +147,8 @@ storiesOf('Editor', module)
 						}}
 						collaborativeOptions={{
 							pubId: 'storybook-pub-id',
-							firebaseRef: draftRef as any,
 							clientData,
 							initialDocKey: -1,
-							// onClientChange: () => {},
 							onStatusChange: (status) => console.info('collab status is', status),
 						}}
 					/>
@@ -239,10 +221,8 @@ storiesOf('Editor', module)
 						}}
 						collaborativeOptions={{
 							pubId: 'storybook-pub-id',
-							firebaseRef: draftRef as any,
 							clientData,
 							initialDocKey: -1,
-							// onClientChange: () => {},
 							onStatusChange: (status) => console.info('collab status is', status),
 						}}
 					/>

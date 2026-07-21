@@ -1,7 +1,8 @@
 export * from './changes';
 export * from './doc';
-export * from './firebase';
-export * from './firebaseDoc';
+// legacy firebase exports -- only used by migration tools, not the app bundle
+export { createFirebaseChange, flattenKeyables, storeCheckpoint } from './firebase';
+export { getFirebaseDoc, getFirstKeyAndTimestamp, getLatestKeyAndTimestamp } from './firebaseDoc';
 export * from './media';
 export * from './misc';
 export * from './nodes';

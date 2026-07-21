@@ -126,12 +126,27 @@ import { schedulePurge } from 'utils/caching/schedulePurgeWithSentry';
 import { abortStorage } from './abort';
 import { authTokenMiddleware } from './authToken/authTokenMiddleware';
 import { bearerStrategy } from './authToken/strategy';
+import { router as collabRouter } from './collab/api';
+import { router as collabDiscussionPositionsRouter } from './collab/discussionPositions';
 
 const SequelizeStore = CreateSequelizeStore(session.Store);
 
 appRouter.use('/api/health', (req, res) => {
 	res.status(200).json({ status: 'ok' });
 });
+
+/* --------------------------------------------------------------------- */
+/* Collab + presence hot-path routes.                                     */
+/*                                                                        */
+/* These fire on ~every keystroke-batch and have no authorization of      */
+/* their own (they only resolve pubId -> draftId and read req.body). We   */
+/* mount them HERE, before the session/passport/authToken/ban middleware, */
+/* so a commit doesn't pay for the session SELECT+UPDATE, the Users       */
+/* deserialize SELECT, and the CommunityBans SELECT+JOIN it never reads.  */
+/* readOnlyMiddleware is kept in front so maintenance mode still blocks    */
+/* these writes; blocklist + body parsing already ran above.              */
+/* --------------------------------------------------------------------- */
+appRouter.use(readOnlyMiddleware(), collabRouter, collabDiscussionPositionsRouter);
 
 appRouter.use(
 	session({
@@ -222,13 +237,14 @@ process.on('uncaughtException', (err) => {
 /** Same as Heroku's default timeout */
 const TIMEOUT_MS = env.REQUEST_TIMEOUT_MS;
 
+const ignoredPaths = /\/api\/analytics|\/api\/ev|\/api\/pubs\/.*?\/presence/;
 appRouter.use((req, res, next) => {
 	// don't abort requests in test environment
 	if (env.NODE_ENV === 'test') {
 		return next();
 	}
 
-	if (req.path.includes('/api/analytics')) {
+	if (ignoredPaths.test(req.path)) {
 		return next();
 	}
 
@@ -309,6 +325,10 @@ appRouter.use((req, res, next) => {
 		const userId = req.user?.id ?? 'anon';
 		const ip = req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? 'unknown';
 
+		if (req.path.includes('/discussions/positions') || req.path.includes('/commits')) {
+			return;
+		}
+
 		console.log(
 			`${req.method} ${res.statusCode} ${req.path} ${durationMs}ms | host=${host} | user=${userId} | ip=${ip} | size=${contentLength} | ua=${userAgent} | origin=${req.headers.origin}`,
 		);
@@ -380,6 +400,17 @@ export const startServer = async () => {
 	await initOidc().catch((err) => {
 		console.warn('[OIDC] Discovery failed at startup (will retry on demand):', err.message);
 	});
+
+	if (env.NODE_ENV !== 'test') {
+		// connect collab redis clients
+		const { connectCollabRedis } = await import('./collab/authority.js');
+		const { connectPresenceRedis } = await import('./collab/presence.js');
+
+		await Promise.all([connectCollabRedis(), connectPresenceRedis()]).catch((err) => {
+			console.error('[collab] Failed to connect to Redis/Valkey:', err.message);
+			console.error('[collab] Collaborative editing will not work until Redis is available.');
+		});
+	}
 
 	await sequelizeSyncPromise;
 	return app.listen(

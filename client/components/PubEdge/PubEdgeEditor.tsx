@@ -62,7 +62,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 
 		return (
 			<RKButton
-				as="a"
+				as={'a' as 'button'}
 				// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 				tabIndex="0"
 				onKeyDown={(evt) => evt.key === 'Enter' && addPublicationDate()}
@@ -101,7 +101,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 
 		return (
 			<RKButton
-				as="a"
+				as={'a' as 'button'}
 				// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 				tabIndex="0"
 				onKeyDown={(evt) => evt.key === 'Enter' && setDoiOpen(true)}

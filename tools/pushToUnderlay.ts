@@ -64,6 +64,7 @@ async function main() {
 	);
 }
 
+let exitCode = 0;
 main()
 	.then(() => {
 		console.info('Done!');
@@ -71,5 +72,6 @@ main()
 	.catch((err) => {
 		console.error('Failed!');
 		console.error(err);
+		exitCode = 1;
 	})
-	.finally(() => process.exit(0));
+	.finally(() => process.exit(exitCode));

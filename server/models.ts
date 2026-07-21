@@ -56,8 +56,10 @@ import { SubmissionWorkflow } from './submissionWorkflow/model';
 import { Thread } from './thread/model';
 import { ThreadComment } from './threadComment/model';
 import { ThreadEvent } from './threadEvent/model';
+import { UnderlayAssetCache } from './underlayAssetCache/model';
 import { UnderlayIntegration } from './underlayIntegration/model';
 import { UnderlayPushEntry } from './underlayPushEntry/model';
+import { UnderlayPushLog } from './underlayPushLog/model';
 import { User } from './user/model';
 import { UserDismissable } from './userDismissable/model';
 import { UserNotification } from './userNotification/model';
@@ -132,8 +134,10 @@ sequelize.addModels([
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayAssetCache,
 	UnderlayIntegration,
 	UnderlayPushEntry,
+	UnderlayPushLog,
 ]);
 
 export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
@@ -232,8 +236,10 @@ export {
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayAssetCache,
 	UnderlayIntegration,
 	UnderlayPushEntry,
+	UnderlayPushLog,
 	ZoteroIntegration,
 };
 

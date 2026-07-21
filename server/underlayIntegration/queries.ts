@@ -8,6 +8,7 @@ export type UnderlayIntegrationClientConfig = {
 	communityId: string | null;
 	underlayOrg: string | null;
 	underlayCollection: string | null;
+	readme: string | null;
 	includeReleaseHtml: boolean;
 	includeAssets: boolean;
 	includePdfs: boolean;
@@ -24,6 +25,7 @@ const toClientConfig = (integration: UnderlayIntegration): UnderlayIntegrationCl
 	communityId: integration.communityId,
 	underlayOrg: integration.underlayOrg,
 	underlayCollection: integration.underlayCollection,
+	readme: integration.readme,
 	includeReleaseHtml: integration.includeReleaseHtml,
 	includeAssets: integration.includeAssets,
 	includePdfs: integration.includePdfs,
@@ -40,6 +42,7 @@ const toClientConfig = (integration: UnderlayIntegration): UnderlayIntegrationCl
 export type UnderlayIntegrationConfigUpdate = {
 	underlayOrg?: string | null;
 	underlayCollection?: string | null;
+	readme?: string | null;
 	/** Plaintext API key. Omit to leave the stored key unchanged; empty string clears it. */
 	apiKey?: string | null;
 	includeReleaseHtml?: boolean;
@@ -60,6 +63,18 @@ export const getUnderlayIntegration = async (
 		return undefined;
 	}
 	return toClientConfig(integration);
+};
+
+/**
+ * Cheap check for whether the community has a configured integration (an API key is set).
+ * Used to decide tab visibility without shipping the full config. Community admin only (caller-gated).
+ */
+export const isUnderlayIntegrationConfigured = async (communityId: string): Promise<boolean> => {
+	const integration = await UnderlayIntegration.findOne({
+		where: { communityId },
+		attributes: ['apiKey'],
+	});
+	return Boolean(integration?.apiKey);
 };
 
 /** Internal: fetch the integration with the decrypted API key. Never return this to a client. */
@@ -94,6 +109,7 @@ export const upsertUnderlayIntegration = async (
 	if (update.underlayOrg !== undefined) patch.underlayOrg = update.underlayOrg;
 	if (update.underlayCollection !== undefined)
 		patch.underlayCollection = update.underlayCollection;
+	if (update.readme !== undefined) patch.readme = update.readme;
 	if (update.includeReleaseHtml !== undefined)
 		patch.includeReleaseHtml = update.includeReleaseHtml;
 	if (update.includeAssets !== undefined) patch.includeAssets = update.includeAssets;

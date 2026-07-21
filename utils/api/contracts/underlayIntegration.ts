@@ -5,12 +5,34 @@ import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
+const underlayPushWarningSchema = z.object({
+	pubId: z.string().nullable().optional(),
+	assetUrl: z.string().nullable().optional(),
+	reason: z.string(),
+});
+
+/** A single push-history entry (also used for the in-progress and most-recent push on the config). */
+const underlayPushLogSchema = z.object({
+	id: z.string().uuid(),
+	status: z.enum(['running', 'success', 'error', 'noop']),
+	startedAt: z.string(),
+	finishedAt: z.string().nullable(),
+	semver: z.string().nullable(),
+	recordCount: z.number().int().nullable(),
+	fileCount: z.number().int().nullable(),
+	message: z.string().nullable(),
+	error: z.string().nullable(),
+	warnings: z.array(underlayPushWarningSchema),
+	workerTaskId: z.string().nullable(),
+});
+
 /** Sanitized integration config returned to clients — never includes the API key itself. */
 const underlayIntegrationSchema = z.object({
 	id: z.string().uuid(),
 	communityId: z.string().uuid().nullable(),
 	underlayOrg: z.string().nullable(),
 	underlayCollection: z.string().nullable(),
+	readme: z.string().nullable(),
 	includeReleaseHtml: z.boolean(),
 	includeAssets: z.boolean(),
 	includePdfs: z.boolean(),
@@ -20,11 +42,16 @@ const underlayIntegrationSchema = z.object({
 	lastPushStatus: z.enum(['success', 'error', 'noop']).nullable(),
 	lastPushError: z.string().nullable(),
 	hasApiKey: z.boolean(),
+	/** In-progress push, if any — lets a page reload show that a push is running. Present on GET. */
+	currentPush: underlayPushLogSchema.nullable().optional(),
+	/** Most recent finished push. Present on GET. */
+	lastPush: underlayPushLogSchema.nullable().optional(),
 });
 
 const underlayIntegrationUpdateSchema = z.object({
 	underlayOrg: z.string().nullable().optional(),
 	underlayCollection: z.string().nullable().optional(),
+	readme: z.string().nullable().optional(),
 	/** Plaintext key. Omit to leave unchanged; empty string clears it. */
 	apiKey: z.string().nullable().optional(),
 	includeReleaseHtml: z.boolean().optional(),
@@ -138,9 +165,23 @@ export const underlayIntegrationRouter = {
 		body: z.object({}),
 		responses: {
 			200: z.object({
-				workerTaskId: z.string().uuid(),
+				workerTaskId: z.string().uuid().optional(),
 				message: z.string().optional(),
 			}),
+		},
+	},
+	/**
+	 * `GET /api/underlayIntegration/history`
+	 *
+	 * Recent push history for the current community (newest first, last ~90 days). Admin only.
+	 */
+	history: {
+		path: '/api/underlayIntegration/history',
+		method: 'GET',
+		summary: 'Get recent Underlay push history',
+		description: 'Returns recent push-log entries (newest first). Community admin only.',
+		responses: {
+			200: z.array(underlayPushLogSchema),
 		},
 	},
 } as const satisfies AppRouter;

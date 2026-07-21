@@ -133,17 +133,10 @@ describe('underlay/incremental — buildIncrementalPush', () => {
 		expect(calls).toEqual({ p1: 1, p2: 1 });
 		expect(result.cacheUpserts.map((e) => e.pubId).sort()).toEqual(['p1', 'p2']);
 		expect(result.presentPubIds.sort()).toEqual(['p1', 'p2']);
-		// Manifest carries community-scope records (Community + 2 Contributors) plus 2 Pub + 2 Release.
+		// Manifest carries community-scope records (Community; the fixture's attributions are name-only,
+		// so no User records) plus 2 Pub + 2 Release.
 		const types = result.payload.manifest!.map((m) => m.type).sort();
-		expect(types).toEqual([
-			'Community',
-			'Contributor',
-			'Contributor',
-			'Pub',
-			'Pub',
-			'Release',
-			'Release',
-		]);
+		expect(types).toEqual(['Community', 'Pub', 'Pub', 'Release', 'Release']);
 		expect(result.payload.files).toHaveLength(2);
 	});
 
@@ -354,5 +347,79 @@ describe('underlay/incremental — computeFacetsSignature', () => {
 			expect(sig.p1).toBe(base.p1);
 			expect(sig.p2).not.toBe(base.p2);
 		});
+	});
+});
+
+describe('underlay/incremental — MAPPING_VERSION invalidation', () => {
+	it('is stable for the same options + version, and changes when the mapping version bumps', () => {
+		const base = optionsSignature(OPTIONS);
+		// Deterministic across calls with the same version.
+		expect(optionsSignature(OPTIONS)).toBe(base);
+		// A shape/version bump changes the signature → every cache entry invalidates once.
+		expect(optionsSignature(OPTIONS, 'next-version')).not.toBe(base);
+	});
+});
+
+describe('underlay/incremental — immutable asset cache', () => {
+	const url = 'https://assets.pubpub.org/logo.png';
+	const brandedCommunity: CommunityInput = { ...community, avatar: url };
+
+	it('references a preloaded scope image without downloading, and resolves its bytes lazily by hash', async () => {
+		const bytes = Buffer.from('logo-bytes');
+		const hash = hashBytes(bytes);
+		let fetchCalls = 0;
+		const assetCache = {
+			preloaded: new Map([[url, { hash, fileName: 'logo.png', mimeType: 'image/png' }]]),
+			learned: new Map(),
+			byHash: new Map(),
+		};
+		const result = await buildIncrementalPush({
+			community: brandedCommunity,
+			collections: [],
+			pubs: [],
+			pubUpdatedAt: {},
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			fetchAsset: async () => {
+				fetchCalls += 1;
+				return bytes;
+			},
+			assetCache,
+		});
+
+		// Assembling the push did NOT download the logo (cache hit).
+		expect(fetchCalls).toBe(0);
+		// It is NOT held as eager bytes …
+		expect(result.payload.files.some((f) => f.hash === hash)).toBe(false);
+		// … but its bytes are produced on demand and verified against the declared hash.
+		const file = await result.payload.resolveFileByHash?.(hash);
+		expect(file?.hash).toBe(hash);
+		expect(file?.bytes.equals(bytes)).toBe(true);
+		expect(file?.contentType).toBe('image/png');
+		expect(fetchCalls).toBe(1);
+	});
+
+	it('throws if a cached asset URL no longer hashes to the declared hash (poisoned/mutable)', async () => {
+		const declaredHash = 'deadbeefdeadbeef';
+		const assetCache = {
+			preloaded: new Map([
+				[url, { hash: declaredHash, fileName: 'logo.png', mimeType: 'image/png' }],
+			]),
+			learned: new Map(),
+			byHash: new Map(),
+		};
+		const result = await buildIncrementalPush({
+			community: brandedCommunity,
+			collections: [],
+			pubs: [],
+			pubUpdatedAt: {},
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			fetchAsset: async () => Buffer.from('different-bytes'),
+			assetCache,
+		});
+		await expect(result.payload.resolveFileByHash?.(declaredHash)).rejects.toThrow(/mismatch/);
 	});
 });

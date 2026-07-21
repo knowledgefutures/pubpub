@@ -9,6 +9,7 @@ import { getCommunityExports } from 'server/community/queries';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import Html from 'server/Html';
 import { FtpTarget } from 'server/models';
+import { isUnderlayIntegrationConfigured } from 'server/underlayIntegration/queries';
 import { ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getPubForRequest } from 'server/utils/queryHelpers';
@@ -24,31 +25,34 @@ const getSettingsData = async (
 	collectionSlug?: string,
 ) => {
 	const activeCollection = initialData.scopeData.elements.activeCollection;
-	const [depositTarget, pubData, archives, collectionExports, ftpTargets] = await Promise.all([
-		getCommunityDepositTarget(initialData.communityData.id),
-		pubSlug
-			? getPubForRequest({
-					slug: pubSlug,
-					initialData,
-					getEdges: 'all',
-				})
-			: null,
-		isAdmin ? getCommunityExports(initialData.communityData.id) : null,
-		isAdmin && collectionSlug && activeCollection
-			? getCollectionExports(activeCollection.id)
-			: null,
-		isAdmin && collectionSlug
-			? FtpTarget.findAll({
-					where: { communityId: initialData.communityData.id },
-					attributes: ['id', 'host', 'filePath', 'ftpType', 'name'],
-				})
-			: null,
-	]);
+	const [depositTarget, pubData, archives, collectionExports, ftpTargets, underlayConfigured] =
+		await Promise.all([
+			getCommunityDepositTarget(initialData.communityData.id),
+			pubSlug
+				? getPubForRequest({
+						slug: pubSlug,
+						initialData,
+						getEdges: 'all',
+					})
+				: null,
+			isAdmin ? getCommunityExports(initialData.communityData.id) : null,
+			isAdmin && collectionSlug && activeCollection
+				? getCollectionExports(activeCollection.id)
+				: null,
+			isAdmin && collectionSlug
+				? FtpTarget.findAll({
+						where: { communityId: initialData.communityData.id },
+						attributes: ['id', 'host', 'filePath', 'ftpType', 'name'],
+					})
+				: null,
+			isAdmin ? isUnderlayIntegrationConfigured(initialData.communityData.id) : false,
+		]);
 	const baseSettingsData = {
 		depositTarget,
 		archives,
 		collectionExports,
 		ftpTargets,
+		underlayConfigured,
 	};
 	if (pubSlug) {
 		return {

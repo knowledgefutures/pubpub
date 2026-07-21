@@ -47,6 +47,8 @@ type Props = {
 			output: string | null;
 			error: string | null;
 		}[];
+		/** Whether this community already has a saved Underlay integration (an API key is set). */
+		underlayConfigured?: boolean;
 	};
 };
 
@@ -184,8 +186,9 @@ const CommunitySettings = (props: Props) => {
 					} as const,
 				]
 			: ([] as Subtab[])),
-		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
-		pageContext.scopeData.activePermissions.isSuperAdmin
+		...(pageContext.scopeData.activePermissions.isSuperAdmin ||
+		(pageContext.scopeData.activePermissions.canAdminCommunity &&
+			props.settingsData?.underlayConfigured)
 			? [
 					{
 						id: 'underlay-settings',

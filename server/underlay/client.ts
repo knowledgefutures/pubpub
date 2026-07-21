@@ -445,9 +445,11 @@ export class UnderlayClient {
 	}
 
 	private async uploadFile(file: UnderlayFile): Promise<void> {
+		// Send the file's real content type — Underlay reports back whatever it received, so this is
+		// what downstream consumers see. Falls back to octet-stream only when we truly don't know.
 		const response = await this.request(`${this.collectionPath()}/files/sha256:${file.hash}`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/octet-stream' },
+			headers: { 'Content-Type': file.contentType || 'application/octet-stream' },
 			rawBody: file.bytes,
 		});
 		if (!response.ok) {
@@ -514,6 +516,7 @@ export class UnderlayClient {
 		payload: UnderlayPushPayload,
 		baseVersion: string | null,
 		message: string,
+		metadata?: Record<string, unknown>,
 	): Promise<PushResult> {
 		// Incremental pushes supply a precomputed manifest spanning cache-reused + fresh records;
 		// otherwise derive it from the in-memory records.
@@ -537,6 +540,7 @@ export class UnderlayClient {
 						schemas: payload.schemas,
 						manifest,
 						files: payload.files.map((f) => f.hash),
+						...(metadata ? { metadata } : {}),
 					}),
 				},
 			);

@@ -9,6 +9,12 @@ import { contract } from 'utils/api/contract';
 import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 
 import {
+	beginPushLog,
+	getPushHistory,
+	getPushState,
+	hasRunningPush,
+} from '../underlayPushLog/queries';
+import {
 	getUnderlayIntegration,
 	getUnderlayIntegrationWithKey,
 	upsertUnderlayIntegration,
@@ -29,7 +35,18 @@ export const underlayIntegrationServer = s.router(contract.underlayIntegration, 
 	get: async ({ req }) => {
 		const community = await ensureUserIsCommunityAdmin(req);
 		const integration = await getUnderlayIntegration(community.id);
-		return { status: 200, body: integration ?? null };
+		if (!integration) {
+			return { status: 200, body: null };
+		}
+		// Attach current/last push state so a page reload can show an in-progress or just-finished push.
+		const { currentPush, lastPush } = await getPushState(community.id);
+		return { status: 200, body: { ...integration, currentPush, lastPush } };
+	},
+
+	history: async ({ req }) => {
+		const community = await ensureUserIsCommunityAdmin(req);
+		const history = await getPushHistory(community.id);
+		return { status: 200, body: history };
 	},
 
 	update: async ({ req, body }) => {
@@ -135,6 +152,18 @@ export const underlayIntegrationServer = s.router(contract.underlayIntegration, 
 		}
 
 		// If a push is already running for this community, return it rather than double-enqueuing.
+		// The push log is the source of truth (it's created synchronously below, before the worker
+		// even starts), so a rapid double-click is caught even before the WorkerTask is picked up.
+		const running = await hasRunningPush(community.id);
+		if (running) {
+			return {
+				status: 200,
+				body: {
+					workerTaskId: running.workerTaskId ?? undefined,
+					message: 'A push is already in progress.',
+				},
+			};
+		}
 		const runningTask = await WorkerTask.findOne({
 			where: {
 				type: 'pushToUnderlay',
@@ -156,6 +185,9 @@ export const underlayIntegrationServer = s.router(contract.underlayIntegration, 
 			type: 'pushToUnderlay',
 			input: { communityId: community.id },
 		});
+		// Create the `running` log now so a reload immediately reflects the in-progress push; the
+		// worker adopts this same log when it starts (see beginPushLog).
+		await beginPushLog(community.id, workerTask.id);
 
 		return { status: 200, body: { workerTaskId: workerTask.id } };
 	},

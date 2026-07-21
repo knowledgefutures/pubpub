@@ -45,6 +45,10 @@ export class UnderlayIntegration extends Model<
 	@Column(DataType.STRING)
 	declare underlayCollection: string | null;
 
+	/** Markdown README pushed as the Underlay version's `metadata.readme`. Safe to expose to clients. */
+	@Column(DataType.TEXT)
+	declare readme: string | null;
+
 	/** AES-256-encrypted Underlay API key (hex ciphertext). Never expose to clients. */
 	@Column(DataType.TEXT)
 	declare apiKey: string | null;

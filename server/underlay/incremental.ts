@@ -1,10 +1,13 @@
 import { canonicalize, hashBytes, hashRecord } from './hash';
 import {
+	type AssetCacheContext,
+	type AssetWarning,
 	buildManifest,
 	type CollectionInput,
 	type CommunityInput,
 	computeSignatureFromParts,
 	type JsonSchema,
+	MAPPING_VERSION,
 	type ManifestEntry,
 	mapCommunityScopeRecords,
 	type PubInput,
@@ -61,6 +64,15 @@ export type IncrementalPushInput = {
 	options: PushOptions;
 	cacheEntries: CachedPubEntry[];
 	mapPub: MapPubFn;
+	/** Fetches asset bytes for community/collection/author-scope images (avatars, logos, hero). */
+	fetchAsset?: (url: string) => Promise<Buffer>;
+	/** Collects non-fatal asset-download failures (community-scope). */
+	onAssetWarning?: (warning: AssetWarning) => void;
+	/**
+	 * Shared immutable-asset cache. When set, scope images resolve from it without downloading; any
+	 * cached file the server later needs is fetched lazily by hash via `resolveFileByHash`.
+	 */
+	assetCache?: AssetCacheContext;
 };
 
 export type IncrementalPushResult = {
@@ -91,11 +103,21 @@ const latestHistoryKeyOf = (pub: PubInput): number | null => {
 export const computeFacetsSignature = (resolvedFacets: unknown): string =>
 	hashBytes(Buffer.from(JSON.stringify(canonicalize(resolvedFacets ?? {}))));
 
-/** Deterministic signature of the push-relevant options. A change invalidates every cache entry. */
-export const optionsSignature = (options: PushOptions): string =>
+/**
+ * Deterministic signature of the push-relevant options AND the mapping shape version. A change to
+ * either invalidates every cache entry — the `MAPPING_VERSION` term is what forces a one-time
+ * re-map of every pub when the emitted record shape changes in code (otherwise cache-hit pubs would
+ * re-emit stale hashes for the OLD shape). `mappingVersion` is injectable only so tests can prove a
+ * bump changes the signature; production always uses the module constant.
+ */
+export const optionsSignature = (
+	options: PushOptions,
+	mappingVersion: string = MAPPING_VERSION,
+): string =>
 	hashBytes(
 		Buffer.from(
 			JSON.stringify({
+				mappingVersion,
 				includeReleaseHtml: options.includeReleaseHtml,
 				includeAssets: options.includeAssets,
 				includePdfs: options.includePdfs,
@@ -149,6 +171,9 @@ export const buildIncrementalPush = async (
 		options,
 		cacheEntries,
 		mapPub,
+		fetchAsset,
+		onAssetWarning,
+		assetCache,
 	} = input;
 
 	const optionsSig = optionsSignature(options);
@@ -174,8 +199,32 @@ export const buildIncrementalPush = async (
 	let cacheHits = 0;
 	let cacheMisses = 0;
 
-	// Community-scope records (Community, Collections, Contributors) are always recomputed.
-	const scopeRecords = mapCommunityScopeRecords(community, collections, pubs);
+	// Community-scope records (Community, Collections, Users) are always recomputed — cheap, and
+	// their identity depends on cross-pub dedup. Their localized branding/avatar files (if any) are
+	// added to the fresh file set + manifest file hashes; they are always sent in full (never cached
+	// per-pub), so no lazy-rehydration path is needed for them.
+	const addScopeFile = (bytes: Buffer, contentType: string, fileName?: string): string => {
+		const hash = hashBytes(bytes);
+		if (!freshFilesByHash.has(hash)) {
+			freshFilesByHash.set(hash, { hash, contentType, fileName, bytes });
+		}
+		allFileHashes.add(hash);
+		return hash;
+	};
+	// A scope image that resolved from the asset cache has no bytes here; still declare its hash so the
+	// signature (and the version's referenced files) is identical to a freshly-downloaded push. The
+	// bytes are produced on demand by resolveFileByHash below if the server turns out to need them.
+	const registerCachedScopeHash = (hash: string) => {
+		allFileHashes.add(hash);
+	};
+	const scopeRecords = await mapCommunityScopeRecords(community, collections, pubs, {
+		addFile: addScopeFile,
+		fetchAsset,
+		onAssetWarning,
+		options,
+		assetCache,
+		registerCachedHash: registerCachedScopeHash,
+	});
 	freshRecords.push(...scopeRecords);
 	manifest.push(...buildManifest(scopeRecords));
 
@@ -277,6 +326,26 @@ export const buildIncrementalPush = async (
 		return (await hydratePub(pubId)).records.get(hash) ?? null;
 	};
 	const resolveFileByHash = async (hash: string): Promise<UnderlayFile | null> => {
+		// A cache-resolved file (e.g. a scope image) has no bytes in memory — fetch them from the
+		// immutable source URL on demand, and verify the bytes still hash to what we declared (a
+		// mismatch means the URL was not immutable / the cache is poisoned; refuse to upload it wrong).
+		const cached = assetCache?.byHash.get(hash);
+		if (cached && fetchAsset) {
+			const bytes = await fetchAsset(cached.url);
+			const got = hashBytes(bytes);
+			if (got !== hash) {
+				throw new Error(
+					`Underlay asset cache mismatch: ${cached.url} hashed to ${got} but the push declared ${hash}. ` +
+						'The asset URL was expected to be immutable; refusing to upload bytes under the wrong hash.',
+				);
+			}
+			return {
+				hash,
+				bytes,
+				contentType: cached.mimeType ?? 'application/octet-stream',
+				fileName: cached.fileName,
+			};
+		}
 		const pubId = pubIdByHash.get(hash);
 		if (!pubId) {
 			return null;

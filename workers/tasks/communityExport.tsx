@@ -150,7 +150,7 @@ const renderPubFooter = (metadata: PubMetadata) => {
 	);
 };
 
-const getReleaseHtml = async (facets: FacetsProps, doc: DocJson, metadata?: PubMetadata) => {
+export const getReleaseHtml = async (facets: FacetsProps, doc: DocJson, metadata?: PubMetadata) => {
 	// const pubMetadata = await getPubMetadata(pub.id);
 	const citationInlineStyle = facets.CitationStyle.value.inlineCitationStyle;
 	const citationStyle = facets.CitationStyle.value.citationStyle;

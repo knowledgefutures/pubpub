@@ -21,6 +21,7 @@ import HomepageBannerSettings from './HomepageBannerSettings';
 import NavSettings from './NavSettings';
 import PublicNewPubs from './PublicNewPubsSettings';
 import SocialSettings from './SocialSettings';
+import UnderlaySettings from './UnderlaySettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -46,6 +47,8 @@ type Props = {
 			output: string | null;
 			error: string | null;
 		}[];
+		/** Whether this community already has a saved Underlay integration (an API key is set). */
+		underlayConfigured?: boolean;
 	};
 };
 
@@ -180,6 +183,18 @@ const CommunitySettings = (props: Props) => {
 								updateCommunityData={updateCommunityData}
 							/>,
 						],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.isSuperAdmin ||
+		(pageContext.scopeData.activePermissions.canAdminCommunity &&
+			props.settingsData?.underlayConfigured)
+			? [
+					{
+						id: 'underlay-settings',
+						title: 'Underlay',
+						icon: 'globe-network',
+						sections: [<UnderlaySettings communityData={communityData} />],
 					} as const,
 				]
 			: ([] as Subtab[])),

@@ -181,6 +181,13 @@ export const envSchema = z.object({
 		.optional()
 		.describe('Comma-separated extra keywords to flag uploads as suspicious'),
 
+	// ── Underlay ────────────────────────────────────────────────────────
+	UNDERLAY_API_BASE_URL: z
+		.string()
+		.url()
+		.optional()
+		.describe('Base URL for the Underlay API (defaults to https://underlay.org/api)'),
+
 	// ── Backup / Misc ───────────────────────────────────────────────────
 	BACKUPS_SECRET: z.string().optional().describe('GPG passphrase for encrypting backups'),
 	DEBUG_LOG: z.string().optional().describe('Enable verbose debug logging'),

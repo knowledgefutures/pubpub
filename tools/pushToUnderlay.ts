@@ -35,6 +35,7 @@ async function main() {
 			underlayOrg: { [Op.ne]: null },
 			underlayCollection: { [Op.ne]: null },
 			apiKey: { [Op.ne]: null },
+			apiKeyInitVec: { [Op.ne]: null },
 		},
 	});
 

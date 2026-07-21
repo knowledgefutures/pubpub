@@ -350,11 +350,14 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		}: {
 			pub: PubInput;
 			release: { id: string };
-		}): Promise<string> => {
+		}): Promise<string | null> => {
 			await ensureDocsForPub(pub.id);
 			const doc = docByReleaseId.get(release.id);
 			if (!doc) {
-				return '';
+				// Doc content unavailable (docId is non-nullable, so this indicates GC/corruption).
+				// Return null so the mapping skips this release with a warning rather than
+				// publishing an empty article into the canonical store.
+				return null;
 			}
 			// The legacy renderer's facet/metadata types are broad; cast at this boundary only.
 			const pubFacets = facets.pub[pub.id] as any;

@@ -36,7 +36,7 @@ const toClientConfig = (integration: UnderlayIntegration): UnderlayIntegrationCl
 	lastPushSemver: integration.lastPushSemver,
 	lastPushStatus: integration.lastPushStatus,
 	lastPushError: integration.lastPushError,
-	hasApiKey: Boolean(integration.apiKey),
+	hasApiKey: Boolean(integration.apiKey && integration.apiKeyInitVec),
 });
 
 export type UnderlayIntegrationConfigUpdate = {

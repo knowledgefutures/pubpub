@@ -1,6 +1,6 @@
 import { getAssetUrlFromResizedUrl } from 'utils/images';
 
-import { hashBytes, hashRecord } from './hash';
+import { hashBytes, hashRecord, hashSchema } from './hash';
 
 /**
  * Maps PubPub entities to flat, content-addressed Underlay records + per-type JSON Schemas.
@@ -42,7 +42,8 @@ export type UnderlayFile = {
 export type AssetWarning = {
 	/** The pub the asset belongs to, or undefined for community/collection/author-scope assets. */
 	pubId?: string;
-	assetUrl: string;
+	/** The asset URL that failed; absent for non-asset warnings (e.g. a skipped release). */
+	assetUrl?: string;
 	reason: string;
 };
 
@@ -52,7 +53,7 @@ export type AssetWarning = {
  * invalidates exactly once and unchanged pubs are re-mapped with the new shape instead of silently
  * re-emitting stale hashes. Bump on any change to a type's emitted fields.
  */
-export const MAPPING_VERSION = '6';
+export const MAPPING_VERSION = '7';
 
 export type ManifestEntry = { id: string; type: string; hash: string; private?: boolean };
 
@@ -83,7 +84,7 @@ export type PubMapContext = {
 	options: PushOptions;
 	/** Registers file bytes and returns the bare hex hash (deduping by hash). */
 	addFile: (bytes: Buffer, contentType: string, fileName?: string) => string;
-	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string>;
+	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string | null>;
 	fetchAsset?: (url: string) => Promise<Buffer>;
 	/**
 	 * Called when an asset/PDF fails to download and is skipped (non-fatal). Lets the caller
@@ -755,7 +756,6 @@ export const mapPubRecords = async (
 		.slice()
 		.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 	const releases = (pub.releases ?? []).slice().sort((a, b) => a.historyKey - b.historyKey);
-	const latestRelease = releases[releases.length - 1];
 
 	// Canonical publication date: editorial date if set, else the earliest release, else row creation.
 	// All three are stable values, so this does not introduce a volatile field.
@@ -769,38 +769,15 @@ export const mapPubRecords = async (
 	const metadata =
 		pub.metadata && Object.keys(pub.metadata).length > 0 ? pub.metadata : undefined;
 
-	out.push({
-		id: pub.id,
-		type: 'Pub',
-		data: compact({
-			title: pub.title,
-			htmlTitle: pub.htmlTitle ?? undefined,
-			slug: pub.slug,
-			description: pub.description ?? undefined,
-			htmlDescription: pub.htmlDescription ?? undefined,
-			avatar: avatarRef,
-			metadata,
-			labels,
-			doi: pub.doi ?? undefined,
-			kind: pub.kind ?? undefined,
-			license: pub.license ?? undefined,
-			licenseSpdx: pub.licenseSpdx ?? undefined,
-			licenseUri: pub.licenseUri ?? undefined,
-			createdAt: toIso(pub.createdAt),
-			publishedAt: publishedAtSource ? toIso(publishedAtSource) : undefined,
-			communityId: community.id,
-			collectionIds: (pub.collectionPubs ?? []).map((cp) => cp.collectionId).sort(),
-			latestReleaseId: latestRelease?.id,
-		}),
-	});
-
 	// One PubAttribution record per attribution row on this pub (id = the real attribution id).
 	for (const attribution of attributions) {
 		// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
 		out.push(await mapPubAttribution(attribution, pub.id, localizeToRef));
 	}
 
-	// One Underlay Release record per PubPub release (full, lossless history).
+	// One Underlay Release record per PubPub release (full, lossless history). A release whose Doc
+	// content can't be loaded is SKIPPED with a warning — never published as empty content.
+	const emittedReleases: typeof releases = [];
 	for (const release of releases) {
 		const releaseData: Record<string, Json | null | undefined> = {
 			pubId: pub.id,
@@ -812,6 +789,16 @@ export const mapPubRecords = async (
 		if (options.includeReleaseHtml) {
 			// biome-ignore lint/performance/noAwaitInLoops: releases rendered sequentially to bound memory
 			const html = await renderReleaseHtml({ pub, release });
+			if (html === null) {
+				console.warn(
+					`[underlay] Skipped release ${release.id} for pub "${pub.slug}": document content unavailable`,
+				);
+				onAssetWarning?.({
+					pubId: pub.id,
+					reason: `Release ${release.id}: document content unavailable — skipped`,
+				});
+				continue;
+			}
 			const htmlName = `${pub.slug}-v${release.historyKey}.html`;
 
 			// Localize in-body assets, then rewrite their URLs to content-addressed refs BEFORE hashing
@@ -872,16 +859,48 @@ export const mapPubRecords = async (
 		}
 
 		out.push({ id: release.id, type: 'Release', data: compact(releaseData) });
+		emittedReleases.push(release);
 	}
+
+	const latestEmittedRelease = emittedReleases[emittedReleases.length - 1];
+
+	// Pub record — `latestReleaseId` points at the newest release actually emitted (skip-aware);
+	// omitted entirely if every release was skipped, so it never dangles.
+	out.push({
+		id: pub.id,
+		type: 'Pub',
+		data: compact({
+			title: pub.title,
+			htmlTitle: pub.htmlTitle ?? undefined,
+			slug: pub.slug,
+			description: pub.description ?? undefined,
+			htmlDescription: pub.htmlDescription ?? undefined,
+			avatar: avatarRef,
+			metadata,
+			labels,
+			doi: pub.doi ?? undefined,
+			kind: pub.kind ?? undefined,
+			license: pub.license ?? undefined,
+			licenseSpdx: pub.licenseSpdx ?? undefined,
+			licenseUri: pub.licenseUri ?? undefined,
+			createdAt: toIso(pub.createdAt),
+			publishedAt: publishedAtSource ? toIso(publishedAtSource) : undefined,
+			communityId: community.id,
+			collectionIds: (pub.collectionPubs ?? []).map((cp) => cp.collectionId).sort(),
+			latestReleaseId: latestEmittedRelease?.id,
+		}),
+	});
 
 	if (options.includePdfs) {
 		const pdf = (pub.downloads ?? []).find((d) => d.type === 'formatted');
-		if (pdf && fetchAsset && latestRelease) {
+		if (pdf && fetchAsset && latestEmittedRelease) {
 			try {
 				const bytes = await fetchAsset(pdf.url);
 				const pdfName = `${pub.slug}.pdf`;
 				const pdfHash = addFile(bytes, 'application/pdf', pdfName);
-				const rec = out.find((r) => r.type === 'Release' && r.id === latestRelease.id);
+				const rec = out.find(
+					(r) => r.type === 'Release' && r.id === latestEmittedRelease.id,
+				);
 				if (rec) {
 					rec.data.pdfFile = fileRef(pdfHash, pdfName, 'application/pdf');
 				}
@@ -907,7 +926,7 @@ export const buildUnderlayPush = async (params: {
 	collections: CollectionInput[];
 	pubs: PubInput[];
 	options: PushOptions;
-	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string>;
+	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string | null>;
 	fetchAsset?: (url: string) => Promise<Buffer>;
 }): Promise<UnderlayPushPayload> => {
 	const { community, collections, pubs, options, renderReleaseHtml, fetchAsset } = params;
@@ -987,10 +1006,9 @@ export const computeSignatureFromParts = (
 		records: manifest.map((m) => `${m.type}:${m.id}:${m.hash}:${m.private ? 1 : 0}`).sort(),
 		files: [...new Set(fileHashes)].sort(),
 		schemas: Object.fromEntries(
-			Object.entries(schemas).map(([type, schema]) => [
-				type,
-				hashBytes(Buffer.from(JSON.stringify(schema))),
-			]),
+			// Canonicalized (matches Underlay's own schema hashing) so the signature is stable
+			// regardless of a schema literal's key insertion order — honoring the ordering guarantee.
+			Object.entries(schemas).map(([type, schema]) => [type, hashSchema(schema)]),
 		),
 	};
 	return hashBytes(Buffer.from(JSON.stringify(signatureBody)));

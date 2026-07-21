@@ -13,6 +13,7 @@ import { hashRecord } from '../hash';
 import {
 	buildManifest,
 	buildUnderlayPush,
+	computeSignatureFromParts,
 	mapCommunityScopeRecords,
 	mapPubRecords,
 	userIdFor,
@@ -612,5 +613,89 @@ describe('underlay/mapping — immutable asset url→hash cache', () => {
 		expect(fetchCalls).toBe(1);
 		expect(assetCache.learned.size).toBe(0);
 		expect(assetCache.byHash.size).toBe(0);
+	});
+});
+
+describe('underlay/mapping — missing release doc is skipped, not published empty', () => {
+	const twoReleasePub: PubInput = {
+		id: 'p1',
+		slug: 'p1',
+		title: 'Pub p1',
+		createdAt: '2026-01-01T00:00:00.000Z',
+		attributions: [],
+		collectionPubs: [],
+		releases: [
+			{ id: 'p1-r1', historyKey: 1, createdAt: '2026-01-02T00:00:00.000Z' },
+			{ id: 'p1-r2', historyKey: 2, createdAt: '2026-01-03T00:00:00.000Z' },
+		],
+		outboundEdges: [],
+	};
+
+	const ctxFor = (
+		render: (c: { pub: PubInput; release: { id: string } }) => Promise<string | null>,
+		warnings: AssetWarning[],
+	) => ({
+		community,
+		options: { includeReleaseHtml: true, includeAssets: false, includePdfs: false },
+		addFile: (bytes: Buffer, contentType: string, fileName?: string) =>
+			`${contentType}:${fileName}:${bytes.length}`,
+		renderReleaseHtml: render as (c: {
+			pub: PubInput;
+			release: { id: string; historyKey: number; createdAt: string | Date };
+		}) => Promise<string | null>,
+		onAssetWarning: (w: AssetWarning) => warnings.push(w),
+	});
+
+	it('skips the release with a missing doc, warns, and points latestReleaseId at the newest EMITTED release', async () => {
+		const warnings: AssetWarning[] = [];
+		// The latest release (r2) has no loadable doc → null; r1 renders normally.
+		const render = async ({ release }: { release: { id: string } }) =>
+			release.id === 'p1-r2' ? null : '<p>Body</p>';
+		const records = await mapPubRecords(twoReleasePub, ctxFor(render, warnings));
+
+		const releaseIds = records.filter((r) => r.type === 'Release').map((r) => r.id);
+		expect(releaseIds).toEqual(['p1-r1']); // r2 skipped
+		const pub = records.find((r) => r.type === 'Pub')!;
+		expect(pub.data.latestReleaseId).toBe('p1-r1'); // newest EMITTED, not the skipped r2
+
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0].pubId).toBe('p1');
+		expect(warnings[0].assetUrl).toBeUndefined();
+		expect(warnings[0].reason).toContain('p1-r2');
+		expect(warnings[0].reason).toContain('unavailable');
+	});
+
+	it('omits latestReleaseId entirely when every release is skipped', async () => {
+		const warnings: AssetWarning[] = [];
+		const render = async () => null; // all docs missing
+		const records = await mapPubRecords(twoReleasePub, ctxFor(render, warnings));
+
+		expect(records.some((r) => r.type === 'Release')).toBe(false);
+		const pub = records.find((r) => r.type === 'Pub')!;
+		expect('latestReleaseId' in pub.data).toBe(false);
+		expect(warnings).toHaveLength(2);
+	});
+
+	it('is deterministic — the same missing-doc input yields the same records', async () => {
+		const render = async ({ release }: { release: { id: string } }) =>
+			release.id === 'p1-r2' ? null : '<p>Body</p>';
+		const a = await mapPubRecords(twoReleasePub, ctxFor(render, []));
+		const b = await mapPubRecords(twoReleasePub, ctxFor(render, []));
+		expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+	});
+});
+
+describe('underlay/mapping — push signature is schema-key-order independent', () => {
+	it('yields the same signature when a schema object’s keys are reordered', () => {
+		const manifest = [{ id: 'p1', type: 'Pub', hash: 'abc' }];
+		const files: string[] = ['f1'];
+		const sigA = computeSignatureFromParts(manifest, files, {
+			Pub: { type: 'object', properties: { a: { type: 'string' }, b: { type: 'number' } } },
+		});
+		// Same schema, keys emitted in a different order — canonicalization must collapse them.
+		const sigB = computeSignatureFromParts(manifest, files, {
+			Pub: { properties: { b: { type: 'number' }, a: { type: 'string' } }, type: 'object' },
+		});
+		expect(sigA).toBe(sigB);
 	});
 });

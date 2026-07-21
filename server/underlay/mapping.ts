@@ -65,6 +65,11 @@ export type PubMapContext = {
 	addFile: (bytes: Buffer, contentType: string) => string;
 	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string>;
 	fetchAsset?: (url: string) => Promise<Buffer>;
+	/**
+	 * Called when an asset/PDF fails to download and is skipped (non-fatal). Lets the caller
+	 * collect the warnings and surface them to the admin instead of failing the whole push.
+	 */
+	onAssetWarning?: (message: string) => void;
 };
 
 export type PushOptions = {
@@ -149,7 +154,12 @@ const toIso = (value: string | Date): string =>
 	typeof value === 'string' ? new Date(value).toISOString() : value.toISOString();
 
 const guessContentType = (url: string): string => {
-	const ext = new URL(url).pathname.split('.').pop()?.toLowerCase();
+	let ext: string | undefined;
+	try {
+		ext = new URL(url).pathname.split('.').pop()?.toLowerCase();
+	} catch {
+		return 'application/octet-stream';
+	}
 	switch (ext) {
 		case 'png':
 			return 'image/png';
@@ -377,7 +387,13 @@ export const mapPubRecords = async (
 	pub: PubInput,
 	ctx: PubMapContext,
 ): Promise<UnderlayRecord[]> => {
-	const { community, options, addFile, renderReleaseHtml, fetchAsset } = ctx;
+	const { community, options, addFile, renderReleaseHtml, fetchAsset, onAssetWarning } = ctx;
+	const warnAsset = (url: string, error: unknown) => {
+		const reason = error instanceof Error ? error.message : String(error);
+		const message = `Skipped asset ${url} for pub "${pub.slug}": ${reason}`;
+		console.error(`[underlay] ${message}`);
+		onAssetWarning?.(message);
+	};
 	const out: UnderlayRecord[] = [];
 
 	const attributions = (pub.attributions ?? [])
@@ -426,7 +442,7 @@ export const mapPubRecords = async (
 						const bytes = await fetchAsset(url);
 						assetHashes.push(addFile(bytes, guessContentType(url)));
 					} catch (e) {
-						console.error(`[underlay] failed to fetch asset ${url}:`, e);
+						warnAsset(url, e);
 					}
 				}
 				if (assetHashes.length > 0) {
@@ -449,7 +465,7 @@ export const mapPubRecords = async (
 					rec.data.pdfFile = fileRef(pdfHash);
 				}
 			} catch (e) {
-				console.error(`[underlay] failed to fetch pdf ${pdf.url}:`, e);
+				warnAsset(pdf.url, e);
 			}
 		}
 	}

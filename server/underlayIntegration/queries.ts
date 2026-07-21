@@ -123,6 +123,8 @@ export const recordPushResult = async (
 		status: 'success' | 'error' | 'noop';
 		semver?: string | null;
 		error?: string | null;
+		/** Non-fatal issues (e.g. skipped assets) on a successful push; shown to the admin. */
+		warning?: string | null;
 		manifestHash?: string | null;
 	},
 ): Promise<void> => {
@@ -130,11 +132,14 @@ export const recordPushResult = async (
 	if (!integration) {
 		return;
 	}
+	// lastPushError doubles as the warning text on a successful push (status tells them apart).
+	const lastPushError =
+		result.status === 'error' ? (result.error ?? null) : (result.warning ?? null);
 	await integration.update({
 		lastPushedAt: new Date(),
 		lastPushStatus: result.status,
 		lastPushSemver: result.semver ?? integration.lastPushSemver,
-		lastPushError: result.status === 'error' ? (result.error ?? null) : null,
+		lastPushError,
 		lastManifestHash: result.manifestHash ?? integration.lastManifestHash,
 	});
 };

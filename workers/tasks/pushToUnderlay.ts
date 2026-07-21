@@ -1,5 +1,6 @@
 import type { DocJson } from 'types';
 
+import { env } from 'server/env';
 import { fetchFacetsForScopeIds } from 'server/facets';
 import {
 	Collection,
@@ -16,7 +17,7 @@ import {
 import { expect } from 'utils/assert';
 import { getAssetUrlFromResizedUrl } from 'utils/images';
 
-import { UnderlayClient } from '../../server/underlay/client';
+import { formatUnderlayError, UnderlayClient } from '../../server/underlay/client';
 import { hashBytes } from '../../server/underlay/hash';
 import { buildIncrementalPush, computeFacetsSignature } from '../../server/underlay/incremental';
 import {
@@ -69,7 +70,32 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		throw new Error('Underlay integration is missing an org or collection.');
 	}
 
+	const client = new UnderlayClient({
+		apiKey,
+		owner: integration.underlayOrg,
+		slug: integration.underlayCollection,
+		baseUrl: env.UNDERLAY_API_BASE_URL ?? undefined,
+		appId: 'pubpub',
+		actorId: `pubpub:community:${communityId}`,
+	});
+
 	try {
+		console.info(
+			`[underlay] Starting push for community ${community.subdomain} (${communityId}) → ${integration.underlayOrg}/${integration.underlayCollection}`,
+		);
+
+		// Verify the connection BEFORE any expensive mapping/rendering, so a bad API key, wrong
+		// base URL, or inaccessible org fails fast with a specific reason in the logs.
+		const check = await client.verifyConnection();
+		for (const step of check.steps) {
+			console.info(
+				`[underlay] connection check — ${step.name}: ${step.ok ? 'ok' : 'FAILED'} (${step.message})`,
+			);
+		}
+		if (!check.ok) {
+			throw new Error(`Underlay connection check failed: ${check.message}`);
+		}
+
 		const collections = await Collection.findAll({ where: { communityId } });
 
 		// Cheap hydration: attributions, collectionPubs, edges, and release metadata — but NOT the
@@ -261,6 +287,10 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			includePdfs: integration.includePdfs,
 		};
 
+		// Assets that failed to download are skipped (non-fatal); collect the warnings so the admin
+		// sees them in the UI and logs instead of the push silently omitting content.
+		const assetWarnings = new Set<string>();
+
 		// Map ONE pub → records + the files those records reference (renders on demand).
 		const mapPub = async (pub: PubInput) => {
 			const filesByHash = new Map<string, UnderlayFile>();
@@ -277,6 +307,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 				addFile,
 				renderReleaseHtml,
 				fetchAsset,
+				onAssetWarning: (message) => assetWarnings.add(message),
 			});
 			return { records, files: [...filesByHash.values()] };
 		};
@@ -309,14 +340,9 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			};
 		}
 
-		const client = new UnderlayClient({
-			apiKey,
-			owner: integration.underlayOrg,
-			slug: integration.underlayCollection,
-			baseUrl: process.env.UNDERLAY_API_BASE_URL,
-			appId: 'pubpub',
-			actorId: `pubpub:community:${communityId}`,
-		});
+		console.info(
+			`[underlay] Mapped ${incremental.stats.totalPubs} pub(s): ${incremental.stats.cacheHits} cache hit(s), ${incremental.stats.cacheMisses} re-mapped. Negotiating…`,
+		);
 
 		await client.ensureCollection();
 		const baseVersion = await client.getBaseVersion();
@@ -326,11 +352,24 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			`PubPub sync for ${community.subdomain}`,
 		);
 
+		if (assetWarnings.size > 0) {
+			console.warn(
+				`[underlay] Push completed with ${assetWarnings.size} skipped asset(s):\n${[...assetWarnings].map((w) => `  - ${w}`).join('\n')}`,
+			);
+		}
+
 		if (result.status === 'committed') {
+			console.info(
+				`[underlay] Committed version ${result.semver} (${result.recordCount} records, ${result.fileCount} files).`,
+			);
 			await recordPushResult(communityId, {
 				status: 'success',
 				semver: result.semver,
 				manifestHash: incremental.signature,
+				warning:
+					assetWarnings.size > 0
+						? `Completed with ${assetWarnings.size} skipped asset(s):\n${[...assetWarnings].join('\n')}`
+						: null,
 			});
 			// Persist the cache only after a successful commit.
 			await applyPushCache(
@@ -344,11 +383,13 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 				manifestHash: incremental.signature,
 			});
 		}
-		return { ...result, stats: incremental.stats };
+		return { ...result, stats: incremental.stats, warnings: [...assetWarnings] };
 	} catch (error) {
+		const detail = formatUnderlayError(error);
+		console.error(`[underlay] Push failed for community ${communityId}: ${detail}`);
 		await recordPushResult(communityId, {
 			status: 'error',
-			error: error instanceof Error ? error.message : String(error),
+			error: detail,
 		});
 		throw error;
 	}

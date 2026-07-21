@@ -30,28 +30,33 @@ export const applyPushCache = async (
 	upserts: CachedPubEntry[],
 	presentPubIds: string[],
 ): Promise<void> => {
-	for (const entry of upserts) {
-		// biome-ignore lint/performance/noAwaitInLoops: cache rows written sequentially, bounded by changed pubs
-		const existing = await UnderlayPushEntry.findOne({
-			where: { underlayIntegrationId, pubId: entry.pubId },
-		});
-		const values = {
-			underlayIntegrationId,
-			pubId: entry.pubId,
-			recordHashes: entry.recordHashes,
-			fileHashes: entry.fileHashes,
-			latestReleaseHistoryKey: entry.latestReleaseHistoryKey,
-			pubUpdatedAt: new Date(entry.pubUpdatedAt),
-			optionsSignature: entry.optionsSignature,
-			facetsSignature: entry.facetsSignature,
-		};
-		if (existing) {
-			// biome-ignore lint/performance/noAwaitInLoops: sequential upsert, bounded by changed pubs
-			await existing.update(values);
-		} else {
-			// biome-ignore lint/performance/noAwaitInLoops: sequential upsert, bounded by changed pubs
-			await UnderlayPushEntry.create(values);
-		}
+	if (upserts.length > 0) {
+		await UnderlayPushEntry.bulkCreate(
+			upserts.map((entry) => ({
+				underlayIntegrationId,
+				pubId: entry.pubId,
+				recordHashes: entry.recordHashes,
+				fileHashes: entry.fileHashes,
+				latestReleaseHistoryKey: entry.latestReleaseHistoryKey,
+				pubUpdatedAt: new Date(entry.pubUpdatedAt),
+				optionsSignature: entry.optionsSignature,
+				facetsSignature: entry.facetsSignature,
+			})),
+			{
+				// Explicit ON CONFLICT target. Without this, Sequelize derives the conflict keys
+				// from the model's unique indexes, whose fields sequelize-typescript stores as
+				// objects — which crashes quoteIdentifier ("s.replace is not a function").
+				conflictAttributes: ['underlayIntegrationId', 'pubId'],
+				updateOnDuplicate: [
+					'recordHashes',
+					'fileHashes',
+					'latestReleaseHistoryKey',
+					'pubUpdatedAt',
+					'optionsSignature',
+					'facetsSignature',
+				],
+			},
+		);
 	}
 
 	// Retention: remove cache rows for pubs that no longer exist in this push.

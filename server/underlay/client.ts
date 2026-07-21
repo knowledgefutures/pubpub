@@ -46,6 +46,158 @@ export class UnderlayPushError extends Error {
 	}
 }
 
+export type UnderlayAccount = { slug: string; name: string };
+export type UnderlayCollectionInfo = { slug: string; name: string };
+
+/**
+ * Human-readable error string including the HTTP status and response detail an UnderlayPushError
+ * carries. Use this (not `error.message` alone) whenever surfacing a push failure to logs or the
+ * stored `lastPushError` — the detail is usually the part that explains WHY the server refused.
+ */
+export const formatUnderlayError = (error: unknown): string => {
+	if (error instanceof UnderlayPushError) {
+		const parts = [error.message];
+		if (error.statusCode) {
+			parts.push(`(HTTP ${error.statusCode})`);
+		}
+		if (error.detail) {
+			const detail =
+				typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+			parts.push(`— ${detail.slice(0, 500)}`);
+		}
+		return parts.join(' ');
+	}
+	return error instanceof Error ? error.message : String(error);
+};
+
+/** One authenticated fetch, parsed as JSON, with every failure mode reported instead of thrown. */
+const fetchJson = async (
+	url: string,
+	apiKey: string,
+): Promise<
+	| { kind: 'network'; error: string }
+	| { kind: 'http'; status: number; bodyText: string }
+	| { kind: 'not-json'; status: number; bodyText: string }
+	| { kind: 'json'; status: number; body: unknown }
+> => {
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+	try {
+		const response = await fetch(url, {
+			headers: { Authorization: `Bearer ${apiKey}` },
+			signal: controller.signal,
+		});
+		const text = await response.text();
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(text);
+		} catch {
+			return { kind: 'not-json', status: response.status, bodyText: text.slice(0, 200) };
+		}
+		if (!response.ok) {
+			return { kind: 'http', status: response.status, bodyText: text.slice(0, 200) };
+		}
+		return { kind: 'json', status: response.status, body: parsed };
+	} catch (err) {
+		return { kind: 'network', error: err instanceof Error ? err.message : String(err) };
+	} finally {
+		clearTimeout(timeout);
+	}
+};
+
+export type ConnectionCheck = {
+	ok: boolean;
+	/** One-line summary suitable for the UI. */
+	message: string;
+	/** Step-by-step results, suitable for logs and the UI's detail view. */
+	steps: { name: string; ok: boolean; message: string }[];
+	/** The collection doesn't exist yet; it will be created on the first push. Not a failure. */
+	collectionMissing?: boolean;
+};
+
+/**
+ * Probe the Underlay API with just an API key. Returns the accounts (orgs) the key has access to,
+ * and optionally the collections within one account. Runs outside an UnderlayClient instance because
+ * we don't yet know the owner/slug.
+ */
+export async function probeUnderlay(
+	apiKey: string,
+	opts?: { baseUrl?: string; owner?: string },
+): Promise<{ accounts: UnderlayAccount[]; collections: UnderlayCollectionInfo[] }> {
+	const baseUrl = (opts?.baseUrl ?? DEFAULT_BASE_URL).replace(/\/$/, '');
+	const headers = { Authorization: `Bearer ${apiKey}` };
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+	try {
+		let meResp: Response;
+		try {
+			meResp = await fetch(`${baseUrl}/accounts/me`, {
+				headers,
+				signal: controller.signal,
+			});
+		} catch (err) {
+			throw new UnderlayPushError(
+				`Could not reach the Underlay API at ${baseUrl} — check UNDERLAY_API_BASE_URL (${err instanceof Error ? err.message : String(err)})`,
+			);
+		}
+		const meText = await meResp.text();
+		let me: { accounts?: { slug: string; name: string }[] };
+		try {
+			me = JSON.parse(meText);
+		} catch {
+			throw new UnderlayPushError(
+				`${baseUrl}/accounts/me did not return JSON (HTTP ${meResp.status}) — this does not look like an Underlay API. Check UNDERLAY_API_BASE_URL.`,
+				meResp.status,
+			);
+		}
+		if (meResp.status === 401 || meResp.status === 403) {
+			throw new UnderlayPushError(
+				`The Underlay API at ${baseUrl} rejected the API key (HTTP ${meResp.status})`,
+				meResp.status,
+			);
+		}
+		if (!meResp.ok) {
+			throw new UnderlayPushError(
+				`The Underlay API at ${baseUrl} returned HTTP ${meResp.status} for /accounts/me`,
+				meResp.status,
+				meText.slice(0, 200),
+			);
+		}
+		const accounts: UnderlayAccount[] = (me.accounts ?? []).map((a) => ({
+			slug: a.slug,
+			name: a.name || a.slug,
+		}));
+
+		let collections: UnderlayCollectionInfo[] = [];
+		if (opts?.owner) {
+			clearTimeout(timeout);
+			const colController = new AbortController();
+			const colTimeout = setTimeout(() => colController.abort(), REQUEST_TIMEOUT_MS);
+			try {
+				const colResp = await fetch(
+					`${baseUrl}/accounts/${encodeURIComponent(opts.owner)}/collections`,
+					{ headers, signal: colController.signal },
+				);
+				if (colResp.ok) {
+					const body = (await colResp.json()) as {
+						slug: string;
+						name: string;
+					}[];
+					collections = (Array.isArray(body) ? body : []).map((c) => ({
+						slug: c.slug,
+						name: c.name || c.slug,
+					}));
+				}
+			} finally {
+				clearTimeout(colTimeout);
+			}
+		}
+		return { accounts, collections };
+	} finally {
+		clearTimeout(timeout);
+	}
+}
+
 export class UnderlayClient {
 	private readonly baseUrl: string;
 	private readonly apiKey: string;
@@ -148,6 +300,123 @@ export class UnderlayClient {
 		return body.semver ?? null;
 	}
 
+	/**
+	 * Read-only connection diagnostic. Verifies, in order: the base URL actually answers with JSON
+	 * (a wrong UNDERLAY_API_BASE_URL pointing at a website returns HTTP 200 HTML for everything —
+	 * that must NOT pass), the API key is accepted, the key can see the configured organization, and
+	 * whether the collection exists. Unlike ensureCollection this NEVER creates anything, so it is
+	 * safe to run from a "Test connection" button and at the start of every push.
+	 */
+	async verifyConnection(): Promise<ConnectionCheck> {
+		const steps: ConnectionCheck['steps'] = [];
+		const fail = (message: string): ConnectionCheck => ({ ok: false, message, steps });
+
+		// 1. API reachability + key validity.
+		const meUrl = `${this.baseUrl}/accounts/me`;
+		const me = await fetchJson(meUrl, this.apiKey);
+		if (me.kind === 'network') {
+			steps.push({
+				name: 'api',
+				ok: false,
+				message: `Could not reach ${meUrl}: ${me.error}`,
+			});
+			return fail(
+				`The Underlay API is unreachable at ${this.baseUrl} — check UNDERLAY_API_BASE_URL (${me.error}).`,
+			);
+		}
+		if (me.kind === 'not-json') {
+			steps.push({
+				name: 'api',
+				ok: false,
+				message: `${meUrl} returned HTTP ${me.status} with a non-JSON body`,
+			});
+			return fail(
+				`${this.baseUrl} did not return JSON for /me — this does not look like an Underlay API. Check UNDERLAY_API_BASE_URL.`,
+			);
+		}
+		if (me.kind === 'http') {
+			steps.push({
+				name: 'api',
+				ok: false,
+				message: `${meUrl} returned HTTP ${me.status}: ${me.bodyText}`,
+			});
+			return fail(
+				me.status === 401 || me.status === 403
+					? `The Underlay API rejected the API key (HTTP ${me.status}).`
+					: `The Underlay API returned HTTP ${me.status} for /me.`,
+			);
+		}
+		steps.push({
+			name: 'api',
+			ok: true,
+			message: `Reached the Underlay API at ${this.baseUrl}; the API key was accepted.`,
+		});
+
+		// 2. Organization access.
+		const accounts = ((me.body as { accounts?: { slug: string }[] })?.accounts ?? []).map(
+			(a) => a.slug,
+		);
+		if (accounts.length > 0 && !accounts.includes(this.owner)) {
+			steps.push({
+				name: 'organization',
+				ok: false,
+				message: `The API key has no access to "${this.owner}". Available: ${accounts.join(', ')}`,
+			});
+			return fail(
+				`The API key does not have access to the organization "${this.owner}" (available: ${accounts.join(', ')}).`,
+			);
+		}
+		steps.push({
+			name: 'organization',
+			ok: true,
+			message: `Organization "${this.owner}" is accessible.`,
+		});
+
+		// 3. Collection existence (read-only — a test must never create the collection).
+		const col = await fetchJson(this.collectionPath(), this.apiKey);
+		if (col.kind === 'network') {
+			steps.push({
+				name: 'collection',
+				ok: false,
+				message: `Could not reach ${this.collectionPath()}: ${col.error}`,
+			});
+			return fail(`Could not check the collection: ${col.error}`);
+		}
+		console.log('col', col);
+		if (col.kind === 'json') {
+			steps.push({
+				name: 'collection',
+				ok: true,
+				message: `Collection "${this.owner}/${this.slug}" exists.`,
+			});
+			return { ok: true, message: `Connected to ${this.owner}/${this.slug}.`, steps };
+		}
+		if (col.status === 404) {
+			steps.push({
+				name: 'collection',
+				ok: true,
+				message: `Collection "${this.owner}/${this.slug}" does not exist yet — it will be created on the first push.`,
+			});
+			return {
+				ok: true,
+				collectionMissing: true,
+				message: `Connected to ${this.owner}. The collection "${this.slug}" does not exist yet and will be created on the first push.`,
+				steps,
+			};
+		}
+		steps.push({
+			name: 'collection',
+			ok: false,
+			message:
+				col.kind === 'not-json'
+					? `${this.collectionPath()} returned HTTP ${col.status} with a non-JSON body`
+					: `${this.collectionPath()} returned HTTP ${col.status}: ${col.bodyText}`,
+		});
+		return fail(
+			`Checking the collection "${this.owner}/${this.slug}" failed (HTTP ${col.status}).`,
+		);
+	}
+
 	/** Ensure the collection exists, creating it under the org if missing. */
 	async ensureCollection(): Promise<void> {
 		const response = await this.request(
@@ -208,7 +477,9 @@ export class UnderlayClient {
 			}
 			if (!rec) {
 				throw new UnderlayPushError(
-					`Server requested a record we cannot produce (hash ${hash})`,
+					`The Underlay server requested a record we can no longer produce (hash ${hash}). ` +
+						'This usually means content cached from a previous push (e.g. an asset inside a release) ' +
+						'can no longer be regenerated — check the [underlay] warnings in the worker logs for skipped assets.',
 				);
 			}
 			toSend.push(rec);
@@ -293,7 +564,11 @@ export class UnderlayClient {
 					file = (await payload.resolveFileByHash(hash)) ?? undefined;
 				}
 				if (!file) {
-					throw new UnderlayPushError(`Server requested unknown file ${hash}`);
+					throw new UnderlayPushError(
+						`The Underlay server requested a file we can no longer produce (sha256:${hash}). ` +
+							'This usually means an asset from a previous push failed to download this time — ' +
+							'check the [underlay] warnings in the worker logs for the skipped asset URLs.',
+					);
 				}
 				// biome-ignore lint/performance/noAwaitInLoops: bounded by needed files
 				await this.uploadFile(file);

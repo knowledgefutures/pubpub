@@ -33,6 +33,16 @@ const underlayIntegrationUpdateSchema = z.object({
 	scheduleDays: z.number().int().min(1).nullable().optional(),
 });
 
+const underlayAccountSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+});
+
+const underlayCollectionInfoSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+});
+
 export const underlayIntegrationRouter = {
 	/**
 	 * `GET /api/underlayIntegration`
@@ -62,6 +72,57 @@ export const underlayIntegrationRouter = {
 		body: underlayIntegrationUpdateSchema,
 		responses: {
 			200: underlayIntegrationSchema,
+		},
+	},
+	/**
+	 * `POST /api/underlayIntegration/probe`
+	 *
+	 * Probe the Underlay API to discover available accounts and collections. Uses the provided
+	 * API key if given, otherwise falls back to the saved key. Community admin only.
+	 */
+	probe: {
+		path: '/api/underlayIntegration/probe',
+		method: 'POST',
+		summary: 'Discover Underlay accounts and collections',
+		description:
+			'Probe the Underlay API with a key to list available orgs and collections. Admin only.',
+		body: z.object({
+			apiKey: z.string().optional(),
+			underlayOrg: z.string().optional(),
+		}),
+		responses: {
+			200: z.object({
+				ok: z.boolean(),
+				error: z.string().optional(),
+				accounts: z.array(underlayAccountSchema),
+				collections: z.array(underlayCollectionInfoSchema),
+			}),
+		},
+	},
+	/**
+	 * `POST /api/underlayIntegration/test`
+	 *
+	 * Test the connection to Underlay. Uses provided credentials if given, otherwise falls
+	 * back to the saved config. Community admin only.
+	 */
+	test: {
+		path: '/api/underlayIntegration/test',
+		method: 'POST',
+		summary: 'Test the Underlay connection',
+		description:
+			'Verify that the API key, org, and collection are valid. Accepts unsaved values. Admin only.',
+		body: z.object({
+			apiKey: z.string().optional(),
+			underlayOrg: z.string().optional(),
+			underlayCollection: z.string().optional(),
+		}),
+		responses: {
+			200: z.object({
+				ok: z.boolean(),
+				message: z.string(),
+				/** Step-by-step check results ("✓/✗ …") for display under the summary. */
+				details: z.array(z.string()).optional(),
+			}),
 		},
 	},
 	/**

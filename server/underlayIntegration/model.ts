@@ -65,9 +65,10 @@ export class UnderlayIntegration extends Model<
 	@Column(DataType.BOOLEAN)
 	declare includeAssets: CreationOptional<boolean>;
 
-	@Default(false)
-	@Column(DataType.BOOLEAN)
-	declare includePdfs: CreationOptional<boolean>;
+	/** Export formats (pdf/epub/jats/…) to push as downloadable files on each Release. */
+	@Default(['pdf', 'epub'])
+	@Column(DataType.JSONB)
+	declare exportFormats: CreationOptional<string[]>;
 
 	/** Automatic push cadence in days. null = manual only. */
 	@Column(DataType.INTEGER)

@@ -35,7 +35,7 @@ const underlayIntegrationSchema = z.object({
 	readme: z.string().nullable(),
 	includeReleaseHtml: z.boolean(),
 	includeAssets: z.boolean(),
-	includePdfs: z.boolean(),
+	exportFormats: z.array(z.string()),
 	scheduleDays: z.number().int().nullable(),
 	lastPushedAt: z.string().nullable(),
 	lastPushSemver: z.string().nullable(),
@@ -56,7 +56,7 @@ const underlayIntegrationUpdateSchema = z.object({
 	apiKey: z.string().nullable().optional(),
 	includeReleaseHtml: z.boolean().optional(),
 	includeAssets: z.boolean().optional(),
-	includePdfs: z.boolean().optional(),
+	exportFormats: z.array(z.string()).optional(),
 	scheduleDays: z.number().int().min(1).nullable().optional(),
 });
 

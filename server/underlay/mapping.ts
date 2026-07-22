@@ -1,6 +1,6 @@
 import { getAssetUrlFromResizedUrl } from 'utils/images';
 
-import { hashBytes, hashRecord, hashSchema } from './hash';
+import { canonicalize, hashBytes, hashRecord, hashSchema } from './hash';
 
 /**
  * Maps PubPub entities to flat, content-addressed Underlay records + per-type JSON Schemas.
@@ -53,7 +53,7 @@ export type AssetWarning = {
  * invalidates exactly once and unchanged pubs are re-mapped with the new shape instead of silently
  * re-emitting stale hashes. Bump on any change to a type's emitted fields.
  */
-export const MAPPING_VERSION = '7';
+export const MAPPING_VERSION = '9';
 
 export type ManifestEntry = { id: string; type: string; hash: string; private?: boolean };
 
@@ -96,7 +96,8 @@ export type PubMapContext = {
 export type PushOptions = {
 	includeReleaseHtml: boolean;
 	includeAssets: boolean;
-	includePdfs: boolean;
+	/** Export formats (pdf/epub/jats/…) to push as downloadable files on each Release. */
+	exportFormats: string[];
 };
 
 // ── Structural inputs (a subset of the hydrated PubPub JSON we actually read) ────────────────
@@ -216,8 +217,9 @@ export type PubInput = {
 	collectionPubs?: { collectionId: string }[] | null;
 	releases?: ReleaseInput[] | null;
 	outboundEdges?: PubEdgeInput[] | null;
-	/** Formatted-download PDFs recorded on the pub (used when includePdfs is set). */
-	downloads?: { url: string; type: string }[] | null;
+	/** Per-format export artifacts (pdf/epub/…) from PubPub's exports table, matched to a release by
+	 * historyKey. `url` is the S3 asset URL (only non-null entries are passed in). */
+	exports?: { format: string; url: string; historyKey: number }[] | null;
 };
 
 const FILE_PREFIX = 'sha256:';
@@ -246,6 +248,33 @@ const assetFileName = (url: string): string => {
 
 const toIso = (value: string | Date): string =>
 	typeof value === 'string' ? new Date(value).toISOString() : value.toISOString();
+
+/** Canonical mime type per PubPub export format. */
+const EXPORT_MIME: Record<string, string> = {
+	pdf: 'application/pdf',
+	epub: 'application/epub+zip',
+	jats: 'application/xml',
+	docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	tex: 'application/x-tex',
+	markdown: 'text/markdown',
+	html: 'text/html',
+	odt: 'application/vnd.oasis.opendocument.text',
+	plain: 'text/plain',
+	json: 'application/json',
+};
+/** File extension per PubPub export format (for the downloadable file's name). */
+const EXPORT_EXT: Record<string, string> = {
+	pdf: 'pdf',
+	epub: 'epub',
+	jats: 'xml',
+	docx: 'docx',
+	tex: 'tex',
+	markdown: 'md',
+	html: 'html',
+	odt: 'odt',
+	plain: 'txt',
+	json: 'json',
+};
 
 const guessContentType = (url: string): string => {
 	let ext: string | undefined;
@@ -276,13 +305,19 @@ const guessContentType = (url: string): string => {
 };
 
 /**
- * Matches a COMPLETE assets.pubpub.org URL token in rendered HTML, bounded by HTML/CSS delimiters
- * (quotes, whitespace, comma, paren, angle brackets). Unlike a prefix/attribute match, this captures
- * the whole token — including any `?width=…&amp;dpr=N` responsive query string — so a rewrite can
- * replace the entire token in one pass and never leave glued remnants like `sha256:<hash>&dpr=2`.
- * Covers `src`, every `srcset` candidate, `href`, `data-url`, and CSS `url(...)` uniformly.
+ * Matches an `assets.pubpub.org` URL that is the value of a quoted attribute (`src="…"`, `href='…'`,
+ * `data-…="…"`, and quoted `url("…")`). The URL is captured up to the CLOSING QUOTE — NOT at
+ * whitespace — so filenames containing literal spaces, parens, or commas
+ * (e.g. `.../Cavanagh Fig 2-123.png?width=800&fit=bounds`) are captured whole. `\1` is the opening
+ * quote; the tempered `(?:(?!\1).)*` grabs everything up to the matching quote. Group 1 = quote,
+ * group 2 = URL.
  */
-const HTML_ASSET_TOKEN_PATTERN = /https:\/\/assets\.pubpub\.org\/[^\s"'),<>]*/g;
+const HTML_QUOTED_ASSET_URL = /(["'])(https:\/\/assets\.pubpub\.org\/(?:(?!\1).)*)\1/g;
+/**
+ * Matches an UNQUOTED CSS `url(https://assets.pubpub.org/…)`. Quoted `url("…")` is already covered by
+ * `HTML_QUOTED_ASSET_URL`. Group 1 = URL (up to the closing paren).
+ */
+const HTML_CSS_URL_ASSET = /url\(\s*(https:\/\/assets\.pubpub\.org\/[^)"']*?)\s*\)/gi;
 
 // ── Per-type JSON Schemas. Property sets MUST match the emitted `data` exactly. ──────────────
 
@@ -296,6 +331,18 @@ const fileRefSchema = {
 		originalUrl: { type: 'string' },
 	},
 	required: ['$file'],
+};
+
+/** A downloadable export file reference on a Release, tagged with its format. */
+const exportRefSchema = {
+	type: 'object',
+	properties: {
+		format: { type: 'string' },
+		$file: { type: 'string' },
+		fileName: { type: 'string' },
+		mimeType: { type: 'string' },
+	},
+	required: ['format', '$file'],
 };
 
 export const underlaySchemas: Record<string, JsonSchema> = {
@@ -419,7 +466,7 @@ export const underlaySchemas: Record<string, JsonSchema> = {
 			wordCount: { type: 'number' },
 			contentFile: fileRefSchema,
 			assets: { type: 'array', items: fileRefSchema },
-			pdfFile: fileRefSchema,
+			exports: { type: 'array', items: exportRefSchema },
 		},
 	},
 	PubEdge: {
@@ -806,25 +853,40 @@ export const mapPubRecords = async (
 			// every former image resolves via the version's files.
 			let contentHtml = html;
 			if (options.includeAssets && fetchAsset) {
+				// Drop CDN responsive variants (srcset/sizes) FIRST — they're delivery artifacts, not
+				// canonical content, and their multi-URL values (`url 1x, url 2x`) would defeat the
+				// single-URL attribute capture below. The single content-addressed `src` remains;
+				// consumers regenerate their own responsive variants.
+				contentHtml = contentHtml
+					.replace(/\s+srcset="[^"]*"/gi, '')
+					.replace(/\s+srcset='[^']*'/gi, '')
+					.replace(/\s+sizes="[^"]*"/gi, '')
+					.replace(/\s+sizes='[^']*'/gi, '');
+
 				const assets: Record<string, Json>[] = [];
 				const seenAssetHash = new Set<string>();
-				// Map each COMPLETE asset URL token (as it appears in the HTML) to its content hash.
-				// Every responsive variant (`?width=…&dpr=N`) normalizes to the same base asset, so all
-				// candidates of one image resolve to one hash. Keyed by the raw token so the rewrite can
-				// swap the whole token — no prefix gluing.
+				// Raw asset URLs exactly as they appear in the HTML — captured attribute-value-aware
+				// (up to the closing quote / paren), so URLs with spaces/parens in the filename are
+				// captured whole rather than truncated at the first space. Keyed by the raw string so
+				// the rewrite below swaps the exact occurrence. Every responsive variant normalizes to
+				// the same base asset → one hash.
+				const rawUrls = new Set<string>();
+				for (const m of contentHtml.matchAll(HTML_QUOTED_ASSET_URL)) {
+					rawUrls.add(m[2]);
+				}
+				for (const m of contentHtml.matchAll(HTML_CSS_URL_ASSET)) {
+					rawUrls.add(m[1]);
+				}
 				const tokenToHash = new Map<string, string>();
-				const rawTokens = [
-					...new Set(contentHtml.match(HTML_ASSET_TOKEN_PATTERN) ?? []),
-				].sort();
-				for (const rawToken of rawTokens) {
-					const normalized = getAssetUrlFromResizedUrl(rawToken);
+				for (const rawUrl of [...rawUrls].sort()) {
+					const normalized = getAssetUrlFromResizedUrl(rawUrl);
 					// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
 					const asset = await localize(normalized, pub.id);
 					if (!asset) {
-						// Failed to fetch: leave this token in place (already warned).
+						// Failed to fetch: leave this URL in place (already warned).
 						continue;
 					}
-					tokenToHash.set(rawToken, asset.hash);
+					tokenToHash.set(rawUrl, asset.hash);
 					if (!seenAssetHash.has(asset.hash)) {
 						seenAssetHash.add(asset.hash);
 						assets.push(
@@ -832,17 +894,17 @@ export const mapPubRecords = async (
 						);
 					}
 				}
-				// Single left-to-right pass over maximal tokens — replaces each whole token, so a base
-				// URL that is a prefix of a variant token can never corrupt it. Deterministic.
-				contentHtml = contentHtml.replace(HTML_ASSET_TOKEN_PATTERN, (token) => {
-					const hash = tokenToHash.get(token);
-					return hash ? `${FILE_PREFIX}${hash}` : token;
-				});
-				// Drop CDN responsive variants (srcset/sizes) — delivery artifacts, not canonical
-				// content. The single content-addressed `src` remains; consumers regenerate their own.
+				// Rewrite each captured occurrence to its content-addressed ref, preserving delimiters.
+				// Deterministic: same HTML + same hashes → same output.
 				contentHtml = contentHtml
-					.replace(/\s+srcset="[^"]*"/gi, '')
-					.replace(/\s+sizes="[^"]*"/gi, '');
+					.replace(HTML_QUOTED_ASSET_URL, (match, quote, url) => {
+						const hash = tokenToHash.get(url);
+						return hash ? `${quote}${FILE_PREFIX}${hash}${quote}` : match;
+					})
+					.replace(HTML_CSS_URL_ASSET, (match, url) => {
+						const hash = tokenToHash.get(url);
+						return hash ? `url(${FILE_PREFIX}${hash})` : match;
+					});
 				if (assets.length > 0) {
 					releaseData.assets = assets.sort((a, b) =>
 						String(a.$file).localeCompare(String(b.$file)),
@@ -856,6 +918,35 @@ export const mapPubRecords = async (
 				htmlName,
 			);
 			releaseData.contentFile = fileRef(htmlHash, htmlName, 'text/html');
+		}
+
+		// Downloadable exports (pdf/epub/…) from PubPub's exports table, matched to THIS release by
+		// historyKey and filtered to the admin-selected formats. Independent of includeReleaseHtml.
+		if (options.exportFormats.length > 0 && fetchAsset) {
+			const releaseExports = (pub.exports ?? [])
+				.filter(
+					(e) =>
+						e.historyKey === release.historyKey &&
+						e.url &&
+						options.exportFormats.includes(e.format),
+				)
+				.sort((a, b) => a.format.localeCompare(b.format));
+			const exportRefs: Record<string, Json>[] = [];
+			for (const exp of releaseExports) {
+				try {
+					// biome-ignore lint/performance/noAwaitInLoops: sequential to bound memory
+					const bytes = await fetchAsset(exp.url);
+					const mimeType = EXPORT_MIME[exp.format] ?? 'application/octet-stream';
+					const fileName = `${pub.slug}.${EXPORT_EXT[exp.format] ?? exp.format}`;
+					const hash = addFile(bytes, mimeType, fileName);
+					exportRefs.push({ format: exp.format, ...fileRef(hash, fileName, mimeType) });
+				} catch (e) {
+					warnAsset(exp.url, e);
+				}
+			}
+			if (exportRefs.length > 0) {
+				releaseData.exports = exportRefs;
+			}
 		}
 
 		out.push({ id: release.id, type: 'Release', data: compact(releaseData) });
@@ -890,25 +981,6 @@ export const mapPubRecords = async (
 			latestReleaseId: latestEmittedRelease?.id,
 		}),
 	});
-
-	if (options.includePdfs) {
-		const pdf = (pub.downloads ?? []).find((d) => d.type === 'formatted');
-		if (pdf && fetchAsset && latestEmittedRelease) {
-			try {
-				const bytes = await fetchAsset(pdf.url);
-				const pdfName = `${pub.slug}.pdf`;
-				const pdfHash = addFile(bytes, 'application/pdf', pdfName);
-				const rec = out.find(
-					(r) => r.type === 'Release' && r.id === latestEmittedRelease.id,
-				);
-				if (rec) {
-					rec.data.pdfFile = fileRef(pdfHash, pdfName, 'application/pdf');
-				}
-			} catch (e) {
-				warnAsset(pdf.url, e);
-			}
-		}
-	}
 
 	for (const edge of pub.outboundEdges ?? []) {
 		out.push(mapEdge(edge, pub.id));
@@ -1001,6 +1073,7 @@ export const computeSignatureFromParts = (
 	manifest: ManifestEntry[],
 	fileHashes: string[],
 	schemas: Record<string, JsonSchema>,
+	metadata?: Record<string, unknown> | null,
 ): string => {
 	const signatureBody = {
 		records: manifest.map((m) => `${m.type}:${m.id}:${m.hash}:${m.private ? 1 : 0}`).sort(),
@@ -1010,17 +1083,25 @@ export const computeSignatureFromParts = (
 			// regardless of a schema literal's key insertion order — honoring the ordering guarantee.
 			Object.entries(schemas).map(([type, schema]) => [type, hashSchema(schema)]),
 		),
+		// Version metadata (e.g. `readme`) is pushed as Underlay version metadata and produces a
+		// patch version when it changes — so it MUST be part of the no-op signature, or a readme-only
+		// edit would be skipped as "no changes". Canonicalized for key-order independence.
+		metadata: hashBytes(Buffer.from(JSON.stringify(canonicalize((metadata ?? {}) as Json)))),
 	};
 	return hashBytes(Buffer.from(JSON.stringify(signatureBody)));
 };
 
 /**
- * A single deterministic signature over the whole push (manifest + file hashes + schemas).
+ * A single deterministic signature over the whole push (manifest + file hashes + schemas + metadata).
  * Used as the client-side no-op guard: if it equals the last push's signature, skip entirely.
  */
-export const computePushSignature = (payload: UnderlayPushPayload): string =>
+export const computePushSignature = (
+	payload: UnderlayPushPayload,
+	metadata?: Record<string, unknown> | null,
+): string =>
 	computeSignatureFromParts(
 		payload.manifest ?? buildManifest(payload.records),
 		payload.files.map((f) => f.hash),
 		payload.schemas,
+		metadata,
 	);

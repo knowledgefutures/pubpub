@@ -7,6 +7,7 @@ import {
 	CollectionPub,
 	Community,
 	Doc,
+	Export,
 	ExternalPublication,
 	includeUserModel,
 	Pub,
@@ -129,6 +130,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 					include: [includeUserModel({ as: 'user' })],
 				},
 				{ model: CollectionPub, as: 'collectionPubs' },
+				{ model: Export, as: 'exports' },
 				{
 					model: PubEdge,
 					as: 'outboundEdges',
@@ -324,7 +326,13 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 							}
 						: null,
 				})),
-				downloads: (pub.downloads as { url: string; type: string }[] | null) ?? null,
+				exports: (pub.exports ?? [])
+					.filter((e) => e.url)
+					.map((e) => ({
+						format: e.format,
+						url: e.url as string,
+						historyKey: e.historyKey,
+					})),
 			};
 		});
 
@@ -370,9 +378,18 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 
 		const fetchAsset = async (url: string): Promise<Buffer> => {
 			const normalized = getAssetUrlFromResizedUrl(url);
-			const response = await fetch(normalized, { signal: AbortSignal.timeout(30_000) });
+			// Percent-encode spaces / unsafe chars — asset filenames can contain literal spaces
+			// (e.g. "Cavanagh Fig 2-123.png"), and a raw space yields a 400/404. WHATWG URL parsing
+			// encodes the path/query; fall back to a manual space-encode if the URL won't parse.
+			let encoded: string;
+			try {
+				encoded = new URL(normalized).href;
+			} catch {
+				encoded = normalized.replace(/ /g, '%20');
+			}
+			const response = await fetch(encoded, { signal: AbortSignal.timeout(30_000) });
 			if (!response.ok) {
-				throw new Error(`Failed to download asset ${normalized}: ${response.status}`);
+				throw new Error(`Failed to download asset ${encoded}: ${response.status}`);
 			}
 			return Buffer.from(await response.arrayBuffer());
 		};
@@ -380,7 +397,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		const options = {
 			includeReleaseHtml: integration.includeReleaseHtml,
 			includeAssets: integration.includeAssets,
-			includePdfs: integration.includePdfs,
+			exportFormats: integration.exportFormats ?? [],
 		};
 
 		// Assets that failed to download are skipped (non-fatal); collect structured warnings so the
@@ -453,6 +470,10 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			});
 		}
 
+		// Version metadata pushed to Underlay (produces a patch version when it changes). Folded into
+		// the no-op signature below so a readme-only edit isn't skipped as "no changes".
+		const pushMetadata = integration.readme ? { readme: integration.readme } : undefined;
+
 		const cacheEntries = await getPushCacheEntries(integration.id);
 		const incremental = await buildIncrementalPush({
 			community: communityInput,
@@ -461,6 +482,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			pubUpdatedAt,
 			pubFacetsSignature,
 			options,
+			metadata: pushMetadata,
 			cacheEntries,
 			mapPub,
 			fetchAsset,
@@ -500,7 +522,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			incremental.payload,
 			baseVersion,
 			`PubPub sync for ${community.subdomain}`,
-			integration.readme ? { readme: integration.readme } : undefined,
+			pushMetadata,
 		);
 
 		const warnings: AssetWarning[] = [...assetWarnings.values()];

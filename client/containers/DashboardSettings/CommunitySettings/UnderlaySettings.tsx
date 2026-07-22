@@ -10,6 +10,8 @@ import {
 	Classes,
 	Collapse,
 	HTMLSelect,
+	Popover,
+	Position,
 	Spinner,
 	Tag,
 } from '@blueprintjs/core';
@@ -54,6 +56,22 @@ const SCHEDULE_OPTIONS = [
 	{ value: '7', label: 'Weekly' },
 	{ value: '30', label: 'Monthly' },
 ];
+
+// Downloadable export formats PubPub can generate; each is a content-addressed file on the Release.
+const EXPORT_FORMAT_OPTIONS = [
+	{ value: 'pdf', label: 'PDF' },
+	{ value: 'epub', label: 'EPUB' },
+	{ value: 'jats', label: 'JATS XML' },
+	{ value: 'docx', label: 'Word (DOCX)' },
+	{ value: 'tex', label: 'LaTeX' },
+	{ value: 'markdown', label: 'Markdown' },
+	{ value: 'html', label: 'HTML' },
+	{ value: 'odt', label: 'OpenDocument (ODT)' },
+	{ value: 'plain', label: 'Plain text' },
+	{ value: 'json', label: 'JSON' },
+];
+const DEFAULT_EXPORT_FORMATS = ['pdf', 'epub'];
+const sortedCsv = (arr: string[]) => [...arr].sort().join(',');
 
 // Keep the credential/target inputs a readable width rather than stretching across the dashboard.
 const FIELD_MAX_WIDTH = 520;
@@ -120,7 +138,7 @@ const UnderlaySettings = (_props: Props) => {
 	const [readme, setReadme] = useState('');
 	const [includeReleaseHtml, setIncludeReleaseHtml] = useState(true);
 	const [includeAssets, setIncludeAssets] = useState(true);
-	const [includePdfs, setIncludePdfs] = useState(false);
+	const [exportFormats, setExportFormats] = useState<string[]>(DEFAULT_EXPORT_FORMATS);
 	const [scheduleDays, setScheduleDays] = useState('');
 
 	const [showReadme, setShowReadme] = useState(false);
@@ -183,7 +201,7 @@ const UnderlaySettings = (_props: Props) => {
 		setReadme(next?.readme ?? '');
 		setIncludeReleaseHtml(next?.includeReleaseHtml ?? true);
 		setIncludeAssets(next?.includeAssets ?? true);
-		setIncludePdfs(next?.includePdfs ?? false);
+		setExportFormats(next?.exportFormats ?? DEFAULT_EXPORT_FORMATS);
 		setScheduleDays(next?.scheduleDays ? String(next.scheduleDays) : '');
 		setCurrentPush(next?.currentPush ?? null);
 		setLastPush(next?.lastPush ?? null);
@@ -340,7 +358,7 @@ const UnderlaySettings = (_props: Props) => {
 				readme: readme || null,
 				includeReleaseHtml,
 				includeAssets,
-				includePdfs,
+				exportFormats,
 				scheduleDays: scheduleDays ? Number(scheduleDays) : null,
 			};
 			if (apiKeyInput) {
@@ -432,7 +450,7 @@ const UnderlaySettings = (_props: Props) => {
 		readme !== (config?.readme ?? '') ||
 		includeReleaseHtml !== (config?.includeReleaseHtml ?? true) ||
 		includeAssets !== (config?.includeAssets ?? true) ||
-		includePdfs !== (config?.includePdfs ?? false) ||
+		sortedCsv(exportFormats) !== sortedCsv(config?.exportFormats ?? DEFAULT_EXPORT_FORMATS) ||
 		scheduleDays !== (config?.scheduleDays ? String(config.scheduleDays) : '');
 
 	const orgOptions = [
@@ -567,11 +585,42 @@ const UnderlaySettings = (_props: Props) => {
 				disabled={!includeReleaseHtml}
 				onChange={() => setIncludeAssets((v) => !v)}
 			/>
-			<Checkbox
-				checked={includePdfs}
-				label="Include formatted PDF downloads"
-				onChange={() => setIncludePdfs((v) => !v)}
-			/>
+			<div className={Classes.FORM_GROUP} style={{ marginTop: 8 }}>
+				<div className={Classes.LABEL}>Downloadable exports</div>
+				<Popover
+					position={Position.BOTTOM_LEFT}
+					content={
+						<div style={{ padding: 12, maxWidth: FIELD_MAX_WIDTH }}>
+							<p className={Classes.TEXT_MUTED} style={{ marginBottom: 8 }}>
+								Push these downloadable export files (when PubPub has generated
+								them) as content-addressed files on each release.
+							</p>
+							{EXPORT_FORMAT_OPTIONS.map((opt) => (
+								<Checkbox
+									key={opt.value}
+									checked={exportFormats.includes(opt.value)}
+									label={opt.label}
+									onChange={() =>
+										setExportFormats((prev) =>
+											prev.includes(opt.value)
+												? prev.filter((f) => f !== opt.value)
+												: [...prev, opt.value],
+										)
+									}
+								/>
+							))}
+						</div>
+					}
+				>
+					<Button rightIcon="caret-down" alignText="left" style={{ minWidth: 220 }}>
+						{exportFormats.length > 0
+							? EXPORT_FORMAT_OPTIONS.filter((o) => exportFormats.includes(o.value))
+									.map((o) => o.label)
+									.join(', ')
+							: 'No exports'}
+					</Button>
+				</Popover>
+			</div>
 
 			<div className={Classes.FORM_GROUP} style={{ marginTop: 8 }}>
 				<div className={Classes.LABEL}>Automatic push schedule</div>

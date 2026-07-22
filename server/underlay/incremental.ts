@@ -62,6 +62,9 @@ export type IncrementalPushInput = {
 	 */
 	pubFacetsSignature?: Record<string, string>;
 	options: PushOptions;
+	/** Version metadata (e.g. `{ readme }`) pushed as Underlay version metadata; folded into the
+	 * signature so a metadata-only edit (readme) isn't skipped by the no-op guard. */
+	metadata?: Record<string, unknown> | null;
 	cacheEntries: CachedPubEntry[];
 	mapPub: MapPubFn;
 	/** Fetches asset bytes for community/collection/author-scope images (avatars, logos, hero). */
@@ -120,7 +123,7 @@ export const optionsSignature = (
 				mappingVersion,
 				includeReleaseHtml: options.includeReleaseHtml,
 				includeAssets: options.includeAssets,
-				includePdfs: options.includePdfs,
+				exportFormats: [...options.exportFormats].sort(),
 			}),
 		),
 	);
@@ -169,6 +172,7 @@ export const buildIncrementalPush = async (
 		pubUpdatedAt,
 		pubFacetsSignature = {},
 		options,
+		metadata,
 		cacheEntries,
 		mapPub,
 		fetchAsset,
@@ -364,7 +368,7 @@ export const buildIncrementalPush = async (
 
 	return {
 		payload,
-		signature: computeSignatureFromParts(manifest, [...allFileHashes], schemas),
+		signature: computeSignatureFromParts(manifest, [...allFileHashes], schemas, metadata),
 		cacheUpserts,
 		presentPubIds: pubs.map((p) => p.id),
 		stats: { totalPubs: pubs.length, cacheHits, cacheMisses },

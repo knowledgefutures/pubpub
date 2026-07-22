@@ -21,7 +21,7 @@ import {
 
 const community: CommunityInput = { id: 'c1', subdomain: 'sub', title: 'Community One' };
 
-const OPTIONS: PushOptions = { includeReleaseHtml: true, includeAssets: true, includePdfs: false };
+const OPTIONS: PushOptions = { includeReleaseHtml: true, includeAssets: true, exportFormats: [] };
 
 /** Renders a tiny HTML doc referencing one asset, so asset handling can be exercised. */
 const renderReleaseHtml = async () =>
@@ -448,6 +448,46 @@ describe('underlay/mapping — responsive srcSet rewrite', () => {
 	});
 });
 
+describe('underlay/mapping — asset URLs with spaces/parens in the filename', () => {
+	// Real prod URLs have literal spaces (and occasionally parens) in the filename. A
+	// whitespace-bounded matcher truncated at the first space, leaving the full external URL in the
+	// canonical HTML. Attribute-value-aware capture must grab the whole quoted value.
+	const spaced = 'https://assets.pubpub.org/x/My Figure 1-123.png?width=800&fit=bounds';
+	const parened = 'https://assets.pubpub.org/y/Figure (final)-456.png';
+	const renderSpaced = async () => `<p>Body</p><img src="${spaced}" /><img src="${parened}" />`;
+	// Distinct bytes per URL so the two images don't dedupe to one hash.
+	const fetchDistinct = async (url: string) => Buffer.from(`bytes:${url}`);
+
+	const runPush = () =>
+		buildUnderlayPush({
+			community,
+			collections: [],
+			pubs: [pubWithUser('p1', 'u1')],
+			options: OPTIONS,
+			renderReleaseHtml: renderSpaced,
+			fetchAsset: fetchDistinct,
+		});
+
+	it('localizes spaced/paren’d URLs and leaves zero external URLs in the contentFile', async () => {
+		const payload = await runPush();
+		const html = payload.files
+			.find((f) => f.contentType.startsWith('text/html'))!
+			.bytes.toString('utf8');
+		// The whole quoted value (spaces + parens) was captured and rewritten — nothing external left.
+		expect(html).not.toContain('assets.pubpub.org');
+		expect(html.match(/src="sha256:[a-f0-9]+"/g) ?? []).toHaveLength(2);
+
+		const release = payload.records.find((r) => r.type === 'Release')!;
+		const assets = release.data.assets as Record<string, unknown>[];
+		// Both distinct images localized; each resolves to a file in the push.
+		expect(assets).toHaveLength(2);
+		for (const a of assets) {
+			const hash = String(a.$file).replace('sha256:', '');
+			expect(payload.files.some((f) => f.hash === hash)).toBe(true);
+		}
+	});
+});
+
 describe('underlay/mapping — branding/avatar images become files', () => {
 	const brandedCommunity: CommunityInput = {
 		id: 'c1',
@@ -636,7 +676,7 @@ describe('underlay/mapping — missing release doc is skipped, not published emp
 		warnings: AssetWarning[],
 	) => ({
 		community,
-		options: { includeReleaseHtml: true, includeAssets: false, includePdfs: false },
+		options: { includeReleaseHtml: true, includeAssets: false, exportFormats: [] },
 		addFile: (bytes: Buffer, contentType: string, fileName?: string) =>
 			`${contentType}:${fileName}:${bytes.length}`,
 		renderReleaseHtml: render as (c: {
@@ -697,5 +737,94 @@ describe('underlay/mapping — push signature is schema-key-order independent', 
 			Pub: { properties: { b: { type: 'number' }, a: { type: 'string' } }, type: 'object' },
 		});
 		expect(sigA).toBe(sigB);
+	});
+});
+
+describe('underlay/mapping — push signature includes version metadata (readme)', () => {
+	const manifest = [{ id: 'p1', type: 'Pub', hash: 'abc' }];
+	const files = ['f1'];
+	const schemas = { Pub: { type: 'object', properties: { a: { type: 'string' } } } };
+
+	it('changes the signature when metadata (readme) changes — so a readme-only edit is not skipped', () => {
+		const sigOld = computeSignatureFromParts(manifest, files, schemas, {
+			readme: 'Old readme',
+		});
+		const sigNew = computeSignatureFromParts(manifest, files, schemas, {
+			readme: 'New readme',
+		});
+		expect(sigOld).not.toBe(sigNew);
+	});
+
+	it('is stable for identical metadata (still a true no-op) and key-order independent', () => {
+		const a = computeSignatureFromParts(manifest, files, schemas, {
+			license: 'cc',
+			readme: 'R',
+		});
+		// Same values, different runtime insertion order — canonicalization must collapse them.
+		const reordered: Record<string, string> = {};
+		reordered.readme = 'R';
+		reordered.license = 'cc';
+		const b = computeSignatureFromParts(manifest, files, schemas, reordered);
+		expect(a).toBe(b);
+	});
+});
+
+describe('underlay/mapping — downloadable exports (Release.exports)', () => {
+	const pubWithExports: PubInput = {
+		id: 'pe',
+		slug: 'my-article',
+		title: 'Exported',
+		createdAt: '2026-01-01T00:00:00.000Z',
+		attributions: [],
+		collectionPubs: [],
+		releases: [{ id: 'pe-r1', historyKey: 3, createdAt: '2026-01-02T00:00:00.000Z' }],
+		outboundEdges: [],
+		exports: [
+			{ format: 'pdf', url: 'https://assets.pubpub.org/x/a.pdf', historyKey: 3 },
+			{ format: 'epub', url: 'https://assets.pubpub.org/x/a.epub', historyKey: 3 },
+			{ format: 'docx', url: 'https://assets.pubpub.org/x/a.docx', historyKey: 3 },
+			// url:null → skipped; wrong historyKey → not this release.
+			{ format: 'jats', url: null as unknown as string, historyKey: 3 },
+			{ format: 'pdf', url: 'https://assets.pubpub.org/x/old.pdf', historyKey: 2 },
+		],
+	};
+
+	const exportCtx = (formats: string[]) => ({
+		community,
+		options: { includeReleaseHtml: false, includeAssets: false, exportFormats: formats },
+		addFile: (_b: Buffer, contentType: string, fileName?: string) =>
+			`hash-${fileName}-${contentType.split('/')[1]}`,
+		renderReleaseHtml: async () => null,
+		fetchAsset,
+	});
+
+	it('emits only selected formats for the matching release, skipping url:null and other historyKeys', async () => {
+		const records = await mapPubRecords(pubWithExports, exportCtx(['pdf', 'epub']));
+		const release = records.find((r) => r.type === 'Release' && r.id === 'pe-r1')!;
+		const exports = release.data.exports as {
+			format: string;
+			$file: string;
+			mimeType: string;
+		}[];
+		expect(exports.map((e) => e.format)).toEqual(['epub', 'pdf']); // sorted, docx excluded
+		const pdf = exports.find((e) => e.format === 'pdf')!;
+		expect(pdf.mimeType).toBe('application/pdf');
+		expect(pdf.$file).toMatch(/^sha256:/);
+		const epub = exports.find((e) => e.format === 'epub')!;
+		expect(epub.mimeType).toBe('application/epub+zip');
+	});
+
+	it('omits exports when no formats are selected', async () => {
+		const records = await mapPubRecords(pubWithExports, exportCtx([]));
+		const release = records.find((r) => r.type === 'Release' && r.id === 'pe-r1')!;
+		expect(release.data).not.toHaveProperty('exports');
+	});
+
+	it('is deterministic — same input yields identical Release.exports', async () => {
+		const a = await mapPubRecords(pubWithExports, exportCtx(['pdf', 'epub']));
+		const b = await mapPubRecords(pubWithExports, exportCtx(['pdf', 'epub']));
+		const ra = a.find((r) => r.type === 'Release')!;
+		const rb = b.find((r) => r.type === 'Release')!;
+		expect(hashRecord(ra)).toEqual(hashRecord(rb));
 	});
 });

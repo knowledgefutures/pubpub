@@ -38,10 +38,10 @@ module.exports = async ({ Sequelize, sequelize }) => {
 			allowNull: false,
 			defaultValue: true,
 		},
-		includePdfs: {
-			type: Sequelize.BOOLEAN,
+		exportFormats: {
+			type: Sequelize.JSONB,
 			allowNull: false,
-			defaultValue: false,
+			defaultValue: ['pdf', 'epub'],
 		},
 		scheduleDays: {
 			type: Sequelize.INTEGER,

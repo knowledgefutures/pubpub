@@ -12,7 +12,7 @@ import {
 	optionsSignature,
 } from '../incremental';
 
-const OPTIONS: PushOptions = { includeReleaseHtml: true, includeAssets: true, includePdfs: false };
+const OPTIONS: PushOptions = { includeReleaseHtml: true, includeAssets: true, exportFormats: [] };
 
 const community: CommunityInput = { id: 'c1', subdomain: 'sub', title: 'Community One' };
 
@@ -62,7 +62,7 @@ describe('underlay/incremental — options signature', () => {
 	it('is stable for equal options and differs when a toggle changes', () => {
 		expect(optionsSignature(OPTIONS)).toBe(optionsSignature({ ...OPTIONS }));
 		expect(optionsSignature(OPTIONS)).not.toBe(
-			optionsSignature({ ...OPTIONS, includePdfs: true }),
+			optionsSignature({ ...OPTIONS, exportFormats: ["pdf"] }),
 		);
 		expect(optionsSignature(OPTIONS)).not.toBe(
 			optionsSignature({ ...OPTIONS, includeAssets: false }),
@@ -103,7 +103,7 @@ describe('underlay/incremental — isCacheHit', () => {
 				pub,
 				updatedAt,
 				entry,
-				optionsSignature({ ...OPTIONS, includePdfs: true }),
+				optionsSignature({ ...OPTIONS, exportFormats: ["pdf"] }),
 				facetSig,
 			),
 		).toBe(false);

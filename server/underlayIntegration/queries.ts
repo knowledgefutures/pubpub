@@ -11,7 +11,7 @@ export type UnderlayIntegrationClientConfig = {
 	readme: string | null;
 	includeReleaseHtml: boolean;
 	includeAssets: boolean;
-	includePdfs: boolean;
+	exportFormats: string[];
 	scheduleDays: number | null;
 	lastPushedAt: string | null;
 	lastPushSemver: string | null;
@@ -28,7 +28,7 @@ const toClientConfig = (integration: UnderlayIntegration): UnderlayIntegrationCl
 	readme: integration.readme,
 	includeReleaseHtml: integration.includeReleaseHtml,
 	includeAssets: integration.includeAssets,
-	includePdfs: integration.includePdfs,
+	exportFormats: integration.exportFormats ?? [],
 	scheduleDays: integration.scheduleDays,
 	lastPushedAt: integration.lastPushedAt
 		? new Date(integration.lastPushedAt).toISOString()
@@ -47,7 +47,7 @@ export type UnderlayIntegrationConfigUpdate = {
 	apiKey?: string | null;
 	includeReleaseHtml?: boolean;
 	includeAssets?: boolean;
-	includePdfs?: boolean;
+	exportFormats?: string[];
 	scheduleDays?: number | null;
 };
 
@@ -113,7 +113,7 @@ export const upsertUnderlayIntegration = async (
 	if (update.includeReleaseHtml !== undefined)
 		patch.includeReleaseHtml = update.includeReleaseHtml;
 	if (update.includeAssets !== undefined) patch.includeAssets = update.includeAssets;
-	if (update.includePdfs !== undefined) patch.includePdfs = update.includePdfs;
+	if (update.exportFormats !== undefined) patch.exportFormats = update.exportFormats;
 	if (update.scheduleDays !== undefined) patch.scheduleDays = update.scheduleDays;
 
 	// Only touch the API key when explicitly provided. Empty string clears it.

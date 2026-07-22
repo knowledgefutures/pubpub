@@ -113,6 +113,27 @@ const statusLabel = (status: PushStatus): string => {
 	}
 };
 
+// Collapse a large warning list into "N× .ext — <reason with URL removed>" groups, so the
+// push-history popover shows *why* assets were skipped at a glance (e.g. "218× .epub — …: 404")
+// instead of hundreds of near-identical lines.
+const summarizeWarnings = (
+	warnings: PushWarning[],
+): { key: string; count: number; sample?: string }[] => {
+	const groups = new Map<string, { count: number; sample?: string }>();
+	for (const w of warnings) {
+		const ext = w.assetUrl?.split('?')[0].split('.').pop()?.toLowerCase();
+		const extLabel = ext && ext.length <= 5 ? `.${ext}` : 'asset';
+		const kind = (w.reason ?? 'skipped').replace(/https?:\/\/\S+/g, '<url>');
+		const key = `${extLabel} — ${kind}`;
+		const g = groups.get(key) ?? { count: 0, sample: w.assetUrl ?? undefined };
+		g.count += 1;
+		groups.set(key, g);
+	}
+	return [...groups.entries()]
+		.map(([key, v]) => ({ key, count: v.count, sample: v.sample }))
+		.sort((a, b) => b.count - a.count);
+};
+
 const UnderlaySettings = (_props: Props) => {
 	const [config, setConfig] = useState<UnderlayConfig | null>(null);
 	const [apiKeyInput, setApiKeyInput] = useState('');
@@ -759,11 +780,77 @@ const UnderlaySettings = (_props: Props) => {
 										).toLocaleString()}
 									</td>
 									<td>
-										{entry.status === 'error'
-											? (entry.error ?? 'Failed')
-											: entry.warnings.length > 0
-												? `${entry.warnings.length} asset(s) skipped`
-												: '—'}
+										{entry.status === 'error' ? (
+											(entry.error ?? 'Failed')
+										) : entry.warnings.length > 0 ? (
+											<Popover
+												position={Position.LEFT}
+												content={
+													<div
+														style={{
+															maxWidth: 520,
+															maxHeight: 340,
+															overflow: 'auto',
+															padding: 12,
+														}}
+													>
+														<div
+															className={Classes.TEXT_MUTED}
+															style={{ marginBottom: 8 }}
+														>
+															{entry.warnings.length} asset(s) skipped
+															(non-fatal)
+														</div>
+														<ul
+															style={{
+																margin: 0,
+																paddingLeft: 18,
+																fontSize: 12,
+															}}
+														>
+															{summarizeWarnings(entry.warnings).map(
+																(g) => (
+																	<li
+																		key={g.key}
+																		style={{
+																			marginBottom: 6,
+																			wordBreak: 'break-word',
+																		}}
+																	>
+																		<strong>{g.count}×</strong>{' '}
+																		{g.key}
+																		{g.sample && (
+																			<div
+																				className={
+																					Classes.TEXT_MUTED
+																				}
+																				style={{
+																					wordBreak:
+																						'break-all',
+																				}}
+																			>
+																				{g.sample}
+																			</div>
+																		)}
+																	</li>
+																),
+															)}
+														</ul>
+													</div>
+												}
+											>
+												<Button
+													minimal
+													small
+													intent="warning"
+													rightIcon="caret-down"
+												>
+													{entry.warnings.length} skipped
+												</Button>
+											</Popover>
+										) : (
+											'—'
+										)}
 									</td>
 								</tr>
 							))}

@@ -14,9 +14,11 @@ export const router = Router();
 
 const assertUserAuthorized = async (target, requestIds) => {
 	const permissions = await getPermissions(requestIds);
+	console.log('permissions', permissions);
 	const isAuthenticated =
 		(target === 'pub' && permissions.pub) ||
 		(target === 'collection' && permissions.collection);
+	console.log('isAuthenticated', isAuthenticated);
 
 	if (!isAuthenticated) {
 		throw new ForbiddenError();

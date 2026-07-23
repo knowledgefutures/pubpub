@@ -99,6 +99,12 @@ export const communitySchema = baseSchema.extend({
 	scopeSummaryId: z.string().uuid().nullable(),
 	templateId: z.string().uuid().nullable(),
 	kfOrgId: z.string().nullable(),
+	cmsMode: z.boolean().default(false),
+	canonicalBaseUrl: z.string().url().nullable(),
+	canonicalPubUrlTemplate: z
+		.string()
+		.regex(/\{slug\}/, 'Template must contain {slug}')
+		.nullable(),
 	accentTextColor: z.string(),
 	analyticsSettings: analyticsSettingsSchema,
 }) satisfies z.ZodType<types.Community, any, any>;

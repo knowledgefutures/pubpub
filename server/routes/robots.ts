@@ -16,6 +16,13 @@ const buildRobotsFile = (community) => {
 			Disallow: /
 		`).trim();
 	}
+	if (community?.cmsMode) {
+		// CMS-mode communities are members-only; their canonical home is elsewhere
+		return stripIndent(`
+			User-agent: *
+			Disallow: /
+		`).trim();
+	}
 	if (community) {
 		return stripIndent(`
 			User-agent: *

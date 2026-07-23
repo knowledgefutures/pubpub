@@ -17,7 +17,10 @@ import {
 	Release,
 } from 'server/models';
 import { sequelize } from 'server/sequelize';
-import { communityUrl as getCommunityUrl, pubUrl } from 'utils/canonicalUrls';
+import {
+	canonicalCommunityUrl as getCommunityUrl,
+	canonicalPubUrl as pubUrl,
+} from 'utils/canonicalUrls';
 import { sortByPrimaryStatus } from 'utils/collections/primary';
 import { getAllPubContributors, getContributorName } from 'utils/contributors';
 import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';

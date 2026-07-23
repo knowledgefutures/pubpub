@@ -13,6 +13,7 @@ import { usePageContext, usePendingChanges } from 'utils/hooks';
 import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import AnalyticsSettings from './AnalyticsSettings';
 import BasicSettings from './BasicSettings';
+import CmsSettings from './CmsSettings';
 import CommunityAdminSettings from './CommunityAdminSettings';
 import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
 import FooterSettings from './FooterSettings';
@@ -195,6 +196,22 @@ const CommunitySettings = (props: Props) => {
 						title: 'Underlay',
 						icon: 'globe-network',
 						sections: [<UnderlaySettings communityData={communityData} />],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+		pageContext.scopeData.activePermissions.isSuperAdmin
+			? [
+					{
+						id: 'cms-settings',
+						title: 'CMS',
+						icon: 'exchange',
+						sections: [
+							<CmsSettings
+								communityData={communityData}
+								updateCommunityData={updateCommunityData}
+							/>,
+						],
 					} as const,
 				]
 			: ([] as Subtab[])),

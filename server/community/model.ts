@@ -256,6 +256,27 @@ export class Community extends Model<
 	@Column(DataType.TEXT)
 	declare kfOrgId: string | null;
 
+	/**
+	 * CMS mode: the community is only visible to members; public visitors are
+	 * redirected to canonicalBaseUrl (or shown a not-found page if none is set).
+	 */
+	@Default(false)
+	@AllowNull(false)
+	@Column(DataType.BOOLEAN)
+	declare cmsMode: CreationOptional<boolean>;
+
+	/** External canonical home for this community's content, e.g. https://journal.example.org */
+	@Column(DataType.TEXT)
+	declare canonicalBaseUrl: string | null;
+
+	/**
+	 * Template for canonical pub URLs on the external site, with {slug} as the
+	 * pub slug, e.g. https://journal.example.org/articles/{slug}. When unset,
+	 * canonicalBaseUrl + /pub/{slug} is used.
+	 */
+	@Column(DataType.TEXT)
+	declare canonicalPubUrlTemplate: string | null;
+
 	@BelongsTo(() => CommunityTemplate, {
 		as: 'template',
 		foreignKey: 'templateId',

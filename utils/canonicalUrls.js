@@ -119,6 +119,53 @@ export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
 	return pubShortUrl(pubData);
 };
 
+/**
+ * The public canonical URL for a community. Unlike communityUrl, this honors
+ * canonicalBaseUrl for CMS-mode communities whose content is published on an
+ * external site. Use for content-facing URLs (canonical tags, citations,
+ * exports, deposits, feeds) — NOT for in-app navigation.
+ * @param {Object} community
+ * @param {string} community.subdomain
+ * @param {string | null | undefined} [community.domain]
+ * @param {string | null | undefined} [community.canonicalBaseUrl]
+ * @returns {string}
+ */
+export const canonicalCommunityUrl = (community) => {
+	if (community.canonicalBaseUrl) {
+		return community.canonicalBaseUrl.replace(/\/+$/, '');
+	}
+	return communityUrl(community);
+};
+
+/**
+ * The public canonical URL for a collection. Honors canonicalBaseUrl for
+ * CMS-mode communities. Use for content-facing URLs — NOT for in-app
+ * navigation.
+ */
+export const canonicalCollectionUrl = (community, collection) => {
+	return `${canonicalCommunityUrl(community)}/${collection.slug}`;
+};
+
+/**
+ * The public canonical URL for a pub. Honors canonicalPubUrlTemplate and
+ * canonicalBaseUrl for CMS-mode communities. Use for content-facing URLs —
+ * NOT for in-app navigation.
+ * @param {import('types').Community | import('server/models').Community | null} community
+ * @param {PubForUrl} pub
+ * @param options
+ * @returns {string}
+ */
+export const canonicalPubUrl = (community, pub, options = {}) => {
+	if (community && community.canonicalPubUrlTemplate) {
+		return community.canonicalPubUrlTemplate.replace(/\{slug\}/g, pub.slug);
+	}
+	if (community && community.canonicalBaseUrl) {
+		const url = pubUrl(community, pub, { ...options, absolute: true });
+		return url.replace(communityUrl(community), canonicalCommunityUrl(community));
+	}
+	return pubUrl(community, pub, options);
+};
+
 export const doiUrl = (doi) => `https://doi.org/${doi}`;
 
 export const pageUrl = (community, page) => {

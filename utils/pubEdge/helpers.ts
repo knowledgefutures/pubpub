@@ -1,7 +1,7 @@
 import type { Community, Pub } from 'server/models';
 import type * as types from 'types';
 
-import { pubShortUrl, pubUrl } from 'utils/canonicalUrls';
+import { canonicalPubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getAllPubContributors } from 'utils/contributors';
 import { formatDate } from 'utils/dates';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
@@ -22,10 +22,10 @@ export const getUrlForPub = (
 	communityData: types.Community | Community,
 ) => {
 	if (communityData.id === pubData.communityId) {
-		return pubUrl(communityData, pubData);
+		return canonicalPubUrl(communityData, pubData);
 	}
 	if (pubData.community) {
-		return pubUrl(pubData.community, pubData);
+		return canonicalPubUrl(pubData.community, pubData);
 	}
 	return pubShortUrl(pubData);
 };

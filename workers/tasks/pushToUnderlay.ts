@@ -15,6 +15,7 @@ import {
 	PubEdge,
 	Release,
 } from 'server/models';
+import { assetsClient } from 'server/utils/s3';
 import { expect } from 'utils/assert';
 import { getAssetUrlFromResizedUrl } from 'utils/images';
 import { licenseDetailsByKind } from 'utils/licenses';
@@ -387,7 +388,23 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			} catch {
 				encoded = normalized.replace(/ /g, '%20');
 			}
-			const response = await fetch(encoded, { signal: AbortSignal.timeout(30_000) });
+			let response = await fetch(encoded, { signal: AbortSignal.timeout(30_000) });
+			// Legacy assets.pubpub.org objects (notably older .epub/.pdf exports) were uploaded
+			// without a public-read ACL, so an anonymous GET 403s. Retry with a presigned GET
+			// (authenticated — works regardless of ACL). Bytes, and thus the content hash, are
+			// identical either way, so this doesn't affect determinism or the emitted references.
+			if (response.status === 403 || response.status === 401) {
+				try {
+					const parsed = new URL(normalized);
+					if (parsed.hostname === 'assets.pubpub.org') {
+						const key = decodeURIComponent(parsed.pathname.replace(/^\//, ''));
+						const signedUrl = await assetsClient.getPresignedUrl(key, 3600);
+						response = await fetch(signedUrl, { signal: AbortSignal.timeout(30_000) });
+					}
+				} catch {
+					// Fall through to the not-ok check below with the original 403 response.
+				}
+			}
 			if (!response.ok) {
 				throw new Error(`Failed to download asset ${encoded}: ${response.status}`);
 			}

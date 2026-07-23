@@ -53,7 +53,7 @@ export type AssetWarning = {
  * invalidates exactly once and unchanged pubs are re-mapped with the new shape instead of silently
  * re-emitting stale hashes. Bump on any change to a type's emitted fields.
  */
-export const MAPPING_VERSION = '9';
+export const MAPPING_VERSION = '10';
 
 export type ManifestEntry = { id: string; type: string; hash: string; private?: boolean };
 

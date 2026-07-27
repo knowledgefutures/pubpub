@@ -20,6 +20,9 @@ const CmsSettings = (props: Props) => {
 			activePermissions: { isSuperAdmin },
 		},
 	} = usePageContext();
+	if (!isSuperAdmin) {
+		return null;
+	}
 
 	return (
 		<SettingsSection
@@ -52,49 +55,45 @@ const CmsSettings = (props: Props) => {
 					&ldquo;community not found&rdquo; page with an option to log in.
 				</Callout>
 			)}
-			{isSuperAdmin && (
-				<>
-					<InputField
-						label={
-							<>
-								Canonical URL <SuperAdminTag />
-							</>
-						}
-						helperText="The external site where this community's content is published, e.g. https://journal.example.org. Canonical tags, citations, exports, and new Crossref deposits will point to it."
-						type="text"
-						placeholder="https://journal.example.org"
-						value={canonicalBaseUrl || ''}
-						onChange={(evt) => {
-							updateCommunityData({
-								canonicalBaseUrl: evt.target.value.trim() || null,
-							});
-						}}
-					/>
-					<InputField
-						label={
-							<>
-								Pub URL template <SuperAdminTag />
-							</>
-						}
-						helperText={
-							<>
-								Where a pub lives on the external site, with <code>{'{slug}'}</code>{' '}
-								standing in for the pub slug, e.g.{' '}
-								<code>{'https://journal.example.org/articles/{slug}'}</code>. Leave
-								empty to use the canonical URL + <code>/pub/{'{slug}'}</code>.
-							</>
-						}
-						type="text"
-						placeholder="https://journal.example.org/articles/{slug}"
-						value={canonicalPubUrlTemplate || ''}
-						onChange={(evt) => {
-							updateCommunityData({
-								canonicalPubUrlTemplate: evt.target.value.trim() || null,
-							});
-						}}
-					/>
-				</>
-			)}
+			<InputField
+				label={
+					<>
+						Canonical URL <SuperAdminTag />
+					</>
+				}
+				helperText="The external site where this community's content is published, e.g. https://journal.example.org. Canonical tags, citations, exports, and new Crossref deposits will point to it."
+				type="text"
+				placeholder="https://journal.example.org"
+				value={canonicalBaseUrl || ''}
+				onChange={(evt) => {
+					updateCommunityData({
+						canonicalBaseUrl: evt.target.value.trim() || null,
+					});
+				}}
+			/>
+			<InputField
+				label={
+					<>
+						Pub URL template <SuperAdminTag />
+					</>
+				}
+				helperText={
+					<>
+						Where a pub lives on the external site, with <code>{'{slug}'}</code>{' '}
+						standing in for the pub slug, e.g.{' '}
+						<code>{'https://journal.example.org/articles/{slug}'}</code>. Leave empty to
+						use the canonical URL + <code>/pub/{'{slug}'}</code>.
+					</>
+				}
+				type="text"
+				placeholder="https://journal.example.org/articles/{slug}"
+				value={canonicalPubUrlTemplate || ''}
+				onChange={(evt) => {
+					updateCommunityData({
+						canonicalPubUrlTemplate: evt.target.value.trim() || null,
+					});
+				}}
+			/>
 		</SettingsSection>
 	);
 };

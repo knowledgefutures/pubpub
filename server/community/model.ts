@@ -257,8 +257,8 @@ export class Community extends Model<
 	declare kfOrgId: string | null;
 
 	/**
-	 * CMS mode: the community is only visible to members; public visitors are
-	 * redirected to canonicalBaseUrl (or shown a not-found page if none is set).
+	 * CMS mode: the community is only visible to members;
+	 * public visitors are shown a not-found page with a sign-in prompt.
 	 */
 	@Default(false)
 	@AllowNull(false)

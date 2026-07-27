@@ -131,7 +131,7 @@ export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
  * @returns {string}
  */
 export const canonicalCommunityUrl = (community) => {
-	if (community.canonicalBaseUrl) {
+	if (community?.cmsMode && community.canonicalBaseUrl) {
 		return community.canonicalBaseUrl.replace(/\/+$/, '');
 	}
 	return communityUrl(community);

@@ -104,6 +104,17 @@ export const communitySchema = baseSchema.extend({
 	canonicalPubUrlTemplate: z
 		.string()
 		.regex(/\{slug\}/, 'Template must contain {slug}')
+		.refine(
+			(template) => {
+				try {
+					const url = new URL(template.replace(/\{slug\}/g, 'test-slug'));
+					return url.protocol === 'http:' || url.protocol === 'https:';
+				} catch {
+					return false;
+				}
+			},
+			'Template must be a valid absolute http(s) URL',
+		)
 		.nullable(),
 	accentTextColor: z.string(),
 	analyticsSettings: analyticsSettingsSchema,

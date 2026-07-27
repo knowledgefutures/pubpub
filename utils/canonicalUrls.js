@@ -126,6 +126,7 @@ export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
  * exports, deposits, feeds) — NOT for in-app navigation.
  * @param {Object} community
  * @param {string} community.subdomain
+ * @param {boolean} community.cmsMode
  * @param {string | null | undefined} [community.domain]
  * @param {string | null | undefined} [community.canonicalBaseUrl]
  * @returns {string}

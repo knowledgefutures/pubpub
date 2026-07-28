@@ -20,7 +20,6 @@ import {
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 import {
 	AccentStyle,
-	Banner,
 	FacetsStateProvider,
 	Footer,
 	Header,
@@ -36,6 +35,7 @@ import { PageContext } from 'utils/hooks';
 
 import BottomMenu from './BottomMenu';
 import Breadcrumbs from './Breadcrumbs';
+import CmsModeBanner from './CmsModeBanner';
 import getPaths from './paths';
 import SideMenu from './SideMenu';
 import SpamBanner from './SpamBanner';
@@ -161,14 +161,7 @@ const App = (props: Props) => {
 							<LegalBanner />
 							{showHeader && header}
 							{showNav && <NavBar />}
-							{showCmsModeBanner && (
-								<div className="cms-mode-banner">
-									<Banner
-										bannerText="This community is in CMS mode: only logged-in Members can see this page. Everyone else will see a not-found page."
-										accentColor={communityData.accentColorDark}
-									/>
-								</div>
-							)}
+							{showCmsModeBanner && <CmsModeBanner />}
 							{isDashboard && (
 								<MobileAware
 									mobile={({ className }) => (

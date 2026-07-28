@@ -74,11 +74,11 @@ export const getPermissions = async ({
 	const isSuperAdmin = scopeData.activePermissions.isSuperAdmin;
 	const canExportCommunity = scopeData.activePermissions.canAdminCommunity || isSuperAdmin;
 
-	// only admins can edit analytics settings and toggle CMS mode
-	const adminEditProps = canAdmin ? (['analyticsSettings', 'cmsMode'] as const) : ([] as const);
+	// only admins can edit analytics settings
+	const adminEditProps = canAdmin ? (['analyticsSettings'] as const) : ([] as const);
 	// only superadmins can point a community at an external canonical URL
 	const superAdminEditProps = isSuperAdmin
-		? (['canonicalBaseUrl', 'canonicalPubUrlTemplate'] as const)
+		? (['canonicalBaseUrl', 'canonicalPubUrlTemplate', 'cmsMode'] as const)
 		: ([] as const);
 
 	return {

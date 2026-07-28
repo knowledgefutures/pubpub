@@ -20,6 +20,7 @@ import {
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 import {
 	AccentStyle,
+	Banner,
 	FacetsStateProvider,
 	Footer,
 	Header,
@@ -74,6 +75,16 @@ const App = (props: Props) => {
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, hideHeader, isDashboard } = pathObject;
+
+	// In CMS mode, public visitors get a not-found page; warn the members who
+	// can see the content that it isn't publicly visible. Only shown on public
+	// content views (pages, collections, and pub releases — not drafts).
+	const showCmsModeBanner =
+		communityData.cmsMode &&
+		!!loginData.id &&
+		(chunkName === 'Page' ||
+			chunkName === 'Collection' ||
+			(chunkName === 'Pub' && !!viewData.pubData?.isRelease));
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {
@@ -150,6 +161,14 @@ const App = (props: Props) => {
 							<LegalBanner />
 							{showHeader && header}
 							{showNav && <NavBar />}
+							{showCmsModeBanner && (
+								<div className="cms-mode-banner">
+									<Banner
+										bannerText="This community is in CMS mode: only logged-in Members can see this page. Everyone else will see a not-found page."
+										accentColor={communityData.accentColorDark}
+									/>
+								</div>
+							)}
 							{isDashboard && (
 								<MobileAware
 									mobile={({ className }) => (

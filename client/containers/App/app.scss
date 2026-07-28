@@ -9,6 +9,12 @@
 		outline: none;
 		flex-grow: 1;
 	}
+	.cms-mode-banner {
+		padding: 8px 16px;
+		.banner {
+			margin-bottom: 0;
+		}
+	}
 	.duqduq-warning {
 		position: fixed;
 		right: 10px;

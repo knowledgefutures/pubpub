@@ -29,7 +29,7 @@ import { createLogger } from 'server/utils/queryHelpers/communityGet';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCorrectHostname } from 'utils/caching/getCorrectHostname';
-import { pubUrl } from 'utils/canonicalUrls';
+import { canonicalPubUrl } from 'utils/canonicalUrls';
 import { getNextCollectionPub } from 'utils/collections/getNextCollectionPub';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getGoogleScholarNotes, getPdfDownloadUrl, getTextAbstract } from 'utils/pub/metadata';
@@ -75,7 +75,7 @@ const renderPubDocument = (
 				initialData,
 				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),
 				publishedAt: getPubPublishedDate(pubData),
-				canonicalUrl: pubUrl(initialData.communityData, pubData),
+				canonicalUrl: canonicalPubUrl(initialData.communityData, pubData),
 				textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
 				title: pubData.title,
 				unlisted: !pubData.isRelease,

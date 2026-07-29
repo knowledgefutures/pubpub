@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { ForbiddenSlugStatus } from 'types';
 
 import * as Sentry from '@sentry/node';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
 import { env } from 'server/env';
@@ -12,6 +13,7 @@ import { isRequestAborted } from '../abort';
 export enum PubPubApplicationError {
 	ForbiddenSlug = 'forbidden-slug',
 	CommunityIsSpam = 'community-is-spam',
+	CommunityIsPrivate = 'community-is-private',
 }
 
 class PubPubBaseError extends Error {
@@ -39,6 +41,34 @@ export const PubPubError = {
 			super(PubPubApplicationError.CommunityIsSpam, 'Community is spam');
 		}
 	},
+	/* A CMS-mode community, which is only visible to members */
+	CommunityIsPrivateError: class extends PubPubBaseError {
+		constructor() {
+			super(PubPubApplicationError.CommunityIsPrivate, 'Community is private');
+		}
+	},
+};
+
+let communityNotFoundTemplate: string | null = null;
+
+/**
+ * Renders the "community not found" page, adding a login prompt for
+ * logged-out visitors: gated communities (spam-flagged or CMS mode) serve
+ * this page to non-members, and members need a way to sign in from it.
+ */
+const renderCommunityNotFound = (req: Request) => {
+	if (communityNotFoundTemplate === null) {
+		communityNotFoundTemplate = readFileSync(
+			resolve(__dirname, '../errorPages/communityNotFound.html'),
+			'utf8',
+		);
+	}
+	const isLoggedIn = Boolean((req.user as any)?.id);
+	const loginSection = isLoggedIn
+		? ''
+		: `<p>Expecting something here?</p>
+			<a class="login-button" href="/login?redirect=${encodeURIComponent(req.originalUrl)}">Log in</a>`;
+	return communityNotFoundTemplate.replace('<!--LOGIN_SECTION-->', loginSection);
 };
 
 export class HTTPStatusError extends Error {
@@ -93,11 +123,10 @@ export const handleErrors = (req: Request, res: Response, next: NextFunction) =>
 
 		if (
 			err.message === 'Community Not Found' ||
-			err instanceof PubPubError.CommunityIsSpamError
+			err instanceof PubPubError.CommunityIsSpamError ||
+			err instanceof PubPubError.CommunityIsPrivateError
 		) {
-			return res
-				.status(404)
-				.sendFile(resolve(__dirname, '../errorPages/communityNotFound.html'));
+			return res.status(404).send(renderCommunityNotFound(req));
 		}
 
 		if (err.message.indexOf('UseCustomDomain:') === 0) {

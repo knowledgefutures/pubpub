@@ -108,6 +108,7 @@ export { default as SliderInput } from './SliderInput/SliderInput';
 export { default as SpamStatusMenu } from './SpamStatusMenu';
 export { default as SubmissionEmail } from './SubmissionEmail/SubmissionEmail';
 export { default as SubscriptionButton } from './SubscriptionButton/SubscriptionButton';
+export { default as SuperAdminTag } from './SuperAdminTag/SuperAdminTag';
 export { default as TabToShow } from './TabToShow/TabToShow';
 export { default as Thread } from './Thread/Thread';
 export { default as ThreadInput } from './ThreadInput/ThreadInput';

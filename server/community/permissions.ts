@@ -71,17 +71,19 @@ export const getPermissions = async ({
 
 	const canUpdate = scopeData.activePermissions.canManage;
 	const canAdmin = scopeData.activePermissions.canAdmin;
-	const canExportCommunity =
-		scopeData.activePermissions.canAdminCommunity || scopeData.activePermissions.isSuperAdmin;
+	const isSuperAdmin = scopeData.activePermissions.isSuperAdmin;
+	const canExportCommunity = scopeData.activePermissions.canAdminCommunity || isSuperAdmin;
 
 	// only admins can edit analytics settings
-	const editPropsWithAnalytics = canAdmin
-		? ([...editProps, 'analyticsSettings'] as const)
-		: editProps;
+	const adminEditProps = canAdmin ? (['analyticsSettings'] as const) : ([] as const);
+	// only superadmins can point a community at an external canonical URL
+	const superAdminEditProps = isSuperAdmin
+		? (['canonicalBaseUrl', 'canonicalPubUrlTemplate', 'cmsMode'] as const)
+		: ([] as const);
 
 	return {
 		create: true,
-		update: canUpdate ? editPropsWithAnalytics : false,
+		update: canUpdate ? [...editProps, ...adminEditProps, ...superAdminEditProps] : false,
 		admin: canAdmin,
 		communityExport: canExportCommunity,
 	};

@@ -8,6 +8,7 @@ import { isUserMemberOfScope } from 'server/member/queries';
 import { UserNotification } from 'server/models';
 import { isUserSuperAdmin } from 'server/user/queries';
 import { getDismissedUserDismissables } from 'server/userDismissable/queries';
+import { isAuthBypassPath, isCmsGateBypassPath } from 'utils/cms';
 import { getAppCommit, isDuqDuq, isProd, isQubQub, shouldForceBasePubPub } from 'utils/environment';
 
 import { PubPubError } from './errors';
@@ -131,7 +132,12 @@ export const getInitialData = async (
 			: { domain: hostname };
 	const communityData = await getCommunity(locationData, whereQuery);
 
-	if (communityData.spamTag && communityData.spamTag.status !== 'confirmed-not-spam') {
+	const isSpamGated =
+		communityData.spamTag &&
+		communityData.spamTag.status !== 'confirmed-not-spam' &&
+		!isAuthBypassPath(req.path);
+	const isCmsGated = communityData.cmsMode && !isCmsGateBypassPath(req.path);
+	if (isSpamGated || isCmsGated) {
 		const [isMemberOfCommunity, isSuperadmin] = await Promise.all([
 			isUserMemberOfScope({
 				userId: loginData.id,
@@ -140,7 +146,10 @@ export const getInitialData = async (
 			isUserSuperAdmin({ userId: loginData.id }),
 		]);
 		if (!isMemberOfCommunity && !isSuperadmin) {
-			throw new PubPubError.CommunityIsSpamError();
+			if (isSpamGated) {
+				throw new PubPubError.CommunityIsSpamError();
+			}
+			throw new PubPubError.CommunityIsPrivateError();
 		}
 	}
 

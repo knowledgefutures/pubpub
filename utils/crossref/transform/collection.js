@@ -1,4 +1,4 @@
-import { collectionUrl } from 'utils/canonicalUrls';
+import { canonicalCollectionUrl as collectionUrl } from 'utils/canonicalUrls';
 import { deserializeMetadata } from 'utils/collections/metadata';
 
 import transformAttributions from './attributions';

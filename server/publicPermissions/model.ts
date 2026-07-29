@@ -33,7 +33,7 @@ export class PublicPermissions extends Model<
 	declare canCreateDiscussions: boolean | null;
 
 	@Default('public')
-	@Column(DataType.ENUM('public', 'contributors', 'members', 'disabled'))
+	@Column(DataType.ENUM('public', 'contributors-members', 'disabled'))
 	declare discussionCreationAccess: CreationOptional<DiscussionCreationAccess>;
 
 	@Column(DataType.BOOLEAN)

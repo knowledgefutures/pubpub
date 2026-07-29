@@ -11,7 +11,7 @@ export const publicPermissionsRouter = {
 		method: 'PUT',
 		summary: 'Update who is able to create new discussions',
 		body: z.object({
-			discussionCreationAccess: z.enum(['public', 'contributors', 'members', 'disabled']),
+			discussionCreationAccess: z.enum(['public', 'contributors-members', 'disabled']),
 		}),
 		responses: {
 			200: z.object({ success: z.boolean() }),

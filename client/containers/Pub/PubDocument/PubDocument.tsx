@@ -39,7 +39,7 @@ const PubDocument = () => {
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData, featureFlags } = usePageContext();
 	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
-	const { canEdit, canEditDraft } = scopeData.activePermissions;
+	const { canEdit, canEditDraft, discussionCreationAccess } = scopeData.activePermissions;
 	const { isReviewingPub } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
@@ -50,6 +50,13 @@ const PubDocument = () => {
 	usePubHrefs({ enabled: !isReadOnly });
 
 	const showPubFileImport = (canEdit || canEditDraft) && !isReadOnly;
+
+	/* When discussions are disabled and there's nothing to read, the Comments section is just an */
+	/* empty box with controls that do nothing. Discussions arrive already sanitized (spam, banned */
+	/* authors and draft-vs-release visibility are filtered server-side), so an empty list here */
+	/* means there is nothing this reader is allowed to see. */
+	const showDiscussions =
+		discussionCreationAccess !== 'disabled' || !!pubData.discussions?.length;
 
 	if (hidePubBody) {
 		return null;
@@ -125,6 +132,7 @@ const PubDocument = () => {
 			</div>
 			<PubBottom
 				pubData={pubData}
+				showDiscussions={showDiscussions}
 				updateLocalData={updateLocalData}
 				sideContentRef={sideContentRef}
 				mainContentRef={mainContentRef}

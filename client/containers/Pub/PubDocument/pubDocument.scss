@@ -5,6 +5,13 @@
 	flex-direction: column;
 	flex-grow: 1;
 
+	/* Absorb any leftover viewport height into the body rather than the bottom section, so a pub
+	   shorter than the screen keeps a compact License / Comments strip sitting on the footer
+	   instead of stretching it into a tall grey band. */
+	.pub-grid {
+		flex-grow: 1;
+	}
+
 	.top-pub-edges {
 		margin-top: 30px;
 		margin-bottom: 30px;

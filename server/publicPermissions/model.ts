@@ -12,6 +12,8 @@ import {
 	Table,
 } from 'sequelize-typescript';
 
+import { discussionCreationAccessValues } from 'types/community';
+
 import { Pub } from '../models';
 
 @Table
@@ -33,7 +35,7 @@ export class PublicPermissions extends Model<
 	declare canCreateDiscussions: boolean | null;
 
 	@Default('public')
-	@Column(DataType.ENUM('public', 'contributors-members', 'disabled'))
+	@Column(DataType.ENUM(...discussionCreationAccessValues))
 	declare discussionCreationAccess: CreationOptional<DiscussionCreationAccess>;
 
 	@Column(DataType.BOOLEAN)

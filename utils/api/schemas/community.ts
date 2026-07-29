@@ -2,6 +2,8 @@ import type * as types from 'types';
 
 import { z } from 'zod';
 
+import { discussionCreationAccessValues } from 'types/community';
+
 import { baseSchema } from '../utils/baseSchema';
 import { analyticsSettingsSchema } from './analyticsSettings';
 
@@ -138,5 +140,5 @@ export const communityUpdateSchema = communitySchema
 	})
 	.extend({
 		communityId: communitySchema.shape.id,
-		discussionCreationAccess: z.enum(['public', 'contributors-members', 'disabled']).optional(),
+		discussionCreationAccess: z.enum(discussionCreationAccessValues).optional(),
 	});

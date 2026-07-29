@@ -39,7 +39,7 @@ const PubDocument = () => {
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData, featureFlags } = usePageContext();
 	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
-	const { canEdit, canEditDraft, discussionCreationAccess } = scopeData.activePermissions;
+	const { canEdit, canEditDraft, canCreateDiscussions } = scopeData.activePermissions;
 	const { isReviewingPub } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
@@ -51,12 +51,13 @@ const PubDocument = () => {
 
 	const showPubFileImport = (canEdit || canEditDraft) && !isReadOnly;
 
-	/* When discussions are disabled and there's nothing to read, the Comments section is just an */
-	/* empty box with controls that do nothing. Discussions arrive already sanitized (spam, banned */
-	/* authors and draft-vs-release visibility are filtered server-side), so an empty list here */
-	/* means there is nothing this reader is allowed to see. */
-	const showDiscussions =
-		discussionCreationAccess !== 'disabled' || !!pubData.discussions?.length;
+	/* Only show the Comments section if there's something to read, or this reader can actually */
+	/* post. Otherwise it's an empty box with sort/filter controls that do nothing — which is what */
+	/* a logged-out visitor saw on a Community that limits commenting to members and contributors, */
+	/* or that disabled it outright. Discussions arrive already sanitized (spam, banned authors */
+	/* and draft-vs-release visibility are filtered server-side), so an empty list here means */
+	/* there is nothing this reader is allowed to see. */
+	const showDiscussions = canCreateDiscussions || !!pubData.discussions?.length;
 
 	if (hidePubBody) {
 		return null;

@@ -15,4 +15,9 @@ export type CommunityHeaderLink = {
 
 export type Community = SerializedModel<CommunityModel>;
 
-export type DiscussionCreationAccess = 'public' | 'contributors-members' | 'disabled';
+export const discussionCreationAccessValues = [
+	'public',
+	'contributors-members',
+	'disabled',
+] as const;
+export type DiscussionCreationAccess = (typeof discussionCreationAccessValues)[number];

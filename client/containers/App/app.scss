@@ -9,6 +9,25 @@
 		outline: none;
 		flex-grow: 1;
 	}
+	/* Let the pub page fill the viewport, so its grey bottom section reaches the footer instead
+	   of leaving a white gap when the pub is shorter than the screen. Every link in the chain
+	   has to be a column flex container for the next one to grow into it:
+
+	     #app > #main-content > #pub-container > .pub-document-component > .pub-bottom-component
+
+	   .pub-document-component (pubDocument.scss) declares `flex-grow: 1` and is a column flex container;
+	   .pub-grid absorbs leftover space while .pub-bottom-component (pubBottom.scss) stays at content height.
+	   These rules connect that chain by making #main-content and #pub-container flex columns. Skipped on the dashboard, which has its own
+	   padded #main-content layout and no growing root. */
+	&:not(.dashboard) #main-content {
+		display: flex;
+		flex-direction: column;
+		#pub-container {
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+		}
+	}
 	.duqduq-warning {
 		position: fixed;
 		right: 10px;

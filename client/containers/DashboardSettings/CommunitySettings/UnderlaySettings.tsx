@@ -17,7 +17,7 @@ import {
 } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { InputField, SettingsSection } from 'components';
+import { InputField, SettingsSection, SuperAdminTag } from 'components';
 
 type Props = {
 	communityData: Community;
@@ -460,7 +460,18 @@ const UnderlaySettings = (_props: Props) => {
 	};
 
 	if (loading) {
-		return <SettingsSection title="Push to Underlay">Loading…</SettingsSection>;
+		return (
+			<SettingsSection
+				id="push-to-underlay"
+				title={
+					<>
+						Push to Underlay <SuperAdminTag />
+					</>
+				}
+			>
+				Loading…
+			</SettingsSection>
+		);
 	}
 
 	const isConfigured = Boolean(org && collection && hasKey);
@@ -497,7 +508,14 @@ const UnderlaySettings = (_props: Props) => {
 			: null;
 
 	return (
-		<SettingsSection title="Push to Underlay">
+		<SettingsSection
+			id="push-to-underlay"
+			title={
+				<>
+					Push to Underlay <SuperAdminTag />
+				</>
+			}
+		>
 			<p className={Classes.TEXT_MUTED}>
 				Push this community&rsquo;s releases and metadata to an Underlay collection. Only
 				new or changed content is transferred.

@@ -1,4 +1,4 @@
-import { pubUrl } from 'utils/canonicalUrls';
+import { canonicalPubUrl as pubUrl } from 'utils/canonicalUrls';
 import { extractDoiFromUrl } from 'utils/crossref/parseDoi';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { relationTypeDefinitions } from 'utils/pubEdge/relations';

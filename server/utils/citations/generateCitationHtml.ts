@@ -1,7 +1,7 @@
 import Cite from 'citation-js';
 
 import * as types from 'types';
-import { pubUrl } from 'utils/canonicalUrls';
+import { canonicalPubUrl as pubUrl } from 'utils/canonicalUrls';
 import { type CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPrimaryCollection } from 'utils/collections/primary';

@@ -22,11 +22,22 @@ import {
 import { getAllTemplates } from 'server/communityTemplate/queries';
 import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
+import { createFeatureFlag } from 'server/featureFlag/queries';
+import { setFeatureFlagOverrideForCommunity } from 'server/featureFlagCommunity/queries';
+import { setFeatureFlagOverrideForUser } from 'server/featureFlagUser/queries';
 import Html from 'server/Html';
 // NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget, FtpTarget } from 'server/models';
+import {
+	Community,
+	DepositTarget,
+	FeatureFlag,
+	FeatureFlagCommunity,
+	FeatureFlagUser,
+	FtpTarget,
+	User,
+} from 'server/models';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -73,7 +84,48 @@ const parseSpamFieldFilterParam = (
 	return values;
 };
 
+const sanitizeFeatureFlag = (flag: FeatureFlag) => ({
+	id: flag.id,
+	name: flag.name,
+	enabledUsersFraction: flag.enabledUsersFraction ?? 0,
+	enabledCommunitiesFraction: flag.enabledCommunitiesFraction ?? 0,
+	overrides: {
+		communitiesOn: (flag.communities ?? []).filter((c) => c.enabled).length,
+		communitiesOff: (flag.communities ?? []).filter((c) => c.enabled === false).length,
+		usersOn: (flag.users ?? []).filter((u) => u.enabled).length,
+		usersOff: (flag.users ?? []).filter((u) => u.enabled === false).length,
+	},
+});
+
+const featureFlagIncludes = [
+	{ model: FeatureFlagUser, as: 'users', attributes: ['id', 'enabled'] },
+	{ model: FeatureFlagCommunity, as: 'communities', attributes: ['id', 'enabled'] },
+];
+
+const getFeatureFlagWithCounts = async (id: string) => {
+	const flag = await FeatureFlag.findByPk(id, { include: featureFlagIncludes });
+	if (!flag) {
+		throw new NotFoundError(new Error('Feature flag not found'));
+	}
+	return flag;
+};
+
 const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.LocationData) => {
+	if (tabKind === 'featureFlags') {
+		const [flags, totalCommunities, totalUsers] = await Promise.all([
+			FeatureFlag.findAll({
+				include: featureFlagIncludes,
+				order: [['name', 'ASC']],
+			}),
+			Community.count(),
+			User.count(),
+		]);
+		return {
+			featureFlags: flags.map(sanitizeFeatureFlag),
+			totalCommunities,
+			totalUsers,
+		};
+	}
 	if (tabKind === 'customDomains') {
 		const communities = await Community.findAll({
 			where: { domain: { [Op.ne]: null } },
@@ -827,6 +879,198 @@ router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
 			return res.status(err.status).json({ error: err.message });
 		}
 		return next(err);
+	}
+});
+
+// ── Feature Flags API ──────────────────────────────────────────────────────
+
+const assertSuperAdmin = async (req: any) => {
+	const initialData = await getInitialData(req);
+	if (!initialData.loginData.isSuperAdmin) {
+		throw new ForbiddenError();
+	}
+};
+
+const featureFlagNamePattern = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
+
+const parseOverrideState = (state: any): types.FeatureFlagOverrideState => {
+	if (state !== 'on' && state !== 'off' && state !== 'inert') {
+		throw new BadRequestError(new Error('state must be "on", "off", or "inert"'));
+	}
+	return state;
+};
+
+const parseFraction = (value: any, label: string) => {
+	const fraction = Number(value);
+	if (Number.isNaN(fraction) || fraction < 0 || fraction > 1) {
+		throw new BadRequestError(new Error(`${label} must be a number between 0 and 1`));
+	}
+	return fraction;
+};
+
+router.post('/api/superadmin/feature-flags', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const name = String(req.body.name ?? '').trim();
+		if (!featureFlagNamePattern.test(name)) {
+			throw new BadRequestError(
+				new Error(
+					'Flag names must start with a letter and contain only letters, numbers, hyphens, and underscores (e.g. newActivityDash)',
+				),
+			);
+		}
+		const existing = await FeatureFlag.findOne({ where: { name } });
+		if (existing) {
+			throw new BadRequestError(new Error(`A feature flag named "${name}" already exists`));
+		}
+		const flag = await createFeatureFlag(name);
+		return res.status(201).json(sanitizeFeatureFlag(await getFeatureFlagWithCounts(flag.id)));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.put('/api/superadmin/feature-flags/:id', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const flag = await getFeatureFlagWithCounts(req.params.id);
+		const { enabledUsersFraction, enabledCommunitiesFraction } = req.body;
+		if (enabledUsersFraction !== undefined) {
+			flag.enabledUsersFraction = parseFraction(enabledUsersFraction, 'enabledUsersFraction');
+		}
+		if (enabledCommunitiesFraction !== undefined) {
+			flag.enabledCommunitiesFraction = parseFraction(
+				enabledCommunitiesFraction,
+				'enabledCommunitiesFraction',
+			);
+		}
+		await flag.save();
+		return res.json(sanitizeFeatureFlag(flag));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.delete('/api/superadmin/feature-flags/:id', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const flag = await FeatureFlag.findByPk(req.params.id);
+		if (!flag) {
+			throw new NotFoundError(new Error('Feature flag not found'));
+		}
+		await Promise.all([
+			FeatureFlagCommunity.destroy({ where: { featureFlagId: flag.id } }),
+			FeatureFlagUser.destroy({ where: { featureFlagId: flag.id } }),
+		]);
+		await flag.destroy();
+		return res.json({ id: req.params.id });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.get('/api/superadmin/feature-flags/:id/overrides', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const flag = await FeatureFlag.findByPk(req.params.id);
+		if (!flag) {
+			throw new NotFoundError(new Error('Feature flag not found'));
+		}
+		const [communityOverrides, userOverrides] = await Promise.all([
+			FeatureFlagCommunity.findAll({
+				where: { featureFlagId: flag.id },
+				include: [
+					{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+				],
+			}),
+			FeatureFlagUser.findAll({
+				where: { featureFlagId: flag.id },
+				include: [
+					{
+						model: User,
+						as: 'user',
+						attributes: ['id', 'fullName', 'slug', 'avatar', 'initials'],
+					},
+				],
+			}),
+		]);
+		return res.json({
+			communities: communityOverrides
+				.map((o) => ({
+					communityId: o.communityId,
+					enabled: Boolean(o.enabled),
+					title: o.community?.title ?? '(unknown)',
+					subdomain: o.community?.subdomain ?? '',
+				}))
+				.sort((a, b) => a.title.localeCompare(b.title)),
+			users: userOverrides
+				.map((o) => ({
+					userId: o.userId,
+					enabled: Boolean(o.enabled),
+					fullName: o.user?.fullName ?? '(unknown)',
+					slug: o.user?.slug ?? '',
+					avatar: o.user?.avatar ?? null,
+					initials: o.user?.initials ?? '?',
+				}))
+				.sort((a, b) => a.fullName.localeCompare(b.fullName)),
+		});
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.put('/api/superadmin/feature-flags/:id/community-override', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const flag = await FeatureFlag.findByPk(req.params.id);
+		if (!flag) {
+			throw new NotFoundError(new Error('Feature flag not found'));
+		}
+		const state = parseOverrideState(req.body.state);
+		if (!req.body.communityId) {
+			throw new BadRequestError(new Error('communityId is required'));
+		}
+		const community = await resolveCommunity(req.body.communityId);
+		await setFeatureFlagOverrideForCommunity(flag.id, community.id, state);
+		return res.json({
+			communityId: community.id,
+			title: community.title,
+			subdomain: community.subdomain,
+			state,
+		});
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.put('/api/superadmin/feature-flags/:id/user-override', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const flag = await FeatureFlag.findByPk(req.params.id);
+		if (!flag) {
+			throw new NotFoundError(new Error('Feature flag not found'));
+		}
+		const state = parseOverrideState(req.body.state);
+		if (!req.body.userId) {
+			throw new BadRequestError(new Error('userId is required'));
+		}
+		const user = await User.findByPk(String(req.body.userId).trim(), {
+			attributes: ['id', 'fullName', 'slug', 'avatar', 'initials'],
+		});
+		if (!user) {
+			throw new NotFoundError(new Error('User not found'));
+		}
+		await setFeatureFlagOverrideForUser(flag.id, user.id, state);
+		return res.json({
+			userId: user.id,
+			fullName: user.fullName,
+			slug: user.slug,
+			avatar: user.avatar,
+			initials: user.initials,
+			state,
+		});
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
 	}
 });
 

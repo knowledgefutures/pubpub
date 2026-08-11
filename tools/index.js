@@ -64,6 +64,7 @@ const commandFiles = {
 	emailUsers: "./emailUsers",
 	encrypt: "./encrypt",
 	exportCollection: "./exportCollection",
+	exportDoiRegistrations: "./exportDoiRegistrations",
 	exportFirebasePubs: "./exportFirebasePubs",
 	figurelist: "./figurelist",
 	discoverBrokenDois: "./fix-dois/discover",

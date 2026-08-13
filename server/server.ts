@@ -33,6 +33,7 @@ if (env.NODE_ENV !== 'test') {
 	require('server/utils/serverModuleOverwrite');
 }
 
+import { doilyWebhookRouter } from './doily/webhook';
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 import { kfSessionCheckMiddleware } from './middleware/kfSessionCheck';
@@ -109,6 +110,16 @@ if (env.NODE_ENV === 'production') {
 }
 appRouter.use(deduplicateSlash());
 appRouter.use(noSlash());
+
+// ACHTUNG: this must stay ABOVE express.json(). Doily signs the exact bytes of
+// the webhook body, and once body-parser has turned them into an object the
+// signed bytes are unrecoverable: re-serializing produces different key order
+// and whitespace, so every delivery would fail verification. The router mounts
+// express.raw() on its one path, so nothing else is affected. It also lands
+// ahead of session/passport deliberately: the HMAC is the authentication, there
+// is no cookie or user involved.
+appRouter.use(doilyWebhookRouter);
+
 appRouter.use(express.json({ limit: '50mb' }));
 appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
 appRouter.use(cookieParser());

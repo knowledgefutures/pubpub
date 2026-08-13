@@ -141,6 +141,12 @@ export const envSchema = z.object({
 		.string()
 		.optional()
 		.describe('Doily app token (doily_sk_…) for the pubpub app'),
+	DOILY_WEBHOOK_SECRET: z
+		.string()
+		.optional()
+		.describe(
+			'Doily webhook subscription secret (whsec_…), the HMAC key for POST /api/doily/webhook',
+		),
 
 	// ── Message Queues ──────────────────────────────────────────────────
 	CLOUDAMQP_URL: z.string().describe('CloudAMQP (RabbitMQ) connection URL'),

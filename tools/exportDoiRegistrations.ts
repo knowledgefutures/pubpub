@@ -10,6 +10,7 @@ import { createWriteStream } from 'fs';
 import { Op } from 'sequelize';
 
 import { Collection, Community, CrossrefDepositRecord, DepositTarget, Pub } from 'server/models';
+import { isDoiPublic } from 'utils/crossref/depositStatus';
 
 const getArgValue = (name: string) => {
 	const index = process.argv.indexOf(name);
@@ -78,6 +79,7 @@ async function main() {
 
 	const stream = createWriteStream(out);
 	let written = 0;
+	let skipped = 0;
 
 	const writeRow = (
 		scope: 'pub' | 'collection',
@@ -88,6 +90,7 @@ async function main() {
 			community?: CommunityLite;
 			crossrefDepositRecord?: {
 				depositJson: object | null;
+				status?: string | null;
 				createdAt?: Date;
 				updatedAt?: Date;
 			};
@@ -96,6 +99,15 @@ async function main() {
 		const record = item.crossrefDepositRecord;
 		const community = item.community;
 		if (!item.doi || !record?.depositJson || !community) {
+			return;
+		}
+		// "Has a DOI and a deposit record" used to be the only available proxy for
+		// "registered". Now that a verdict can be recorded, a deposit we know
+		// Crossref rejected (or one still in flight) is not a registration, and
+		// exporting it would import a fiction into Doily. A NULL status is every
+		// pre-verdict row and still exports, exactly as before.
+		if (record.status && !isDoiPublic(record.status)) {
+			skipped += 1;
 			return;
 		}
 		const row = {
@@ -127,6 +139,10 @@ async function main() {
 	console.log(
 		`wrote ${written} rows (${pubs.length} pubs, ${collections.length} collections) to ${out}`,
 	);
+	if (skipped > 0) {
+		// eslint-disable-next-line no-console
+		console.log(`skipped ${skipped} rows whose deposit is pending or failed`);
+	}
 	process.exit(0);
 }
 

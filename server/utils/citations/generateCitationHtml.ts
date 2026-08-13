@@ -6,6 +6,7 @@ import { type CitationStyleKind, renderJournalCitationForCitations } from 'utils
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getAllPubContributors } from 'utils/contributors';
+import { isDoiPublic } from 'utils/crossref/depositStatus';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 const getDatePartsObject = (date) => ({
@@ -103,11 +104,23 @@ export const generateCitationHtml = async (
 		'PubPub/6.0 (https://pubpub.org; mailto:dev@pubpub.org) Citation.js/0.7.11 Node.js/22.14.0',
 	);
 
+	// A citation is copied into someone else's bibliography and outlives the page
+	// it came from, so it may only carry a DOI that resolves. A deposit still in
+	// flight, or one Crossref rejected, is left out of the citation entirely (the
+	// pub URL still identifies the work) until the registrar confirms it. A NULL
+	// status is every pre-Doily deposit, and keeps citing as it always has.
+	const citableDoi = isDoiPublic(
+		pubData.crossrefDepositStatus,
+		pubData.crossrefDepositEverRegistered,
+	)
+		? pubData.doi
+		: null;
+
 	const pubCiteObject = await Cite.async({
 		...commonData,
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'containerDoi' does not exist on type '{ ... Remove this comment to see the full error message
-		DOI: pubData.doi || commonData.containerDoi,
-		ISSN: pubData.doi ? communityData.issn : null,
+		DOI: citableDoi || commonData.containerDoi,
+		ISSN: citableDoi ? communityData.issn : null,
 		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],
 		note: pubLink,
 		URL: pubLink,

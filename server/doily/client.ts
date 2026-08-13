@@ -2,20 +2,6 @@ import { env } from 'server/env';
 import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 import { Community } from 'server/models';
 
-// Client for Doily, KF's DOI broker. When the `doilyDeposits` community
-// feature flag is on (and DOILY_URL/DOILY_API_TOKEN are configured), Crossref
-// deposits are delegated to Doily instead of the internal 4.4.1 pipeline:
-// PubPub still builds its deposit JSON, Doily maps it to 5.4.0 records,
-// registers them under the community's Doily organization, and owns polling.
-//
-// IMPORTANT (timestamp one-way door): Doily stamps deposits with
-// YYYYMMDDhhmmss, which always exceeds our epoch-ms timestamps. Once Doily
-// has touched a DOI, a legacy re-deposit of it is silently rejected by
-// Crossref as stale. So once a community's flag is on, transient Doily
-// failures must FAIL the request loudly — never fall back to the legacy path.
-// Falling back is only safe for record types Doily rejects outright (422:
-// conference, supplement), which the legacy path keeps owning by design.
-
 export const DOILY_FLAG = 'doilyDeposits';
 
 export const isDoilyConfigured = () => Boolean(env.DOILY_URL && env.DOILY_API_TOKEN);
@@ -54,11 +40,11 @@ export class DoilyUnsupportedRecordError extends Error {
 const orgIdByCommunityId = new Map<string, string>();
 
 /**
- * One Doily organization per community (slug = subdomain). Provisioning
- * requires the community to be linked to a KF Auth org — Doily enforces
- * kfOrgId on every organization.
+ * The Doily organization for this community, or null if there is not one yet.
+ * Never provisions: a read-only caller (the status backfill) has to be able to
+ * ask the question without creating an organization as a side effect.
  */
-export const resolveDoilyOrgId = async (communityId: string): Promise<string> => {
+export const findDoilyOrgId = async (communityId: string): Promise<string | null> => {
 	const cached = orgIdByCommunityId.get(communityId);
 	if (cached) {
 		return cached;
@@ -66,7 +52,7 @@ export const resolveDoilyOrgId = async (communityId: string): Promise<string> =>
 
 	const community = await Community.findOne({
 		where: { id: communityId },
-		attributes: ['id', 'subdomain', 'title', 'kfOrgId'],
+		attributes: ['id', 'subdomain'],
 	});
 	if (!community) {
 		throw new Error(`Community ${communityId} not found`);
@@ -78,9 +64,30 @@ export const resolveDoilyOrgId = async (communityId: string): Promise<string> =>
 	}
 	const orgs = (await listRes.json()) as { id: string; slug: string }[];
 	const existing = orgs.find((org) => org.slug === community.subdomain);
+	if (!existing) {
+		return null;
+	}
+	orgIdByCommunityId.set(communityId, existing.id);
+	return existing.id;
+};
+
+/**
+ * One Doily organization per community (slug = subdomain). Provisioning
+ * requires the community to be linked to a KF Auth org — Doily enforces
+ * kfOrgId on every organization.
+ */
+export const resolveDoilyOrgId = async (communityId: string): Promise<string> => {
+	const existing = await findDoilyOrgId(communityId);
 	if (existing) {
-		orgIdByCommunityId.set(communityId, existing.id);
-		return existing.id;
+		return existing;
+	}
+
+	const community = await Community.findOne({
+		where: { id: communityId },
+		attributes: ['id', 'subdomain', 'title', 'kfOrgId'],
+	});
+	if (!community) {
+		throw new Error(`Community ${communityId} not found`);
 	}
 
 	if (!community.kfOrgId) {
@@ -116,6 +123,53 @@ export type DoilyRecordResult = {
 };
 
 /**
+ * The record a deposit's state should be read from. A PubPub deposit can create
+ * several Doily records at once (a pub plus the collection it appears in), and
+ * only the one carrying the DOI we asked for describes this work. The trailing
+ * fallback covers Doily returning a single record whose DOI it normalized.
+ */
+export const findPrimaryDoilyRecord = (
+	records: DoilyRecordResult[],
+	primaryDoi: string,
+): DoilyRecordResult | undefined =>
+	records.find((record) => record.doi === primaryDoi) ?? records[records.length - 1];
+
+export type DoilyDepositSummary = {
+	id: string;
+	doi: string | null;
+	status: string;
+	error: string | null;
+	batchId: string | null;
+	registeredAt: string | null;
+	updatedAt: string;
+};
+
+/**
+ * One page of an organization's deposits. Used by the status backfill, which
+ * pages through every deposit Doily holds for a community and matches on DOI,
+ * the only join available for rows deposited before PubPub recorded Doily's
+ * deposit id.
+ */
+export const listDoilyDeposits = async (options: {
+	organizationId: string;
+	limit: number;
+	offset: number;
+}): Promise<{ items: DoilyDepositSummary[]; total: number }> => {
+	const { organizationId, limit, offset } = options;
+	const query = new URLSearchParams({
+		organizationId,
+		limit: String(limit),
+		offset: String(offset),
+	});
+	const res = await doilyFetch(`/v1/deposits?${query.toString()}`);
+	if (!res.ok) {
+		const body = await res.text();
+		throw new Error(`Doily deposit listing failed (${res.status}): ${body.slice(0, 500)}`);
+	}
+	return (await res.json()) as { items: DoilyDepositSummary[]; total: number };
+};
+
+/**
  * Send a PubPub deposit JSON to Doily for mapping + submission. Throws on
  * hard blockers or transport failures (never silently falls back — see the
  * timestamp note above); throws DoilyUnsupportedRecordError for 422s.
@@ -148,8 +202,7 @@ export const submitDepositViaDoily = async (options: {
 	}
 
 	const { records } = (await res.json()) as { records: DoilyRecordResult[] };
-	const primary =
-		records.find((record) => record.doi === primaryDoi) ?? records[records.length - 1];
+	const primary = findPrimaryDoilyRecord(records, primaryDoi);
 	if (primary && !primary.submitted && primary.action !== 'unchanged') {
 		const messages = (primary.blockers ?? []).map((blocker) => blocker.message).join('; ');
 		throw new Error(

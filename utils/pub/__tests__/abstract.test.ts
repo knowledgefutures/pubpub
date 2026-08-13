@@ -26,7 +26,9 @@ describe('getAbstractText', () => {
 	});
 
 	it('trims the heading text (utils/pub/metadata.js used to miss this)', () => {
-		expect(getAbstractText(doc(h1(text(' Abstract')), para(text('Trimmed.'))))).toBe('Trimmed.');
+		expect(getAbstractText(doc(h1(text(' Abstract')), para(text('Trimmed.'))))).toBe(
+			'Trimmed.',
+		);
 	});
 
 	it('matches a heading split across marks (the pandoc path used to miss this)', () => {
@@ -65,7 +67,10 @@ describe('getAbstractText', () => {
 		['an empty doc', doc()],
 		[
 			'a level-2 heading',
-			doc({ type: 'heading', attrs: { level: 2 }, content: [text('Abstract')] }, para(text('x'))),
+			doc(
+				{ type: 'heading', attrs: { level: 2 }, content: [text('Abstract')] },
+				para(text('x')),
+			),
 		],
 		[
 			// metadata.js read `firstChild.attrs.level` unguarded and threw here.

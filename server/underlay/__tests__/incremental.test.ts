@@ -1,4 +1,10 @@
-import type { CommunityInput, PubInput, PushOptions, UnderlayRecord } from '../mapping';
+import type {
+	CommunityInput,
+	PubInput,
+	PushOptions,
+	UnderlayFile,
+	UnderlayRecord,
+} from '../mapping';
 
 import { describe, expect, it, vi } from 'vitest';
 
@@ -421,5 +427,151 @@ describe('underlay/incremental — immutable asset cache', () => {
 			assetCache,
 		});
 		await expect(result.payload.resolveFileByHash?.(declaredHash)).rejects.toThrow(/mismatch/);
+	});
+});
+
+describe('underlay/incremental — streaming file upload', () => {
+	const pubs = [makePub('p1', 1), makePub('p2', 1)];
+	const pubUpdatedAt = { p1: '2026-01-05T00:00:00.000Z', p2: '2026-01-06T00:00:00.000Z' };
+
+	const buildStreaming = async (uploaded: UnderlayFile[]) =>
+		buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async (file) => {
+				uploaded.push(file);
+			},
+		});
+
+	it('uploads every file during mapping and retains no bytes', async () => {
+		const uploaded: UnderlayFile[] = [];
+		const result = await buildStreaming(uploaded);
+
+		// Both pubs' content files went up as they were mapped...
+		expect(uploaded).toHaveLength(2);
+		expect(uploaded.every((f) => f.bytes.length > 0)).toBe(true);
+		// ...and nothing is held afterwards, which is the whole point.
+		expect(result.payload.files).toHaveLength(0);
+		// The hashes are still declared, so negotiate sees an identical file set.
+		expect(result.payload.fileHashes).toEqual(uploaded.map((f) => f.hash).sort());
+	});
+
+	it('commits exactly what a non-streaming push would (same signature and manifest)', async () => {
+		const buffered = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+		});
+		const streamed = await buildStreaming([]);
+
+		// Streaming is a transport change, not a content change — the version must be identical, or
+		// the no-op guard would fire spuriously on the next push.
+		expect(streamed.signature).toBe(buffered.signature);
+		expect(streamed.payload.manifest).toEqual(buffered.payload.manifest);
+		expect(streamed.payload.fileHashes).toEqual(
+			buffered.payload.files.map((f) => f.hash).sort(),
+		);
+	});
+
+	it('uploads a file shared by several pubs only once', async () => {
+		const shared = Buffer.from('shared-bytes');
+		const sharedHash = hashBytes(shared);
+		const uploaded: UnderlayFile[] = [];
+
+		await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			// Both pubs reference the identical file.
+			mapPub: async (pub) => ({
+				records: [{ id: pub.id, type: 'Pub', data: { slug: pub.slug } }],
+				files: [{ hash: sharedHash, contentType: 'text/html', bytes: shared }],
+			}),
+			uploadFile: async (file) => {
+				uploaded.push(file);
+			},
+		});
+
+		expect(uploaded).toHaveLength(1);
+		expect(uploaded[0].hash).toBe(sharedHash);
+	});
+
+	it('keeps bytes for a scope image it could not otherwise reproduce', async () => {
+		// A branding image NOT on assets.pubpub.org is never entered into the asset cache, and a
+		// scope file has no owning pub to re-map — so dropping its bytes after upload would leave a
+		// later needed_files request for it unrecoverable.
+		const bytes = Buffer.from('external-logo');
+		const hash = hashBytes(bytes);
+		const uploaded: UnderlayFile[] = [];
+
+		const result = await buildIncrementalPush({
+			community: { ...community, avatar: 'https://example.com/logo.png' },
+			collections: [],
+			pubs: [],
+			pubUpdatedAt: {},
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			fetchAsset: async () => bytes,
+			assetCache: { preloaded: new Map(), learned: new Map(), byHash: new Map() },
+			uploadFile: async (file) => {
+				uploaded.push(file);
+			},
+		});
+
+		// It was uploaded during mapping like any other file …
+		expect(uploaded.map((f) => f.hash)).toContain(hash);
+		// … but its bytes are retained, because nothing else could produce them again.
+		expect(result.payload.files.some((f) => f.hash === hash)).toBe(true);
+		expect(result.payload.fileHashes).toContain(hash);
+	});
+
+	it('drops bytes for a scope image that can be re-fetched from its immutable URL', async () => {
+		// The assets.pubpub.org counterpart: the localizer records url→hash, so resolveFileByHash can
+		// re-fetch it and the bytes need not be held.
+		const bytes = Buffer.from('cacheable-logo');
+		const hash = hashBytes(bytes);
+
+		const result = await buildIncrementalPush({
+			community: { ...community, avatar: 'https://assets.pubpub.org/logo.png' },
+			collections: [],
+			pubs: [],
+			pubUpdatedAt: {},
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			fetchAsset: async () => bytes,
+			assetCache: { preloaded: new Map(), learned: new Map(), byHash: new Map() },
+			uploadFile: async () => {},
+		});
+
+		expect(result.payload.files.some((f) => f.hash === hash)).toBe(false);
+		expect(result.payload.fileHashes).toContain(hash);
+		const recovered = await result.payload.resolveFileByHash?.(hash);
+		expect(recovered?.bytes.equals(bytes)).toBe(true);
+	});
+
+	it('can still regenerate a streamed file the server unexpectedly asks for', async () => {
+		const uploaded: UnderlayFile[] = [];
+		const result = await buildStreaming(uploaded);
+
+		// Bytes were dropped after upload, but the pub that produced them is still resolvable — so a
+		// server that GC'd the blob (or never received it) can be served without failing the push.
+		const wanted = uploaded[0].hash;
+		const resolved = await result.payload.resolveFileByHash?.(wanted);
+		expect(resolved?.hash).toBe(wanted);
+		expect(hashBytes(resolved!.bytes)).toBe(wanted);
 	});
 });

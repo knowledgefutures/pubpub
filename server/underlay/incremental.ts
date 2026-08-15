@@ -76,6 +76,18 @@ export type IncrementalPushInput = {
 	 * cached file the server later needs is fetched lazily by hash via `resolveFileByHash`.
 	 */
 	assetCache?: AssetCacheContext;
+	/**
+	 * Streaming file upload. When set, each file's bytes are uploaded as soon as the pub that
+	 * produced them is mapped, and then dropped — so peak memory is one pub's files, not the whole
+	 * collection's. Without it, every file (release HTML, PDF/EPUB exports, images) is retained
+	 * until commit, which is what makes a large community's push unbounded in memory.
+	 *
+	 * Safe to do before the version exists: files are content-addressed, the endpoint is idempotent
+	 * by hash, and a push that later fails just leaves unreferenced blobs for GC. The hash is still
+	 * declared in the manifest, and `resolveFileByHash` can always regenerate the bytes if the
+	 * server asks for them anyway.
+	 */
+	uploadFile?: (file: UnderlayFile) => Promise<void>;
 };
 
 export type IncrementalPushResult = {
@@ -178,7 +190,20 @@ export const buildIncrementalPush = async (
 		fetchAsset,
 		onAssetWarning,
 		assetCache,
+		uploadFile,
 	} = input;
+
+	const streaming = Boolean(uploadFile);
+	// Hashes already pushed to the server this run, so a file shared across pubs (a reused image, an
+	// identical export) uploads once rather than per referencing pub.
+	const uploadedHashes = new Set<string>();
+	const streamFile = async (file: UnderlayFile): Promise<void> => {
+		if (!uploadFile || uploadedHashes.has(file.hash)) {
+			return;
+		}
+		await uploadFile(file);
+		uploadedHashes.add(file.hash);
+	};
 
 	const optionsSig = optionsSignature(options);
 	const entryByPubId = new Map(cacheEntries.map((e) => [e.pubId, e]));
@@ -232,6 +257,26 @@ export const buildIncrementalPush = async (
 	freshRecords.push(...scopeRecords);
 	manifest.push(...buildManifest(scopeRecords));
 
+	// Scope images (community branding, collection + author avatars) are collected synchronously by
+	// `addScopeFile` because the mapper's addFile contract is sync. Upload them now so they aren't
+	// held for the rest of the push.
+	//
+	// Bytes are dropped only when they can be produced again. A scope file has no owning pub for
+	// `hydratePub` to re-map, so its ONLY recovery path is re-fetching the source URL via
+	// `assetCache.byHash` — which the localizer populates for assets.pubpub.org URLs alone. Dropping
+	// an externally-hosted branding image would make a later `needed_files` request for it
+	// unrecoverable, so those stay in memory. That set is small (branding images not on
+	// assets.pubpub.org are the exception), so this costs little and removes the sharp edge.
+	if (streaming) {
+		for (const [hash, file] of [...freshFilesByHash]) {
+			// biome-ignore lint/performance/noAwaitInLoops: sequential to bound memory
+			await streamFile(file);
+			if (assetCache?.byHash.has(hash)) {
+				freshFilesByHash.delete(hash);
+			}
+		}
+	}
+
 	for (const pub of pubs) {
 		const entry = entryByPubId.get(pub.id);
 		if (
@@ -255,7 +300,12 @@ export const buildIncrementalPush = async (
 		freshRecords.push(...records);
 		manifest.push(...buildManifest(records));
 		for (const file of files) {
-			if (!freshFilesByHash.has(file.hash)) {
+			if (streaming) {
+				// Upload now and drop the bytes. `pubIdByHash` still maps the hash back to this pub,
+				// so resolveFileByHash can regenerate it if the server turns out to need it.
+				// biome-ignore lint/performance/noAwaitInLoops: sequential to bound memory
+				await streamFile(file);
+			} else if (!freshFilesByHash.has(file.hash)) {
 				freshFilesByHash.set(file.hash, file);
 			}
 			allFileHashes.add(file.hash);
@@ -359,7 +409,9 @@ export const buildIncrementalPush = async (
 
 	const payload: UnderlayPushPayload = {
 		records: freshRecords,
+		// Streaming pushes have already uploaded (and dropped) every byte; only the hashes remain.
 		files: [...freshFilesByHash.values()].sort((a, b) => a.hash.localeCompare(b.hash)),
+		fileHashes: [...allFileHashes].sort(),
 		schemas,
 		manifest,
 		resolveRecordByHash,

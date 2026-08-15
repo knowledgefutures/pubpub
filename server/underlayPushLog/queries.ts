@@ -150,3 +150,26 @@ export const getPushState = async (
 /** True if a fresh push is already running for this community (concurrency guard). */
 export const hasRunningPush = async (communityId: string): Promise<UnderlayPushLog | null> =>
 	findRunningRow(communityId);
+
+/**
+ * Finalize a `running` log whose worker died before it could finalize itself.
+ *
+ * The task finalizes its own log from a try/catch, which covers every failure it can observe — but
+ * not the process dying underneath it (OOM, container replacement, the queue's watchdog terminating
+ * the thread). In those cases the queue records the error on the WorkerTask and the log is left at
+ * `running` forever, showing an in-progress push in the history that will never resolve. The queue
+ * calls this from its worker-error path to close that gap.
+ *
+ * Keyed on workerTaskId and scoped to `running`, so it can never overwrite a log the task already
+ * finalized (the ordinary case, where the task's own catch wrote a specific error first).
+ */
+export const failPushLogForWorkerTask = async (
+	workerTaskId: string,
+	error: string,
+): Promise<void> => {
+	const row = await UnderlayPushLog.findOne({ where: { workerTaskId, status: 'running' } });
+	if (!row) {
+		return;
+	}
+	await row.update({ status: 'error', finishedAt: new Date(), error });
+};

@@ -228,6 +228,14 @@ const DiscussionInput = (props: Props) => {
 				<form
 					onSubmit={isNewThread ? handlePostDiscussion : handlePostThreadComment}
 					className="content-wrapper"
+					// The altcha widget renders a `required` checkbox into this form's light
+					// DOM, and we keep the widget `display: none` until it needs the user's
+					// attention. If a submit is attempted before the widget reaches its
+					// `verified` state, native validation fails on a control it cannot focus
+					// ("An invalid form control is not focusable") and the browser silently
+					// drops the submit. The submit handlers verify explicitly via
+					// `altchaRef.verify()`, so native validation is redundant here.
+					noValidate
 				>
 					<Honeypot name="title" />
 					<div className="discussion-body-wrapper editable">

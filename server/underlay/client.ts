@@ -19,6 +19,19 @@ const REQUEST_TIMEOUT_MS = 60_000;
 const RECORD_BATCH_SIZE = 10_000;
 const MAX_RETRIES = 4;
 
+/**
+ * Async-commit polling. Underlay validates every record, folds the version digests and writes
+ * version_records during a commit — minutes of work on a large collection, far past
+ * REQUEST_TIMEOUT_MS. Holding the request open would abort and then *retry* that work, so we ask
+ * for an async commit and poll the session instead.
+ */
+const COMMIT_POLL_INITIAL_MS = 2_000;
+const COMMIT_POLL_MAX_MS = 15_000;
+/** Generous: the worker's own task timeout (4h) is the real backstop. */
+const COMMIT_POLL_TIMEOUT_MS = 60 * 60 * 1000;
+/** How often to log that a commit is still running, so a long push isn't silent in the worker logs. */
+const COMMIT_LOG_INTERVAL_MS = 30_000;
+
 export type PushClientOptions = {
 	apiKey: string;
 	owner: string;
@@ -27,6 +40,9 @@ export type PushClientOptions = {
 	/** Identifies the pushing app + actor in the commit metadata. */
 	appId?: string;
 	actorId?: string;
+	/** Async-commit poll timing. Overridable so tests don't wait real seconds. */
+	pollIntervalMs?: number;
+	pollTimeoutMs?: number;
 };
 
 export type PushResult =
@@ -40,6 +56,13 @@ export class UnderlayPushError extends Error {
 		message: string,
 		public readonly statusCode?: number,
 		public readonly detail?: unknown,
+		/**
+		 * The push can recover by re-negotiating from scratch. Set when a commit failed for a cause
+		 * we've since fixed (missing files, now uploaded) but whose session can no longer be
+		 * re-committed — Underlay only accepts a commit on an `open` session, and a failed async
+		 * finalize leaves it `failed`.
+		 */
+		public readonly retriable = false,
 	) {
 		super(message);
 		this.name = 'UnderlayPushError';
@@ -205,6 +228,8 @@ export class UnderlayClient {
 	private readonly slug: string;
 	private readonly appId: string;
 	private readonly actorId: string;
+	private readonly pollIntervalMs: number;
+	private readonly pollTimeoutMs: number;
 
 	constructor(options: PushClientOptions) {
 		this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/$/, '');
@@ -213,6 +238,8 @@ export class UnderlayClient {
 		this.slug = options.slug;
 		this.appId = options.appId ?? 'pubpub';
 		this.actorId = options.actorId ?? 'pubpub:push-to-underlay';
+		this.pollIntervalMs = options.pollIntervalMs ?? COMMIT_POLL_INITIAL_MS;
+		this.pollTimeoutMs = options.pollTimeoutMs ?? COMMIT_POLL_TIMEOUT_MS;
 	}
 
 	private collectionPath() {
@@ -281,15 +308,19 @@ export class UnderlayClient {
 		}
 	}
 
-	/** Returns the latest version semver, or null if the collection has no versions yet. */
+	/**
+	 * Returns the latest version semver, or null if the collection has no versions yet.
+	 *
+	 * Sent authenticated: Underlay resolves this route through the caller's access, so an anonymous
+	 * request against a PRIVATE collection 404s — which is indistinguishable here from "no versions
+	 * yet". That would push `base_version: null`, the server would reject the mismatch with a 409,
+	 * and the conflict retry would re-read the same 404 and fail again. Every push after the first
+	 * would die on a misleading version conflict the moment a collection was made private.
+	 */
 	async getBaseVersion(): Promise<string | null> {
-		const response = await this.request(
-			`${this.collectionPath()}/versions/latest`,
-			{
-				method: 'GET',
-			},
-			{ auth: false },
-		);
+		const response = await this.request(`${this.collectionPath()}/versions/latest`, {
+			method: 'GET',
+		});
 		if (response.status === 404) {
 			return null;
 		}
@@ -419,11 +450,9 @@ export class UnderlayClient {
 
 	/** Ensure the collection exists, creating it under the org if missing. */
 	async ensureCollection(): Promise<void> {
-		const response = await this.request(
-			this.collectionPath(),
-			{ method: 'GET' },
-			{ auth: false },
-		);
+		// Authenticated for the same reason as getBaseVersion: an anonymous probe of a private
+		// collection 404s, sending us down the create path for something that already exists.
+		const response = await this.request(this.collectionPath(), { method: 'GET' });
 		if (response.ok) {
 			return;
 		}
@@ -442,6 +471,15 @@ export class UnderlayClient {
 			const detail = await create.text();
 			throw new UnderlayPushError('Failed to create collection', create.status, detail);
 		}
+	}
+
+	/**
+	 * Upload one file's bytes, content-addressed by hash. Public so a push can stream files up as it
+	 * maps them instead of accumulating every byte in memory until commit; the endpoint is idempotent
+	 * (an already-present hash is a cheap no-op), so re-uploading across attempts is harmless.
+	 */
+	async putFile(file: UnderlayFile): Promise<void> {
+		return this.uploadFile(file);
 	}
 
 	private async uploadFile(file: UnderlayFile): Promise<void> {
@@ -539,7 +577,9 @@ export class UnderlayClient {
 						actor_id: this.actorId,
 						schemas: payload.schemas,
 						manifest,
-						files: payload.files.map((f) => f.hash),
+						// Every referenced hash — which on a streaming push is a superset of the
+						// bytes still held in `files` (those were uploaded and dropped during mapping).
+						files: payload.fileHashes ?? payload.files.map((f) => f.hash),
 						...(metadata ? { metadata } : {}),
 					}),
 				},
@@ -600,8 +640,10 @@ export class UnderlayClient {
 		try {
 			return await negotiateOnce(baseVersion);
 		} catch (err) {
-			if (err instanceof UnderlayPushError && err.statusCode === 409) {
-				// Someone pushed while we were diffing — re-fetch and retry once.
+			// 409: someone pushed while we were diffing. `retriable`: the commit was rejected for a
+			// cause we've since fixed (missing files, now uploaded) on a session that can no longer
+			// be re-committed. Both are resolved by re-negotiating against the current head, once.
+			if (err instanceof UnderlayPushError && (err.statusCode === 409 || err.retriable)) {
 				const freshBase = await this.getBaseVersion();
 				return negotiateOnce(freshBase);
 			}
@@ -609,15 +651,160 @@ export class UnderlayClient {
 		}
 	}
 
+	/**
+	 * Upload any files named in a `filesNeeded` rejection. Returns the hashes it could not produce.
+	 */
+	private async uploadMissingFiles(
+		filesNeeded: string[],
+		filesByHash: Map<string, UnderlayFile>,
+		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
+	): Promise<string[]> {
+		const unresolved: string[] = [];
+		for (const ref of filesNeeded) {
+			const hash = ref.replace(/^sha256:/, '');
+			let file = filesByHash.get(hash);
+			if (!file && resolveFileByHash) {
+				// biome-ignore lint/performance/noAwaitInLoops: bounded retry
+				file = (await resolveFileByHash(hash)) ?? undefined;
+			}
+			if (!file) {
+				unresolved.push(hash);
+				continue;
+			}
+			await this.uploadFile(file);
+		}
+		return unresolved;
+	}
+
+	/**
+	 * Poll a session whose commit was accepted asynchronously, until it reports a terminal status.
+	 *
+	 * A transient failure to *read* the session is not a failed commit — the finalize is running
+	 * server-side regardless — so read errors are swallowed and retried until the deadline.
+	 */
+	private async awaitAsyncCommit(
+		sessionId: string,
+		filesByHash: Map<string, UnderlayFile>,
+		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
+	): Promise<PushResult> {
+		const startedAt = Date.now();
+		const deadline = startedAt + this.pollTimeoutMs;
+		let delay = this.pollIntervalMs;
+		let lastLoggedAt = startedAt;
+
+		while (Date.now() < deadline) {
+			// biome-ignore lint/performance/noAwaitInLoops: polling is inherently sequential
+			await sleep(delay);
+			delay = Math.min(COMMIT_POLL_MAX_MS, Math.round(delay * 1.5));
+
+			// The server keeps finalizing regardless of whether we can read the session, so a failed
+			// poll must not fail the push. `request` throws once its own retries are exhausted, and
+			// a malformed body throws from `json` — both are transient from here, so both keep
+			// polling. If reads never recover, the deadline below produces the actionable timeout.
+			let session: {
+				status: 'open' | 'committing' | 'committed' | 'failed' | 'expired';
+				result?: {
+					semver: string;
+					hash: string;
+					recordCount: number;
+					fileCount: number;
+				} | null;
+				error?: unknown;
+			};
+			try {
+				const response = await this.request(
+					`${this.collectionPath()}/versions/negotiate/${sessionId}`,
+					{ method: 'GET' },
+				);
+				if (!response.ok) {
+					continue;
+				}
+				session = await this.json<typeof session>(response);
+			} catch {
+				continue;
+			}
+
+			if (session.status === 'committed') {
+				if (!session.result?.semver) {
+					throw new UnderlayPushError(
+						'Underlay reported the commit as committed but returned no version',
+						undefined,
+						session,
+					);
+				}
+				return { status: 'committed', ...session.result };
+			}
+
+			if (session.status === 'failed') {
+				const detail = session.error as
+					| { error?: string; filesNeeded?: string[] }
+					| undefined;
+				// Same recovery the synchronous 422 path gets: upload what the server is missing and
+				// push again. The failed session can't be re-committed, so this re-negotiates.
+				if (detail?.filesNeeded && detail.filesNeeded.length > 0) {
+					const unresolved = await this.uploadMissingFiles(
+						detail.filesNeeded,
+						filesByHash,
+						resolveFileByHash,
+					);
+					if (unresolved.length === 0) {
+						throw new UnderlayPushError(
+							'Commit rejected for missing files; they have been uploaded, retrying',
+							422,
+							detail,
+							true,
+						);
+					}
+					throw new UnderlayPushError(
+						`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
+							'Check the [underlay] warnings in the worker logs for skipped assets.',
+						422,
+						detail,
+					);
+				}
+				throw new UnderlayPushError(
+					detail?.error ?? 'Underlay reported the commit as failed',
+					undefined,
+					session.error,
+				);
+			}
+
+			if (session.status === 'expired') {
+				throw new UnderlayPushError(
+					'The negotiate session expired before the commit finished',
+					undefined,
+					session,
+				);
+			}
+
+			const now = Date.now();
+			if (now - lastLoggedAt >= COMMIT_LOG_INTERVAL_MS) {
+				lastLoggedAt = now;
+				console.info(
+					`[underlay] Commit still finalizing (${Math.round((now - startedAt) / 1000)}s elapsed)…`,
+				);
+			}
+		}
+
+		throw new UnderlayPushError(
+			`The commit did not finish within ${Math.round(this.pollTimeoutMs / 1000)}s. ` +
+				'It may still complete server-side; check the collection before re-pushing.',
+		);
+	}
+
 	private async commit(
 		sessionId: string,
 		filesByHash: Map<string, UnderlayFile>,
 		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
 	): Promise<PushResult> {
+		// Ask for an async finalize. An Underlay that predates async commit ignores the query param
+		// and answers 201 with the version inline, which the 2xx path below handles unchanged — so
+		// this is safe against either side being deployed first.
 		const doCommit = () =>
-			this.request(`${this.collectionPath()}/versions/negotiate/${sessionId}/commit`, {
-				method: 'POST',
-			});
+			this.request(
+				`${this.collectionPath()}/versions/negotiate/${sessionId}/commit?async=true`,
+				{ method: 'POST' },
+			);
 
 		let response = await doCommit();
 
@@ -629,17 +816,20 @@ export class UnderlayClient {
 				extraFields?: string[];
 			}>(response);
 			if (body.filesNeeded && body.filesNeeded.length > 0) {
-				for (const ref of body.filesNeeded) {
-					const hash = ref.replace(/^sha256:/, '');
-					let file = filesByHash.get(hash);
-					if (!file && resolveFileByHash) {
-						// biome-ignore lint/performance/noAwaitInLoops: bounded retry
-						file = (await resolveFileByHash(hash)) ?? undefined;
-					}
-					if (file) {
-						// biome-ignore lint/performance/noAwaitInLoops: bounded retry
-						await this.uploadFile(file);
-					}
+				const unresolved = await this.uploadMissingFiles(
+					body.filesNeeded,
+					filesByHash,
+					resolveFileByHash,
+				);
+				// Retrying the commit when we know we could not supply everything just trades a
+				// specific diagnosis for a generic "Commit failed". Same message the async path gives.
+				if (unresolved.length > 0) {
+					throw new UnderlayPushError(
+						`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
+							'Check the [underlay] warnings in the worker logs for skipped assets.',
+						422,
+						body,
+					);
 				}
 				response = await doCommit();
 			} else {
@@ -654,6 +844,11 @@ export class UnderlayClient {
 		if (!response.ok) {
 			const detail = await response.text();
 			throw new UnderlayPushError('Commit failed', response.status, detail);
+		}
+
+		// 202: the server is finalizing in the background; the outcome lands on the session.
+		if (response.status === 202) {
+			return this.awaitAsyncCommit(sessionId, filesByHash, resolveFileByHash);
 		}
 
 		const committed = await this.json<{

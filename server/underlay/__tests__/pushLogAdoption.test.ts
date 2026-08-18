@@ -36,7 +36,7 @@ describe('underlayPushLog — adopting a stale running row', () => {
 		const existing = {
 			id: 'log-1',
 			workerTaskId: 'same-task',
-			update: vi.fn(async () => {}),
+			update: vi.fn(async (_patch: Record<string, unknown>) => {}),
 		};
 		const adopt = async (row: typeof existing, workerTaskId: string | null) => {
 			if (workerTaskId && row.workerTaskId !== workerTaskId) {

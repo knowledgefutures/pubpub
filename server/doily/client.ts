@@ -198,13 +198,13 @@ export const resolveDoilyOrgId = async (communityId: string): Promise<string> =>
  */
 export const installDoilyOrg = async (options: {
 	communityId: string;
-	organizationId: string;
+	projectId: string;
 }): Promise<DoilyInstallation> => {
 	const res = await doilyFetch('/v1/installations', {
 		method: 'POST',
 		body: JSON.stringify({
 			externalId: options.communityId,
-			organizationId: options.organizationId,
+			projectId: options.projectId,
 		}),
 	});
 	if (!res.ok) {
@@ -216,14 +216,20 @@ export const installDoilyOrg = async (options: {
 };
 
 /**
- * Every organization this token can see. Only the reconciliation tool needs
- * this: the deposit path resolves by installation, and reintroducing a
- * list-and-scan there is what forked communities in the first place.
+ * Every project this token can see. Only the reconciliation tool needs this: the
+ * deposit path resolves by installation, and reintroducing a list-and-scan there
+ * is what forked communities in the first place.
+ *
+ * Deliberately /v1/projects and not /v1/organizations. Doily renamed the record
+ * that owns the deposits to `project` and then reused `organization` for the
+ * tenant ABOVE it, so the old path now answers about a different thing entirely
+ * — one organization can own many projects, and matching a community subdomain
+ * against it would resolve to the wrong level.
  */
-export const listDoilyOrganizations = async (): Promise<{ id: string; slug: string }[]> => {
-	const res = await doilyFetch('/v1/organizations');
+export const listDoilyProjects = async (): Promise<{ id: string; slug: string }[]> => {
+	const res = await doilyFetch('/v1/projects');
 	if (!res.ok) {
-		throw new Error(`Doily organization listing failed (${res.status})`);
+		throw new Error(`Doily project listing failed (${res.status})`);
 	}
 	return (await res.json()) as { id: string; slug: string }[];
 };
@@ -268,13 +274,13 @@ export type DoilyDepositSummary = {
  * deposit id.
  */
 export const listDoilyDeposits = async (options: {
-	organizationId: string;
+	projectId: string;
 	limit: number;
 	offset: number;
 }): Promise<{ items: DoilyDepositSummary[]; total: number }> => {
-	const { organizationId, limit, offset } = options;
+	const { projectId, limit, offset } = options;
 	const query = new URLSearchParams({
-		organizationId,
+		projectId,
 		limit: String(limit),
 		offset: String(offset),
 	});
@@ -295,13 +301,13 @@ export const submitDepositViaDoily = async (options: {
 	communityId: string;
 	depositJson: unknown;
 	primaryDoi: string;
-}): Promise<{ organizationId: string; records: DoilyRecordResult[] }> => {
+}): Promise<{ projectId: string; records: DoilyRecordResult[] }> => {
 	const { communityId, depositJson, primaryDoi } = options;
-	const organizationId = await resolveDoilyOrgId(communityId);
+	const projectId = await resolveDoilyOrgId(communityId);
 
 	const res = await doilyFetch('/v1/pubpub/deposits', {
 		method: 'POST',
-		body: JSON.stringify({ organizationId, depositJson, primaryDoi }),
+		body: JSON.stringify({ projectId, depositJson, primaryDoi }),
 	});
 
 	if (res.status === 400) {
@@ -327,5 +333,5 @@ export const submitDepositViaDoily = async (options: {
 		);
 	}
 
-	return { organizationId, records };
+	return { projectId, records };
 };

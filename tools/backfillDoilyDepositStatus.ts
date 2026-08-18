@@ -96,13 +96,13 @@ const getDoilyCommunities = async (subdomain: string | null) => {
 	);
 };
 
-/** Every deposit Doily holds for an organization, keyed by lowercased DOI. */
-const fetchDepositsByDoi = async (organizationId: string) => {
+/** Every deposit Doily holds for a project, keyed by lowercased DOI. */
+const fetchDepositsByDoi = async (projectId: string) => {
 	const byDoi = new Map<string, DoilyDepositSummary>();
 	let offset = 0;
 	for (;;) {
 		// biome-ignore lint/performance/noAwaitInLoops: offset pagination is inherently sequential, the next offset depends on how many items this response returned
-		const page = await listDoilyDeposits({ organizationId, limit: PAGE_SIZE, offset });
+		const page = await listDoilyDeposits({ projectId, limit: PAGE_SIZE, offset });
 		for (const item of page.items) {
 			if (!item.doi) {
 				continue;
@@ -159,14 +159,14 @@ const getDepositedTargets = async (communityId: string): Promise<Target[]> => {
 const backfillCommunity = async (community: { id: string; subdomain: string }) => {
 	const counts = { matched: 0, updated: 0, unchanged: 0, unknownToDoily: 0, noRecord: 0 };
 
-	const organizationId = await findDoilyOrgId(community.id);
-	if (!organizationId) {
-		warn(`${community.subdomain} has no Doily organization yet, skipping`);
+	const projectId = await findDoilyOrgId(community.id);
+	if (!projectId) {
+		warn(`${community.subdomain} has no Doily project yet, skipping`);
 		return counts;
 	}
 
 	const [depositsByDoi, targets] = await Promise.all([
-		fetchDepositsByDoi(organizationId),
+		fetchDepositsByDoi(projectId),
 		getDepositedTargets(community.id),
 	]);
 	log(

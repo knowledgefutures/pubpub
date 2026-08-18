@@ -41,7 +41,11 @@ import {
 	getUnderlayIntegrationWithKey,
 	recordPushResult,
 } from '../../server/underlayIntegration/queries';
-import { applyPushCache, getPushCacheEntries } from '../../server/underlayPushEntry/queries';
+import {
+	applyPushCache,
+	getPushCacheEntries,
+	upsertPushCacheEntries,
+} from '../../server/underlayPushEntry/queries';
 import { beginPushLog, finishPushLog } from '../../server/underlayPushLog/queries';
 import { getReleaseHtml } from './communityExport';
 
@@ -114,55 +118,16 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 
 		const collections = await Collection.findAll({ where: { communityId } });
 
-		// Cheap hydration: attributions, collectionPubs, edges, and release metadata — but NOT the
-		// ProseMirror docs. Docs are loaded lazily per pub only when that pub must be (re)rendered.
-		const pubs = await Pub.findAll({
-			where: { communityId },
-			include: [
-				{
-					model: Release,
-					as: 'releases',
-					separate: true,
-					order: [['historyKey', 'ASC']],
-				},
-				{
-					model: PubAttribution,
-					as: 'attributions',
-					include: [includeUserModel({ as: 'user' })],
-				},
-				{ model: CollectionPub, as: 'collectionPubs' },
-				{ model: Export, as: 'exports' },
-				{
-					model: PubEdge,
-					as: 'outboundEdges',
-					include: [{ model: ExternalPublication, as: 'externalPublication' }],
-				},
-			],
-			order: [['createdAt', 'ASC']],
-		});
-
-		const facets = await fetchFacetsForScopeIds({ pub: pubs.map((p) => p.id) }, [
-			...RENDER_FACET_NAMES,
-		]);
-
 		// Release → docId and pub → releaseIds, so docs can be fetched lazily by pub.
 		const docIdByReleaseId = new Map<string, string>();
 		const releaseIdsByPubId = new Map<string, string[]>();
 		const attributionsByPubId = new Map<string, unknown[]>();
-		for (const pub of pubs) {
-			attributionsByPubId.set(
-				pub.id,
-				(pub.attributions ?? []).map((a) => a.toJSON()),
-			);
-			const releaseIds: string[] = [];
-			for (const release of pub.releases ?? []) {
-				releaseIds.push(release.id);
-				if (release.docId) {
-					docIdByReleaseId.set(release.id, release.docId);
-				}
-			}
-			releaseIdsByPubId.set(pub.id, releaseIds);
-		}
+		// pubId → the pub's fully-resolved facet cascade, retained for the lazy render below. Plain
+		// values, not model instances: a few small objects per pub.
+		const resolvedFacetsByPubId = new Map<string, unknown>();
+		const pubInputs: PubInput[] = [];
+		const pubUpdatedAt: Record<string, Date> = {};
+		const pubFacetsSignature: Record<string, string> = {};
 
 		// Lazy doc loading: fetch a pub's release docs once, on first render of that pub.
 		const docByReleaseId = new Map<string, DocJson>();
@@ -251,10 +216,23 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			return undefined;
 		};
 
-		const pubInputs: PubInput[] = pubs.map((pub) => {
+		// Hydrate in chunks. A community's pubs are loaded as Sequelize model instances, which cost
+		// several times what the plain PubInput we derive from them does; loading all of them at once
+		// put peak memory in proportion to the community. Chunking keeps only CHUNK pubs' instances
+		// live at a time — the derived plain objects are all we retain.
+		const PUB_HYDRATION_CHUNK = 250;
+		const pubIdRows = (await Pub.findAll({
+			where: { communityId },
+			attributes: ['id'],
+			order: [['createdAt', 'ASC']],
+			raw: true,
+		})) as unknown as { id: string }[];
+		const orderedPubIds = pubIdRows.map((row) => row.id);
+
+		const toPubInput = (pub: Pub): PubInput => {
 			// License comes from the already-resolved facet cascade (no extra query); enrich the raw
 			// kind with the SPDX id + canonical URI via the shared license table.
-			const pubFacets = facets.pub[pub.id] as
+			const pubFacets = resolvedFacetsByPubId.get(pub.id) as
 				| { License?: { value?: { kind?: string } } }
 				| undefined;
 			const licenseKind = pubFacets?.License?.value?.kind;
@@ -335,22 +313,78 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 						historyKey: e.historyKey,
 					})),
 			};
-		});
+		};
 
-		const pubUpdatedAt: Record<string, Date> = {};
-		for (const pub of pubs) {
-			pubUpdatedAt[pub.id] = pub.updatedAt;
-		}
+		for (let i = 0; i < orderedPubIds.length; i += PUB_HYDRATION_CHUNK) {
+			const chunkIds = orderedPubIds.slice(i, i + PUB_HYDRATION_CHUNK);
 
-		// Facet change signal. `fetchFacetsForScopeIds({ pub })` already resolved the full
-		// community→collection→pub cascade for us (no extra query), so `facets.pub[pubId]` is the exact
-		// resolved facet stack that feeds getReleaseHtml. Hashing that value gives cascade-correct
-		// invalidation for free: a community facet edit changes every pub's resolved value; a collection
-		// edit changes only that collection's pubs; a pub edit changes only that pub. It's value-based,
-		// so a no-op facet edit that doesn't change the effective value won't force a needless re-render.
-		const pubFacetsSignature: Record<string, string> = {};
-		for (const pub of pubs) {
-			pubFacetsSignature[pub.id] = computeFacetsSignature(facets.pub[pub.id]);
+			// `separate: true` on every hasMany. Without it Sequelize emits ONE query joining
+			// attributions × collectionPubs × exports × outboundEdges, whose row count is the product
+			// of those four per pub — each row repeating the pub's full payload (description,
+			// htmlDescription, metadata, …). On a large community with long author lists and several
+			// export formats that product is enormous, and materializing it is what exhausted the
+			// worker heap. Separate queries make the cost additive instead of multiplicative.
+			// biome-ignore lint/performance/noAwaitInLoops: chunks are sequential to bound memory
+			const chunkPubs = await Pub.findAll({
+				where: { id: chunkIds },
+				include: [
+					{
+						model: Release,
+						as: 'releases',
+						separate: true,
+						order: [['historyKey', 'ASC']],
+					},
+					{
+						model: PubAttribution,
+						as: 'attributions',
+						separate: true,
+						include: [includeUserModel({ as: 'user' })],
+					},
+					{ model: CollectionPub, as: 'collectionPubs', separate: true },
+					{ model: Export, as: 'exports', separate: true },
+					{
+						model: PubEdge,
+						as: 'outboundEdges',
+						separate: true,
+						include: [{ model: ExternalPublication, as: 'externalPublication' }],
+					},
+				],
+			});
+
+			// Facet change signal. `fetchFacetsForScopeIds({ pub })` resolves the full
+			// community→collection→pub cascade, so this is the exact resolved facet stack that feeds
+			// getReleaseHtml. Hashing that value gives cascade-correct invalidation for free: a
+			// community facet edit changes every pub's resolved value; a collection edit changes only
+			// that collection's pubs; a pub edit changes only that pub. It's value-based, so a no-op
+			// facet edit that doesn't change the effective value won't force a needless re-render.
+			const chunkFacets = await fetchFacetsForScopeIds({ pub: chunkIds }, [
+				...RENDER_FACET_NAMES,
+			]);
+
+			// Preserve the global createdAt ordering: `where: { id: [...] }` does not guarantee it.
+			const byId = new Map(chunkPubs.map((pub) => [pub.id, pub]));
+			for (const pubId of chunkIds) {
+				const pub = byId.get(pubId);
+				if (!pub) {
+					continue;
+				}
+				resolvedFacetsByPubId.set(pubId, chunkFacets.pub[pubId]);
+				pubFacetsSignature[pubId] = computeFacetsSignature(chunkFacets.pub[pubId]);
+				pubUpdatedAt[pubId] = pub.updatedAt;
+				attributionsByPubId.set(
+					pubId,
+					(pub.attributions ?? []).map((a) => a.toJSON()),
+				);
+				const releaseIds: string[] = [];
+				for (const release of pub.releases ?? []) {
+					releaseIds.push(release.id);
+					if (release.docId) {
+						docIdByReleaseId.set(release.id, release.docId);
+					}
+				}
+				releaseIdsByPubId.set(pubId, releaseIds);
+				pubInputs.push(toPubInput(pub));
+			}
 		}
 
 		const renderReleaseHtml = async ({
@@ -369,7 +403,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 				return null;
 			}
 			// The legacy renderer's facet/metadata types are broad; cast at this boundary only.
-			const pubFacets = facets.pub[pub.id] as any;
+			const pubFacets = resolvedFacetsByPubId.get(pub.id) as any;
 			const metadata = {
 				attributions: attributionsByPubId.get(pub.id) ?? [],
 				licenseKind: pubFacets?.License?.value?.kind,
@@ -491,6 +525,14 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		// the no-op signature below so a readme-only edit isn't skipped as "no changes".
 		const pushMetadata = integration.readme ? { readme: integration.readme } : undefined;
 
+		// The collection must exist before any file can be uploaded into it, and the streaming
+		// uploader below runs during mapping — so this moves ahead of the build (it used to sit just
+		// before negotiate). Creating it early is harmless: it was going to be created either way,
+		// and a push that fails afterwards just leaves an empty collection with no versions.
+		await client.ensureCollection();
+
+		let uploadedFileCount = 0;
+		let checkpointedPubs = 0;
 		const cacheEntries = await getPushCacheEntries(integration.id);
 		const incremental = await buildIncrementalPush({
 			community: communityInput,
@@ -505,6 +547,23 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			fetchAsset,
 			onAssetWarning: collectAssetWarning,
 			assetCache,
+			// Stream each pub's files up as it is mapped rather than holding every release's HTML
+			// and every PDF/EPUB export in memory until commit. Peak file memory becomes one pub's
+			// worth, regardless of how large the community is.
+			uploadFile: (file) => {
+				uploadedFileCount += 1;
+				return client.putFile(file);
+			},
+			// Checkpoint progress so a push that dies partway (worker timeout, restart, crash) is
+			// resumable: the pubs already mapped and uploaded come back as cache hits next attempt
+			// instead of being re-rendered and re-uploaded from scratch.
+			flushCacheEntries: async (entries) => {
+				await upsertPushCacheEntries(integration.id, entries);
+				checkpointedPubs += entries.length;
+				console.info(
+					`[underlay] Checkpointed ${checkpointedPubs} pub(s); ${uploadedFileCount} file(s) uploaded so far.`,
+				);
+			},
 		});
 
 		// Client-side no-op guard: identical content since the last push → skip entirely.
@@ -530,10 +589,9 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		}
 
 		console.info(
-			`[underlay] Mapped ${incremental.stats.totalPubs} pub(s): ${incremental.stats.cacheHits} cache hit(s), ${incremental.stats.cacheMisses} re-mapped. Negotiating…`,
+			`[underlay] Mapped ${incremental.stats.totalPubs} pub(s): ${incremental.stats.cacheHits} cache hit(s), ${incremental.stats.cacheMisses} re-mapped, ${uploadedFileCount} file(s) streamed. Negotiating…`,
 		);
 
-		await client.ensureCollection();
 		const baseVersion = await client.getBaseVersion();
 		const result = await client.push(
 			incremental.payload,
@@ -544,10 +602,15 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 
 		const warnings: AssetWarning[] = [...assetWarnings.values()];
 		if (warnings.length > 0) {
+			// Log a sample, not the whole set: a large community can skip tens of thousands of
+			// assets, and joining them all produced a single multi-megabyte log line.
+			const LOGGED = 50;
+			const shown = warnings.slice(0, LOGGED);
+			const more = warnings.length - shown.length;
 			console.warn(
-				`[underlay] Push completed with ${warnings.length} skipped asset(s):\n${warnings
+				`[underlay] Push completed with ${warnings.length} skipped asset(s):\n${shown
 					.map((w) => `  - ${w.assetUrl} (pub ${w.pubId}): ${w.reason}`)
-					.join('\n')}`,
+					.join('\n')}${more > 0 ? `\n  … and ${more} more` : ''}`,
 			);
 		}
 

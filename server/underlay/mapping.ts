@@ -60,8 +60,17 @@ export type ManifestEntry = { id: string; type: string; hash: string; private?: 
 export type UnderlayPushPayload = {
 	records: UnderlayRecord[];
 	schemas: Record<string, JsonSchema>;
-	/** Deduplicated by hash. */
+	/**
+	 * Deduplicated by hash. Empty when the push streams files (see `fileHashes`): bytes are uploaded
+	 * as each pub is mapped and then dropped, so nothing proportional to the collection is retained.
+	 */
 	files: UnderlayFile[];
+	/**
+	 * Every file hash this version references, whether or not its bytes are still in `files`. The
+	 * streaming path uploads bytes during mapping and keeps only hashes, so this — not `files` — is
+	 * what the negotiate call must declare. Falls back to the hashes of `files` when omitted.
+	 */
+	fileHashes?: string[];
 	/**
 	 * Precomputed full manifest. Set by the incremental push path, where the manifest spans both
 	 * freshly-mapped records and records reused from the push cache (whose data is not in `records`).

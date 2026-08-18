@@ -194,6 +194,15 @@ export const envSchema = z.object({
 
 	// ── Worker ───────────────────────────────────────────────────────────
 	WORKER: booleanish.describe('Set to true when running as a standalone worker process'),
+	WORKER_MAX_OLD_SPACE_MB: z.coerce
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Heap ceiling (MB) for each worker thread. Unset means Node derives it from host memory, ' +
+				'which makes OOM behaviour differ between machines. Set it to make failures reproducible.',
+		),
 	DEFAULT_QUEUE_TASK_PRIORITY: z.coerce
 		.number()
 		.int()

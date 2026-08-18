@@ -197,6 +197,7 @@ export const envSchema = z.object({
 	WORKER_MAX_OLD_SPACE_MB: z.coerce
 		.number()
 		.int()
+		.positive()
 		.optional()
 		.describe(
 			'Heap ceiling (MB) for each worker thread. Unset means Node derives it from host memory, ' +

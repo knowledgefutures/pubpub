@@ -697,14 +697,11 @@ export class UnderlayClient {
 			await sleep(delay);
 			delay = Math.min(COMMIT_POLL_MAX_MS, Math.round(delay * 1.5));
 
-			const response = await this.request(
-				`${this.collectionPath()}/versions/negotiate/${sessionId}`,
-				{ method: 'GET' },
-			);
-			if (!response.ok) {
-				continue;
-			}
-			const session = await this.json<{
+			// The server keeps finalizing regardless of whether we can read the session, so a failed
+			// poll must not fail the push. `request` throws once its own retries are exhausted, and
+			// a malformed body throws from `json` — both are transient from here, so both keep
+			// polling. If reads never recover, the deadline below produces the actionable timeout.
+			let session: {
 				status: 'open' | 'committing' | 'committed' | 'failed' | 'expired';
 				result?: {
 					semver: string;
@@ -713,7 +710,19 @@ export class UnderlayClient {
 					fileCount: number;
 				} | null;
 				error?: unknown;
-			}>(response);
+			};
+			try {
+				const response = await this.request(
+					`${this.collectionPath()}/versions/negotiate/${sessionId}`,
+					{ method: 'GET' },
+				);
+				if (!response.ok) {
+					continue;
+				}
+				session = await this.json<typeof session>(response);
+			} catch {
+				continue;
+			}
 
 			if (session.status === 'committed') {
 				if (!session.result?.semver) {
@@ -807,7 +816,21 @@ export class UnderlayClient {
 				extraFields?: string[];
 			}>(response);
 			if (body.filesNeeded && body.filesNeeded.length > 0) {
-				await this.uploadMissingFiles(body.filesNeeded, filesByHash, resolveFileByHash);
+				const unresolved = await this.uploadMissingFiles(
+					body.filesNeeded,
+					filesByHash,
+					resolveFileByHash,
+				);
+				// Retrying the commit when we know we could not supply everything just trades a
+				// specific diagnosis for a generic "Commit failed". Same message the async path gives.
+				if (unresolved.length > 0) {
+					throw new UnderlayPushError(
+						`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
+							'Check the [underlay] warnings in the worker logs for skipped assets.',
+						422,
+						body,
+					);
+				}
 				response = await doCommit();
 			} else {
 				throw new UnderlayPushError(

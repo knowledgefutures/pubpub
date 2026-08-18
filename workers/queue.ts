@@ -66,7 +66,12 @@ const processTask = (channel) => async (message) => {
 	// the same task OOMs at different points on different machines and the failure is not
 	// reproducible locally. Setting WORKER_MAX_OLD_SPACE_MB pins it. Left unset by default so this
 	// change alters nothing until someone chooses a value.
-	const maxOldSpaceMb = Number(env.WORKER_MAX_OLD_SPACE_MB) || undefined;
+	// Must be positive: a zero or negative limit makes the Worker constructor throw, which would
+	// break every task type, not just this one. The schema rejects such values at boot; this guards
+	// the case where the constructor is reached anyway.
+	const configuredHeapMb = Number(env.WORKER_MAX_OLD_SPACE_MB);
+	const maxOldSpaceMb =
+		Number.isFinite(configuredHeapMb) && configuredHeapMb > 0 ? configuredHeapMb : undefined;
 
 	const worker = new Worker(path.join(__dirname, 'initWorker.js'), {
 		workerData: taskData,

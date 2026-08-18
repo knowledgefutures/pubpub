@@ -250,3 +250,63 @@ describe('underlay/client — authenticated reads', () => {
 		expect(seen.some((c) => c.url.endsWith('/collections'))).toBe(false);
 	});
 });
+
+describe('underlay/client — poll resilience and missing-file diagnosis', () => {
+	it('keeps polling when a session read fails, instead of failing a commit that is still running', async () => {
+		let polls = 0;
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (input: any) => {
+				const url = String(input);
+				if (url.endsWith('/versions/latest')) return json({ semver: '1.0.0' });
+				if (url.endsWith('/versions/negotiate')) {
+					return json({ session_id: 's1', needed_records: [], needed_files: [] });
+				}
+				if (url.includes('/commit')) return json({ session_id: 's1' }, 202);
+				if (url.endsWith('/versions/negotiate/s1')) {
+					polls += 1;
+					// A 200 whose body is not JSON: `json()` throws, which reaches the poll loop's
+					// catch directly. (Throwing from fetch instead would be absorbed by `request`'s
+					// own retry, so it would never exercise this path.)
+					if (polls <= 3) {
+						return new Response('<html>502 upstream</html>', {
+							status: 200,
+							headers: { 'Content-Type': 'text/html' },
+						});
+					}
+					return json({
+						status: 'committed',
+						result: { semver: '1.1.0', hash: 'h', recordCount: 1, fileCount: 0 },
+					});
+				}
+				throw new Error(`unexpected ${url}`);
+			}),
+		);
+
+		const result = await makeClient().push(payload(), '1.0.0', 'msg');
+		expect(result).toMatchObject({ status: 'committed', semver: '1.1.0' });
+		expect(polls).toBeGreaterThan(3);
+	});
+
+	it('reports which files could not be produced rather than a generic commit failure', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (input: any) => {
+				const url = String(input);
+				if (url.endsWith('/versions/latest')) return json({ semver: '1.0.0' });
+				if (url.endsWith('/versions/negotiate')) {
+					return json({ session_id: 's1', needed_records: [], needed_files: [] });
+				}
+				// Synchronous 422 naming a file the push cannot regenerate.
+				if (url.includes('/commit')) {
+					return json({ error: 'missing', filesNeeded: ['sha256:gone'] }, 422);
+				}
+				throw new Error(`unexpected ${url}`);
+			}),
+		);
+
+		await expect(makeClient().push(payload(), '1.0.0', 'msg')).rejects.toThrow(
+			/can no longer produce/,
+		);
+	});
+});

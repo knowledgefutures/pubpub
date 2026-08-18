@@ -308,15 +308,19 @@ export class UnderlayClient {
 		}
 	}
 
-	/** Returns the latest version semver, or null if the collection has no versions yet. */
+	/**
+	 * Returns the latest version semver, or null if the collection has no versions yet.
+	 *
+	 * Sent authenticated: Underlay resolves this route through the caller's access, so an anonymous
+	 * request against a PRIVATE collection 404s — which is indistinguishable here from "no versions
+	 * yet". That would push `base_version: null`, the server would reject the mismatch with a 409,
+	 * and the conflict retry would re-read the same 404 and fail again. Every push after the first
+	 * would die on a misleading version conflict the moment a collection was made private.
+	 */
 	async getBaseVersion(): Promise<string | null> {
-		const response = await this.request(
-			`${this.collectionPath()}/versions/latest`,
-			{
-				method: 'GET',
-			},
-			{ auth: false },
-		);
+		const response = await this.request(`${this.collectionPath()}/versions/latest`, {
+			method: 'GET',
+		});
 		if (response.status === 404) {
 			return null;
 		}
@@ -446,11 +450,9 @@ export class UnderlayClient {
 
 	/** Ensure the collection exists, creating it under the org if missing. */
 	async ensureCollection(): Promise<void> {
-		const response = await this.request(
-			this.collectionPath(),
-			{ method: 'GET' },
-			{ auth: false },
-		);
+		// Authenticated for the same reason as getBaseVersion: an anonymous probe of a private
+		// collection 404s, sending us down the create path for something that already exists.
+		const response = await this.request(this.collectionPath(), { method: 'GET' });
 		if (response.ok) {
 			return;
 		}

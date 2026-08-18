@@ -41,7 +41,11 @@ import {
 	getUnderlayIntegrationWithKey,
 	recordPushResult,
 } from '../../server/underlayIntegration/queries';
-import { applyPushCache, getPushCacheEntries } from '../../server/underlayPushEntry/queries';
+import {
+	applyPushCache,
+	getPushCacheEntries,
+	upsertPushCacheEntries,
+} from '../../server/underlayPushEntry/queries';
 import { beginPushLog, finishPushLog } from '../../server/underlayPushLog/queries';
 import { getReleaseHtml } from './communityExport';
 
@@ -528,6 +532,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		await client.ensureCollection();
 
 		let uploadedFileCount = 0;
+		let checkpointedPubs = 0;
 		const cacheEntries = await getPushCacheEntries(integration.id);
 		const incremental = await buildIncrementalPush({
 			community: communityInput,
@@ -548,6 +553,16 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			uploadFile: (file) => {
 				uploadedFileCount += 1;
 				return client.putFile(file);
+			},
+			// Checkpoint progress so a push that dies partway (worker timeout, restart, crash) is
+			// resumable: the pubs already mapped and uploaded come back as cache hits next attempt
+			// instead of being re-rendered and re-uploaded from scratch.
+			flushCacheEntries: async (entries) => {
+				await upsertPushCacheEntries(integration.id, entries);
+				checkpointedPubs += entries.length;
+				console.info(
+					`[underlay] Checkpointed ${checkpointedPubs} pub(s); ${uploadedFileCount} file(s) uploaded so far.`,
+				);
 			},
 		});
 
@@ -587,10 +602,15 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 
 		const warnings: AssetWarning[] = [...assetWarnings.values()];
 		if (warnings.length > 0) {
+			// Log a sample, not the whole set: a large community can skip tens of thousands of
+			// assets, and joining them all produced a single multi-megabyte log line.
+			const LOGGED = 50;
+			const shown = warnings.slice(0, LOGGED);
+			const more = warnings.length - shown.length;
 			console.warn(
-				`[underlay] Push completed with ${warnings.length} skipped asset(s):\n${warnings
+				`[underlay] Push completed with ${warnings.length} skipped asset(s):\n${shown
 					.map((w) => `  - ${w.assetUrl} (pub ${w.pubId}): ${w.reason}`)
-					.join('\n')}`,
+					.join('\n')}${more > 0 ? `\n  … and ${more} more` : ''}`,
 			);
 		}
 

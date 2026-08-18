@@ -88,6 +88,16 @@ export type IncrementalPushInput = {
 	 * server asks for them anyway.
 	 */
 	uploadFile?: (file: UnderlayFile) => Promise<void>;
+	/**
+	 * Checkpoint callback: persist cache entries for pubs whose records are computed AND whose files
+	 * have landed on the server. Called periodically during mapping, not just at the end.
+	 *
+	 * This is what makes a retry cheap. A push that dies partway (timeout, crash, restart) otherwise
+	 * throws away everything it did, because the cache was only written after a successful commit —
+	 * so the next attempt re-renders and re-uploads content the server already has. With
+	 * checkpointing, those pubs come back as cache hits and are skipped entirely.
+	 */
+	flushCacheEntries?: (entries: CachedPubEntry[]) => Promise<void>;
 };
 
 export type IncrementalPushResult = {
@@ -174,6 +184,72 @@ const recordHashesFrom = (
 	return out;
 };
 
+/**
+ * How many file uploads may be in flight at once.
+ *
+ * A push is dominated by upload latency, not bandwidth or CPU: each PUT is a round trip that spends
+ * almost all of its time waiting. Uploading serially made a large community's push take hours (a
+ * measured ~390ms per file × tens of thousands of files), enough to exceed the worker's own task
+ * timeout. Overlapping them removes that wall without raising peak memory much — at most this many
+ * files' bytes are resident at once.
+ */
+const UPLOAD_CONCURRENCY = 12;
+
+/** How many mapped pubs to accumulate before checkpointing their cache entries. */
+const CHECKPOINT_EVERY_PUBS = 200;
+
+/**
+ * Bounded-concurrency uploader. `submit` returns as soon as a slot is free (so the caller keeps
+ * mapping while uploads are in flight) and `drain` waits for everything to land.
+ *
+ * The first failure is latched and re-thrown from the next `submit`/`drain`, so a broken upload
+ * fails the push promptly instead of letting it continue and commit a version whose files never
+ * arrived.
+ */
+const createUploadPool = (
+	upload: (file: UnderlayFile) => Promise<void>,
+	concurrency: number = UPLOAD_CONCURRENCY,
+) => {
+	const inFlight = new Set<Promise<void>>();
+	let failure: unknown = null;
+
+	const start = (file: UnderlayFile) => {
+		const task: Promise<void> = upload(file)
+			.catch((err) => {
+				failure ??= err;
+			})
+			.finally(() => {
+				inFlight.delete(task);
+			});
+		inFlight.add(task);
+	};
+
+	return {
+		submit: async (file: UnderlayFile): Promise<void> => {
+			if (failure) {
+				throw failure;
+			}
+			while (inFlight.size >= concurrency) {
+				// biome-ignore lint/performance/noAwaitInLoops: waiting for a free slot is the point
+				await Promise.race(inFlight);
+				if (failure) {
+					throw failure;
+				}
+			}
+			start(file);
+		},
+		drain: async (): Promise<void> => {
+			while (inFlight.size > 0) {
+				// biome-ignore lint/performance/noAwaitInLoops: draining is inherently sequential
+				await Promise.race(inFlight);
+			}
+			if (failure) {
+				throw failure;
+			}
+		},
+	};
+};
+
 export const buildIncrementalPush = async (
 	input: IncrementalPushInput,
 ): Promise<IncrementalPushResult> => {
@@ -191,18 +267,21 @@ export const buildIncrementalPush = async (
 		onAssetWarning,
 		assetCache,
 		uploadFile,
+		flushCacheEntries,
 	} = input;
 
 	const streaming = Boolean(uploadFile);
 	// Hashes already pushed to the server this run, so a file shared across pubs (a reused image, an
-	// identical export) uploads once rather than per referencing pub.
+	// identical export) uploads once rather than per referencing pub. Marked on submit, not on
+	// completion, so a duplicate submitted while the first is still in flight is not sent twice.
 	const uploadedHashes = new Set<string>();
+	const pool = uploadFile ? createUploadPool(uploadFile) : null;
 	const streamFile = async (file: UnderlayFile): Promise<void> => {
-		if (!uploadFile || uploadedHashes.has(file.hash)) {
+		if (!pool || uploadedHashes.has(file.hash)) {
 			return;
 		}
-		await uploadFile(file);
 		uploadedHashes.add(file.hash);
+		await pool.submit(file);
 	};
 
 	const optionsSig = optionsSignature(options);
@@ -225,6 +304,7 @@ export const buildIncrementalPush = async (
 	const freshFilesByHash = new Map<string, UnderlayFile>();
 	const allFileHashes = new Set<string>();
 	const cacheUpserts: CachedPubEntry[] = [];
+	const pendingCheckpoint: CachedPubEntry[] = [];
 	let cacheHits = 0;
 	let cacheMisses = 0;
 
@@ -262,7 +342,7 @@ export const buildIncrementalPush = async (
 	// held for the rest of the push.
 	//
 	// Bytes are dropped only when they can be produced again. A scope file has no owning pub for
-	// `hydratePub` to re-map, so its ONLY recovery path is re-fetching the source URL via
+	// `hydratePubRecords` to re-map, so its ONLY recovery path is re-fetching the source URL via
 	// `assetCache.byHash` — which the localizer populates for assets.pubpub.org URLs alone. Dropping
 	// an externally-hosted branding image would make a later `needed_files` request for it
 	// unrecoverable, so those stay in memory. That set is small (branding images not on
@@ -314,7 +394,7 @@ export const buildIncrementalPush = async (
 		for (const record of records) {
 			pubIdByHash.set(hashRecord(record).hash, pub.id);
 		}
-		cacheUpserts.push({
+		const cacheEntry: CachedPubEntry = {
 			pubId: pub.id,
 			recordHashes: recordHashesFrom(records),
 			fileHashes: files.map((f) => f.hash),
@@ -322,7 +402,24 @@ export const buildIncrementalPush = async (
 			pubUpdatedAt: toIso(pubUpdatedAt[pub.id] ?? new Date(0).toISOString()),
 			optionsSignature: optionsSig,
 			facetsSignature: pubFacetsSignature[pub.id] ?? '',
-		});
+		};
+		cacheUpserts.push(cacheEntry);
+		pendingCheckpoint.push(cacheEntry);
+
+		// Drain before checkpointing: a pub may only be recorded as cached once its bytes have
+		// actually landed, not merely been queued. Submitting is asynchronous, so without this
+		// barrier a crash could leave a pub marked cached whose files never reached the server.
+		if (flushCacheEntries && pendingCheckpoint.length >= CHECKPOINT_EVERY_PUBS) {
+			await pool?.drain();
+			await flushCacheEntries(pendingCheckpoint.splice(0, pendingCheckpoint.length));
+		}
+	}
+
+	// Everything still queued must land before the manifest is declared: negotiate announces these
+	// hashes as present, so an unfinished upload would make the server ask for a file mid-commit.
+	await pool?.drain();
+	if (flushCacheEntries && pendingCheckpoint.length > 0) {
+		await flushCacheEntries(pendingCheckpoint.splice(0, pendingCheckpoint.length));
 	}
 
 	// Stable ordering (by type, then id) for a tidy manifest; the signature is order-independent.
@@ -340,36 +437,33 @@ export const buildIncrementalPush = async (
 	}
 
 	// ── Lazy re-hydration: produce a needed record/file for a cache-hit pub on demand. ──────────
-	const hydratedByPubId = new Map<
-		string,
-		{ records: Map<string, UnderlayRecord>; files: Map<string, UnderlayFile> }
-	>();
-	const hydratePub = async (pubId: string) => {
-		const cached = hydratedByPubId.get(pubId);
+	//
+	// Only RECORDS are memoized. Re-mapping a pub also produces its file bytes, and holding those
+	// would defeat the streaming this module exists to do: a resumed push can legitimately need to
+	// re-produce records for every pub it checkpointed (see below), so a cache that retained bytes
+	// would reaccumulate the entire collection in memory.
+	//
+	// Why a resumed push needs this at all: a checkpointed pub has had its files uploaded, but its
+	// records are only ever sent AFTER negotiate. A push that dies mid-mapping therefore leaves pubs
+	// marked cached whose records the server has never seen, and the next push gets them all back in
+	// `needed_records`. Records are metadata-sized (the HTML and exports live in files), so memoizing
+	// them is bounded; bytes are not.
+	const hydratedRecordsByPubId = new Map<string, Map<string, UnderlayRecord>>();
+	const hydratePubRecords = async (pubId: string): Promise<Map<string, UnderlayRecord>> => {
+		const cached = hydratedRecordsByPubId.get(pubId);
 		if (cached) {
 			return cached;
 		}
-		const pub = pubById.get(pubId);
-		if (!pub) {
-			const empty = {
-				records: new Map<string, UnderlayRecord>(),
-				files: new Map<string, UnderlayFile>(),
-			};
-			hydratedByPubId.set(pubId, empty);
-			return empty;
-		}
-		const { records, files } = await mapPub(pub);
 		const recordMap = new Map<string, UnderlayRecord>();
-		for (const record of records) {
-			recordMap.set(hashRecord(record).hash, record);
+		const pub = pubById.get(pubId);
+		if (pub) {
+			const { records } = await mapPub(pub);
+			for (const record of records) {
+				recordMap.set(hashRecord(record).hash, record);
+			}
 		}
-		const fileMap = new Map<string, UnderlayFile>();
-		for (const file of files) {
-			fileMap.set(file.hash, file);
-		}
-		const result = { records: recordMap, files: fileMap };
-		hydratedByPubId.set(pubId, result);
-		return result;
+		hydratedRecordsByPubId.set(pubId, recordMap);
+		return recordMap;
 	};
 
 	const resolveRecordByHash = async (hash: string): Promise<UnderlayRecord | null> => {
@@ -377,7 +471,7 @@ export const buildIncrementalPush = async (
 		if (!pubId) {
 			return null;
 		}
-		return (await hydratePub(pubId)).records.get(hash) ?? null;
+		return (await hydratePubRecords(pubId)).get(hash) ?? null;
 	};
 	const resolveFileByHash = async (hash: string): Promise<UnderlayFile | null> => {
 		// A cache-resolved file (e.g. a scope image) has no bytes in memory — fetch them from the
@@ -404,7 +498,15 @@ export const buildIncrementalPush = async (
 		if (!pubId) {
 			return null;
 		}
-		return (await hydratePub(pubId)).files.get(hash) ?? null;
+		const pub = pubById.get(pubId);
+		if (!pub) {
+			return null;
+		}
+		// Deliberately NOT memoized: retaining these bytes is precisely what makes a large push run
+		// out of memory. Underlay keeps uploaded blobs even when a push never commits, so this path
+		// is rare — worth re-mapping a pub for, not worth holding every pub's bytes against.
+		const { files } = await mapPub(pub);
+		return files.find((f) => f.hash === hash) ?? null;
 	};
 
 	const payload: UnderlayPushPayload = {

@@ -275,8 +275,11 @@ describe('underlay/incremental — buildIncrementalPush', () => {
 		expect(record).not.toBeNull();
 		expect(hashRecord(record!).hash).toBe(releaseHash); // producing it reproduces the requested hash
 		expect(file?.hash).toBe(fileHash);
-		// Both resolves hit the same pub → hydrated exactly once (memoized).
-		expect(mapPub).toHaveBeenCalledTimes(1);
+		// Twice, not once: RECORDS are memoized per pub, FILES deliberately are not. Caching the
+		// bytes that re-mapping yields would reaccumulate the whole collection in memory on a
+		// resumed push, which is exactly what streaming exists to prevent — so the file resolve
+		// re-maps rather than reading a retained byte cache.
+		expect(mapPub).toHaveBeenCalledTimes(2);
 		expect(mapPub).toHaveBeenCalledWith(expect.objectContaining({ id: 'p1' }));
 
 		// An unknown hash resolves to null rather than throwing.
@@ -573,5 +576,213 @@ describe('underlay/incremental — streaming file upload', () => {
 		const resolved = await result.payload.resolveFileByHash?.(wanted);
 		expect(resolved?.hash).toBe(wanted);
 		expect(hashBytes(resolved!.bytes)).toBe(wanted);
+	});
+});
+
+describe('underlay/incremental — upload concurrency and checkpointing', () => {
+	const manyPubs = Array.from({ length: 40 }, (_, i) => makePub(`p${i}`, 1));
+	const manyUpdatedAt = Object.fromEntries(
+		manyPubs.map((p) => [p.id, '2026-01-05T00:00:00.000Z']),
+	);
+
+	it('overlaps uploads instead of running them one at a time', async () => {
+		let inFlight = 0;
+		let peak = 0;
+		await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs: manyPubs,
+			pubUpdatedAt: manyUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async () => {
+				inFlight += 1;
+				peak = Math.max(peak, inFlight);
+				await new Promise((r) => setTimeout(r, 5));
+				inFlight -= 1;
+			},
+		});
+		// Serial uploads would never exceed one in flight; that was the hours-long behaviour.
+		expect(peak).toBeGreaterThan(1);
+	});
+
+	it('never leaves an upload in flight once the push is assembled', async () => {
+		let settled = 0;
+		let started = 0;
+		const result = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs: manyPubs,
+			pubUpdatedAt: manyUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async () => {
+				started += 1;
+				await new Promise((r) => setTimeout(r, 3));
+				settled += 1;
+			},
+		});
+		// The manifest declares these hashes as already present, so every byte must have landed.
+		expect(settled).toBe(started);
+		expect(started).toBe(result.payload.fileHashes!.length);
+	});
+
+	it('fails the push when an upload fails, rather than committing a version missing files', async () => {
+		await expect(
+			buildIncrementalPush({
+				community,
+				collections: [],
+				pubs: manyPubs,
+				pubUpdatedAt: manyUpdatedAt,
+				options: OPTIONS,
+				cacheEntries: [],
+				mapPub: makeMapPub({}),
+				uploadFile: async (file) => {
+					if (file.hash.length > 0) throw new Error('upload exploded');
+				},
+			}),
+		).rejects.toThrow(/upload exploded/);
+	});
+
+	it('checkpoints only pubs whose bytes have actually landed', async () => {
+		const landed = new Set<string>();
+		const checkpointed: string[] = [];
+		await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs: manyPubs,
+			pubUpdatedAt: manyUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async (file) => {
+				await new Promise((r) => setTimeout(r, 2));
+				landed.add(file.hash);
+			},
+			flushCacheEntries: async (entries) => {
+				for (const e of entries) {
+					// Every file this pub declares must already be on the server at checkpoint time.
+					for (const h of e.fileHashes) expect(landed.has(h)).toBe(true);
+					checkpointed.push(e.pubId);
+				}
+			},
+		});
+		expect(checkpointed.sort()).toEqual(manyPubs.map((p) => p.id).sort());
+	});
+
+	it('lets a resumed push skip pubs checkpointed by a previous failed attempt', async () => {
+		const firstAttemptEntries: CachedPubEntry[] = [];
+		await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs: manyPubs,
+			pubUpdatedAt: manyUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async () => {},
+			flushCacheEntries: async (entries) => {
+				firstAttemptEntries.push(...entries);
+			},
+		});
+
+		// Retry using only what the (failed) first attempt managed to checkpoint.
+		const retryCalls: Record<string, number> = {};
+		const uploads: string[] = [];
+		const retry = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs: manyPubs,
+			pubUpdatedAt: manyUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: firstAttemptEntries,
+			mapPub: makeMapPub(retryCalls),
+			uploadFile: async (f) => {
+				uploads.push(f.hash);
+			},
+		});
+
+		expect(retry.stats.cacheHits).toBe(manyPubs.length);
+		expect(retryCalls).toEqual({}); // nothing re-rendered
+		expect(uploads).toEqual([]); // nothing re-uploaded
+	});
+});
+
+describe('underlay/incremental — resumed push re-supplies records without hoarding bytes', () => {
+	const pubs = [makePub('p1', 1), makePub('p2', 1)];
+	const pubUpdatedAt = { p1: '2026-01-05T00:00:00.000Z', p2: '2026-01-06T00:00:00.000Z' };
+
+	/**
+	 * A checkpointed pub has had its FILES uploaded, but records are only sent after negotiate — so a
+	 * push that died mid-mapping leaves cache entries whose records the server has never seen. The
+	 * next push must be able to produce them on demand, without retaining the file bytes that
+	 * re-mapping also yields.
+	 */
+	const checkpointedEntriesFrom = async () => {
+		const first = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+			uploadFile: async () => {},
+			flushCacheEntries: async () => {},
+		});
+		return first.cacheUpserts;
+	};
+
+	it('produces records for a checkpointed pub the server never received', async () => {
+		const entries = await checkpointedEntriesFrom();
+		const calls: Record<string, number> = {};
+		const resumed = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: entries,
+			mapPub: makeMapPub(calls),
+			uploadFile: async () => {},
+		});
+
+		expect(resumed.stats.cacheHits).toBe(2);
+		expect(calls).toEqual({}); // nothing re-mapped during assembly
+
+		// The server asks for a cache-hit pub's record; it must be resolvable.
+		const wanted = Object.values(entries[0].recordHashes)[0].hash;
+		const record = await resumed.payload.resolveRecordByHash?.(wanted);
+		expect(record).toBeTruthy();
+	});
+
+	it('memoizes records but never retains file bytes between resolutions', async () => {
+		const entries = await checkpointedEntriesFrom();
+		const calls: Record<string, number> = {};
+		const resumed = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: entries,
+			mapPub: makeMapPub(calls),
+			uploadFile: async () => {},
+		});
+
+		const hashes = Object.values(entries[0].recordHashes).map((r) => r.hash);
+		await resumed.payload.resolveRecordByHash?.(hashes[0]);
+		await resumed.payload.resolveRecordByHash?.(hashes[1] ?? hashes[0]);
+		// Records are memoized: one re-map serves every record of that pub.
+		expect(calls.p1).toBe(1);
+
+		// Files are NOT memoized — resolving one re-maps rather than reading a retained byte cache.
+		// That re-map is the observable proof the bytes were dropped.
+		const fileHash = entries[0].fileHashes[0];
+		const file = await resumed.payload.resolveFileByHash?.(fileHash);
+		expect(file?.hash).toBe(fileHash);
+		expect(calls.p1).toBe(2);
 	});
 });

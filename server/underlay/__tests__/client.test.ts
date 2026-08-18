@@ -208,3 +208,45 @@ describe('underlay/client — async commit', () => {
 		);
 	});
 });
+
+describe('underlay/client — authenticated reads', () => {
+	it('sends credentials when reading the latest version', async () => {
+		const seen: { url: string; auth: boolean }[] = [];
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (input: any, init?: any) => {
+				const headers = new Headers(init?.headers);
+				seen.push({ url: String(input), auth: headers.has('Authorization') });
+				if (String(input).endsWith('/versions/latest')) {
+					return json({ semver: '3.0.0' });
+				}
+				return json({}, 404);
+			}),
+		);
+
+		const base = await makeClient().getBaseVersion();
+		expect(base).toBe('3.0.0');
+
+		// Anonymous, this 404s on a private collection and is misread as "no versions yet" — which
+		// then pushes base_version: null and dies on a 409 conflict.
+		const call = seen.find((c) => c.url.endsWith('/versions/latest'));
+		expect(call?.auth).toBe(true);
+	});
+
+	it('sends credentials when checking whether the collection exists', async () => {
+		const seen: { url: string; auth: boolean }[] = [];
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (input: any, init?: any) => {
+				const headers = new Headers(init?.headers);
+				seen.push({ url: String(input), auth: headers.has('Authorization') });
+				return json({ slug: 'coll' });
+			}),
+		);
+
+		await makeClient().ensureCollection();
+		expect(seen[0]?.auth).toBe(true);
+		// It existed, so nothing was created.
+		expect(seen.some((c) => c.url.endsWith('/collections'))).toBe(false);
+	});
+});

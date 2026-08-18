@@ -257,6 +257,16 @@ export class Community extends Model<
 	declare kfOrgId: string | null;
 
 	/**
+	 * Cache of the Doily organization this community deposits under. Doily's
+	 * installation record, keyed on the community id, is authoritative — this
+	 * only spares the deposit path an HTTP round trip per cold process. Null
+	 * means "not resolved yet", never "not on Doily".
+	 */
+	@Index
+	@Column(DataType.TEXT)
+	declare doilyOrgId: string | null;
+
+	/**
 	 * CMS mode: the community is only visible to members;
 	 * public visitors are shown a not-found page with a sign-in prompt.
 	 */

@@ -37,49 +37,95 @@ export class DoilyUnsupportedRecordError extends Error {
 	}
 }
 
-const orgIdByCommunityId = new Map<string, string>();
+/**
+ * Doily's slug cap. PubPub allows a 280-character subdomain, so a long one has
+ * to be truncated before it is offered as a slug or provisioning 400s. The slug
+ * is cosmetic now that the mapping is keyed on the community id, so truncating
+ * loses nothing that matters.
+ */
+const DOILY_SLUG_MAX = 48;
+
+const toDoilySlug = (subdomain: string) => subdomain.slice(0, DOILY_SLUG_MAX);
+
+export type DoilyInstallation = {
+	id: string;
+	appId: string;
+	organizationId: string;
+	externalId: string;
+};
 
 /**
- * The Doily organization for this community, or null if there is not one yet.
- * Never provisions: a read-only caller (the status backfill) has to be able to
- * ask the question without creating an organization as a side effect.
+ * Ask Doily which organization it has installed us into for this community.
+ *
+ * Keyed on `community.id`, which is why this replaced a scan for
+ * `org.slug === community.subdomain`: subdomains are editable, so after a
+ * rename the slug scan missed, the provisioning path below treated the
+ * community as new, and a second organization was created — future deposits
+ * landing there while the DOI history stayed behind under the old one.
  */
-export const findDoilyOrgId = async (communityId: string): Promise<string | null> => {
-	const cached = orgIdByCommunityId.get(communityId);
-	if (cached) {
-		return cached;
+const fetchInstallation = async (communityId: string): Promise<DoilyInstallation | null> => {
+	const query = new URLSearchParams({ externalId: communityId });
+	const res = await doilyFetch(`/v1/installations?${query.toString()}`);
+	if (!res.ok) {
+		throw new Error(`Doily installation lookup failed (${res.status})`);
 	}
+	const { installation } = (await res.json()) as { installation: DoilyInstallation | null };
+	return installation;
+};
 
+/**
+ * Persist the resolved id on the community. Doily's installation record is
+ * authoritative; this column only spares the deposit path an HTTP round trip
+ * per cold process, which is what the old process-local Map was for — except a
+ * Map also made the fork bug non-deterministic per dyno and invisible to any
+ * fix applied in the database.
+ */
+const cacheOrgId = async (communityId: string, organizationId: string) => {
+	await Community.update({ doilyOrgId: organizationId }, { where: { id: communityId } });
+};
+
+const readDoilyOrgId = async (
+	communityId: string,
+): Promise<{ organizationId: string | null; cached: boolean }> => {
 	const community = await Community.findOne({
 		where: { id: communityId },
-		attributes: ['id', 'subdomain'],
+		attributes: ['id', 'doilyOrgId'],
 	});
 	if (!community) {
 		throw new Error(`Community ${communityId} not found`);
 	}
-
-	const listRes = await doilyFetch('/v1/organizations');
-	if (!listRes.ok) {
-		throw new Error(`Doily organization lookup failed (${listRes.status})`);
+	if (community.doilyOrgId) {
+		return { organizationId: community.doilyOrgId, cached: true };
 	}
-	const orgs = (await listRes.json()) as { id: string; slug: string }[];
-	const existing = orgs.find((org) => org.slug === community.subdomain);
-	if (!existing) {
-		return null;
-	}
-	orgIdByCommunityId.set(communityId, existing.id);
-	return existing.id;
+	const installation = await fetchInstallation(communityId);
+	return { organizationId: installation?.organizationId ?? null, cached: false };
 };
 
 /**
- * One Doily organization per community (slug = subdomain). Provisioning
- * requires the community to be linked to a KF Auth org — Doily enforces
- * kfOrgId on every organization.
+ * The Doily organization for this community, or null if there is not one yet.
+ *
+ * Reads only — no provisioning AND no cache write. The distinction matters
+ * because tools/backfillDoilyDepositStatus.ts calls this in a dry run that
+ * promises to modify nothing, so populating the cache is left to
+ * resolveDoilyOrgId below, on the path that is already writing.
+ */
+export const findDoilyOrgId = async (communityId: string): Promise<string | null> => {
+	const { organizationId } = await readDoilyOrgId(communityId);
+	return organizationId;
+};
+
+/**
+ * One Doily organization per community, installed against the community id.
+ * Provisioning requires the community to be linked to a KF Auth org — Doily
+ * enforces kfOrgId on every organization.
  */
 export const resolveDoilyOrgId = async (communityId: string): Promise<string> => {
-	const existing = await findDoilyOrgId(communityId);
-	if (existing) {
-		return existing;
+	const existing = await readDoilyOrgId(communityId);
+	if (existing.organizationId) {
+		if (!existing.cached) {
+			await cacheOrgId(communityId, existing.organizationId);
+		}
+		return existing.organizationId;
 	}
 
 	const community = await Community.findOne({
@@ -95,20 +141,66 @@ export const resolveDoilyOrgId = async (communityId: string): Promise<string> =>
 			`Community "${community.subdomain}" has no KF Auth org — link it before enabling ${DOILY_FLAG}`,
 		);
 	}
-	const createRes = await doilyFetch('/v1/organizations', {
+	// One call, so there is no window in which the organization exists but the
+	// installation naming it does not. Doily adopts an organization that already
+	// carries this slug rather than creating a second one.
+	const createRes = await doilyFetch('/v1/installations', {
 		method: 'POST',
 		body: JSON.stringify({
-			name: community.title,
-			slug: community.subdomain,
-			kfOrgId: community.kfOrgId,
+			externalId: community.id,
+			organization: {
+				name: community.title,
+				slug: toDoilySlug(community.subdomain),
+				kfOrgId: community.kfOrgId,
+			},
 		}),
 	});
 	if (!createRes.ok) {
-		throw new Error(`Doily organization provisioning failed (${createRes.status})`);
+		const body = await createRes.text();
+		throw new Error(
+			`Doily organization provisioning failed (${createRes.status}): ${body.slice(0, 500)}`,
+		);
 	}
-	const created = (await createRes.json()) as { id: string };
-	orgIdByCommunityId.set(communityId, created.id);
-	return created.id;
+	const { installation } = (await createRes.json()) as { installation: DoilyInstallation };
+	await cacheOrgId(communityId, installation.organizationId);
+	return installation.organizationId;
+};
+
+/**
+ * Install this app against an organization that already exists. Used by the
+ * reconciliation tool, which knows the answer from PubPub's own deposit history
+ * and only needs Doily to record it — never to pick an organization itself.
+ */
+export const installDoilyOrg = async (options: {
+	communityId: string;
+	organizationId: string;
+}): Promise<DoilyInstallation> => {
+	const res = await doilyFetch('/v1/installations', {
+		method: 'POST',
+		body: JSON.stringify({
+			externalId: options.communityId,
+			organizationId: options.organizationId,
+		}),
+	});
+	if (!res.ok) {
+		const body = await res.text();
+		throw new Error(`Doily installation failed (${res.status}): ${body.slice(0, 500)}`);
+	}
+	const { installation } = (await res.json()) as { installation: DoilyInstallation };
+	return installation;
+};
+
+/**
+ * Every organization this token can see. Only the reconciliation tool needs
+ * this: the deposit path resolves by installation, and reintroducing a
+ * list-and-scan there is what forked communities in the first place.
+ */
+export const listDoilyOrganizations = async (): Promise<{ id: string; slug: string }[]> => {
+	const res = await doilyFetch('/v1/organizations');
+	if (!res.ok) {
+		throw new Error(`Doily organization listing failed (${res.status})`);
+	}
+	return (await res.json()) as { id: string; slug: string }[];
 };
 
 export type DoilyRecordResult = {

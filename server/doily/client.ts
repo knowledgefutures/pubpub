@@ -50,8 +50,29 @@ const toDoilySlug = (subdomain: string) => subdomain.slice(0, DOILY_SLUG_MAX);
 export type DoilyInstallation = {
 	id: string;
 	appId: string;
-	organizationId: string;
 	externalId: string;
+	/** Doily's current name for the thing that owns the deposits. */
+	projectId?: string;
+	/** Its previous name. Doily emits both for one release. */
+	organizationId?: string;
+};
+
+/**
+ * The id of the Doily record this community's deposits belong to.
+ *
+ * Doily renamed `organization` to `project` and emits both keys during the
+ * transition. Reading both means PubPub works against a Doily on either side of
+ * that rename, so neither repo has to deploy first and Doily can retire the
+ * alias without waiting on us.
+ */
+export const installationTargetId = (installation: DoilyInstallation): string => {
+	const id = installation.projectId ?? installation.organizationId;
+	if (!id) {
+		throw new Error(
+			`Doily installation ${installation.id} named neither projectId nor organizationId`,
+		);
+	}
+	return id;
 };
 
 /**
@@ -98,7 +119,10 @@ const readDoilyOrgId = async (
 		return { organizationId: community.doilyOrgId, cached: true };
 	}
 	const installation = await fetchInstallation(communityId);
-	return { organizationId: installation?.organizationId ?? null, cached: false };
+	return {
+		organizationId: installation ? installationTargetId(installation) : null,
+		cached: false,
+	};
 };
 
 /**
@@ -162,8 +186,9 @@ export const resolveDoilyOrgId = async (communityId: string): Promise<string> =>
 		);
 	}
 	const { installation } = (await createRes.json()) as { installation: DoilyInstallation };
-	await cacheOrgId(communityId, installation.organizationId);
-	return installation.organizationId;
+	const projectId = installationTargetId(installation);
+	await cacheOrgId(communityId, projectId);
+	return projectId;
 };
 
 /**

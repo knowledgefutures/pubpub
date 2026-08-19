@@ -30,6 +30,17 @@ const models = modelize`
 			}
 		}
 	}
+	Community cmsCommunity {
+		cmsMode: true
+		canonicalBaseUrl: "https://cms.example.org"
+		Member {
+			permissions: "admin"
+			User cmsCommunityAdmin {}
+		}
+		Pub cmsPub {
+			Release {}
+		}
+	}
 	User guest {}
 `;
 
@@ -177,6 +188,21 @@ it('lets community admins preview a DOI for collections in their community', asy
 		.expect(200);
 
 	expect(previewDois.collection).toEqual(expectedCollectionDoi);
+});
+
+it('deposits the canonical url for a CMS-mode community', async () => {
+	const { cmsCommunityAdmin, cmsCommunity, cmsPub } = models;
+	const agent = await login(cmsCommunityAdmin);
+	const {
+		body: { depositJson },
+	} = await agent
+		.get('/api/doiPreview')
+		.query({ target: 'pub', pubId: cmsPub.id, communityId: cmsCommunity.id })
+		.expect(200);
+
+	const depositXml = JSON.stringify(depositJson.deposit);
+	expect(depositXml).toContain(`https://cms.example.org/pub/${cmsPub.slug}`);
+	expect(depositXml).not.toContain('pubpub.org');
 });
 
 teardown(afterAll);

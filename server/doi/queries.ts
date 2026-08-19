@@ -68,6 +68,9 @@ const findCommunity = (communityId) =>
 			'subdomain',
 			'citeAs',
 			'publishAs',
+			// cmsMode gates canonicalCommunityUrl, so it must be selected here or
+			// deposits fall back to the pubpub.org URL for CMS-mode communities.
+			'cmsMode',
 			'canonicalBaseUrl',
 			'canonicalPubUrlTemplate',
 		],

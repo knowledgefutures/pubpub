@@ -109,6 +109,9 @@ describe('/api/facets', () => {
 				},
 			})
 			.expect(200);
+		// The ActivityItems are written from deferred afterCreate/afterUpdate hooks,
+		// so they aren't queryable until the deferred queue drains.
+		await finishDeferredTasks();
 		expect(
 			await fetchFacetsForScope({ pubId: pub.id }, ['PubHeaderTheme', 'CitationStyle']),
 		).toMatchObject({

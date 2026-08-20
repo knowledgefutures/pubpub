@@ -23,6 +23,17 @@ export type PushLogView = {
 const RETENTION_DAYS = 90;
 
 /**
+ * Cap on how many individual warnings a push log stores.
+ *
+ * Warnings are one-per-skipped-asset and a large community can skip tens of thousands (every legacy
+ * .epub whose object predates public-read ACLs, for instance). Persisting all of them put megabytes
+ * of JSONB in a single row — which `getPushHistory` then returns fifty rows of in one response, and
+ * the settings UI renders in full into a popover. The stored sample is for diagnosis; the true total
+ * is preserved separately on the log's message and on the integration's status text.
+ */
+const MAX_STORED_WARNINGS = 100;
+
+/**
  * A `running` log older than this is treated as stale (its worker died without finalizing), so it
  * neither blocks new pushes nor shows as "in progress" forever.
  */
@@ -76,7 +87,12 @@ export const beginPushLog = async (
 
 	const existing = await findRunningRow(communityId);
 	if (existing) {
-		if (workerTaskId && !existing.workerTaskId) {
+		// Re-point the row at whichever task is actually running it, even if it already names one.
+		// A `running` row can outlive its task (killed worker, redelivered message), and the next
+		// task adopts it — so keeping the dead task's id would strand the row: the queue finalizes
+		// crashed pushes via `failPushLogForWorkerTask`, which looks the row up BY workerTaskId and
+		// would silently match nothing, leaving it `running` forever.
+		if (workerTaskId && existing.workerTaskId !== workerTaskId) {
 			await existing.update({ workerTaskId });
 		}
 		return existing;
@@ -106,15 +122,24 @@ export const finishPushLog = async (
 	if (!row) {
 		return;
 	}
+	// Truncate defensively here rather than at the call site, so no caller can put an unbounded
+	// array into the row. The count is folded into the message so nothing is silently lost.
+	const allWarnings = result.warnings ?? [];
+	const truncated = allWarnings.length > MAX_STORED_WARNINGS;
+	const baseMessage = result.message ?? null;
+	const message = truncated
+		? `${baseMessage ? `${baseMessage} — ` : ''}${allWarnings.length} assets skipped (showing first ${MAX_STORED_WARNINGS})`
+		: baseMessage;
+
 	await row.update({
 		status: result.status,
 		finishedAt: new Date(),
 		semver: result.semver ?? null,
 		recordCount: result.recordCount ?? null,
 		fileCount: result.fileCount ?? null,
-		message: result.message ?? null,
+		message,
 		error: result.error ?? null,
-		warnings: result.warnings ?? [],
+		warnings: truncated ? allWarnings.slice(0, MAX_STORED_WARNINGS) : allWarnings,
 	});
 };
 
@@ -150,3 +175,26 @@ export const getPushState = async (
 /** True if a fresh push is already running for this community (concurrency guard). */
 export const hasRunningPush = async (communityId: string): Promise<UnderlayPushLog | null> =>
 	findRunningRow(communityId);
+
+/**
+ * Finalize a `running` log whose worker died before it could finalize itself.
+ *
+ * The task finalizes its own log from a try/catch, which covers every failure it can observe — but
+ * not the process dying underneath it (OOM, container replacement, the queue's watchdog terminating
+ * the thread). In those cases the queue records the error on the WorkerTask and the log is left at
+ * `running` forever, showing an in-progress push in the history that will never resolve. The queue
+ * calls this from its worker-error path to close that gap.
+ *
+ * Keyed on workerTaskId and scoped to `running`, so it can never overwrite a log the task already
+ * finalized (the ordinary case, where the task's own catch wrote a specific error first).
+ */
+export const failPushLogForWorkerTask = async (
+	workerTaskId: string,
+	error: string,
+): Promise<void> => {
+	const row = await UnderlayPushLog.findOne({ where: { workerTaskId, status: 'running' } });
+	if (!row) {
+		return;
+	}
+	await row.update({ status: 'error', finishedAt: new Date(), error });
+};

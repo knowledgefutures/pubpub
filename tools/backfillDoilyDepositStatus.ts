@@ -26,7 +26,7 @@ import { Op } from 'sequelize';
 import {
 	DOILY_FLAG,
 	type DoilyDepositSummary,
-	findDoilyOrgId,
+	findDoilyProjectId,
 	isDoilyConfigured,
 	listDoilyDeposits,
 } from 'server/doily/client';
@@ -159,7 +159,7 @@ const getDepositedTargets = async (communityId: string): Promise<Target[]> => {
 const backfillCommunity = async (community: { id: string; subdomain: string }) => {
 	const counts = { matched: 0, updated: 0, unchanged: 0, unknownToDoily: 0, noRecord: 0 };
 
-	const projectId = await findDoilyOrgId(community.id);
+	const projectId = await findDoilyProjectId(community.id);
 	if (!projectId) {
 		warn(`${community.subdomain} has no Doily project yet, skipping`);
 		return counts;

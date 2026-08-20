@@ -111,7 +111,7 @@ const getDoilyCommunities = async (subdomain: string | null) => {
 
 	const communities = await Community.findAll({
 		where,
-		attributes: ['id', 'subdomain', 'title', 'doilyOrgId'],
+		attributes: ['id', 'subdomain', 'title', 'doilyProjectId'],
 	});
 	return communities.filter((community) =>
 		isFeatureFlagEnabledForUserInCommunity({
@@ -201,7 +201,7 @@ const main = async () => {
 	for (const community of communities) {
 		const label = `${community.subdomain} (${community.id})`;
 
-		if (community.doilyOrgId) {
+		if (community.doilyProjectId) {
 			alreadyCached += 1;
 			continue;
 		}
@@ -250,14 +250,14 @@ const main = async () => {
 			// biome-ignore lint/performance/noAwaitInLoops: one install per community, and a failure should stop the run rather than fan out
 			await installDoilyOrg({ communityId: community.id, projectId: projectId });
 			// biome-ignore lint/performance/noAwaitInLoops: paired with the install above
-			await Community.update({ doilyOrgId: projectId }, { where: { id: community.id } });
+			await Community.update({ doilyProjectId: projectId }, { where: { id: community.id } });
 		}
 		installed += 1;
 	}
 
 	log('---');
 	log(`${installed} ${execute ? 'installed' : 'would be installed'}`);
-	log(`${alreadyCached} already had doilyOrgId cached`);
+	log(`${alreadyCached} already had doilyProjectId cached`);
 	log(`${noEvidence} have no Doily project yet`);
 	if (disagreed.length) {
 		warn(`${disagreed.length} renamed community/communities detected: ${disagreed.join(', ')}`);

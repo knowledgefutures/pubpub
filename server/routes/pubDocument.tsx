@@ -70,6 +70,8 @@ const renderPubDocument = (
 				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 				description: pubData.description,
 				doi: pubData.doi,
+				depositStatus: pubData.crossrefDepositStatus,
+				depositEverRegistered: pubData.crossrefDepositEverRegistered,
 				pdfDownloadUrl: getPdfDownloadUrl(initialData.communityData, pubData) || '',
 				image: pubData.avatar,
 				initialData,

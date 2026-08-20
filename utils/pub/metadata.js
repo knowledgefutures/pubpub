@@ -1,3 +1,4 @@
+import { getAbstractText } from 'utils/pub/abstract';
 import { getBestDownloadUrl } from 'utils/pub/downloads';
 import { pubUrl } from 'utils/canonicalUrls';
 
@@ -9,44 +10,13 @@ export const getPdfDownloadUrl = (communityData, pubData) => {
 	return null;
 };
 
-export const getTextAbstract = (docJson) => {
-	let abstract = '';
-	if (!docJson) return abstract;
-	const { content } = docJson;
-	const [firstChild, secondChild] = content;
-	const firstChildIsAbstractHeader =
-		firstChild &&
-		firstChild.type === 'heading' &&
-		firstChild.attrs.level === 1 &&
-		firstChild.content &&
-		firstChild.content.length > 0 &&
-		(firstChild.content[0].text || '').toLowerCase() === 'abstract';
-	if (firstChildIsAbstractHeader && secondChild) {
-		const { content: abstractContent } = secondChild;
-		if (abstractContent) {
-			abstractContent.forEach((item) => {
-				switch (item.type) {
-					case 'text':
-						abstract += item.text;
-						if (item.marks) {
-							item.marks.forEach((mark) => {
-								if (mark.type === 'link') {
-									abstract += ` <${mark.attrs.href}> `;
-								}
-							});
-						}
-						break;
-					case 'equation':
-						abstract += item.attrs.value;
-						break;
-					default:
-						break;
-				}
-			});
-		}
-	}
-	return abstract;
-};
+/**
+ * Kept as a re-export so existing callers are unchanged. The implementation
+ * moved to utils/pub/abstract.ts, which is now the single definition of the
+ * abstract convention — this file used to carry a second, subtly different copy
+ * of the match (no trim, unguarded attrs, hard_breaks dropped). See that module.
+ */
+export const getTextAbstract = getAbstractText;
 
 const noteTypes = {
 	chapter: 'book',

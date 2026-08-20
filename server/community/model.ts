@@ -257,6 +257,20 @@ export class Community extends Model<
 	declare kfOrgId: string | null;
 
 	/**
+	 * Cache of the Doily project this community deposits under. A project, not an
+	 * organization: Doily reused `organization` for the tenant level above the
+	 * project, so one organization can own many of these.
+	 *
+	 * Doily provisioning is idempotent by slug, so this cache is what stops a
+	 * repeat provisioning call: without it every cold process re-offers the slug
+	 * and pays an HTTP round trip to be told the project already exists. Null
+	 * means "not resolved yet", never "not on Doily".
+	 */
+	@Index
+	@Column(DataType.TEXT)
+	declare doilyProjectId: string | null;
+
+	/**
 	 * CMS mode: the community is only visible to members;
 	 * public visitors are shown a not-found page with a sign-in prompt.
 	 */

@@ -5,6 +5,7 @@ import React from 'react';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
 import ReactDOMServer from 'react-dom/server';
 
+import { isDoiPublic } from 'utils/crossref/depositStatus';
 import { isProd } from 'utils/environment';
 
 export const renderToNodeStream = (res, reactElement) => {
@@ -22,6 +23,13 @@ type MetaProps = {
 	image?: string | null;
 	attributions?: Attribution[];
 	doi?: string | null;
+	/**
+	 * Deposit status for `doi`, from the pub's crossrefDepositRecord. Undefined or
+	 * null means no deposit state is recorded, which every pre-Doily DOI looks
+	 * like and which must keep emitting the tags exactly as before.
+	 */
+	depositStatus?: string | null;
+	depositEverRegistered?: boolean;
 	publishedAt?: null | Date;
 	unlisted?: boolean;
 	collection?: Collection;
@@ -57,6 +65,8 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		image,
 		attributions,
 		doi,
+		depositStatus,
+		depositEverRegistered,
 		publishedAt,
 		unlisted,
 		collection,
@@ -351,7 +361,18 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
-	const finalDoi = doi || collection?.metadata?.doi;
+	// A DOI whose deposit is still in flight, or that Crossref rejected, does not
+	// resolve, and citation_doi is read by Google Scholar and by every reference
+	// manager, where an unresolvable DOI is worse than no DOI at all. When the pub
+	// has such a DOI the block is dropped entirely rather than falling through to
+	// the collection's DOI, which would advertise the collection's identifier as
+	// this pub's. isDoiPublic() is true for a NULL status, so nothing that renders
+	// today stops rendering.
+	const finalDoi = doi
+		? isDoiPublic(depositStatus, depositEverRegistered)
+			? doi
+			: null
+		: collection?.metadata?.doi;
 
 	if (finalDoi) {
 		outputComponents = [

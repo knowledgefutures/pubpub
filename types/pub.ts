@@ -5,6 +5,7 @@ import type {
 	Pub as PubModel,
 	Release as ReleaseModel,
 } from 'server/models';
+import type { DepositStatus } from 'utils/crossref/depositStatus';
 
 import type { PubAttribution } from './attribution';
 import type { Collection, CollectionPub } from './collection';
@@ -58,6 +59,9 @@ export type PubPageDiscussion = Prettify<
 
 export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPubs'> &
 	PubDocInfo & {
+		/** See SanitizedPubData: the pub page is served the sanitized shape. */
+		crossrefDepositStatus?: DepositStatus | null;
+		crossrefDepositEverRegistered?: boolean;
 		membersData?: {
 			members: Member[];
 		};
@@ -106,6 +110,18 @@ type CollectionPubWithAttributions = CollectionPub & {
 };
 
 export type SanitizedPubData = Pub & {
+	/**
+	 * Deposit status lifted out of the (manage-only) crossrefDepositRecord so
+	 * public surfaces can decide whether the DOI may be printed as final. NULL
+	 * means no deposit state is recorded. See utils/crossref/depositStatus.ts.
+	 */
+	crossrefDepositStatus: DepositStatus | null;
+	/**
+	 * Whether the DOI ever registered. Needed alongside the status because status
+	 * is per attempt: a rejected update to a live DOI reads 'failed', and hiding
+	 * that DOI would be worse than showing slightly stale metadata.
+	 */
+	crossrefDepositEverRegistered: boolean;
 	viewHash: string | null;
 	editHash: string | null;
 	reviewHash: string | null;

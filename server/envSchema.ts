@@ -131,6 +131,23 @@ export const envSchema = z.object({
 	// ── DataCite ─────────────────────────────────────────────────────────
 	DATACITE_DEPOSIT_URL: z.string().url().describe('DataCite DOI deposit endpoint URL'),
 
+	// ── Doily (Crossref deposit broker) ─────────────────────────────────
+	DOILY_URL: z
+		.string()
+		.url()
+		.optional()
+		.describe('Doily API base URL — with DOILY_API_TOKEN, enables the doilyDeposits flag path'),
+	DOILY_API_TOKEN: z
+		.string()
+		.optional()
+		.describe('Doily app token (doily_sk_…) for the pubpub app'),
+	DOILY_WEBHOOK_SECRET: z
+		.string()
+		.optional()
+		.describe(
+			'Doily webhook subscription secret (whsec_…), the HMAC key for POST /api/doily/webhook',
+		),
+
 	// ── Message Queues ──────────────────────────────────────────────────
 	CLOUDAMQP_URL: z.string().describe('CloudAMQP (RabbitMQ) connection URL'),
 

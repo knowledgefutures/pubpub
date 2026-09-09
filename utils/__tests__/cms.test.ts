@@ -5,7 +5,7 @@ import {
 	canonicalCommunityUrl,
 	canonicalPubUrl,
 } from 'utils/canonicalUrls';
-import { isAuthBypassPath, isCmsGateBypassPath } from 'utils/cms';
+import { isAuthBypassPath, isCmsGateBypassPath, isCmsGated } from 'utils/cms';
 
 const plainCommunity = { subdomain: 'demo', domain: null } as any;
 const cmsCommunity = {
@@ -88,5 +88,33 @@ describe('isCmsGateBypassPath', () => {
 		expect(isCmsGateBypassPath('/pub/my-pub')).toBe(false);
 		expect(isCmsGateBypassPath('/dashing-page')).toBe(false);
 		expect(isCmsGateBypassPath('/loginish')).toBe(false);
+	});
+});
+
+describe('isCmsGated', () => {
+	const path = '/pub/my-pub/draft';
+
+	it('turns away a public visitor to a CMS-mode community', () => {
+		expect(isCmsGated({ cmsMode: true, path, canView: false })).toBe(true);
+	});
+
+	it('lets an insider through — a member, superadmin, or access-link holder', () => {
+		expect(isCmsGated({ cmsMode: true, path, canView: true })).toBe(false);
+	});
+
+	it('does nothing at all when the community is not in CMS mode', () => {
+		expect(isCmsGated({ cmsMode: false, path, canView: false })).toBe(false);
+		expect(isCmsGated({ cmsMode: null, path, canView: false })).toBe(false);
+		expect(isCmsGated({ cmsMode: undefined, path, canView: false })).toBe(false);
+	});
+
+	it('never gates a bypass path, so members can still sign in and crawlers can read the rules', () => {
+		expect(isCmsGated({ cmsMode: true, path: '/login', canView: false })).toBe(false);
+		expect(isCmsGated({ cmsMode: true, path: '/dash/settings', canView: false })).toBe(false);
+		expect(isCmsGated({ cmsMode: true, path: '/robots.txt', canView: false })).toBe(false);
+	});
+
+	it('gates the community home, which no access hash can match', () => {
+		expect(isCmsGated({ cmsMode: true, path: '/', canView: false })).toBe(true);
 	});
 });

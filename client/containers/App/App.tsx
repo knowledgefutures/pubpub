@@ -79,9 +79,12 @@ const App = (props: Props) => {
 	// In CMS mode, public visitors get a not-found page; warn the members who
 	// can see the content that it isn't publicly visible. Only shown on public
 	// content views (pages, collections, and pub releases — not drafts).
+	// Keyed on community membership rather than merely being logged in: someone
+	// who got here through a sharing link can see the page without being a
+	// member, and telling them only members can see it is just confusing.
 	const showCmsModeBanner =
 		communityData.cmsMode &&
-		!!loginData.id &&
+		scopeData.activePermissions.canViewCommunity &&
 		(chunkName === 'Page' ||
 			chunkName === 'Collection' ||
 			(chunkName === 'Pub' && !!viewData.pubData?.isRelease));

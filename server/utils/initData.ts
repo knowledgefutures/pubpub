@@ -8,7 +8,7 @@ import { isUserMemberOfScope } from 'server/member/queries';
 import { UserNotification } from 'server/models';
 import { isUserSuperAdmin } from 'server/user/queries';
 import { getDismissedUserDismissables } from 'server/userDismissable/queries';
-import { isAuthBypassPath, isCmsGateBypassPath } from 'utils/cms';
+import { isAuthBypassPath, isCmsGated } from 'utils/cms';
 import { getAppCommit, isDuqDuq, isProd, isQubQub, shouldForceBasePubPub } from 'utils/environment';
 
 import { PubPubError } from './errors';
@@ -132,12 +132,15 @@ export const getInitialData = async (
 			: { domain: hostname };
 	const communityData = await getCommunity(locationData, whereQuery);
 
+	/* A spam-flagged community is hidden from everyone but its own members, with
+	   no way to opt a visitor back in -- so this gate needs nothing from the
+	   scope and stays here, ahead of the work below. The CMS-mode gate is the
+	   opposite (sharing links must keep working) and runs after getScope. */
 	const isSpamGated =
 		communityData.spamTag &&
 		communityData.spamTag.status !== 'confirmed-not-spam' &&
 		!isAuthBypassPath(req.path);
-	const isCmsGated = communityData.cmsMode && !isCmsGateBypassPath(req.path);
-	if (isSpamGated || isCmsGated) {
+	if (isSpamGated) {
 		const [isMemberOfCommunity, isSuperadmin] = await Promise.all([
 			isUserMemberOfScope({
 				userId: loginData.id,
@@ -146,10 +149,7 @@ export const getInitialData = async (
 			isUserSuperAdmin({ userId: loginData.id }),
 		]);
 		if (!isMemberOfCommunity && !isSuperadmin) {
-			if (isSpamGated) {
-				throw new PubPubError.CommunityIsSpamError();
-			}
-			throw new PubPubError.CommunityIsPrivateError();
+			throw new PubPubError.CommunityIsSpamError();
 		}
 	}
 
@@ -185,6 +185,31 @@ export const getInitialData = async (
 			await getNotificationData(user.id),
 			await getDismissedUserDismissables(user.id),
 		]);
+
+	/**
+	 * A CMS-mode community is invisible to the public, but a sharing link has to
+	 * keep working: authors review their proofs through one, and requiring
+	 * membership puts an account-provisioning step in front of every proof.
+	 *
+	 * `canView` is exactly the predicate we want. getScope raises it only for
+	 * members of the community/collection/pub, superadmins, and holders of an
+	 * access hash matching something in *this* URL. Neither public permissions
+	 * nor a pub being released raise it -- released pubs are visible because
+	 * `releases.length` is non-zero, a separate path -- so the community stays
+	 * hidden from the public while `?access=` links resolve normally.
+	 *
+	 * This has to run after getScope, which is where the access hash is
+	 * resolved; the spam gate above needs no scope and stays ahead of it.
+	 */
+	if (
+		isCmsGated({
+			cmsMode: communityData.cmsMode,
+			path: req.path,
+			canView: scopeData.activePermissions.canView,
+		})
+	) {
+		throw new PubPubError.CommunityIsPrivateError();
+	}
 
 	const cleanedCommunityData = sanitizeCommunity(
 		communityData,

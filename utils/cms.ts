@@ -29,3 +29,23 @@ export const isCmsGateBypassPath = (path: string) =>
 	/^\/sitemap[^/]*\.xml$/.test(path) ||
 	isAuthBypassPath(path) ||
 	matchesPrefix(path, ['/dash']);
+
+/**
+ * Should this request be turned away from a CMS-mode community?
+ *
+ * `canView` comes from `scopeData.activePermissions` and is the definition of
+ * an insider: getScope raises it only for members of the community, collection
+ * or pub, for superadmins, and for holders of an access hash matching
+ * something in the request's own URL. Public permissions do not raise it, and
+ * neither does a pub being released, so the community stays invisible to the
+ * public while sharing links keep working.
+ */
+export const isCmsGated = ({
+	cmsMode,
+	path,
+	canView,
+}: {
+	cmsMode: boolean | null | undefined;
+	path: string;
+	canView: boolean;
+}) => Boolean(cmsMode) && !isCmsGateBypassPath(path) && !canView;

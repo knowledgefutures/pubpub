@@ -5,6 +5,8 @@ import type { getProposedMetadata } from 'workers/tasks/import/metadata';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
+import { depositStatuses } from 'utils/crossref/depositStatus';
+
 import { baseSchema } from '../utils/baseSchema';
 import { collectionSchema } from './collection';
 import { collectionAttributionSchema } from './collectionAttribution';
@@ -195,6 +197,10 @@ export const getManyQuerySchema = z.object({
 
 export const sanitizedPubSchema = pubSchema.merge(
 	z.object({
+		// Nullable rather than optional: pubSanitize always sets it, and null is
+		// the meaningful value (no deposit state recorded for this pub).
+		crossrefDepositStatus: z.enum(depositStatuses).nullable(),
+		crossrefDepositEverRegistered: z.boolean(),
 		attributions: pubAttributionSchema.array(),
 		discussions: z.array(discussionSchema),
 		collectionPubs: z.array(

@@ -7,6 +7,7 @@ import dateFormat from 'dateformat';
 import { ClickToCopyButton, ContributorsList } from 'components';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getAllPubContributors } from 'utils/contributors';
+import { getDoiDisplay, isDoiPublic } from 'utils/crossref/depositStatus';
 import { usePageContext } from 'utils/hooks';
 import {
 	getPubCreatedDate,
@@ -21,7 +22,10 @@ import SmallHeaderButton from '../SmallHeaderButton';
 import './pubDetails.scss';
 
 type Props = {
-	pubData: Pub;
+	pubData: Pub & {
+		crossrefDepositStatus?: string | null;
+		crossrefDepositEverRegistered?: boolean;
+	};
 	onCloseHeaderDetails: (...args: any[]) => any;
 	communityData: {};
 };
@@ -31,7 +35,21 @@ const PubDetails = (props: Props) => {
 	const { collectionPubs } = pubData;
 	const contributors = getAllPubContributors(pubData, 'contributors');
 	const { scopeData } = usePageContext();
-	const { canView } = scopeData.activePermissions;
+	const { canView, canManage } = scopeData.activePermissions;
+
+	// A DOI whose deposit has not been confirmed is not a link we may ask a
+	// reader to click: doi.org answers 404 until the registrar has the record.
+	// Pending still shows the DOI (it is the pub's assigned identifier, and it
+	// will start resolving) but as text, not a promise. A rejected deposit is
+	// shown only to someone who can do something about it, with the way there.
+	const doiDisplay = getDoiDisplay(pubData.crossrefDepositStatus);
+	// A DOI that ever registered still resolves even when the latest attempt was
+	// rejected, so it stays printable. doiDisplay above still reports 'failed',
+	// which is what drives the manager-only caveat.
+	const doiIsPublic = isDoiPublic(
+		pubData.crossrefDepositStatus,
+		pubData.crossrefDepositEverRegistered,
+	);
 
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedDateString = getPubPublishedDateString(pubData);
@@ -76,7 +94,7 @@ const PubDetails = (props: Props) => {
 					)}
 				</div>
 				<div className="section citation-and-doi">
-					{pubData.doi && (
+					{pubData.doi && doiIsPublic && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
 							<ClickToCopyButton
@@ -86,6 +104,23 @@ const PubDetails = (props: Props) => {
 							>
 								{pubData.doi}
 							</ClickToCopyButton>
+						</React.Fragment>
+					)}
+					{pubData.doi && doiDisplay === 'pending' && (
+						<React.Fragment>
+							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
+							<div>
+								{pubData.doi} <i>(registration pending)</i>
+							</div>
+						</React.Fragment>
+					)}
+					{pubData.doi && doiDisplay === 'failed' && canManage && (
+						<React.Fragment>
+							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
+							<div>
+								{pubData.doi} <i>(registration failed)</i>{' '}
+								<a href={`/dash/pub/${pubData.slug}/settings`}>Resubmit</a>
+							</div>
 						</React.Fragment>
 					)}
 					<CitationsPreview pubData={pubData} />

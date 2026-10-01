@@ -15,6 +15,7 @@ import { assert, exists } from 'utils/assert';
 import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
 
 import DataciteDeposit from './DataciteDeposit';
+import DepositStatusCallout from './DepositStatusCallout';
 import './deposit.scss';
 
 import { UpdateDoi } from './UpdateDoi';
@@ -145,10 +146,18 @@ export default function Deposit(props: Props) {
 
 	const firstIntraWorkRelationship = resource && getFirstIntraWorkRelationship(resource);
 	const disabledDueToNoReleases = 'pub' in props && props.pub.releases?.length === 0;
+	// Deliberately still keyed on "a deposit exists" rather than "a deposit
+	// succeeded": a failed deposit does NOT unlock the DOI suffix again. Deposit
+	// state is per attempt, so a rejected *update* to a work whose DOI Crossref
+	// already registered also reads as failed, and letting the suffix be edited
+	// there would strand a live DOI pointing at nothing. The affordance for a
+	// failure is fixing the metadata and re-submitting, not renaming the DOI.
 	const crossrefDepositRecordId =
 		'pub' in props
 			? props.pub.crossrefDepositRecordId
 			: props.collection.crossrefDepositRecordId;
+	const depositRecord =
+		'pub' in props ? props.pub.crossrefDepositRecord : props.collection.crossrefDepositRecord;
 
 	let children: React.ReactNode;
 
@@ -171,6 +180,14 @@ export default function Deposit(props: Props) {
 			children = (
 				<>
 					{unapprovedWarning}
+					{!justSetDoi && (
+						<DepositStatusCallout
+							status={depositRecord?.status}
+							error={depositRecord?.error}
+							lastCheckedAt={depositRecord?.lastCheckedAt}
+							registrarName="DataCite"
+						/>
+					)}
 					{'pub' in props && resource && firstIntraWorkRelationship && (
 						<p>
 							This Pub will be cited as a member of the{' '}

@@ -20,7 +20,10 @@ const buttonTextByStatus = {
 	[SubmitDepositStatus.Previewing]: 'Generating Preview',
 	[SubmitDepositStatus.Previewed]: 'Submit Deposit',
 	[SubmitDepositStatus.Depositing]: 'Depositing',
-	[SubmitDepositStatus.Deposited]: 'DOI Deposited',
+	// Not "DOI Deposited": the registrar has only accepted the batch at this
+	// point and can still reject the record. The outcome is reported by the
+	// status callout next to this button, which is the only thing that knows it.
+	[SubmitDepositStatus.Deposited]: 'Deposit Submitted',
 };
 
 const getButtonText = (status: SubmitDepositStatus, depositRecord?: DepositRecord) => {

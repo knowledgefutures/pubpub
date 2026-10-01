@@ -25,6 +25,40 @@ const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease:
 	);
 };
 
+/**
+ * The Crossref deposit record is internal operational data — the full registrar
+ * payload, and (once deposit state lands) registrar error text. It is eager-loaded
+ * unconditionally by pubOptions for every pub query, which means it was being
+ * serialized into __INITIAL_DATA__ on every PUBLIC pub page.
+ *
+ * Only the manage-level DOI UI needs it: AssignDoi and DataciteDeposit read
+ * depositJson via utils/crossref/parseDeposit. Everything else that cares about
+ * deposit existence uses the `crossrefDepositRecordId` scalar on the pub itself,
+ * which is unaffected.
+ */
+const sanitizeCrossrefDepositRecord = (pubData, activePermissions) =>
+	activePermissions.canManage ? pubData.crossrefDepositRecord : null;
+
+/**
+ * The one bit of deposit state that is not operational data: whether the DOI has
+ * actually been registered. Every public surface that prints the DOI needs it
+ * (the Scholar meta tags, the citation strings, the pub header), and those render
+ * for readers who will never have canManage, so it cannot come from the record
+ * the gate above nulls out. A status string on its own leaks nothing: the DOI it
+ * describes is already on the page.
+ */
+const sanitizeCrossrefDepositStatus = (pubData) => pubData.crossrefDepositRecord?.status ?? null;
+
+/**
+ * Whether this DOI has ever registered, as a boolean rather than the timestamp,
+ * because that is all any display rule needs. Required alongside the status for
+ * the same reason the status is: `status` is per attempt, so a rejected update to
+ * a live DOI reads 'failed', and a reader-facing surface keying off status alone
+ * would hide a DOI that doi.org still resolves.
+ */
+const sanitizeCrossrefDepositEverRegistered = (pubData) =>
+	Boolean(pubData.crossrefDepositRecord?.firstRegisteredAt);
+
 const getFilteredExports = (pubData, isRelease) => {
 	const { exports, releases } = pubData;
 	if (!isRelease || !exports) {
@@ -101,6 +135,9 @@ export default (
 		...pubData,
 		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
+		crossrefDepositRecord: sanitizeCrossrefDepositRecord(pubData, activePermissions),
+		crossrefDepositStatus: sanitizeCrossrefDepositStatus(pubData),
+		crossrefDepositEverRegistered: sanitizeCrossrefDepositEverRegistered(pubData),
 		draft: isRelease ? null : pubData.draft,
 		submission: isRelease ? null : pubData.submission,
 		discussions,

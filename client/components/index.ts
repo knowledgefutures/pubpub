@@ -23,6 +23,7 @@ export { default as DashboardRowListing } from './DashboardRow/DashboardRowListi
 export { default as DatePicker } from './DatePicker/DatePicker';
 export { default as DataciteDeposit } from './Deposit/DataciteDeposit';
 export { default as Deposit } from './Deposit/Deposit';
+export { default as DepositStatusCallout } from './Deposit/DepositStatusCallout';
 export {
 	DevCommunitySwitcherMenu,
 	DevCommunitySwitcherMenuItems,

@@ -1,6 +1,7 @@
 export const superAdminTabKinds = [
 	'analytics',
 	'customDomains',
+	'featureFlags',
 	'depositTargets',
 	'ftpTargets',
 	'exploreCommunities',

@@ -7,6 +7,7 @@ import CommunityTemplates from './CommunityTemplates';
 import CustomDomains from './CustomDomains';
 import DepositTargets from './DepositTargets';
 import ExploreCommunities from './ExploreCommunities';
+import FeatureFlags from './FeatureFlags';
 import FtpTargets from './FtpTargets';
 import Hubs from './Hubs';
 import LandingPageFeatures from './LandingPageFeatures';
@@ -27,6 +28,10 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	customDomains: {
 		title: 'Custom Domains',
 		component: CustomDomains,
+	},
+	featureFlags: {
+		title: 'Feature Flags',
+		component: FeatureFlags,
 	},
 	depositTargets: {
 		title: 'Deposit Targets',

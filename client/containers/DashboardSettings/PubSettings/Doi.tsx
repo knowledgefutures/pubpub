@@ -6,10 +6,11 @@ import React, { Component } from 'react';
 import { Button, Callout, Collapse, FormGroup, InputGroup } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { AssignDoi } from 'components';
+import { AssignDoi, DepositStatusCallout } from 'components';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
+import { getDoiDisplay } from 'utils/crossref/depositStatus';
 import { isDoi } from 'utils/crossref/parseDoi';
 import {
 	findParentEdgeByRelationTypes,
@@ -341,18 +342,30 @@ class Doi extends Component<Props, State> {
 		return null;
 	}
 
+	getDepositState() {
+		// Null for a viewer without manage permission (pubSanitize withholds the
+		// record), which lands on 'legacy' and renders as it always has.
+		return this.props.pubData.crossrefDepositRecord ?? null;
+	}
+
 	renderStatusMessage() {
 		const { pubData } = this.props;
 		const { justSetDoi } = this.state;
+		const depositState = this.getDepositState();
+		// A deposit with no recorded state is the pre-Doily normal: keep the exact
+		// sentence this page has always shown rather than implying the DOI is
+		// unconfirmed.
+		const hasDepositState = getDoiDisplay(depositState?.status) !== 'legacy';
 
 		if (justSetDoi) {
 			return (
-				<Callout intent="success" title="Success!">
-					<p>Successfully submitted a DOI registration for this Pub.</p>
+				<Callout intent="success" title="Deposit submitted">
+					<p>The DOI registration for this Pub has been submitted to Crossref.</p>
 					<p>
-						Registration may take a few hours to complete in Crossref&apos;s system. If
-						DOI URLs do not work immediately, the registration is likely still
-						processing.
+						Crossref usually rules on a deposit within a few hours. Until it confirms
+						the record, this DOI is left out of the Pub page, the citations and the
+						metadata search engines read. Reload this page to see the outcome, which
+						will include Crossref&apos;s error message if the deposit was rejected.
 					</p>
 				</Callout>
 			);
@@ -376,7 +389,16 @@ class Doi extends Component<Props, State> {
 							to Crossref.
 						</Callout>
 					)}
-				{pubData.crossrefDepositRecordId && <p>This Pub has been deposited to Crossref.</p>}
+				{pubData.crossrefDepositRecordId && !hasDepositState && (
+					<p>This Pub has been deposited to Crossref.</p>
+				)}
+				{pubData.crossrefDepositRecordId && hasDepositState && (
+					<DepositStatusCallout
+						status={depositState?.status}
+						error={depositState?.error}
+						lastCheckedAt={depositState?.lastCheckedAt}
+					/>
+				)}
 				{this.isDoiEditableWithoutRelations() && this.findSupplementTo() && (
 					<Callout intent="warning">
 						The DOI for this Pub is not editable because it is a{' '}

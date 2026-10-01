@@ -101,6 +101,7 @@ export const communitySchema = baseSchema.extend({
 	scopeSummaryId: z.string().uuid().nullable(),
 	templateId: z.string().uuid().nullable(),
 	kfOrgId: z.string().nullable(),
+	doilyProjectId: z.string().nullable(),
 	cmsMode: z.boolean().default(false),
 	canonicalBaseUrl: z.string().url().nullable(),
 	canonicalPubUrlTemplate: z

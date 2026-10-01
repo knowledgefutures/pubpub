@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 
-import { Community, Pub } from 'server/models';
+import { Community, CrossrefDepositRecord, Pub } from 'server/models';
+import { isDoiPending } from 'utils/crossref/depositStatus';
 
 import {
 	applyRange,
@@ -20,6 +21,8 @@ type DiscoveredEntry = {
 	communityId: string;
 	communitySubdomain: string;
 	error: string;
+	/** Recorded deposit state, when there is one: 'failed' here explains itself. */
+	depositStatus: string | null;
 	time: string;
 };
 
@@ -58,7 +61,7 @@ async function main() {
 		log(`scanning ALL deposited pubs across all communities...`);
 	}
 
-	const allPubs = await Pub.findAll({
+	const allPubsIncludingPending = await Pub.findAll({
 		where,
 		attributes: ['id', 'title', 'slug', 'doi', 'communityId'],
 		include: [
@@ -67,9 +70,27 @@ async function main() {
 				as: 'community',
 				attributes: ['subdomain'],
 			},
+			{
+				model: CrossrefDepositRecord,
+				as: 'crossrefDepositRecord',
+				attributes: ['status', 'error'],
+			},
 		],
 		order: [['createdAt', 'DESC']],
 	});
+
+	// A pub whose deposit is still in flight is *supposed* not to resolve yet, so
+	// checking it produces a false "broken DOI" that an operator then chases. A
+	// NULL status is every pre-verdict deposit and is still checked, which is the
+	// behaviour this tool has always had. Failed deposits stay in the run: they
+	// really are broken, and the recorded error explains why.
+	const allPubs = allPubsIncludingPending.filter(
+		(pub) => !isDoiPending((pub as any).crossrefDepositRecord?.status),
+	);
+	const pendingCount = allPubsIncludingPending.length - allPubs.length;
+	if (pendingCount > 0) {
+		log(`skipping ${pendingCount} pubs whose deposit is still in flight`);
+	}
 
 	const pubs = applyRange(allPubs);
 	log(`found ${allPubs.length} deposited pubs, checking ${pubs.length}`);
@@ -99,6 +120,7 @@ async function main() {
 			communityId: pub.communityId,
 			communitySubdomain: pubJson.community?.subdomain ?? 'unknown',
 			error: result.error ?? 'Not Found',
+			depositStatus: pubJson.crossrefDepositRecord?.status ?? null,
 			time: new Date().toISOString(),
 		});
 	}

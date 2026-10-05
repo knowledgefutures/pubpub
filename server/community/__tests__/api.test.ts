@@ -25,10 +25,11 @@ const models = modelize`
 	}
 `;
 
-const { subscribeUser, postToSlackAboutNewCommunity } = vi.hoisted(() => {
+const { subscribeUser, postToSlackAboutNewCommunity, fetchUserOrgs } = vi.hoisted(() => {
 	return {
 		subscribeUser: vi.fn(),
 		postToSlackAboutNewCommunity: vi.fn(),
+		fetchUserOrgs: vi.fn(async () => [] as { id: string }[]),
 	};
 });
 
@@ -38,6 +39,10 @@ setup(beforeAll, async () => {
 	}));
 	vi.mock('server/utils/slack', () => ({
 		postToSlackAboutNewCommunity,
+	}));
+	vi.mock('server/kf/oidc.server', async (importOriginal) => ({
+		...(await importOriginal<typeof import('server/kf/oidc.server')>()),
+		fetchUserOrgs,
 	}));
 
 	await models.resolve();
@@ -114,6 +119,43 @@ describe('/api/communities', () => {
 			.expect(201);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
 		expect(newCommunity?.title).toEqual('Journal of Regular Users');
+	});
+
+	it('creates a community with no kfOrgId when the user has no KF orgs', async () => {
+		const { willNotCreateCommunity } = models;
+		const agent = await login(willNotCreateCommunity);
+		const subdomain = 'no-orgs-' + uuid.v4();
+		await agent
+			.post('/api/communities')
+			.send({ subdomain, title: 'Journal of No Orgs' })
+			.expect(201);
+		const newCommunity = await Community.findOne({ where: { subdomain } });
+		expect(newCommunity?.kfOrgId).toBeNull();
+	});
+
+	it('keeps a picked kfOrgId only if the user belongs to that org', async () => {
+		const { willNotCreateCommunity } = models;
+		const agent = await login(willNotCreateCommunity);
+		fetchUserOrgs.mockResolvedValue([{ id: 'org-mine' }]);
+
+		const mine = 'org-mine-' + uuid.v4();
+		await agent
+			.post('/api/communities')
+			.send({ subdomain: mine, title: 'Mine', kfOrgId: 'org-mine' })
+			.expect(201);
+		expect((await Community.findOne({ where: { subdomain: mine } }))?.kfOrgId).toEqual(
+			'org-mine',
+		);
+
+		const theirs = 'org-theirs-' + uuid.v4();
+		await agent
+			.post('/api/communities')
+			.send({ subdomain: theirs, title: 'Theirs', kfOrgId: 'org-theirs' })
+			.expect(201);
+		expect((await Community.findOne({ where: { subdomain: theirs } }))?.kfOrgId).toBeNull();
+
+		fetchUserOrgs.mockReset();
+		fetchUserOrgs.mockResolvedValue([]);
 	});
 
 	it('does not create a community if you are logged out', async () => {

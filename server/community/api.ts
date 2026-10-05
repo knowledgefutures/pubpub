@@ -2,6 +2,7 @@ import { initServer } from '@ts-rest/express';
 import { Op } from 'sequelize';
 
 import { setSubdomain } from 'server/dev/api';
+import { fetchUserOrgs } from 'server/kf/oidc.server';
 import { Community, User, WorkerTask } from 'server/models';
 import { updateDiscussionCreationAccess } from 'server/publicPermissions/queries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
@@ -155,6 +156,14 @@ export const communityServer = s.router(contract.community, {
 		const body = { ...req.body };
 		delete body.altcha;
 		delete body._honeypot;
+		// kfOrgId is billing attribution, not required ownership. Keep a picked org
+		// only if the user belongs to it; otherwise leave it NULL for staff to set.
+		if (body.kfOrgId) {
+			const userOrgs = await fetchUserOrgs(req.user.id).catch(() => []);
+			if (!userOrgs.some((org) => org.id === body.kfOrgId)) {
+				delete body.kfOrgId;
+			}
+		}
 		try {
 			// Resolve hub context before creating the community
 			const hubSlug = (req as any).body.hubSlug as string | undefined;

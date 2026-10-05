@@ -251,7 +251,11 @@ export class Community extends Model<
 	@Column(DataType.UUID)
 	declare templateId: string | null;
 
-	/** KF Auth organization that owns this community (for billing/ownership) */
+	/**
+	 * KF account this community is billed to. Billing attribution set by KF staff,
+	 * not ownership: NULL until someone assigns it (users who sign up through
+	 * kf-console have no personal org to default to).
+	 */
 	@Index
 	@Column(DataType.TEXT)
 	declare kfOrgId: string | null;

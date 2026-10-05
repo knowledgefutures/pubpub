@@ -1,28 +1,17 @@
 /**
  * Phase D cleanup: Make kfOrgId NOT NULL on Communities.
  *
- * Run this ONLY after confirming all communities have been assigned
- * a kfOrgId value (from the seed script + new community creation).
+ * SUPERSEDED by 2026_10_05_makeKfOrgIdNullable. kfOrgId is staff-set billing
+ * attribution and may be NULL (users who sign up through kf-console have no
+ * personal org), so `up` refuses to run. `down` is kept so the constraint can
+ * still be removed where this was applied.
  */
 
-export const up = async ({ Sequelize, sequelize }) => {
-	// First verify there are no NULL values
-	const [results] = await sequelize.query(
-		`SELECT count(*) as count FROM "Communities" WHERE "kfOrgId" IS NULL`,
+export const up = async () => {
+	throw new Error(
+		'2026_06_15_makeKfOrgIdNotNull is superseded by 2026_10_05_makeKfOrgIdNullable; ' +
+			'kfOrgId must stay nullable.',
 	);
-	const nullCount = parseInt(results[0].count, 10);
-
-	if (nullCount > 0) {
-		throw new Error(
-			`Cannot make kfOrgId NOT NULL: ${nullCount} communities still have NULL kfOrgId. ` +
-				`Assign ownership first, then re-run this migration.`,
-		);
-	}
-
-	await sequelize.queryInterface.changeColumn('Communities', 'kfOrgId', {
-		type: Sequelize.TEXT,
-		allowNull: false,
-	});
 };
 
 export const down = async ({ Sequelize, sequelize }) => {

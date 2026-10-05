@@ -18,7 +18,6 @@ import {
 	DefaultScope,
 	ForeignKey,
 	HasMany,
-	Index,
 	Is,
 	IsLowercase,
 	Length,
@@ -254,11 +253,13 @@ export class Community extends Model<
 	/**
 	 * KF account this community is billed to. Billing attribution set by KF staff,
 	 * not ownership: NULL until someone assigns it (users who sign up through
-	 * kf-console have no personal org to default to).
+	 * kf-console have no personal account to default to). Was kfOrgId until
+	 * 2026_10_05_renameKfOrgIdToKfAccountId. Its index (communities_kf_account_id_idx)
+	 * is owned by the migrations, not declared here: sync() would otherwise try to
+	 * create it on kfAccountId before the rename migration has run.
 	 */
-	@Index
 	@Column(DataType.TEXT)
-	declare kfOrgId: string | null;
+	declare kfAccountId: string | null;
 
 	/**
 	 * CMS mode: the community is only visible to members;

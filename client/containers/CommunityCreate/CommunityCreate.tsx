@@ -82,7 +82,7 @@ const CommunityCreatedView = ({ subdomain, hubName }: { subdomain: string; hubNa
 	);
 };
 
-type KFOrg = {
+type KFAccount = {
 	id: string;
 	name: string;
 	slug: string;
@@ -94,7 +94,7 @@ type Props = {
 	hubData?: Hub | null;
 	templates?: CommunityTemplate[];
 	hubCommunities?: { id: string; title: string; subdomain: string; avatar?: string | null }[];
-	kfOrgs?: KFOrg[];
+	kfAccounts?: KFAccount[];
 };
 
 const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
@@ -118,7 +118,7 @@ const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
 };
 
 const CommunityCreate = (props: Props) => {
-	const { hubData, templates = [], hubCommunities = [], kfOrgs = [] } = props;
+	const { hubData, templates = [], hubCommunities = [], kfAccounts = [] } = props;
 	const { loginData, locationData } = usePageContext();
 	const altchaRef = useRef<import('components').AltchaRef>(null);
 	const hubSlug = hubData?.slug || locationData?.query?.hub || null;
@@ -135,10 +135,10 @@ const CommunityCreate = (props: Props) => {
 	const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 	const [cloneCommunityId, setCloneCommunityId] = useState<string | null>(null);
 
-	// KF org picker: default to personal org, or first available
-	const personalOrg = kfOrgs.find((o) => o.type === 'personal');
-	const [selectedKfOrgId, setSelectedKfOrgId] = useState<string | null>(
-		personalOrg?.id ?? kfOrgs[0]?.id ?? null,
+	// KF account picker: default to the personal account, or first available
+	const personalAccount = kfAccounts.find((a) => a.type === 'personal');
+	const [selectedKfAccountId, setSelectedKfAccountId] = useState<string | null>(
+		personalAccount?.id ?? kfAccounts[0]?.id ?? null,
 	);
 
 	const hasHub = !!hubData;
@@ -178,7 +178,7 @@ const CommunityCreate = (props: Props) => {
 				...(selectedTemplateId === CLONE_MARKER && cloneCommunityId
 					? { cloneCommunityId }
 					: {}),
-				...(selectedKfOrgId ? { kfOrgId: selectedKfOrgId } : {}),
+				...(selectedKfAccountId ? { kfAccountId: selectedKfAccountId } : {}),
 			});
 			setCreateIsLoading(false);
 			setIsCreated(true);
@@ -324,19 +324,19 @@ const CommunityCreate = (props: Props) => {
 									onChange={onDescriptionChange}
 									helperText={`${description.length}/280 characters`}
 								/>
-								{kfOrgs.length > 1 && (
-									<InputField label="Organization">
+								{kfAccounts.length > 1 && (
+									<InputField label="KF Account">
 										<div className={Classes.HTML_SELECT}>
 											<select
-												value={selectedKfOrgId ?? ''}
+												value={selectedKfAccountId ?? ''}
 												onChange={(e) =>
-													setSelectedKfOrgId(e.target.value || null)
+													setSelectedKfAccountId(e.target.value || null)
 												}
 											>
-												{kfOrgs.map((org) => (
-													<option key={org.id} value={org.id}>
-														{org.name}
-														{org.type === 'personal'
+												{kfAccounts.map((account) => (
+													<option key={account.id} value={account.id}>
+														{account.name}
+														{account.type === 'personal'
 															? ' (Personal)'
 															: ''}
 													</option>

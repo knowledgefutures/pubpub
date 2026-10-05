@@ -5,7 +5,7 @@ import { Button, Callout, Classes } from '@blueprintjs/core';
 import { apiFetch } from 'client/utils/apiFetch';
 import { SettingsSection } from 'components';
 
-type KFOrg = {
+type KFAccount = {
 	id: string;
 	name: string;
 	slug: string;
@@ -17,59 +17,62 @@ type Props = {
 	communityData: {
 		id: string;
 		title: string;
-		kfOrgId: string | null;
+		kfAccountId: string | null;
 	};
 };
 
 const TransferOwnership = (props: Props) => {
 	const { communityData } = props;
-	const [orgs, setOrgs] = useState<KFOrg[]>([]);
+	const [accounts, setAccounts] = useState<KFAccount[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+	const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 	const [isTransferring, setIsTransferring] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 
-	const loadOrgs = useCallback(async () => {
+	const loadAccounts = useCallback(async () => {
 		try {
 			const data = await apiFetch.get('/api/kf/my-orgs');
-			const fetchedOrgs: KFOrg[] = data.orgs ?? [];
-			setOrgs(fetchedOrgs);
-			// Default to current org if set, otherwise first org
-			if (communityData.kfOrgId && fetchedOrgs.some((o) => o.id === communityData.kfOrgId)) {
-				setSelectedOrgId(communityData.kfOrgId);
-			} else if (fetchedOrgs.length > 0) {
-				setSelectedOrgId(fetchedOrgs[0].id);
+			const fetchedAccounts: KFAccount[] = data.orgs ?? [];
+			setAccounts(fetchedAccounts);
+			// Default to the current account if set, otherwise the first one
+			if (
+				communityData.kfAccountId &&
+				fetchedAccounts.some((a) => a.id === communityData.kfAccountId)
+			) {
+				setSelectedAccountId(communityData.kfAccountId);
+			} else if (fetchedAccounts.length > 0) {
+				setSelectedAccountId(fetchedAccounts[0].id);
 			}
 		} catch {
-			setError('Failed to load organizations');
+			setError('Failed to load accounts');
 		} finally {
 			setLoading(false);
 		}
-	}, [communityData.kfOrgId]);
+	}, [communityData.kfAccountId]);
 
 	useEffect(() => {
-		loadOrgs();
-	}, [loadOrgs]);
+		loadAccounts();
+	}, [loadAccounts]);
 
-	const selectedOrg = orgs.find((o) => o.id === selectedOrgId);
-	const isCurrentOrg = selectedOrgId === communityData.kfOrgId;
+	const selectedAccount = accounts.find((a) => a.id === selectedAccountId);
+	const isCurrentAccount = selectedAccountId === communityData.kfAccountId;
 
 	const handleTransfer = async () => {
-		if (!selectedOrgId || isCurrentOrg) return;
+		if (!selectedAccountId || isCurrentAccount) return;
 		setIsTransferring(true);
 		setError(null);
 		setSuccess(null);
 		try {
 			await apiFetch.post('/api/kf/transfer-community', {
 				communityId: communityData.id,
-				kfOrgId: selectedOrgId,
+				kfAccountId: selectedAccountId,
 			});
 			setSuccess(
-				`Community transferred to ${selectedOrg?.name ?? 'the selected organization'}.`,
+				`Community transferred to ${selectedAccount?.name ?? 'the selected account'}.`,
 			);
 			// Update the local state so the button disables
-			communityData.kfOrgId = selectedOrgId;
+			communityData.kfAccountId = selectedAccountId;
 		} catch (err: any) {
 			setError(err?.error || err?.message || 'Failed to transfer community');
 		} finally {
@@ -80,17 +83,17 @@ const TransferOwnership = (props: Props) => {
 	if (loading) {
 		return (
 			<SettingsSection title="Transfer Ownership">
-				<p className={Classes.TEXT_MUTED}>Loading organizations...</p>
+				<p className={Classes.TEXT_MUTED}>Loading accounts...</p>
 			</SettingsSection>
 		);
 	}
 
-	// Need at least 2 orgs to have somewhere to transfer to
-	if (orgs.length < 2) {
+	// Need at least 2 accounts to have somewhere to transfer to
+	if (accounts.length < 2) {
 		return null;
 	}
 
-	const currentOrg = orgs.find((o) => o.id === communityData.kfOrgId);
+	const currentAccount = accounts.find((a) => a.id === communityData.kfAccountId);
 
 	return (
 		<SettingsSection title="Transfer Ownership">
@@ -99,10 +102,10 @@ const TransferOwnership = (props: Props) => {
 				the billing owner of this community.
 			</p>
 
-			{currentOrg && (
+			{currentAccount && (
 				<p>
-					Currently owned by: <strong>{currentOrg.name}</strong>
-					{currentOrg.type === 'personal' ? ' (Personal)' : ''}
+					Currently owned by: <strong>{currentAccount.name}</strong>
+					{currentAccount.type === 'personal' ? ' (Personal)' : ''}
 				</p>
 			)}
 
@@ -122,18 +125,18 @@ const TransferOwnership = (props: Props) => {
 				<div style={{ flex: 1, maxWidth: 300 }}>
 					<div className={Classes.HTML_SELECT} style={{ width: '100%' }}>
 						<select
-							value={selectedOrgId ?? ''}
+							value={selectedAccountId ?? ''}
 							onChange={(e) => {
-								setSelectedOrgId(e.target.value || null);
+								setSelectedAccountId(e.target.value || null);
 								setSuccess(null);
 							}}
 							disabled={isTransferring}
 						>
-							{orgs.map((org) => (
-								<option key={org.id} value={org.id}>
-									{org.name}
-									{org.type === 'personal' ? ' (Personal)' : ''}
-									{org.id === communityData.kfOrgId ? ' (current)' : ''}
+							{accounts.map((account) => (
+								<option key={account.id} value={account.id}>
+									{account.name}
+									{account.type === 'personal' ? ' (Personal)' : ''}
+									{account.id === communityData.kfAccountId ? ' (current)' : ''}
 								</option>
 							))}
 						</select>
@@ -143,7 +146,7 @@ const TransferOwnership = (props: Props) => {
 					intent="warning"
 					text="Transfer"
 					loading={isTransferring}
-					disabled={isCurrentOrg || !selectedOrgId}
+					disabled={isCurrentAccount || !selectedAccountId}
 					onClick={handleTransfer}
 				/>
 			</div>

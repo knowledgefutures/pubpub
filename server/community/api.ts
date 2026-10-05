@@ -156,12 +156,12 @@ export const communityServer = s.router(contract.community, {
 		const body = { ...req.body };
 		delete body.altcha;
 		delete body._honeypot;
-		// kfOrgId is billing attribution, not required ownership. Keep a picked org
-		// only if the user belongs to it; otherwise leave it NULL for staff to set.
-		if (body.kfOrgId) {
-			const userOrgs = await fetchUserOrgs(req.user.id).catch(() => []);
-			if (!userOrgs.some((org) => org.id === body.kfOrgId)) {
-				delete body.kfOrgId;
+		// kfAccountId is billing attribution, not required ownership. Keep a picked
+		// account only if the user belongs to it; otherwise leave it NULL for staff to set.
+		if (body.kfAccountId) {
+			const userAccounts = await fetchUserOrgs(req.user.id).catch(() => []);
+			if (!userAccounts.some((account) => account.id === body.kfAccountId)) {
+				delete body.kfAccountId;
 			}
 		}
 		try {

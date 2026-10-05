@@ -7,6 +7,10 @@
  * NOT NULL constraint in place that insert fails.
  *
  * Safe to run whether or not the NOT NULL migration was ever applied.
+ *
+ * Run BEFORE 2026_10_05_renameKfOrgIdToKfAccountId, which renames the column
+ * this migration operates on (roll that one back first before running this
+ * one down).
  */
 
 export const up = async ({ Sequelize, sequelize }) => {

@@ -121,38 +121,38 @@ describe('/api/communities', () => {
 		expect(newCommunity?.title).toEqual('Journal of Regular Users');
 	});
 
-	it('creates a community with no kfOrgId when the user has no KF orgs', async () => {
+	it('creates a community with no kfAccountId when the user has no KF accounts', async () => {
 		const { willNotCreateCommunity } = models;
 		const agent = await login(willNotCreateCommunity);
-		const subdomain = 'no-orgs-' + uuid.v4();
+		const subdomain = 'no-accounts-' + uuid.v4();
 		await agent
 			.post('/api/communities')
-			.send({ subdomain, title: 'Journal of No Orgs' })
+			.send({ subdomain, title: 'Journal of No Accounts' })
 			.expect(201);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
-		expect(newCommunity?.kfOrgId).toBeNull();
+		expect(newCommunity?.kfAccountId).toBeNull();
 	});
 
-	it('keeps a picked kfOrgId only if the user belongs to that org', async () => {
+	it('keeps a picked kfAccountId only if the user belongs to that account', async () => {
 		const { willNotCreateCommunity } = models;
 		const agent = await login(willNotCreateCommunity);
-		fetchUserOrgs.mockResolvedValue([{ id: 'org-mine' }]);
+		fetchUserOrgs.mockResolvedValue([{ id: 'account-mine' }]);
 
-		const mine = 'org-mine-' + uuid.v4();
+		const mine = 'account-mine-' + uuid.v4();
 		await agent
 			.post('/api/communities')
-			.send({ subdomain: mine, title: 'Mine', kfOrgId: 'org-mine' })
+			.send({ subdomain: mine, title: 'Mine', kfAccountId: 'account-mine' })
 			.expect(201);
-		expect((await Community.findOne({ where: { subdomain: mine } }))?.kfOrgId).toEqual(
-			'org-mine',
+		expect((await Community.findOne({ where: { subdomain: mine } }))?.kfAccountId).toEqual(
+			'account-mine',
 		);
 
-		const theirs = 'org-theirs-' + uuid.v4();
+		const theirs = 'account-theirs-' + uuid.v4();
 		await agent
 			.post('/api/communities')
-			.send({ subdomain: theirs, title: 'Theirs', kfOrgId: 'org-theirs' })
+			.send({ subdomain: theirs, title: 'Theirs', kfAccountId: 'account-theirs' })
 			.expect(201);
-		expect((await Community.findOne({ where: { subdomain: theirs } }))?.kfOrgId).toBeNull();
+		expect((await Community.findOne({ where: { subdomain: theirs } }))?.kfAccountId).toBeNull();
 
 		fetchUserOrgs.mockReset();
 		fetchUserOrgs.mockResolvedValue([]);

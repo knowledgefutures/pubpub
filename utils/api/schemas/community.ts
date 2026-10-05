@@ -100,7 +100,7 @@ export const communitySchema = baseSchema.extend({
 	spamTagId: z.string().uuid().nullable(),
 	scopeSummaryId: z.string().uuid().nullable(),
 	templateId: z.string().uuid().nullable(),
-	kfOrgId: z.string().nullable(),
+	kfAccountId: z.string().nullable(),
 	cmsMode: z.boolean().default(false),
 	canonicalBaseUrl: z.string().url().nullable(),
 	canonicalPubUrlTemplate: z
@@ -142,7 +142,7 @@ export const communityCreateSchema = communitySchema
 		altcha: z.string().optional(),
 		_honeypot: z.string().optional(),
 		templateId: z.string().uuid().nullish(),
-		kfOrgId: z.string().nullish(),
+		kfAccountId: z.string().nullish(),
 	});
 
 export const communityUpdateSchema = communitySchema

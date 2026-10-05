@@ -105,7 +105,7 @@ export const createCommunity = async (
 			accentColorDark: inputValues.accentColorDark ?? '#000000',
 			navigation: [{ type: 'page', id: homePageId }],
 			hideCreatePubButton: true,
-			...(inputValues.kfOrgId ? { kfOrgId: inputValues.kfOrgId } : {}),
+			...(inputValues.kfAccountId ? { kfAccountId: inputValues.kfAccountId } : {}),
 		},
 		{ actorId: userData.id },
 	);

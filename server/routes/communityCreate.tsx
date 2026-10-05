@@ -30,7 +30,7 @@ router.get('/community/create', (req, res, next) => {
 		hubSlug ? getHubBySlug(hubSlug) : Promise.resolve(null),
 		req.user?.id ? fetchUserOrgs(req.user.id) : Promise.resolve([]),
 	])
-		.then(async ([initialData, hubData, kfOrgs]) => {
+		.then(async ([initialData, hubData, kfAccounts]) => {
 			const templates = hubData ? await getActiveTemplatesForHub(hubData.id) : [];
 
 			// Fetch hub communities for the clone-from-community picker
@@ -83,7 +83,7 @@ router.get('/community/create', (req, res, next) => {
 				<Html
 					chunkName="CommunityCreate"
 					initialData={initialData}
-					viewData={{ hubData, templates, hubCommunities, kfOrgs }}
+					viewData={{ hubData, templates, hubCommunities, kfAccounts }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title,

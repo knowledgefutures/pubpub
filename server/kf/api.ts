@@ -10,7 +10,7 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
  *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
- *   GET  /api/kf/summary              — return community list for a KF org
+ *   GET  /api/kf/summary              — return community list for a KF account (?kf_account_id=)
  *   GET  /api/kf/billing/usage        — return usage stats for billing (placeholder)
  *
  * Session-authenticated endpoints:
@@ -398,15 +398,25 @@ router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) =>
 
 // ─── Summary API (for KF Account roster / Hub) ──────────────────────
 
+/**
+ * The KF account id from an internal-API query string. kf_org_id is the old name,
+ * still accepted because kf-console (src/api/org-assets.ts) and Hubs call
+ * /api/kf/summary?kf_org_id=<id>; drop the fallback once they send kf_account_id.
+ */
+const getKfAccountIdParam = (query: Record<string, unknown>): string | null => {
+	const value = query.kf_account_id ?? query.kf_org_id;
+	return typeof value === 'string' && value ? value : null;
+};
+
 router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => {
 	try {
-		const { kf_org_id } = req.query;
-		if (!kf_org_id) {
-			return res.status(400).json({ error: 'kf_org_id is required' });
+		const kfAccountId = getKfAccountIdParam(req.query);
+		if (!kfAccountId) {
+			return res.status(400).json({ error: 'kf_account_id is required' });
 		}
 
 		const communities = await Community.findAll({
-			where: { kfOrgId: kf_org_id },
+			where: { kfAccountId },
 			attributes: ['id', 'title', 'subdomain', 'domain', 'avatar'],
 		});
 
@@ -446,18 +456,20 @@ router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => 
 
 router.get('/api/kf/billing/usage', requireInternalKey, async (req: any, res: any) => {
 	try {
-		const { kf_org_id } = req.query;
-		if (!kf_org_id) {
-			return res.status(400).json({ error: 'kf_org_id is required' });
+		const kfAccountId = getKfAccountIdParam(req.query);
+		if (!kfAccountId) {
+			return res.status(400).json({ error: 'kf_account_id is required' });
 		}
 
 		const communityCount = await Community.count({
-			where: { kfOrgId: kf_org_id },
+			where: { kfAccountId },
 		});
 
-		// Placeholder — just return community count for now
+		// Placeholder — just return community count for now. kf_org_id is echoed
+		// under its old name too until callers read kf_account_id.
 		return res.json({
-			kf_org_id,
+			kf_account_id: kfAccountId,
+			kf_org_id: kfAccountId,
 			line_items: [{ key: 'communities', quantity: communityCount }],
 		});
 	} catch (err) {
@@ -488,9 +500,11 @@ router.post('/api/kf/transfer-community', async (req: any, res: any) => {
 		return res.status(401).json({ error: 'Not authenticated' });
 	}
 
-	const { communityId, kfOrgId } = req.body;
-	if (!communityId || !kfOrgId) {
-		return res.status(400).json({ error: 'communityId and kfOrgId are required' });
+	const { communityId } = req.body;
+	// kfOrgId is the old body field name, accepted until every caller sends kfAccountId.
+	const kfAccountId = req.body.kfAccountId ?? req.body.kfOrgId;
+	if (!communityId || !kfAccountId) {
+		return res.status(400).json({ error: 'communityId and kfAccountId are required' });
 	}
 
 	try {
@@ -501,23 +515,23 @@ router.post('/api/kf/transfer-community', async (req: any, res: any) => {
 	}
 
 	try {
-		// Verify the user belongs to the target org
-		const userOrgs = await fetchUserOrgs(req.user.id);
-		const targetOrg = userOrgs.find((o) => o.id === kfOrgId);
-		if (!targetOrg) {
-			return res
-				.status(403)
-				.json({ error: 'You are not a member of the target organization' });
+		// Verify the user belongs to the target account
+		const userAccounts = await fetchUserOrgs(req.user.id);
+		const targetAccount = userAccounts.find((a) => a.id === kfAccountId);
+		if (!targetAccount) {
+			return res.status(403).json({ error: 'You are not a member of the target account' });
 		}
 
-		// Update the community's kfOrgId
-		const [updatedCount] = await Community.update({ kfOrgId }, { where: { id: communityId } });
+		const [updatedCount] = await Community.update(
+			{ kfAccountId },
+			{ where: { id: communityId } },
+		);
 
 		if (updatedCount === 0) {
 			return res.status(404).json({ error: 'Community not found' });
 		}
 
-		return res.json({ success: true, kfOrgId });
+		return res.json({ success: true, kfAccountId });
 	} catch (err) {
 		console.error('Transfer community error:', err);
 		return res.status(500).json({ error: 'Internal error' });

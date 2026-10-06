@@ -715,8 +715,8 @@ describe('underlay/incremental — resumed push re-supplies records without hoar
 	const pubUpdatedAt = { p1: '2026-01-05T00:00:00.000Z', p2: '2026-01-06T00:00:00.000Z' };
 
 	/**
-	 * A checkpointed pub has had its FILES uploaded, but records are only sent after negotiate — so a
-	 * push that died mid-mapping leaves cache entries whose records the server has never seen. The
+	 * A checkpointed pub has had its FILES uploaded, but records are only sent in the push session —
+	 * so a push that died mid-mapping leaves cache entries whose records the server has never seen. The
 	 * next push must be able to produce them on demand, without retaining the file bytes that
 	 * re-mapping also yields.
 	 */
@@ -784,5 +784,60 @@ describe('underlay/incremental — resumed push re-supplies records without hoar
 		const file = await resumed.payload.resolveFileByHash?.(fileHash);
 		expect(file?.hash).toBe(fileHash);
 		expect(calls.p1).toBe(2);
+	});
+});
+
+describe('underlay/incremental — cached hashes from an older hash function', () => {
+	const pubs = [makePub('p1', 1)];
+	const pubUpdatedAt = { p1: '2026-01-05T00:00:00.000Z' };
+
+	/** A real cache entry whose stored record hashes no longer match what the pub maps to. */
+	const staleEntries = async () => {
+		const first = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: [],
+			mapPub: makeMapPub({}),
+		});
+		return first.cacheUpserts.map((entry) => ({
+			...entry,
+			recordHashes: Object.fromEntries(
+				Object.entries(entry.recordHashes).map(([id, r]) => [
+					id,
+					{ ...r, hash: `old-${r.hash}` },
+				]),
+			),
+		}));
+	};
+
+	it('resolves a record by (type, id) and queues a corrected cache entry', async () => {
+		const entries = await staleEntries();
+		const resumed = await buildIncrementalPush({
+			community,
+			collections: [],
+			pubs,
+			pubUpdatedAt,
+			options: OPTIONS,
+			cacheEntries: entries,
+			mapPub: makeMapPub({}),
+		});
+		expect(resumed.stats.cacheHits).toBe(1);
+		expect(resumed.cacheUpserts).toEqual([]);
+
+		// The manifest carries the stale hash, so a lookup by hash alone finds nothing…
+		const entry = resumed.payload.manifest!.find((m) => m.type === 'Pub' && m.id === 'p1')!;
+		expect(entry.hash.startsWith('old-')).toBe(true);
+		expect(await resumed.payload.resolveRecordByHash?.(entry.hash)).toBeNull();
+
+		// …but (type, id) still produces the record.
+		const record = await resumed.payload.resolveRecord?.(entry);
+		expect(record).toMatchObject({ id: 'p1', type: 'Pub' });
+
+		// And the entry is corrected, so the next push's manifest matches the head.
+		expect(resumed.cacheUpserts).toHaveLength(1);
+		expect(resumed.cacheUpserts[0].recordHashes.p1.hash).toBe(hashRecord(record!).hash);
 	});
 });

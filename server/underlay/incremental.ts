@@ -23,10 +23,10 @@ import {
  * re-rendering) only the pubs whose content changed since the last successful push; unchanged pubs
  * contribute their cached record + file hashes to the manifest without any rendering or asset fetch.
  *
- * Correctness guarantee: even for a cache-hit pub, if the server unexpectedly asks for one of its
- * records or files (e.g. it was GC'd, or a prior push never fully landed), the returned payload's
- * `resolveRecordByHash` / `resolveFileByHash` lazily re-map that pub on demand and produce it. So a
- * cache hit never means "we can't fulfil a needed_records request".
+ * Correctness guarantee: the client diffs this manifest against the head's, so a cache-hit pub's
+ * record can still turn out to be one the server lacks (a prior push never fully landed) or holds
+ * differently. The returned payload's `resolveRecord` / `resolveFileByHash` lazily re-map that pub on
+ * demand and produce it. So a cache hit never means "we can't upload a record the diff needs".
  *
  * See planning/pubpub-underlay-integration.md §3c.
  */
@@ -342,9 +342,9 @@ export const buildIncrementalPush = async (
 	// held for the rest of the push.
 	//
 	// Bytes are dropped only when they can be produced again. A scope file has no owning pub for
-	// `hydratePubRecords` to re-map, so its ONLY recovery path is re-fetching the source URL via
+	// `hydratePub` to re-map, so its ONLY recovery path is re-fetching the source URL via
 	// `assetCache.byHash` — which the localizer populates for assets.pubpub.org URLs alone. Dropping
-	// an externally-hosted branding image would make a later `needed_files` request for it
+	// an externally-hosted branding image would make a later commit's missing-files refusal for it
 	// unrecoverable, so those stay in memory. That set is small (branding images not on
 	// assets.pubpub.org are the exception), so this costs little and removes the sharp edge.
 	if (streaming) {
@@ -415,8 +415,8 @@ export const buildIncrementalPush = async (
 		}
 	}
 
-	// Everything still queued must land before the manifest is declared: negotiate announces these
-	// hashes as present, so an unfinished upload would make the server ask for a file mid-commit.
+	// Everything still queued must land before the push commits: the records reference these files,
+	// and a commit refuses any referenced file the collection doesn't hold yet.
 	await pool?.drain();
 	if (flushCacheEntries && pendingCheckpoint.length > 0) {
 		await flushCacheEntries(pendingCheckpoint.splice(0, pendingCheckpoint.length));
@@ -436,7 +436,7 @@ export const buildIncrementalPush = async (
 		}
 	}
 
-	// ── Lazy re-hydration: produce a needed record/file for a cache-hit pub on demand. ──────────
+	// ── Lazy re-hydration: produce a record/file for a cache-hit pub on demand. ─────────────────
 	//
 	// Only RECORDS are memoized. Re-mapping a pub also produces its file bytes, and holding those
 	// would defeat the streaming this module exists to do: a resumed push can legitimately need to
@@ -444,34 +444,67 @@ export const buildIncrementalPush = async (
 	// would reaccumulate the entire collection in memory.
 	//
 	// Why a resumed push needs this at all: a checkpointed pub has had its files uploaded, but its
-	// records are only ever sent AFTER negotiate. A push that dies mid-mapping therefore leaves pubs
-	// marked cached whose records the server has never seen, and the next push gets them all back in
-	// `needed_records`. Records are metadata-sized (the HTML and exports live in files), so memoizing
-	// them is bounded; bytes are not.
-	const hydratedRecordsByPubId = new Map<string, Map<string, UnderlayRecord>>();
-	const hydratePubRecords = async (pubId: string): Promise<Map<string, UnderlayRecord>> => {
-		const cached = hydratedRecordsByPubId.get(pubId);
+	// records are only ever sent at the end, in the push session. A push that dies mid-mapping
+	// therefore leaves pubs marked cached whose records the server has never seen, and the next
+	// push's diff lists them all as upserts. Records are metadata-sized (the HTML and exports live in
+	// files), so memoizing them is bounded; bytes are not.
+	type HydratedPub = { byHash: Map<string, UnderlayRecord>; byKey: Map<string, UnderlayRecord> };
+	const recordKey = (type: string, id: string) => `${type}\u0000${id}`;
+	const hydratedByPubId = new Map<string, HydratedPub>();
+	const hydratePub = async (pubId: string): Promise<HydratedPub> => {
+		const cached = hydratedByPubId.get(pubId);
 		if (cached) {
 			return cached;
 		}
-		const recordMap = new Map<string, UnderlayRecord>();
+		const hydrated: HydratedPub = { byHash: new Map(), byKey: new Map() };
 		const pub = pubById.get(pubId);
 		if (pub) {
-			const { records } = await mapPub(pub);
+			const { records, files } = await mapPub(pub);
 			for (const record of records) {
-				recordMap.set(hashRecord(record).hash, record);
+				hydrated.byHash.set(hashRecord(record).hash, record);
+				hydrated.byKey.set(recordKey(record.type, record.id), record);
+			}
+			// Self-heal a cache entry whose hashes no longer match what the pub maps to (e.g. hashes
+			// stored before the hash function changed). Without this the stale hash would differ from
+			// the head's on every push and the record would be re-sent each time. `cacheUpserts` is
+			// the array returned below, so the correction is persisted with the rest after the push.
+			const entry = entryByPubId.get(pubId);
+			const fresh = recordHashesFrom(records);
+			if (
+				entry &&
+				!cacheUpserts.some((upsert) => upsert.pubId === pubId) &&
+				JSON.stringify(canonicalize(fresh)) !==
+					JSON.stringify(canonicalize(entry.recordHashes))
+			) {
+				cacheUpserts.push({
+					...entry,
+					recordHashes: fresh,
+					fileHashes: files.map((f) => f.hash),
+				});
 			}
 		}
-		hydratedRecordsByPubId.set(pubId, recordMap);
-		return recordMap;
+		hydratedByPubId.set(pubId, hydrated);
+		return hydrated;
 	};
 
+	const resolveRecord = async (entry: ManifestEntry): Promise<UnderlayRecord | null> => {
+		const pubId = pubIdByHash.get(entry.hash);
+		if (!pubId) {
+			return null;
+		}
+		const hydrated = await hydratePub(pubId);
+		return (
+			hydrated.byKey.get(recordKey(entry.type, entry.id)) ??
+			hydrated.byHash.get(entry.hash) ??
+			null
+		);
+	};
 	const resolveRecordByHash = async (hash: string): Promise<UnderlayRecord | null> => {
 		const pubId = pubIdByHash.get(hash);
 		if (!pubId) {
 			return null;
 		}
-		return (await hydratePubRecords(pubId)).get(hash) ?? null;
+		return (await hydratePub(pubId)).byHash.get(hash) ?? null;
 	};
 	const resolveFileByHash = async (hash: string): Promise<UnderlayFile | null> => {
 		// A cache-resolved file (e.g. a scope image) has no bytes in memory — fetch them from the
@@ -516,6 +549,7 @@ export const buildIncrementalPush = async (
 		fileHashes: [...allFileHashes].sort(),
 		schemas,
 		manifest,
+		resolveRecord,
 		resolveRecordByHash,
 		resolveFileByHash,
 	};

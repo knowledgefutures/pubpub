@@ -10,7 +10,6 @@ import {
 	getHubWithCommunities,
 	isUserHubManager,
 } from 'server/hub/queries';
-import { fetchUserOrgs } from 'server/kf/auth';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
@@ -28,9 +27,8 @@ router.get('/community/create', (req, res, next) => {
 	return Promise.all([
 		getInitialData(req),
 		hubSlug ? getHubBySlug(hubSlug) : Promise.resolve(null),
-		req.user?.id ? fetchUserOrgs(req.user.id) : Promise.resolve([]),
 	])
-		.then(async ([initialData, hubData, kfOrgs]) => {
+		.then(async ([initialData, hubData]) => {
 			const templates = hubData ? await getActiveTemplatesForHub(hubData.id) : [];
 
 			// Fetch hub communities for the clone-from-community picker
@@ -83,7 +81,7 @@ router.get('/community/create', (req, res, next) => {
 				<Html
 					chunkName="CommunityCreate"
 					initialData={initialData}
-					viewData={{ hubData, templates, hubCommunities, kfOrgs }}
+					viewData={{ hubData, templates, hubCommunities }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title,

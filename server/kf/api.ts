@@ -10,12 +10,6 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
  *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
- *   GET  /api/kf/summary              — return community list for a KF org
- *   GET  /api/kf/billing/usage        — return usage stats for billing (placeholder)
- *
- * Session-authenticated endpoints:
- *   GET  /api/kf/my-orgs              — return current user's KF Account memberships
- *   POST /api/kf/transfer-community   — transfer community ownership to a different KF Account
  */
 
 import { timingSafeEqual } from 'crypto';
@@ -26,7 +20,6 @@ import { Collection, Community, Member, Pub, PubAttribution, Release, User } fro
 import { sequelize } from 'server/sequelize';
 import { logout } from 'server/utils/logout';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
-import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 
 import {
@@ -36,7 +29,6 @@ import {
 	encryptPayload,
 	exchangeCode,
 	fetchUserInfo,
-	fetchUserOrgs,
 	generateCodeVerifier,
 	OIDC_ISSUER_URL,
 } from './oidc.server';
@@ -392,134 +384,6 @@ router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) =>
 		});
 	} catch (err) {
 		console.error('Branding API error:', err);
-		return res.status(500).json({ error: 'Internal error' });
-	}
-});
-
-// ─── Summary API (for KF Account roster / Hub) ──────────────────────
-
-router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => {
-	try {
-		const { kf_org_id } = req.query;
-		if (!kf_org_id) {
-			return res.status(400).json({ error: 'kf_org_id is required' });
-		}
-
-		const communities = await Community.findAll({
-			where: { kfOrgId: kf_org_id },
-			attributes: ['id', 'title', 'subdomain', 'domain', 'avatar'],
-		});
-
-		const accounts = await Promise.all(
-			communities.map(async (community: any) => {
-				const [pubCount, memberCount] = await Promise.all([
-					Pub.count({ where: { communityId: community.id } }),
-					Member.count({
-						where: { communityId: community.id },
-					}),
-				]);
-
-				const host = community.domain || `${community.subdomain}.pubpub.org`;
-				const protocol = isProd() ? 'https' : 'http';
-
-				return {
-					id: community.id,
-					slug: community.subdomain,
-					type: 'community',
-					name: community.title,
-					url: `${protocol}://${host}`,
-					avatar: community.avatar || null,
-					stats: { pubs: pubCount, members: memberCount },
-					collections: [],
-				};
-			}),
-		);
-
-		return res.json({ accounts });
-	} catch (err) {
-		console.error('Summary API error:', err);
-		return res.status(500).json({ error: 'Internal error' });
-	}
-});
-
-// ─── Billing usage API (placeholder) ─────────────────────────────────
-
-router.get('/api/kf/billing/usage', requireInternalKey, async (req: any, res: any) => {
-	try {
-		const { kf_org_id } = req.query;
-		if (!kf_org_id) {
-			return res.status(400).json({ error: 'kf_org_id is required' });
-		}
-
-		const communityCount = await Community.count({
-			where: { kfOrgId: kf_org_id },
-		});
-
-		// Placeholder — just return community count for now
-		return res.json({
-			kf_org_id,
-			line_items: [{ key: 'communities', quantity: communityCount }],
-		});
-	} catch (err) {
-		console.error('Billing usage API error:', err);
-		return res.status(500).json({ error: 'Internal error' });
-	}
-});
-
-// ─── User's KF orgs (session-authenticated) ─────────────────────────
-
-router.get('/api/kf/my-orgs', async (req: any, res: any) => {
-	if (!req.user?.id) {
-		return res.status(401).json({ error: 'Not authenticated' });
-	}
-	try {
-		const orgs = await fetchUserOrgs(req.user.id);
-		return res.json({ orgs });
-	} catch (err) {
-		console.error('Failed to fetch KF orgs:', err);
-		return res.status(500).json({ error: 'Failed to fetch organizations' });
-	}
-});
-
-// ─── Transfer community ownership ───────────────────────────────────
-
-router.post('/api/kf/transfer-community', async (req: any, res: any) => {
-	if (!req.user?.id) {
-		return res.status(401).json({ error: 'Not authenticated' });
-	}
-
-	const { communityId, kfOrgId } = req.body;
-	if (!communityId || !kfOrgId) {
-		return res.status(400).json({ error: 'communityId and kfOrgId are required' });
-	}
-
-	try {
-		// Verify the user is an admin of this community
-		await ensureUserIsCommunityAdmin({ ...req, id: communityId });
-	} catch {
-		return res.status(403).json({ error: 'You must be an admin of this community' });
-	}
-
-	try {
-		// Verify the user belongs to the target org
-		const userOrgs = await fetchUserOrgs(req.user.id);
-		const targetOrg = userOrgs.find((o) => o.id === kfOrgId);
-		if (!targetOrg) {
-			return res
-				.status(403)
-				.json({ error: 'You are not a member of the target organization' });
-		}
-
-		// Update the community's kfOrgId
-		const [updatedCount] = await Community.update({ kfOrgId }, { where: { id: communityId } });
-
-		if (updatedCount === 0) {
-			return res.status(404).json({ error: 'Community not found' });
-		}
-
-		return res.json({ success: true, kfOrgId });
-	} catch (err) {
-		console.error('Transfer community error:', err);
 		return res.status(500).json({ error: 'Internal error' });
 	}
 });

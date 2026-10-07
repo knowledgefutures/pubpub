@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { canonicalize, hashBytes, hashRecord, hashSchema } from '../hash';
+import { canonicalize, hashBytes, hashRecord, hashSchema, jcs } from '../hash';
 
 describe('underlay/hash', () => {
 	it('canonicalizes the spec example to sorted-key JSON', () => {
@@ -58,6 +58,25 @@ describe('underlay/hash', () => {
 		});
 		const without = hashRecord({ id: 'x', type: 'T', data: { a: 1 } });
 		expect(withExtra.hash).toBe(without.hash);
+	});
+
+	it('sorts integer-like keys as strings, as JCS does (not in JavaScript enumeration order)', () => {
+		const { canonical } = hashRecord({
+			id: 'x',
+			type: 'T',
+			data: { b: 1, '10': 'ten', '9': 'nine', a: { '2': true, '1': false } },
+		});
+		// "10" < "9" < "a" < "b" by UTF-16 code units. A sorted object passed to JSON.stringify would
+		// put "9" before "10".
+		expect(canonical).toBe(
+			'{"id":"x","type":"T","data":{"10":"ten","9":"nine","a":{"1":false,"2":true},"b":1}}',
+		);
+	});
+
+	it('matches JSON.stringify for strings and numbers', () => {
+		expect(jcs({ s: 'é\n"', n: [1, 1.5, -0, 1e21] })).toBe(
+			'{"n":[1,1.5,0,1e+21],"s":"é\\n\\""}',
+		);
 	});
 
 	it('hashes schemas by canonicalized content', () => {

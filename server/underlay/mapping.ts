@@ -67,8 +67,8 @@ export type UnderlayPushPayload = {
 	files: UnderlayFile[];
 	/**
 	 * Every file hash this version references, whether or not its bytes are still in `files`. The
-	 * streaming path uploads bytes during mapping and keeps only hashes, so this — not `files` — is
-	 * what the negotiate call must declare. Falls back to the hashes of `files` when omitted.
+	 * streaming path uploads bytes during mapping and keeps only hashes. Feeds the no-op signature;
+	 * Underlay itself learns referenced files from the records' `$file` references.
 	 */
 	fileHashes?: string[];
 	/**
@@ -78,10 +78,13 @@ export type UnderlayPushPayload = {
 	 */
 	manifest?: ManifestEntry[];
 	/**
-	 * Lazy fallback for the incremental path: produce a record whose hash the server asked for but
-	 * which isn't in `records` (e.g. a cache-hit pub the server unexpectedly needs re-sent). Returns
-	 * null if the hash can't be resolved.
+	 * Lazy fallback for the incremental path: produce the record behind a manifest entry that isn't
+	 * in `records` (a cache-hit pub whose record the head lacks or holds differently). Looks the
+	 * record up by (type, id), so it still works when the cached hash was computed differently from
+	 * the freshly-mapped one. Returns null if the entry can't be resolved.
 	 */
+	resolveRecord?: (entry: ManifestEntry) => Promise<UnderlayRecord | null>;
+	/** As `resolveRecord`, by hash alone. */
 	resolveRecordByHash?: (hash: string) => Promise<UnderlayRecord | null>;
 	/** Lazy fallback: produce file bytes the server asked for but which aren't in `files`. */
 	resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>;

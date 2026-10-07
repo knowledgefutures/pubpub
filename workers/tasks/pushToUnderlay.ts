@@ -524,10 +524,13 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		// Version metadata pushed to Underlay (produces a patch version when it changes). Folded into
 		// the no-op signature below so a readme-only edit isn't skipped as "no changes".
 		const pushMetadata = integration.readme ? { readme: integration.readme } : undefined;
+		// Sent as a patch, so metadata set in Underlay itself (description, license, …) survives. A
+		// cleared readme is sent as null; the client only sends fields that differ from the head.
+		const metadataPatch = { readme: integration.readme || null };
 
 		// The collection must exist before any file can be uploaded into it, and the streaming
 		// uploader below runs during mapping — so this moves ahead of the build (it used to sit just
-		// before negotiate). Creating it early is harmless: it was going to be created either way,
+		// before the push). Creating it early is harmless: it was going to be created either way,
 		// and a push that fails afterwards just leaves an empty collection with no versions.
 		await client.ensureCollection();
 
@@ -589,15 +592,13 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		}
 
 		console.info(
-			`[underlay] Mapped ${incremental.stats.totalPubs} pub(s): ${incremental.stats.cacheHits} cache hit(s), ${incremental.stats.cacheMisses} re-mapped, ${uploadedFileCount} file(s) streamed. Negotiating…`,
+			`[underlay] Mapped ${incremental.stats.totalPubs} pub(s): ${incremental.stats.cacheHits} cache hit(s), ${incremental.stats.cacheMisses} re-mapped, ${uploadedFileCount} file(s) streamed. Diffing against Underlay…`,
 		);
 
-		const baseVersion = await client.getBaseVersion();
 		const result = await client.push(
 			incremental.payload,
-			baseVersion,
 			`PubPub sync for ${community.subdomain}`,
-			pushMetadata,
+			metadataPatch,
 		);
 
 		const warnings: AssetWarning[] = [...assetWarnings.values()];
@@ -633,26 +634,11 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 					semver: result.semver,
 					recordCount: result.recordCount,
 					fileCount: result.fileCount,
-					message: `Pushed version ${result.semver}`,
+					message: result.changes
+						? `Pushed version ${result.semver}: ${result.changes.added} added, ${result.changes.updated} updated, ${result.changes.removed} removed`
+						: `Pushed version ${result.semver}`,
 					warnings,
 				});
-			}
-			// Persist the cache only after a successful commit.
-			await applyPushCache(
-				integration.id,
-				incremental.cacheUpserts,
-				incremental.presentPubIds,
-			);
-			// Record any newly-fetched immutable asset URLs so future pushes skip the download.
-			if (assetCache.learned.size > 0) {
-				await saveCachedAssetHashes(
-					[...assetCache.learned].map(([url, asset]) => ({
-						url,
-						hash: asset.hash,
-						mimeType: asset.mimeType,
-						fileName: asset.fileName,
-					})),
-				);
 			}
 		} else {
 			await recordPushResult(communityId, {
@@ -660,8 +646,22 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 				manifestHash: incremental.signature,
 			});
 			if (logId) {
-				await finishPushLog(logId, { status: 'noop', warnings });
+				await finishPushLog(logId, { status: 'noop', message: result.reason, warnings });
 			}
+		}
+		// Persist the cache only once Underlay holds exactly this content: after a commit, or when
+		// the head already matched (a noop) — which is also when stale cache entries self-heal.
+		await applyPushCache(integration.id, incremental.cacheUpserts, incremental.presentPubIds);
+		// Record any newly-fetched immutable asset URLs so future pushes skip the download.
+		if (assetCache.learned.size > 0) {
+			await saveCachedAssetHashes(
+				[...assetCache.learned].map(([url, asset]) => ({
+					url,
+					hash: asset.hash,
+					mimeType: asset.mimeType,
+					fileName: asset.fileName,
+				})),
+			);
 		}
 		return { ...result, stats: incremental.stats, warnings };
 	} catch (error) {

@@ -1,29 +1,53 @@
-import { hashRecord } from './hash';
+import { hashSchema, jcs } from './hash';
 import {
 	buildManifest,
+	type JsonSchema,
+	type ManifestEntry,
 	type UnderlayFile,
 	type UnderlayPushPayload,
 	type UnderlayRecord,
 } from './mapping';
 
 /**
- * Minimal client for the Underlay push (negotiate) protocol.
- * @see https://underlay.org — public/llms.txt §"Writing Data: The Push Flow"
+ * Minimal client for the Underlay delta push protocol.
+ * @see https://www.underlay.org/llms.txt §"Writing Data: The Push Flow"
+ *
+ * A push reads the head version's manifest, diffs our full record set against it, and uploads only
+ * the records that changed plus the (type, id) pairs that went away. The server's manifest is the
+ * source of truth for what it holds; PubPub's own push cache only decides what to re-render.
  *
  * Framework-free so it can be driven from a worker. Uses global fetch + AbortController; no
  * external HTTP dependency.
  */
 
-const DEFAULT_BASE_URL = 'https://underlay.org/api';
+// The apex domain 301s to www. fetch follows that by turning a POST into a GET and dropping the
+// Authorization header across origins, so the default must be the www host itself.
+const DEFAULT_BASE_URL = 'https://www.underlay.org/api';
 const REQUEST_TIMEOUT_MS = 60_000;
-const RECORD_BATCH_SIZE = 10_000;
 const MAX_RETRIES = 4;
 
+/** Manifest page size: the server's maximum (each entry is ~120 bytes). */
+const MANIFEST_PAGE_LIMIT = 25_000;
+
+/** Fallbacks for a session whose `limits` omit a batch limit; the server's values win. */
+const DEFAULT_BATCH_LINES = 10_000;
+const DEFAULT_BATCH_BYTES = 16 * 1024 * 1024;
+
 /**
- * Async-commit polling. Underlay validates every record, folds the version digests and writes
- * version_records during a commit — minutes of work on a large collection, far past
- * REQUEST_TIMEOUT_MS. Holding the request open would abort and then *retry* that work, so we ask
- * for an async commit and poll the session instead.
+ * Largest file the plain `PUT …/files/:hash` accepts. Larger files go through a presigned upload.
+ * Files are streamed during mapping, before any session reports `limits.file_bytes`, so this is
+ * fixed here; a 413 from the plain PUT also falls back to the presigned upload.
+ */
+const SMALL_UPLOAD_BYTES = 32 * 1024 * 1024;
+/** A presigned PUT of a large export is one long request; give it far more than the API timeout. */
+const LARGE_UPLOAD_TIMEOUT_MS = 30 * 60 * 1000;
+/** How long to wait for the server to verify a presigned upload's hash. */
+const UPLOAD_VERIFY_TIMEOUT_MS = 10 * 60 * 1000;
+
+/**
+ * Async-commit polling. Underlay commits a large push in the background — minutes of work, far past
+ * REQUEST_TIMEOUT_MS. Holding the request open would abort and then *retry* that work, so we ask for
+ * an async commit and poll the session instead.
  */
 const COMMIT_POLL_INITIAL_MS = 2_000;
 const COMMIT_POLL_MAX_MS = 15_000;
@@ -40,14 +64,23 @@ export type PushClientOptions = {
 	/** Identifies the pushing app + actor in the commit metadata. */
 	appId?: string;
 	actorId?: string;
-	/** Async-commit poll timing. Overridable so tests don't wait real seconds. */
+	/** Async-commit (and upload-verify) poll timing. Overridable so tests don't wait real seconds. */
 	pollIntervalMs?: number;
 	pollTimeoutMs?: number;
 };
 
+export type PushChanges = { added: number; updated: number; removed: number };
+
 export type PushResult =
 	| { status: 'noop'; reason: string }
-	| { status: 'committed'; semver: string; hash: string; recordCount: number; fileCount: number };
+	| {
+			status: 'committed';
+			semver: string;
+			hash: string;
+			recordCount: number;
+			fileCount: number;
+			changes?: PushChanges;
+	  };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -57,10 +90,10 @@ export class UnderlayPushError extends Error {
 		public readonly statusCode?: number,
 		public readonly detail?: unknown,
 		/**
-		 * The push can recover by re-negotiating from scratch. Set when a commit failed for a cause
-		 * we've since fixed (missing files, now uploaded) but whose session can no longer be
-		 * re-committed — Underlay only accepts a commit on an `open` session, and a failed async
-		 * finalize leaves it `failed`.
+		 * The push can recover by starting over against the current head: a version conflict
+		 * (someone published after we read the manifest), or a commit refused for a cause we've
+		 * since fixed (missing files, now uploaded). A refused commit leaves its session `failed`,
+		 * and only an `open` session accepts a commit, so recovery always means a new session.
 		 */
 		public readonly retriable = false,
 	) {
@@ -92,6 +125,9 @@ export const formatUnderlayError = (error: unknown): string => {
 	}
 	return error instanceof Error ? error.message : String(error);
 };
+
+/** `/accounts/me` lists the caller's organizations as `orgs`. */
+type MeBody = { orgs?: { slug: string; name?: string | null }[] };
 
 /** One authenticated fetch, parsed as JSON, with every failure mode reported instead of thrown. */
 const fetchJson = async (
@@ -164,7 +200,7 @@ export async function probeUnderlay(
 			);
 		}
 		const meText = await meResp.text();
-		let me: { accounts?: { slug: string; name: string }[] };
+		let me: MeBody;
 		try {
 			me = JSON.parse(meText);
 		} catch {
@@ -186,7 +222,7 @@ export async function probeUnderlay(
 				meText.slice(0, 200),
 			);
 		}
-		const accounts: UnderlayAccount[] = (me.accounts ?? []).map((a) => ({
+		const accounts: UnderlayAccount[] = (me.orgs ?? []).map((a) => ({
 			slug: a.slug,
 			name: a.name || a.slug,
 		}));
@@ -221,6 +257,92 @@ export async function probeUnderlay(
 	}
 }
 
+/** The head version as a delta push needs it: what the server holds, by (type, id). */
+export type UnderlayHead = {
+	semver: string;
+	metadata: Record<string, unknown> | null;
+	/** type → schema hash (bare hex). */
+	schemaHashes: Record<string, string>;
+	records: Map<string, { id: string; type: string; hash: string; private: boolean }>;
+};
+
+export type PushPlan = {
+	/** Our entries the head lacks, holds with a different hash, or holds in the other access set. */
+	upserts: ManifestEntry[];
+	/** Pairs the head holds that we no longer have, limited to types we still push. */
+	deletes: { type: string; id: string }[];
+	schemasChanged: boolean;
+};
+
+const recordKey = (type: string, id: string) => `${type}\u0000${id}`;
+const bareHash = (hash: string) => hash.replace(/^sha256:/, '');
+
+/**
+ * Diff our full record set against the head. A delete is only sent for a type that stays in our
+ * schema set: dropping a type removes its records with it, and the server refuses a delete line
+ * whose type isn't in the session's type set.
+ */
+export const diffAgainstHead = (
+	manifest: ManifestEntry[],
+	schemas: Record<string, JsonSchema>,
+	schemaHash: (schema: JsonSchema) => string,
+	head: UnderlayHead | null,
+): PushPlan => {
+	const upserts: ManifestEntry[] = [];
+	const ours = new Set<string>();
+	for (const entry of manifest) {
+		const key = recordKey(entry.type, entry.id);
+		ours.add(key);
+		const theirs = head?.records.get(key);
+		if (!theirs || theirs.hash !== entry.hash || theirs.private !== Boolean(entry.private)) {
+			upserts.push(entry);
+		}
+	}
+	const deletes: PushPlan['deletes'] = [];
+	for (const [key, theirs] of head?.records ?? []) {
+		if (!ours.has(key) && theirs.type in schemas) {
+			deletes.push({ type: theirs.type, id: theirs.id });
+		}
+	}
+	const theirSchemas = head?.schemaHashes ?? {};
+	const schemasChanged =
+		!head ||
+		Object.keys(theirSchemas).length !== Object.keys(schemas).length ||
+		Object.entries(schemas).some(([type, schema]) => theirSchemas[type] !== schemaHash(schema));
+	return { upserts, deletes, schemasChanged };
+};
+
+/**
+ * The fields of `patch` whose value differs from the head's metadata, or null if none do. A null
+ * value means "absent" on either side, so clearing a readme that was never set is not a change.
+ */
+export const metadataChanges = (
+	patch: Record<string, unknown> | undefined,
+	headMetadata: Record<string, unknown> | null,
+): Record<string, unknown> | null => {
+	if (!patch) {
+		return null;
+	}
+	const changed: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(patch)) {
+		if (jcs(value ?? null) !== jcs(headMetadata?.[key] ?? null)) {
+			changed[key] = value ?? null;
+		}
+	}
+	return Object.keys(changed).length > 0 ? changed : null;
+};
+
+type SessionLimits = { batch_lines?: number; batch_bytes?: number };
+
+/** A commit refusal, as the synchronous response body or a failed session's `error`. */
+type CommitErrorBody = {
+	error?: string;
+	statusCode?: number;
+	currentVersion?: string | null;
+	filesNeeded?: string[];
+	hash?: string;
+};
+
 export class UnderlayClient {
 	private readonly baseUrl: string;
 	private readonly apiKey: string;
@@ -250,13 +372,16 @@ export class UnderlayClient {
 	private async request(
 		url: string,
 		init: RequestInit & { rawBody?: Buffer | string } = {},
-		{ auth = true }: { auth?: boolean } = {},
+		{
+			auth = true,
+			timeoutMs = REQUEST_TIMEOUT_MS,
+		}: { auth?: boolean; timeoutMs?: number } = {},
 	): Promise<Response> {
 		const { rawBody, ...rest } = init;
 		let lastError: unknown;
 		for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
 			const controller = new AbortController();
-			const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+			const timeout = setTimeout(() => controller.abort(), timeoutMs);
 			try {
 				const headers = new Headers(rest.headers);
 				if (auth) {
@@ -308,27 +433,100 @@ export class UnderlayClient {
 		}
 	}
 
+	/** A response body as JSON when it is JSON, else its text (for error detail). */
+	private async body(response: Response): Promise<unknown> {
+		const text = await response.text();
+		try {
+			return JSON.parse(text);
+		} catch {
+			return text.slice(0, 500);
+		}
+	}
+
 	/**
-	 * Returns the latest version semver, or null if the collection has no versions yet.
+	 * Read the head version and its full manifest (ids, types and hashes; no bodies). Returns null
+	 * when the collection has no versions yet.
 	 *
-	 * Sent authenticated: Underlay resolves this route through the caller's access, so an anonymous
-	 * request against a PRIVATE collection 404s — which is indistinguishable here from "no versions
-	 * yet". That would push `base_version: null`, the server would reject the mismatch with a 409,
-	 * and the conflict retry would re-read the same 404 and fail again. Every push after the first
-	 * would die on a misleading version conflict the moment a collection was made private.
+	 * Sent authenticated: Underlay resolves these routes through the caller's access, so an anonymous
+	 * request against a PRIVATE collection 404s — indistinguishable from "no versions yet", which
+	 * would make every record look new. Authenticated as a member, the manifest also lists the
+	 * private set, marked `"private": true`.
+	 *
+	 * Pages after the first are read at the head's semver rather than `latest`, so a version
+	 * published mid-read can't splice two versions into one manifest.
 	 */
-	async getBaseVersion(): Promise<string | null> {
-		const response = await this.request(`${this.collectionPath()}/versions/latest`, {
+	async readHead(): Promise<UnderlayHead | null> {
+		const latest = await this.request(`${this.collectionPath()}/versions/latest`, {
 			method: 'GET',
 		});
-		if (response.status === 404) {
+		if (latest.status === 404) {
 			return null;
 		}
-		if (!response.ok) {
-			throw new UnderlayPushError('Failed to fetch latest version', response.status);
+		if (!latest.ok) {
+			throw new UnderlayPushError(
+				'Failed to fetch the latest version',
+				latest.status,
+				await this.body(latest),
+			);
 		}
-		const body = await this.json<{ semver?: string }>(response);
-		return body.semver ?? null;
+		const version = await this.json<{
+			semver: string;
+			metadata?: Record<string, unknown> | null;
+		}>(latest);
+
+		const records: UnderlayHead['records'] = new Map();
+		let schemaHashes: Record<string, string> = {};
+		let cursor: string | null = null;
+		let firstPage = true;
+		do {
+			const params = new URLSearchParams({ limit: String(MANIFEST_PAGE_LIMIT) });
+			if (cursor) {
+				params.set('cursor', cursor);
+			}
+			// biome-ignore lint/performance/noAwaitInLoops: manifest pages are cursor-chained
+			const response = await this.request(
+				`${this.collectionPath()}/versions/${encodeURIComponent(version.semver)}/manifest?${params}`,
+				{ method: 'GET' },
+			);
+			if (!response.ok) {
+				throw new UnderlayPushError(
+					`Failed to read the manifest of ${version.semver}`,
+					response.status,
+					await this.body(response),
+				);
+			}
+			// biome-ignore lint/performance/noAwaitInLoops: manifest pages are cursor-chained
+			const page = await this.json<{
+				schemas?: Record<string, string>;
+				records?: { id: string; type: string; hash: string; private?: boolean }[];
+				pagination?: { hasMore?: boolean; nextCursor?: string | null };
+			}>(response);
+			if (firstPage) {
+				schemaHashes = Object.fromEntries(
+					Object.entries(page.schemas ?? {}).map(([type, hash]) => [
+						type,
+						bareHash(hash),
+					]),
+				);
+				firstPage = false;
+			}
+			for (const r of page.records ?? []) {
+				records.set(recordKey(r.type, r.id), {
+					id: r.id,
+					type: r.type,
+					hash: bareHash(r.hash),
+					private: r.private === true,
+				});
+			}
+			cursor = page.pagination?.hasMore ? (page.pagination.nextCursor ?? null) : null;
+		} while (cursor);
+
+		return {
+			semver: version.semver,
+			metadata: version.metadata ?? null,
+			schemaHashes,
+			records,
+		};
 	}
 
 	/**
@@ -384,9 +582,7 @@ export class UnderlayClient {
 		});
 
 		// 2. Organization access.
-		const accounts = ((me.body as { accounts?: { slug: string }[] })?.accounts ?? []).map(
-			(a) => a.slug,
-		);
+		const accounts = ((me.body as MeBody)?.orgs ?? []).map((a) => a.slug);
 		if (accounts.length > 0 && !accounts.includes(this.owner)) {
 			steps.push({
 				name: 'organization',
@@ -413,7 +609,6 @@ export class UnderlayClient {
 			});
 			return fail(`Could not check the collection: ${col.error}`);
 		}
-		console.log('col', col);
 		if (col.kind === 'json') {
 			steps.push({
 				name: 'collection',
@@ -450,8 +645,8 @@ export class UnderlayClient {
 
 	/** Ensure the collection exists, creating it under the org if missing. */
 	async ensureCollection(): Promise<void> {
-		// Authenticated for the same reason as getBaseVersion: an anonymous probe of a private
-		// collection 404s, sending us down the create path for something that already exists.
+		// Authenticated for the same reason as readHead: an anonymous probe of a private collection
+		// 404s, sending us down the create path for something that already exists.
 		const response = await this.request(this.collectionPath(), { method: 'GET' });
 		if (response.ok) {
 			return;
@@ -475,177 +670,316 @@ export class UnderlayClient {
 
 	/**
 	 * Upload one file's bytes, content-addressed by hash. Public so a push can stream files up as it
-	 * maps them instead of accumulating every byte in memory until commit; the endpoint is idempotent
-	 * (an already-present hash is a cheap no-op), so re-uploading across attempts is harmless.
+	 * maps them instead of accumulating every byte in memory until commit. Uploading a file the
+	 * collection already holds is harmless, so re-uploading across attempts is too. A file uploaded
+	 * and verified for the collection counts as held even if no version references it yet.
 	 */
 	async putFile(file: UnderlayFile): Promise<void> {
-		return this.uploadFile(file);
-	}
-
-	private async uploadFile(file: UnderlayFile): Promise<void> {
+		if (file.bytes.length > SMALL_UPLOAD_BYTES) {
+			return this.uploadLargeFile(file);
+		}
 		// Send the file's real content type — Underlay reports back whatever it received, so this is
 		// what downstream consumers see. Falls back to octet-stream only when we truly don't know.
-		const response = await this.request(`${this.collectionPath()}/files/sha256:${file.hash}`, {
+		const response = await this.request(`${this.collectionPath()}/files/${file.hash}`, {
 			method: 'PUT',
 			headers: { 'Content-Type': file.contentType || 'application/octet-stream' },
 			rawBody: file.bytes,
 		});
+		if (response.status === 413) {
+			// A server whose small-upload limit is below ours.
+			return this.uploadLargeFile(file);
+		}
 		if (!response.ok) {
-			const detail = await response.text();
 			throw new UnderlayPushError(
 				`Failed to upload file ${file.hash}`,
 				response.status,
-				detail,
+				await this.body(response),
 			);
-		}
-	}
-
-	private async sendRecords(
-		sessionId: string,
-		neededHashes: string[],
-		recordByHash: Map<string, UnderlayRecord>,
-		resolveRecordByHash?: (hash: string) => Promise<UnderlayRecord | null>,
-	) {
-		// Resolve every needed hash to a record — from the in-memory set, or (incremental path) by
-		// lazily re-hydrating the owning pub when the server asks for a record we didn't materialize.
-		const toSend: UnderlayRecord[] = [];
-		for (const hash of neededHashes) {
-			let rec = recordByHash.get(hash);
-			if (!rec && resolveRecordByHash) {
-				// biome-ignore lint/performance/noAwaitInLoops: lazy hydration is bounded by needed records
-				rec = (await resolveRecordByHash(hash)) ?? undefined;
-			}
-			if (!rec) {
-				throw new UnderlayPushError(
-					`The Underlay server requested a record we can no longer produce (hash ${hash}). ` +
-						'This usually means content cached from a previous push (e.g. an asset inside a release) ' +
-						'can no longer be regenerated — check the [underlay] warnings in the worker logs for skipped assets.',
-				);
-			}
-			toSend.push(rec);
-		}
-		for (let i = 0; i < toSend.length; i += RECORD_BATCH_SIZE) {
-			const batch = toSend.slice(i, i + RECORD_BATCH_SIZE);
-			const ndjson = `${batch
-				.map((r) => JSON.stringify({ id: r.id, type: r.type, data: r.data }))
-				.join('\n')}\n`;
-			// biome-ignore lint/performance/noAwaitInLoops: batches must be sent sequentially
-			const response = await this.request(
-				`${this.collectionPath()}/versions/negotiate/${sessionId}/records`,
-				{
-					method: 'POST',
-					headers: { 'Content-Type': 'application/x-ndjson' },
-					rawBody: ndjson,
-				},
-			);
-			if (!response.ok) {
-				const detail = await response.text();
-				throw new UnderlayPushError('Failed to send records', response.status, detail);
-			}
 		}
 	}
 
 	/**
-	 * Run the full push. `payload` is the mapped records/schemas/files; `baseVersion` is the semver
-	 * the caller diffed against (null on first push). Retries once on a 409 version conflict by
-	 * re-fetching the latest version and re-negotiating.
+	 * Presigned upload, for files over the plain PUT's limit (large PDF/EPUB exports): start an
+	 * upload, PUT the bytes straight to storage, complete it, and wait until the server has hashed
+	 * the bytes and marked the file verified. Up to 5 GiB is one PUT; beyond that the server asks for
+	 * a multipart upload, which no PubPub export comes near, so that is refused clearly.
+	 */
+	private async uploadLargeFile(file: UnderlayFile): Promise<void> {
+		const uploads = `${this.collectionPath()}/files/uploads`;
+		const start = await this.request(uploads, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				hash: file.hash,
+				size: file.bytes.length,
+				mimeType: file.contentType || 'application/octet-stream',
+			}),
+		});
+		if (!start.ok) {
+			throw new UnderlayPushError(
+				`Failed to start the upload of file ${file.hash}`,
+				start.status,
+				await this.body(start),
+			);
+		}
+		const ticket = await this.json<{ id: string; url?: string }>(start);
+		if (!ticket.url) {
+			throw new UnderlayPushError(
+				`File ${file.hash} (${file.bytes.length} bytes) needs a multipart upload, which PubPub does not support.`,
+			);
+		}
+
+		// The presigned URL carries its own authorization; our API key must not go to storage.
+		const put = await this.request(
+			ticket.url,
+			{ method: 'PUT', rawBody: file.bytes },
+			{ auth: false, timeoutMs: LARGE_UPLOAD_TIMEOUT_MS },
+		);
+		if (!put.ok) {
+			throw new UnderlayPushError(
+				`Failed to upload file ${file.hash} to storage`,
+				put.status,
+				await this.body(put),
+			);
+		}
+
+		const complete = await this.request(`${uploads}/${ticket.id}/complete`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: '{}',
+		});
+		if (!complete.ok) {
+			throw new UnderlayPushError(
+				`Failed to complete the upload of file ${file.hash}`,
+				complete.status,
+				await this.body(complete),
+			);
+		}
+
+		const deadline = Date.now() + Math.min(this.pollTimeoutMs, UPLOAD_VERIFY_TIMEOUT_MS);
+		let delay = this.pollIntervalMs;
+		while (Date.now() < deadline) {
+			// biome-ignore lint/performance/noAwaitInLoops: polling is inherently sequential
+			await sleep(delay);
+			delay = Math.min(COMMIT_POLL_MAX_MS, Math.round(delay * 1.5));
+			let status: { status?: string; error?: unknown };
+			try {
+				const response = await this.request(`${uploads}/${ticket.id}`, { method: 'GET' });
+				if (!response.ok) {
+					continue;
+				}
+				status = await this.json<typeof status>(response);
+			} catch {
+				// A failed read isn't a failed upload; the server verifies regardless.
+				continue;
+			}
+			if (status.status === 'verified') {
+				return;
+			}
+			if (status.status === 'failed') {
+				throw new UnderlayPushError(
+					`Underlay could not verify the upload of file ${file.hash}`,
+					undefined,
+					status.error,
+				);
+			}
+		}
+		throw new UnderlayPushError(`The upload of file ${file.hash} was not verified in time.`);
+	}
+
+	/**
+	 * Produce the body of every record to upsert. Fresh records are in memory; a record of a pub that
+	 * came from the push cache is re-mapped on demand. Done BEFORE the session opens, so a slow
+	 * re-render can't let the session's idle timer run out between uploads.
+	 */
+	private async resolveUpserts(
+		upserts: ManifestEntry[],
+		payload: UnderlayPushPayload,
+	): Promise<UnderlayRecord[]> {
+		const freshByKey = new Map<string, UnderlayRecord>();
+		for (const record of payload.records) {
+			freshByKey.set(recordKey(record.type, record.id), record);
+		}
+		const out: UnderlayRecord[] = [];
+		for (const entry of upserts) {
+			let record = freshByKey.get(recordKey(entry.type, entry.id));
+			if (!record && payload.resolveRecord) {
+				// biome-ignore lint/performance/noAwaitInLoops: lazy hydration is bounded by the upserts
+				record = (await payload.resolveRecord(entry)) ?? undefined;
+			}
+			if (!record && payload.resolveRecordByHash) {
+				// biome-ignore lint/performance/noAwaitInLoops: lazy hydration is bounded by the upserts
+				record = (await payload.resolveRecordByHash(entry.hash)) ?? undefined;
+			}
+			if (!record) {
+				throw new UnderlayPushError(
+					`Underlay is missing record ${entry.type}/${entry.id}, and we can no longer produce it. ` +
+						'This usually means content cached from a previous push (e.g. an asset inside a release) ' +
+						'can no longer be regenerated — check the [underlay] warnings in the worker logs for skipped assets.',
+				);
+			}
+			out.push(record);
+		}
+		return out;
+	}
+
+	/** Upload NDJSON lines to a session, in batches within the server's line and byte limits. */
+	private async sendLines(
+		sessionId: string,
+		kind: 'records' | 'deletes',
+		lines: string[],
+		limits: SessionLimits,
+	): Promise<void> {
+		const maxLines = limits.batch_lines ?? DEFAULT_BATCH_LINES;
+		const maxBytes = limits.batch_bytes ?? DEFAULT_BATCH_BYTES;
+		let batch: string[] = [];
+		let batchBytes = 0;
+		const flush = async () => {
+			const response = await this.request(
+				`${this.collectionPath()}/push/${sessionId}/${kind}`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-ndjson' },
+					rawBody: `${batch.join('\n')}\n`,
+				},
+			);
+			if (!response.ok) {
+				throw new UnderlayPushError(
+					`Underlay refused the ${kind} upload`,
+					response.status,
+					await this.body(response),
+				);
+			}
+			batch = [];
+			batchBytes = 0;
+		};
+		for (const line of lines) {
+			const size = Buffer.byteLength(line) + 1;
+			if (batch.length > 0 && (batch.length >= maxLines || batchBytes + size > maxBytes)) {
+				// biome-ignore lint/performance/noAwaitInLoops: batches must be sent sequentially
+				await flush();
+			}
+			batch.push(line);
+			batchBytes += size;
+		}
+		if (batch.length > 0) {
+			await flush();
+		}
+	}
+
+	/** Best effort: free the session slot (20 per user) after a push fails partway. */
+	private async abandon(sessionId: string): Promise<void> {
+		try {
+			await this.request(`${this.collectionPath()}/push/${sessionId}`, { method: 'DELETE' });
+		} catch {
+			// The server expires idle sessions on its own.
+		}
+	}
+
+	/**
+	 * Run the full push: diff `payload` against the head, then open a session, upload the upserts and
+	 * deletes, and commit. `metadataPatch` holds version metadata fields to keep in sync (e.g.
+	 * `{readme}`); only the fields that differ from the head are sent, and any metadata set in
+	 * Underlay itself is left alone. Starts over once against the new head on a version conflict, or
+	 * after uploading files a commit said were missing.
 	 */
 	async push(
 		payload: UnderlayPushPayload,
-		baseVersion: string | null,
 		message: string,
-		metadata?: Record<string, unknown>,
+		metadataPatch?: Record<string, unknown>,
 	): Promise<PushResult> {
 		// Incremental pushes supply a precomputed manifest spanning cache-reused + fresh records;
 		// otherwise derive it from the in-memory records.
 		const manifest = payload.manifest ?? buildManifest(payload.records);
-		const recordByHash = new Map<string, UnderlayRecord>();
-		for (const record of payload.records) {
-			recordByHash.set(hashRecord(record).hash, record);
-		}
+		const filesByHash = new Map(payload.files.map((f) => [f.hash, f]));
 
-		const negotiateOnce = async (base: string | null): Promise<PushResult> => {
-			const negotiateResponse = await this.request(
-				`${this.collectionPath()}/versions/negotiate`,
-				{
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						base_version: base,
-						message,
-						app_id: this.appId,
-						actor_id: this.actorId,
-						schemas: payload.schemas,
-						manifest,
-						// Every referenced hash — which on a streaming push is a superset of the
-						// bytes still held in `files` (those were uploaded and dropped during mapping).
-						files: payload.fileHashes ?? payload.files.map((f) => f.hash),
-						...(metadata ? { metadata } : {}),
-					}),
-				},
+		const attempt = async (): Promise<PushResult> => {
+			const head = await this.readHead();
+			const plan = diffAgainstHead(manifest, payload.schemas, hashSchema, head);
+			const patch = metadataChanges(metadataPatch, head?.metadata ?? null);
+			if (
+				head &&
+				plan.upserts.length === 0 &&
+				plan.deletes.length === 0 &&
+				!plan.schemasChanged &&
+				!patch
+			) {
+				return { status: 'noop', reason: `Underlay ${head.semver} already matches` };
+			}
+			console.info(
+				`[underlay] Diff against ${head?.semver ?? 'an empty collection'}: ${plan.upserts.length} upsert(s), ${plan.deletes.length} delete(s)${plan.schemasChanged ? ', schemas changed' : ''}${patch ? ', metadata changed' : ''}.`,
 			);
+			const upserts = await this.resolveUpserts(plan.upserts, payload);
 
-			if (negotiateResponse.status === 409) {
-				throw new UnderlayPushError('Version conflict', 409);
+			const open = await this.request(`${this.collectionPath()}/push`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					base: head?.semver ?? null,
+					message,
+					app_id: this.appId,
+					actor_id: this.actorId,
+					// The full type set: it replaces the base's.
+					schemas: payload.schemas,
+					...(patch ? { metadata_patch: patch } : {}),
+				}),
+			});
+			if (open.status === 409) {
+				throw new UnderlayPushError('Version conflict', 409, await this.body(open), true);
 			}
-			if (!negotiateResponse.ok) {
-				const detail = await negotiateResponse.text();
-				throw new UnderlayPushError('Negotiate failed', negotiateResponse.status, detail);
-			}
-
-			const session = await this.json<{
-				session_id: string;
-				needed_records: string[];
-				needed_files: string[];
-			}>(negotiateResponse);
-
-			// Upload needed files.
-			const filesByHash = new Map(payload.files.map((f) => [f.hash, f]));
-			for (const hash of session.needed_files) {
-				let file = filesByHash.get(hash);
-				if (!file && payload.resolveFileByHash) {
-					// biome-ignore lint/performance/noAwaitInLoops: lazy hydration is bounded by needed files
-					file = (await payload.resolveFileByHash(hash)) ?? undefined;
-				}
-				if (!file) {
-					throw new UnderlayPushError(
-						`The Underlay server requested a file we can no longer produce (sha256:${hash}). ` +
-							'This usually means an asset from a previous push failed to download this time — ' +
-							'check the [underlay] warnings in the worker logs for the skipped asset URLs.',
-					);
-				}
-				// biome-ignore lint/performance/noAwaitInLoops: bounded by needed files
-				await this.uploadFile(file);
-			}
-
-			// Send needed records.
-			if (session.needed_records.length > 0) {
-				await this.sendRecords(
-					session.session_id,
-					session.needed_records,
-					recordByHash,
-					payload.resolveRecordByHash,
+			if (!open.ok) {
+				throw new UnderlayPushError(
+					'Could not open a push session',
+					open.status,
+					await this.body(open),
 				);
 			}
+			const session = await this.json<{ session_id: string; limits?: SessionLimits }>(open);
+			const limits = session.limits ?? {};
 
-			// Commit, retrying once for late-uploaded files.
-			const commit = await this.commit(
-				session.session_id,
-				filesByHash,
-				payload.resolveFileByHash,
-			);
-			return commit;
+			try {
+				await this.sendLines(
+					session.session_id,
+					'records',
+					upserts.map((r) =>
+						JSON.stringify({
+							id: r.id,
+							type: r.type,
+							data: r.data,
+							...(r.private ? { private: true } : {}),
+						}),
+					),
+					limits,
+				);
+				await this.sendLines(
+					session.session_id,
+					'deletes',
+					plan.deletes.map((d) => JSON.stringify({ type: d.type, id: d.id })),
+					limits,
+				);
+				const result = await this.commit(
+					session.session_id,
+					filesByHash,
+					payload.resolveFileByHash,
+				);
+				if (result.status === 'committed' && result.changes) {
+					console.info(
+						`[underlay] ${result.semver}: ${result.changes.added} added, ${result.changes.updated} updated, ${result.changes.removed} removed.`,
+					);
+				}
+				return result;
+			} catch (err) {
+				await this.abandon(session.session_id);
+				throw err;
+			}
 		};
 
 		try {
-			return await negotiateOnce(baseVersion);
+			return await attempt();
 		} catch (err) {
-			// 409: someone pushed while we were diffing. `retriable`: the commit was rejected for a
-			// cause we've since fixed (missing files, now uploaded) on a session that can no longer
-			// be re-committed. Both are resolved by re-negotiating against the current head, once.
-			if (err instanceof UnderlayPushError && (err.statusCode === 409 || err.retriable)) {
-				const freshBase = await this.getBaseVersion();
-				return negotiateOnce(freshBase);
+			if (err instanceof UnderlayPushError && err.retriable) {
+				console.info(`[underlay] ${err.message}; starting over against the current head.`);
+				return attempt();
 			}
 			throw err;
 		}
@@ -661,7 +995,7 @@ export class UnderlayClient {
 	): Promise<string[]> {
 		const unresolved: string[] = [];
 		for (const ref of filesNeeded) {
-			const hash = ref.replace(/^sha256:/, '');
+			const hash = bareHash(ref);
 			let file = filesByHash.get(hash);
 			if (!file && resolveFileByHash) {
 				// biome-ignore lint/performance/noAwaitInLoops: bounded retry
@@ -671,15 +1005,68 @@ export class UnderlayClient {
 				unresolved.push(hash);
 				continue;
 			}
-			await this.uploadFile(file);
+			await this.putFile(file);
 		}
 		return unresolved;
 	}
 
 	/**
+	 * Turn a refused commit into a result or an error. The body is the synchronous response, or a
+	 * failed session's `error`; either way the session is now `failed` and can't be committed again.
+	 */
+	private async commitRefused(
+		status: number | undefined,
+		body: unknown,
+		filesByHash: Map<string, UnderlayFile>,
+		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
+	): Promise<PushResult> {
+		const detail = (body && typeof body === 'object' ? body : {}) as CommitErrorBody;
+		const code = status ?? detail.statusCode;
+		if (detail.error === 'No changes detected') {
+			return { status: 'noop', reason: 'Underlay reported no changes' };
+		}
+		if (detail.error === 'Version conflict') {
+			throw new UnderlayPushError('Version conflict', 409, body, true);
+		}
+		if (detail.filesNeeded && detail.filesNeeded.length > 0) {
+			const unresolved = await this.uploadMissingFiles(
+				detail.filesNeeded,
+				filesByHash,
+				resolveFileByHash,
+			);
+			// Starting over when we know we could not supply everything just trades a specific
+			// diagnosis for a generic failure.
+			if (unresolved.length > 0) {
+				throw new UnderlayPushError(
+					`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
+						'Check the [underlay] warnings in the worker logs for skipped assets.',
+					422,
+					body,
+				);
+			}
+			throw new UnderlayPushError(
+				'Commit rejected for missing files; they have been uploaded, retrying',
+				422,
+				body,
+				true,
+			);
+		}
+		if (code === 503) {
+			// Storage cleanup ran during the commit; the server says to push again.
+			throw new UnderlayPushError(
+				detail.error ?? 'Underlay storage was busy',
+				503,
+				body,
+				true,
+			);
+		}
+		throw new UnderlayPushError(detail.error ?? 'Commit failed', code, body);
+	}
+
+	/**
 	 * Poll a session whose commit was accepted asynchronously, until it reports a terminal status.
 	 *
-	 * A transient failure to *read* the session is not a failed commit — the finalize is running
+	 * A transient failure to *read* the session is not a failed commit — the commit is running
 	 * server-side regardless — so read errors are swallowed and retried until the deadline.
 	 */
 	private async awaitAsyncCommit(
@@ -697,7 +1084,7 @@ export class UnderlayClient {
 			await sleep(delay);
 			delay = Math.min(COMMIT_POLL_MAX_MS, Math.round(delay * 1.5));
 
-			// The server keeps finalizing regardless of whether we can read the session, so a failed
+			// The server keeps committing regardless of whether we can read the session, so a failed
 			// poll must not fail the push. `request` throws once its own retries are exhausted, and
 			// a malformed body throws from `json` — both are transient from here, so both keep
 			// polling. If reads never recover, the deadline below produces the actionable timeout.
@@ -708,14 +1095,14 @@ export class UnderlayClient {
 					hash: string;
 					recordCount: number;
 					fileCount: number;
+					changes?: PushChanges;
 				} | null;
 				error?: unknown;
 			};
 			try {
-				const response = await this.request(
-					`${this.collectionPath()}/versions/negotiate/${sessionId}`,
-					{ method: 'GET' },
-				);
+				const response = await this.request(`${this.collectionPath()}/push/${sessionId}`, {
+					method: 'GET',
+				});
 				if (!response.ok) {
 					continue;
 				}
@@ -736,42 +1123,17 @@ export class UnderlayClient {
 			}
 
 			if (session.status === 'failed') {
-				const detail = session.error as
-					| { error?: string; filesNeeded?: string[] }
-					| undefined;
-				// Same recovery the synchronous 422 path gets: upload what the server is missing and
-				// push again. The failed session can't be re-committed, so this re-negotiates.
-				if (detail?.filesNeeded && detail.filesNeeded.length > 0) {
-					const unresolved = await this.uploadMissingFiles(
-						detail.filesNeeded,
-						filesByHash,
-						resolveFileByHash,
-					);
-					if (unresolved.length === 0) {
-						throw new UnderlayPushError(
-							'Commit rejected for missing files; they have been uploaded, retrying',
-							422,
-							detail,
-							true,
-						);
-					}
-					throw new UnderlayPushError(
-						`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
-							'Check the [underlay] warnings in the worker logs for skipped assets.',
-						422,
-						detail,
-					);
-				}
-				throw new UnderlayPushError(
-					detail?.error ?? 'Underlay reported the commit as failed',
+				return this.commitRefused(
 					undefined,
-					session.error,
+					session.error ?? { error: 'Underlay reported the commit as failed' },
+					filesByHash,
+					resolveFileByHash,
 				);
 			}
 
 			if (session.status === 'expired') {
 				throw new UnderlayPushError(
-					'The negotiate session expired before the commit finished',
+					'The push session expired before the commit finished',
 					undefined,
 					session,
 				);
@@ -781,7 +1143,7 @@ export class UnderlayClient {
 			if (now - lastLoggedAt >= COMMIT_LOG_INTERVAL_MS) {
 				lastLoggedAt = now;
 				console.info(
-					`[underlay] Commit still finalizing (${Math.round((now - startedAt) / 1000)}s elapsed)…`,
+					`[underlay] Commit still running (${Math.round((now - startedAt) / 1000)}s elapsed)…`,
 				);
 			}
 		}
@@ -797,66 +1159,36 @@ export class UnderlayClient {
 		filesByHash: Map<string, UnderlayFile>,
 		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
 	): Promise<PushResult> {
-		// Ask for an async finalize. An Underlay that predates async commit ignores the query param
-		// and answers 201 with the version inline, which the 2xx path below handles unchanged — so
-		// this is safe against either side being deployed first.
-		const doCommit = () =>
-			this.request(
-				`${this.collectionPath()}/versions/negotiate/${sessionId}/commit?async=true`,
-				{ method: 'POST' },
-			);
+		const response = await this.request(
+			`${this.collectionPath()}/push/${sessionId}/commit?async=true`,
+			{ method: 'POST' },
+		);
 
-		let response = await doCommit();
-
-		// 422 with missing files → upload them and retry once.
-		if (response.status === 422) {
-			const body = await this.json<{
-				error?: string;
-				filesNeeded?: string[];
-				extraFields?: string[];
-			}>(response);
-			if (body.filesNeeded && body.filesNeeded.length > 0) {
-				const unresolved = await this.uploadMissingFiles(
-					body.filesNeeded,
-					filesByHash,
-					resolveFileByHash,
-				);
-				// Retrying the commit when we know we could not supply everything just trades a
-				// specific diagnosis for a generic "Commit failed". Same message the async path gives.
-				if (unresolved.length > 0) {
-					throw new UnderlayPushError(
-						`Commit rejected: the Underlay server needs ${unresolved.length} file(s) we can no longer produce. ` +
-							'Check the [underlay] warnings in the worker logs for skipped assets.',
-						422,
-						body,
-					);
-				}
-				response = await doCommit();
-			} else {
-				throw new UnderlayPushError(
-					body.error ?? 'Commit rejected (422)',
-					422,
-					body.extraFields ?? body,
-				);
-			}
-		}
-
-		if (!response.ok) {
-			const detail = await response.text();
-			throw new UnderlayPushError('Commit failed', response.status, detail);
-		}
-
-		// 202: the server is finalizing in the background; the outcome lands on the session.
+		// 202: the server is committing in the background; the outcome lands on the session.
 		if (response.status === 202) {
 			return this.awaitAsyncCommit(sessionId, filesByHash, resolveFileByHash);
 		}
 
-		const committed = await this.json<{
-			semver: string;
-			hash: string;
-			recordCount: number;
-			fileCount: number;
-		}>(response);
-		return { status: 'committed', ...committed };
+		if (response.ok) {
+			const committed = await this.json<{
+				semver: string;
+				hash: string;
+				recordCount: number;
+				fileCount: number;
+				changes?: PushChanges;
+			}>(response);
+			return { status: 'committed', ...committed };
+		}
+
+		const body = await this.body(response);
+		// A commit retried after a lost response finds its session already committing: keep polling
+		// rather than reporting the first attempt's own progress as a failure.
+		if (
+			response.status === 409 &&
+			(body as CommitErrorBody | null)?.error === 'Session is committing'
+		) {
+			return this.awaitAsyncCommit(sessionId, filesByHash, resolveFileByHash);
+		}
+		return this.commitRefused(response.status, body, filesByHash, resolveFileByHash);
 	}
 }

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://console.knowledgefutures.org/schemas/kf.project.v2.json",
+  "version": 2,
+  "slug": "kf-pubpub",
+  "name": "PubPub",
+  "account": "kf",
+
+  // No environments yet: the console registers the project and deploys
+  // nothing. Add "environments" (with at least "production") to deploy.
+}

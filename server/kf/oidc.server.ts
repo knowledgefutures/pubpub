@@ -9,7 +9,6 @@
  *   OIDC_ISSUER_INTERNAL_URL — server-to-server URL for Docker (falls back to OIDC_ISSUER_URL)
  *   OIDC_CLIENT_ID           — OAuth client ID
  *   OIDC_CLIENT_SECRET       — OAuth client secret
- *   OIDC_ORGS_CLAIM          — custom claim key for org memberships (default: https://knowledgefutures.org/orgs)
  */
 
 import * as crypto from 'node:crypto';
@@ -24,7 +23,6 @@ const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID ?? 'kf_pubpub';
 
 const OIDC_CLIENT_SECRET = process.env.OIDC_CLIENT_SECRET ?? '';
 
-const OIDC_ORGS_CLAIM = process.env.OIDC_ORGS_CLAIM ?? 'https://knowledgefutures.org/orgs';
 const OIDC_ROLE_CLAIM = process.env.OIDC_ROLE_CLAIM ?? 'https://knowledgefutures.org/role';
 
 const APP_URL = process.env.APP_URL ?? 'http://localhost:9876';
@@ -302,14 +300,6 @@ export async function introspectRefreshToken(refreshToken: string): Promise<Intr
 
 // --- UserInfo ---
 
-export interface OIDCOrg {
-	id: string;
-	name: string;
-	slug: string;
-	type: 'personal' | 'shared';
-	role: string;
-}
-
 export interface OIDCUserInfo {
 	sub: string;
 	name?: string;
@@ -333,13 +323,6 @@ export async function fetchUserInfo(accessToken: string): Promise<OIDCUserInfo> 
 	return res.json() as Promise<OIDCUserInfo>;
 }
 
-/** Extract org memberships from the userinfo response. */
-export function extractOrgs(userInfo: OIDCUserInfo): OIDCOrg[] {
-	const orgs = userInfo[OIDC_ORGS_CLAIM];
-	if (Array.isArray(orgs)) return orgs as OIDCOrg[];
-	return [];
-}
-
 // --- Internal API (optional, for KF Auth specific features) ---
 
 const AUTH_INTERNAL_API_URL = process.env.AUTH_INTERNAL_API_URL ?? OIDC_ISSUER_INTERNAL_URL;
@@ -348,22 +331,6 @@ const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY ?? '';
 
 /** Whether the internal API is configured and available. */
 export const hasInternalApi = Boolean(AUTH_INTERNAL_API_KEY);
-
-/**
- * Fetch a user's orgs from the auth provider's internal API.
- * Returns empty array if internal API is not configured.
- */
-export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
-	if (!AUTH_INTERNAL_API_KEY) return [];
-
-	const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/orgs`, {
-		headers: { Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}` },
-	});
-
-	if (!res.ok) return [];
-	const data = (await res.json()) as { orgs?: OIDCOrg[] };
-	return data.orgs ?? [];
-}
 
 // --- Outbound ban sync ---
 
@@ -416,7 +383,6 @@ export {
 	OIDC_ISSUER_INTERNAL_URL,
 	OIDC_CLIENT_ID,
 	OIDC_CLIENT_SECRET,
-	OIDC_ORGS_CLAIM,
 	OIDC_ROLE_CLAIM,
 	OIDC_ACCOUNT_URL,
 	APP_URL,

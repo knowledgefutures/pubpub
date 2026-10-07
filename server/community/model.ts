@@ -18,7 +18,6 @@ import {
 	DefaultScope,
 	ForeignKey,
 	HasMany,
-	Index,
 	Is,
 	IsLowercase,
 	Length,
@@ -250,11 +249,6 @@ export class Community extends Model<
 	@AllowNull
 	@Column(DataType.UUID)
 	declare templateId: string | null;
-
-	/** KF Auth organization that owns this community (for billing/ownership) */
-	@Index
-	@Column(DataType.TEXT)
-	declare kfOrgId: string | null;
 
 	/**
 	 * CMS mode: the community is only visible to members;

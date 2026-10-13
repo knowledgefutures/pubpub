@@ -236,7 +236,7 @@
 		"reflect-metadata": "^0.1.13",
 		"request": "^2.88.0",
 		"rss": "^1.2.2",
-		"sanitize-html": "^2.3.2",
+		"sanitize-html": "^2.17.7",
 		"sass": "1.67.0",
 		"saxes": "^6.0.0",
 		"sequelize": "^6.31.1",

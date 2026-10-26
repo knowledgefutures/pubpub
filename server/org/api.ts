@@ -2,6 +2,7 @@ import type { MemberPermission } from 'types';
 
 import { Router } from 'express';
 
+import { fetchUserOrgs } from 'server/kf/oidc.server';
 import { Community, OrgMember, Pub, User } from 'server/models';
 import { OrgFeaturedPub } from 'server/orgFeaturedPub/model';
 import { addPubToOrg, getOrgFeaturedPubs, removePubFromOrg } from 'server/orgFeaturedPub/queries';
@@ -271,11 +272,22 @@ router.put('/api/orgs/:id', async (req, res, next) => {
 		};
 		// Only superadmins can change privileged fields
 		if (initialData.loginData.isSuperAdmin) {
-			const { isActive, isPrivate, slug, domains, pubSearchTerms, kfOrgId } = req.body;
+			const { isActive, isPrivate, slug, domains, pubSearchTerms } = req.body;
 			Object.assign(values, { isActive, isPrivate, slug, domains, pubSearchTerms });
-			if (typeof kfOrgId === 'string' && kfOrgId.trim()) {
-				values.kfOrgId = kfOrgId.trim();
+		}
+		// The KF Account: staff can set any; an org admin only one they belong to
+		const { kfOrgId } = req.body;
+		if (typeof kfOrgId === 'string' && kfOrgId.trim()) {
+			const nextKfOrgId = kfOrgId.trim();
+			if (!initialData.loginData.isSuperAdmin) {
+				const accounts = await fetchUserOrgs(initialData.loginData.id!);
+				if (!accounts.some((account) => account.id === nextKfOrgId)) {
+					throw new ForbiddenError(
+						new Error('You can only move an org to a KF Account you belong to'),
+					);
+				}
 			}
+			values.kfOrgId = nextKfOrgId;
 		}
 		// Remove undefined keys so we don't null out fields
 		Object.keys(values).forEach((k) => {
@@ -286,6 +298,25 @@ router.put('/api/orgs/:id', async (req, res, next) => {
 			throw new NotFoundError();
 		}
 		return res.status(200).json(org.toJSON());
+	} catch (err) {
+		return next(err);
+	}
+});
+
+// GET /api/orgs/:id/kf-accounts — the org's KF Account, and the KF Accounts this user can
+// move it to (superadmin or org admin)
+router.get('/api/orgs/:id/kf-accounts', async (req, res, next) => {
+	try {
+		const initialData = await requireOrgAdmin(req, req.params.id);
+		const org = await getOrgById(req.params.id);
+		if (!org) {
+			throw new NotFoundError();
+		}
+		const accounts = await fetchUserOrgs(initialData.loginData.id!);
+		return res.status(200).json({
+			current: org.kfOrgId,
+			accounts: accounts.map(({ id, name, slug, type }) => ({ id, name, slug, type })),
+		});
 	} catch (err) {
 		return next(err);
 	}

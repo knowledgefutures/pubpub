@@ -332,6 +332,29 @@ const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY ?? '';
 /** Whether the internal API is configured and available. */
 export const hasInternalApi = Boolean(AUTH_INTERNAL_API_KEY);
 
+// --- KF Accounts ---
+
+export interface OIDCOrg {
+	id: string;
+	name: string;
+	slug: string;
+	type: 'personal' | 'shared';
+	role: string;
+}
+
+/** The KF Accounts (console orgs) a user belongs to. Empty when the internal API is off. */
+export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
+	if (!AUTH_INTERNAL_API_KEY) return [];
+
+	const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/orgs`, {
+		headers: { Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}` },
+	});
+
+	if (!res.ok) return [];
+	const data = (await res.json()) as { orgs?: OIDCOrg[] };
+	return data.orgs ?? [];
+}
+
 // --- Outbound ban sync ---
 
 export async function syncBanToKfAuth(userId: string, reason?: string): Promise<void> {

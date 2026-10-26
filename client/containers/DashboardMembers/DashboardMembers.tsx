@@ -98,9 +98,11 @@ const DashboardMembers = (props: Props) => {
 	const showBannedTab =
 		activeTargetType === 'community' && canAdminCommunity && bannedUsersData.length > 0;
 
+	const orgMembers = membersData.orgMembers || [];
 	const hasInheritedMembers =
 		(membersByType.collection.length && activeTargetType !== 'collection') ||
-		(membersByType.community.length && activeTargetType !== 'community');
+		(membersByType.community.length && activeTargetType !== 'community') ||
+		orgMembers.length;
 
 	const membersContent = (
 		<>
@@ -163,6 +165,13 @@ const DashboardMembers = (props: Props) => {
 						<InheritedMembersBlock
 							members={membersByType.community}
 							scope="Community"
+						/>
+					)}
+					{!!orgMembers.length && (
+						<InheritedMembersBlock
+							members={orgMembers}
+							scope="Org"
+							org={membersData.org}
 						/>
 					)}
 				</SettingsSection>

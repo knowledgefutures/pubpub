@@ -30,7 +30,8 @@ const DashboardActivity = (props: Props) => {
 	} = usePageContext();
 	const { scope, memberData } = scopeData;
 	const [member, setMember] = useState<Member | undefined>(
-		memberData.find((m: Member) => m.communityId),
+		// The digest setting lives on a Member row, so an inherited org membership has none
+		memberData.find((m) => m.communityId && !m.inheritedFromOrg),
 	);
 	const [filters, setFilters] = useState<ActivityFilter[]>([]);
 

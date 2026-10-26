@@ -990,6 +990,14 @@ type SettingsMember = {
 	} | null;
 };
 
+type PendingInvite = {
+	id: string;
+	community?: { id: string; title: string; subdomain: string };
+	requestedBy?: { fullName: string };
+};
+
+type PendingInvites = { invites: PendingInvite[]; requests: PendingInvite[] };
+
 const memberPermissionOptions = [
 	{ value: 'view', label: 'View' },
 	{ value: 'edit', label: 'Edit' },
@@ -1353,7 +1361,7 @@ const PubAutocomplete = ({
 const SettingsTab = ({ orgData }: Props) => {
 	const org = orgData.org;
 	const { loginData } = usePageContext();
-	const isSuperAdmin = loginData.isSuperAdmin;
+	const _isSuperAdmin = loginData.isSuperAdmin;
 
 	// Org info form
 	const [title, setTitle] = useState(org.title || '');
@@ -1388,6 +1396,10 @@ const SettingsTab = ({ orgData }: Props) => {
 	const [communities, setCommunities] = useState<any[]>([]);
 	const [communityLoading, setCommunityLoading] = useState(false);
 	const [communityError, setCommunityError] = useState('');
+	const [pendingInvites, setPendingInvites] = useState<PendingInvites>({
+		invites: [],
+		requests: [],
+	});
 	const [communitySaved, setCommunitySaved] = useState(false);
 
 	// Curated Pubs
@@ -1406,10 +1418,12 @@ const SettingsTab = ({ orgData }: Props) => {
 			apiFetch.get(`/api/orgs/${org.id}/members`),
 			apiFetch.get(`/api/orgs/${org.id}/communities`),
 			apiFetch.get(`/api/orgs/${org.id}/pubs`),
-		]).then(([mems, comms, pubs]) => {
+			apiFetch.get(`/api/orgs/${org.id}/invites`),
+		]).then(([mems, comms, pubs, pending]) => {
 			setMembers(mems as any);
 			setCommunities(comms as any);
 			setCuratedPubs(pubs as any);
+			setPendingInvites(pending as any);
 		});
 	}, [org.id]);
 
@@ -1494,20 +1508,43 @@ const SettingsTab = ({ orgData }: Props) => {
 		setTimeout(() => setCommunitySaved(false), 2000);
 	};
 
-	const handleAddCommunity = async (community: CommunitySearchResult) => {
+	const reloadCommunities = async () => {
+		const [comms, pending] = await Promise.all([
+			apiFetch.get(`/api/orgs/${org.id}/communities`),
+			apiFetch.get(`/api/orgs/${org.id}/invites`),
+		]);
+		setCommunities(comms as any);
+		setPendingInvites(pending as any);
+	};
+
+	/** Invites the community, or moves it in directly if the user also admins it */
+	const handleInviteCommunity = async (community: CommunitySearchResult) => {
 		setCommunityLoading(true);
 		setCommunityError('');
 		try {
-			await apiFetch.post(`/api/orgs/${org.id}/communities`, {
+			await apiFetch.post(`/api/orgs/${org.id}/invites`, {
 				subdomain: community.subdomain,
 			});
-			const comms = await apiFetch.get(`/api/orgs/${org.id}/communities`);
-			setCommunities(comms as any);
+			await reloadCommunities();
 			flashCommunitySaved();
 		} catch (e: any) {
-			setCommunityError(e?.message || 'Failed to add community');
+			setCommunityError(e?.message || 'Failed to invite community');
 		} finally {
 			setCommunityLoading(false);
+		}
+	};
+
+	const handleInviteAction = async (
+		inviteId: string,
+		action: 'accept' | 'decline' | 'cancel',
+	) => {
+		setCommunityError('');
+		try {
+			await apiFetch.post(`/api/orgInvites/${inviteId}/${action}`, {});
+			await reloadCommunities();
+			flashCommunitySaved();
+		} catch (e: any) {
+			setCommunityError(e?.message || `Failed to ${action}`);
 		}
 	};
 
@@ -1715,8 +1752,9 @@ const SettingsTab = ({ orgData }: Props) => {
 					Members{memberSaved && <span className="settings-saved-msg">Saved!</span>}
 				</h3>
 				<p className="settings-help">
-					Admins manage this org: its members, communities, featured pubs, templates and
-					settings. Every member can see the dashboard.
+					Each member gets their level in every community this org owns. Admins also
+					manage the org itself: its members, communities, featured pubs, templates and
+					settings.
 				</p>
 				<div className="settings-row">
 					<UserAutocomplete onSelect={handleAddMember} disabled={memberLoading} />
@@ -1788,16 +1826,67 @@ const SettingsTab = ({ orgData }: Props) => {
 					{communitySaved && <span className="settings-saved-msg">Saved!</span>}
 				</h3>
 				<p className="settings-help">
-					Communities this org owns. Its dashboard and analytics cover them.
-					{isSuperAdmin
-						? ' As a PubPub admin, you can add any community.'
-						: ' To add a community, ask PubPub support.'}
+					Communities this org owns. Org members get their level in each of them, and the
+					dashboard and analytics cover them. Inviting a community asks its admins to
+					join; if you admin it too, it moves in right away.
 				</p>
-				{isSuperAdmin && (
-					<CommunityAutocomplete
-						onSelect={handleAddCommunity}
-						disabled={communityLoading}
-					/>
+				<CommunityAutocomplete
+					onSelect={handleInviteCommunity}
+					disabled={communityLoading}
+				/>
+				{pendingInvites.requests.length > 0 && (
+					<div className="settings-list">
+						<div className="settings-list-heading">Asking to join</div>
+						{pendingInvites.requests.map((r) => (
+							<div className="settings-list-item" key={r.id}>
+								<span className="settings-list-name">
+									{r.community?.title}
+									<span className="settings-list-slug">
+										asked by {r.requestedBy?.fullName ?? 'a community admin'}
+									</span>
+								</span>
+								<span>
+									<Button
+										small
+										minimal
+										intent="success"
+										icon="tick"
+										text="Accept"
+										onClick={() => handleInviteAction(r.id, 'accept')}
+									/>
+									<Button
+										small
+										minimal
+										icon="cross"
+										text="Decline"
+										onClick={() => handleInviteAction(r.id, 'decline')}
+									/>
+								</span>
+							</div>
+						))}
+					</div>
+				)}
+				{pendingInvites.invites.length > 0 && (
+					<div className="settings-list">
+						<div className="settings-list-heading">Invited</div>
+						{pendingInvites.invites.map((i) => (
+							<div className="settings-list-item" key={i.id}>
+								<span className="settings-list-name">
+									{i.community?.title}
+									<span className="settings-list-slug">
+										waiting for a community admin
+									</span>
+								</span>
+								<Button
+									small
+									minimal
+									icon="cross"
+									text="Cancel"
+									onClick={() => handleInviteAction(i.id, 'cancel')}
+								/>
+							</div>
+						))}
+					</div>
 				)}
 				{communityError && (
 					<Callout intent="danger" className="settings-error">
@@ -2018,6 +2107,7 @@ type SuggestedCommunity = {
 	managerCount: number;
 	authorCount: number;
 	alreadyAdded: boolean;
+	pendingDirection: 'invite' | 'request' | null;
 };
 
 type SuggestedSortKey = 'title' | 'managers' | 'authors' | 'pubs' | 'created' | 'status';
@@ -2052,9 +2142,9 @@ const SuggestedCommunitiesTab = ({ orgId }: { orgId: string }) => {
 			.finally(() => setLoading(false));
 	}, [orgId]);
 
-	const handleAdd = useCallback(
+	const handleInvite = useCallback(
 		async (communityId: string) => {
-			await apiFetch.post(`/api/orgs/${orgId}/communities`, { communityId });
+			await apiFetch.post(`/api/orgs/${orgId}/invites`, { communityId });
 			const data = await apiFetch.get(`/api/orgs/${orgId}/suggested-communities`);
 			setSuggestions(data as any);
 		},
@@ -2152,8 +2242,8 @@ const SuggestedCommunitiesTab = ({ orgId }: { orgId: string }) => {
 			<div className="sg-help">
 				Based on your org&rsquo;s email domains. Counts reflect only managers, authors, and
 				pubs associated with users whose email matches your configured domains. Communities
-				another org owns aren&rsquo;t listed, and only PubPub admins can add a community for
-				now.
+				another org owns aren&rsquo;t listed. Inviting a community asks its admins to join;
+				answer requests to join in Settings.
 			</div>
 			<div className="data-table-wrapper">
 				<table className="data-table sg-table">
@@ -2207,9 +2297,19 @@ const SuggestedCommunitiesTab = ({ orgId }: { orgId: string }) => {
 											Owned
 										</Tag>
 									)}
+									{!s.alreadyAdded && s.pendingDirection === 'invite' && (
+										<Tag minimal intent="primary">
+											Invited
+										</Tag>
+									)}
+									{!s.alreadyAdded && s.pendingDirection === 'request' && (
+										<Tag minimal intent="warning">
+											Asked to join
+										</Tag>
+									)}
 								</td>
 								<td className="sg-td-action">
-									{s.alreadyAdded ? (
+									{s.alreadyAdded && (
 										<Button
 											small
 											minimal
@@ -2218,17 +2318,16 @@ const SuggestedCommunitiesTab = ({ orgId }: { orgId: string }) => {
 											text="Remove"
 											onClick={() => handleRemove(s.communityId)}
 										/>
-									) : (
-										loginData.isSuperAdmin && (
-											<Button
-												small
-												minimal
-												intent="primary"
-												icon="plus"
-												text="Add"
-												onClick={() => handleAdd(s.communityId)}
-											/>
-										)
+									)}
+									{!s.alreadyAdded && !s.pendingDirection && (
+										<Button
+											small
+											minimal
+											intent="primary"
+											icon="plus"
+											text={loginData.isSuperAdmin ? 'Add' : 'Invite'}
+											onClick={() => handleInvite(s.communityId)}
+										/>
 									)}
 								</td>
 							</tr>

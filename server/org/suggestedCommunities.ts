@@ -25,6 +25,8 @@ export type SuggestedCommunity = {
 	authorCount: number;
 	/** true if this org already owns the community */
 	alreadyAdded: boolean;
+	/** 'invite' if the org has invited it, 'request' if it has asked to join */
+	pendingDirection: 'invite' | 'request' | null;
 };
 
 /**
@@ -183,8 +185,13 @@ export const getSuggestedCommunities = async (orgId: string): Promise<SuggestedC
 			"Communities"."accentColorDark",
 			"Communities"."accentColorLight",
 			"Communities"."createdAt",
-			("Communities"."orgId" IS NOT NULL AND "Communities"."orgId" = :orgId) AS "alreadyAdded"
+			("Communities"."orgId" IS NOT NULL AND "Communities"."orgId" = :orgId) AS "alreadyAdded",
+			oi."direction" AS "pendingDirection"
 		FROM "Communities"
+		LEFT JOIN "OrgInvites" oi
+			ON oi."communityId" = "Communities"."id"
+			AND oi."orgId" = :orgId
+			AND oi."status" = 'pending'
 		LEFT JOIN "SpamTags" st
 			ON st."id" = "Communities"."spamTagId"
 		WHERE "Communities"."id" IN (${placeholders})
@@ -204,6 +211,7 @@ export const getSuggestedCommunities = async (orgId: string): Promise<SuggestedC
 		accentColorLight: string | null;
 		createdAt: string;
 		alreadyAdded: boolean;
+		pendingDirection: 'invite' | 'request' | null;
 	}>(communityQuery, {
 		replacements,
 		type: QueryTypes.SELECT,
@@ -230,6 +238,7 @@ export const getSuggestedCommunities = async (orgId: string): Promise<SuggestedC
 			managerCount: counts.managerCount,
 			authorCount: counts.authorCount,
 			alreadyAdded: c.alreadyAdded === true || (c.alreadyAdded as any) === 'true',
+			pendingDirection: c.pendingDirection ?? null,
 		};
 	});
 };

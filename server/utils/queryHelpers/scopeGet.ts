@@ -18,6 +18,7 @@ import {
 	Submission,
 	SubmissionWorkflow,
 } from 'server/models';
+import { getInheritedCommunityMember } from 'server/orgMember/queries';
 import { isUserSuperAdmin } from 'server/user/queries';
 import { expect } from 'utils/assert';
 
@@ -182,7 +183,7 @@ const getScopeElements = async (scopeInputs: {
 		activeCommunity = expect(
 			await Community.findOne({
 				where: { id: communityId },
-				attributes: ['id'],
+				attributes: ['id', 'orgId'],
 				raw: true,
 			}),
 		);
@@ -334,20 +335,24 @@ const getScopeMemberData = async (
 		return [];
 	}
 	const orQuery = buildOrQuery(scopeElements);
-	const members = await Member.findAll({
-		where: {
-			userId: loginId,
-			[Op.or]: orQuery,
-		},
-	});
-	return members.map((member) => member.toJSON());
+	const [members, inheritedMember] = await Promise.all([
+		Member.findAll({
+			where: {
+				userId: loginId,
+				[Op.or]: orQuery,
+			},
+		}),
+		getInheritedCommunityMember(loginId, scopeElements.activeCommunity),
+	]);
+	const memberData: types.ScopeMember[] = members.map((member) => member.toJSON());
+	return inheritedMember ? [...memberData, inheritedMember] : memberData;
 };
 
 const getActivePermissions = async (
 	scopeInputs: ScopeInputs,
 	scopeElements: types.ScopeData['elements'],
 	publicPermissionsData: PublicPermissions[],
-	scopeMemberData: types.Member[],
+	scopeMemberData: types.ScopeMember[],
 ) => {
 	const { activePub, activeCollection, activeCommunity, inactiveCollections } = scopeElements;
 	const isSuperAdmin = await isUserSuperAdmin({ userId: scopeInputs.loginId });

@@ -1060,6 +1060,14 @@
 		}
 
 		.settings-list {
+			.settings-list-heading {
+				margin-top: 12px;
+				font-size: 12px;
+				font-weight: 600;
+				text-transform: uppercase;
+				color: #5c7080;
+			}
+
 			.settings-list-item {
 				display: flex;
 				align-items: center;

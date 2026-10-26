@@ -35,6 +35,7 @@ import { LandingPageFeature } from './landingPageFeature/model';
 import { Member } from './member/model';
 import { Org } from './org/model';
 import { OrgFeaturedPub } from './orgFeaturedPub/model';
+import { OrgInvite } from './orgInvite/model';
 import { OrgMember } from './orgMember/model';
 import { Page } from './page/model';
 import { Pub } from './pub/model';
@@ -101,6 +102,7 @@ sequelize.addModels([
 	Member,
 	CommunityTemplate,
 	Org,
+	OrgInvite,
 	OrgMember,
 	OrgFeaturedPub,
 	Page,
@@ -200,6 +202,7 @@ export {
 	LandingPageFeature,
 	Member,
 	Org,
+	OrgInvite,
 	OrgMember,
 	OrgFeaturedPub,
 	CommunityTemplate,

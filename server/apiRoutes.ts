@@ -24,6 +24,7 @@ import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
 import { router as openSearchRouter } from './openSearch/api';
 import { router as orgRouter } from './org/api';
+import { router as orgInviteRouter } from './orgInvite/api';
 import { router as passwordResetRouter } from './passwordReset/api';
 import { router as platformAnalyticsRouter } from './platformAnalytics/api';
 import { router as pubEdgeProposalRouter } from './pubEdgeProposal/api';
@@ -62,6 +63,7 @@ const apiRouter = Router()
 	.use(layoutRouter)
 	.use(openSearchRouter)
 	.use(orgRouter)
+	.use(orgInviteRouter)
 	.use(communityTemplateRouter)
 	.use(passwordResetRouter)
 	.use(pubEdgeProposalRouter)

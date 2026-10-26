@@ -20,6 +20,7 @@ import FooterSettings from './FooterSettings';
 import HeaderSettings from './HeaderSettings';
 import HomepageBannerSettings from './HomepageBannerSettings';
 import NavSettings from './NavSettings';
+import OrganizationSettings from './OrganizationSettings';
 import PublicNewPubs from './PublicNewPubsSettings';
 import SocialSettings from './SocialSettings';
 import UnderlaySettings from './UnderlaySettings';
@@ -196,6 +197,17 @@ const CommunitySettings = (props: Props) => {
 						title: 'Underlay',
 						icon: 'globe-network',
 						sections: [<UnderlaySettings communityData={communityData} />],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+		pageContext.scopeData.activePermissions.isSuperAdmin
+			? [
+					{
+						id: 'organization-settings',
+						title: 'Organization',
+						icon: 'office',
+						sections: [<OrganizationSettings communityData={communityData} />],
 					} as const,
 				]
 			: ([] as Subtab[])),

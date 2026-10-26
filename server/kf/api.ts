@@ -10,6 +10,8 @@ docker service logs auth_auth --tail 50 2>&1 | grep -i "error\|invalid\|authoriz
  * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
  *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
+ *   GET  /api/kf/summary              — a KF Account's orgs and communities (console org-assets)
+ *   GET  /api/kf/usage                — a KF Account's billable usage
  */
 
 import { timingSafeEqual } from 'crypto';
@@ -17,6 +19,7 @@ import { Router } from 'express';
 import { promisify } from 'util';
 
 import { Collection, Community, Member, Pub, PubAttribution, Release, User } from 'server/models';
+import { getKfAccountSummary, getKfAccountUsage } from 'server/org/kfQueries';
 import { sequelize } from 'server/sequelize';
 import { logout } from 'server/utils/logout';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
@@ -296,6 +299,49 @@ router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) =
 		}
 	} catch (err) {
 		console.error(`Webhook handler error [${event}]:`, err);
+		return res.status(500).json({ error: 'Internal error' });
+	}
+});
+
+// ─── KF Account summary and usage (for the console) ─────────────────
+
+router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => {
+	try {
+		const { kf_org_id } = req.query;
+		if (!kf_org_id || typeof kf_org_id !== 'string') {
+			return res.status(400).json({ error: 'kf_org_id is required' });
+		}
+		return res.json({ accounts: await getKfAccountSummary(kf_org_id) });
+	} catch (err) {
+		console.error('Summary API error:', err);
+		return res.status(500).json({ error: 'Internal error' });
+	}
+});
+
+/** ?kf_org_id=…[&since=ISO date][&until=ISO date]; the window limits DOI deposits */
+router.get('/api/kf/usage', requireInternalKey, async (req: any, res: any) => {
+	try {
+		const { kf_org_id, since, until } = req.query;
+		if (!kf_org_id || typeof kf_org_id !== 'string') {
+			return res.status(400).json({ error: 'kf_org_id is required' });
+		}
+		const parseDate = (value: unknown) => {
+			if (value === undefined) return undefined;
+			const date = new Date(String(value));
+			return Number.isNaN(date.getTime()) ? null : date;
+		};
+		const window = { since: parseDate(since), until: parseDate(until) };
+		if (window.since === null || window.until === null) {
+			return res.status(400).json({ error: 'since and until must be ISO dates' });
+		}
+		return res.json(
+			await getKfAccountUsage(kf_org_id, {
+				since: window.since,
+				until: window.until,
+			}),
+		);
+	} catch (err) {
+		console.error('Usage API error:', err);
 		return res.status(500).json({ error: 'Internal error' });
 	}
 });

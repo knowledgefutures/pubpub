@@ -990,6 +990,11 @@ type SettingsMember = {
 	} | null;
 };
 
+type KfAccounts = {
+	current: string;
+	accounts: { id: string; name: string; slug: string; type: 'personal' | 'shared' }[];
+};
+
 type PendingInvite = {
 	id: string;
 	community?: { id: string; title: string; subdomain: string };
@@ -1392,6 +1397,12 @@ const SettingsTab = ({ orgData }: Props) => {
 	const [memberError, setMemberError] = useState('');
 	const [memberSaved, setMemberSaved] = useState(false);
 
+	// KF Account
+	const [kfAccounts, setKfAccounts] = useState<KfAccounts | null>(null);
+	const [nextKfOrgId, setNextKfOrgId] = useState('');
+	const [kfError, setKfError] = useState('');
+	const [kfSaved, setKfSaved] = useState(false);
+
 	// Communities
 	const [communities, setCommunities] = useState<any[]>([]);
 	const [communityLoading, setCommunityLoading] = useState(false);
@@ -1455,6 +1466,28 @@ const SettingsTab = ({ orgData }: Props) => {
 	const flashMemberSaved = () => {
 		setMemberSaved(true);
 		setTimeout(() => setMemberSaved(false), 2000);
+	};
+
+	const loadKfAccounts = useCallback(async () => {
+		const result = (await apiFetch.get(`/api/orgs/${org.id}/kf-accounts`)) as KfAccounts;
+		setKfAccounts(result);
+		setNextKfOrgId(result.current);
+	}, [org.id]);
+
+	useEffect(() => {
+		loadKfAccounts().catch(() => setKfError('Could not load your KF Accounts'));
+	}, [loadKfAccounts]);
+
+	const handleSaveKfAccount = async () => {
+		setKfError('');
+		try {
+			await apiFetch.put(`/api/orgs/${org.id}`, { kfOrgId: nextKfOrgId });
+			await loadKfAccounts();
+			setKfSaved(true);
+			setTimeout(() => setKfSaved(false), 2000);
+		} catch (e: any) {
+			setKfError(e?.message || 'Failed to change the KF Account');
+		}
 	};
 
 	const reloadMembers = async () => {
@@ -1744,6 +1777,44 @@ const SettingsTab = ({ orgData }: Props) => {
 						{saved && <span className="settings-saved-msg">Saved!</span>}
 					</div>
 				</div>
+			</div>
+
+			{/* ─── KF Account ─── */}
+			<div className="settings-section">
+				<h3 className="settings-section-title">
+					KF Account{kfSaved && <span className="settings-saved-msg">Saved!</span>}
+				</h3>
+				<p className="settings-help">
+					The Knowledge Futures account this org bills to. You can move it to another KF
+					Account you belong to.
+				</p>
+				{kfError && (
+					<Callout intent="danger" className="settings-error">
+						{kfError}
+					</Callout>
+				)}
+				{kfAccounts && (
+					<div className="settings-row">
+						<HTMLSelect
+							value={nextKfOrgId}
+							onChange={(e) => setNextKfOrgId(e.target.value)}
+							options={[
+								...(kfAccounts.accounts.some((a) => a.id === kfAccounts.current)
+									? []
+									: [{ value: kfAccounts.current, label: kfAccounts.current }]),
+								...kfAccounts.accounts.map((a) => ({
+									value: a.id,
+									label: a.type === 'personal' ? `${a.name} (personal)` : a.name,
+								})),
+							]}
+						/>
+						<Button
+							text="Save"
+							disabled={nextKfOrgId === kfAccounts.current}
+							onClick={handleSaveKfAccount}
+						/>
+					</div>
+				)}
 			</div>
 
 			{/* ─── Members ─── */}

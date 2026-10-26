@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { vi } from 'vitest';
 
 import { Org, OrgMember } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';

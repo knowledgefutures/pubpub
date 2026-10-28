@@ -3,6 +3,7 @@ import type {
 	AssetWarning,
 	CollectionInput,
 	CommunityInput,
+	PageInput,
 	PubInput,
 	PushOptions,
 } from '../mapping';
@@ -826,5 +827,432 @@ describe('underlay/mapping — downloadable exports (Release.exports)', () => {
 		const ra = a.find((r) => r.type === 'Release')!;
 		const rb = b.find((r) => r.type === 'Release')!;
 		expect(hashRecord(ra)).toEqual(hashRecord(rb));
+	});
+});
+
+describe('underlay/mapping — formatted downloads (Pub.downloads)', () => {
+	const formattedUrl = 'https://assets.pubpub.org/44k2vnvm/61595701771772.pdf';
+	const pubWithDownloads: PubInput = {
+		id: 'pd',
+		slug: 'ragworms-commentary',
+		title: 'Ragworms',
+		createdAt: '2026-01-01T00:00:00.000Z',
+		attributions: [],
+		collectionPubs: [],
+		releases: [{ id: 'pd-r1', historyKey: 1, createdAt: '2026-01-02T00:00:00.000Z' }],
+		outboundEdges: [],
+		downloads: [
+			{ type: 'formatted', url: formattedUrl, createdAt: '2026-02-01T10:00:00.000Z' },
+			{
+				type: 'formatted',
+				url: 'https://assets.pubpub.org/44k2vnvm/older.pdf',
+				createdAt: '2025-12-01T10:00:00.000Z',
+			},
+			// Not a formatted download, and one without a url: both ignored.
+			{ type: 'other', url: 'https://assets.pubpub.org/x/other.pdf', createdAt: null },
+			{ type: 'formatted', url: null, createdAt: '2026-03-01T00:00:00.000Z' },
+		],
+	};
+
+	const ctx = (options: PushOptions, fetch = fetchAsset, warnings: AssetWarning[] = []) => ({
+		community,
+		options,
+		addFile: (bytes: Buffer) => `hash-of-${bytes.toString()}`,
+		renderReleaseHtml: async () => null,
+		fetchAsset: fetch,
+		onAssetWarning: (w: AssetWarning) => warnings.push(w),
+	});
+
+	const assetsOnly: PushOptions = {
+		includeReleaseHtml: false,
+		includeAssets: true,
+		exportFormats: [],
+	};
+
+	it('emits formatted downloads as file references on the Pub, oldest first', async () => {
+		const records = await mapPubRecords(
+			pubWithDownloads,
+			ctx(assetsOnly, async (url) => Buffer.from(url)),
+		);
+		const pub = records.find((r) => r.type === 'Pub')!;
+		expect(pub.data.downloads).toEqual([
+			{
+				type: 'formatted',
+				createdAt: '2025-12-01T10:00:00.000Z',
+				$file: 'sha256:hash-of-https://assets.pubpub.org/44k2vnvm/older.pdf',
+				fileName: 'ragworms-commentary.pdf',
+				mimeType: 'application/pdf',
+				originalUrl: 'https://assets.pubpub.org/44k2vnvm/older.pdf',
+			},
+			{
+				type: 'formatted',
+				createdAt: '2026-02-01T10:00:00.000Z',
+				$file: `sha256:hash-of-${formattedUrl}`,
+				fileName: 'ragworms-commentary.pdf',
+				mimeType: 'application/pdf',
+				originalUrl: formattedUrl,
+			},
+		]);
+		// Not duplicated onto the release.
+		const release = records.find((r) => r.type === 'Release')!;
+		expect(release.data).not.toHaveProperty('downloads');
+	});
+
+	it('omits downloads when assets are excluded', async () => {
+		const records = await mapPubRecords(
+			pubWithDownloads,
+			ctx({ ...assetsOnly, includeAssets: false }),
+		);
+		expect(records.find((r) => r.type === 'Pub')!.data).not.toHaveProperty('downloads');
+	});
+
+	it('skips a download that fails to fetch, with a warning', async () => {
+		const warnings: AssetWarning[] = [];
+		const records = await mapPubRecords(
+			pubWithDownloads,
+			ctx(
+				assetsOnly,
+				async (url) => {
+					if (url === formattedUrl) {
+						throw new Error('403');
+					}
+					return Buffer.from(url);
+				},
+				warnings,
+			),
+		);
+		const downloads = records.find((r) => r.type === 'Pub')!.data.downloads as {
+			originalUrl: string;
+		}[];
+		expect(downloads.map((d) => d.originalUrl)).toEqual([
+			'https://assets.pubpub.org/44k2vnvm/older.pdf',
+		]);
+		expect(warnings).toEqual([{ pubId: 'pd', assetUrl: formattedUrl, reason: '403' }]);
+	});
+
+	it('omits downloads when the pub has none', async () => {
+		const records = await mapPubRecords(
+			{ ...pubWithDownloads, downloads: null },
+			ctx(assetsOnly),
+		);
+		expect(records.find((r) => r.type === 'Pub')!.data).not.toHaveProperty('downloads');
+	});
+});
+
+describe('underlay/mapping — collection metadata and order', () => {
+	const issue: CollectionInput = {
+		id: 'col-issue',
+		title: 'Volume 4, Issue 1',
+		slug: 'v4i1',
+		kind: 'issue',
+		doi: '10.36850/i1',
+		isPublic: true,
+		createdAt: '2024-03-01T12:00:00.000Z',
+		metadata: {
+			volume: '4',
+			issue: '1',
+			electronicIssn: '2667-1204',
+			publicationDate: '2024-03-15T00:00:00.000Z',
+			printIssn: '',
+			printPublicationDate: null,
+		},
+	};
+	const emptyTag: CollectionInput = { id: 'col-tag', title: 'Empty', kind: 'tag', metadata: {} };
+	const member = (id: string, rank: string): PubInput => ({
+		...pubWithUser(id, `u-${id}`),
+		collectionPubs: [{ collectionId: 'col-issue', rank }],
+	});
+
+	const scope = (collections: CollectionInput[], pubs: PubInput[]) =>
+		mapCommunityScopeRecords(community, collections, pubs, {
+			addFile: () => 'h',
+			options: OPTIONS,
+		});
+
+	it('emits metadata without empty values, createdAt, and pubIds in rank order', async () => {
+		const records = await scope(
+			[issue, emptyTag],
+			// Deliberately out of order; 'i' < 'r' < 'x' as base36 ranks.
+			[member('p-third', 'x'), member('p-first', 'i'), member('p-second', 'r')],
+		);
+		const record = records.find((r) => r.id === 'col-issue')!;
+		expect(record.data).toEqual({
+			title: 'Volume 4, Issue 1',
+			slug: 'v4i1',
+			kind: 'issue',
+			doi: '10.36850/i1',
+			isPublic: true,
+			metadata: {
+				volume: '4',
+				issue: '1',
+				electronicIssn: '2667-1204',
+				publicationDate: '2024-03-15T00:00:00.000Z',
+			},
+			createdAt: '2024-03-01T12:00:00.000Z',
+			communityId: 'c1',
+			pubIds: ['p-first', 'p-second', 'p-third'],
+		});
+
+		// A collection with no exported pubs and empty metadata still lists its (empty) order.
+		const tag = records.find((r) => r.id === 'col-tag')!;
+		expect(tag.data).not.toHaveProperty('metadata');
+		expect(tag.data.pubIds).toEqual([]);
+	});
+
+	it('orders by code point, not locale, and is independent of pub input order', async () => {
+		const pubs = [member('a', '0z'), member('b', '0Z'), member('c', '01')];
+		const forward = await scope([issue], pubs);
+		const reversed = await scope([issue], [...pubs].reverse());
+		const ids = forward.find((r) => r.id === 'col-issue')!.data.pubIds;
+		expect(ids).toEqual(['c', 'b', 'a']);
+		expect(hashRecord(forward.find((r) => r.id === 'col-issue')!)).toEqual(
+			hashRecord(reversed.find((r) => r.id === 'col-issue')!),
+		);
+	});
+
+	it('changes the Collection record (only) when the collection is reordered', async () => {
+		const before = await scope([issue], [member('p1', 'i'), member('p2', 'r')]);
+		const after = await scope([issue], [member('p1', 's'), member('p2', 'r')]);
+		const hashOf = (records: typeof before, id: string) =>
+			hashRecord(records.find((r) => r.id === id)!).hash;
+		expect(hashOf(after, 'col-issue')).not.toBe(hashOf(before, 'col-issue'));
+		expect(after.find((r) => r.id === 'col-issue')!.data.pubIds).toEqual(['p2', 'p1']);
+	});
+});
+
+describe('underlay/mapping — emitted fields match the declared schemas', () => {
+	type Schema = { properties?: Record<string, Schema>; items?: Schema; type?: string };
+
+	/** Every key in `value` must be declared by `schema`, recursively into objects and arrays. */
+	const undeclared = (value: unknown, schema: Schema, path: string): string[] => {
+		if (Array.isArray(value)) {
+			return schema.items
+				? value.flatMap((v, i) => undeclared(v, schema.items!, `${path}[${i}]`))
+				: [];
+		}
+		if (value && typeof value === 'object' && schema.properties) {
+			return Object.entries(value).flatMap(([key, v]) =>
+				schema.properties![key]
+					? undeclared(v, schema.properties![key], `${path}.${key}`)
+					: [`${path}.${key}`],
+			);
+		}
+		return [];
+	};
+
+	it('declares every field of every record type, including nested file references', async () => {
+		const pub: PubInput = {
+			...pubWithUser('p1', 'u1'),
+			avatar: 'https://assets.pubpub.org/x/avatar.png',
+			collectionPubs: [{ collectionId: 'col1', rank: 'i' }],
+			downloads: [
+				{
+					type: 'formatted',
+					url: 'https://assets.pubpub.org/x/typeset.pdf',
+					createdAt: '2026-02-01T00:00:00.000Z',
+				},
+			],
+			exports: [{ format: 'pdf', url: 'https://assets.pubpub.org/x/a.pdf', historyKey: 1 }],
+		};
+		const payload = await buildUnderlayPush({
+			community: { ...community, avatar: 'https://assets.pubpub.org/x/logo.png' },
+			collections: [
+				{
+					id: 'col1',
+					title: 'Issue',
+					kind: 'issue',
+					avatar: 'https://assets.pubpub.org/x/col.png',
+					metadata: { volume: '1' },
+					createdAt: '2026-01-01T00:00:00.000Z',
+					layoutBlocks: [
+						{
+							id: 'i1',
+							type: 'text',
+							html: '<img src="https://assets.pubpub.org/x/j.png"/>',
+						},
+					],
+				},
+			],
+			pubs: [pub],
+			pages: [
+				{
+					id: 'page1',
+					title: 'About',
+					slug: 'about',
+					description: 'Who we are',
+					avatar: 'https://assets.pubpub.org/x/page.png',
+					isPublic: true,
+					createdAt: '2026-01-01T00:00:00.000Z',
+					updatedAt: '2026-01-02T00:00:00.000Z',
+					blocks: [
+						{
+							id: 'b1',
+							type: 'text',
+							html: '<img src="https://assets.pubpub.org/x/i.png"/>',
+						},
+						{ id: 'b2', type: 'pubs', title: 'Latest' },
+					],
+				},
+			],
+			options: { ...OPTIONS, exportFormats: ['pdf'] },
+			renderReleaseHtml,
+			fetchAsset,
+		});
+		const types = new Set(payload.records.map((r) => r.type));
+		expect(types).toEqual(
+			new Set([
+				'Community',
+				'Collection',
+				'Page',
+				'User',
+				'PubAttribution',
+				'Pub',
+				'Release',
+			]),
+		);
+		const problems = payload.records.flatMap((r) =>
+			undeclared(r.data, payload.schemas[r.type] as Schema, `${r.type}:${r.id}`),
+		);
+		expect(problems).toEqual([]);
+		const pubRecord = payload.records.find((r) => r.type === 'Pub')!;
+		expect(pubRecord.data.downloads).toHaveLength(1);
+		expect(payload.records.find((r) => r.type === 'Collection')!.data.pubIds).toEqual(['p1']);
+	});
+});
+
+describe('underlay/mapping — Pages and collection layout text', () => {
+	const urlFetch = async (url: string) => Buffer.from(url);
+	const scope = (
+		collections: CollectionInput[],
+		pages: PageInput[],
+		options: PushOptions = OPTIONS,
+	) =>
+		mapCommunityScopeRecords(
+			community,
+			collections,
+			[],
+			{
+				addFile: (bytes) => `h-${bytes.toString().split('/').pop()}`,
+				fetchAsset: urlFetch,
+				options,
+			},
+			pages,
+		);
+
+	const about: PageInput = {
+		id: 'pg-about',
+		title: 'About',
+		slug: 'about',
+		description: 'About the journal',
+		isPublic: true,
+		createdAt: '2020-01-01T00:00:00.000Z',
+		updatedAt: '2024-05-01T00:00:00.000Z',
+		blocks: [
+			{ id: 'b0', type: 'banner' },
+			{
+				id: 'b1',
+				type: 'text',
+				html: '<h2>About</h2><img srcSet="x 1x" src="https://assets.pubpub.org/a/team.png?width=800&amp;fit=bounds"/>',
+			},
+			{ id: 'b2', type: 'pubs', title: 'Latest' },
+			{ id: 'b3', type: 'html', html: '<p>Contact us</p>' },
+			{ id: 'b4', type: 'text', html: '' },
+		],
+	};
+
+	it('exports a public page with blocks in layout order, joined html, and localized images', async () => {
+		const records = await scope([], [about]);
+		const page = records.find((r) => r.type === 'Page')!;
+		expect(page).toEqual({
+			id: 'pg-about',
+			type: 'Page',
+			data: {
+				title: 'About',
+				slug: 'about',
+				description: 'About the journal',
+				isPublic: true,
+				communityId: 'c1',
+				createdAt: '2020-01-01T00:00:00.000Z',
+				updatedAt: '2024-05-01T00:00:00.000Z',
+				html: '<h2>About</h2><img src="sha256:h-team.png"/>\n<p>Contact us</p>',
+				blocks: [
+					{ id: 'b0', type: 'banner' },
+					{
+						id: 'b1',
+						type: 'text',
+						html: '<h2>About</h2><img src="sha256:h-team.png"/>',
+					},
+					{ id: 'b2', type: 'pubs', title: 'Latest' },
+					{ id: 'b3', type: 'html', html: '<p>Contact us</p>' },
+					{ id: 'b4', type: 'text' },
+				],
+				assets: [
+					{
+						$file: 'sha256:h-team.png',
+						fileName: 'team.png',
+						mimeType: 'image/png',
+						originalUrl: 'https://assets.pubpub.org/a/team.png',
+					},
+				],
+			},
+		});
+	});
+
+	it('keeps original image URLs when assets are excluded', async () => {
+		const records = await scope([], [about], { ...OPTIONS, includeAssets: false });
+		const page = records.find((r) => r.type === 'Page')!;
+		expect(page.data.html).toContain('https://assets.pubpub.org/a/team.png');
+		expect(page.data).not.toHaveProperty('assets');
+	});
+
+	it('exports the home page (slug "") but no private page', async () => {
+		const records = await scope(
+			[],
+			[
+				{ ...about, id: 'pg-home', slug: '', title: 'Home' },
+				{ ...about, id: 'pg-draft', slug: 'draft', isPublic: false },
+				{ ...about, id: 'pg-unset', slug: 'unset', isPublic: null },
+			],
+		);
+		expect(records.filter((r) => r.type === 'Page').map((r) => [r.id, r.data.slug])).toEqual([
+			['pg-home', ''],
+		]);
+	});
+
+	it('gives a public collection layoutHtml and layoutBlocks from its layout, and no text when empty or private', async () => {
+		const withIntro: CollectionInput = {
+			id: 'col-a',
+			title: 'Issue 1',
+			isPublic: true,
+			layoutBlocks: [
+				{ id: 'h', type: 'collection-header' },
+				{ id: 't', type: 'text', html: '<p>Editorial intro</p>' },
+				{ id: 'p', type: 'pubs', title: 'Articles' },
+			],
+		};
+		const records = await scope(
+			[
+				withIntro,
+				{ ...withIntro, id: 'col-private', isPublic: false },
+				{ ...withIntro, id: 'col-empty', layoutBlocks: [{ id: 'p', type: 'pubs' }] },
+				{ ...withIntro, id: 'col-none', layoutBlocks: undefined },
+			],
+			[],
+		);
+		const byId = new Map(records.map((r) => [r.id, r.data]));
+		expect(byId.get('col-a')!.layoutHtml).toBe('<p>Editorial intro</p>');
+		expect(byId.get('col-a')).not.toHaveProperty('layoutAssets');
+		expect(byId.get('col-a')!.layoutBlocks).toEqual([
+			{ id: 'h', type: 'collection-header' },
+			{ id: 't', type: 'text', html: '<p>Editorial intro</p>' },
+			{ id: 'p', type: 'pubs', title: 'Articles' },
+		]);
+		expect(byId.get('col-empty')!.layoutBlocks).toEqual([{ id: 'p', type: 'pubs' }]);
+		for (const id of ['col-private', 'col-empty', 'col-none']) {
+			expect(byId.get(id)).not.toHaveProperty('layoutHtml');
+		}
+		for (const id of ['col-private', 'col-none']) {
+			expect(byId.get(id)).not.toHaveProperty('layoutBlocks');
+		}
 	});
 });

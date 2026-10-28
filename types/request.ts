@@ -5,10 +5,10 @@ import type {
 	DefinitelyHas,
 	DiscussionCreationAccess,
 	Integration,
-	Member,
 	MemberPermission,
 	Pub,
 	ScopeId,
+	ScopeMember,
 } from 'types';
 import type { UserDismissableKey } from 'utils/userDismissable';
 
@@ -80,10 +80,9 @@ export type ScopeData = {
 	activeCounts: {
 		reviews: number;
 		submissions: number;
-		curatingHubCount: number;
 	};
 	scope: ScopeId;
-	memberData: Member[];
+	memberData: ScopeMember[];
 	facets?: CascadedFacetsByKind;
 };
 

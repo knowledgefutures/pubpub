@@ -21,8 +21,7 @@ import { createGetRequestIds } from 'utils/getRequestIds';
 import { applyTemplate } from '../communityTemplate/applyTemplate';
 import { CommunityTemplate } from '../communityTemplate/model';
 import { createTemplateFromCommunity } from '../communityTemplate/queries';
-import { addCommunityToHub, getHubBySlug, isUserHubManager } from '../hub/queries';
-import { HubCommunity } from '../hubCommunity/model';
+import { addCommunityToOrg, getOrgBySlug, isUserOrgMember } from '../org/queries';
 import { addSpamTagToCommunity, updateSpamTagForCommunity } from '../spamTag/communityQueries';
 import { destroyCommunity, getCommunityDeletionAudit } from './destroyCommunity';
 import { getPermissions } from './permissions';
@@ -156,19 +155,19 @@ export const communityServer = s.router(contract.community, {
 		delete body.altcha;
 		delete body._honeypot;
 		try {
-			// Resolve hub context before creating the community
-			const hubSlug = (req as any).body.hubSlug as string | undefined;
-			let validatedHub: Awaited<ReturnType<typeof getHubBySlug>> | null = null;
+			// Resolve org context before creating the community
+			const orgSlug = (req as any).body.orgSlug as string | undefined;
+			let validatedOrg: Awaited<ReturnType<typeof getOrgBySlug>> | null = null;
 
-			if (hubSlug) {
-				const org = await getHubBySlug(hubSlug);
+			if (orgSlug) {
+				const org = await getOrgBySlug(orgSlug);
 				if (org && org.communityCreationEnabled) {
-					// Server-side domain validation: user email must match hub domains (or be superadmin)
+					// Server-side domain validation: user email must match org domains (or be superadmin)
 					const user = await User.findByPk(req.user!.id, {
 						attributes: ['email', 'isSuperAdmin'],
 					});
 					if (user?.isSuperAdmin) {
-						validatedHub = org;
+						validatedOrg = org;
 					} else if (user?.email && org.domains && org.domains.length > 0) {
 						const emailDomain = user.email.split('@')[1]?.toLowerCase();
 						if (emailDomain) {
@@ -179,15 +178,15 @@ export const communityServer = s.router(contract.community, {
 								);
 							});
 							if (matches) {
-								validatedHub = org;
+								validatedOrg = org;
 							}
 						}
 					}
 				}
 			}
 
-			// Skip awaiting-approval email + Slack for hub-created communities
-			const newCommunity = await createCommunity(body, req.user, !validatedHub);
+			// Skip awaiting-approval email + Slack for org-created communities
+			const newCommunity = await createCommunity(body, req.user, !validatedOrg);
 
 			// Apply template if one was selected
 			const templateId = (req as any).body.templateId as string | undefined;
@@ -200,21 +199,21 @@ export const communityServer = s.router(contract.community, {
 						attributes: ['id'],
 					});
 					if (created) {
-						// Validate: if hub context, ensure template belongs to the hub
-						if (validatedHub) {
+						// Validate: if org context, ensure template belongs to the org
+						if (validatedOrg) {
 							const template = await CommunityTemplate.findOne({
-								where: { id: templateId, hubId: validatedHub.id, isActive: true },
+								where: { id: templateId, orgId: validatedOrg.id, isActive: true },
 							});
 							if (!template) {
 								console.warn(
-									`Template ${templateId} not found or not active for hub ${validatedHub.id}`,
+									`Template ${templateId} not found or not active for org ${validatedOrg.id}`,
 								);
 							} else {
 								await applyTemplate(template, created.id, req.user!.id);
 								await created.update({ templateId });
 							}
 						} else {
-							// No hub context — superadmin or direct template usage
+							// No org context — superadmin or direct template usage
 							const template = await CommunityTemplate.findByPk(templateId);
 							if (template && template.isActive) {
 								await applyTemplate(template, created.id, req.user!.id);
@@ -226,11 +225,11 @@ export const communityServer = s.router(contract.community, {
 					// Non-fatal: community was created, template just didn't apply
 					console.error('Failed to apply template:', templateErr);
 				}
-			} else if (cloneCommunityId && validatedHub) {
+			} else if (cloneCommunityId && validatedOrg) {
 				// Clone-from-community: find or create an inactive clone template
 				try {
-					// Check that clone access is enabled for this hub
-					const cloneAccess = validatedHub.communityCloneAccess || 'off';
+					// Check that clone access is enabled for this org
+					const cloneAccess = validatedOrg.communityCloneAccess || 'off';
 					let cloneAllowed = false;
 					if (cloneAccess === 'everyone') {
 						cloneAllowed = true;
@@ -241,29 +240,30 @@ export const communityServer = s.router(contract.community, {
 						if (user?.isSuperAdmin) {
 							cloneAllowed = true;
 						} else {
-							cloneAllowed = await isUserHubManager(req.user!.id, validatedHub.id);
+							cloneAllowed = await isUserOrgMember(req.user!.id, validatedOrg.id);
 						}
 					}
 
 					if (!cloneAllowed) {
 						console.warn(
-							`Clone access denied for user ${req.user!.id} on hub ${validatedHub.id} (access: ${cloneAccess})`,
+							`Clone access denied for user ${req.user!.id} on org ${validatedOrg.id} (access: ${cloneAccess})`,
 						);
 					} else {
-						// Verify the source community belongs to this hub
-						const hubAssoc = await HubCommunity.findOne({
-							where: { hubId: validatedHub.id, communityId: cloneCommunityId },
+						// Verify the org owns the source community
+						const ownedSource = await Community.findOne({
+							where: { id: cloneCommunityId, orgId: validatedOrg.id },
+							attributes: ['id'],
 						});
-						if (hubAssoc) {
+						if (ownedSource) {
 							const created = await Community.findOne({
 								where: { subdomain: newCommunity.subdomain },
 								attributes: ['id'],
 							});
 							if (created) {
-								// Reuse existing clone template if one exists for this source community + hub
+								// Reuse existing clone template if one exists for this source community + org
 								let cloneTemplate = await CommunityTemplate.findOne({
 									where: {
-										hubId: validatedHub.id,
+										orgId: validatedOrg.id,
 										sourceCommunityId: cloneCommunityId,
 										isActive: false,
 									},
@@ -285,7 +285,7 @@ export const communityServer = s.router(contract.community, {
 											createdById: req.user!.id,
 										},
 									);
-									await template.update({ hubId: validatedHub.id });
+									await template.update({ orgId: validatedOrg.id });
 									cloneTemplate = template;
 								}
 								await applyTemplate(cloneTemplate, created.id, req.user!.id);
@@ -299,18 +299,15 @@ export const communityServer = s.router(contract.community, {
 				}
 			}
 
-			// Auto-tag community with hub if domain validation passed
-			if (validatedHub) {
+			// A community created through an org belongs to it, if domain validation passed
+			if (validatedOrg) {
 				try {
 					const created = await Community.findOne({
 						where: { subdomain: newCommunity.subdomain },
 						attributes: ['id'],
 					});
 					if (created) {
-						await addCommunityToHub(validatedHub.id, created.id, {
-							dataAccess: 'granted',
-							showOnLandingPage: false,
-						});
+						await addCommunityToOrg(validatedOrg.id, created.id);
 						// Ensure spam tag exists, then mark as not-spam
 						await addSpamTagToCommunity(created.id);
 						await updateSpamTagForCommunity({

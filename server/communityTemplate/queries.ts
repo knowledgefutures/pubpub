@@ -26,7 +26,7 @@ import {
 import { sequelize } from 'server/sequelize';
 import { slugifyString } from 'utils/strings';
 
-import { Hub } from '../hub/model';
+import { Org } from '../org/model';
 import { CommunityTemplate } from './model';
 
 // ─── CRUD ────────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ export const createTemplate = async (values: {
 	customCSS?: string | null;
 	sourceCommunityId?: string | null;
 	createdById?: string | null;
-	hubId?: string | null;
+	orgId?: string | null;
 }) => {
 	const slug = slugifyString(values.slug);
 	const existing = await CommunityTemplate.findOne({ where: { slug } });
@@ -83,7 +83,7 @@ export const getTemplateById = async (id: string) => {
 	const template = await CommunityTemplate.findByPk(id, {
 		include: [
 			{ model: User, as: 'createdBy', attributes: ['id', 'fullName', 'avatar'] },
-			{ model: Hub, as: 'hub', attributes: ['id', 'slug', 'title'] },
+			{ model: Org, as: 'org', attributes: ['id', 'slug', 'title'] },
 		],
 	});
 	if (!template) return null;
@@ -103,7 +103,7 @@ export const getAllTemplates = async () => {
 		order: [['title', 'ASC']],
 		include: [
 			{ model: User, as: 'createdBy', attributes: ['id', 'fullName', 'avatar'] },
-			{ model: Hub, as: 'hub', attributes: ['id', 'slug', 'title'] },
+			{ model: Org, as: 'org', attributes: ['id', 'slug', 'title'] },
 		],
 	});
 
@@ -172,12 +172,12 @@ export const destroyTemplate = async (id: string) => {
 	await template.destroy();
 };
 
-// ─── Hub ↔ Template ──────────────────────────────────────────────
+// ─── Org ↔ Template ──────────────────────────────────────────────
 
-/** Get all templates belonging to a hub */
-export const getTemplatesForHub = async (hubId: string) => {
+/** Get all templates belonging to an org */
+export const getTemplatesForOrg = async (orgId: string) => {
 	return CommunityTemplate.findAll({
-		where: { hubId },
+		where: { orgId },
 		order: [['title', 'ASC']],
 		attributes: {
 			include: [
@@ -193,10 +193,10 @@ export const getTemplatesForHub = async (hubId: string) => {
 	});
 };
 
-/** Get active templates for a hub (public-facing, for community creation flow) */
-export const getActiveTemplatesForHub = async (hubId: string) => {
+/** Get active templates for an org (public-facing, for community creation flow) */
+export const getActiveTemplatesForOrg = async (orgId: string) => {
 	const templates = await CommunityTemplate.findAll({
-		where: { hubId, isActive: true },
+		where: { orgId, isActive: true },
 		order: [['title', 'ASC']],
 	});
 	// Only expose public-safe fields (this endpoint is unauthenticated)

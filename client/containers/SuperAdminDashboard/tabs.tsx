@@ -8,10 +8,10 @@ import CustomDomains from './CustomDomains';
 import DepositTargets from './DepositTargets';
 import ExploreCommunities from './ExploreCommunities';
 import FtpTargets from './FtpTargets';
-import Hubs from './Hubs';
 import LandingPageFeatures from './LandingPageFeatures';
+import Orgs from './Orgs';
 import PlatformAnalytics from './PlatformAnalytics';
-import SuggestedHubs from './SuggestedHubs';
+import SuggestedOrgs from './SuggestedOrgs';
 import UserSpam from './UserSpam';
 
 type SuperAdminTab = {
@@ -44,13 +44,13 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 		title: 'Landing Page features',
 		component: LandingPageFeatures,
 	},
-	hubs: {
-		title: 'Hubs',
-		component: Hubs,
+	orgs: {
+		title: 'Orgs',
+		component: Orgs,
 	},
-	suggestedHubs: {
-		title: 'Suggested Hubs',
-		component: SuggestedHubs,
+	suggestedOrgs: {
+		title: 'Suggested Orgs',
+		component: SuggestedOrgs,
 	},
 	templates: {
 		title: 'Templates',

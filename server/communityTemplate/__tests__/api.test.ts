@@ -1,8 +1,8 @@
 import uuid from 'uuid';
 
 import { fetchFacetsForScope } from 'server/facets';
-import { Hub } from 'server/hub/model';
 import { Collection, CollectionPub, Community, Member, Page, Pub } from 'server/models';
+import { Org } from 'server/org/model';
 import { login, modelize, setup, teardown } from 'stubstub';
 
 import { applyTemplate } from '../applyTemplate';
@@ -11,8 +11,8 @@ import { createTemplate, createTemplateFromCommunity } from '../queries';
 
 // ─── Test fixtures ───────────────────────────────────────────────
 
-let testHub: Hub;
-let otherHub: Hub;
+let testOrg: Org;
+let otherOrg: Org;
 
 const models = modelize`
 	User superAdmin {
@@ -42,15 +42,17 @@ const models = modelize`
 
 setup(beforeAll, async () => {
 	await models.resolve();
-	testHub = await Hub.create({
-		slug: `test-hub-${uuid.v4().slice(0, 8)}`,
-		title: 'Test Hub',
+	testOrg = await Org.create({
+		slug: `test-org-${uuid.v4().slice(0, 8)}`,
+		title: 'Test Org',
 		communityCreationEnabled: true,
+		kfOrgId: 'kf-test-account',
 	});
-	otherHub = await Hub.create({
-		slug: `other-hub-${uuid.v4().slice(0, 8)}`,
-		title: 'Other Hub',
+	otherOrg = await Org.create({
+		slug: `other-org-${uuid.v4().slice(0, 8)}`,
+		title: 'Other Org',
 		communityCreationEnabled: true,
+		kfOrgId: 'kf-test-account',
 	});
 });
 teardown(afterAll);
@@ -286,7 +288,7 @@ describe('/api/communityTemplates', () => {
 			.expect(500);
 	});
 
-	it('forbids non-superadmins from updating templates they do not own via a hub', async () => {
+	it('forbids non-superadmins from updating templates they do not own via an org', async () => {
 		const { superAdmin, regularUser, sourceCommunity } = models;
 		const adminAgent = await login(superAdmin);
 		const host = getHost(sourceCommunity);
@@ -370,18 +372,18 @@ describe('createTemplateFromCommunity', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('POST /api/communities with templateId', () => {
-	it('applies a hub template during community creation', async () => {
+	it('applies an org template during community creation', async () => {
 		const { superAdmin, sourceCommunity } = models;
 		const agent = await login(superAdmin);
 		const host = getHost(sourceCommunity);
 
-		// Create a template owned by the hub
-		const tplSlug = `hub-create-${uuid.v4().slice(0, 8)}`;
+		// Create a template owned by the org
+		const tplSlug = `org-create-${uuid.v4().slice(0, 8)}`;
 		const template = await createTestTemplate({
 			slug: tplSlug,
-			title: 'Hub Creation Template',
+			title: 'Org Creation Template',
 			isActive: true,
-			hubId: testHub.id,
+			orgId: testOrg.id,
 			communityOverrides: { heroTitle: 'From Template' },
 			pages: [{ title: 'Template About', slug: 'tpl-about', isPublic: true }],
 			facetOverrides: {
@@ -400,7 +402,7 @@ describe('POST /api/communities with templateId', () => {
 				accentColorLight: '#FFFFFF',
 				accentColorDark: '#2D2E2F',
 				templateId: template.id,
-				hubSlug: testHub.slug,
+				orgSlug: testOrg.slug,
 			})
 			.expect(201);
 
@@ -408,6 +410,8 @@ describe('POST /api/communities with templateId', () => {
 		const community = await Community.findOne({ where: { subdomain } });
 		expect(community).toBeTruthy();
 		expect(community!.heroTitle).toBe('From Template');
+		// A community created through an org belongs to it
+		expect(community!.orgId).toBe(testOrg.id);
 
 		// Verify page was created
 		const aboutPage = await Page.findOne({
@@ -427,7 +431,7 @@ describe('POST /api/communities with templateId', () => {
 
 		const template = await createTestTemplate({
 			isActive: false,
-			hubId: testHub.id,
+			orgId: testOrg.id,
 		});
 
 		const subdomain = `inactive-${uuid.v4().slice(0, 8)}`;
@@ -441,7 +445,7 @@ describe('POST /api/communities with templateId', () => {
 				accentColorLight: '#FFFFFF',
 				accentColorDark: '#2D2E2F',
 				templateId: template.id,
-				hubSlug: testHub.slug,
+				orgSlug: testOrg.slug,
 			})
 			.expect(201);
 
@@ -452,29 +456,29 @@ describe('POST /api/communities with templateId', () => {
 		expect(community!.heroTitle).toBe('Should Still Create');
 	});
 
-	it('rejects a template belonging to a different hub', async () => {
+	it('rejects a template belonging to a different org', async () => {
 		const { superAdmin, sourceCommunity } = models;
 		const agent = await login(superAdmin);
 		const host = getHost(sourceCommunity);
 
-		// Create template under a different hub
+		// Create template under a different org
 		const template = await createTestTemplate({
 			isActive: true,
-			hubId: otherHub.id, // belongs to a different hub
+			orgId: otherOrg.id, // belongs to a different org
 		});
 
-		const subdomain = `wrong-hub-${uuid.v4().slice(0, 8)}`;
+		const subdomain = `wrong-org-${uuid.v4().slice(0, 8)}`;
 		await agent
 			.post('/api/communities')
 			.set('Host', host)
 			.send({
 				subdomain,
-				title: 'Wrong Hub Test',
-				description: 'Testing wrong hub template',
+				title: 'Wrong Org Test',
+				description: 'Testing wrong org template',
 				accentColorLight: '#FFFFFF',
 				accentColorDark: '#2D2E2F',
 				templateId: template.id,
-				hubSlug: testHub.slug,
+				orgSlug: testOrg.slug,
 			})
 			.expect(201);
 

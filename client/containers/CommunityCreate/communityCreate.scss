@@ -32,8 +32,8 @@ $bp: vendor.$bp-namespace;
 		border-radius: 2px;
 	}
 
-	// ---- Hub-branded variant ----
-	&.hub-branded {
+	// ---- Org-branded variant ----
+	&.org-branded {
 		padding-top: 0;
 		background-image: none;
 		background-color: #f7f8fa;
@@ -50,8 +50,8 @@ $bp: vendor.$bp-namespace;
 		}
 	}
 
-	// ---- Two-column hub create layout ----
-	.hub-create-layout {
+	// ---- Two-column org create layout ----
+	.org-create-layout {
 		display: flex;
 		gap: 40px;
 		align-items: flex-start;
@@ -62,17 +62,17 @@ $bp: vendor.$bp-namespace;
 		}
 	}
 
-	.hub-create-left {
+	.org-create-left {
 		flex: 1;
 		min-width: 0;
 	}
 
-	.hub-create-right {
+	.org-create-right {
 		flex: 1;
 		min-width: 0;
 	}
 
-	.hub-create-form-heading {
+	.org-create-form-heading {
 		font-size: 18px;
 		font-weight: 600;
 		margin: 0 0 16px;
@@ -81,11 +81,11 @@ $bp: vendor.$bp-namespace;
 		color: #182026;
 	}
 
-	.hub-branded-header {
+	.org-branded-header {
 		padding: 0 24px;
 		margin-bottom: 32px;
 
-		.hub-branded-header-inner {
+		.org-branded-header-inner {
 			max-width: 1200px;
 			margin: 0 auto;
 			height: 52px;
@@ -93,7 +93,7 @@ $bp: vendor.$bp-namespace;
 			align-items: center;
 		}
 
-		.hub-branded-back {
+		.org-branded-back {
 			display: flex;
 			align-items: center;
 			gap: 10px;
@@ -113,20 +113,20 @@ $bp: vendor.$bp-namespace;
 				margin-right: 2px;
 			}
 
-			.hub-branded-avatar {
+			.org-branded-avatar {
 				width: 24px;
 				height: 24px;
 				border-radius: 50%;
 				object-fit: cover;
 			}
 
-			.hub-branded-name {
+			.org-branded-name {
 				white-space: nowrap;
 			}
 		}
 	}
 
-	.hub-context-banner {
+	.org-context-banner {
 		display: flex;
 		align-items: center;
 		gap: 12px;
@@ -136,7 +136,7 @@ $bp: vendor.$bp-namespace;
 		border-radius: 4px;
 		margin-bottom: 20px;
 
-		.hub-context-avatar {
+		.org-context-avatar {
 			width: 36px;
 			height: 36px;
 			border-radius: 50%;
@@ -144,19 +144,19 @@ $bp: vendor.$bp-namespace;
 			flex-shrink: 0;
 		}
 
-		.hub-context-text {
+		.org-context-text {
 			display: flex;
 			flex-direction: column;
 			gap: 1px;
 
-			.hub-context-label {
+			.org-context-label {
 				font-size: 12px;
 				color: #8a9ba8;
 				text-transform: uppercase;
 				letter-spacing: 0.04em;
 			}
 
-			.hub-context-name {
+			.org-context-name {
 				font-size: 15px;
 				color: #182026;
 			}

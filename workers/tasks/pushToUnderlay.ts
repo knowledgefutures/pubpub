@@ -10,6 +10,7 @@ import {
 	Export,
 	ExternalPublication,
 	includeUserModel,
+	Page,
 	Pub,
 	PubAttribution,
 	PubEdge,
@@ -23,13 +24,16 @@ import { licenseDetailsByKind } from 'utils/licenses';
 import { formatUnderlayError, UnderlayClient } from '../../server/underlay/client';
 import { hashBytes } from '../../server/underlay/hash';
 import { buildIncrementalPush, computeFacetsSignature } from '../../server/underlay/incremental';
+import { renderLayoutBlocks } from '../../server/underlay/layoutHtml';
 import {
 	type AssetCacheContext,
 	type AssetWarning,
 	type CollectionInput,
 	type CommunityInput,
 	type Json,
+	layoutAssetUrls,
 	mapPubRecords,
+	type PageInput,
 	type PubInput,
 	type UnderlayFile,
 } from '../../server/underlay/mapping';
@@ -117,6 +121,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		}
 
 		const collections = await Collection.findAll({ where: { communityId } });
+		const pages = await Page.findAll({ where: { communityId } });
 
 		// Release → docId and pub → releaseIds, so docs can be fetched lazily by pub.
 		const docIdByReleaseId = new Map<string, string>();
@@ -186,6 +191,16 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			email: community.email,
 		};
 
+		// A layout block that fails to render is exported as a bare marker; say so in the push log.
+		const layoutWarnings: AssetWarning[] = [];
+		const warnLayoutBlock = (where: string, blockId: string, error: unknown) => {
+			const reason = `Layout block ${blockId} of ${where} could not be rendered: ${
+				error instanceof Error ? error.message : String(error)
+			}`;
+			console.warn(`[underlay] ${reason}`);
+			layoutWarnings.push({ reason });
+		};
+
 		const collectionInputs: CollectionInput[] = collections.map((c) => ({
 			id: c.id,
 			title: c.title,
@@ -195,6 +210,27 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			isPublic: c.isPublic,
 			avatar: c.avatar,
 			metadata: (c.metadata as Record<string, unknown> | null) ?? null,
+			createdAt: c.createdAt,
+			layoutBlocks: renderLayoutBlocks(c.layout?.blocks, (block, error) =>
+				warnLayoutBlock(`collection ${c.slug}`, block.id, error),
+			),
+		}));
+
+		const pageInputs: PageInput[] = pages.map((p) => ({
+			id: p.id,
+			title: p.title,
+			slug: p.slug,
+			description: p.description,
+			avatar: p.avatar,
+			isPublic: p.isPublic,
+			createdAt: p.createdAt,
+			updatedAt: p.updatedAt,
+			// Private pages are not exported, so don't spend time rendering them.
+			blocks: p.isPublic
+				? renderLayoutBlocks(p.layout, (block, error) =>
+						warnLayoutBlock(`page "${p.slug}"`, block.id, error),
+					)
+				: [],
 		}));
 
 		// Map collectionId → kind so a pub's scholarly `kind` can be derived from its memberships
@@ -285,6 +321,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 				})),
 				collectionPubs: (pub.collectionPubs ?? []).map((cp) => ({
 					collectionId: cp.collectionId,
+					rank: cp.rank,
 				})),
 				releases: (pub.releases ?? []).map((r) => ({
 					id: r.id,
@@ -304,6 +341,11 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 								doi: e.externalPublication.doi,
 							}
 						: null,
+				})),
+				downloads: (pub.downloads ?? []).map((d) => ({
+					type: d?.type ?? null,
+					url: d?.url ?? null,
+					createdAt: d?.createdAt ?? null,
 				})),
 				exports: (pub.exports ?? [])
 					.filter((e) => e.url)
@@ -369,7 +411,6 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 					continue;
 				}
 				resolvedFacetsByPubId.set(pubId, chunkFacets.pub[pubId]);
-				pubFacetsSignature[pubId] = computeFacetsSignature(chunkFacets.pub[pubId]);
 				pubUpdatedAt[pubId] = pub.updatedAt;
 				attributionsByPubId.set(
 					pubId,
@@ -383,7 +424,21 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 					}
 				}
 				releaseIdsByPubId.set(pubId, releaseIds);
-				pubInputs.push(toPubInput(pub));
+				const pubInput = toPubInput(pub);
+				pubInputs.push(pubInput);
+				// The Pub record also carries `collectionIds` and a `kind` derived from those
+				// collections. Adding a pub to a collection, removing it, or changing a collection's
+				// kind writes CollectionPub/Collection rows without bumping the pub's updatedAt, so
+				// they are folded into the same signature as the facets. Otherwise a cache hit would
+				// keep re-emitting the old memberships. Ranks are left out: collection order lives on
+				// the Collection record, which is recomputed every push.
+				pubFacetsSignature[pubId] = computeFacetsSignature({
+					facets: chunkFacets.pub[pubId] ?? null,
+					collectionIds: (pubInput.collectionPubs ?? [])
+						.map((cp) => cp.collectionId)
+						.sort(),
+					kind: pubInput.kind ?? null,
+				});
 			}
 		}
 
@@ -457,6 +512,9 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		const assetWarnings = new Map<string, AssetWarning>();
 		const collectAssetWarning = (warning: AssetWarning) =>
 			assetWarnings.set(`${warning.pubId ?? 'community'}|${warning.assetUrl}`, warning);
+		for (const warning of layoutWarnings) {
+			assetWarnings.set(`layout|${warning.reason}`, warning);
+		}
 
 		// Map ONE pub → records + the files those records reference (renders on demand).
 		const mapPub = async (pub: PubInput) => {
@@ -499,6 +557,15 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		addScopeUrl(communityInput.heroBackgroundImage);
 		for (const collection of collectionInputs) {
 			addScopeUrl(collection.avatar);
+			for (const url of layoutAssetUrls(collection.layoutBlocks)) {
+				addScopeUrl(url);
+			}
+		}
+		for (const page of pageInputs) {
+			addScopeUrl(page.avatar);
+			for (const url of layoutAssetUrls(page.blocks)) {
+				addScopeUrl(url);
+			}
 		}
 		for (const pub of pubInputs) {
 			for (const attribution of pub.attributions ?? []) {
@@ -540,6 +607,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 		const incremental = await buildIncrementalPush({
 			community: communityInput,
 			collections: collectionInputs,
+			pages: pageInputs,
 			pubs: pubInputs,
 			pubUpdatedAt,
 			pubFacetsSignature,

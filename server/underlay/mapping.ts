@@ -53,7 +53,7 @@ export type AssetWarning = {
  * invalidates exactly once and unchanged pubs are re-mapped with the new shape instead of silently
  * re-emitting stale hashes. Bump on any change to a type's emitted fields.
  */
-export const MAPPING_VERSION = '10';
+export const MAPPING_VERSION = '11';
 
 export type ManifestEntry = { id: string; type: string; hash: string; private?: boolean };
 
@@ -154,7 +154,35 @@ export type CollectionInput = {
 	doi?: string | null;
 	isPublic?: boolean | null;
 	avatar?: string | null;
+	/** Kind-specific fields (volume, issue, publicationDate, printIssn, isbn, …), emitted as-is. */
 	metadata?: Record<string, unknown> | null;
+	createdAt?: string | Date | null;
+	/** The collection's layout blocks; their text/html becomes `layoutHtml`. */
+	layoutBlocks?: LayoutBlockInput[] | null;
+};
+
+/**
+ * One PubPub layout block, pre-rendered by the caller: `html` is set for text blocks (ProseMirror
+ * rendered to static HTML) and html blocks, absent for every other block type.
+ */
+export type LayoutBlockInput = {
+	id: string;
+	type: string;
+	title?: string | null;
+	html?: string | null;
+};
+
+/** A community page (About, Submission guidelines, the home page with slug ''). */
+export type PageInput = {
+	id: string;
+	title: string;
+	slug: string;
+	description?: string | null;
+	avatar?: string | null;
+	isPublic?: boolean | null;
+	createdAt?: string | Date | null;
+	updatedAt?: string | Date | null;
+	blocks?: LayoutBlockInput[] | null;
 };
 
 export type AttributionInput = {
@@ -226,12 +254,24 @@ export type PubInput = {
 	/** Scholarly kind (JournalArticle / Preprint / BookChapter / …), derived by the caller. */
 	kind?: string | null;
 	attributions?: AttributionInput[] | null;
-	collectionPubs?: { collectionId: string }[] | null;
+	/** `rank` orders the pub within that collection (feeds `Collection.pubIds`). */
+	collectionPubs?: { collectionId: string; rank?: string | null }[] | null;
 	releases?: ReleaseInput[] | null;
 	outboundEdges?: PubEdgeInput[] | null;
 	/** Per-format export artifacts (pdf/epub/…) from PubPub's exports table, matched to a release by
 	 * historyKey. `url` is the S3 asset URL (only non-null entries are passed in). */
 	exports?: { format: string; url: string; historyKey: number }[] | null;
+	/**
+	 * PubPub's `Pub.downloads`: files an editor uploaded to stand for the pub, notably the typeset
+	 * "formatted" PDF (`{ type: 'formatted', url, createdAt }`). Not tied to a release.
+	 */
+	downloads?: PubDownloadInput[] | null;
+};
+
+export type PubDownloadInput = {
+	type?: string | null;
+	url?: string | null;
+	createdAt?: string | Date | null;
 };
 
 const FILE_PREFIX = 'sha256:';
@@ -311,6 +351,14 @@ const guessContentType = (url: string): string => {
 			return 'image/x-icon';
 		case 'pdf':
 			return 'application/pdf';
+		case 'epub':
+			return 'application/epub+zip';
+		case 'docx':
+			return EXPORT_MIME.docx;
+		case 'odt':
+			return EXPORT_MIME.odt;
+		case 'zip':
+			return 'application/zip';
 		default:
 			return 'application/octet-stream';
 	}
@@ -331,6 +379,27 @@ const HTML_QUOTED_ASSET_URL = /(["'])(https:\/\/assets\.pubpub\.org\/(?:(?!\1).)
  */
 const HTML_CSS_URL_ASSET = /url\(\s*(https:\/\/assets\.pubpub\.org\/[^)"']*?)\s*\)/gi;
 
+/** Raw assets.pubpub.org URLs referenced by quoted attributes or CSS `url()` in HTML, sorted. */
+const htmlAssetUrls = (html: string): string[] => {
+	const rawUrls = new Set<string>();
+	for (const m of html.matchAll(HTML_QUOTED_ASSET_URL)) {
+		rawUrls.add(m[2]);
+	}
+	for (const m of html.matchAll(HTML_CSS_URL_ASSET)) {
+		rawUrls.add(m[1]);
+	}
+	return [...rawUrls].sort();
+};
+
+/**
+ * The base asset URLs a page/collection layout's HTML will localize, so the worker can preload
+ * their hashes from the immutable-asset cache instead of downloading them on every push.
+ */
+export const layoutAssetUrls = (blocks: LayoutBlockInput[] | null | undefined): string[] =>
+	(blocks ?? []).flatMap((block) =>
+		block.html ? htmlAssetUrls(block.html).map((url) => getAssetUrlFromResizedUrl(url)) : [],
+	);
+
 // ── Per-type JSON Schemas. Property sets MUST match the emitted `data` exactly. ──────────────
 
 const fileRefSchema = {
@@ -343,6 +412,35 @@ const fileRefSchema = {
 		originalUrl: { type: 'string' },
 	},
 	required: ['$file'],
+};
+
+/**
+ * An editor-uploaded download on a Pub (PubPub's `Pub.downloads`), tagged with its PubPub `type`
+ * (only "formatted" today) and the upload time, so a consumer can tell whether it predates a release.
+ */
+const downloadRefSchema = {
+	type: 'object',
+	properties: {
+		type: { type: 'string' },
+		createdAt: { type: 'string', format: 'date-time' },
+		$file: { type: 'string' },
+		fileName: { type: 'string' },
+		mimeType: { type: 'string' },
+		originalUrl: { type: 'string' },
+	},
+	required: ['type', '$file'],
+};
+
+/** One layout block of a Page or Collection, in layout order. `html` only on text/html blocks. */
+const layoutBlockSchema = {
+	type: 'object',
+	properties: {
+		id: { type: 'string' },
+		type: { type: 'string' },
+		title: { type: 'string' },
+		html: { type: 'string' },
+	},
+	required: ['id', 'type'],
 };
 
 /** A downloadable export file reference on a Release, tagged with its format. */
@@ -401,7 +499,43 @@ export const underlaySchemas: Record<string, JsonSchema> = {
 			doi: { type: 'string' },
 			isPublic: { type: 'boolean' },
 			avatar: fileRefSchema,
+			// Kind-specific fields as stored by PubPub (issue: volume, issue, printIssn,
+			// electronicIssn, publicationDate, printPublicationDate; book: isbn, edition, …).
+			// Permissive object so sparse and kind-dependent keys pass.
+			metadata: { type: 'object' },
+			createdAt: { type: 'string', format: 'date-time' },
 			communityId: { type: 'string', 'x-ref-type': 'Community' },
+			// Every pub in the collection that this push exports, in the collection's own order
+			// (CollectionPub.rank), as PubPub shows it on the collection page.
+			pubIds: { type: 'array', items: { type: 'string', 'x-ref-type': 'Pub' } },
+			// The text/html blocks of the collection's layout (often an issue's intro), rendered and
+			// joined, as Page.html. Images point at `sha256:<hex>`, resolved through `layoutAssets`.
+			layoutHtml: { type: 'string' },
+			layoutAssets: { type: 'array', items: fileRefSchema },
+			// Every block of the collection's layout in order, as Page.blocks: text/html blocks carry
+			// their html, the rest (header, pub lists, …) are bare markers with id, type and title.
+			layoutBlocks: { type: 'array', items: layoutBlockSchema },
+		},
+	},
+	/**
+	 * A public community page (About, Submission guidelines, the home page with slug ''). `html` is
+	 * every text/html block of the layout rendered and joined in order; `blocks` keeps the layout
+	 * order, with `html` only on text/html blocks and a bare `type` (plus `title`) for the rest.
+	 */
+	Page: {
+		type: 'object',
+		properties: {
+			title: { type: 'string' },
+			slug: { type: 'string' },
+			description: { type: 'string' },
+			isPublic: { type: 'boolean' },
+			avatar: fileRefSchema,
+			communityId: { type: 'string', 'x-ref-type': 'Community' },
+			createdAt: { type: 'string', format: 'date-time' },
+			updatedAt: { type: 'string', format: 'date-time' },
+			html: { type: 'string' },
+			blocks: { type: 'array', items: layoutBlockSchema },
+			assets: { type: 'array', items: fileRefSchema },
 		},
 	},
 	/**
@@ -448,6 +582,9 @@ export const underlaySchemas: Record<string, JsonSchema> = {
 			description: { type: 'string' },
 			htmlDescription: { type: 'string' },
 			avatar: fileRefSchema,
+			// Editor-uploaded files for the pub, oldest first; PubPub serves the newest "formatted"
+			// one as the pub's PDF download.
+			downloads: { type: 'array', items: downloadRefSchema },
 			// External identifiers (bibcode, mtg_id, …); permissive object so sparse keys pass.
 			metadata: { type: 'object' },
 			labels: {
@@ -608,6 +745,103 @@ const createAssetLocalizer = (
 };
 
 type LocalizeToRef = ReturnType<typeof createAssetLocalizer>['localizeToRef'];
+type Localize = ReturnType<typeof createAssetLocalizer>['localize'];
+
+/**
+ * Rewrite every assets.pubpub.org URL in rendered HTML to a content-addressed `sha256:<hex>` ref and
+ * list the files it now points to (sorted by hash). Shared by release, page and collection HTML so
+ * all three resolve images the same way. An asset that fails to localize keeps its original URL.
+ */
+const localizeHtmlAssets = async (
+	html: string,
+	localize: Localize,
+	pubId?: string,
+): Promise<{ html: string; assets: Record<string, Json>[] }> => {
+	// Drop CDN responsive variants (srcset/sizes) FIRST — they're delivery artifacts, not
+	// canonical content, and their multi-URL values (`url 1x, url 2x`) would defeat the
+	// single-URL attribute capture below. The single content-addressed `src` remains;
+	// consumers regenerate their own responsive variants.
+	let out = html
+		.replace(/\s+srcset="[^"]*"/gi, '')
+		.replace(/\s+srcset='[^']*'/gi, '')
+		.replace(/\s+sizes="[^"]*"/gi, '')
+		.replace(/\s+sizes='[^']*'/gi, '');
+
+	const assets: Record<string, Json>[] = [];
+	const seenAssetHash = new Set<string>();
+	// Raw asset URLs exactly as they appear in the HTML — captured attribute-value-aware
+	// (up to the closing quote / paren), so URLs with spaces/parens in the filename are
+	// captured whole rather than truncated at the first space. Keyed by the raw string so
+	// the rewrite below swaps the exact occurrence. Every responsive variant normalizes to
+	// the same base asset → one hash.
+	const tokenToHash = new Map<string, string>();
+	for (const rawUrl of htmlAssetUrls(out)) {
+		const normalized = getAssetUrlFromResizedUrl(rawUrl);
+		// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
+		const asset = await localize(normalized, pubId);
+		if (!asset) {
+			// Failed to fetch: leave this URL in place (already warned).
+			continue;
+		}
+		tokenToHash.set(rawUrl, asset.hash);
+		if (!seenAssetHash.has(asset.hash)) {
+			seenAssetHash.add(asset.hash);
+			assets.push(fileRef(asset.hash, asset.fileName, asset.mimeType, normalized));
+		}
+	}
+	// Rewrite each captured occurrence to its content-addressed ref, preserving delimiters.
+	// Deterministic: same HTML + same hashes → same output.
+	out = out
+		.replace(HTML_QUOTED_ASSET_URL, (match, quote, url) => {
+			const hash = tokenToHash.get(url);
+			return hash ? `${quote}${FILE_PREFIX}${hash}${quote}` : match;
+		})
+		.replace(HTML_CSS_URL_ASSET, (match, url) => {
+			const hash = tokenToHash.get(url);
+			return hash ? `url(${FILE_PREFIX}${hash})` : match;
+		});
+	return {
+		html: out,
+		assets: assets.sort((a, b) => String(a.$file).localeCompare(String(b.$file))),
+	};
+};
+
+/**
+ * Layout blocks in order, plus their text/html blocks joined into one HTML string with the
+ * assets localized. Other block types (pub lists, banners, collection/page grids) are kept as
+ * `{ id, type, title? }` markers so a consumer knows something was there.
+ */
+const mapLayoutBlocks = async (
+	blocks: LayoutBlockInput[],
+	localize: Localize,
+	includeAssets: boolean,
+): Promise<{ blocks: Record<string, Json>[]; html?: string; assets: Record<string, Json>[] }> => {
+	const out: Record<string, Json>[] = [];
+	const assets = new Map<string, Record<string, Json>>();
+	const parts: string[] = [];
+	for (const block of blocks) {
+		let html = block.html || undefined;
+		if (html && includeAssets) {
+			// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
+			const localized = await localizeHtmlAssets(html, localize);
+			html = localized.html;
+			for (const asset of localized.assets) {
+				assets.set(String(asset.$file), asset);
+			}
+		}
+		if (html) {
+			parts.push(html);
+		}
+		out.push(
+			compact({ id: block.id, type: block.type, title: block.title || undefined, html }),
+		);
+	}
+	return {
+		blocks: out,
+		html: parts.length > 0 ? parts.join('\n') : undefined,
+		assets: [...assets.values()].sort((a, b) => String(a.$file).localeCompare(String(b.$file))),
+	};
+};
 
 const mapCommunity = async (
 	community: CommunityInput,
@@ -645,10 +879,63 @@ const mapCommunity = async (
 	}),
 });
 
+/** Collection metadata without empty values, or undefined when nothing is left. */
+const collectionMetadata = (
+	metadata: Record<string, unknown> | null | undefined,
+): Record<string, Json> | undefined => {
+	if (!metadata) {
+		return undefined;
+	}
+	const out: Record<string, Json> = {};
+	for (const [key, value] of Object.entries(metadata)) {
+		if (value !== null && value !== undefined && value !== '') {
+			out[key] = value as Json;
+		}
+	}
+	return Object.keys(out).length > 0 ? out : undefined;
+};
+
+/** ISO timestamp for a value that may be missing or unparseable (legacy JSON), else undefined. */
+const optionalIso = (value: string | Date | null | undefined): string | undefined => {
+	if (value === null || value === undefined || value === '') {
+		return undefined;
+	}
+	const date = value instanceof Date ? value : new Date(value);
+	return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+};
+
+/**
+ * Pub ids per collection in collection order (CollectionPub.rank). Ranks are base36 strings, so a
+ * plain code-point comparison gives the same order PubPub's `sortByRank` does, without depending on
+ * the worker's locale. Ties (should not happen) fall back to the pub id so the order is stable.
+ */
+export const orderedPubIdsByCollection = (pubs: PubInput[]): Map<string, string[]> => {
+	const entries = new Map<string, { pubId: string; rank: string }[]>();
+	for (const pub of pubs) {
+		for (const cp of pub.collectionPubs ?? []) {
+			const list = entries.get(cp.collectionId) ?? [];
+			list.push({ pubId: pub.id, rank: cp.rank ?? '' });
+			entries.set(cp.collectionId, list);
+		}
+	}
+	const byCode = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+	const out = new Map<string, string[]>();
+	for (const [collectionId, list] of entries) {
+		list.sort((a, b) => byCode(a.rank, b.rank) || byCode(a.pubId, b.pubId));
+		out.set(
+			collectionId,
+			list.map((e) => e.pubId),
+		);
+	}
+	return out;
+};
+
 const mapCollection = async (
 	collection: CollectionInput,
 	communityId: string,
+	pubIds: string[],
 	localizeToRef: LocalizeToRef,
+	layout: { blocks?: Record<string, Json>[]; html?: string; assets: Record<string, Json>[] },
 ): Promise<UnderlayRecord> => ({
 	id: collection.id,
 	type: 'Collection',
@@ -659,7 +946,36 @@ const mapCollection = async (
 		doi: collection.doi ?? undefined,
 		isPublic: collection.isPublic ?? undefined,
 		avatar: await localizeToRef(collection.avatar),
+		metadata: collectionMetadata(collection.metadata),
+		createdAt: optionalIso(collection.createdAt),
 		communityId,
+		pubIds,
+		layoutHtml: layout.html,
+		layoutAssets: layout.assets.length > 0 ? layout.assets : undefined,
+		layoutBlocks: layout.blocks?.length ? layout.blocks : undefined,
+	}),
+});
+
+const mapPage = async (
+	page: PageInput,
+	communityId: string,
+	localizeToRef: LocalizeToRef,
+	layout: Awaited<ReturnType<typeof mapLayoutBlocks>>,
+): Promise<UnderlayRecord> => ({
+	id: page.id,
+	type: 'Page',
+	data: compact({
+		title: page.title,
+		slug: page.slug,
+		description: page.description || undefined,
+		isPublic: page.isPublic ?? undefined,
+		avatar: await localizeToRef(page.avatar),
+		communityId,
+		createdAt: optionalIso(page.createdAt),
+		updatedAt: optionalIso(page.updatedAt),
+		html: layout.html,
+		blocks: layout.blocks,
+		assets: layout.assets.length > 0 ? layout.assets : undefined,
 	}),
 });
 
@@ -738,31 +1054,55 @@ const mapEdge = (edge: PubEdgeInput, sourcePubId: string): UnderlayRecord => ({
 });
 
 /**
- * Map the cheap, community-scoped records: the Community, every Collection, and the deduplicated
- * `User` records across all pubs. Users are deduped by real user id, so a person credited on many
- * pubs produces exactly one `User` record; name-only credits produce none (their data lives on the
- * per-pub `PubAttribution` records). These never require rendering, so they are always recomputed
- * (never cached) on an incremental push.
+ * Map the cheap, community-scoped records: the Community, every Collection, the public Pages, and
+ * the deduplicated `User` records across all pubs. Users are deduped by real user id, so a person
+ * credited on many pubs produces exactly one `User` record; name-only credits produce none (their
+ * data lives on the per-pub `PubAttribution` records). Page and collection layouts arrive
+ * pre-rendered, so nothing here renders, and these are always recomputed (never cached) on an
+ * incremental push. Their shape can change without a MAPPING_VERSION bump.
  */
 export const mapCommunityScopeRecords = async (
 	community: CommunityInput,
 	collections: CollectionInput[],
 	pubs: PubInput[],
 	ctx: ScopeMapContext,
+	pages: PageInput[] = [],
 ): Promise<UnderlayRecord[]> => {
 	// Branding/avatar images follow the includeAssets toggle: with assets off, images are omitted
 	// (never left as a bare URL) so the schema property is always a file reference or absent.
-	const { localizeToRef } = createAssetLocalizer(
+	const { localize, localizeToRef } = createAssetLocalizer(
 		ctx.addFile,
 		ctx.options.includeAssets ? ctx.fetchAsset : undefined,
 		ctx.onAssetWarning,
 		ctx.assetCache,
 		ctx.registerCachedHash,
 	);
+	const localizeHtml = ctx.options.includeAssets && Boolean(ctx.fetchAsset);
 	const records: UnderlayRecord[] = [await mapCommunity(community, localizeToRef)];
+	// Collection order lives here, not on the per-pub records: reordering a collection updates
+	// CollectionPub rows without touching the pub, so a per-pub cache entry would never see it.
+	// Scope records are recomputed on every push, so this is always current.
+	const pubIdsByCollection = orderedPubIdsByCollection(pubs);
 	for (const collection of collections) {
+		const pubIds = pubIdsByCollection.get(collection.id) ?? [];
+		// A private collection's record is already public metadata (title, slug), but the layout
+		// text editors write for it is content, so it stays out until the collection is public.
+		const layout =
+			collection.isPublic === false
+				? { assets: [] }
+				: // biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
+					await mapLayoutBlocks(collection.layoutBlocks ?? [], localize, localizeHtml);
+		records.push(await mapCollection(collection, community.id, pubIds, localizeToRef, layout));
+	}
+	// Only public pages: an Underlay collection is usually public, and a private PubPub page is a
+	// draft or an internal page nobody outside the community should read.
+	for (const page of pages) {
+		if (!page.isPublic) {
+			continue;
+		}
 		// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
-		records.push(await mapCollection(collection, community.id, localizeToRef));
+		const layout = await mapLayoutBlocks(page.blocks ?? [], localize, localizeHtml);
+		records.push(await mapPage(page, community.id, localizeToRef, layout));
 	}
 	const seenUsers = new Set<string>();
 	for (const pub of pubs) {
@@ -779,6 +1119,61 @@ export const mapCommunityScopeRecords = async (
 		}
 	}
 	return records;
+};
+
+/** Lowercase file extension of a URL's last path segment, if it has one. */
+const urlExtension = (url: string): string | undefined => {
+	const name = assetFileName(url);
+	const dot = name.lastIndexOf('.');
+	return dot > 0 ? name.slice(dot + 1).toLowerCase() : undefined;
+};
+
+/**
+ * The pub's editor-uploaded downloads (PubPub `Pub.downloads`, today only `type: 'formatted'`) as
+ * file references, oldest first. They are localized like any other asset, so they follow the
+ * includeAssets toggle and a failed download warns and is skipped. The file is named after the pub
+ * (as Release exports are) because uploaded asset names are random.
+ *
+ * These stay on the Pub rather than a Release: PubPub stores them on the pub with no release
+ * reference and serves the newest one whichever release is viewed. `createdAt` lets a consumer
+ * compare the upload with a release date instead of the export guessing a pairing.
+ */
+const mapPubDownloads = async (
+	pub: PubInput,
+	localizeToRef: LocalizeToRef,
+): Promise<Record<string, Json>[] | undefined> => {
+	const seen = new Set<string>();
+	const candidates = (pub.downloads ?? [])
+		.filter((d): d is PubDownloadInput & { url: string } => {
+			if (!d || d.type !== 'formatted' || !d.url || seen.has(d.url)) {
+				return false;
+			}
+			seen.add(d.url);
+			return true;
+		})
+		.map((d) => ({ url: d.url, type: d.type as string, createdAt: optionalIso(d.createdAt) }))
+		.sort(
+			(a, b) =>
+				(a.createdAt ?? '').localeCompare(b.createdAt ?? '') || a.url.localeCompare(b.url),
+		);
+	const refs: Record<string, Json>[] = [];
+	for (const download of candidates) {
+		// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
+		const ref = await localizeToRef(download.url, pub.id);
+		if (!ref) {
+			continue;
+		}
+		const ext = urlExtension(download.url);
+		refs.push(
+			compact({
+				type: download.type,
+				createdAt: download.createdAt,
+				...ref,
+				fileName: ext ? `${pub.slug}.${ext}` : ref.fileName,
+			}),
+		);
+	}
+	return refs.length > 0 ? refs : undefined;
 };
 
 /**
@@ -821,6 +1216,7 @@ export const mapPubRecords = async (
 	const publishedAtSource = pub.customPublishedAt ?? releases[0]?.createdAt ?? pub.createdAt;
 
 	const avatarRef = await localizeToRef(pub.avatar, pub.id);
+	const downloads = await mapPubDownloads(pub, localizeToRef);
 	const labels =
 		pub.labels && pub.labels.length > 0
 			? pub.labels.map((l) => ({ id: l.id, title: l.title }))
@@ -865,62 +1261,10 @@ export const mapPubRecords = async (
 			// every former image resolves via the version's files.
 			let contentHtml = html;
 			if (options.includeAssets && fetchAsset) {
-				// Drop CDN responsive variants (srcset/sizes) FIRST — they're delivery artifacts, not
-				// canonical content, and their multi-URL values (`url 1x, url 2x`) would defeat the
-				// single-URL attribute capture below. The single content-addressed `src` remains;
-				// consumers regenerate their own responsive variants.
-				contentHtml = contentHtml
-					.replace(/\s+srcset="[^"]*"/gi, '')
-					.replace(/\s+srcset='[^']*'/gi, '')
-					.replace(/\s+sizes="[^"]*"/gi, '')
-					.replace(/\s+sizes='[^']*'/gi, '');
-
-				const assets: Record<string, Json>[] = [];
-				const seenAssetHash = new Set<string>();
-				// Raw asset URLs exactly as they appear in the HTML — captured attribute-value-aware
-				// (up to the closing quote / paren), so URLs with spaces/parens in the filename are
-				// captured whole rather than truncated at the first space. Keyed by the raw string so
-				// the rewrite below swaps the exact occurrence. Every responsive variant normalizes to
-				// the same base asset → one hash.
-				const rawUrls = new Set<string>();
-				for (const m of contentHtml.matchAll(HTML_QUOTED_ASSET_URL)) {
-					rawUrls.add(m[2]);
-				}
-				for (const m of contentHtml.matchAll(HTML_CSS_URL_ASSET)) {
-					rawUrls.add(m[1]);
-				}
-				const tokenToHash = new Map<string, string>();
-				for (const rawUrl of [...rawUrls].sort()) {
-					const normalized = getAssetUrlFromResizedUrl(rawUrl);
-					// biome-ignore lint/performance/noAwaitInLoops: sequential to reuse the localizer memo + bound memory
-					const asset = await localize(normalized, pub.id);
-					if (!asset) {
-						// Failed to fetch: leave this URL in place (already warned).
-						continue;
-					}
-					tokenToHash.set(rawUrl, asset.hash);
-					if (!seenAssetHash.has(asset.hash)) {
-						seenAssetHash.add(asset.hash);
-						assets.push(
-							fileRef(asset.hash, asset.fileName, asset.mimeType, normalized),
-						);
-					}
-				}
-				// Rewrite each captured occurrence to its content-addressed ref, preserving delimiters.
-				// Deterministic: same HTML + same hashes → same output.
-				contentHtml = contentHtml
-					.replace(HTML_QUOTED_ASSET_URL, (match, quote, url) => {
-						const hash = tokenToHash.get(url);
-						return hash ? `${quote}${FILE_PREFIX}${hash}${quote}` : match;
-					})
-					.replace(HTML_CSS_URL_ASSET, (match, url) => {
-						const hash = tokenToHash.get(url);
-						return hash ? `url(${FILE_PREFIX}${hash})` : match;
-					});
-				if (assets.length > 0) {
-					releaseData.assets = assets.sort((a, b) =>
-						String(a.$file).localeCompare(String(b.$file)),
-					);
+				const localized = await localizeHtmlAssets(contentHtml, localize, pub.id);
+				contentHtml = localized.html;
+				if (localized.assets.length > 0) {
+					releaseData.assets = localized.assets;
 				}
 			}
 
@@ -979,6 +1323,7 @@ export const mapPubRecords = async (
 			description: pub.description ?? undefined,
 			htmlDescription: pub.htmlDescription ?? undefined,
 			avatar: avatarRef,
+			downloads,
 			metadata,
 			labels,
 			doi: pub.doi ?? undefined,
@@ -1009,11 +1354,12 @@ export const buildUnderlayPush = async (params: {
 	community: CommunityInput;
 	collections: CollectionInput[];
 	pubs: PubInput[];
+	pages?: PageInput[];
 	options: PushOptions;
 	renderReleaseHtml: (ctx: { pub: PubInput; release: ReleaseInput }) => Promise<string | null>;
 	fetchAsset?: (url: string) => Promise<Buffer>;
 }): Promise<UnderlayPushPayload> => {
-	const { community, collections, pubs, options, renderReleaseHtml, fetchAsset } = params;
+	const { community, collections, pubs, pages, options, renderReleaseHtml, fetchAsset } = params;
 
 	const records: UnderlayRecord[] = [];
 	const filesByHash = new Map<string, UnderlayFile>();
@@ -1027,11 +1373,13 @@ export const buildUnderlayPush = async (params: {
 	};
 
 	records.push(
-		...(await mapCommunityScopeRecords(community, collections, pubs, {
-			addFile,
-			fetchAsset,
-			options,
-		})),
+		...(await mapCommunityScopeRecords(
+			community,
+			collections,
+			pubs,
+			{ addFile, fetchAsset, options },
+			pages,
+		)),
 	);
 
 	for (const pub of pubs) {

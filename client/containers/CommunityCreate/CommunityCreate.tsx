@@ -1,4 +1,4 @@
-import type { CommunityTemplate, Hub } from 'types';
+import type { CommunityTemplate, Org } from 'types';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -29,7 +29,7 @@ const mountDonorboxWidget = (container: HTMLDivElement) => {
 	container.appendChild(widget);
 };
 
-const CommunityCreatedView = ({ subdomain, hubName }: { subdomain: string; hubName?: string }) => {
+const CommunityCreatedView = ({ subdomain, orgName }: { subdomain: string; orgName?: string }) => {
 	const donorboxRef = useRef<HTMLDivElement>(null);
 	const url = communityUrl({ subdomain });
 
@@ -43,10 +43,10 @@ const CommunityCreatedView = ({ subdomain, hubName }: { subdomain: string; hubNa
 		<div className="community-created-layout">
 			<div className="community-created-text">
 				<h1>Community Created!</h1>
-				{hubName ? (
+				{orgName ? (
 					<p>
 						Your community has been created and approved as part of the{' '}
-						<strong>{hubName}</strong> hub. You can start using it right away.
+						<strong>{orgName}</strong> org. You can start using it right away.
 					</p>
 				) : (
 					<p>
@@ -82,35 +82,26 @@ const CommunityCreatedView = ({ subdomain, hubName }: { subdomain: string; hubNa
 	);
 };
 
-type KFOrg = {
-	id: string;
-	name: string;
-	slug: string;
-	type: 'personal' | 'shared';
-	role: string;
-};
-
 type Props = {
-	hubData?: Hub | null;
+	orgData?: Org | null;
 	templates?: CommunityTemplate[];
-	hubCommunities?: { id: string; title: string; subdomain: string; avatar?: string | null }[];
-	kfOrgs?: KFOrg[];
+	orgCommunities?: { id: string; title: string; subdomain: string; avatar?: string | null }[];
 };
 
-const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
-	const accentDark = hub.accentColorDark || '#2D2E2F';
-	const accentLight = hub.accentColorLight || '#FFFFFF';
+const OrgBrandedHeader = ({ org }: { org: Org }) => {
+	const accentDark = org.accentColorDark || '#2D2E2F';
+	const accentLight = org.accentColorLight || '#FFFFFF';
 	return (
-		<div className="hub-branded-header" style={{ backgroundColor: accentDark }}>
-			<div className="hub-branded-header-inner">
+		<div className="org-branded-header" style={{ backgroundColor: accentDark }}>
+			<div className="org-branded-header-inner">
 				<a
-					href={`/hub/${hub.slug}`}
-					className="hub-branded-back"
+					href={`/org/${org.slug}`}
+					className="org-branded-back"
 					style={{ color: accentLight }}
 				>
 					<span className="back-arrow">←</span>
-					{hub.avatar && <img className="hub-branded-avatar" src={hub.avatar} alt="" />}
-					<span className="hub-branded-name">{hub.title}</span>
+					{org.avatar && <img className="org-branded-avatar" src={org.avatar} alt="" />}
+					<span className="org-branded-name">{org.title}</span>
 				</a>
 			</div>
 		</div>
@@ -118,10 +109,10 @@ const HubBrandedHeader = ({ hub }: { hub: Hub }) => {
 };
 
 const CommunityCreate = (props: Props) => {
-	const { hubData, templates = [], hubCommunities = [], kfOrgs = [] } = props;
+	const { orgData, templates = [], orgCommunities = [] } = props;
 	const { loginData, locationData } = usePageContext();
 	const altchaRef = useRef<import('components').AltchaRef>(null);
-	const hubSlug = hubData?.slug || locationData?.query?.hub || null;
+	const orgSlug = orgData?.slug || locationData?.query?.org || null;
 	const [subdomain, setSubdomain] = useState('');
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -135,14 +126,8 @@ const CommunityCreate = (props: Props) => {
 	const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 	const [cloneCommunityId, setCloneCommunityId] = useState<string | null>(null);
 
-	// KF org picker: default to personal org, or first available
-	const personalOrg = kfOrgs.find((o) => o.type === 'personal');
-	const [selectedKfOrgId, setSelectedKfOrgId] = useState<string | null>(
-		personalOrg?.id ?? kfOrgs[0]?.id ?? null,
-	);
-
-	const hasHub = !!hubData;
-	const hubAccentDark = hubData?.accentColorDark || '#2D2E2F';
+	const hasOrg = !!orgData;
+	const orgAccentDark = orgData?.accentColorDark || '#2D2E2F';
 
 	const onCreateSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();
@@ -173,12 +158,11 @@ const CommunityCreate = (props: Props) => {
 			await apiFetch.post<string>('/api/communities', {
 				...payload,
 				altcha: altchaPayload,
-				...(hubSlug ? { hubSlug } : {}),
+				...(orgSlug ? { orgSlug } : {}),
 				...(templateIdToUse ? { templateId: templateIdToUse } : {}),
 				...(selectedTemplateId === CLONE_MARKER && cloneCommunityId
 					? { cloneCommunityId }
 					: {}),
-				...(selectedKfOrgId ? { kfOrgId: selectedKfOrgId } : {}),
 			});
 			setCreateIsLoading(false);
 			setIsCreated(true);
@@ -211,9 +195,9 @@ const CommunityCreate = (props: Props) => {
 	};
 
 	return (
-		<div id="community-create-container" className={hasHub ? 'hub-branded' : ''}>
-			{hasHub && <HubBrandedHeader hub={hubData!} />}
-			<GridWrapper containerClassName={isCreated ? undefined : hasHub ? 'wide' : 'small'}>
+		<div id="community-create-container" className={hasOrg ? 'org-branded' : ''}>
+			{hasOrg && <OrgBrandedHeader org={orgData!} />}
+			<GridWrapper containerClassName={isCreated ? undefined : hasOrg ? 'wide' : 'small'}>
 				{!loginData.id && (
 					<NonIdealState
 						title="To create your community, create an account or login."
@@ -221,7 +205,7 @@ const CommunityCreate = (props: Props) => {
 						visual="error"
 						action={
 							<a
-								href={`/login?redirect=/community/create${hubSlug ? `?hub=${hubSlug}` : ''}`}
+								href={`/login?redirect=/community/create${orgSlug ? `?org=${orgSlug}` : ''}`}
 								className={Classes.BUTTON}
 							>
 								Login or Signup
@@ -230,37 +214,37 @@ const CommunityCreate = (props: Props) => {
 					/>
 				)}
 				{loginData.id && isCreated && (
-					<CommunityCreatedView subdomain={subdomain} hubName={hubData?.title} />
+					<CommunityCreatedView subdomain={subdomain} orgName={orgData?.title} />
 				)}
 				{loginData.id && !isCreated && (
-					<div className={hasHub ? 'hub-create-layout' : ''}>
-						<div className={hasHub ? 'hub-create-left' : ''}>
-							<h1>{hasHub ? <>Create a New Community</> : 'Create Community'}</h1>
-							{hasHub && (
+					<div className={hasOrg ? 'org-create-layout' : ''}>
+						<div className={hasOrg ? 'org-create-left' : ''}>
+							<h1>{hasOrg ? <>Create a New Community</> : 'Create Community'}</h1>
+							{hasOrg && (
 								<div
-									className="hub-context-banner"
-									style={{ borderLeftColor: hubAccentDark }}
+									className="org-context-banner"
+									style={{ borderLeftColor: orgAccentDark }}
 								>
-									{hubData!.avatar && (
+									{orgData!.avatar && (
 										<img
-											className="hub-context-avatar"
-											src={hubData!.avatar}
+											className="org-context-avatar"
+											src={orgData!.avatar}
 											alt=""
 										/>
 									)}
-									<div className="hub-context-text">
-										<span className="hub-context-label">Creating within</span>
-										<strong className="hub-context-name">
-											{hubData!.title}
+									<div className="org-context-text">
+										<span className="org-context-label">Creating within</span>
+										<strong className="org-context-name">
+											{orgData!.title}
 										</strong>
 									</div>
 								</div>
 							)}
-							{hasHub ? (
+							{hasOrg ? (
 								<p>
-									Communities created within a hub are automatically approved and
+									Communities created within an org are automatically approved and
 									publicly visible. Metadata about your community will be visible
-									to hub managers. You can disconnect your community from the hub
+									to org managers. You can disconnect your community from the org
 									at any time. By creating this community, you agree to our{' '}
 									<a href="/legal/terms">Terms of Service</a> and{' '}
 									<a href="/legal/aup">Acceptable Use Policy</a>.
@@ -276,24 +260,24 @@ const CommunityCreate = (props: Props) => {
 									approval from within the community.
 								</p>
 							)}
-							{hasHub && (
+							{hasOrg && (
 								<TemplatePicker
 									templates={templates}
 									selectedTemplateId={selectedTemplateId}
 									onSelect={setSelectedTemplateId}
-									hubCommunities={hubCommunities}
+									orgCommunities={orgCommunities}
 									cloneEnabled={
-										hubData?.communityCloneAccess !== 'off' &&
-										hubCommunities.length > 0
+										orgData?.communityCloneAccess !== 'off' &&
+										orgCommunities.length > 0
 									}
 									cloneCommunityId={cloneCommunityId}
 									onCloneCommunitySelect={setCloneCommunityId}
 								/>
 							)}
 						</div>
-						<div className={hasHub ? 'hub-create-right' : ''}>
-							{hasHub && (
-								<h2 className="hub-create-form-heading">Community Details</h2>
+						<div className={hasOrg ? 'org-create-right' : ''}>
+							{hasOrg && (
+								<h2 className="org-create-form-heading">Community Details</h2>
 							)}
 							<form onSubmit={onCreateSubmit}>
 								<Honeypot name="website" />
@@ -324,27 +308,6 @@ const CommunityCreate = (props: Props) => {
 									onChange={onDescriptionChange}
 									helperText={`${description.length}/280 characters`}
 								/>
-								{kfOrgs.length > 1 && (
-									<InputField label="Organization">
-										<div className={Classes.HTML_SELECT}>
-											<select
-												value={selectedKfOrgId ?? ''}
-												onChange={(e) =>
-													setSelectedKfOrgId(e.target.value || null)
-												}
-											>
-												{kfOrgs.map((org) => (
-													<option key={org.id} value={org.id}>
-														{org.name}
-														{org.type === 'personal'
-															? ' (Personal)'
-															: ''}
-													</option>
-												))}
-											</select>
-										</div>
-									</InputField>
-								)}
 								{selectedTemplateId ? (
 									<Callout
 										intent="none"

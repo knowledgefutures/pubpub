@@ -18,7 +18,6 @@ import {
 	DefaultScope,
 	ForeignKey,
 	HasMany,
-	Index,
 	Is,
 	IsLowercase,
 	Length,
@@ -39,6 +38,7 @@ import {
 	ScopeSummary,
 	SpamTag,
 } from '../models';
+import { Org } from '../org/model';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table
@@ -251,10 +251,13 @@ export class Community extends Model<
 	@Column(DataType.UUID)
 	declare templateId: string | null;
 
-	/** KF Auth organization that owns this community (for billing/ownership) */
-	@Index
-	@Column(DataType.TEXT)
-	declare kfOrgId: string | null;
+	/** The org that owns this community, if any. Its index (communities_org_id) is created by
+	 *  the 2026_10_19_renameHubsToOrgs migration: an @Index here would make sync() index the
+	 *  column before that migration adds it. */
+	@AllowNull
+	@ForeignKey(() => Org)
+	@Column(DataType.UUID)
+	declare orgId: string | null;
 
 	/**
 	 * CMS mode: the community is only visible to members;
@@ -283,6 +286,9 @@ export class Community extends Model<
 		onDelete: 'SET NULL',
 	})
 	declare template?: CommunityTemplate;
+
+	@BelongsTo(() => Org, { as: 'org', foreignKey: 'orgId', onDelete: 'SET NULL' })
+	declare org?: Org;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',

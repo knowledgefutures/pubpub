@@ -26,7 +26,7 @@ import {
 	Unique,
 } from 'sequelize-typescript';
 
-import { Hub } from '../hub/model';
+import { Org } from '../org/model';
 import { User } from '../user/model';
 
 @Table
@@ -120,14 +120,14 @@ export class CommunityTemplate extends Model<
 	@BelongsTo(() => User, { foreignKey: 'createdById' })
 	declare createdBy?: User;
 
-	/** Optional hub that owns this template (hub managers can edit their own) */
+	/** Optional org that owns this template (org managers can edit their own) */
 	@AllowNull
-	@ForeignKey(() => Hub)
+	@ForeignKey(() => Org)
 	@Column(DataType.UUID)
-	declare hubId: CreationOptional<string | null>;
+	declare orgId: CreationOptional<string | null>;
 
-	@BelongsTo(() => Hub, { foreignKey: 'hubId', onDelete: 'SET NULL' })
-	declare hub?: Hub;
+	@BelongsTo(() => Org, { foreignKey: 'orgId', onDelete: 'SET NULL' })
+	declare org?: Org;
 
 	declare createdAt: CreationOptional<Date>;
 	declare updatedAt: CreationOptional<Date>;

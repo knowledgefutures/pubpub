@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { isUserHubManager } from 'server/hub/queries';
+import { isUserOrgAdmin } from 'server/org/queries';
 import { ForbiddenError, HTTPStatusError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 
@@ -12,10 +12,10 @@ import {
 	fetchPageByUrl,
 	fetchPubContent,
 	findCommunityByUrl,
-	getActiveTemplatesForHub,
+	getActiveTemplatesForOrg,
 	getAllTemplates,
 	getTemplateById,
-	getTemplatesForHub,
+	getTemplatesForOrg,
 	updateTemplate,
 } from './queries';
 
@@ -31,13 +31,13 @@ const requireSuperAdmin = async (req: any) => {
 	return initialData;
 };
 
-const requireSuperAdminOrHubManager = async (req: any, hubId: string) => {
+const requireSuperAdminOrOrgAdmin = async (req: any, orgId: string) => {
 	const initialData = await getInitialData(req);
 	if (initialData.loginData.isSuperAdmin) {
 		return initialData;
 	}
 	if (initialData.loginData.id) {
-		const isMgr = await isUserHubManager(initialData.loginData.id, hubId);
+		const isMgr = await isUserOrgAdmin(initialData.loginData.id, orgId);
 		if (isMgr) {
 			return initialData;
 		}
@@ -46,8 +46,8 @@ const requireSuperAdminOrHubManager = async (req: any, hubId: string) => {
 };
 
 /**
- * For template-level operations: allows superadmin, or hub manager if the template
- * belongs to a hub they manage.
+ * For template-level operations: allows superadmin, or an org admin if the template
+ * belongs to their org.
  */
 const requireSuperAdminOrTemplateOwner = async (req: any, templateId: string) => {
 	const initialData = await getInitialData(req);
@@ -58,8 +58,8 @@ const requireSuperAdminOrTemplateOwner = async (req: any, templateId: string) =>
 	if (!template) {
 		throw new NotFoundError();
 	}
-	if (template.hubId && initialData.loginData.id) {
-		const isMgr = await isUserHubManager(initialData.loginData.id, template.hubId);
+	if (template.orgId && initialData.loginData.id) {
+		const isMgr = await isUserOrgAdmin(initialData.loginData.id, template.orgId);
 		if (isMgr) {
 			return initialData;
 		}
@@ -194,26 +194,26 @@ router.delete('/api/communityTemplates/:id', async (req, res, next) => {
 	}
 });
 
-// ─── Hub ↔ Template routes (superadmin or hub manager) ───────────
+// ─── Org ↔ Template routes (superadmin or org manager) ───────────
 
-// GET /api/hubs/:hubId/templates — list templates belonging to this hub
-router.get('/api/hubs/:hubId/templates', async (req, res, next) => {
+// GET /api/orgs/:orgId/templates — list templates belonging to this org
+router.get('/api/orgs/:orgId/templates', async (req, res, next) => {
 	try {
-		await requireSuperAdminOrHubManager(req, req.params.hubId);
-		const templates = await getTemplatesForHub(req.params.hubId);
+		await requireSuperAdminOrOrgAdmin(req, req.params.orgId);
+		const templates = await getTemplatesForOrg(req.params.orgId);
 		return res.status(200).json(templates.map((t) => t.toJSON()));
 	} catch (err) {
 		return next(err);
 	}
 });
 
-// POST /api/hubs/:hubId/templates — create a new template owned by this hub
-router.post('/api/hubs/:hubId/templates', async (req, res, next) => {
+// POST /api/orgs/:orgId/templates — create a new template owned by this org
+router.post('/api/orgs/:orgId/templates', async (req, res, next) => {
 	try {
-		const initialData = await requireSuperAdminOrHubManager(req, req.params.hubId);
+		const initialData = await requireSuperAdminOrOrgAdmin(req, req.params.orgId);
 		const template = await createTemplate({
 			...pickTemplateFields(req.body),
-			hubId: req.params.hubId,
+			orgId: req.params.orgId,
 			createdById: initialData.loginData.id,
 		} as Parameters<typeof createTemplate>[0]);
 		return res.status(201).json(template.toJSON());
@@ -222,10 +222,10 @@ router.post('/api/hubs/:hubId/templates', async (req, res, next) => {
 	}
 });
 
-// POST /api/hubs/:hubId/templates/from-community — clone template from community, owned by hub
-router.post('/api/hubs/:hubId/templates/from-community', async (req, res, next) => {
+// POST /api/orgs/:orgId/templates/from-community — clone template from community, owned by org
+router.post('/api/orgs/:orgId/templates/from-community', async (req, res, next) => {
 	try {
-		const initialData = await requireSuperAdminOrHubManager(req, req.params.hubId);
+		const initialData = await requireSuperAdminOrOrgAdmin(req, req.params.orgId);
 		const { title, slug, description, includePages, includeCollections } = req.body;
 
 		const resolvedCommunityId = await resolveCommunityId(req.body);
@@ -242,19 +242,19 @@ router.post('/api/hubs/:hubId/templates/from-community', async (req, res, next) 
 			includePages,
 			includeCollections,
 		});
-		await template.update({ hubId: req.params.hubId });
+		await template.update({ orgId: req.params.orgId });
 		return res.status(201).json({ ...template.toJSON(), _warnings: warnings });
 	} catch (err) {
 		return next(err);
 	}
 });
 
-// ─── Public: get active templates for hub (used by community create page) ────
+// ─── Public: get active templates for org (used by community create page) ────
 
-// GET /api/hubs/:hubId/activeTemplates — public-ish (for community create flow)
-router.get('/api/hubs/:hubId/activeTemplates', async (req, res, next) => {
+// GET /api/orgs/:orgId/activeTemplates — public-ish (for community create flow)
+router.get('/api/orgs/:orgId/activeTemplates', async (req, res, next) => {
 	try {
-		const templates = await getActiveTemplatesForHub(req.params.hubId);
+		const templates = await getActiveTemplatesForOrg(req.params.orgId);
 		return res.status(200).json(templates);
 	} catch (err) {
 		return next(err);
@@ -265,7 +265,7 @@ router.get('/api/hubs/:hubId/activeTemplates', async (req, res, next) => {
 router.post('/api/communityTemplates/fetch-pub-content', async (req, res, next) => {
 	try {
 		const { pubUrl, templateId } = req.body;
-		// Allow superadmin, or hub manager if they provide a templateId they own
+		// Allow superadmin, or org manager if they provide a templateId they own
 		if (templateId) {
 			await requireSuperAdminOrTemplateOwner(req, templateId);
 		} else {

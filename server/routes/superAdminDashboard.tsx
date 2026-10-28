@@ -23,10 +23,10 @@ import { getAllTemplates } from 'server/communityTemplate/queries';
 import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
-// NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
-import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { Community, DepositTarget, FtpTarget } from 'server/models';
+// NOTE: Suggested Orgs SSR returns an empty shell; summaries are fetched client-side on mount.
+import { getAllOrgsWithCommunityCounts } from 'server/org/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -127,10 +127,10 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 	if (tabKind === 'landingPageFeatures') {
 		return { landingPageFeatures: await getLandingPageFeatures({ onlyValidItems: false }) };
 	}
-	if (tabKind === 'hubs') {
-		return { hubs: await getAllHubsWithCommunityCounts() };
+	if (tabKind === 'orgs') {
+		return { orgs: await getAllOrgsWithCommunityCounts() };
 	}
-	if (tabKind === 'suggestedHubs') {
+	if (tabKind === 'suggestedOrgs') {
 		// Return empty shell — summaries are fetched client-side for fast SSR
 		return {};
 	}
@@ -830,8 +830,8 @@ router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs sidebar summaries
-router.get('/api/superadmin/suggested-hubs-summaries', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs sidebar summaries
+router.get('/api/superadmin/suggested-orgs-summaries', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -844,8 +844,8 @@ router.get('/api/superadmin/suggested-hubs-summaries', async (req, res, next) =>
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs domain detail
-router.get('/api/superadmin/suggested-hubs/:domain', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs domain detail
+router.get('/api/superadmin/suggested-orgs/:domain', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -860,8 +860,8 @@ router.get('/api/superadmin/suggested-hubs/:domain', async (req, res, next) => {
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs collaborators (fetched on-demand)
-router.get('/api/superadmin/suggested-hubs/:domain/collaborators', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs collaborators (fetched on-demand)
+router.get('/api/superadmin/suggested-orgs/:domain/collaborators', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -875,8 +875,8 @@ router.get('/api/superadmin/suggested-hubs/:domain/collaborators', async (req, r
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs activity feed (fetched on-demand)
-router.get('/api/superadmin/suggested-hubs/:domain/activity', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs activity feed (fetched on-demand)
+router.get('/api/superadmin/suggested-orgs/:domain/activity', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -891,7 +891,7 @@ router.get('/api/superadmin/suggested-hubs/:domain/activity', async (req, res, n
 });
 
 // JSON API for known search term content mentions for a domain (cross-reference)
-router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req, res, next) => {
+router.get('/api/superadmin/suggested-orgs/:domain/content-mentions', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {

@@ -10,6 +10,7 @@ import {
 	MAPPING_VERSION,
 	type ManifestEntry,
 	mapCommunityScopeRecords,
+	type PageInput,
 	type PubInput,
 	type PushOptions,
 	type UnderlayFile,
@@ -51,6 +52,8 @@ export type MapPubFn = (
 export type IncrementalPushInput = {
 	community: CommunityInput;
 	collections: CollectionInput[];
+	/** Community pages with their layouts pre-rendered; only public ones are exported. */
+	pages?: PageInput[];
 	/** All pubs, hydrated cheaply (no docs): attributions, collectionPubs, edges, release metadata. */
 	pubs: PubInput[];
 	/** pubId → the pub's `updatedAt` (cheap change signal). */
@@ -59,6 +62,8 @@ export type IncrementalPushInput = {
 	 * pubId → hash of that pub's fully-resolved facet cascade. Facet edits at community/collection/pub
 	 * scope change the resolved value (and thus this hash) without bumping `updatedAt` or adding a
 	 * release, so this is the signal that invalidates a pub whose rendered content changed via facets.
+	 * The worker also folds in the pub's collection memberships and the kind derived from them, which
+	 * change the Pub record the same way: through other rows, without touching the pub.
 	 */
 	pubFacetsSignature?: Record<string, string>;
 	options: PushOptions;
@@ -256,6 +261,7 @@ export const buildIncrementalPush = async (
 	const {
 		community,
 		collections,
+		pages,
 		pubs,
 		pubUpdatedAt,
 		pubFacetsSignature = {},
@@ -308,7 +314,7 @@ export const buildIncrementalPush = async (
 	let cacheHits = 0;
 	let cacheMisses = 0;
 
-	// Community-scope records (Community, Collections, Users) are always recomputed — cheap, and
+	// Community-scope records (Community, Collections, Pages, Users) are always recomputed — cheap, and
 	// their identity depends on cross-pub dedup. Their localized branding/avatar files (if any) are
 	// added to the fresh file set + manifest file hashes; they are always sent in full (never cached
 	// per-pub), so no lazy-rehydration path is needed for them.
@@ -326,14 +332,20 @@ export const buildIncrementalPush = async (
 	const registerCachedScopeHash = (hash: string) => {
 		allFileHashes.add(hash);
 	};
-	const scopeRecords = await mapCommunityScopeRecords(community, collections, pubs, {
-		addFile: addScopeFile,
-		fetchAsset,
-		onAssetWarning,
-		options,
-		assetCache,
-		registerCachedHash: registerCachedScopeHash,
-	});
+	const scopeRecords = await mapCommunityScopeRecords(
+		community,
+		collections,
+		pubs,
+		{
+			addFile: addScopeFile,
+			fetchAsset,
+			onAssetWarning,
+			options,
+			assetCache,
+			registerCachedHash: registerCachedScopeHash,
+		},
+		pages,
+	);
 	freshRecords.push(...scopeRecords);
 	manifest.push(...buildManifest(scopeRecords));
 

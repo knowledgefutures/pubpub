@@ -8,9 +8,9 @@ import {
 	Discussion,
 	EmailChangeToken,
 	FeatureFlagUser,
-	Hub,
-	HubManager,
 	Member,
+	Org,
+	OrgMember,
 	PubAttribution,
 	Release,
 	ReviewEvent,
@@ -73,27 +73,27 @@ export const getUserDeletionAudit = async (userId: string) => {
 				).map((c) => ({ id: c.id, title: c.title, subdomain: c.subdomain }))
 			: [];
 
-	// Find hubs where this user is the only manager
-	const hubManagerships = await HubManager.findAll({
-		where: { userId },
-		attributes: ['hubId'],
+	// Find orgs where this user is the only admin
+	const orgAdminships = await OrgMember.findAll({
+		where: { userId, permissions: 'admin' },
+		attributes: ['orgId'],
 	});
 
-	const otherManagerCounts = await Promise.all(
-		hubManagerships.map((hm) =>
-			HubManager.count({
-				where: { hubId: (hm as any).hubId, userId: { [Op.ne]: userId } },
-			}).then((count) => ({ hubId: (hm as any).hubId, count })),
+	const otherOrgAdminCounts = await Promise.all(
+		orgAdminships.map((m) =>
+			OrgMember.count({
+				where: { orgId: m.orgId, userId: { [Op.ne]: userId }, permissions: 'admin' },
+			}).then((count) => ({ orgId: m.orgId, count })),
 		),
 	);
 
-	const soleManagerHubIds = otherManagerCounts.filter((r) => r.count === 0).map((r) => r.hubId);
+	const soleAdminOrgIds = otherOrgAdminCounts.filter((r) => r.count === 0).map((r) => r.orgId);
 
-	const soleManagerHubs =
-		soleManagerHubIds.length > 0
+	const soleAdminOrgs =
+		soleAdminOrgIds.length > 0
 			? (
-					await Hub.findAll({
-						where: { id: soleManagerHubIds },
+					await Org.findAll({
+						where: { id: soleAdminOrgIds },
 						attributes: ['id', 'title', 'slug'],
 					})
 				).map((h) => ({ id: h.id, title: (h as any).title, slug: (h as any).slug }))
@@ -107,7 +107,7 @@ export const getUserDeletionAudit = async (userId: string) => {
 		collectionAttributionCount,
 		commentCount,
 		soleAdminCommunities,
-		soleManagerHubs,
+		soleAdminOrgs,
 	};
 };
 
@@ -219,7 +219,7 @@ export const destroyUser = async (userId: string) => {
 		// ---------------------------------------------------------------
 		// 4. Let CASCADE handle: Member, AuthToken, EmailChangeToken,
 		//    UserNotification, UserSubscription, UserNotificationPreferences,
-		//    FeatureFlagUser, CommunityBan (userId side), HubManager
+		//    FeatureFlagUser, CommunityBan (userId side), OrgMember
 		// ---------------------------------------------------------------
 
 		// ActivityItem.actorId has no FK — leave orphaned.

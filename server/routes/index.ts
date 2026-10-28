@@ -12,7 +12,6 @@ import { router as dashboardActivityRouter } from './dashboardActivity';
 import { router as dashboardCollectionLayoutRouter } from './dashboardCollectionLayout';
 import { router as dashboardCollectionOverviewRouter } from './dashboardCollectionOverview';
 import { router as dashboardCommunityOverviewRouter } from './dashboardCommunityOverview';
-import { router as dashboardCuratedByRouter } from './dashboardCuratedBy';
 import { router as dashboardCustomScriptsRouter } from './dashboardCustomScripts';
 import { router as dashboardDiscussionsRouter } from './dashboardDiscussions';
 import { router as dashboardEdgesRouter } from './dashboardEdges';
@@ -31,11 +30,11 @@ import { router as dashboardSubmissionsRouter } from './dashboardSubmissions';
 import { router as emailRouter } from './email'; // Route: '/email'
 /* import { router as cmmunityServicesRouter} from './cmmunityServices'); // Route: '/community-services' */
 import { router as exploreRouter } from './explore'; // Route: '/explore'
-import { router as hubDataRouter } from './hubData';
-import { router as hubDirectoryRouter } from './hubDirectory';
-import { router as hubDocsRouter } from './hubDocs';
-import { router as hubLandingRouter } from './hubLanding';
-import { router as hubPricingRouter } from './hubPricing';
+import { router as orgDataRouter } from './orgData';
+import { router as orgDirectoryRouter } from './orgDirectory';
+import { router as orgDocsRouter } from './orgDocs';
+import { router as orgLandingRouter } from './orgLanding';
+import { router as orgPricingRouter } from './orgPricing';
 
 /* import { router as picingRouter} from './picing'); // Route: '/pricing' */
 
@@ -75,7 +74,6 @@ rootRouter
 	.use(dashboardImpact2Router)
 	.use(dashboardMembersRouter)
 	.use(dashboardCommunityOverviewRouter)
-	.use(dashboardCuratedByRouter)
 	.use(dashboardCollectionOverviewRouter)
 	.use(dashboardCustomScriptsRouter)
 	.use(dashboardPubOverviewRouter)
@@ -90,11 +88,11 @@ rootRouter
 	.use(communityCreateRouter)
 	.use(exploreRouter)
 	.use(emailRouter)
-	.use(hubDataRouter)
-	.use(hubDocsRouter)
-	.use(hubPricingRouter)
-	.use(hubDirectoryRouter)
-	.use(hubLandingRouter)
+	.use(orgDataRouter)
+	.use(orgDocsRouter)
+	.use(orgPricingRouter)
+	.use(orgDirectoryRouter)
+	.use(orgLandingRouter)
 	.use(adminDashboardRouter)
 	.use(landingRouter)
 	.use(kfAuthRouter)

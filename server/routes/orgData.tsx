@@ -42,6 +42,7 @@ router.get('/org/:slug/data', async (req, res, next) => {
 
 		const orgData = await getOrgDataDashboard(slug, {
 			userId: initialData.loginData.id,
+			isSuperAdmin,
 		});
 		if (!orgData) {
 			throw new NotFoundError();

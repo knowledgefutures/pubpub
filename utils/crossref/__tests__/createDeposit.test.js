@@ -370,6 +370,16 @@ describe('createDeposit', () => {
 		]);
 	});
 
+	it('accepts an ISSN written with an en dash and spaces', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, issn: ' 2637\u20136091 ' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'electronic', '#text': '26376091' },
+		]);
+	});
+
 	it('leaves out an ISSN with a wrong check digit', () => {
 		const { deposit } = createDeposit(
 			{ community: { ...community, issn: '2644-2354' }, pub },

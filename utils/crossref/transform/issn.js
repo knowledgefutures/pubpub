@@ -15,6 +15,7 @@ export default (value) => {
 	if (typeof value !== 'string') {
 		return null;
 	}
-	const issn = value.replace(/[\s-]/g, '').toUpperCase();
+	// Editors paste ISSNs with spaces and en or em dashes as often as hyphens.
+	const issn = value.replace(/[\s\-\u2010-\u2015]/g, '').toUpperCase();
 	return issnPattern.test(issn) && hasValidCheckDigit(issn) ? issn : null;
 };

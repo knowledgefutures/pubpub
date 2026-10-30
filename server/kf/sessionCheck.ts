@@ -25,7 +25,7 @@ import { promisify } from 'util';
 import { logout } from 'server/utils/logout';
 import { isDevelopment, isDuqDuq } from 'utils/environment';
 
-import { decryptPayload, encryptPayload, introspectRefreshToken } from './oidc.server';
+import { decryptPayloadWithKeyInfo, encryptPayload, introspectRefreshToken } from './oidc.server';
 
 // Worst-case revocation/ban latency if the webhook is missed. Short in dev /
 // duqduq for fast testing; a few minutes in prod. Override with
@@ -84,14 +84,21 @@ export async function checkKfSession(req: Request, res: Response): Promise<boole
 
 async function doCheck(req: Request, res: Response): Promise<boolean> {
 	const session = req.session;
-	const decrypted = decryptPayload<{ t: string }>(session.kfRefreshToken ?? '');
-	if (!decrypted?.t) {
+	const decrypted = decryptPayloadWithKeyInfo<{ t: string }>(session.kfRefreshToken ?? '');
+	const refreshToken = decrypted?.data.t;
+	if (!refreshToken) {
 		teardown(req, res);
 		return false;
 	}
+	// Written under the key derived from the client secret: move it to
+	// KF_SESSION_ENCRYPTION_KEY. Both paths below save the session.
+	// TODO(session-key-fallback): remove with the fallback in oidc.server.ts.
+	if (decrypted.needsReencrypt) {
+		session.kfRefreshToken = encryptPayload({ t: refreshToken });
+	}
 
 	try {
-		const { active, sid } = await introspectRefreshToken(decrypted.t);
+		const { active, sid } = await introspectRefreshToken(refreshToken);
 		// `active` goes false on revoke/expire; `sid` is nulled when the backing
 		// session is gone. Either means the kf-auth session no longer exists.
 		if (!active || !sid) {

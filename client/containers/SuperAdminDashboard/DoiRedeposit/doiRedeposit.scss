@@ -1,0 +1,57 @@
+.doi-redeposit-component {
+	max-width: 900px;
+
+	.callout {
+		margin-bottom: 15px;
+	}
+
+	.plan-table {
+		margin-bottom: 15px;
+
+		th {
+			white-space: nowrap;
+			width: 160px;
+		}
+	}
+
+	.actions {
+		display: flex;
+		align-items: flex-start;
+		gap: 20px;
+		margin-bottom: 20px;
+
+		.test-row {
+			display: flex;
+			gap: 8px;
+		}
+	}
+
+	.active-run {
+		margin-bottom: 20px;
+
+		h4 {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.run-detail {
+			margin-top: 8px;
+		}
+	}
+
+	.runs-table {
+		width: 100%;
+	}
+
+	.item-list {
+		margin: 4px 0 10px;
+		padding-left: 18px;
+		font-size: 13px;
+	}
+
+	.error-text {
+		color: #c23030;
+		font-size: 12px;
+	}
+}

@@ -78,3 +78,6 @@ planning/
 
 infra/sftp/
 !infra/sftp/upload/.gitkeep
+
+# DOI redeposit results (tools/redepositDois.ts)
+redeposit-*.json

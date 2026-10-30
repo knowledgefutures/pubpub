@@ -75,6 +75,7 @@ const commandFiles = {
 	migrate: "./migrate",
 	migrateRedshift: "./migrateRedshift",
 	refreshAnalyticsSummary: "./refreshAnalyticsSummary",
+	redepositDois: "./redepositDois",
 	migrateDash: "./dashboardMigrations/runMigrations",
 	migrateFirebasePaths: "./migrateFirebasePaths",
 	migration2020_05_06: "./migration2020_05_06",

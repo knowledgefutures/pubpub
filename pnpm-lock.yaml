@@ -337,6 +337,9 @@ importers:
       is-url:
         specifier: ^1.2.4
         version: 1.2.4
+      jose:
+        specifier: 6.2.12
+        version: 6.2.12
       js-beautify:
         specifier: ^1.11.0
         version: 1.15.4
@@ -7977,6 +7980,9 @@ packages:
   jose@2.0.7:
     resolution: {integrity: sha512-5hFWIigKqC+e/lRyQhfnirrAqUdIPMB7SJRqflJaO29dW7q5DFvH1XCSTmv6PQ6pb++0k6MJlLRoS0Wv4s38Wg==}
     engines: {node: '>=10.13.0 < 13 || >=13.7.0'}
+
+  jose@6.2.12:
+    resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
 
   jotai@1.13.1:
     resolution: {integrity: sha512-RUmH1S4vLsG3V6fbGlKzGJnLrDcC/HNb5gH2AeA9DzuJknoVxSGvvg8OBB7lke+gDc4oXmdVsaKn/xDUhWZ0vw==}
@@ -21710,6 +21716,8 @@ snapshots:
   jose@2.0.7:
     dependencies:
       '@panva/asn1.js': 1.0.0
+
+  jose@6.2.12: {}
 
   jotai@1.13.1(@babel/core@7.29.0)(@babel/template@7.28.6)(react@16.14.0):
     dependencies:

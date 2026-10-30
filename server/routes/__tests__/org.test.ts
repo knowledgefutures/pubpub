@@ -54,6 +54,14 @@ describe('org pages', () => {
 		);
 	});
 
+	it('gives superadmins the admin tabs on the dashboard', async () => {
+		const { text } = await (await login(models.superAdmin))
+			.get(`/org/${org.slug}/data`)
+			.set('Host', host)
+			.expect(200);
+		expect(text).toContain('&quot;viewerPermissions&quot;:&quot;admin&quot;');
+	});
+
 	it('hides org pages from other users during the private rollout', async () => {
 		const agent = await login(models.regularUser);
 		await agent.get(`/org/${org.slug}`).set('Host', host).expect(404);

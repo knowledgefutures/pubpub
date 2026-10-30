@@ -3,10 +3,16 @@ import type { Callback, Community } from 'types';
 import React from 'react';
 
 import { ColorInput, ImageUpload, InputField, SettingsSection } from 'components';
+import normalizeIssn from 'utils/crossref/transform/issn';
 import { slugifyString } from 'utils/strings';
 
 import LabelWithInfo from '../LabelWithInfo';
 import SettingsRow from '../SettingsRow';
+
+const getIssnError = (value: string | null) =>
+	value?.trim() && !normalizeIssn(value)
+		? "This isn't a valid ISSN, so it will be left out of Crossref deposits."
+		: undefined;
 
 type Props = {
 	communityData: Community;
@@ -21,6 +27,8 @@ const BasicSettings = (props: Props) => {
 		subdomain,
 		publishAs,
 		citeAs,
+		electronicIssn,
+		printIssn,
 		favicon,
 		accentColorDark,
 		accentColorLight,
@@ -72,6 +80,32 @@ const BasicSettings = (props: Props) => {
 					updateCommunityData({ citeAs: evt.target.value });
 				}}
 			/>
+			<SettingsRow>
+				<InputField
+					label="Electronic ISSN"
+					htmlFor="electronic-issn"
+					placeholder="e.g. 2644-2353"
+					helperText="Used in DOI deposits and citations for pubs not in an issue, and in issues without their own ISSNs. Crossref only accepts an ISSN with the exact journal title it has registered."
+					error={getIssnError(electronicIssn)}
+					type="text"
+					value={electronicIssn ?? ''}
+					onChange={(evt) => {
+						updateCommunityData({ electronicIssn: evt.target.value.trim() || null });
+					}}
+				/>
+				<InputField
+					label="Print ISSN"
+					htmlFor="print-issn"
+					placeholder="e.g. 2688-8513"
+					helperText="Leave empty if the journal has no print edition."
+					error={getIssnError(printIssn)}
+					type="text"
+					value={printIssn ?? ''}
+					onChange={(evt) => {
+						updateCommunityData({ printIssn: evt.target.value.trim() || null });
+					}}
+				/>
+			</SettingsRow>
 			<InputField
 				htmlFor="publisher"
 				label="Publisher"

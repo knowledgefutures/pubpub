@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import passport from 'passport';
 import { promisify } from 'util';
 
+import { kfClientAuthorization } from 'server/kf/oidc.server';
 import { provisionLocalUser } from 'server/kf/provisionLocalUser';
 import { User } from 'server/models';
 import { getSpamTagForUser } from 'server/spamTag/userQueries';
@@ -77,7 +78,7 @@ function mapEstablishError(err: Error): LoginResult | null {
 
 /**
  * Verify the SDK's sha3-prehashed password against kf-auth's source-of-truth
- * via the Bearer-authenticated internal route. We don't use Better Auth's
+ * via the internal route, as PubPub's own OAuth client (HTTP Basic). We don't use Better Auth's
  * public `/api/auth/sign-in/email` because (a) it enforces an Origin check
  * (`MISSING_OR_NULL_ORIGIN`) intended for browsers, and (b) it would mint a
  * kf-auth session we'd only have to clean up. The internal route just
@@ -90,9 +91,9 @@ async function performKfAuthLogin(req: any, res: any): Promise<LoginResult> {
 		process.env.OIDC_ISSUER_INTERNAL_URL ??
 		process.env.OIDC_ISSUER_URL ??
 		'';
-	const apiKey = process.env.AUTH_INTERNAL_API_KEY ?? '';
-	if (!apiUrl || !apiKey) {
-		console.error('Legacy /api/login: AUTH_INTERNAL_API_URL/KEY not configured');
+	const authorization = kfClientAuthorization();
+	if (!apiUrl || !authorization) {
+		console.error('Legacy /api/login: KF Auth URL or client credentials not configured');
 		return { status: 500, body: 'Authentication service not configured' } as const;
 	}
 
@@ -102,7 +103,7 @@ async function performKfAuthLogin(req: any, res: any): Promise<LoginResult> {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${apiKey}`,
+				Authorization: authorization,
 			},
 			body: JSON.stringify({
 				email: req.body.email,
@@ -255,9 +256,9 @@ function performLegacyLocalLogin(req: any, res: any): Promise<LoginResult> {
 
 const performLogin = async (req: any, res: any): Promise<LoginResult> => {
 	applyDeprecationHeaders(res);
-	// Production sets both — the key is the discriminator since AUTH_INTERNAL_API_URL
-	// falls back to OIDC_* defaults. Tests omit the key and take the legacy path.
-	if (process.env.AUTH_INTERNAL_API_KEY) {
+	// Production sets the client secret; the URL can't decide, since it falls back to
+	// OIDC_* defaults. Tests omit the secret and take the legacy path.
+	if (kfClientAuthorization()) {
 		return performKfAuthLogin(req, res);
 	}
 	return performLegacyLocalLogin(req, res);

@@ -1,15 +1,17 @@
 import { canonicalCommunityUrl as communityUrl } from 'utils/canonicalUrls';
 
+import normalizeIssn from './issn';
+
 const getLanguageForCommunity = () => 'en';
 
 export default ({ globals }) =>
 	(community, collection) => {
-		const { title, issn: denormalizedIssn, citeAs } = community;
+		const { title, electronicIssn, printIssn, citeAs } = community;
 		const kind = collection?.kind || '';
-		const issn = denormalizedIssn && denormalizedIssn.replace('-', '');
 		return {
 			title,
-			issn,
+			electronicIssn: normalizeIssn(electronicIssn),
+			printIssn: normalizeIssn(printIssn),
 			citeAs,
 			kind,
 			timestamp: globals.timestamp,

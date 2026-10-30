@@ -223,6 +223,16 @@ export const envSchema = z.object({
 
 	// ── Session ─────────────────────────────────────────────────────────
 	SESSION_SECRET: z.string().min(1).describe('Secret for signing session cookies'),
+	KF_SESSION_ENCRYPTION_KEY: z
+		.string()
+		.refine(
+			(v) => v === '' || Buffer.from(v, 'base64').length === 32,
+			'must be 32 bytes, base64-encoded (openssl rand -base64 32)',
+		)
+		.optional()
+		.describe(
+			'AES-256 key for the encrypted OIDC state, session-set and stored refresh tokens. Generate with `openssl rand -base64 32`. Unset falls back to a key derived from OIDC_CLIENT_SECRET',
+		),
 
 	// ── Testing ──────────────────────────────────────────────────────────
 	INTEGRATION_TESTING: booleanish.describe('Signals that integration tests are running'),

@@ -16,7 +16,7 @@ import { book, issue, conference } from './data/collections';
 
 const createDeposit = (context, target, depositTarget) =>
 	createDepositPartial(
-		{ ...context, community },
+		{ community, ...context },
 		target,
 		depositTarget,
 		new Date('2019-04-11T19:02:15.577Z').getTime(),
@@ -339,6 +339,80 @@ describe('createDeposit', () => {
 			getSchemaForKind('book').contextHints.find((ch) => ch.value === contextHintValue)
 				.crossrefComponentType,
 		);
+	});
+
+	it('includes the community ISSNs in journal metadata', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, electronicIssn: '2644-2353', printIssn: '2688-8513' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'print', '#text': '26888513' },
+			{ '@media_type': 'electronic', '#text': '26442353' },
+		]);
+	});
+
+	const issueDeposit = (communityFields, issueMetadata) => {
+		const issueWithJournal = { ...issue, metadata: { ...issue.metadata, ...issueMetadata } };
+		return createDeposit(
+			{
+				community: { ...community, ...communityFields },
+				collection: issueWithJournal,
+				collectionPub: makeCollectionPub(issueWithJournal, pub),
+				pub,
+			},
+			'pub',
+		).deposit.doi_batch.body.journal.journal_metadata;
+	};
+
+	it("uses an issue's own ISSNs and journal title over the community's", () => {
+		const metadata = issueDeposit(
+			{ electronicIssn: '2644-2353', printIssn: '2688-8513' },
+			{ electronicIssn: '2637-6091', journalTitle: 'Second Journal' },
+		);
+		expect(metadata.full_title).toEqual('Second Journal');
+		// The issue's ISSNs are a set; the community's print ISSN belongs to another journal.
+		expect(metadata.issn).toEqual([{ '@media_type': 'electronic', '#text': '26376091' }]);
+	});
+
+	it('uses the community ISSNs for an issue without its own', () => {
+		const metadata = issueDeposit(
+			{ electronicIssn: '2644-2353' },
+			{ printIssn: '', electronicIssn: 'not an issn' },
+		);
+		expect(metadata.full_title).toEqual('PubPub Dev');
+		expect(metadata.issn).toEqual([{ '@media_type': 'electronic', '#text': '26442353' }]);
+	});
+
+	it('accepts an ISSN written with a label, an en dash, and invisible characters', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, electronicIssn: 'ISSN \u200b2637\u20136091 (online)' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'electronic', '#text': '26376091' },
+		]);
+	});
+
+	it('leaves out an ISSN with a wrong check digit', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, electronicIssn: '2644-2354' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toBeUndefined();
+	});
+
+	it('leaves out malformed ISSNs', () => {
+		const { deposit } = createDeposit(
+			{
+				community: { ...community, electronicIssn: 'not an issn' },
+				collection: issue,
+				collectionPub: makeCollectionPub(issue, pub),
+				pub,
+			},
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toBeUndefined();
 	});
 
 	it('uses a DepositTarget to produce a doi prefix', () => {

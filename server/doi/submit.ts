@@ -89,6 +89,16 @@ const getDoiLogin = async (communityId: string) => {
 	return resolveCrossrefCredentials(depositTarget);
 };
 
+/**
+ * The file name Crossref records for a deposit, which is how its submission log is looked up
+ * later. The batch id adds the community to the timestamp, so names stay unique across
+ * communities that share a Crossref account.
+ */
+export const getDepositFilename = (json: Record<string, any>, timestamp: number) => {
+	const batchId = json?.doi_batch?.head?.doi_batch_id;
+	return `${batchId ?? timestamp}.xml`;
+};
+
 export const submitDoiData = async (
 	json: Record<string, object>,
 	timestamp: number,
@@ -100,7 +110,7 @@ export const submitDoiData = async (
 	return postToCrossref({
 		content: xmlContent,
 		contentType: 'application/xml',
-		filename: `${timestamp}.xml`,
+		filename: getDepositFilename(json, timestamp),
 		credentials,
 	});
 };

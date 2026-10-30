@@ -6,6 +6,7 @@ import CommunitySpam from './CommunitySpam';
 import CommunityTemplates from './CommunityTemplates';
 import CustomDomains from './CustomDomains';
 import DepositTargets from './DepositTargets';
+import DoiRedeposit from './DoiRedeposit';
 import ExploreCommunities from './ExploreCommunities';
 import FtpTargets from './FtpTargets';
 import LandingPageFeatures from './LandingPageFeatures';
@@ -31,6 +32,10 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	depositTargets: {
 		title: 'Deposit Targets',
 		component: DepositTargets,
+	},
+	doiRedeposit: {
+		title: 'DOI Redeposit',
+		component: DoiRedeposit,
 	},
 	ftpTargets: {
 		title: 'FTP Targets',

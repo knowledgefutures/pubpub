@@ -20,11 +20,12 @@ import {
 	getEduDomainSummaries,
 } from 'server/community/eduQueries';
 import { getAllTemplates } from 'server/communityTemplate/queries';
+import { getRedepositPlan, RedepositError, type RedepositResult } from 'server/doi/redeposit';
 import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget, FtpTarget } from 'server/models';
+import { Community, DepositTarget, FtpTarget, WorkerTask } from 'server/models';
 // NOTE: Suggested Orgs SSR returns an empty shell; summaries are fetched client-side on mount.
 import { getAllOrgsWithCommunityCounts } from 'server/org/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
@@ -44,6 +45,7 @@ import {
 import { getInitialData } from 'server/utils/initData';
 import { testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { addWorkerTask } from 'server/utils/workers';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
 	getSuperAdminTabUrl,
@@ -972,6 +974,157 @@ router.get('/api/superadmin/content-search/adhoc/pubs', async (req, res, next) =
 
 		const result = await getContentSearchPubsByPhrase(phrase, { limit, offset });
 		return res.json(result);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── DOI Redeposit API ───────────────────────────────────────────────────────
+
+const assertSuperAdmin = async (req) => {
+	const initialData = await getInitialData(req);
+	if (!initialData.loginData.isSuperAdmin) {
+		throw new ForbiddenError();
+	}
+};
+
+const summarizeRedepositTask = (task: WorkerTask) => {
+	const output = (task.output ?? {}) as any;
+	const { results = [], ...rest } = output as { results?: RedepositResult[] };
+	const counts: Record<string, number> = {};
+	results.forEach((result) => {
+		counts[result.status] = (counts[result.status] ?? 0) + 1;
+	});
+	return {
+		id: task.id,
+		createdAt: task.createdAt,
+		isProcessing: Boolean(task.isProcessing),
+		error: task.error,
+		input: task.input,
+		output: {
+			...rest,
+			counts,
+			// The dashboard lists every item that needs attention, and a sample of the rest.
+			needsAttention: results.filter(
+				(result) => !['succeeded', 'submitted', 'ready'].includes(result.status),
+			),
+			succeeded: results.filter((result) => result.status === 'succeeded').slice(0, 5),
+			changed: results.filter((result) => result.changes?.length).slice(0, 20),
+		},
+	};
+};
+
+const sendRedepositError = (res, err) => {
+	if (err instanceof RedepositError) {
+		res.status(400).json({ message: err.message });
+		return true;
+	}
+	return false;
+};
+
+const getRedepositTasks = (communityId: string) =>
+	WorkerTask.findAll({
+		where: { type: 'redepositDois', input: { communityId } },
+		order: [['createdAt', 'DESC']],
+		limit: 5,
+	});
+
+router.get('/api/superadmin/doi-redeposit', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const communityId = String(req.query.communityId ?? '');
+		if (!communityId) {
+			return res.status(400).json({ message: 'communityId is required' });
+		}
+		const [plan, tasks] = await Promise.all([
+			getRedepositPlan(communityId),
+			getRedepositTasks(communityId),
+		]);
+		const { items, ...rest } = plan;
+		return res.json({
+			...rest,
+			collectionCount: items.filter((item) => item.kind === 'collection').length,
+			pubCount: items.filter((item) => item.kind === 'pub').length,
+			firstPub: items.find((item) => item.kind === 'pub') ?? null,
+			tasks: tasks.map(summarizeRedepositTask),
+		});
+	} catch (err) {
+		if (sendRedepositError(res, err)) return undefined;
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/doi-redeposit', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const { communityId, pubSlug, limit, checkOnly } = req.body;
+		if (!communityId) {
+			return res.status(400).json({ message: 'communityId is required' });
+		}
+		const running = await WorkerTask.findOne({
+			where: { type: 'redepositDois', input: { communityId }, isProcessing: true },
+		});
+		if (running) {
+			return res
+				.status(409)
+				.json({ message: 'A redeposit is already running for this community.' });
+		}
+		// Surface plan-level problems (no such community, a DataCite community) before queueing.
+		const options = {
+			pubSlug: pubSlug ? String(pubSlug) : undefined,
+			limit: limit ? Number(limit) : undefined,
+		};
+		const plan = await getRedepositPlan(communityId, options);
+		if (!plan.items.length) {
+			return res.status(400).json({
+				message: pubSlug
+					? `No pub with slug "${pubSlug}" has a DOI that PubPub deposited.`
+					: 'Nothing to redeposit for this community.',
+			});
+		}
+		const task = await addWorkerTask({
+			type: 'redepositDois',
+			input: {
+				communityId,
+				...(options.pubSlug && { pubSlug: options.pubSlug }),
+				...(options.limit && { limit: options.limit }),
+				...(checkOnly && { checkOnly: true }),
+			},
+		});
+		return res.json(summarizeRedepositTask(task));
+	} catch (err) {
+		if (sendRedepositError(res, err)) return undefined;
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.get('/api/superadmin/doi-redeposit/tasks/:taskId', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const task = await WorkerTask.findOne({
+			where: { id: req.params.taskId, type: 'redepositDois' },
+		});
+		if (!task) {
+			throw new NotFoundError();
+		}
+		return res.json(summarizeRedepositTask(task));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/doi-redeposit/tasks/:taskId/stop', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const task = await WorkerTask.findOne({
+			where: { id: req.params.taskId, type: 'redepositDois' },
+		});
+		if (!task) {
+			throw new NotFoundError();
+		}
+		// The task checks this between deposits and between rounds of log reads.
+		await task.update({ input: { ...(task.input as object), stopRequested: true } });
+		return res.json(summarizeRedepositTask(task));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

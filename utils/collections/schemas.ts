@@ -73,6 +73,7 @@ const schemas: CollectionSchema[] = [
 		metadata: [
 			sharedFields.doi,
 			sharedFields.url,
+			{ name: 'journalTitle', label: 'Journal title' },
 			{ name: 'printIssn', label: 'Print ISSN' },
 			{ name: 'electronicIssn', label: 'Electronic ISSN' },
 			{ name: 'volume', label: 'Volume' },

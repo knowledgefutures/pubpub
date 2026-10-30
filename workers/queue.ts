@@ -22,6 +22,7 @@ const customTimeouts = {
 	communityExport: 14_400, // 4 hours
 	import: 300, // 5 minutes
 	pushToUnderlay: 14_400, // 4 hours
+	redepositDois: 21_600, // 6 hours: sends, then reads Crossref's logs for up to 2 hours
 } satisfies Partial<Record<TaskType, number>>;
 
 if (env.NODE_ENV === 'production') {
@@ -147,10 +148,22 @@ const processTask = (channel) => async (message) => {
 			}
 		}
 
+		// A redeposit writes its results as it goes. Keep them, so a run that dies still shows what
+		// was sent to Crossref.
+		let output: object | null = null;
+		if (taskData.type === 'redepositDois') {
+			try {
+				const task = await WorkerTask.findByPk(taskData.id, { attributes: ['output'] });
+				output = task?.output ?? null;
+			} catch (err) {
+				console.error(`Failed to read redeposit progress for ${taskData.id}:`, err);
+			}
+		}
+
 		await onWorkerFinished({
 			isProcessing: false,
 			error: message,
-			output: null,
+			output,
 		});
 	};
 

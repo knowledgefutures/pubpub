@@ -208,8 +208,13 @@ export class Community extends Model<
 	@Column(DataType.ENUM('header', 'footer'))
 	declare socialLinksLocation: 'header' | 'footer' | null;
 
+	// The journal's ISSNs, used in Crossref deposits and citations. An issue's own ISSNs (and
+	// journal title) win, since a community can publish more than one journal.
 	@Column(DataType.TEXT)
-	declare issn: string | null;
+	declare electronicIssn: string | null;
+
+	@Column(DataType.TEXT)
+	declare printIssn: string | null;
 
 	@Column(DataType.BOOLEAN)
 	declare isFeatured: boolean | null;

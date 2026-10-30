@@ -24,6 +24,8 @@ export const getPermissions = async ({
 	const editProps = [
 		'title',
 		'citeAs',
+		'electronicIssn',
+		'printIssn',
 		'publishAs',
 		'subdomain',
 		'description',

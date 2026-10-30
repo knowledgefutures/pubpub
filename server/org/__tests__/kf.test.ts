@@ -1,13 +1,8 @@
 import uuid from 'uuid';
-import { vi } from 'vitest';
 
+import { stubKfConsole } from 'server/kf/__tests__/consoleTokenStub';
 import { Collection, Community, CrossrefDepositRecord, Org, Pub } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
-
-const { internalKey } = vi.hoisted(() => {
-	process.env.AUTH_INTERNAL_API_KEY = 'test-internal-key';
-	return { internalKey: 'test-internal-key' };
-});
 
 const kfOrgId = `kf-account-${uuid.v4().slice(0, 8)}`;
 let orgA: Org;
@@ -31,7 +26,10 @@ const models = modelize`
 	}
 `;
 
+let kfConsole: Awaited<ReturnType<typeof stubKfConsole>>;
+
 setup(beforeAll, async () => {
+	kfConsole = await stubKfConsole();
 	await models.resolve();
 	const createOrg = (title: string, kf: string) =>
 		Org.create({ slug: `kf-org-${uuid.v4().slice(0, 8)}`, title, kfOrgId: kf });
@@ -57,16 +55,14 @@ setup(beforeAll, async () => {
 	);
 });
 teardown(afterAll);
-// The env is shared with later test files in this worker, where the key would switch
-// /api/login over to KF Auth. Modules here already read it.
-afterAll(() => {
-	delete process.env.AUTH_INTERNAL_API_KEY;
+beforeEach(() => {
+	kfConsole.stubJwks();
 });
 
 const host = 'www.pubpub.org';
 
 describe('KF Account summary and usage', () => {
-	it('requires the internal key', async () => {
+	it('requires a KF-Console-Token', async () => {
 		await (await login())
 			.get(`/api/kf/summary?kf_org_id=${kfOrgId}`)
 			.set('Host', host)
@@ -77,7 +73,7 @@ describe('KF Account summary and usage', () => {
 		const { body } = await (await login())
 			.get(`/api/kf/summary?kf_org_id=${kfOrgId}`)
 			.set('Host', host)
-			.set('Authorization', `Bearer ${internalKey}`)
+			.set('KF-Console-Token', await kfConsole.sign({ path: '/api/kf/summary' }))
 			.expect(200);
 		expect(body.accounts.map((a) => a.name)).toEqual(['Org A', 'Org B']);
 		const [a] = body.accounts;
@@ -95,7 +91,7 @@ describe('KF Account summary and usage', () => {
 		const { body } = await (await login())
 			.get(`/api/kf/usage?kf_org_id=${kfOrgId}`)
 			.set('Host', host)
-			.set('Authorization', `Bearer ${internalKey}`)
+			.set('KF-Console-Token', await kfConsole.sign({ path: '/api/kf/usage' }))
 			.expect(200);
 		expect(body.line_items).toEqual([
 			{ key: 'communities', quantity: 2 },
@@ -109,7 +105,7 @@ describe('KF Account summary and usage', () => {
 		const { body } = await (await login())
 			.get(`/api/kf/usage?kf_org_id=${kfOrgId}&since=2000-01-01&until=2000-02-01`)
 			.set('Host', host)
-			.set('Authorization', `Bearer ${internalKey}`)
+			.set('KF-Console-Token', await kfConsole.sign({ path: '/api/kf/usage' }))
 			.expect(200);
 		expect(body.line_items[1]).toEqual({ key: 'doi_deposits', quantity: 0 });
 	});

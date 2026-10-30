@@ -143,7 +143,8 @@ export const addWorkerTask = async ({
 		| 'communityExport'
 		| 'accountExport'
 		| 'collectionExport'
-		| 'pushToUnderlay';
+		| 'pushToUnderlay'
+		| 'redepositDois';
 	input: any;
 	priority?: number;
 }) => {

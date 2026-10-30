@@ -65,6 +65,7 @@ All environment variables used by PubPub, with types, defaults, and descriptions
 | `NEW_ACCOUNT_LINK_COMMENT_WINDOW_MINUTES` | number | No | — | Minutes after account creation during which link-comments are flagged |
 | `EXTRA_SUSPICIOUS_KEYWORDS` | string | No | — | Comma-separated extra keywords to flag uploads as suspicious |
 | `BACKUPS_SECRET` | string | No | — | GPG passphrase for encrypting backups |
+| `KF_SESSION_ENCRYPTION_KEY` | string | No | — | AES-256 key for the encrypted OIDC state, session-set and stored refresh tokens. Generate with `openssl rand -base64 32`. Unset falls back to a key derived from OIDC_CLIENT_SECRET |
 | `DEBUG_LOG` | string | No | — | Enable verbose debug logging |
 | `WORKER` | boolean | No | `false` | Set to true when running as a standalone worker process |
 | `DEFAULT_QUEUE_TASK_PRIORITY` | number | No | — | Default priority for worker queue tasks |

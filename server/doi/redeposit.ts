@@ -16,12 +16,12 @@ import normalizeIssn from 'utils/crossref/transform/issn';
 import {
 	fetchSubmissionResult,
 	findMetadataPubPubDoesNotSend,
-	getCrossrefJournal,
 	getCrossrefWork,
 	getSubmissionHost,
 	isTestCrossref,
 	type SubmissionRecord,
 } from './crossrefChecks';
+import { checkIssnWithCrossref } from './issnChecks';
 import { assertCommunityApprovedForDoi } from './permissions';
 import { getDoiData, setDoiData } from './queries';
 import { getDepositFilename, resolveCrossrefCredentials } from './submit';
@@ -83,8 +83,8 @@ export type RedepositPlan = {
 		id: string;
 		title: string;
 		subdomain: string;
-		issn: string | null;
-		rawIssn: string | null;
+		electronicIssn: string | null;
+		printIssn: string | null;
 	};
 	doiPrefix: string;
 	submissionHost: string | null;
@@ -108,54 +108,30 @@ const depositRecordInclude = {
 	attributes: ['id', 'depositJson'],
 };
 
-const formatIssn = (issn: string) => `${issn.slice(0, 4)}-${issn.slice(4)}`;
-
-const normalizeTitle = (title?: string | null) =>
-	(title ?? '')
-		.toLowerCase()
-		.replace(/^the\s+/, '')
-		.replace(/[^a-z0-9]+/g, ' ')
-		.trim();
-
 const getIssnWarnings = async (community: Community) => {
-	const { issn: rawIssn, title, citeAs } = community;
-	const issn = normalizeIssn(rawIssn);
-	if (!rawIssn) {
+	const { title, citeAs } = community;
+	const journalTitle = renderJournalCitation('', citeAs, title);
+	const entries = [
+		{ type: 'electronic' as const, raw: community.electronicIssn },
+		{ type: 'print' as const, raw: community.printIssn },
+	].filter((entry) => entry.raw?.trim());
+	if (!entries.length) {
 		return [
-			'This community has no ISSN set, so deposits will only carry ISSNs set on individual issues.',
+			'This community has no ISSN set in its settings, so deposits will only carry ISSNs set on individual issues.',
 		];
 	}
-	if (!issn) {
-		return [
-			`The community ISSN "${rawIssn}" isn't a valid ISSN (check the digits), so it will be left out of deposits.`,
-		];
-	}
-	const journal = await getCrossrefJournal(issn);
-	if (journal.state === 'not_found') {
-		return [
-			`Crossref has no journal registered under ISSN ${formatIssn(issn)}. Deposits will create one; check the ISSN is right.`,
-		];
-	}
-	if (journal.state === 'error') {
-		return [`Couldn't check ISSN ${formatIssn(issn)} with Crossref: ${journal.message}`];
-	}
-	if (journal.state !== 'found') {
-		return [];
-	}
-	const warnings: string[] = [];
-	const sentTitle = renderJournalCitation('', citeAs, title);
-	if (normalizeTitle(journal.title) !== normalizeTitle(sentTitle)) {
-		warnings.push(
-			`Crossref has ISSN ${formatIssn(issn)} registered to "${journal.title}", but deposits send the title "${sentTitle}". Crossref may reject them.`,
-		);
-	}
-	const registered = journal.issns.find((entry) => entry.value.replace('-', '') === issn);
-	if (registered && registered.type !== 'electronic') {
-		warnings.push(
-			`Crossref lists ISSN ${formatIssn(issn)} as the ${registered.type} ISSN, but PubPub sends the community ISSN as electronic.`,
-		);
-	}
-	return warnings;
+	const warnings = await Promise.all(
+		entries.map(async ({ type, raw }) => {
+			const issn = normalizeIssn(raw);
+			if (!issn) {
+				return [
+					`The community's ${type} ISSN "${raw}" isn't a valid ISSN (check the digits), so it will be left out of deposits.`,
+				];
+			}
+			return (await checkIssnWithCrossref(issn, type, journalTitle)).problems;
+		}),
+	);
+	return warnings.flat();
 };
 
 export const getRedepositPlan = async (
@@ -166,7 +142,7 @@ export const getRedepositPlan = async (
 	const isPartial = Boolean(pubSlug || limit);
 	const [community, depositTarget] = await Promise.all([
 		Community.findByPk(communityId, {
-			attributes: ['id', 'title', 'subdomain', 'issn', 'citeAs'],
+			attributes: ['id', 'title', 'subdomain', 'electronicIssn', 'printIssn', 'citeAs'],
 		}),
 		getCommunityDepositTarget(communityId),
 	]);
@@ -226,8 +202,8 @@ export const getRedepositPlan = async (
 			id: communityId,
 			title: community.title,
 			subdomain: community.subdomain,
-			issn: normalizeIssn(community.issn),
-			rawIssn: community.issn ?? null,
+			electronicIssn: normalizeIssn(community.electronicIssn),
+			printIssn: normalizeIssn(community.printIssn),
 		},
 		doiPrefix: depositTarget?.doiPrefix ?? PUBPUB_DOI_PREFIX,
 		submissionHost,

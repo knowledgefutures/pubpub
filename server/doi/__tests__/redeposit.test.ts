@@ -17,7 +17,7 @@ import { getRedepositPlan, RedepositError, runRedeposit } from '../redeposit';
 
 const models = modelize`
 	Community community {
-		issn: "2644-2353"
+		electronicIssn: "2644-2353"
 		Pub articlePub {
 			Release {}
 		}
@@ -270,7 +270,7 @@ describe('planning', () => {
 	it('includes only DOIs PubPub deposited, and warns about the ISSN', async () => {
 		const { community, issue } = models;
 		const plan = await getRedepositPlan(community.id);
-		expect(plan.community.issn).toEqual('26442353');
+		expect(plan.community).toMatchObject({ electronicIssn: '26442353', printIssn: null });
 		expect(plan.items[0].id).toEqual(issue.id);
 		expect(plan.items).toHaveLength(12);
 		expect(plan.skipped).toEqual({ pubsWithoutDepositRecord: 1, pubsWithoutRelease: 1 });

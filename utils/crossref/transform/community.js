@@ -6,11 +6,12 @@ const getLanguageForCommunity = () => 'en';
 
 export default ({ globals }) =>
 	(community, collection) => {
-		const { title, issn, citeAs } = community;
+		const { title, electronicIssn, printIssn, citeAs } = community;
 		const kind = collection?.kind || '';
 		return {
 			title,
-			issn: normalizeIssn(issn),
+			electronicIssn: normalizeIssn(electronicIssn),
+			printIssn: normalizeIssn(printIssn),
 			citeAs,
 			kind,
 			timestamp: globals.timestamp,

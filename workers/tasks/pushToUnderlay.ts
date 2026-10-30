@@ -165,7 +165,7 @@ export const pushToUnderlayTask = async (input: PushToUnderlayInput) => {
 			subdomain: community.subdomain,
 			title: community.title,
 			description: community.description,
-			issn: community.issn,
+			issn: community.electronicIssn ?? community.printIssn,
 			publishAs: community.publishAs,
 			citeAs: community.citeAs,
 			// Canonical identity + branding (images localized to files downstream; layout toggles excluded).

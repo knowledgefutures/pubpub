@@ -32,7 +32,8 @@ export const redepositDoisTask = async (input: RedepositDoisInput) => {
 	const planSummary = {
 		doiPrefix: plan.doiPrefix,
 		submissionHost: plan.submissionHost,
-		issn: plan.community.issn,
+		electronicIssn: plan.community.electronicIssn,
+		printIssn: plan.community.printIssn,
 		warnings: plan.warnings,
 	};
 	let lastUpdate = 0;

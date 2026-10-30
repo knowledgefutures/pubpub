@@ -107,7 +107,7 @@ export const generateCitationHtml = async (
 		...commonData,
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'containerDoi' does not exist on type '{ ... Remove this comment to see the full error message
 		DOI: pubData.doi || commonData.containerDoi,
-		ISSN: pubData.doi ? communityData.issn : null,
+		ISSN: pubData.doi ? communityData.electronicIssn || communityData.printIssn : null,
 		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],
 		note: pubLink,
 		URL: pubLink,

@@ -17,8 +17,10 @@ export default ({ globals, community, collection, pub }) => {
 	const collectionProps = collection && transformCollection({ globals, community })(collection);
 	return journal({
 		...communityProps,
-		electronicIssn: communityProps.issn || normalizeIssn(collectionProps?.electronicIssn),
-		printIssn: normalizeIssn(collectionProps?.printIssn),
+		// The community's ISSNs win; an issue's fill in only where the community has none.
+		electronicIssn:
+			communityProps.electronicIssn || normalizeIssn(collectionProps?.electronicIssn),
+		printIssn: communityProps.printIssn || normalizeIssn(collectionProps?.printIssn),
 		timestamp: globals.timestamp,
 		children: {
 			...(collectionProps && journalIssue(collectionProps)),

@@ -81,3 +81,4 @@ infra/sftp/
 
 # DOI redeposit results (tools/redepositDois.ts)
 redeposit-*.json
+community-issns-*.csv

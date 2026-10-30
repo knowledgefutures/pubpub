@@ -45,6 +45,7 @@ const commandFiles = {
 	backfillActivity: "./activityItem/allCommunities",
 	backfillCommunityActivity: "./activityItem/singleCommunityCli",
 	backfillCheckpoints: "./backfillCheckpoints",
+	backfillCommunityIssns: "./backfillCommunityIssns",
 	backfillDepositTargets: "./backfillDepositTargets",
 	backup: "./backup/backup",
 	backupDb: "./backup-db",

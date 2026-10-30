@@ -341,12 +341,33 @@ describe('createDeposit', () => {
 		);
 	});
 
-	it('includes the community ISSN in journal metadata', () => {
+	it('includes the community ISSNs in journal metadata', () => {
 		const { deposit } = createDeposit(
-			{ community: { ...community, issn: '2644-2353' }, pub },
+			{ community: { ...community, electronicIssn: '2644-2353', printIssn: '2688-8513' }, pub },
 			'pub',
 		);
 		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'print', '#text': '26888513' },
+			{ '@media_type': 'electronic', '#text': '26442353' },
+		]);
+	});
+
+	it("prefers the community's ISSNs to an issue's, field by field", () => {
+		const issueWithIssns = {
+			...issue,
+			metadata: { ...issue.metadata, printIssn: '1234-5679', electronicIssn: '2637-6091' },
+		};
+		const { deposit } = createDeposit(
+			{
+				community: { ...community, electronicIssn: '2644-2353' },
+				collection: issueWithIssns,
+				collectionPub: makeCollectionPub(issueWithIssns, pub),
+				pub,
+			},
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'print', '#text': '12345679' },
 			{ '@media_type': 'electronic', '#text': '26442353' },
 		]);
 	});
@@ -372,7 +393,7 @@ describe('createDeposit', () => {
 
 	it('accepts an ISSN written with an en dash and spaces', () => {
 		const { deposit } = createDeposit(
-			{ community: { ...community, issn: ' 2637\u20136091 ' }, pub },
+			{ community: { ...community, electronicIssn: ' 2637\u20136091 ' }, pub },
 			'pub',
 		);
 		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
@@ -382,7 +403,7 @@ describe('createDeposit', () => {
 
 	it('leaves out an ISSN with a wrong check digit', () => {
 		const { deposit } = createDeposit(
-			{ community: { ...community, issn: '2644-2354' }, pub },
+			{ community: { ...community, electronicIssn: '2644-2354' }, pub },
 			'pub',
 		);
 		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toBeUndefined();
@@ -391,7 +412,7 @@ describe('createDeposit', () => {
 	it('leaves out malformed ISSNs', () => {
 		const { deposit } = createDeposit(
 			{
-				community: { ...community, issn: 'not an issn' },
+				community: { ...community, electronicIssn: 'not an issn' },
 				collection: issue,
 				collectionPub: makeCollectionPub(issue, pub),
 				pub,

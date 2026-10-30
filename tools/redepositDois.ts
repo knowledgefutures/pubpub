@@ -56,7 +56,8 @@ const main = async () => {
 	const collectionCount = plan.items.filter((item) => item.kind === 'collection').length;
 	log(`${plan.community.title} (${subdomain})`);
 	log(`sending to ${plan.submissionHost ?? 'unknown host'} with DOI prefix ${plan.doiPrefix}`);
-	log(`community ISSN: ${plan.community.issn ?? plan.community.rawIssn ?? 'none set'}`);
+	const { electronicIssn, printIssn } = plan.community;
+	log(`community ISSNs: electronic ${electronicIssn ?? 'none'}, print ${printIssn ?? 'none'}`);
 	plan.warnings.forEach((warning) => log(`WARNING: ${warning}`));
 	log(
 		`${plan.items.length} to ${checkOnly ? 'check' : 'redeposit'}: ${collectionCount} collections, ${plan.items.length - collectionCount} pubs`,

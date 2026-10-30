@@ -81,7 +81,13 @@ type RedepositTask = {
 };
 
 type Plan = {
-	community: { id: string; title: string; subdomain: string; issn: string | null };
+	community: {
+		id: string;
+		title: string;
+		subdomain: string;
+		electronicIssn: string | null;
+		printIssn: string | null;
+	};
 	doiPrefix: string;
 	submissionHost: string | null;
 	isTestCrossref: boolean;
@@ -463,8 +469,11 @@ const DoiRedeposit = () => {
 								<td>{plan.doiPrefix}</td>
 							</tr>
 							<tr>
-								<th>Community ISSN</th>
-								<td>{plan.community.issn ?? 'None'}</td>
+								<th>Community ISSNs</th>
+								<td>
+									Electronic {plan.community.electronicIssn ?? 'none'}, print{' '}
+									{plan.community.printIssn ?? 'none'}
+								</td>
 							</tr>
 							<tr>
 								<th>To redeposit</th>

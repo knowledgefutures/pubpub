@@ -8,5 +8,6 @@ export default {
 	facebook: '',
 	twitter: '',
 	email: '',
-	issn: null,
+	electronicIssn: null,
+	printIssn: null,
 };

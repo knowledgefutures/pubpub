@@ -63,7 +63,8 @@ const findCommunity = (communityId) =>
 		attributes: [
 			'id',
 			'title',
-			'issn',
+			'electronicIssn',
+			'printIssn',
 			'domain',
 			'subdomain',
 			'citeAs',

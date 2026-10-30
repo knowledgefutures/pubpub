@@ -16,7 +16,7 @@ import { book, issue, conference } from './data/collections';
 
 const createDeposit = (context, target, depositTarget) =>
 	createDepositPartial(
-		{ ...context, community },
+		{ community, ...context },
 		target,
 		depositTarget,
 		new Date('2019-04-11T19:02:15.577Z').getTime(),
@@ -339,6 +339,48 @@ describe('createDeposit', () => {
 			getSchemaForKind('book').contextHints.find((ch) => ch.value === contextHintValue)
 				.crossrefComponentType,
 		);
+	});
+
+	it('includes the community ISSN in journal metadata', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, issn: '2644-2353' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'electronic', '#text': '26442353' },
+		]);
+	});
+
+	it('falls back to issue ISSNs when the community has none', () => {
+		const issueWithIssns = {
+			...issue,
+			metadata: { ...issue.metadata, printIssn: '1234-5679', electronicIssn: '2644-2353' },
+		};
+		const { deposit } = createDeposit(
+			{
+				collection: issueWithIssns,
+				collectionPub: makeCollectionPub(issueWithIssns, pub),
+				pub,
+			},
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
+			{ '@media_type': 'print', '#text': '12345679' },
+			{ '@media_type': 'electronic', '#text': '26442353' },
+		]);
+	});
+
+	it('leaves out malformed ISSNs', () => {
+		const { deposit } = createDeposit(
+			{
+				community: { ...community, issn: 'not an issn' },
+				collection: issue,
+				collectionPub: makeCollectionPub(issue, pub),
+				pub,
+			},
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toBeUndefined();
 	});
 
 	it('uses a DepositTarget to produce a doi prefix', () => {

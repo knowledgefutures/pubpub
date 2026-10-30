@@ -1,10 +1,19 @@
 import { renderJournalCitation } from 'utils/citations';
 import doiData from './doiData';
 
+const issnElements = (electronicIssn, printIssn) => {
+	const issn = [
+		printIssn && printIssn !== electronicIssn && { '@media_type': 'print', '#text': printIssn },
+		electronicIssn && { '@media_type': 'electronic', '#text': electronicIssn },
+	].filter(Boolean);
+	return issn.length ? { issn } : {};
+};
+
 export default ({
 	title,
 	citeAs,
-	issn,
+	electronicIssn,
+	printIssn,
 	language,
 	children,
 	doi,
@@ -17,7 +26,7 @@ export default ({
 		journal_metadata: {
 			'@language': language,
 			full_title: renderJournalCitation(kind, citeAs, title),
-			...(issn ? { '@media_type': 'electronic', '#text': issn } : {}),
+			...issnElements(electronicIssn, printIssn),
 			...doiData(doi, timestamp, url, contentVersion),
 		},
 		...children,

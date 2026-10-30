@@ -14,7 +14,7 @@ import { redepositDoisTask } from 'workers/tasks/redepositDois';
 
 import { clearIssnGateCache } from '../issnGate';
 import { setDoiData } from '../queries';
-import { getRedepositPlan, RedepositError, runRedeposit } from '../redeposit';
+import { describeCrossrefWork, getRedepositPlan, RedepositError, runRedeposit } from '../redeposit';
 
 const models = modelize`
 	Community community {
@@ -27,6 +27,24 @@ const models = modelize`
 			Release {}
 		}
 		Pub movedPub {
+			Release {}
+		}
+		Pub lateIssuePub {
+			Release {}
+		}
+		Pub unrecordedPub {
+			Release {}
+		}
+		Pub unrecordedReviewPub {
+			Release {}
+		}
+		Pub retitledPub {
+			Release {}
+		}
+		Pub renamedIssuePub {
+			Release {}
+		}
+		Pub otherIssuePub {
 			Release {}
 		}
 		Pub bookPub {
@@ -153,7 +171,7 @@ setup(beforeAll, async () => {
 		{ where: { id: laterIssue.id } },
 	);
 	await Promise.all(
-		['articlePub', 'movedPub', 'bookPub'].map((name) =>
+		['articlePub', 'movedPub', 'bookPub', 'renamedIssuePub', 'otherIssuePub'].map((name) =>
 			CollectionPub.create({
 				collectionId: issue.id,
 				pubId: models[name].id,
@@ -167,6 +185,12 @@ setup(beforeAll, async () => {
 	for (const name of [
 		'articlePub',
 		'movedPub',
+		'lateIssuePub',
+		'unrecordedPub',
+		'unrecordedReviewPub',
+		'retitledPub',
+		'renamedIssuePub',
+		'otherIssuePub',
 		'bookPub',
 		'editedDoiPub',
 		'referencesPub',
@@ -192,6 +216,55 @@ setup(beforeAll, async () => {
 		rank: 'b',
 		pubRank: 'a',
 	});
+	// Deposit records backfilled in 2020 have no copy of the deposit.
+	await Promise.all(
+		['unrecordedPub', 'unrecordedReviewPub'].map(async (name) => {
+			const pub = await Pub.findByPk(models[name].id);
+			await CrossrefDepositRecord.update(
+				{ depositJson: null },
+				{ where: { id: pub!.crossrefDepositRecordId! } },
+			);
+		}),
+	);
+	// Deposited under a journal title the community no longer uses.
+	const retitled = await CrossrefDepositRecord.findByPk(
+		(await Pub.findByPk(models.retitledPub.id))!.crossrefDepositRecordId!,
+	);
+	const retitledJson = retitled!.depositJson as any;
+	retitledJson.deposit.doi_batch.body.journal.journal_metadata.full_title = 'Old Journal Name';
+	await CrossrefDepositRecord.update(
+		{ depositJson: retitledJson },
+		{ where: { id: retitled!.id } },
+	);
+
+	// Deposited when their issue had no numbers, only an older title.
+	await Promise.all(
+		[
+			['renamedIssuePub', '1.1'],
+			['otherIssuePub', '3.2'],
+		].map(async ([name, oldTitle]) => {
+			const pub = await Pub.findByPk(models[name].id);
+			const record = await CrossrefDepositRecord.findByPk(pub!.crossrefDepositRecordId!);
+			const json = record!.depositJson as any;
+			const journalIssue = json.deposit.doi_batch.body.journal.journal_issue;
+			delete journalIssue.journal_volume;
+			delete journalIssue.issue;
+			delete journalIssue.doi_data;
+			journalIssue.titles = { title: oldTitle };
+			await CrossrefDepositRecord.update(
+				{ depositJson: json },
+				{ where: { id: record!.id } },
+			);
+		}),
+	);
+
+	// Deposited before it was put in an issue.
+	await CollectionPub.create({
+		collectionId: issue.id,
+		pubId: models.lateIssuePub.id,
+		rank: 'c',
+		pubRank: 'a',
+	});
 	await CollectionPub.create({
 		collectionId: book.id,
 		pubId: models.bookPub.id,
@@ -215,6 +288,15 @@ setup(beforeAll, async () => {
 	});
 
 	crossrefWorks = {
+		[await doiOf(models.unrecordedPub)]: {
+			type: 'journal-article',
+			'container-title': ['Test Journal'],
+			'reference-count': 0,
+		},
+		[await doiOf(models.unrecordedReviewPub)]: {
+			type: 'peer-review',
+			'reference-count': 0,
+		},
 		[await doiOf(models.referencesPub)]: { 'reference-count': 12, license: [{ URL: 'x' }] },
 		[await doiOf(models.unregisteredPub)]: null,
 	};
@@ -285,7 +367,7 @@ describe('planning', () => {
 		const plan = await getRedepositPlan(community.id);
 		expect(plan.community).toMatchObject({ electronicIssn: '26442353', printIssn: null });
 		expect(plan.items[0].id).toEqual(issue.id);
-		expect(plan.items).toHaveLength(12);
+		expect(plan.items).toHaveLength(18);
 		expect(plan.skipped).toEqual({ pubsWithoutDepositRecord: 1, pubsWithoutRelease: 1 });
 		expect(plan.warnings).toEqual([
 			expect.stringContaining('registered to "Something else entirely"'),
@@ -330,6 +412,85 @@ describe('checks before sending', () => {
 		});
 		const { journal } = submitDoiData.mock.lastCall![0].doi_batch.body;
 		expect(journal.journal_metadata.issn).toBeUndefined();
+	});
+
+	it('fills in an issue that was missing at the last deposit', async () => {
+		const summary = await runFor(models.lateIssuePub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'succeeded',
+			changes: expect.arrayContaining(['Issue: none → volume 1 issue 1']),
+		});
+	});
+
+	it("compares with Crossref's record when PubPub has no copy of the last deposit", async () => {
+		const summary = await runFor(models.unrecordedPub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'succeeded',
+			backupDepositRecordId: undefined,
+			changes: expect.arrayContaining([
+				'Compared with its Crossref record; PubPub had no copy of its last deposit.',
+			]),
+		});
+	});
+
+	it("reads Crossref's container title as a journal only for journal records", () => {
+		const chapter = describeCrossrefWork({
+			type: 'book-chapter',
+			DOI: '10.1/x',
+			'container-title': ['A Book'],
+		});
+		expect(chapter).toMatchObject({ type: 'book chapter', journalTitle: null, issue: null });
+		const article = describeCrossrefWork({
+			type: 'journal-article',
+			DOI: '10.1/y',
+			'container-title': ['A Journal'],
+			volume: '2',
+			issue: '1',
+			'issue-title': ['2.1'],
+		});
+		expect(article).toMatchObject({
+			journalTitle: 'A Journal',
+			issue: 'volume 2 issue 1',
+			issueTitle: '2.1',
+		});
+	});
+
+	it("won't guess the settings of an unrecorded peer review", async () => {
+		const summary = await runFor(models.unrecordedReviewPub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'skipped',
+			message:
+				"PubPub has no copy of its last deposit, so its peer review settings aren't known. Redeposit it from its DOI settings.",
+		});
+	});
+
+	it('accepts an unnumbered issue whose old title fits its numbers now', async () => {
+		const summary = await runFor(models.renamedIssuePub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'succeeded',
+			changes: expect.arrayContaining([
+				'Issue: none → volume 1 issue 1',
+				'Issue title: "1.1" → "Volume 1, Issue 1"',
+			]),
+		});
+	});
+
+	it("skips a pub whose old issue title doesn't fit its issue now", async () => {
+		const summary = await runFor(models.otherIssuePub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'skipped',
+			message: expect.stringContaining('It would move from issue "3.2" to'),
+		});
+	});
+
+	it('skips a pub whose journal title would change', async () => {
+		const summary = await runFor(models.retitledPub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'skipped',
+			message: expect.stringContaining(
+				'journal title would change from "Old Journal Name" to "Test Journal"',
+			),
+		});
 	});
 
 	it('keeps a copy of the deposit record it overwrites', async () => {
@@ -377,7 +538,7 @@ describe('checks before sending', () => {
 			checkOnly: true,
 		});
 		expect(submitDoiData).not.toHaveBeenCalled();
-		expect(summary.counts).toEqual({ ready: 6, skipped: 6 });
+		expect(summary.counts).toEqual({ ready: 9, skipped: 9 });
 	});
 });
 
@@ -423,15 +584,15 @@ describe('as a worker task', () => {
 			workerTaskId: task.id,
 			checkOnly: true,
 		});
-		expect(result).toMatchObject({ total: 12, processed: 12, stopped: false });
-		expect(((await task.reload()).output as any).results).toHaveLength(12);
+		expect(result).toMatchObject({ total: 18, processed: 18, stopped: false });
+		expect(((await task.reload()).output as any).results).toHaveLength(18);
 
 		await task.update({ input: { communityId: community.id, stopRequested: true } });
 		const stopped = await redepositDoisTask({
 			communityId: community.id,
 			workerTaskId: task.id,
 		});
-		expect(stopped).toMatchObject({ total: 12, processed: 0, notRun: 12, stopped: true });
+		expect(stopped).toMatchObject({ total: 18, processed: 0, notRun: 18, stopped: true });
 		// The queue marks the task finished once it returns.
 		await task.update({ isProcessing: false, output: stopped });
 	});
@@ -481,7 +642,7 @@ describe('superadmin API', () => {
 			.set('Host', host)
 			.query({ communityId: community.id })
 			.expect(200);
-		expect(plan).toMatchObject({ collectionCount: 1, pubCount: 11 });
+		expect(plan).toMatchObject({ collectionCount: 1, pubCount: 17 });
 
 		const { body: task } = await agent
 			.post('/api/superadmin/doi-redeposit')

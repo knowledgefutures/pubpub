@@ -20,7 +20,7 @@ import {
 	isTestCrossref,
 	type SubmissionRecord,
 } from './crossrefChecks';
-import { checkIssnWithCrossref, getDepositTitles } from './issnChecks';
+import { checkIssnWithCrossref, getDepositTitles, sameTitle } from './issnChecks';
 import { assertCommunityApprovedForDoi } from './permissions';
 import { getDoiData, setDoiData } from './queries';
 import { getDepositFilename, resolveCrossrefCredentials } from './submit';
@@ -240,20 +240,84 @@ type DepositShape = {
 	type: string;
 	doi: string | null;
 	journalDoi: string | null;
+	journalTitle: string | null;
 	issue: string | null;
 	issueDoi: string | null;
+	issueTitle: string | null;
 	url: string | null;
 	title: string | null;
 };
 
+const numbersIn = (text?: string | null) => (text ?? '').match(/\d+/g) ?? [];
+
+const startsWith = (list: string[], prefix: string[]) =>
+	prefix.every((value, index) => list[index] === value);
+
+/**
+ * Issue titles get edited ("2.1" became "Issue 2.1, Winter 2020"), so an old title is only taken
+ * as a different issue when its numbers contradict the current issue's: "2.1" fits volume 2
+ * issue 1, "Issue 1" fits volume 1 issue 3, "3.2" doesn't fit volume 2 issue 1. A title without
+ * numbers can't be compared, so it's allowed and reported as a change.
+ */
+const issueTitleFits = (previousTitle: string, next: DepositShape) => {
+	if (next.issueTitle && sameTitle(previousTitle, next.issueTitle)) return true;
+	const before = numbersIn(previousTitle);
+	const after = numbersIn(next.issue);
+	if (!before.length) return true;
+	if (!after.length) return false;
+	return startsWith(after, before) || startsWith(before, after);
+};
+
+/** "volume 3 issue 2", or null when there's no issue or it has no numbers. */
 const describeIssue = (journalIssue) => {
-	if (!journalIssue) return null;
-	const volume = journalIssue.journal_volume?.volume;
-	const parts = [
-		volume && `volume ${volume}`,
-		journalIssue.issue && `issue ${journalIssue.issue}`,
-	];
-	return parts.filter(Boolean).join(' ') || 'an issue with no number';
+	const volume = String(journalIssue?.journal_volume?.volume ?? '').trim();
+	const issue = String(journalIssue?.issue ?? '').trim();
+	const parts = [volume && `volume ${volume}`, issue && `issue ${issue}`];
+	return parts.filter(Boolean).join(' ') || null;
+};
+
+const plainTitle = (title) =>
+	title == null ? null : typeof title === 'string' ? title : JSON.stringify(title);
+
+const crossrefTypes: Record<string, string> = {
+	'journal-article': 'journal article',
+	'journal-issue': 'journal issue',
+	'book-chapter': 'book chapter',
+	'book-section': 'book chapter',
+	'book-part': 'book chapter',
+	book: 'book',
+	'edited-book': 'book',
+	monograph: 'book',
+	'proceedings-article': 'conference paper',
+	proceedings: 'conference proceedings',
+	'posted-content': 'preprint',
+	'peer-review': 'peer review',
+	component: 'supplement',
+};
+
+/**
+ * The same description, read from a live Crossref record. Used when PubPub has no copy of the last
+ * deposit (records backfilled in 2020 have an empty depositJson).
+ */
+export const describeCrossrefWork = (work: Record<string, any>): DepositShape | null => {
+	const type = crossrefTypes[work.type];
+	if (!type) return null;
+	// container-title is the journal only for journal records; for a chapter it's the book.
+	const isJournal = work.type === 'journal-article' || work.type === 'journal-issue';
+	return {
+		type,
+		doi: work.DOI ?? null,
+		url: work.resource?.primary?.URL ?? null,
+		title: work.title?.[0] ?? null,
+		journalDoi: null,
+		journalTitle: isJournal ? (work['container-title']?.[0] ?? null) : null,
+		issue: isJournal
+			? describeIssue({ journal_volume: { volume: work.volume }, issue: work.issue })
+			: null,
+		// Crossref's REST API doesn't expose the issue's DOI, only its title.
+		issueDoi: null,
+		issueTitle: isJournal ? (work['issue-title']?.[0] ?? null) : null,
+	};
 };
 
 /** What a deposit registers, in terms we can compare and show to a person. */
@@ -264,18 +328,22 @@ export const describeDeposit = (deposit, target: 'pub' | 'collection'): DepositS
 		type,
 		doi: item?.doi_data?.doi ?? null,
 		url: item?.doi_data?.resource?.['#text'] ?? item?.doi_data?.resource ?? null,
-		title: item?.titles?.title == null ? null : JSON.stringify(item.titles.title),
+		title: plainTitle(item?.titles?.title),
 		journalDoi: null,
+		journalTitle: null,
 		issue: null,
 		issueDoi: null,
+		issueTitle: null,
 		...extra,
 	});
 	if (body.journal) {
 		const { journal } = body;
 		const extra = {
 			journalDoi: journal.journal_metadata?.doi_data?.doi ?? null,
+			journalTitle: plainTitle(journal.journal_metadata?.full_title),
 			issue: describeIssue(journal.journal_issue),
 			issueDoi: journal.journal_issue?.doi_data?.doi ?? null,
+			issueTitle: plainTitle(journal.journal_issue?.titles?.title),
 		};
 		if (target === 'pub') {
 			return journal.journal_article
@@ -323,7 +391,7 @@ type Preflight =
 			target: 'pub' | 'collection';
 			changes: string[];
 			previousRecordId: string;
-			previousDepositJson: object;
+			previousDepositJson: object | null;
 	  };
 
 const skip = (reason: string): Preflight => ({ ok: false, reason });
@@ -355,22 +423,57 @@ const preflightItem = async (
 	const record = model.crossrefDepositRecord?.toJSON() as any;
 	if (!model.doi || !record) return skip('It no longer has a DOI deposited by PubPub.');
 	if (model instanceof Pub && !model.releases?.length) return skip('It has no release.');
-
-	const previous = describeDeposit(record.depositJson?.deposit, target);
-	if (!previous)
-		return skip("Its last deposit record isn't a Crossref deposit PubPub recognizes.");
-	if (previous.doi && previous.doi !== model.doi) {
-		return skip(
-			`Its DOI (${model.doi}) doesn't match its last deposit (${previous.doi}). Check it from its DOI settings.`,
-		);
-	}
 	if (!model.doi.startsWith(`${doiPrefix}/`)) {
 		return skip(
 			`Its DOI prefix doesn't match this community's Crossref prefix (${doiPrefix}), so Crossref would reject it.`,
 		);
 	}
 
-	const params = target === 'pub' ? getPubDepositParams(record) : {};
+	const live = await getCrossrefWork(model.doi);
+	if (live.state === 'not_found') {
+		return skip(
+			`${model.doi} isn't registered in Crossref, so this isn't a redeposit. Deposit it from its DOI settings.`,
+		);
+	}
+	if (live.state === 'error') {
+		return skip(`Couldn't check its current Crossref record: ${live.message}`);
+	}
+	if (live.state === 'found') {
+		const extra = findMetadataPubPubDoesNotSend(live.work);
+		if (extra.length) {
+			return skip(
+				`Crossref has ${extra.join(', ')} for it, which PubPub doesn't send. Redepositing would remove them.`,
+			);
+		}
+	}
+
+	// Compare with PubPub's copy of the last deposit, or, if it has none, with Crossref's record.
+	const hasRecordedDeposit = Boolean(record.depositJson);
+	const previous = hasRecordedDeposit
+		? describeDeposit(record.depositJson.deposit, target)
+		: live.state === 'found'
+			? describeCrossrefWork(live.work)
+			: null;
+	const basis = hasRecordedDeposit ? 'its last deposit' : 'its Crossref record';
+	if (!previous) {
+		return skip(
+			hasRecordedDeposit
+				? "Its last deposit record isn't a Crossref deposit PubPub recognizes."
+				: "PubPub has no copy of its last deposit, and its Crossref record couldn't be read.",
+		);
+	}
+	if (previous.doi && previous.doi.toLowerCase() !== model.doi.toLowerCase()) {
+		return skip(
+			`Its DOI (${model.doi}) doesn't match ${basis} (${previous.doi}). Check it from its DOI settings.`,
+		);
+	}
+	if (!hasRecordedDeposit && ['peer review', 'preprint', 'supplement'].includes(previous.type)) {
+		return skip(
+			`PubPub has no copy of its last deposit, so its ${previous.type} settings aren't known. Redeposit it from its DOI settings.`,
+		);
+	}
+
+	const params = target === 'pub' && hasRecordedDeposit ? getPubDepositParams(record) : {};
 	if (target === 'pub') {
 		const issues = await validatePubRelationshipsForDeposit(item.id);
 		if (issues.length) {
@@ -411,7 +514,7 @@ const preflightItem = async (
 	}
 	if (next.type !== previous.type) {
 		return skip(
-			`It would change from a ${previous.type} to a ${next.type}, usually because its primary collection changed. Redeposit it from its DOI settings if that's intended.`,
+			`It would change from a ${previous.type} to a ${next.type} (compared with ${basis}), usually because its primary collection or connections changed. Redeposit it from its DOI settings if that's intended.`,
 		);
 	}
 	if (previous.journalDoi && next.journalDoi !== previous.journalDoi) {
@@ -419,26 +522,32 @@ const preflightItem = async (
 			`Its journal DOI would change from ${previous.journalDoi} to ${next.journalDoi ?? 'none'}.`,
 		);
 	}
-	if (target === 'pub' && previous.issue !== next.issue) {
+	// A different journal title files the record under a different journal in Crossref.
+	if (previous.journalTitle && !sameTitle(previous.journalTitle, next.journalTitle)) {
 		return skip(
-			`Its issue would change from ${previous.issue ?? 'none'} to ${next.issue ?? 'none'}. Redeposit it from its DOI settings if that's intended.`,
+			`Its journal title would change from "${previous.journalTitle}" to "${next.journalTitle}" (compared with ${basis}), which files it under a different journal in Crossref. Redeposit it from its DOI settings if that's intended.`,
 		);
 	}
-
-	const live = await getCrossrefWork(model.doi);
-	if (live.state === 'not_found') {
+	// Filling in an issue that was missing or unnumbered at the last deposit is a correction.
+	// Moving to a different issue, or out of one, needs a person.
+	if (target === 'pub' && previous.issue && previous.issue !== next.issue) {
 		return skip(
-			`${model.doi} isn't registered in Crossref, so this isn't a redeposit. Deposit it from its DOI settings.`,
+			`Its issue would change from ${previous.issue} to ${next.issue ?? 'no issue'} (compared with ${basis}). Redeposit it from its DOI settings if that's intended.`,
 		);
 	}
-	if (live.state === 'error') {
-		return skip(`Couldn't check its current Crossref record: ${live.message}`);
-	}
-	if (live.state === 'found') {
-		const extra = findMetadataPubPubDoesNotSend(live.work);
-		if (extra.length) {
+	// An issue that had no numbers can still be told apart from another by its DOI or title.
+	if (target === 'pub') {
+		const hadIssue = Boolean(previous.issue || previous.issueDoi || previous.issueTitle);
+		const hasIssue = Boolean(next.issue || next.issueDoi || next.issueTitle);
+		const movedByDoi =
+			previous.issueDoi && next.issueDoi && previous.issueDoi !== next.issueDoi;
+		const movedByTitle =
+			previous.issueTitle && !previous.issue && !issueTitleFits(previous.issueTitle, next);
+		if ((hadIssue && !hasIssue) || movedByDoi || movedByTitle) {
+			const from = previous.issueTitle ?? previous.issueDoi ?? previous.issue;
+			const to = next.issueTitle ?? next.issueDoi ?? next.issue ?? 'no issue';
 			return skip(
-				`Crossref has ${extra.join(', ')} for it, which PubPub doesn't send. Redepositing would remove them.`,
+				`It would move from issue "${from}" to "${to}" (compared with ${basis}). Redeposit it from its DOI settings if that's intended.`,
 			);
 		}
 	}
@@ -446,11 +555,16 @@ const preflightItem = async (
 	const changes = [
 		previous.url !== next.url && `URL: ${previous.url} → ${next.url}`,
 		previous.title !== next.title && `Title: ${previous.title} → ${next.title}`,
+		!hasRecordedDeposit &&
+			`Compared with its Crossref record; PubPub had no copy of its last deposit.`,
 		previous.issueDoi !== next.issueDoi &&
 			`Issue DOI: ${previous.issueDoi ?? 'none'} → ${next.issueDoi ?? 'none'}`,
-		target === 'collection' &&
-			previous.issue !== next.issue &&
-			`Issue: ${previous.issue} → ${next.issue}`,
+		previous.issue !== next.issue &&
+			`Issue: ${previous.issue ?? 'none'} → ${next.issue ?? 'none'}`,
+		previous.issueTitle &&
+			next.issueTitle &&
+			!sameTitle(previous.issueTitle, next.issueTitle) &&
+			`Issue title: "${previous.issueTitle}" → "${next.issueTitle}"`,
 	].filter((change): change is string => Boolean(change));
 	changes.push(...(rebuilt.issnNotes ?? []));
 
@@ -460,7 +574,7 @@ const preflightItem = async (
 		target,
 		changes,
 		previousRecordId: record.id,
-		previousDepositJson: record.depositJson,
+		previousDepositJson: record.depositJson ?? null,
 	};
 };
 
@@ -479,7 +593,9 @@ const sendItem = async (
 		return { ...item, status: 'ready', changes };
 	}
 	// setDoiData overwrites the deposit record in place, so keep a copy we can restore from.
-	const backup = await CrossrefDepositRecord.create({ depositJson: previousDepositJson });
+	const backup = previousDepositJson
+		? await CrossrefDepositRecord.create({ depositJson: previousDepositJson })
+		: null;
 	try {
 		const { deposit } = await setDoiData(
 			{
@@ -499,10 +615,10 @@ const sendItem = async (
 			status: 'submitted',
 			changes,
 			submissionFile: getDepositFilename(deposit, timestamp),
-			backupDepositRecordId: backup.id,
+			backupDepositRecordId: backup?.id,
 		};
 	} catch (err: any) {
-		await backup.destroy();
+		await backup?.destroy();
 		return {
 			...item,
 			status: 'error',

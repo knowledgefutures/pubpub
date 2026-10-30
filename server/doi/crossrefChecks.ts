@@ -28,6 +28,33 @@ const fetchWithTimeout = (url: string) =>
 		signal: AbortSignal.timeout(requestTimeoutMs),
 	});
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * A Crossref REST API request, retried when Crossref rate-limits or errors, so a busy API is never
+ * mistaken for an answer. Throws if every attempt fails to get a response at all.
+ */
+const fetchCrossrefApi = async (url: string) => {
+	let lastError: unknown;
+	let lastResponse: Response | null = null;
+	for (const delay of [0, 1000, 3000]) {
+		if (delay) {
+			// biome-ignore lint/performance/noAwaitInLoops: retry backoff
+			await sleep(delay);
+		}
+		try {
+			lastResponse = await fetchWithTimeout(url);
+			if (lastResponse.status !== 429 && lastResponse.status < 500) {
+				return lastResponse;
+			}
+		} catch (err) {
+			lastError = err;
+		}
+	}
+	if (lastResponse) return lastResponse;
+	throw lastError;
+};
+
 export type CrossrefWorkLookup =
 	| { state: 'found'; work: Record<string, any> }
 	| { state: 'not_found' }
@@ -40,7 +67,7 @@ export const getCrossrefWork = async (doi: string): Promise<CrossrefWorkLookup> 
 		return { state: 'unavailable' };
 	}
 	try {
-		const response = await fetchWithTimeout(
+		const response = await fetchCrossrefApi(
 			`https://api.crossref.org/works/${doi}?${politeQuery}`,
 		);
 		if (response.status === 404) {
@@ -86,7 +113,7 @@ export const getCrossrefJournal = async (issn: string): Promise<CrossrefJournalL
 	}
 	const formatted = `${issn.slice(0, 4)}-${issn.slice(4)}`;
 	try {
-		const response = await fetchWithTimeout(
+		const response = await fetchCrossrefApi(
 			`https://api.crossref.org/journals/${formatted}?${politeQuery}`,
 		);
 		if (response.status === 404) {

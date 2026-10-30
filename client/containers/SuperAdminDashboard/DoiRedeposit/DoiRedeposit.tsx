@@ -26,53 +26,108 @@ type CommunityOption = {
 	subdomain: string;
 };
 
-type ItemSummary = { title: string; doi: string; slug?: string; error?: string };
+type Status =
+	| 'ready'
+	| 'skipped'
+	| 'error'
+	| 'submitted'
+	| 'succeeded'
+	| 'warning'
+	| 'failed'
+	| 'unverified';
+
+type ItemResult = {
+	kind: 'pub' | 'collection';
+	title: string;
+	doi: string;
+	slug: string;
+	status: Status;
+	message?: string;
+	changes?: string[];
+	submissionFile?: string;
+};
 
 type RedepositTask = {
 	id: string;
 	createdAt: string;
 	isProcessing: boolean;
 	error: string | null;
-	input: { communityId: string; pubSlug?: string; limit?: number; stopRequested?: boolean };
+	input: {
+		communityId: string;
+		pubSlug?: string;
+		limit?: number;
+		checkOnly?: boolean;
+		stopRequested?: boolean;
+		source?: string;
+	};
 	output: {
 		startedAt?: string;
 		finishedAt?: string;
+		plan?: { warnings?: string[] };
 		progress?: {
+			phase: 'sending' | 'verifying';
 			total: number;
 			processed: number;
-			failed: number;
-			current: ItemSummary | null;
+			current: { title: string; doi: string } | null;
 		};
 		total?: number;
-		processed?: number;
-		succeeded?: number;
-		failed?: number;
+		notRun?: number;
 		stopped?: boolean;
-		failures?: ItemSummary[];
-		deposited?: ItemSummary[];
+		counts: Partial<Record<Status, number>>;
+		needsAttention: ItemResult[];
+		succeeded: ItemResult[];
+		changed: ItemResult[];
 	};
 };
 
 type Plan = {
 	community: { id: string; title: string; subdomain: string; issn: string | null };
-	doiPrefix: string | null;
+	doiPrefix: string;
+	submissionHost: string | null;
+	isTestCrossref: boolean;
+	warnings: string[];
 	collectionCount: number;
 	pubCount: number;
-	firstPub: ItemSummary | null;
+	firstPub: { slug: string; title: string; doi: string } | null;
 	skipped: { pubsWithoutDepositRecord: number; pubsWithoutRelease: number };
 	tasks: RedepositTask[];
 };
 
 const pollIntervalMs = 3000;
 
+const statusLabels: Record<Status, string> = {
+	ready: 'ready to send',
+	skipped: 'skipped',
+	error: 'not sent (error)',
+	submitted: 'awaiting Crossref',
+	succeeded: 'succeeded',
+	warning: 'succeeded with warning',
+	failed: 'failed at Crossref',
+	unverified: 'unconfirmed',
+};
+
+const statusIntents: Partial<Record<Status, Intent>> = {
+	ready: Intent.SUCCESS,
+	succeeded: Intent.SUCCESS,
+	skipped: Intent.WARNING,
+	warning: Intent.WARNING,
+	unverified: Intent.WARNING,
+	error: Intent.DANGER,
+	failed: Intent.DANGER,
+};
+
 const crossrefApiUrl = (doi: string) => `https://api.crossref.org/works/${doi}`;
 
 const formatDate = (value?: string) => (value ? new Date(value).toLocaleString() : '');
 
 const describeScope = (task: RedepositTask) => {
-	if (task.input.pubSlug) return `Pub ${task.input.pubSlug}`;
-	if (task.input.limit) return `First ${task.input.limit} pubs`;
-	return 'All DOIs';
+	const scope = task.input.pubSlug
+		? `Pub ${task.input.pubSlug}`
+		: task.input.limit
+			? `First ${task.input.limit} pubs`
+			: 'All DOIs';
+	const mode = task.input.checkOnly ? 'Check' : 'Redeposit';
+	return `${mode}: ${scope}${task.input.source === 'cli' ? ' (CLI)' : ''}`;
 };
 
 const useCommunitySearch = () => {
@@ -106,8 +161,19 @@ const useCommunitySearch = () => {
 	return { query, setQuery, results };
 };
 
-const TaskStatus = ({ task }: { task: RedepositTask }) => {
-	const { output } = task;
+const StatusCounts = ({ counts }: { counts: Partial<Record<Status, number>> }) => (
+	<span className="status-counts">
+		{(Object.keys(statusLabels) as Status[])
+			.filter((status) => counts[status])
+			.map((status) => (
+				<Tag key={status} minimal intent={statusIntents[status]}>
+					{counts[status]} {statusLabels[status]}
+				</Tag>
+			))}
+	</span>
+);
+
+const TaskState = ({ task }: { task: RedepositTask }) => {
 	if (task.isProcessing) {
 		return (
 			<Tag intent={Intent.PRIMARY} minimal>
@@ -118,55 +184,76 @@ const TaskStatus = ({ task }: { task: RedepositTask }) => {
 	if (task.error) {
 		return (
 			<Tag intent={Intent.DANGER} minimal>
-				Error
+				Crashed
 			</Tag>
 		);
 	}
-	if (output.stopped) {
+	if (task.output.stopped) {
 		return (
 			<Tag intent={Intent.WARNING} minimal>
 				Stopped
 			</Tag>
 		);
 	}
-	return (
-		<Tag intent={output.failed ? Intent.WARNING : Intent.SUCCESS} minimal>
-			Done
-		</Tag>
-	);
+	return <Tag minimal>Finished</Tag>;
 };
 
-const TaskCounts = ({ task }: { task: RedepositTask }) => {
-	const { output } = task;
-	if (task.isProcessing) {
-		const progress = output.progress;
-		return <>{progress ? `${progress.processed} / ${progress.total}` : 'Starting'}</>;
-	}
-	if (task.error) {
-		return <span className="error-text">{String(task.error)}</span>;
-	}
-	return (
-		<>
-			{output.succeeded ?? 0} deposited
-			{output.failed ? `, ${output.failed} failed` : ''}
-			{output.stopped ? `, ${(output.total ?? 0) - (output.processed ?? 0)} not run` : ''}
-		</>
-	);
-};
-
-const ItemList = ({ items, showErrors }: { items: ItemSummary[]; showErrors?: boolean }) => (
+const ItemList = ({ items }: { items: ItemResult[] }) => (
 	<ul className="item-list">
 		{items.map((item) => (
-			<li key={item.doi}>
+			<li key={`${item.kind}-${item.doi}`}>
+				<Tag minimal intent={statusIntents[item.status]}>
+					{statusLabels[item.status]}
+				</Tag>{' '}
 				<a href={crossrefApiUrl(item.doi)} target="_blank" rel="noreferrer">
 					{item.doi}
 				</a>{' '}
 				{item.title}
-				{showErrors && item.error && <div className="error-text">{item.error}</div>}
+				{item.message && <div className="item-message">{item.message}</div>}
+				{item.changes?.map((change) => (
+					<div key={change} className={Classes.TEXT_MUTED}>
+						{change}
+					</div>
+				))}
 			</li>
 		))}
 	</ul>
 );
+
+const RunDetail = ({ task }: { task: RedepositTask }) => {
+	const { output } = task;
+	return (
+		<div className="run-detail">
+			{task.error && (
+				<Callout intent={Intent.DANGER} className="callout">
+					The run stopped with an error: {String(task.error)}. Anything listed below was
+					already handled; items not listed weren't sent.
+				</Callout>
+			)}
+			{!!output.notRun && (
+				<p>{output.notRun} items weren't reached before the run stopped.</p>
+			)}
+			{output.needsAttention.length > 0 && (
+				<>
+					<strong>Needs attention</strong>
+					<ItemList items={output.needsAttention} />
+				</>
+			)}
+			{output.changed.length > 0 && (
+				<>
+					<strong>Sent with other changes (first 20)</strong>
+					<ItemList items={output.changed} />
+				</>
+			)}
+			{output.succeeded.length > 0 && (
+				<>
+					<strong>Succeeded (first 5)</strong>
+					<ItemList items={output.succeeded} />
+				</>
+			)}
+		</div>
+	);
+};
 
 const ActiveRun = ({
 	task,
@@ -179,7 +266,7 @@ const ActiveRun = ({
 }) => {
 	const progress = task.output.progress;
 	const fraction = progress && progress.total ? progress.processed / progress.total : undefined;
-	const failures = task.output.failures ?? [];
+	const verb = progress?.phase === 'verifying' ? 'confirmed by Crossref' : 'checked';
 	return (
 		<div className="active-run">
 			<h4>
@@ -193,15 +280,22 @@ const ActiveRun = ({
 				/>
 			</h4>
 			<ProgressBar value={fraction} intent={Intent.PRIMARY} stripes={!progress} />
-			<div className="run-detail">
+			<div className="run-progress">
 				{progress
-					? `${progress.processed} of ${progress.total} deposited, ${progress.failed} failed`
+					? `${progress.processed} of ${progress.total} ${verb}`
 					: 'Waiting for the worker to start…'}
+				{progress?.phase === 'verifying' && (
+					<div className={Classes.TEXT_MUTED}>
+						Everything has been sent. Reading Crossref's submission logs, which can take
+						a while; Stop ends the checking, not the deposits.
+					</div>
+				)}
 				{progress?.current && (
 					<div className={Classes.TEXT_MUTED}>Last: {progress.current.title}</div>
 				)}
 			</div>
-			{failures.length > 0 && <ItemList items={failures} showErrors />}
+			<StatusCounts counts={task.output.counts} />
+			<RunDetail task={task} />
 		</div>
 	);
 };
@@ -229,6 +323,7 @@ const DoiRedeposit = () => {
 	useEffect(() => {
 		setPlan(null);
 		setTestSlug('');
+		setError(null);
 		if (community) {
 			loadPlan(community.id);
 		}
@@ -264,7 +359,7 @@ const DoiRedeposit = () => {
 		return () => clearInterval(interval);
 	}, [activeTaskId, community, loadPlan]);
 
-	const startRun = async (body: { pubSlug?: string }) => {
+	const startRun = async (body: { pubSlug?: string; checkOnly?: boolean }) => {
 		if (!community) return;
 		setIsLoading(true);
 		setError(null);
@@ -275,7 +370,7 @@ const DoiRedeposit = () => {
 			});
 			await loadPlan(community.id);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to start the redeposit.');
+			setError(err?.message || 'Failed to start the run.');
 		} finally {
 			setIsLoading(false);
 			setIsConfirmingAll(false);
@@ -289,7 +384,7 @@ const DoiRedeposit = () => {
 			await apiFetch.post(`/api/superadmin/doi-redeposit/tasks/${activeTask.id}/stop`);
 			await loadPlan(community.id);
 		} catch (err: any) {
-			setError(err?.message || 'Failed to stop the redeposit.');
+			setError(err?.message || 'Failed to stop the run.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -302,9 +397,11 @@ const DoiRedeposit = () => {
 		<div className="doi-redeposit-component">
 			<h2>DOI Redeposit</h2>
 			<p className={Classes.TEXT_MUTED}>
-				Resends a community's existing DOIs to Crossref, rebuilt from current data. Use it
-				after a fix to the deposit code. Each pub keeps the content version and review
-				settings from its last deposit.
+				Resends a community's existing DOIs to Crossref, rebuilt from current data, for use
+				after a fix to the deposit code. Each item is checked just before it is sent and
+				skipped, with the reason, if its DOI, record type, issue, or journal would change,
+				or if Crossref holds metadata PubPub doesn't send. Results come from Crossref's
+				submission logs, not just from Crossref accepting the upload.
 			</p>
 
 			{error && (
@@ -351,12 +448,23 @@ const DoiRedeposit = () => {
 					<HTMLTable condensed className="plan-table">
 						<tbody>
 							<tr>
+								<th>Sends to</th>
+								<td>
+									{plan.submissionHost ?? 'Not configured'}
+									{plan.isTestCrossref && (
+										<Tag minimal intent={Intent.WARNING} className="inline-tag">
+											test system
+										</Tag>
+									)}
+								</td>
+							</tr>
+							<tr>
 								<th>DOI prefix</th>
-								<td>{plan.doiPrefix ?? 'Default PubPub prefix'}</td>
+								<td>{plan.doiPrefix}</td>
 							</tr>
 							<tr>
 								<th>Community ISSN</th>
-								<td>{plan.community.issn ?? 'None set'}</td>
+								<td>{plan.community.issn ?? 'None'}</td>
 							</tr>
 							<tr>
 								<th>To redeposit</th>
@@ -365,7 +473,7 @@ const DoiRedeposit = () => {
 								</td>
 							</tr>
 							<tr>
-								<th>Skipped</th>
+								<th>Not included</th>
 								<td>
 									{plan.skipped.pubsWithoutDepositRecord} pubs with a DOI that
 									PubPub didn't deposit, {plan.skipped.pubsWithoutRelease} pubs
@@ -375,21 +483,29 @@ const DoiRedeposit = () => {
 						</tbody>
 					</HTMLTable>
 
-					{!plan.community.issn && (
-						<Callout intent={Intent.WARNING} className="callout">
-							This community has no ISSN set, so deposits will only carry ISSNs set on
-							individual issues. Add it in the community's settings first if it has
-							one.
+					{plan.warnings.map((warning) => (
+						<Callout key={warning} intent={Intent.WARNING} className="callout">
+							{warning}
 						</Callout>
-					)}
+					))}
 
 					{activeTask ? (
 						<ActiveRun task={activeTask} onStop={stopRun} isStopping={isLoading} />
 					) : (
-						<div className="actions">
+						<div className="steps">
 							<FormGroup
-								label="Test with one pub"
-								helperText="Deposits a single pub so you can check the record in Crossref before running everything."
+								label="1. Check everything"
+								helperText="Runs every check against PubPub and Crossref and sends nothing."
+							>
+								<Button
+									text={`Check all (${total})`}
+									disabled={isLoading || total === 0}
+									onClick={() => startRun({ checkOnly: true })}
+								/>
+							</FormGroup>
+							<FormGroup
+								label="2. Send one pub"
+								helperText="Then open its Crossref record to confirm the result before sending the rest."
 							>
 								<div className="test-row">
 									<InputGroup
@@ -399,18 +515,20 @@ const DoiRedeposit = () => {
 										disabled={isLoading}
 									/>
 									<Button
-										text="Deposit one pub"
+										text="Send one pub"
 										disabled={isLoading || !testTarget}
 										onClick={() => startRun({ pubSlug: testTarget })}
 									/>
 								</div>
 							</FormGroup>
-							<Button
-								intent={Intent.PRIMARY}
-								text={`Redeposit all (${total})`}
-								disabled={isLoading || total === 0}
-								onClick={() => setIsConfirmingAll(true)}
-							/>
+							<FormGroup label="3. Send everything">
+								<Button
+									intent={Intent.PRIMARY}
+									text={`Redeposit all (${total})`}
+									disabled={isLoading || total === 0}
+									onClick={() => setIsConfirmingAll(true)}
+								/>
+							</FormGroup>
 						</div>
 					)}
 
@@ -421,9 +539,9 @@ const DoiRedeposit = () => {
 								<thead>
 									<tr>
 										<th>Started</th>
-										<th>Scope</th>
-										<th>Status</th>
-										<th>Result</th>
+										<th>Run</th>
+										<th>State</th>
+										<th>Results</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -439,37 +557,16 @@ const DoiRedeposit = () => {
 												<td>{formatDate(task.createdAt)}</td>
 												<td>{describeScope(task)}</td>
 												<td>
-													<TaskStatus task={task} />
+													<TaskState task={task} />
 												</td>
 												<td>
-													<TaskCounts task={task} />
+													<StatusCounts counts={task.output.counts} />
 												</td>
 											</tr>
 											{expandedTaskId === task.id && !task.isProcessing && (
 												<tr className="run-detail-row">
 													<td colSpan={4}>
-														{!!task.output.failures?.length && (
-															<>
-																<strong>Failed</strong>
-																<ItemList
-																	items={task.output.failures}
-																	showErrors
-																/>
-															</>
-														)}
-														{!!task.output.deposited?.length && (
-															<>
-																<strong>Deposited (first 5)</strong>
-																<ItemList
-																	items={task.output.deposited}
-																/>
-															</>
-														)}
-														<div className={Classes.TEXT_MUTED}>
-															Crossref processes deposits in a queue,
-															so changes can take a few minutes to
-															show in its API.
-														</div>
+														<RunDetail task={task} />
 													</td>
 												</tr>
 											)}
@@ -489,9 +586,16 @@ const DoiRedeposit = () => {
 			>
 				<div className={Classes.DIALOG_BODY}>
 					<p>
-						This sends {total} deposits to Crossref for {plan?.community.title}, one at
-						a time. Expect it to take a while. You can stop it from this page.
+						This checks and sends up to {total} deposits to Crossref (
+						{plan?.submissionHost}) for {plan?.community.title}, one at a time, then
+						reads Crossref's submission logs for up to two hours. Items that fail a
+						check are skipped, not sent.
 					</p>
+					{plan?.warnings.map((warning) => (
+						<Callout key={warning} intent={Intent.WARNING} className="callout">
+							{warning}
+						</Callout>
+					))}
 				</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>

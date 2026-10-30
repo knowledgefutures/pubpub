@@ -14,11 +14,12 @@
 		}
 	}
 
-	.actions {
+	.steps {
 		display: flex;
 		align-items: flex-start;
-		gap: 20px;
+		gap: 24px;
 		margin-bottom: 20px;
+		flex-wrap: wrap;
 
 		.test-row {
 			display: flex;
@@ -35,9 +36,28 @@
 			gap: 10px;
 		}
 
-		.run-detail {
-			margin-top: 8px;
+		.run-progress {
+			margin: 8px 0;
 		}
+	}
+
+	.status-counts {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+
+	.inline-tag {
+		margin-left: 6px;
+	}
+
+	.run-detail {
+		margin-top: 8px;
+	}
+
+	.item-message {
+		font-size: 12px;
+		margin-top: 2px;
 	}
 
 	.runs-table {
@@ -50,8 +70,4 @@
 		font-size: 13px;
 	}
 
-	.error-text {
-		color: #c23030;
-		font-size: 12px;
-	}
 }

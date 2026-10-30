@@ -370,6 +370,14 @@ describe('createDeposit', () => {
 		]);
 	});
 
+	it('leaves out an ISSN with a wrong check digit', () => {
+		const { deposit } = createDeposit(
+			{ community: { ...community, issn: '2644-2354' }, pub },
+			'pub',
+		);
+		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toBeUndefined();
+	});
+
 	it('leaves out malformed ISSNs', () => {
 		const { deposit } = createDeposit(
 			{

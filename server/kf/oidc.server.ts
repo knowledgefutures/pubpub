@@ -327,10 +327,15 @@ export async function fetchUserInfo(accessToken: string): Promise<OIDCUserInfo> 
 
 const AUTH_INTERNAL_API_URL = process.env.AUTH_INTERNAL_API_URL ?? OIDC_ISSUER_INTERNAL_URL;
 
-const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY ?? '';
-
-/** Whether the internal API is configured and available. */
-export const hasInternalApi = Boolean(AUTH_INTERNAL_API_KEY);
+/**
+ * PubPub calls KF's internal API as its own OAuth client: HTTP Basic with the client
+ * id and secret. Null when no secret is configured, which turns those calls off.
+ */
+export function kfClientAuthorization(): string | null {
+	if (!OIDC_CLIENT_SECRET) return null;
+	const credentials = Buffer.from(`${OIDC_CLIENT_ID}:${OIDC_CLIENT_SECRET}`).toString('base64');
+	return `Basic ${credentials}`;
+}
 
 // --- KF Accounts ---
 
@@ -342,12 +347,13 @@ export interface OIDCOrg {
 	role: string;
 }
 
-/** The KF Accounts (console orgs) a user belongs to. Empty when the internal API is off. */
+/** The KF Accounts (console orgs) a user belongs to. Empty without client credentials. */
 export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
-	if (!AUTH_INTERNAL_API_KEY) return [];
+	const authorization = kfClientAuthorization();
+	if (!authorization) return [];
 
 	const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/orgs`, {
-		headers: { Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}` },
+		headers: { Authorization: authorization },
 	});
 
 	if (!res.ok) return [];
@@ -358,14 +364,15 @@ export async function fetchUserOrgs(userId: string): Promise<OIDCOrg[]> {
 // --- Outbound ban sync ---
 
 export async function syncBanToKfAuth(userId: string, reason?: string): Promise<void> {
-	if (!AUTH_INTERNAL_API_KEY) return;
+	const authorization = kfClientAuthorization();
+	if (!authorization) return;
 
 	try {
 		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/ban`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+				Authorization: authorization,
 			},
 			body: JSON.stringify({ reason: reason ?? 'banned via PubPub spam system' }),
 		});
@@ -379,14 +386,15 @@ export async function syncBanToKfAuth(userId: string, reason?: string): Promise<
 }
 
 export async function syncUnbanToKfAuth(userId: string): Promise<void> {
-	if (!AUTH_INTERNAL_API_KEY) return;
+	const authorization = kfClientAuthorization();
+	if (!authorization) return;
 
 	try {
 		const res = await fetch(`${AUTH_INTERNAL_API_URL}/api/internal/users/${userId}/unban`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${AUTH_INTERNAL_API_KEY}`,
+				Authorization: authorization,
 			},
 			body: JSON.stringify({}),
 		});

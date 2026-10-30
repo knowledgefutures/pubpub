@@ -7,14 +7,14 @@
  *   GET  /auth/session-set — establish session on custom domains (via encrypted token)
  *   POST /auth/logout      — clear session + redirect to KF Auth logout
  *
- * Internal service-to-service endpoints (AUTH_INTERNAL_API_KEY):
+ * Calls from the KF console, each checked by its KF-Console-Token (./consoleToken):
  *   POST /api/kf/webhooks             — receive webhook events from KF Auth (profile, bans, sessions)
  *   GET  /api/kf/branding             — return community branding for login page
+ *   GET  /api/kf/contexts             — list communities (local dev)
  *   GET  /api/kf/summary              — a KF Account's orgs and communities (console org-assets)
- *   GET  /api/kf/usage                — a KF Account's billable usage
+ *   GET  /api/kf/usage                — a KF Account's billable usage (nothing calls it yet)
  */
 
-import { timingSafeEqual } from 'crypto';
 import { Router } from 'express';
 import { promisify } from 'util';
 
@@ -24,6 +24,7 @@ import { logout } from 'server/utils/logout';
 import { getHashedUserId } from 'utils/caching/getHashedUserId';
 import { isDevelopment, isDuqDuq, isProd } from 'utils/environment';
 
+import { requireKfConsoleToken } from './consoleToken';
 import {
 	buildAuthorizeUrl,
 	decodeIdTokenClaims,
@@ -45,27 +46,6 @@ import {
 } from './webhookHandlers';
 
 // ── Helpers ──────────────────────────────────────────────────────────
-
-const AUTH_INTERNAL_API_KEY = process.env.AUTH_INTERNAL_API_KEY;
-
-function requireInternalKey(req: any, res: any, next: () => void): void {
-	if (!AUTH_INTERNAL_API_KEY) {
-		res.status(500).json({ error: 'AUTH_INTERNAL_API_KEY not configured' });
-		return;
-	}
-	const auth = req.headers.authorization;
-	const expected = `Bearer ${AUTH_INTERNAL_API_KEY}`;
-	// Use timing-safe comparison to prevent timing attacks on the API key
-	if (
-		!auth ||
-		auth.length !== expected.length ||
-		!timingSafeEqual(Buffer.from(auth), Buffer.from(expected))
-	) {
-		res.status(401).json({ error: 'Unauthorized' });
-		return;
-	}
-	next();
-}
 
 /**
  * Derive the community hostname the user came from.
@@ -271,9 +251,22 @@ router.post('/auth/logout', (req, res: any) => {
 	);
 });
 
+// ─── Calls from the KF console ──────────────────────────────────────
+
+// Every method on these paths needs a KF-Console-Token for that path's registered URL.
+for (const path of [
+	'/api/kf/webhooks',
+	'/api/kf/summary',
+	'/api/kf/usage',
+	'/api/kf/contexts',
+	'/api/kf/branding',
+]) {
+	router.all(path, requireKfConsoleToken(path));
+}
+
 // ─── Webhooks from KF Auth ──────────────────────────────────────────
 
-router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) => {
+router.post('/api/kf/webhooks', async (req: any, res: any) => {
 	const event = req.headers['x-kf-webhook-event'];
 	const { data } = req.body;
 
@@ -304,7 +297,7 @@ router.post('/api/kf/webhooks', requireInternalKey, async (req: any, res: any) =
 
 // ─── KF Account summary and usage (for the console) ─────────────────
 
-router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => {
+router.get('/api/kf/summary', async (req: any, res: any) => {
 	try {
 		const { kf_org_id } = req.query;
 		if (!kf_org_id || typeof kf_org_id !== 'string') {
@@ -318,7 +311,7 @@ router.get('/api/kf/summary', requireInternalKey, async (req: any, res: any) => 
 });
 
 /** ?kf_org_id=…[&since=ISO date][&until=ISO date]; the window limits DOI deposits */
-router.get('/api/kf/usage', requireInternalKey, async (req: any, res: any) => {
+router.get('/api/kf/usage', async (req: any, res: any) => {
 	try {
 		const { kf_org_id, since, until } = req.query;
 		if (!kf_org_id || typeof kf_org_id !== 'string') {
@@ -347,7 +340,7 @@ router.get('/api/kf/usage', requireInternalKey, async (req: any, res: any) => {
 
 // ─── Context listing (for KF Auth playground) ───────────────────────
 
-router.get('/api/kf/contexts', requireInternalKey, async (req: any, res: any) => {
+router.get('/api/kf/contexts', async (req: any, res: any) => {
 	try {
 		const communities = await Community.findAll({
 			attributes: ['subdomain', 'title', 'avatar'],
@@ -370,7 +363,7 @@ router.get('/api/kf/contexts', requireInternalKey, async (req: any, res: any) =>
 
 // ─── Branding API (for KF Auth login page) ───────────────────────────
 
-router.get('/api/kf/branding', requireInternalKey, async (req: any, res: any) => {
+router.get('/api/kf/branding', async (req: any, res: any) => {
 	try {
 		const { subdomain, context } = req.query;
 		let identifier = context || subdomain;

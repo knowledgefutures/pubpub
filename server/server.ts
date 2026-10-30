@@ -33,6 +33,7 @@ if (env.NODE_ENV !== 'test') {
 	require('server/utils/serverModuleOverwrite');
 }
 
+import { RAW_BODY_PATHS } from './kf/consoleToken';
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
 import { kfSessionCheckMiddleware } from './middleware/kfSessionCheck';
@@ -109,7 +110,15 @@ if (env.NODE_ENV === 'production') {
 }
 appRouter.use(deduplicateSlash());
 appRouter.use(noSlash());
-appRouter.use(express.json({ limit: '50mb' }));
+appRouter.use(
+	express.json({
+		limit: '50mb',
+		// The console signs a hash of the raw body; keep it where that is checked.
+		verify: (req: any, _res, buf) => {
+			if (RAW_BODY_PATHS.has(req.originalUrl.split('?')[0])) req.rawBody = buf;
+		},
+	}),
+);
 appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
 appRouter.use(cookieParser());
 

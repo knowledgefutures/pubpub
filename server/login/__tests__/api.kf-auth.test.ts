@@ -6,6 +6,12 @@ import { modelize, setup, teardown } from 'stubstub';
 
 import { __appImmutableListenOnly } from '../../server';
 
+// PubPub's client secret, read when the modules load, sends /api/login to KF Auth.
+const { CLIENT_SECRET } = vi.hoisted(() => {
+	process.env.OIDC_CLIENT_SECRET = 'test-client-secret';
+	return { CLIENT_SECRET: 'test-client-secret' };
+});
+
 const normalEmail = `${crypto.randomUUID()}@email.com`;
 const restrictedEmail = `${crypto.randomUUID()}@email.com`;
 
@@ -31,9 +37,13 @@ setup(beforeAll, async () => {
 });
 
 teardown(afterAll);
+// The env is shared with later test files in this worker, where the secret would switch
+// /api/login over to KF Auth too.
+afterAll(() => {
+	delete process.env.OIDC_CLIENT_SECRET;
+});
 
 const AUTH_URL = 'http://kf-auth.test';
-const AUTH_KEY = 'test-internal-key';
 const ENDPOINT = '/api/internal/legacy-pubpub-login';
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -45,7 +55,6 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 beforeEach(() => {
 	vi.stubEnv('AUTH_INTERNAL_API_URL', AUTH_URL);
-	vi.stubEnv('AUTH_INTERNAL_API_KEY', AUTH_KEY);
 });
 
 afterEach(() => {
@@ -79,8 +88,9 @@ describe('/api/login (kf-auth handshake)', () => {
 			const call = fetchSpy.mock.calls.find(([u]) => String(u).endsWith(ENDPOINT));
 			expect(call).toBeDefined();
 			const init = call![1] as RequestInit;
+			// PubPub's own client credentials, never a shared Bearer key
 			expect((init.headers as Record<string, string>).Authorization).toBe(
-				`Bearer ${AUTH_KEY}`,
+				`Basic ${Buffer.from(`kf_pubpub:${CLIENT_SECRET}`).toString('base64')}`,
 			);
 			const body = JSON.parse(String(init.body));
 			expect(body).toEqual({

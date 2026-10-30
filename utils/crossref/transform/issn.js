@@ -15,7 +15,14 @@ export default (value) => {
 	if (typeof value !== 'string') {
 		return null;
 	}
-	// Editors paste ISSNs with spaces and en or em dashes as often as hyphens.
-	const issn = value.replace(/[\s\-\u2010-\u2015]/g, '').toUpperCase();
+	// Editors paste ISSNs with labels ("ISSN 2753-2380", "2994-9262 online"), invisible characters,
+	// and en or em dashes as often as hyphens.
+	const issn = value
+		.normalize('NFKC')
+		.replace(/[\u00AD\u200B-\u200D\u2060\uFEFF]/g, '')
+		.replace(/^\s*(?:(?:e|p|online|print|electronic)[\s-]*)?issn\s*[:#]?\s*/i, '')
+		.replace(/\s*\(?\s*(?:online|print|electronic)\s*\)?\s*$/i, '')
+		.replace(/[\s\-\u2010-\u2015]/g, '')
+		.toUpperCase();
 	return issnPattern.test(issn) && hasValidCheckDigit(issn) ? issn : null;
 };

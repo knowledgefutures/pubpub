@@ -16,6 +16,7 @@ import { expect } from 'utils/assert';
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
 import createDeposit, { getDois } from 'utils/crossref/createDeposit';
 
+import { vetDepositIssns } from './issnGate';
 import { submitDoiData } from './submit';
 
 const collectionIncludes = [
@@ -138,24 +139,26 @@ export const getDoiData = (
 		pubId && findPrimaryCollectionPubForPub(pubId),
 		pubId && findPub(pubId),
 		getCommunityDepositTarget(communityId, true),
-	]).then(([community, collection, collectionPub, pub, depositTarget]) => {
-		const resolvedCollection = collectionPub ? collectionPub.collection : collection;
-		return createDeposit(
-			{
-				collectionPub,
-				collection: resolvedCollection?.toJSON(),
-				community: community?.toJSON(),
-				pub: pub?.toJSON(),
-				contentVersion,
-				reviewType,
-				reviewRecommendation,
-			},
-			doiTarget,
-			depositTarget,
-			timestamp,
-			includeRelationships,
-		);
-	});
+	])
+		.then(([community, collection, collectionPub, pub, depositTarget]) => {
+			const resolvedCollection = collectionPub ? collectionPub.collection : collection;
+			return createDeposit(
+				{
+					collectionPub,
+					collection: resolvedCollection?.toJSON(),
+					community: community?.toJSON(),
+					pub: pub?.toJSON(),
+					contentVersion,
+					reviewType,
+					reviewRecommendation,
+				},
+				doiTarget,
+				depositTarget,
+				timestamp,
+				includeRelationships,
+			);
+		})
+		.then(vetDepositIssns);
 
 export const setDoiData = async (
 	{ communityId, collectionId, pubId, contentVersion, reviewType, reviewRecommendation },

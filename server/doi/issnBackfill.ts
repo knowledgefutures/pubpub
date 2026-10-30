@@ -1,7 +1,13 @@
-import { renderJournalCitation } from 'utils/citations';
 import normalizeIssn from 'utils/crossref/transform/issn';
 
-import { checkIssnWithCrossref, formatIssn, type IssnCheck, type IssnType } from './issnChecks';
+import {
+	checkIssnWithCrossref,
+	type DepositTitle,
+	formatIssn,
+	getDepositTitles,
+	type IssnCheck,
+	type IssnType,
+} from './issnChecks';
 
 /**
  * Work out a community's electronic and print ISSNs from the ISSNs its editors entered on issues,
@@ -28,8 +34,13 @@ export type BackfillIssue = {
 };
 
 export type BackfillStatus =
-	/** One clear ISSN per type, confirmed by Crossref. Safe to apply. */
+	/** One clear ISSN per type, registered in Crossref under the titles deposits send. */
 	| 'ready'
+	/**
+	 * One clear ISSN per type, but Crossref doesn't know it yet, so it can't be checked. Sending it
+	 * registers it to this journal, so a person should confirm it first.
+	 */
+	| 'unverified'
 	/** Something needs a person's judgement; see `problems`. */
 	| 'needs review'
 	/** The community already has ISSNs set; nothing is changed. */
@@ -51,7 +62,7 @@ export type BackfillProposal = {
 	issueFixes: string[];
 };
 
-type CheckIssn = (issn: string, type: IssnType, journalTitle: string) => Promise<IssnCheck>;
+type CheckIssn = (issn: string, type: IssnType, titles: DepositTitle[]) => Promise<IssnCheck>;
 
 const fields: { key: 'electronicIssn' | 'printIssn'; type: IssnType }[] = [
 	{ key: 'electronicIssn', type: 'electronic' },
@@ -63,7 +74,8 @@ export const proposeCommunityIssns = async (
 	issues: BackfillIssue[],
 	checkIssn: CheckIssn = checkIssnWithCrossref,
 ): Promise<BackfillProposal> => {
-	const journalTitle = renderJournalCitation('', community.citeAs, community.title);
+	const depositTitles = getDepositTitles(community);
+	const unverified: string[] = [];
 	const base = {
 		communityId: community.id,
 		subdomain: community.subdomain,
@@ -110,7 +122,7 @@ export const proposeCommunityIssns = async (
 		const enteredAs: IssnType =
 			entered.electronic.length >= entered.print.length ? 'electronic' : 'print';
 		// biome-ignore lint/performance/noAwaitInLoops: polite, sequential Crossref lookups
-		const check = await checkIssn(issn, enteredAs, journalTitle);
+		const check = await checkIssn(issn, enteredAs, depositTitles);
 		const type: IssnType =
 			check.crossrefType === 'electronic' || check.crossrefType === 'print'
 				? check.crossrefType
@@ -123,13 +135,13 @@ export const proposeCommunityIssns = async (
 				`Couldn't check ${formatIssn(issn)} with Crossref${check.error ? `: ${check.error}` : '.'}`,
 			);
 		} else if (check.found === false) {
-			base.problems.push(
-				`Crossref has no journal registered under ${formatIssn(issn)}; check it's this journal's ISSN.`,
-			);
+			unverified.push(formatIssn(issn));
 		} else if (!check.titleMatches) {
-			base.problems.push(
-				`Crossref has ${formatIssn(issn)} registered to "${check.crossrefTitle}", not "${journalTitle}".`,
-			);
+			(check.mismatchedTitles ?? []).forEach(({ title, usedFor }) => {
+				base.problems.push(
+					`Crossref has ${formatIssn(issn)} registered to "${check.crossrefTitle}", but deposits for ${usedFor} send "${title}", which Crossref would reject. Make them match exactly, or ask Crossref to change its title.`,
+				);
+			});
 		}
 		const misfiled = type === 'electronic' ? entered.print : entered.electronic;
 		if (misfiled.length) {
@@ -143,7 +155,7 @@ export const proposeCommunityIssns = async (
 	fields.forEach(({ type }) => {
 		if (byType[type].length > 1) {
 			base.problems.push(
-				`Issues use ${byType[type].length} different ${type} ISSNs: ${byType[type].map(formatIssn).join(', ')}.`,
+				`Issues use ${byType[type].length} different ${type} ISSNs: ${byType[type].map(formatIssn).join(', ')}. If this community publishes more than one journal, leave its ISSNs empty and give each journal's issues their own ISSNs and Journal title.`,
 			);
 		}
 	});
@@ -153,11 +165,21 @@ export const proposeCommunityIssns = async (
 		);
 	}
 
+	if (unverified.length) {
+		base.issueFixes.unshift(
+			`Not in Crossref yet, so unchecked: ${unverified.join(', ')}. Confirm it's this journal's ISSN before applying.`,
+		);
+	}
 	const pick = (type: IssnType) => (byType[type].length === 1 ? byType[type][0] : null);
+	const status: BackfillStatus = base.problems.length
+		? 'needs review'
+		: unverified.length
+			? 'unverified'
+			: 'ready';
 	return {
 		...base,
 		crossrefTitle: crossrefTitles.size === 1 ? [...crossrefTitles][0] : null,
-		status: base.problems.length ? 'needs review' : 'ready',
+		status,
 		electronicIssn: pick('electronic'),
 		printIssn: pick('print'),
 	};

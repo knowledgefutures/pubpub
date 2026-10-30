@@ -26,9 +26,15 @@ const getCollectionLevelData = (collection) => {
 	const { kind, title } = collection;
 	const metadata = collection.metadata || {};
 	const useCollectionTitle = collection.kind !== 'issue';
+	// An issue can belong to a different journal than the community's.
+	const issueJournalTitle: string | undefined =
+		kind === 'issue' && typeof metadata.journalTitle === 'string'
+			? metadata.journalTitle.trim() || undefined
+			: undefined;
 	return {
 		type: collectionKindToCitationJSPart(kind),
 		...(useCollectionTitle && { 'container-title': title }),
+		...(issueJournalTitle ? { 'container-title': issueJournalTitle } : {}),
 		containerDoi: getCollectionDoi(collection),
 		ISBN: metadata.isbn,
 		ISSN: metadata.issn || metadata.printIssn || metadata.electronicIssn,
@@ -107,7 +113,13 @@ export const generateCitationHtml = async (
 		...commonData,
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'containerDoi' does not exist on type '{ ... Remove this comment to see the full error message
 		DOI: pubData.doi || commonData.containerDoi,
-		ISSN: pubData.doi ? communityData.electronicIssn || communityData.printIssn : null,
+		// An issue's own ISSN wins, as in Crossref deposits.
+		ISSN: pubData.doi
+			? primaryCollection?.metadata?.electronicIssn ||
+				primaryCollection?.metadata?.printIssn ||
+				communityData.electronicIssn ||
+				communityData.printIssn
+			: null,
 		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],
 		note: pubLink,
 		URL: pubLink,

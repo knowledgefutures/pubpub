@@ -3,7 +3,6 @@ import { Op } from 'sequelize';
 import { getCommunityDepositTarget } from 'server/depositTarget/queries';
 import { Collection, Community, CrossrefDepositRecord, Pub, Release } from 'server/models';
 import { expect } from 'utils/assert';
-import { renderJournalCitation } from 'utils/citations';
 import { PUBPUB_DOI_PREFIX } from 'utils/crossref/communities';
 import {
 	getDepositRecordContentVersion,
@@ -21,7 +20,7 @@ import {
 	isTestCrossref,
 	type SubmissionRecord,
 } from './crossrefChecks';
-import { checkIssnWithCrossref } from './issnChecks';
+import { checkIssnWithCrossref, getDepositTitles } from './issnChecks';
 import { assertCommunityApprovedForDoi } from './permissions';
 import { getDoiData, setDoiData } from './queries';
 import { getDepositFilename, resolveCrossrefCredentials } from './submit';
@@ -109,15 +108,14 @@ const depositRecordInclude = {
 };
 
 const getIssnWarnings = async (community: Community) => {
-	const { title, citeAs } = community;
-	const journalTitle = renderJournalCitation('', citeAs, title);
+	const depositTitles = getDepositTitles(community);
 	const entries = [
 		{ type: 'electronic' as const, raw: community.electronicIssn },
 		{ type: 'print' as const, raw: community.printIssn },
 	].filter((entry) => entry.raw?.trim());
 	if (!entries.length) {
 		return [
-			'This community has no ISSN set in its settings, so deposits will only carry ISSNs set on individual issues.',
+			'This community has no ISSN set in its settings, so only pubs in issues with their own ISSNs will include one.',
 		];
 	}
 	const warnings = await Promise.all(
@@ -128,7 +126,7 @@ const getIssnWarnings = async (community: Community) => {
 					`The community's ${type} ISSN "${raw}" isn't a valid ISSN (check the digits), so it will be left out of deposits.`,
 				];
 			}
-			return (await checkIssnWithCrossref(issn, type, journalTitle)).problems;
+			return (await checkIssnWithCrossref(issn, type, depositTitles)).problems;
 		}),
 	);
 	return warnings.flat();
@@ -382,7 +380,11 @@ const preflightItem = async (
 		}
 	}
 
-	let rebuilt: { deposit: object; dois: { pub?: string; collection?: string } };
+	let rebuilt: {
+		deposit: object;
+		dois: { pub?: string; collection?: string };
+		issnNotes?: string[];
+	};
 	try {
 		rebuilt = await getDoiData(
 			{
@@ -450,6 +452,7 @@ const preflightItem = async (
 			previous.issue !== next.issue &&
 			`Issue: ${previous.issue} → ${next.issue}`,
 	].filter((change): change is string => Boolean(change));
+	changes.push(...(rebuilt.issnNotes ?? []));
 
 	return {
 		ok: true,

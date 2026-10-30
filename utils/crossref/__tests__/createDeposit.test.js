@@ -352,48 +352,41 @@ describe('createDeposit', () => {
 		]);
 	});
 
-	it("prefers the community's ISSNs to an issue's, field by field", () => {
-		const issueWithIssns = {
-			...issue,
-			metadata: { ...issue.metadata, printIssn: '1234-5679', electronicIssn: '2637-6091' },
-		};
-		const { deposit } = createDeposit(
+	const issueDeposit = (communityFields, issueMetadata) => {
+		const issueWithJournal = { ...issue, metadata: { ...issue.metadata, ...issueMetadata } };
+		return createDeposit(
 			{
-				community: { ...community, electronicIssn: '2644-2353' },
-				collection: issueWithIssns,
-				collectionPub: makeCollectionPub(issueWithIssns, pub),
+				community: { ...community, ...communityFields },
+				collection: issueWithJournal,
+				collectionPub: makeCollectionPub(issueWithJournal, pub),
 				pub,
 			},
 			'pub',
+		).deposit.doi_batch.body.journal.journal_metadata;
+	};
+
+	it("uses an issue's own ISSNs and journal title over the community's", () => {
+		const metadata = issueDeposit(
+			{ electronicIssn: '2644-2353', printIssn: '2688-8513' },
+			{ electronicIssn: '2637-6091', journalTitle: 'Second Journal' },
 		);
-		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
-			{ '@media_type': 'print', '#text': '12345679' },
-			{ '@media_type': 'electronic', '#text': '26442353' },
-		]);
+		expect(metadata.full_title).toEqual('Second Journal');
+		// The issue's ISSNs are a set; the community's print ISSN belongs to another journal.
+		expect(metadata.issn).toEqual([{ '@media_type': 'electronic', '#text': '26376091' }]);
 	});
 
-	it('falls back to issue ISSNs when the community has none', () => {
-		const issueWithIssns = {
-			...issue,
-			metadata: { ...issue.metadata, printIssn: '1234-5679', electronicIssn: '2644-2353' },
-		};
-		const { deposit } = createDeposit(
-			{
-				collection: issueWithIssns,
-				collectionPub: makeCollectionPub(issueWithIssns, pub),
-				pub,
-			},
-			'pub',
+	it('uses the community ISSNs for an issue without its own', () => {
+		const metadata = issueDeposit(
+			{ electronicIssn: '2644-2353' },
+			{ printIssn: '', electronicIssn: 'not an issn' },
 		);
-		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([
-			{ '@media_type': 'print', '#text': '12345679' },
-			{ '@media_type': 'electronic', '#text': '26442353' },
-		]);
+		expect(metadata.full_title).toEqual('PubPub Dev');
+		expect(metadata.issn).toEqual([{ '@media_type': 'electronic', '#text': '26442353' }]);
 	});
 
-	it('accepts an ISSN written with an en dash and spaces', () => {
+	it('accepts an ISSN written with a label, an en dash, and invisible characters', () => {
 		const { deposit } = createDeposit(
-			{ community: { ...community, electronicIssn: ' 2637\u20136091 ' }, pub },
+			{ community: { ...community, electronicIssn: 'ISSN \u200b2637\u20136091 (online)' }, pub },
 			'pub',
 		);
 		expect(deposit.doi_batch.body.journal.journal_metadata.issn).toEqual([

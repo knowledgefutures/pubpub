@@ -12,11 +12,13 @@ import {
 import { login, modelize, setup } from 'stubstub';
 import { redepositDoisTask } from 'workers/tasks/redepositDois';
 
+import { clearIssnGateCache } from '../issnGate';
 import { setDoiData } from '../queries';
 import { getRedepositPlan, RedepositError, runRedeposit } from '../redeposit';
 
 const models = modelize`
 	Community community {
+		title: "Test Journal"
 		electronicIssn: "2644-2353"
 		Pub articlePub {
 			Release {}
@@ -86,7 +88,12 @@ const {
 	submitDoiData: vi.fn(),
 	addWorkerTask: vi.fn(),
 	getCrossrefWork: vi.fn(),
-	getCrossrefJournal: vi.fn(),
+	// A matching journal record by default, so setup deposits keep their ISSN.
+	getCrossrefJournal: vi.fn().mockResolvedValue({
+		state: 'found',
+		title: 'Test Journal',
+		issns: [{ value: '2644-2353', type: 'electronic' }],
+	}),
 	fetchSubmissionResult: vi.fn(),
 	validatePubRelationshipsForDeposit: vi.fn(),
 }));
@@ -228,10 +235,11 @@ setup(beforeAll, async () => {
 
 beforeEach(() => {
 	validatePubRelationshipsForDeposit.mockResolvedValue([]);
+	clearIssnGateCache();
 	getCrossrefJournal.mockResolvedValue({
 		state: 'found',
-		title: 'Something else entirely',
-		issns: [{ value: '2644-2353', type: 'print' }],
+		title: 'Test Journal',
+		issns: [{ value: '2644-2353', type: 'electronic' }],
 	});
 	getCrossrefWork.mockImplementation(async (doi) => {
 		if (doi in crossrefWorks) {
@@ -269,6 +277,11 @@ afterEach(() => {
 describe('planning', () => {
 	it('includes only DOIs PubPub deposited, and warns about the ISSN', async () => {
 		const { community, issue } = models;
+		getCrossrefJournal.mockResolvedValue({
+			state: 'found',
+			title: 'Something else entirely',
+			issns: [{ value: '2644-2353', type: 'print' }],
+		});
 		const plan = await getRedepositPlan(community.id);
 		expect(plan.community).toMatchObject({ electronicIssn: '26442353', printIssn: null });
 		expect(plan.items[0].id).toEqual(issue.id);
@@ -302,6 +315,21 @@ describe('checks before sending', () => {
 		]);
 		expect(journal.journal_article.doi_data.resource['@content_version']).toEqual('am');
 		expect(journal.journal_article.doi_data.doi).toEqual(await doiOf(manuscriptPub));
+	});
+
+	it('reports an ISSN it had to leave out', async () => {
+		getCrossrefJournal.mockResolvedValue({
+			state: 'found',
+			title: 'Another Journal',
+			issns: [{ value: '2644-2353', type: 'electronic' }],
+		});
+		const summary = await runFor(models.articlePub);
+		expect(summary.results[0]).toMatchObject({
+			status: 'succeeded',
+			changes: [expect.stringContaining('Left out the electronic ISSN 2644-2353')],
+		});
+		const { journal } = submitDoiData.mock.lastCall![0].doi_batch.body;
+		expect(journal.journal_metadata.issn).toBeUndefined();
 	});
 
 	it('keeps a copy of the deposit record it overwrites', async () => {

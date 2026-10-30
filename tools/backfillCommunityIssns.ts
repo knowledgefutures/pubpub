@@ -1,11 +1,13 @@
 /**
  * Fill Communities.electronicIssn and printIssn from the ISSNs editors entered on issues, checked
  * against Crossref. Reports by default; writes nothing unless --apply is passed, and then only for
- * communities marked "ready" whose ISSN fields are still empty.
+ * communities marked "ready" (plus "unverified" with --include-unverified) whose ISSN fields are
+ * still empty.
  *
  *   npm run tools backfillCommunityIssns                     # report for every community
  *   npm run tools backfillCommunityIssns -- --subdomain hdsr # one community
  *   npm run tools backfillCommunityIssns -- --apply          # write the "ready" ones
+ *   npm run tools backfillCommunityIssns -- --apply --include-unverified
  *
  * The report is written to community-issns-<timestamp>.csv.
  */
@@ -55,6 +57,7 @@ const toCsv = (proposals: BackfillProposal[]) =>
 const main = async () => {
 	const subdomain = getArgValue('--subdomain');
 	const apply = process.argv.includes('--apply');
+	const includeUnverified = process.argv.includes('--include-unverified');
 
 	const communities = await Community.findAll({
 		where: subdomain ? { subdomain } : {},
@@ -92,14 +95,36 @@ const main = async () => {
 			}),
 		);
 		proposals.push(proposal);
+	}
+
+	// One ISSN belongs to one journal, so the same one proposed for two communities needs a person.
+	const claimedBy = new Map<string, string[]>();
+	proposals.forEach((p) => {
+		[p.electronicIssn, p.printIssn].filter(Boolean).forEach((issn) => {
+			claimedBy.set(issn!, [...(claimedBy.get(issn!) ?? []), p.subdomain]);
+		});
+	});
+	proposals.forEach((p) => {
+		[p.electronicIssn, p.printIssn].filter(Boolean).forEach((issn) => {
+			const others = claimedBy.get(issn!)!.filter((subdomain) => subdomain !== p.subdomain);
+			if (others.length && p.status !== 'already set') {
+				p.status = 'needs review';
+				p.problems.push(`${issn} is also proposed for ${others.join(', ')}.`);
+			}
+		});
+	});
+
+	proposals.forEach((proposal) => {
 		const issns = `e ${proposal.electronicIssn ?? '-'}, p ${proposal.printIssn ?? '-'}`;
 		log(`${proposal.subdomain}: ${proposal.status} (${issns})`);
 		[...proposal.problems, ...proposal.issueFixes].forEach((line) => log(`    ${line}`));
-	}
+	});
 
 	const outputPath = path.resolve(`community-issns-${Date.now()}.csv`);
 	fs.writeFileSync(outputPath, toCsv(proposals));
-	const ready = proposals.filter((p) => p.status === 'ready');
+	const ready = proposals.filter(
+		(p) => p.status === 'ready' || (includeUnverified && p.status === 'unverified'),
+	);
 	const counts = proposals.reduce<Record<string, number>>(
 		(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
 		{},
@@ -107,7 +132,9 @@ const main = async () => {
 	log(`${JSON.stringify(counts)}. Report in ${outputPath}`);
 
 	if (!apply) {
-		log('Nothing written. Pass --apply to set the "ready" communities.');
+		log(
+			'Nothing written. Pass --apply to set the "ready" communities, and --include-unverified for the "unverified" ones too.',
+		);
 		process.exit(0);
 	}
 	if (!ready.length) {

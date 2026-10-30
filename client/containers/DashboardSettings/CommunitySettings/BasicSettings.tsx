@@ -85,7 +85,7 @@ const BasicSettings = (props: Props) => {
 					label="Electronic ISSN"
 					htmlFor="electronic-issn"
 					placeholder="e.g. 2644-2353"
-					helperText="Sent to Crossref with DOI deposits and used in citations. Both override ISSNs set on individual issues."
+					helperText="Used in DOI deposits and citations for pubs not in an issue, and in issues without their own ISSNs. Crossref only accepts an ISSN with the exact journal title it has registered."
 					error={getIssnError(electronicIssn)}
 					type="text"
 					value={electronicIssn ?? ''}

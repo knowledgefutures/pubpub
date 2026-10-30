@@ -12,6 +12,7 @@ const issnElements = (electronicIssn, printIssn) => {
 export default ({
 	title,
 	citeAs,
+	journalTitle,
 	electronicIssn,
 	printIssn,
 	language,
@@ -25,7 +26,7 @@ export default ({
 	journal: {
 		journal_metadata: {
 			'@language': language,
-			full_title: renderJournalCitation(kind, citeAs, title),
+			full_title: journalTitle || renderJournalCitation(kind, citeAs, title),
 			...issnElements(electronicIssn, printIssn),
 			...doiData(doi, timestamp, url, contentVersion),
 		},

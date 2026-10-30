@@ -11,16 +11,30 @@ import transformCommunity from '../transform/community';
 import transformCollection from '../transform/collection';
 import transformPub from '../transform/pub';
 
+/**
+ * A community can publish more than one journal, so an issue's own ISSNs and journal title win
+ * over the community's. The issue's ISSNs are taken as a pair, never mixed with the community's,
+ * since they may belong to a different journal. The server checks each ISSN against Crossref
+ * before sending (server/doi/issnGate.ts).
+ */
+const getIssueJournal = (collectionProps) => {
+	if (!collectionProps) return {};
+	const electronicIssn = normalizeIssn(collectionProps.electronicIssn);
+	const printIssn = normalizeIssn(collectionProps.printIssn);
+	const journalTitle = collectionProps.journalTitle?.trim();
+	return {
+		...((electronicIssn || printIssn) && { electronicIssn, printIssn }),
+		...(journalTitle && { journalTitle }),
+	};
+};
+
 export default ({ globals, community, collection, pub }) => {
 	const communityProps = transformCommunity({ globals })(community, collection);
 	const pubProps = pub && transformPub({ globals, community })(pub);
 	const collectionProps = collection && transformCollection({ globals, community })(collection);
 	return journal({
 		...communityProps,
-		// The community's ISSNs win; an issue's fill in only where the community has none.
-		electronicIssn:
-			communityProps.electronicIssn || normalizeIssn(collectionProps?.electronicIssn),
-		printIssn: communityProps.printIssn || normalizeIssn(collectionProps?.printIssn),
+		...getIssueJournal(collectionProps),
 		timestamp: globals.timestamp,
 		children: {
 			...(collectionProps && journalIssue(collectionProps)),

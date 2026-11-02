@@ -9,8 +9,8 @@
  *   OIDC_ISSUER_INTERNAL_URL — server-to-server URL for Docker (falls back to OIDC_ISSUER_URL)
  *   OIDC_CLIENT_ID           — OAuth client ID
  *   OIDC_CLIENT_SECRET       — OAuth client secret
- *   KF_SESSION_ENCRYPTION_KEY — key for the encrypted OIDC state, session-set
- *                               and refresh tokens (see "Symmetric encryption")
+ *   SESSION_ENCRYPTION_KEY   — key for the encrypted OIDC state, session-set
+ *                              and refresh tokens (see "Symmetric encryption")
  */
 
 import * as crypto from 'node:crypto';
@@ -116,14 +116,16 @@ async function fetchWithTimeout(
 // custom-domain session-set token, and the refresh token stored on the session
 // (sessionCheck.ts).
 //
-// The key is KF_SESSION_ENCRYPTION_KEY: 32 random bytes, base64
-// (`openssl rand -base64 32`). It used to be derived from OIDC_CLIENT_SECRET,
-// so rolling the client secret logged everyone out. New values are encrypted
-// with the dedicated key when it is set; decryption tries it first and falls
-// back to the derived key, so nothing written before it was set breaks.
+// The key is SESSION_ENCRYPTION_KEY: 32 random bytes, base64
+// (`openssl rand -base64 32`). It was named KF_SESSION_ENCRYPTION_KEY, but the
+// KF console refuses a project's env file with a KF_ key. It used to be
+// derived from OIDC_CLIENT_SECRET, so rolling the client secret logged
+// everyone out. New values are encrypted with the dedicated key when it is
+// set; decryption tries it first and falls back to the derived key, so
+// nothing written before it was set breaks.
 // Without it, behaviour is unchanged.
 //
-// TODO(session-key-fallback): once KF_SESSION_ENCRYPTION_KEY has been set in
+// TODO(session-key-fallback): once SESSION_ENCRYPTION_KEY has been set in
 // production for longer than kf-auth's refresh-token lifetime (30 days), every
 // value under the derived key has been re-encrypted or has expired. Then remove
 // legacyDerivedKey() and the fallback and make the env var required. Only after
@@ -131,18 +133,18 @@ async function fetchWithTimeout(
 
 /** The dedicated session key, or null when it isn't configured. */
 function sessionKey(): Buffer | null {
-	const raw = process.env.KF_SESSION_ENCRYPTION_KEY;
+	const raw = process.env.SESSION_ENCRYPTION_KEY;
 	if (!raw) return null;
 	const key = Buffer.from(raw, 'base64');
 	if (key.length !== 32) {
 		throw new Error(
-			'KF_SESSION_ENCRYPTION_KEY must be 32 bytes, base64-encoded (openssl rand -base64 32)',
+			'SESSION_ENCRYPTION_KEY must be 32 bytes, base64-encoded (openssl rand -base64 32)',
 		);
 	}
 	return key;
 }
 
-/** The key used before KF_SESSION_ENCRYPTION_KEY, derived from the client secret. */
+/** The key used before SESSION_ENCRYPTION_KEY, derived from the client secret. */
 function legacyDerivedKey(): Buffer {
 	return crypto.createHash('sha256').update(OIDC_CLIENT_SECRET).digest();
 }

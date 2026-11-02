@@ -43,8 +43,8 @@ afterEach(() => {
 });
 
 describe('session payload encryption', () => {
-	it('round-trips with KF_SESSION_ENCRYPTION_KEY, encrypting under that key', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+	it('round-trips with SESSION_ENCRYPTION_KEY, encrypting under that key', () => {
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const token = encryptPayload({ t: 'refresh-token' });
 		expect(decryptPayload(token)).toEqual({ t: 'refresh-token' });
 		expect(decryptPayloadWithKeyInfo(token)).toEqual({
@@ -56,15 +56,15 @@ describe('session payload encryption', () => {
 	});
 
 	it('still decrypts a value encrypted under the key derived from the client secret', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', '');
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', '');
 		const legacyToken = encryptPayload({ v: 'verifier', h: 'host', r: '/' });
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		expect(decryptPayload(legacyToken)).toEqual({ v: 'verifier', h: 'host', r: '/' });
 		expect(decryptPayloadWithKeyInfo(legacyToken)?.needsReencrypt).toBe(true);
 	});
 
-	it('behaves as before when KF_SESSION_ENCRYPTION_KEY is unset', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', '');
+	it('behaves as before when SESSION_ENCRYPTION_KEY is unset', () => {
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', '');
 		const token = encryptPayload({ u: 'user' });
 		expect(decryptWith(token, legacyKey)).toEqual({ u: 'user' });
 		expect(decryptPayloadWithKeyInfo(token)).toEqual({
@@ -74,15 +74,15 @@ describe('session payload encryption', () => {
 	});
 
 	it('returns null for a value encrypted under a different key', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', OTHER_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', OTHER_KEY);
 		const token = encryptPayload({ t: 'refresh-token' });
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		expect(decryptPayload(token)).toBeNull();
 		expect(decryptPayloadWithKeyInfo(token)).toBeNull();
 	});
 
 	it('returns null for a tampered or malformed value', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const buf = Buffer.from(encryptPayload({ t: 'refresh-token' }), 'base64url');
 		buf[buf.length - 1] = (buf[buf.length - 1] + 1) % 256;
 		expect(decryptPayload(buf.toString('base64url'))).toBeNull();
@@ -91,12 +91,12 @@ describe('session payload encryption', () => {
 	});
 
 	it('refuses a key that is not 32 bytes', () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', Buffer.alloc(16).toString('base64'));
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', Buffer.alloc(16).toString('base64'));
 		expect(() => encryptPayload({})).toThrow(/32 bytes/);
 		expect(() => decryptPayload('anything')).toThrow(/32 bytes/);
 
 		// ...and the env schema refuses it at startup.
-		const schema = envSchema.shape.KF_SESSION_ENCRYPTION_KEY;
+		const schema = envSchema.shape.SESSION_ENCRYPTION_KEY;
 		expect(schema.safeParse(Buffer.alloc(16).toString('base64')).success).toBe(false);
 		expect(schema.safeParse(SESSION_KEY).success).toBe(true);
 		expect(schema.safeParse(undefined).success).toBe(true);
@@ -118,10 +118,10 @@ describe('stored refresh token', () => {
 		vi.mocked(introspectRefreshToken).mockResolvedValue({ active: true, sid: 'kf-session' });
 	});
 
-	it('is re-encrypted under KF_SESSION_ENCRYPTION_KEY on its next check', async () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', '');
+	it('is re-encrypted under SESSION_ENCRYPTION_KEY on its next check', async () => {
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', '');
 		const legacyToken = encryptPayload({ t: 'refresh-token' });
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const { req, session } = fakeSession(legacyToken);
 
 		expect(await checkKfSession(req, {} as any)).toBe(true);
@@ -136,9 +136,9 @@ describe('stored refresh token', () => {
 
 	it('is re-encrypted even when the check fails transiently', async () => {
 		vi.mocked(introspectRefreshToken).mockRejectedValue(new Error('timeout'));
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', '');
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', '');
 		const legacyToken = encryptPayload({ t: 'refresh-token' });
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const { req, session } = fakeSession(legacyToken);
 
 		expect(await checkKfSession(req, {} as any)).toBe(true);
@@ -148,8 +148,8 @@ describe('stored refresh token', () => {
 		expect(session.save).toHaveBeenCalled();
 	});
 
-	it('is left alone when already under KF_SESSION_ENCRYPTION_KEY', async () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+	it('is left alone when already under SESSION_ENCRYPTION_KEY', async () => {
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const token = encryptPayload({ t: 'refresh-token' });
 		const { req, session } = fakeSession(token);
 
@@ -157,8 +157,8 @@ describe('stored refresh token', () => {
 		expect(session.kfRefreshToken).toBe(token);
 	});
 
-	it('is left under the derived key when KF_SESSION_ENCRYPTION_KEY is unset', async () => {
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', '');
+	it('is left under the derived key when SESSION_ENCRYPTION_KEY is unset', async () => {
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', '');
 		const token = encryptPayload({ t: 'refresh-token' });
 		const { req, session } = fakeSession(token);
 
@@ -168,9 +168,9 @@ describe('stored refresh token', () => {
 
 	it('tears the session down when it cannot be decrypted', async () => {
 		const { logout } = await import('server/utils/logout');
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', OTHER_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', OTHER_KEY);
 		const token = encryptPayload({ t: 'refresh-token' });
-		vi.stubEnv('KF_SESSION_ENCRYPTION_KEY', SESSION_KEY);
+		vi.stubEnv('SESSION_ENCRYPTION_KEY', SESSION_KEY);
 		const { req } = fakeSession(token);
 
 		expect(await checkKfSession(req, {} as any)).toBe(false);

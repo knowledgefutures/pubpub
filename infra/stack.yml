@@ -1,8 +1,4 @@
-# Deployed by infra/deploy-remote.sh (from .github/workflows/deploy.yml). The
-# app's values come from the KF console and never touch disk: the deploy adds a
-# second compose file, before this one, that lists their names for app, worker,
-# cron and pubstash, and docker fills them from its environment. A value set
-# here wins over the console's.
+# Deployed by infra/deploy-remote.sh; app values come from the KF console.
 services:
     proxy:
         image: caddy:2.11

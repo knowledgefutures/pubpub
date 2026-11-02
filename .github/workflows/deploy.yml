@@ -22,8 +22,7 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
-  # Dispatch on main deploys DuqDuq; on a v* tag, production. The console
-  # hands nothing to a run on any other ref.
+  # main deploys DuqDuq; a v* tag deploys production.
   workflow_dispatch:
     inputs:
       skip_ci_check:
@@ -42,15 +41,9 @@ on:
 permissions: {}
 
 jobs:
-  # Builds and pushes the image. It runs the repo's build and its
-  # dependencies, so it gets no OIDC token: nothing here can ask the console
-  # for anything.
   build:
     name: Build
     runs-on: ubuntu-latest
-    # A workflow_run runs main's workflow for whatever CI run finished, a
-    # fork's pull request included (its head branch can be called "main"), and
-    # head_sha is that run's code: only a push to this repo's main deploys.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'release' ||
@@ -72,8 +65,6 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           persist-credentials: false
 
-      # Production is a v* tag (a release, or a dispatch on the tag); main is
-      # DuqDuq. The console checks the same ref against its deploy policy.
       - name: Set deployment vars
         id: vars
         env:
@@ -93,7 +84,6 @@ jobs:
             echo "::error::${REF}: dispatch on main (DuqDuq) or a v* tag (production); the console hands nothing to another ref"
             exit 1
           fi
-          # It goes into the server's command line: nothing but a tag's characters.
           if [[ ! "$image_tag" =~ ^[A-Za-z0-9._-]+$ ]]; then
             echo "::error::image tag ${image_tag} has characters a deploy won't send"
             exit 1
@@ -135,12 +125,7 @@ jobs:
             ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  # Deploys what build pushed. It runs only checkout, kf, ssh and curl: the
-  # one job with an OIDC token, so the only code that can ask the console for
-  # the environment's values and SSH key. It runs in the GitHub Environment
-  # (dev or production) the console's deploy policy names, so it waits for
-  # whatever protection that Environment has, and no run outside it gets
-  # anything.
+  # Secrets and the SSH key come from the KF console.
   deploy:
     name: Deploy
     needs: build
@@ -156,7 +141,6 @@ jobs:
       KF_CONSOLE_URL: ${{ vars.KF_CONSOLE_URL || 'https://console.knowledgefutures.org' }}
 
     steps:
-      # For infra/deploy-remote.sh at the commit being deployed.
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -168,17 +152,11 @@ jobs:
         with:
           node-version: 24
 
-      # The environment's SSH key into an ssh-agent, from a pipe, for an hour;
-      # DEPLOY_KNOWN_HOSTS into known_hosts (no ssh-keyscan); DEPLOY_HOST,
-      # DEPLOY_USER and DEPLOY_PORT, checked, as outputs. All from the console,
-      # for this run.
       - name: Load the deploy key
         id: ssh
         run: $KF ci ssh-agent -e "$ENVIRONMENT"
 
-      # The app's values go from the console to the server through this pipe:
-      # never to a file here, never to one there (infra/deploy-remote.sh).
-      # The first line is this job's GITHUB_TOKEN, for the server's image pull.
+      # Registry token, then the app's values, piped to infra/deploy-remote.sh.
       - name: Deploy over SSH
         env:
           DEPLOY_USER: ${{ steps.ssh.outputs.DEPLOY_USER }}
@@ -188,8 +166,7 @@ jobs:
           REGISTRY_USER: ${{ github.actor }}
           REPO: ${{ github.repository }}
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
-          # Only for a server whose swarm isn't set up yet: the address to
-          # advertise. A variable on the GitHub Environment, not a secret.
+          # Only used to init a new swarm.
           SWARM_ADDR: ${{ vars.SWARM_ADDR }}
         run: |
           set -euo pipefail
@@ -206,10 +183,6 @@ jobs:
           } | ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "${port[@]}" -l "$DEPLOY_USER" -- "$DEPLOY_HOST" \
             "bash -c \"\$(echo $remote | base64 -d)\" deploy '$REPO' '$IMAGE_TAG' '$REGISTRY_USER' main '$SWARM_ADDR'"
 
-      # From the runner, after the rollout, and as before only for production.
-      # The Fastly key is the deploy's, not the app's, so it stays a GitHub
-      # secret (best moved onto the production Environment) rather than a
-      # console value, and is no longer on the server's command line.
       - name: Purge the cache
         if: needs.build.outputs.environment == 'production'
         env:

@@ -116,13 +116,12 @@ async function fetchWithTimeout(
 // custom-domain session-set token, and the refresh token stored on the session
 // (sessionCheck.ts).
 //
-// The key is SESSION_ENCRYPTION_KEY: 32 random bytes, base64
-// (`openssl rand -base64 32`). It was named KF_SESSION_ENCRYPTION_KEY, but the
-// KF console refuses a project's env file with a KF_ key. It used to be
-// derived from OIDC_CLIENT_SECRET, so rolling the client secret logged
-// everyone out. New values are encrypted with the dedicated key when it is
-// set; decryption tries it first and falls back to the derived key, so
-// nothing written before it was set breaks.
+// The key is SESSION_ENCRYPTION_KEY (formerly KF_SESSION_ENCRYPTION_KEY): 32
+// random bytes, base64 (`openssl rand -base64 32`). It used to be derived from
+// OIDC_CLIENT_SECRET, so rolling the client secret logged everyone out. New
+// values are encrypted with the dedicated key when it is set; decryption tries
+// it first and falls back to the derived key, so nothing written before it was
+// set breaks.
 // Without it, behaviour is unchanged.
 //
 // TODO(session-key-fallback): once SESSION_ENCRYPTION_KEY has been set in

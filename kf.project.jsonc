@@ -5,14 +5,10 @@
 	"name": "PubPub",
 	"account": "kf",
 
-	// Deployed by .github/workflows/deploy.yml to Docker Swarm on PubPub's own
-	// servers, not by the console. The console keeps each environment's key and
-	// SSH deploy key, and hands its values to that workflow's run on its ref
-	// (kf ci ssh-agent, kf ci secrets --runtime). The sops config is
-	// infra/.sops.yaml.
+	// Deployed by .github/workflows/deploy.yml; secrets come from the console.
 	"environments": {
 		"production": {
-			"ref": "tags/v*", // a published release's tag
+			"ref": "tags/v*",
 			"secrets": ["infra/.env.enc"],
 			"elsewhere": { "workflow": ".github/workflows/deploy.yml" }
 		},

@@ -95,6 +95,14 @@ pnpm secrets:decrypt:local   # infra/.env.local.enc → infra/.env.local
 pnpm secrets:encrypt:local   # infra/.env.local → infra/.env.local.enc (after changes)
 ```
 
+DuqDuq (`dev`) and production values live in `infra/.env.dev.enc` and
+`infra/.env.enc`, and the KF console holds each environment's key. Change them with
+`kf secrets set <KEY> -e dev` or `-e production`; production's file is encrypted only to
+the console and the break-glass keys, so its writes go through the console.
+`.github/workflows/deploy.yml` asks the console for the values (`kf ci secrets --runtime`)
+and pipes them over ssh to `infra/deploy-remote.sh`, which hands them to
+`docker stack deploy` without writing them to disk. No server needs an age key.
+
 ### Troubleshooting
 
 **`env file infra/.env.local not found`**

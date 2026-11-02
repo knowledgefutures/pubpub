@@ -4,6 +4,7 @@ run-name: >-
   ${{
     github.event_name == 'workflow_run' && format('Deploy dev: {0}', github.event.workflow_run.head_commit.message) ||
     github.event_name == 'release' && format('Deploy prod: {0}', github.event.release.tag_name) ||
+    startsWith(github.ref, 'refs/tags/v') && format('Deploy prod: {0}', github.ref_name) ||
     format('Deploy dev: {0}', github.sha)
   }}
 
@@ -21,6 +22,8 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
+  # Dispatch on main deploys DuqDuq; on a v* tag, production. The console
+  # hands nothing to a run on any other ref.
   workflow_dispatch:
     inputs:
       skip_ci_check:
@@ -36,63 +39,88 @@ on:
   release:
     types: [published]
 
+permissions: {}
+
 jobs:
-  deploy:
+  # Builds and pushes the image. It runs the repo's build and its
+  # dependencies, so it gets no OIDC token: nothing here can ask the console
+  # for anything.
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    if: |
+    # A workflow_run runs main's workflow for whatever CI run finished, a
+    # fork's pull request included (its head branch can be called "main"), and
+    # head_sha is that run's code: only a push to this repo's main deploys.
+    if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'release' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     permissions:
       contents: read
       packages: write
-      id-token: write
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+      environment: ${{ steps.vars.outputs.environment }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
 
+      # Production is a v* tag (a release, or a dispatch on the tag); main is
+      # DuqDuq. The console checks the same ref against its deploy policy.
       - name: Set deployment vars
         id: vars
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
         run: |
-          if [[ "${{ github.event_name }}" == "release" ]]; then
-            echo "image_tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
-            echo "host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_OUTPUT
-            echo "swarm_addr=${{ secrets.SWARM_ADDR_PROD }}" >> $GITHUB_OUTPUT
-            echo "env_file=.env.enc" >> $GITHUB_OUTPUT
-            echo "cache_api_key=${{ secrets.CACHE_API_KEY }}" >> $GITHUB_OUTPUT
-            echo "cache_purge_all_url=${{ secrets.CACHE_PURGE_ALL_URL }}" >> $GITHUB_OUTPUT
-            echo "cache_purge_host_url=${{ secrets.CACHE_PURGE_HOST_URL }}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          if [[ "$EVENT" == "release" || "$REF" == refs/tags/v* ]]; then
+            image_tag="${RELEASE_TAG:-${REF#refs/tags/}}"
+            environment=production
+          elif [[ "$REF" == refs/heads/main ]]; then
+            image_tag="$SHA"
+            environment=dev
           else
-            echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
-            echo "host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_OUTPUT
-            echo "swarm_addr=${{ secrets.SWARM_ADDR_DEV }}" >> $GITHUB_OUTPUT
-            echo "env_file=.env.dev.enc" >> $GITHUB_OUTPUT
+            echo "::error::${REF}: dispatch on main (DuqDuq) or a v* tag (production); the console hands nothing to another ref"
+            exit 1
           fi
+          # It goes into the server's command line: nothing but a tag's characters.
+          if [[ ! "$image_tag" =~ ^[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::image tag ${image_tag} has characters a deploy won't send"
+            exit 1
+          fi
+          {
+            echo "image_tag=${image_tag}"
+            echo "environment=${environment}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          # This secret.GITHUB_TOKEN is generated automatically per workflow
-          # run from the permissions block above
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels)
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: ghcr.io/${{ github.repository }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           file: ./Dockerfile
@@ -107,196 +135,103 @@ jobs:
             ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
+  # Deploys what build pushed. It runs only checkout, kf, ssh and curl: the
+  # one job with an OIDC token, so the only code that can ask the console for
+  # the environment's values and SSH key. It runs in the GitHub Environment
+  # (dev or production) the console's deploy policy names, so it waits for
+  # whatever protection that Environment has, and no run outside it gets
+  # anything.
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ needs.build.outputs.environment }}
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
+    env:
+      ENVIRONMENT: ${{ needs.build.outputs.environment }}
+      KF: npx --yes --ignore-scripts @knowledgefutures/kf@0.7.0
+      KF_CONSOLE_URL: ${{ vars.KF_CONSOLE_URL || 'https://console.knowledgefutures.org' }}
+
+    steps:
+      # For infra/deploy-remote.sh at the commit being deployed.
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
 
-      - name: Add known hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ steps.vars.outputs.host }}" >> ~/.ssh/known_hosts
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
 
+      # The environment's SSH key into an ssh-agent, from a pipe, for an hour;
+      # DEPLOY_KNOWN_HOSTS into known_hosts (no ssh-keyscan); DEPLOY_HOST,
+      # DEPLOY_USER and DEPLOY_PORT, checked, as outputs. All from the console,
+      # for this run.
+      - name: Load the deploy key
+        id: ssh
+        run: $KF ci ssh-agent -e "$ENVIRONMENT"
+
+      # The app's values go from the console to the server through this pipe:
+      # never to a file here, never to one there (infra/deploy-remote.sh).
+      # The first line is this job's GITHUB_TOKEN, for the server's image pull.
       - name: Deploy over SSH
         env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ steps.vars.outputs.host }}
+          DEPLOY_USER: ${{ steps.ssh.outputs.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ steps.ssh.outputs.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ steps.ssh.outputs.DEPLOY_PORT }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.actor }}
           REPO: ${{ github.repository }}
-          BRANCH: ${{ github.ref_name }}
-          GHCR_USER: ${{ secrets.GHCR_USER }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
-          SWARM_ADDR: ${{ steps.vars.outputs.swarm_addr }}
-          ENV_FILE: ${{ steps.vars.outputs.env_file }}
-          CACHE_API_KEY: ${{ steps.vars.outputs.cache_api_key }}
-          CACHE_PURGE_ALL_URL: ${{ steps.vars.outputs.cache_purge_all_url }}
-          CACHE_PURGE_HOST_URL: ${{ steps.vars.outputs.cache_purge_host_url }}
-
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          # Only for a server whose swarm isn't set up yet: the address to
+          # advertise. A variable on the GitHub Environment, not a secret.
+          SWARM_ADDR: ${{ vars.SWARM_ADDR }}
         run: |
-          ssh "${SSH_USER}@${SSH_HOST}" \
-            "env GHCR_USER='${GHCR_USER}' GHCR_TOKEN='${GHCR_TOKEN}' IMAGE_TAG='${IMAGE_TAG}' SWARM_ADDR='${SWARM_ADDR}' ENV_FILE='${ENV_FILE}' CACHE_API_KEY='${CACHE_API_KEY}' CACHE_PURGE_ALL_URL='${CACHE_PURGE_ALL_URL}' CACHE_PURGE_HOST_URL='${CACHE_PURGE_HOST_URL}' bash -s -- '${REPO}' '${BRANCH}'" <<'EOS'
-            set -euo pipefail
+          set -euo pipefail
+          if [[ ! "$SWARM_ADDR" =~ ^[A-Za-z0-9.:_-]*$ ]]; then
+            echo "::error::SWARM_ADDR has characters a deploy won't send"
+            exit 1
+          fi
+          port=()
+          if [[ -n "$DEPLOY_PORT" ]]; then port=(-p "$DEPLOY_PORT"); fi
+          remote=$(base64 -w0 infra/deploy-remote.sh)
+          {
+            printf '%s\n' "$REGISTRY_TOKEN"
+            $KF ci secrets --runtime -e "$ENVIRONMENT"
+          } | ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "${port[@]}" -l "$DEPLOY_USER" -- "$DEPLOY_HOST" \
+            "bash -c \"\$(echo $remote | base64 -d)\" deploy '$REPO' '$IMAGE_TAG' '$REGISTRY_USER' main '$SWARM_ADDR'"
 
-            REPO="${1:?missing repo}"
-            BRANCH="${2:-main}"
-
-            : "${IMAGE_TAG:?missing IMAGE_TAG}"
-            DEPLOY_REF="$IMAGE_TAG"
-
-            : "${GHCR_USER:?missing GHCR_USER}"
-            : "${GHCR_TOKEN:?missing GHCR_TOKEN}"
-
-            REPO_NAME="${REPO##*/}"
-            APP_DIR="/srv/${REPO_NAME}"
-            REPO_SSH="git@github.com:${REPO}.git"
-
-            if [[ -z "$REPO_NAME" || -z "$APP_DIR" ]]; then
-              echo "Bad derived paths: REPO='$REPO' REPO_NAME='$REPO_NAME' APP_DIR='$APP_DIR'"
-              exit 1
-            fi
-
-            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-            chmod 600 ~/.ssh/known_hosts
-
-             if [[ ! -d "${APP_DIR}/.git" ]]; then
-              sudo mkdir -p "${APP_DIR}"
-              sudo chown -R "$USER:$USER" "${APP_DIR}"
-              git clone --branch "${BRANCH}" "${REPO_SSH}" "${APP_DIR}"
-            fi
-
-            cd "${APP_DIR}"
-            git fetch --prune --tags origin
-            git checkout --detach "${DEPLOY_REF}"
-            APP_COMMIT="$(git rev-parse HEAD)"
-
-            if [[ -z "$APP_COMMIT" ]]; then
-              echo "Unable to resolve APP_COMMIT from DEPLOY_REF='${DEPLOY_REF}'"
-              exit 1
-            fi
-
-            cd infra
-            umask 077
-
-            : "${ENV_FILE:?missing ENV_FILE}"
-            sops -d --input-type dotenv --output-type dotenv "$ENV_FILE" > .env
-
-            # one-time / idempotent
-            if ! sudo docker info --format '{{.Swarm.LocalNodeState}}' | grep -qx active; then
-              : "${SWARM_ADDR:?missing SWARM_ADDR}"
-              sudo docker swarm init --advertise-addr "$SWARM_ADDR"
-            fi
-
-            echo "$GHCR_TOKEN" | sudo docker login ghcr.io -u "$GHCR_USER" --password-stdin
-
-            echo "IMAGE_TAG in shell: [$IMAGE_TAG]"
-            echo "APP_COMMIT in shell: [$APP_COMMIT]"
-            
-            # Reclaim disk BEFORE the pull and the rollout, never during it.
-            #
-            # This used to run immediately after `docker stack deploy`, which is the
-            # worst possible moment. The rolling update is still in flight there, so
-            # the prune raced Swarm's own containers, and any task that had already
-            # exited had its container -- and therefore its logs -- deleted before
-            # anyone could read them. It also meant the big image pull happened while
-            # the disk was still full, on a box with a history of disk pressure.
-            echo "--- disk before cleanup ---"
-            df -h /var/lib/docker 2>/dev/null || df -h /
-            sudo docker container prune -f
-            sudo docker image prune -a --filter "until=72h" -f
-            echo "--- disk after cleanup ---"
-            df -h /var/lib/docker 2>/dev/null || df -h /
-
-            # For some reason, not pulling explicitly makes the docker stack deploy throw an error that it can't find the package.
-            sudo docker pull ghcr.io/knowledgefutures/pubpub:"$IMAGE_TAG"
-
-            # deploy/update stack
-            sudo env IMAGE_TAG="$IMAGE_TAG" APP_COMMIT="$APP_COMMIT" docker stack deploy -c stack.yml --with-registry-auth --resolve-image always --prune pubpub
-
-            # show progress
-            sudo docker stack services pubpub
-
-            # Dump everything needed to diagnose a failed rollout. Tasks that exit
-            # during an update are short-lived and their containers are gone soon
-            # after, so the only reliable moment to read them is right now, in the
-            # job that just watched them fail.
-            dump_rollout_failure() {
-              svc="$1"
-              echo "--- $svc update status ---"
-              sudo docker service inspect "$svc" --format '{{json .UpdateStatus}}' 2>/dev/null || true
-              echo "--- $svc tasks ---"
-              sudo docker service ps "$svc" --no-trunc 2>/dev/null || true
-              echo "--- $svc service logs (last 200 lines, all tasks) ---"
-              sudo docker service logs "$svc" --timestamps --tail 200 2>&1 || true
-              echo "--- logs for tasks that are not Running ---"
-              sudo docker service ps "$svc" --no-trunc --format '{{.ID}} {{.CurrentState}}' 2>/dev/null \
-                | awk '$2 != "Running" { print $1 }' \
-                | head -5 \
-                | while read -r task; do
-                    echo "--- task $task ---"
-                    sudo docker service logs "$task" --timestamps --tail 100 2>&1 || true
-                  done
-              echo "--- disk ---"
-              df -h /var/lib/docker 2>/dev/null || df -h /
-            }
-
-            # wait until rollout is complete and then clear cache
-            wait_rollout() {
-              echo "Beginning wait for rollout..."
-              svc="$1"
-              timeout="${2:-600}"
-              end=$((SECONDS+timeout))
-
-              while (( SECONDS < end )); do
-                desired="$(sudo docker service inspect "$svc" --format '{{.Spec.Mode.Replicated.Replicas}}' 2>/dev/null || echo "")"
-                running="$(sudo docker service ps "$svc" --filter desired-state=running --format '{{.CurrentState}}' 2>/dev/null | grep -c '^Running' || true)"
-                state="$(sudo docker service inspect "$svc" --format '{{if .UpdateStatus}}{{.UpdateStatus.State}}{{end}}' 2>/dev/null || echo "")"
-                echo "  $svc: desired=$desired running=$running state=$state"
-
-                # Terminal failure states. Swarm has already given up and reverted, so
-                # polling on until the timeout only buries the reason under 600s of
-                # identical lines -- and `desired == running` stays true throughout,
-                # because the OLD tasks are healthy.
-                case "$state" in
-                  rollback_completed|rollback_started|rollback_paused|paused)
-                    echo "::error::$svc update failed (state=$state) -- Swarm reverted to the previous version. The new image is NOT deployed."
-                    dump_rollout_failure "$svc"
-                    return 1
-                    ;;
-                esac
-
-                if [[ -n "$desired" && "$running" == "$desired" ]] && { [[ -z "$state" ]] || [[ "$state" == "completed" ]]; }; then
-                  echo "  $svc rollout complete"
-                  return 0
-                fi
-
-                sleep 5
-              done
-
-              echo "::error::Rollout timeout for $svc after ${timeout}s"
-              dump_rollout_failure "$svc"
-              return 1
-            }
-
-            wait_rollout pubpub_app 600
-            wait_rollout pubpub_worker 300
-            wait_rollout pubpub_pubstash 300
-            wait_rollout pubpub_cron 300
-
-            if [[ -n "${CACHE_API_KEY:-}" ]]; then
-              if [[ -n "${CACHE_PURGE_ALL_URL:-}" ]]; then
-                curl -fsS -X POST \
-                  -H "Fastly-Key: $CACHE_API_KEY" \
-                  -H "Fastly-Soft-Purge: 1" \
-                  "$CACHE_PURGE_ALL_URL"
-                echo "Cache: soft purged all"
-              fi
-
-              if [[ -n "${CACHE_PURGE_HOST_URL:-}" ]]; then
-                curl -fsS -X POST \
-                  -H "Fastly-Key: $CACHE_API_KEY" \
-                  "$CACHE_PURGE_HOST_URL"
-                echo "Cache: purged host"
-              fi
-            fi
-
-          EOS
+      # From the runner, after the rollout, and as before only for production.
+      # The Fastly key is the deploy's, not the app's, so it stays a GitHub
+      # secret (best moved onto the production Environment) rather than a
+      # console value, and is no longer on the server's command line.
+      - name: Purge the cache
+        if: needs.build.outputs.environment == 'production'
+        env:
+          CACHE_API_KEY: ${{ secrets.CACHE_API_KEY }}
+          CACHE_PURGE_ALL_URL: ${{ secrets.CACHE_PURGE_ALL_URL }}
+          CACHE_PURGE_HOST_URL: ${{ secrets.CACHE_PURGE_HOST_URL }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$CACHE_API_KEY" ]]; then
+            echo "No CACHE_API_KEY: cache not purged"
+            exit 0
+          fi
+          if [[ -n "$CACHE_PURGE_ALL_URL" ]]; then
+            curl -fsS -X POST \
+              -H "Fastly-Key: $CACHE_API_KEY" \
+              -H "Fastly-Soft-Purge: 1" \
+              "$CACHE_PURGE_ALL_URL"
+            echo "Cache: soft purged all"
+          fi
+          if [[ -n "$CACHE_PURGE_HOST_URL" ]]; then
+            curl -fsS -X POST \
+              -H "Fastly-Key: $CACHE_API_KEY" \
+              "$CACHE_PURGE_HOST_URL"
+            echo "Cache: purged host"
+          fi

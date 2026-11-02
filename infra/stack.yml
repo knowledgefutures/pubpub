@@ -1,7 +1,11 @@
+# Deployed by infra/deploy-remote.sh (from .github/workflows/deploy.yml). The
+# app's values come from the KF console and never touch disk: the deploy adds a
+# second compose file, before this one, that lists their names for app, worker,
+# cron and pubstash, and docker fills them from its environment. A value set
+# here wins over the console's.
 services:
     proxy:
         image: caddy:2.11
-        env_file: [.env]
         ports:
             - target: 80
               published: 80
@@ -23,7 +27,6 @@ services:
 
     app:
         image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
-        env_file: [.env]
         environment:
             NODE_ENV: production
             PORT: '3000'
@@ -58,7 +61,6 @@ services:
 
     worker:
         image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
-        env_file: [.env]
         environment:
             NODE_ENV: production
             APP_COMMIT: '${APP_COMMIT:-}'
@@ -124,7 +126,6 @@ services:
                 condition: any
     cron:
         image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
-        env_file: [.env]
         environment:
             NODE_ENV: production
             APP_COMMIT: '${APP_COMMIT:-}'
@@ -146,7 +147,6 @@ services:
 
     pubstash:
         image: ghcr.io/knowledgefutures/pubpub:${IMAGE_TAG}
-        env_file: [.env]
         environment:
             NODE_ENV: production
             PORT: '8080'

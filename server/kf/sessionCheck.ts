@@ -91,7 +91,7 @@ async function doCheck(req: Request, res: Response): Promise<boolean> {
 		return false;
 	}
 	// Written under the key derived from the client secret: move it to
-	// KF_SESSION_ENCRYPTION_KEY. Both paths below save the session.
+	// SESSION_ENCRYPTION_KEY. Both paths below save the session.
 	// TODO(session-key-fallback): remove with the fallback in oidc.server.ts.
 	if (decrypted.needsReencrypt) {
 		session.kfRefreshToken = encryptPayload({ t: refreshToken });

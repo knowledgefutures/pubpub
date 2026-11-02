@@ -95,6 +95,10 @@ pnpm secrets:decrypt:local   # infra/.env.local.enc → infra/.env.local
 pnpm secrets:encrypt:local   # infra/.env.local → infra/.env.local.enc (after changes)
 ```
 
+DuqDuq (`dev`) and production values are in `infra/.env.dev.enc` and `infra/.env.enc`.
+Change them with `kf secrets set <KEY> -e dev` or `-e production`. Deploys get them from
+the KF console.
+
 ### Troubleshooting
 
 **`env file infra/.env.local not found`**

@@ -223,7 +223,7 @@ export const envSchema = z.object({
 
 	// ── Session ─────────────────────────────────────────────────────────
 	SESSION_SECRET: z.string().min(1).describe('Secret for signing session cookies'),
-	KF_SESSION_ENCRYPTION_KEY: z
+	SESSION_ENCRYPTION_KEY: z
 		.string()
 		.refine(
 			(v) => v === '' || Buffer.from(v, 'base64').length === 32,

@@ -4,6 +4,7 @@ import type { MemberPermission } from 'types';
 import { Op } from 'sequelize';
 
 import { CollectionPub, Member } from 'server/models';
+import { getInheritedCommunityMember } from 'server/orgMember/queries';
 import { getMemberDataById } from 'server/utils/queryHelpers';
 import { expect } from 'utils/assert';
 
@@ -108,5 +109,8 @@ export const isUserMemberOfScope = async (options: IsUserMemberOfScopeOptions) =
 		return false;
 	}
 	const membersOfScope = await getMembersForScope(scope);
-	return membersOfScope.some((member) => member.userId === userId);
+	if (membersOfScope.some((member) => member.userId === userId)) {
+		return true;
+	}
+	return !!(await getInheritedCommunityMember(userId, { id: scope.communityId }));
 };

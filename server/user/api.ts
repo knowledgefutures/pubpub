@@ -2,6 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import { z } from 'zod';
 
+import { getCommunityIdsFromOrgMemberships } from 'server/orgMember/queries';
 import { verifyCaptchaPayload } from 'server/utils/captcha';
 import { BadRequestError, NotFoundError } from 'server/utils/errors';
 import { handleHoneypotTriggered, isHoneypotFilled } from 'server/utils/honeypot';
@@ -128,9 +129,15 @@ router.get(
 				},
 			],
 		});
+		const orgCommunityIds = await getCommunityIdsFromOrgMemberships(req.user.id);
+		const orgCommunities = orgCommunityIds.length
+			? await Community.findAll({ where: { id: orgCommunityIds } })
+			: [];
 		const seen = new Set<string>();
-		const communities = members
-			.map((m) => m.community ?? m.pub?.community ?? m.collection?.community)
+		const communities = [
+			...members.map((m) => m.community ?? m.pub?.community ?? m.collection?.community),
+			...orgCommunities,
+		]
 			.filter((c): c is Community => {
 				if (!c || seen.has(c.id)) return false;
 				seen.add(c.id);

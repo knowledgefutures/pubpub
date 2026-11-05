@@ -154,17 +154,21 @@ describe('org members', () => {
 });
 
 describe('org ownership', () => {
-	it('lets only superadmins give a community to an org', async () => {
-		await (await login(models.orgAdmin))
-			.post(`/api/orgs/${org.id}/communities`)
-			.set('Host', host)
-			.send({ communityId: models.otherCommunity.id })
-			.expect(403);
-		await (await login(models.superAdmin))
-			.post(`/api/orgs/${org.id}/communities`)
+	it('moves a community in only when its admin agrees', async () => {
+		const { body } = await (await login(models.orgAdmin))
+			.post(`/api/orgs/${org.id}/invites`)
 			.set('Host', host)
 			.send({ communityId: models.otherCommunity.id })
 			.expect(201);
+		expect(body.status).toEqual('pending');
+		expect((await Community.findByPk(models.otherCommunity.id))?.orgId).toBeNull();
+
+		// A superadmin admins every community, so they move it in directly
+		await (await login(models.superAdmin))
+			.post(`/api/orgs/${org.id}/invites`)
+			.set('Host', host)
+			.send({ communityId: models.otherCommunity.id })
+			.expect(200);
 		const community = await Community.findByPk(models.otherCommunity.id);
 		expect(community?.orgId).toEqual(org.id);
 	});

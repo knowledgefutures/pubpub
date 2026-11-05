@@ -1,7 +1,5 @@
-import { Op } from 'sequelize';
-
 import { Community, Org, OrgInvite, OrgMember, User } from 'server/models';
-import { isUserOrgAdmin } from 'server/org/queries';
+import { isUserOrgAdmin, moveCommunityToOrg as moveCommunity } from 'server/org/queries';
 import { getScope } from 'server/utils/queryHelpers';
 
 type Actor = { id: string; isSuperAdmin: boolean };
@@ -16,17 +14,8 @@ export const canAdminCommunity = async (actor: Actor, communityId: string) => {
 };
 
 /** Moves a community into an org, closing every other pending invite or request for it */
-export const moveCommunityToOrg = async (communityId: string, orgId: string, actor: Actor) => {
-	await Community.update({ orgId }, { where: { id: communityId } });
-	await OrgInvite.update(
-		{ status: 'cancelled', respondedById: actor.id, respondedAt: new Date() },
-		{ where: { communityId, status: 'pending', orgId: { [Op.ne]: orgId } } },
-	);
-	await OrgInvite.update(
-		{ status: 'accepted', respondedById: actor.id, respondedAt: new Date() },
-		{ where: { communityId, orgId, status: 'pending' } },
-	);
-};
+export const moveCommunityToOrg = (communityId: string, orgId: string, actor: Actor) =>
+	moveCommunity(communityId, orgId, actor.id);
 
 /**
  * Opens an invite (org → community) or a request (community → org). If the other side already

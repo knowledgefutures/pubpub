@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { Community } from 'server/models';
 import { isUserOrgAdmin } from 'server/org/queries';
 import { ForbiddenError, HTTPStatusError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
@@ -12,7 +13,6 @@ import {
 	fetchPageByUrl,
 	fetchPubContent,
 	findCommunityByUrl,
-	getActiveTemplatesForOrg,
 	getAllTemplates,
 	getTemplateById,
 	getTemplatesForOrg,
@@ -65,6 +65,22 @@ const requireSuperAdminOrTemplateOwner = async (req: any, templateId: string) =>
 		}
 	}
 	throw new ForbiddenError();
+};
+
+/**
+ * For routes that read content into a template: staff may read from any community; an org
+ * admin, with a template of their org, only from communities the org owns. Returns that org.
+ */
+const getSourceOrgId = async (req: any, templateId?: string) => {
+	if (!templateId) {
+		await requireSuperAdmin(req);
+		return null;
+	}
+	const initialData = await requireSuperAdminOrTemplateOwner(req, templateId);
+	if (initialData.loginData.isSuperAdmin) {
+		return null;
+	}
+	return (await getTemplateById(templateId))?.orgId ?? null;
 };
 
 // Fields allowed on template create/update via API
@@ -234,6 +250,14 @@ router.post('/api/orgs/:orgId/templates/from-community', async (req, res, next) 
 				.status(400)
 				.json({ error: 'communityUrl (or communityId), title, and slug are required' });
 		}
+		if (!initialData.loginData.isSuperAdmin) {
+			const source = await Community.findByPk(resolvedCommunityId, { attributes: ['orgId'] });
+			if (source?.orgId !== req.params.orgId) {
+				return res
+					.status(400)
+					.json({ error: 'Templates can only be made from communities this org owns' });
+			}
+		}
 		const { template, warnings } = await createTemplateFromCommunity(resolvedCommunityId, {
 			title,
 			slug,
@@ -244,18 +268,6 @@ router.post('/api/orgs/:orgId/templates/from-community', async (req, res, next) 
 		});
 		await template.update({ orgId: req.params.orgId });
 		return res.status(201).json({ ...template.toJSON(), _warnings: warnings });
-	} catch (err) {
-		return next(err);
-	}
-});
-
-// ─── Public: get active templates for org (used by community create page) ────
-
-// GET /api/orgs/:orgId/activeTemplates — public-ish (for community create flow)
-router.get('/api/orgs/:orgId/activeTemplates', async (req, res, next) => {
-	try {
-		const templates = await getActiveTemplatesForOrg(req.params.orgId);
-		return res.status(200).json(templates);
 	} catch (err) {
 		return next(err);
 	}
@@ -287,15 +299,11 @@ router.post('/api/communityTemplates/fetch-pub-content', async (req, res, next) 
 router.post('/api/communityTemplates/fetch-page', async (req, res, next) => {
 	try {
 		const { pageUrl, templateId } = req.body;
-		if (templateId) {
-			await requireSuperAdminOrTemplateOwner(req, templateId);
-		} else {
-			await requireSuperAdmin(req);
-		}
+		const orgId = await getSourceOrgId(req, templateId);
 		if (!pageUrl) {
 			return res.status(400).json({ error: 'pageUrl is required' });
 		}
-		const result = await fetchPageByUrl(pageUrl);
+		const result = await fetchPageByUrl(pageUrl, { orgId });
 		return res.status(200).json(result);
 	} catch (err) {
 		if (err instanceof HTTPStatusError) return next(err);
@@ -308,15 +316,11 @@ router.post('/api/communityTemplates/fetch-page', async (req, res, next) => {
 router.post('/api/communityTemplates/fetch-collection', async (req, res, next) => {
 	try {
 		const { collectionUrl, templateId } = req.body;
-		if (templateId) {
-			await requireSuperAdminOrTemplateOwner(req, templateId);
-		} else {
-			await requireSuperAdmin(req);
-		}
+		const orgId = await getSourceOrgId(req, templateId);
 		if (!collectionUrl) {
 			return res.status(400).json({ error: 'collectionUrl is required' });
 		}
-		const result = await fetchCollectionByUrl(collectionUrl);
+		const result = await fetchCollectionByUrl(collectionUrl, { orgId });
 		return res.status(200).json(result);
 	} catch (err) {
 		if (err instanceof HTTPStatusError) return next(err);

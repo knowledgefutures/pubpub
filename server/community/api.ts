@@ -21,7 +21,7 @@ import { createGetRequestIds } from 'utils/getRequestIds';
 import { applyTemplate } from '../communityTemplate/applyTemplate';
 import { CommunityTemplate } from '../communityTemplate/model';
 import { createTemplateFromCommunity } from '../communityTemplate/queries';
-import { addCommunityToOrg, getOrgBySlug, isUserOrgMember } from '../org/queries';
+import { getOrgBySlug, isUserOrgMember, moveCommunityToOrg } from '../org/queries';
 import { addSpamTagToCommunity, updateSpamTagForCommunity } from '../spamTag/communityQueries';
 import { destroyCommunity, getCommunityDeletionAudit } from './destroyCommunity';
 import { getPermissions } from './permissions';
@@ -213,8 +213,10 @@ export const communityServer = s.router(contract.community, {
 								await created.update({ templateId });
 							}
 						} else {
-							// No org context — superadmin or direct template usage
-							const template = await CommunityTemplate.findByPk(templateId);
+							// No org context: only staff apply a template directly
+							const template = req.user!.isSuperAdmin
+								? await CommunityTemplate.findByPk(templateId)
+								: null;
 							if (template && template.isActive) {
 								await applyTemplate(template, created.id, req.user!.id);
 								await created.update({ templateId });
@@ -307,7 +309,7 @@ export const communityServer = s.router(contract.community, {
 						attributes: ['id'],
 					});
 					if (created) {
-						await addCommunityToOrg(validatedOrg.id, created.id);
+						await moveCommunityToOrg(created.id, validatedOrg.id, req.user!.id);
 						// Ensure spam tag exists, then mark as not-spam
 						await addSpamTagToCommunity(created.id);
 						await updateSpamTagForCommunity({

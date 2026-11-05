@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import { Draft, Pub } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 import { wrap } from 'server/wrap';
 import { expect } from 'utils/assert';
 
@@ -30,6 +31,15 @@ router.post(
 		});
 		if (!pub?.draft) {
 			return res.status(404).json({ error: 'Pub or draft not found' });
+		}
+
+		const { activePermissions } = await getScope({
+			communityId: pub.communityId,
+			pubId,
+			loginId: userId,
+		});
+		if (!activePermissions.canEdit && !activePermissions.canEditDraft) {
+			return res.status(403).json({});
 		}
 
 		const checkpoint = await upsertDraftCheckpoint(pub.draft.id, historyKey, doc, Date.now());

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
-import { Community, Org, OrgInvite } from 'server/models';
+import { Community, Org, OrgInvite, User } from 'server/models';
+import { removeCommunityFromOrg } from 'server/org/queries';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 
@@ -122,7 +123,7 @@ router.delete('/api/communities/:communityId/organization', async (req, res, nex
 		if (!(await canAdminOrg(actor, community.orgId))) {
 			throw new ForbiddenError();
 		}
-		await community.update({ orgId: null });
+		await removeCommunityFromOrg(community.orgId, community.id);
 		return res.status(200).json({ success: true });
 	} catch (err) {
 		return next(err);
@@ -224,8 +225,22 @@ router.post('/api/orgInvites/:id/accept', async (req, res, next) => {
 			throw new ForbiddenError();
 		}
 		const community = await findCommunity(invite.communityId);
-		if (community.orgId && invite.direction === 'invite') {
-			throw new BadRequestError(new Error('The community already belongs to an org'));
+		if (community.orgId && community.orgId !== invite.orgId) {
+			// A request from a community that another org owns stands only while the person who
+			// asked can still take it out of that org
+			const requester = await User.findByPk(invite.requestedById, {
+				attributes: ['id', 'isSuperAdmin'],
+			});
+			const mayStillMove =
+				invite.direction === 'request' &&
+				!!requester &&
+				(await canAdminOrg(
+					{ id: requester.id, isSuperAdmin: !!requester.isSuperAdmin },
+					community.orgId,
+				));
+			if (!mayStillMove) {
+				throw new BadRequestError(new Error('The community already belongs to an org'));
+			}
 		}
 		await moveCommunityToOrg(invite.communityId, invite.orgId, actor);
 		return res.status(200).json({ status: 'joined' });

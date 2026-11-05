@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { Community, Org, OrgInvite, OrgMember } from 'server/models';
+import { Community, Org, OrgFeaturedPub, OrgInvite, OrgMember } from 'server/models';
 import { login, modelize, setup, teardown } from 'stubstub';
 
 let orgA: Org;
@@ -48,6 +48,11 @@ const models = modelize`
 			User contestedAdmin {}
 		}
 	}
+	Community featured {
+		Pub featuredPub {}
+	}
+	Community switcher {}
+	User switcherAdmin {}
 `;
 
 const createOrg = (title: string) =>
@@ -66,8 +71,13 @@ setup(beforeAll, async () => {
 		{ orgId: orgA.id, userId: models.orgAdmin.id, permissions: 'admin' },
 		{ orgId: orgA.id, userId: models.bothAdmin.id, permissions: 'admin' },
 		{ orgId: orgB.id, userId: models.orgBAdmin.id, permissions: 'admin' },
+		{ orgId: orgA.id, userId: models.switcherAdmin.id, permissions: 'admin' },
 	]);
 	await Community.update({ orgId: orgB.id }, { where: { id: models.ownedByB.id } });
+	await Community.update(
+		{ orgId: orgA.id },
+		{ where: { id: [models.featured.id, models.switcher.id] } },
+	);
 });
 teardown(afterAll);
 
@@ -205,5 +215,29 @@ describe('org invites', () => {
 			.post(`/api/orgInvites/${fromA.invite.id}/accept`)
 			.set('Host', host)
 			.expect(400);
+	});
+
+	it("stops featuring a community's pubs once it leaves the org", async () => {
+		await OrgFeaturedPub.create({ orgId: orgA.id, pubId: models.featuredPub.id });
+		await (await login(models.orgAdmin))
+			.delete(organization(models.featured))
+			.set('Host', host)
+			.expect(200);
+		expect(await OrgFeaturedPub.count({ where: { pubId: models.featuredPub.id } })).toBe(0);
+	});
+
+	it('drops a request to switch orgs once the asker can no longer move the community', async () => {
+		const { body } = await (await login(models.switcherAdmin))
+			.post(organization(models.switcher))
+			.set('Host', host)
+			.send({ orgId: orgB.id })
+			.expect(201);
+		await OrgMember.destroy({ where: { orgId: orgA.id, userId: models.switcherAdmin.id } });
+
+		await (await login(models.orgBAdmin))
+			.post(`/api/orgInvites/${body.invite.id}/accept`)
+			.set('Host', host)
+			.expect(400);
+		expect(await orgIdOf(models.switcher)).toBe(orgA.id);
 	});
 });

@@ -7,7 +7,7 @@ import { login, modelize, setup, teardown } from 'stubstub';
 vi.mock('server/kf/oidc.server', async (importOriginal) => ({
 	...(await importOriginal<typeof import('server/kf/oidc.server')>()),
 	fetchUserOrgs: vi.fn(async () => [
-		{ id: 'kf-mine', name: 'Mine', slug: 'mine', type: 'shared', role: 'admin' },
+		{ id: 'kf-mine', name: 'Mine', slug: 'mine', role: 'admin' },
 	]),
 }));
 

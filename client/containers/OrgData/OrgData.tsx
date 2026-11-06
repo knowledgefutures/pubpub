@@ -992,7 +992,7 @@ type SettingsMember = {
 
 type KfAccounts = {
 	current: string;
-	accounts: { id: string; name: string; slug: string; type: 'personal' | 'shared' }[];
+	accounts: { id: string; name: string; slug: string }[];
 };
 
 type PendingInvite = {
@@ -1804,7 +1804,7 @@ const SettingsTab = ({ orgData }: Props) => {
 									: [{ value: kfAccounts.current, label: kfAccounts.current }]),
 								...kfAccounts.accounts.map((a) => ({
 									value: a.id,
-									label: a.type === 'personal' ? `${a.name} (personal)` : a.name,
+									label: a.name,
 								})),
 							]}
 						/>

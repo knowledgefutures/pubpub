@@ -13,7 +13,6 @@ import { memberPermissions } from 'types';
 import { fetchBrandAssets } from './brandHelper';
 import { getOrgDataDashboard } from './dataQueries';
 import {
-	addCommunityToOrg,
 	addOrgMember,
 	createOrg,
 	destroyOrg,
@@ -357,35 +356,6 @@ router.get('/api/orgs/:id/communities', async (req, res, next) => {
 		await requireOrgMember(req, req.params.id);
 		const communities = await getOrgCommunities(req.params.id);
 		return res.status(200).json(communities);
-	} catch (err) {
-		return next(err);
-	}
-});
-
-// POST /api/orgs/:id/communities - give a community to the org (superadmin, until invites exist)
-// body: { communityId } or { subdomain }
-router.post('/api/orgs/:id/communities', async (req, res, next) => {
-	try {
-		await requireSuperAdmin(req);
-		let { communityId } = req.body;
-		const { subdomain } = req.body;
-		if (!communityId && subdomain) {
-			const community = await Community.findOne({
-				where: { subdomain: subdomain.toLowerCase() },
-				attributes: ['id'],
-			});
-			if (!community) {
-				return res.status(404).json({ error: `Community "${subdomain}" not found` });
-			}
-			communityId = community.id;
-		}
-		if (!communityId) {
-			return res.status(400).json({ error: 'communityId or subdomain is required' });
-		}
-		if (!(await addCommunityToOrg(req.params.id, communityId))) {
-			throw new NotFoundError();
-		}
-		return res.status(201).json({ success: true });
 	} catch (err) {
 		return next(err);
 	}

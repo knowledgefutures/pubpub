@@ -1,6 +1,18 @@
 import type { MemberPermission } from 'types';
 
-import { Community, Org, OrgMember, Pub, Release, SpamTag, User } from 'server/models';
+import { Op } from 'sequelize';
+
+import {
+	Community,
+	Org,
+	OrgFeaturedPub,
+	OrgInvite,
+	OrgMember,
+	Pub,
+	Release,
+	SpamTag,
+	User,
+} from 'server/models';
 
 export const getOrgBySlug = async (slug: string) => {
 	return Org.findOne({ where: { slug } });
@@ -32,11 +44,6 @@ export const getOrgWithCommunities = async (slug: string) => {
 		...org.toJSON(),
 		communities: communitiesWithCounts,
 	};
-};
-
-export const getAllOrgs = async () => {
-	const orgs = await Org.findAll({ order: [['title', 'ASC']] });
-	return orgs.map((o) => o.toJSON());
 };
 
 export const getAllOrgsWithCommunityCounts = async () => {
@@ -167,14 +174,44 @@ export const getOrgCommunities = async (orgId: string) => {
 	});
 };
 
-/** Give a community to an org. Moves it if another org owns it. */
-export const addCommunityToOrg = async (orgId: string, communityId: string) => {
-	const [count] = await Community.update({ orgId }, { where: { id: communityId } });
-	return count > 0;
+/** Stops featuring a community's pubs in every org but the one that now owns it */
+const unfeatureCommunityPubs = async (communityId: string, owningOrgId: string | null) => {
+	const pubs = await Pub.findAll({ where: { communityId }, attributes: ['id'] });
+	if (pubs.length === 0) {
+		return;
+	}
+	await OrgFeaturedPub.destroy({
+		where: {
+			pubId: pubs.map((p) => p.id),
+			...(owningOrgId ? { orgId: { [Op.ne]: owningOrgId } } : {}),
+		},
+	});
 };
 
+/**
+ * Gives a community to an org, moving it if another org owns it. Closes every pending invite or
+ * request for it, accepting the one from this org.
+ */
+export const moveCommunityToOrg = async (communityId: string, orgId: string, actorId: string) => {
+	await Community.update({ orgId }, { where: { id: communityId } });
+	await unfeatureCommunityPubs(communityId, orgId);
+	const respondedAt = new Date();
+	await OrgInvite.update(
+		{ status: 'cancelled', respondedById: actorId, respondedAt },
+		{ where: { communityId, status: 'pending', orgId: { [Op.ne]: orgId } } },
+	);
+	await OrgInvite.update(
+		{ status: 'accepted', respondedById: actorId, respondedAt },
+		{ where: { communityId, orgId, status: 'pending' } },
+	);
+};
+
+/** Releases a community from the org that owns it */
 export const removeCommunityFromOrg = async (orgId: string, communityId: string) => {
 	const [count] = await Community.update({ orgId: null }, { where: { id: communityId, orgId } });
+	if (count > 0) {
+		await unfeatureCommunityPubs(communityId, null);
+	}
 	return count > 0;
 };
 

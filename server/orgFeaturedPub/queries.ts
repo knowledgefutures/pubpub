@@ -1,11 +1,8 @@
-import { QueryTypes } from 'sequelize';
-
 import { Community } from 'server/community/model';
 import { OrgFeaturedPub } from 'server/orgFeaturedPub/model';
 import { Pub } from 'server/pub/model';
 import { PubAttribution } from 'server/pubAttribution/model';
 import { Release } from 'server/release/model';
-import { sequelize } from 'server/sequelize';
 import { SpamTag } from 'server/spamTag/model';
 import { User } from 'server/user/model';
 
@@ -24,7 +21,7 @@ export const getOrgFeaturedPubs = async (orgId: string) => {
 					{
 						model: Community,
 						as: 'community',
-						attributes: ['title', 'subdomain', 'domain'],
+						attributes: ['title', 'subdomain', 'domain', 'orgId'],
 						include: [
 							{
 								model: SpamTag,
@@ -41,7 +38,12 @@ export const getOrgFeaturedPubs = async (orgId: string) => {
 	});
 	return records
 		.map((r) => r.toJSON())
-		.filter((r: any) => r.pub && r.pub.community?.spamTag?.status !== 'confirmed-spam');
+		.filter(
+			(r: any) =>
+				r.pub &&
+				r.pub.community?.orgId === orgId &&
+				r.pub.community.spamTag?.status !== 'confirmed-spam',
+		);
 };
 
 /** Featured pubs for the org landing page (showOnLandingPage + has releases) */
@@ -70,7 +72,14 @@ export const getLandingPagePubs = async (orgId: string) => {
 					{
 						model: Community,
 						as: 'community',
-						attributes: ['id', 'subdomain', 'domain', 'title', 'accentColorDark'],
+						attributes: [
+							'id',
+							'subdomain',
+							'domain',
+							'title',
+							'accentColorDark',
+							'orgId',
+						],
 						include: [
 							{
 								model: SpamTag,
@@ -104,7 +113,11 @@ export const getLandingPagePubs = async (orgId: string) => {
 		records
 			.filter((r) => {
 				const pub = (r as any).pub;
-				return pub && pub.community?.spamTag?.status !== 'confirmed-spam';
+				return (
+					pub &&
+					pub.community?.orgId === orgId &&
+					pub.community.spamTag?.status !== 'confirmed-spam'
+				);
 			})
 			.map(async (r) => {
 				const json = r.toJSON() as any;

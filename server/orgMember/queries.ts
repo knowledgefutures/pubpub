@@ -1,6 +1,6 @@
-import type { ScopeMember } from 'types';
+import type { MemberPermission, ScopeMember } from 'types';
 
-import { Community, Org, OrgMember } from 'server/models';
+import { Community, Org, OrgMember, User } from 'server/models';
 
 /** The user's membership in an org, with the org's id, slug and title */
 export const getOrgMembership = async (userId: string, orgId: string) => {
@@ -47,4 +47,44 @@ export const getInheritedCommunityMember = async (
 			title: membership.org.title,
 		},
 	} as ScopeMember;
+};
+
+/** Ids of the communities owned by orgs the user belongs to, optionally only at these levels */
+export const getCommunityIdsFromOrgMemberships = async (
+	userId: string,
+	permissions?: MemberPermission[],
+) => {
+	const memberships = await OrgMember.findAll({
+		where: { userId, ...(permissions ? { permissions } : {}) },
+		attributes: ['orgId'],
+	});
+	if (memberships.length === 0) {
+		return [];
+	}
+	const communities = await Community.findAll({
+		where: { orgId: memberships.map((m) => m.orgId) },
+		attributes: ['id'],
+	});
+	return communities.map((c) => c.id);
+};
+
+/** Whether the user is an admin of the org that owns the community */
+export const isInheritedCommunityAdmin = async (
+	userId: string,
+	community: { id: string; orgId?: string | null },
+) => {
+	const member = await getInheritedCommunityMember(userId, community);
+	return member?.permissions === 'admin';
+};
+
+/** The admins of the org that owns the community, with their email and name */
+export const getInheritedCommunityAdmins = async (communityId: string) => {
+	const community = await Community.findByPk(communityId, { attributes: ['orgId'] });
+	if (!community?.orgId) {
+		return [];
+	}
+	return OrgMember.findAll({
+		where: { orgId: community.orgId, permissions: 'admin' },
+		include: [{ model: User, attributes: ['email', 'fullName'] }],
+	});
 };

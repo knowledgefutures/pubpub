@@ -1,25 +1,26 @@
 import type { MemberPermission } from 'types';
 
+import { NotFoundError } from 'server/utils/errors';
 import { getMemberDataById, getScope } from 'server/utils/queryHelpers';
-import { expect } from 'utils/assert';
 
+/** The member's current level, provided they belong to the scope the request is for */
 const getMemberPermission = async (scopeData, memberId?: string) => {
-	if (memberId) {
-		const {
-			elements: { activeIds, activeTargetType },
-		} = scopeData;
-		const member = expect(await getMemberDataById(memberId, false));
-		if (activeTargetType === 'community' && member.communityId === activeIds.communityId) {
-			return member.permissions;
-		}
-		if (activeTargetType === 'collection' && member.collectionId === activeIds.collectionId) {
-			return member.permissions;
-		}
-		if (activeTargetType === 'pub' && member.pubId === activeIds.pubId) {
-			return member.permissions;
-		}
+	if (!memberId) {
+		return false;
 	}
-	return false;
+	const {
+		elements: { activeIds, activeTargetType },
+	} = scopeData;
+	const member = await getMemberDataById(memberId, false);
+	const isInScope =
+		!!member &&
+		((activeTargetType === 'community' && member.communityId === activeIds.communityId) ||
+			(activeTargetType === 'collection' && member.collectionId === activeIds.collectionId) ||
+			(activeTargetType === 'pub' && member.pubId === activeIds.pubId));
+	if (!isInScope) {
+		throw new NotFoundError();
+	}
+	return member.permissions;
 };
 
 export const getPermissions = async ({

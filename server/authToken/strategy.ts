@@ -44,10 +44,13 @@ export const bearerStrategy = () => {
 			const { expiresAt, user } = authToken;
 
 			try {
-				await ensureUserIsCommunityAdmin({
+				const community = await ensureUserIsCommunityAdmin({
 					hostname: req.hostname,
 					user: user as UserWithPrivateFields,
 				});
+				if (community.id !== authToken.communityId) {
+					throw new ForbiddenError(new Error('Token is not for this community'));
+				}
 			} catch (e) {
 				return done(e, false, 'User is not an admin of this community');
 			}

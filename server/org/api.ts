@@ -314,7 +314,7 @@ router.get('/api/orgs/:id/kf-accounts', async (req, res, next) => {
 		const accounts = await fetchUserOrgs(initialData.loginData.id!);
 		return res.status(200).json({
 			current: org.kfOrgId,
-			accounts: accounts.map(({ id, name, slug, type }) => ({ id, name, slug, type })),
+			accounts: accounts.map(({ id, name, slug }) => ({ id, name, slug })),
 		});
 	} catch (err) {
 		return next(err);

@@ -398,7 +398,6 @@ export interface OIDCOrg {
 	id: string;
 	name: string;
 	slug: string;
-	type: 'personal' | 'shared';
 	role: string;
 }
 

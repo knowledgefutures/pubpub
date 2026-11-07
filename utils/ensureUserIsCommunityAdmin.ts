@@ -3,6 +3,7 @@ import type { UserWithPrivateFields } from 'types';
 import { Op } from 'sequelize';
 
 import { Community, includeUserModel, Member } from 'server/models';
+import { isInheritedCommunityAdmin } from 'server/orgMember/queries';
 import { ForbiddenError } from 'server/utils/errors';
 
 import { expect } from './assert';
@@ -85,6 +86,10 @@ export const ensureUserIsCommunityAdmin = async (
 		});
 
 		if (!autherMember) {
+			const community = await Community.findByPk(req.id);
+			if (community && (await isInheritedCommunityAdmin(req.user.id, community))) {
+				return community;
+			}
 			throw new ForbiddenError(new Error('User is not an admin of this community'));
 		}
 
@@ -127,6 +132,11 @@ export const ensureUserIsCommunityAdmin = async (
 	});
 
 	if (!autherMember) {
+		const community = await findCommunityByDomain(domainOrSubmdomain);
+		if (community && (await isInheritedCommunityAdmin(req.user.id, community))) {
+			req.user.isAdminOfThisCommunity = true;
+			return community;
+		}
 		throw new ForbiddenError(new Error('User is not an admin of this community'));
 	}
 

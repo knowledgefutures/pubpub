@@ -1,8 +1,11 @@
 import uuid from 'uuid';
 
+import { getAdminCommunitiesForUser } from 'server/community/queries';
+import { isUserMemberOfScope } from 'server/member/queries';
 import { Community, Org, OrgMember } from 'server/models';
 import { getMembers, getScope } from 'server/utils/queryHelpers';
 import { login, modelize, setup, teardown } from 'stubstub';
+import { ensureUserIsCommunityAdmin } from 'utils/ensureUserIsCommunityAdmin';
 
 let org: Org;
 
@@ -10,6 +13,7 @@ const models = modelize`
 	User orgViewer {}
 	User orgEditor {}
 	User orgManager {}
+	User orgAdmin {}
 	User outsider {}
 	Community ownedCommunity {
 		Member {
@@ -32,6 +36,7 @@ setup(beforeAll, async () => {
 		{ orgId: org.id, userId: models.orgViewer.id, permissions: 'view' },
 		{ orgId: org.id, userId: models.orgEditor.id, permissions: 'edit' },
 		{ orgId: org.id, userId: models.orgManager.id, permissions: 'manage' },
+		{ orgId: org.id, userId: models.orgAdmin.id, permissions: 'admin' },
 		// Lower than their direct admin membership, which must win
 		{ orgId: org.id, userId: models.directAdmin.id, permissions: 'view' },
 	]);
@@ -105,5 +110,41 @@ describe('inherited org permissions', () => {
 		const levels = Object.fromEntries(orgMembers.map((m) => [m.userId, m.permissions]));
 		expect(levels[models.orgManager.id]).toBe('manage');
 		expect(orgMembers.every((m) => m.user?.id === m.userId)).toBe(true);
+	});
+
+	it('passes the community admin check for org admins only', async () => {
+		const { ownedCommunity, otherCommunity } = models;
+		const asUser = (user) => ({ user: user.toJSON?.() ?? user });
+		const byHost = (user, community) => ({
+			...asUser(user),
+			hostname: `${community.subdomain}.pubpub.org`,
+		});
+
+		const viaId = await ensureUserIsCommunityAdmin({
+			...asUser(models.orgAdmin),
+			id: ownedCommunity.id,
+		});
+		expect(viaId.id).toBe(ownedCommunity.id);
+		const viaHost = await ensureUserIsCommunityAdmin(byHost(models.orgAdmin, ownedCommunity));
+		expect(viaHost.id).toBe(ownedCommunity.id);
+
+		await expect(
+			ensureUserIsCommunityAdmin(byHost(models.orgManager, ownedCommunity)),
+		).rejects.toThrow();
+		await expect(
+			ensureUserIsCommunityAdmin(byHost(models.orgAdmin, otherCommunity)),
+		).rejects.toThrow();
+	});
+
+	it('counts org members as members of owned communities', async () => {
+		const scope = { communityId: models.ownedCommunity.id };
+		expect(await isUserMemberOfScope({ userId: models.orgViewer.id, scope })).toBe(true);
+		expect(await isUserMemberOfScope({ userId: models.outsider.id, scope })).toBe(false);
+	});
+
+	it("lists owned communities among an org admin's admin communities", async () => {
+		const communities = await getAdminCommunitiesForUser(models.orgAdmin.id);
+		expect(communities.map((c) => c.id)).toEqual([models.ownedCommunity.id]);
+		expect(await getAdminCommunitiesForUser(models.orgManager.id)).toEqual([]);
 	});
 });

@@ -77,7 +77,7 @@ const getFileNameForUpload = (file: File) => {
 	return `${testPrefix}c${communityId}${pubSegment}/u${userId}/${fileName}-${random}${now}.${fileExtension}`;
 };
 
-import { MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
+import { canServeInline, MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
 
 const getBaseUrlForBucket = (bucket) => `https://s3-external-1.amazonaws.com/${bucket}`;
 
@@ -103,7 +103,7 @@ export const s3Upload = (
 		return;
 	}
 	const fileName = getFileNameForUpload(file);
-	const fileType = file.type !== undefined ? file.type : 'image/jpeg';
+	const fileType = file.type || 'application/octet-stream';
 	function beginUpload(this: any) {
 		if (this.status < 200 || this.status >= 300) {
 			onError(new Error(`Could not get an upload policy (status ${this.status})`));
@@ -117,8 +117,12 @@ export const s3Upload = (
 		formData.append('policy', policy);
 		formData.append('signature', signature);
 		formData.append('Content-Type', fileType);
-		if (fileType === 'text/html') {
-			formData.append('Content-Disposition', 'attachment; filename="' + file.name + '"');
+		if (!canServeInline(fileType)) {
+			const asciiName = (file.name || 'file').replace(/[^\w.-]+/g, '_');
+			formData.append(
+				'Content-Disposition',
+				`attachment; filename="${asciiName}"; filename*=UTF-8''${encodeURIComponent(file.name || 'file')}`,
+			);
 		}
 		formData.append('success_action_status', '200');
 		formData.append('file', file);
@@ -165,7 +169,7 @@ export const s3Upload = (
 		false,
 	);
 	const policyParams = new URLSearchParams({
-		contentType: file.type,
+		contentType: fileType,
 	});
 	if (file.name) policyParams.set('filename', file.name);
 	policyParams.set('key', fileName);

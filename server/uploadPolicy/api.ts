@@ -5,9 +5,14 @@ import type { contract } from 'utils/api/contract';
 import { contextFromUser, notify } from 'server/spamTag/notifications';
 import { isSuspiciousUploadKey } from 'server/spamTag/uploadScamKeywords';
 import { upsertSpamTag } from 'server/spamTag/userQueries';
-import { ForbiddenError } from 'server/utils/errors';
+import { BadRequestError, ForbiddenError } from 'server/utils/errors';
 
 import { getUploadPolicy } from './queries';
+
+const contentTypePattern = /^[\w.+-]+\/[\w.+-]+$/;
+
+const isOwnKey = (key: string, userId: string) =>
+	new RegExp(`^(_testing/)?c[^/]+(/p[^/]+)?/u${userId}/[^/]+$`).test(key);
 
 export const uploadPolicyRouteImplementation: AppRouteImplementation<
 	typeof contract.upload.policy
@@ -16,24 +21,27 @@ export const uploadPolicyRouteImplementation: AppRouteImplementation<
 	if (!user?.id) {
 		throw new ForbiddenError(new Error('User not found'));
 	}
+	if (!contentTypePattern.test(query.contentType)) {
+		throw new BadRequestError(new Error('Invalid content type'));
+	}
+	if (!isOwnKey(query.key, user.id)) {
+		throw new BadRequestError(new Error('Invalid key'));
+	}
 	const uploadPolicy = getUploadPolicy(query);
-	if (query.filename || query.key) {
-		const keyOrName = query.key ?? query.filename ?? '';
-		if (isSuspiciousUploadKey(keyOrName)) {
-			await upsertSpamTag({
-				userId: user.id,
-				fields: { suspiciousFiles: [`https://assets.pubpub.org/${keyOrName}`] },
-			})
-				.then(({ user: u }) =>
-					notify('suspicious-upload', {
-						...contextFromUser(u),
-						uploadKey: keyOrName,
-					}),
-				)
-				.catch(() => {
-					// best-effort, don't block the policy response
-				});
-		}
+	if (isSuspiciousUploadKey(query.key)) {
+		await upsertSpamTag({
+			userId: user.id,
+			fields: { suspiciousFiles: [`https://assets.pubpub.org/${query.key}`] },
+		})
+			.then(({ user: u }) =>
+				notify('suspicious-upload', {
+					...contextFromUser(u),
+					uploadKey: query.key,
+				}),
+			)
+			.catch(() => {
+				// best-effort, don't block the policy response
+			});
 	}
 	return {
 		status: 200,

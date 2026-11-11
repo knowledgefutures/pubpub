@@ -9,7 +9,7 @@ type GetUploadPolicyParams = {
 	key?: string;
 };
 
-export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
+export const getUploadPolicy = ({ contentType, key }: GetUploadPolicyParams) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
 	const awsAccessKeyId = env.AWS_ACCESS_KEY_ID;
@@ -20,7 +20,7 @@ export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 		expiration: expirationDate,
 		conditions: [
 			{ bucket },
-			['starts-with', '$key', ''],
+			key ? { key } : ['starts-with', '$key', ''],
 			{ acl },
 			{ success_action_status: '200' },
 			['starts-with', '$Content-Type', contentType],

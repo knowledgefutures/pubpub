@@ -50,7 +50,10 @@ import { addWorkerTask } from 'server/utils/workers';
 import {
 	purgeCloudflareUrls as cfPurgeByUrls,
 	purgeFastlyUrl as fastlyPurgeByUrl,
+	getCloudFrontInvalidationStatus,
+	invalidateCloudFrontUrl,
 	isCachePurgeConfigured,
+	isCloudFrontConfigured,
 } from 'utils/caching/purge';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
@@ -160,7 +163,10 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 		};
 	}
 	if (tabKind === 'scamFiles') {
-		return { cachePurgeConfigured: isCachePurgeConfigured() };
+		return {
+			cachePurgeConfigured: isCachePurgeConfigured(),
+			cloudFrontConfigured: isCloudFrontConfigured(),
+		};
 	}
 	if (tabKind === 'spamUsers') {
 		const searchTerm = locationData.query.q ?? null;
@@ -979,6 +985,24 @@ router.post('/api/superadmin/scam-files/delete', async (req, res, next) => {
 		await assetsClient.deleteObject(key);
 		const stillExists = await assetsClient.checkIfFileExists(key);
 		return res.json({ key, deleted: !stillExists });
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/scam-files/invalidate-cloudfront', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+		const key = parseAssetKey(req.body.url);
+		const { invalidationId } = req.body;
+		const result =
+			typeof invalidationId === 'string' && invalidationId
+				? await getCloudFrontInvalidationStatus(invalidationId)
+				: await invalidateCloudFrontUrl(`https://assets.pubpub.org/${key}`);
+		return res.json({ key, ...result });
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

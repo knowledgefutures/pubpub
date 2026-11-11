@@ -1,3 +1,9 @@
+import {
+	CloudFrontClient,
+	CreateInvalidationCommand,
+	GetInvalidationCommand,
+} from '@aws-sdk/client-cloudfront';
+
 import { env } from 'server/env';
 import { isDuqDuq } from 'utils/environment';
 
@@ -62,7 +68,8 @@ export const purgeSurrogateTag = async (tag: string, soft = false) => {
 
 export async function purgeFastlyUrl(url: string) {
 	try {
-		const res = await fetch(`https://api.fastly.com/purge/${encodeURIComponent(url)}`, {
+		const { host, pathname } = new URL(url);
+		const res = await fetch(`https://api.fastly.com/purge/${host}${pathname}`, {
 			method: 'POST',
 			headers: {
 				'Fastly-Key': env.FASTLY_PURGE_TOKEN,
@@ -114,4 +121,51 @@ export async function purgeCloudflareUrls(urls: string[]) {
 		throw new Error(`Cloudflare cache purge failed: ${msgs || res.statusText}`);
 	}
 	return json;
+}
+
+export function isCloudFrontConfigured() {
+	return Boolean(env.CLOUDFRONT_ASSETS_DISTRIBUTION_ID);
+}
+
+const getCloudFrontDistributionId = () => {
+	const id = env.CLOUDFRONT_ASSETS_DISTRIBUTION_ID;
+	if (!id) {
+		throw new Error(
+			'CloudFront invalidation not configured. Set CLOUDFRONT_ASSETS_DISTRIBUTION_ID.',
+		);
+	}
+	return id;
+};
+
+let cloudFrontClient: CloudFrontClient | null = null;
+const getCloudFrontClient = () => {
+	cloudFrontClient ??= new CloudFrontClient({
+		region: 'us-east-1',
+		credentials: {
+			accessKeyId: env.AWS_ACCESS_KEY_ID,
+			secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+		},
+	});
+	return cloudFrontClient;
+};
+
+export async function invalidateCloudFrontUrl(url: string) {
+	const { pathname } = new URL(url);
+	const res = await getCloudFrontClient().send(
+		new CreateInvalidationCommand({
+			DistributionId: getCloudFrontDistributionId(),
+			InvalidationBatch: {
+				CallerReference: `scam-${Date.now()}`,
+				Paths: { Quantity: 1, Items: [pathname] },
+			},
+		}),
+	);
+	return { id: res.Invalidation?.Id ?? null, status: res.Invalidation?.Status ?? null };
+}
+
+export async function getCloudFrontInvalidationStatus(id: string) {
+	const res = await getCloudFrontClient().send(
+		new GetInvalidationCommand({ DistributionId: getCloudFrontDistributionId(), Id: id }),
+	);
+	return { id, status: res.Invalidation?.Status ?? null };
 }

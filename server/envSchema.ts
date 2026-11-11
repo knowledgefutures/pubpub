@@ -167,6 +167,10 @@ export const envSchema = z.object({
 		.string()
 		.optional()
 		.describe('Cloudflare API token with Zone:Cache Purge:Edit permission'),
+	CLOUDFRONT_ASSETS_DISTRIBUTION_ID: z
+		.string()
+		.optional()
+		.describe('CloudFront distribution in front of the assets bucket'),
 
 	// ── Spam / Security ─────────────────────────────────────────────────
 	BLOCKLIST_IP_ADDRESSES: z

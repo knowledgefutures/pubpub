@@ -49,6 +49,7 @@ type LogEntry = {
 
 type Props = {
 	cachePurgeConfigured: boolean;
+	cloudFrontConfigured: boolean;
 };
 
 const parseKey = (rawUrl: string): string | null => {
@@ -77,6 +78,8 @@ const ScamFiles = (props: Props) => {
 	const [parsedKey, setParsedKey] = useState<string | null>(null);
 	const [copyState, setCopyState] = useState<StepState>('idle');
 	const [deleteState, setDeleteState] = useState<StepState>('idle');
+	const [cloudFrontState, setCloudFrontState] = useState<StepState>('idle');
+	const [invalidationId, setInvalidationId] = useState<string | null>(null);
 	const [fastlyState, setFastlyState] = useState<StepState>('idle');
 	const [cloudflareState, setCloudflareState] = useState<StepState>('idle');
 	const [checkResult, setCheckResult] = useState<CheckResult | null>(null);
@@ -97,6 +100,8 @@ const ScamFiles = (props: Props) => {
 		setCheckResult(null);
 		setCopyState('idle');
 		setDeleteState('idle');
+		setCloudFrontState('idle');
+		setInvalidationId(null);
 		setFastlyState('idle');
 		setCloudflareState('idle');
 		const key = parseKey(url);
@@ -138,6 +143,29 @@ const ScamFiles = (props: Props) => {
 			addLog(`Delete failed: ${err?.message}`);
 		}
 	}, [url, addLog]);
+
+	const handleInvalidateCloudFront = useCallback(async () => {
+		setCloudFrontState('loading');
+		setError(null);
+		try {
+			const result = await apiFetch.post<{ id: string | null; status: string | null }>(
+				'/api/superadmin/scam-files/invalidate-cloudfront',
+				{ url, invalidationId },
+			);
+			setInvalidationId(result.id);
+			if (result.status === 'Completed') {
+				setCloudFrontState('success');
+				addLog(`CloudFront invalidation ${result.id} completed`);
+			} else {
+				setCloudFrontState('idle');
+				addLog(`CloudFront invalidation ${result.id}: ${result.status}`);
+			}
+		} catch (err: any) {
+			setCloudFrontState('error');
+			setError(err?.message || 'Failed to invalidate CloudFront');
+			addLog(`CloudFront invalidation failed: ${err?.message}`);
+		}
+	}, [url, invalidationId, addLog]);
 
 	const handlePurgeFastly = useCallback(async () => {
 		setFastlyState('loading');
@@ -276,6 +304,13 @@ const ScamFiles = (props: Props) => {
 				</Callout>
 			)}
 
+			{!props.cloudFrontConfigured && (
+				<Callout intent={Intent.WARNING} style={{ marginBottom: 20 }}>
+					CloudFront invalidation is not configured. Set{' '}
+					<code>CLOUDFRONT_ASSETS_DISTRIBUTION_ID</code> in environment variables.
+				</Callout>
+			)}
+
 			{error && (
 				<Callout intent={Intent.DANGER} style={{ marginBottom: 15 }}>
 					{error}
@@ -293,6 +328,8 @@ const ScamFiles = (props: Props) => {
 							setCheckResult(null);
 							setCopyState('idle');
 							setDeleteState('idle');
+							setCloudFrontState('idle');
+							setInvalidationId(null);
 							setFastlyState('idle');
 							setCloudflareState('idle');
 						}}
@@ -350,6 +387,32 @@ const ScamFiles = (props: Props) => {
 
 						<div className="step">
 							<span className="step-number">3</span>
+							<span className="step-label">
+								Invalidate CloudFront{' '}
+								<em>(takes a few minutes; click again to check)</em>
+							</span>
+							<Tag intent={stepIntent(cloudFrontState)} minimal>
+								{invalidationId && cloudFrontState === 'idle'
+									? 'In progress'
+									: stepLabel(cloudFrontState)}
+							</Tag>
+							<Button
+								small
+								intent={Intent.WARNING}
+								text={invalidationId ? 'Check' : 'Invalidate'}
+								onClick={handleInvalidateCloudFront}
+								loading={cloudFrontState === 'loading'}
+								disabled={
+									cloudFrontState === 'loading' ||
+									cloudFrontState === 'success' ||
+									deleteState !== 'success' ||
+									!props.cloudFrontConfigured
+								}
+							/>
+						</div>
+
+						<div className="step">
+							<span className="step-number">4</span>
 							<span className="step-label">Purge Fastly cache</span>
 							<Tag intent={stepIntent(fastlyState)} minimal>
 								{stepLabel(fastlyState)}
@@ -360,12 +423,16 @@ const ScamFiles = (props: Props) => {
 								text="Purge Fastly"
 								onClick={handlePurgeFastly}
 								loading={fastlyState === 'loading'}
-								disabled={fastlyState === 'loading' || deleteState !== 'success'}
+								disabled={
+									fastlyState === 'loading' ||
+									deleteState !== 'success' ||
+									(props.cloudFrontConfigured && cloudFrontState !== 'success')
+								}
 							/>
 						</div>
 
 						<div className="step">
-							<span className="step-number">4</span>
+							<span className="step-number">5</span>
 							<span className="step-label">
 								Purge Cloudflare cache{' '}
 								<em>(verify Fastly first with Check Status below)</em>

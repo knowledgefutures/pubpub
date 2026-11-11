@@ -60,10 +60,12 @@ const checkForAsset = (url): Promise<void> => {
 	});
 };
 
-const getFileNameForUpload = (file: File) => {
+const getFileNameForUpload = (file: File, userIdOverride?: string) => {
 	const testPrefix = isProd() ? '' : '_testing/';
 
-	const { communityId, userId, pubId } = getUploadContext();
+	const context = getUploadContext();
+	const { communityId, pubId } = context;
+	const userId = userIdOverride ?? context.userId;
 	const [rawFileName = 'unknown', fileExtension = 'jpg'] =
 		file.name?.split(/(.*)\.(.*)/).filter(Boolean) ?? [];
 	// Replace whitespace and any character that isn't URL/S3-key safe (e.g. `#`, `?`,
@@ -92,6 +94,8 @@ export const s3Upload = (
 	onFinish,
 	index?: number,
 	onError: (err: Error) => void = defaultOnError,
+	/** For uploads right after signup, before the page knows who is logged in. */
+	userId?: string,
 ) => {
 	if (file.size > MAX_UPLOAD_SIZE_BYTES) {
 		const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
@@ -102,7 +106,7 @@ export const s3Upload = (
 		);
 		return;
 	}
-	const fileName = getFileNameForUpload(file);
+	const fileName = getFileNameForUpload(file, userId);
 	const fileType = file.type || 'application/octet-stream';
 	function beginUpload(this: any) {
 		if (this.status < 200 || this.status >= 300) {

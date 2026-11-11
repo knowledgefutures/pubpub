@@ -1,15 +1,14 @@
 import crypto from 'crypto';
 
 import { env } from 'server/env';
-import { MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
+import { canServeInline, MAX_UPLOAD_SIZE_BYTES } from 'utils/uploadConsts';
 
 type GetUploadPolicyParams = {
 	contentType: string;
-	filename?: string;
-	key?: string;
+	key: string;
 };
 
-export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
+export const getUploadPolicy = ({ contentType, key }: GetUploadPolicyParams) => {
 	const acl = 'public-read';
 	const bucket = 'assets.pubpub.org';
 	const awsAccessKeyId = env.AWS_ACCESS_KEY_ID;
@@ -20,14 +19,14 @@ export const getUploadPolicy = ({ contentType }: GetUploadPolicyParams) => {
 		expiration: expirationDate,
 		conditions: [
 			{ bucket },
-			['starts-with', '$key', ''],
+			{ key },
 			{ acl },
 			{ success_action_status: '200' },
-			['starts-with', '$Content-Type', contentType],
+			['eq', '$Content-Type', contentType],
 			['content-length-range', 0, MAX_UPLOAD_SIZE_BYTES],
-			...(contentType === 'text/html'
-				? [['starts-with', '$Content-Disposition', 'attachment; filename="']]
-				: []),
+			...(canServeInline(contentType)
+				? []
+				: [['starts-with', '$Content-Disposition', 'attachment']]),
 		],
 	};
 

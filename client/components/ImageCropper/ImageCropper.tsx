@@ -13,6 +13,8 @@ type OwnProps = {
 	image?: any;
 	onCancel?: (...args: any[]) => any;
 	onUploaded?: (...args: any[]) => any;
+	/** Hands back the cropped image instead of uploading it. */
+	onCropped?: (blob: Blob) => unknown;
 };
 
 const defaultProps = {
@@ -21,6 +23,7 @@ const defaultProps = {
 	image: undefined,
 	onCancel: () => {},
 	onUploaded: () => {},
+	onCropped: undefined as undefined | ((blob: Blob) => unknown),
 };
 
 type State = any;
@@ -60,6 +63,10 @@ class ImageCropper extends Component<Props, State> {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'editor' does not exist on type 'ImageCro... Remove this comment to see the full error message
 		this.editor.getImage().toBlob(
 			(blob) => {
+				if (this.props.onCropped) {
+					this.props.onCropped(blob);
+					return;
+				}
 				s3Upload(blob, () => {}, this.onFileFinish, 0);
 				this.setState({
 					isUploading: true,

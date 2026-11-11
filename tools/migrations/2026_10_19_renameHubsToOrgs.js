@@ -102,7 +102,9 @@ export const up = async ({ sequelize }) => {
 	await withTransaction(
 		sequelize,
 		async ({ run, tableExists, columnExists, typeExists, dropIfEmpty, renameNames }) => {
-			// Children first, so no FK blocks the drop
+			// Children first, so no FK blocks the drop. OrgInvites has no Hub predecessor; sync()
+			// creates it against the empty Orgs and recreates it against the renamed one next time.
+			if (await tableExists('Hubs')) await dropIfEmpty('OrgInvites');
 			for (const [from, to] of [...TABLES].reverse()) {
 				if (await tableExists(from)) await dropIfEmpty(to);
 			}

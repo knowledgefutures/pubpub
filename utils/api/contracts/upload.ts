@@ -57,7 +57,7 @@ export const uploadRouter = {
 		query: z.object({
 			contentType: z.string(),
 			filename: z.string().optional(),
-			key: z.string().optional(),
+			key: z.string(),
 		}),
 		responses: {
 			200: z.object({

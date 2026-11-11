@@ -6,6 +6,7 @@ import SHA3 from 'crypto-js/sha3';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { gdprCookiePersistsSignup, getGdprConsentElection } from 'client/utils/legal/gdprConsent';
+import { s3Upload } from 'client/utils/upload';
 import { Altcha, GridWrapper, Honeypot, Icon, ImageUpload, InputField } from 'components';
 
 import './userCreate.scss';
@@ -13,6 +14,18 @@ import './userCreate.scss';
 type Props = {
 	signupData: any;
 };
+
+const uploadAvatar = (file: Blob, userId: string) =>
+	new Promise<string>((resolve, reject) => {
+		s3Upload(
+			file as File,
+			() => {},
+			(_evt, _index, _type, key) => resolve(`https://assets.pubpub.org/${key}`),
+			0,
+			reject,
+			userId,
+		);
+	});
 
 const UserCreate = (props: Props) => {
 	const { signupData } = props;
@@ -26,7 +39,7 @@ const UserCreate = (props: Props) => {
 	const [password, setPassword] = useState('');
 	const [title, setTitle] = useState('');
 	const [bio, setBio] = useState('');
-	const [avatar, setAvatar] = useState(undefined);
+	const [avatarFile, setAvatarFile] = useState<Blob | null>(null);
 	const [location, setLocation] = useState('');
 	const [orcid, setOrcid] = useState('');
 	const [github, setGithub] = useState('');
@@ -58,7 +71,6 @@ const UserCreate = (props: Props) => {
 				firstName,
 				lastName,
 				password: SHA3(password).toString(encHex),
-				avatar,
 				title,
 				bio,
 				location,
@@ -73,10 +85,22 @@ const UserCreate = (props: Props) => {
 				altcha: altchaPayload,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			};
-			await apiFetch('/api/users', {
+			const newUser: { id: string } = await apiFetch('/api/users', {
 				method: 'POST',
 				body: JSON.stringify(body),
 			});
+			if (avatarFile) {
+				// Uploads need a session, which only exists once the account does.
+				try {
+					const avatar = await uploadAvatar(avatarFile, newUser.id);
+					await apiFetch('/api/users', {
+						method: 'PUT',
+						body: JSON.stringify({ userId: newUser.id, avatar }),
+					});
+				} catch (err) {
+					console.error('Avatar upload failed', err);
+				}
+			}
 			const cacheBreaker = Math.round(new Date().getTime() / 1000);
 			window.location.href = `/?breakCache=${cacheBreaker}`;
 		} catch (err) {
@@ -108,8 +132,8 @@ const UserCreate = (props: Props) => {
 		setBio(evt.target.value.substring(0, 280).replace(/\n/g, ' '));
 	};
 
-	const onAvatarChange = (val) => {
-		setAvatar(val);
+	const onAvatarChange = (file: Blob | null) => {
+		setAvatarFile(file);
 	};
 	const expandables = [
 		{
@@ -240,7 +264,7 @@ const UserCreate = (props: Props) => {
 						<ImageUpload
 							htmlFor="avatar-upload"
 							label="Avatar Image"
-							onNewImage={onAvatarChange}
+							onNewFile={onAvatarChange}
 							useCrop={true}
 						/>
 						<InputField

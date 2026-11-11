@@ -23,6 +23,8 @@ type OwnProps = {
 	isRequired?: boolean;
 	label?: React.ReactNode;
 	onNewImage?: (imageUrl: string) => unknown;
+	/** When set, the image is kept here instead of uploaded. */
+	onNewFile?: (file: Blob | null) => unknown;
 	onImageSelect?: (imageFile: any) => unknown;
 	useAccentBackground?: boolean;
 	useCrop?: boolean;
@@ -39,6 +41,7 @@ const defaultProps = {
 	isRequired: false,
 	label: null as React.ReactNode,
 	onNewImage: noopImageHandler,
+	onNewFile: undefined as undefined | ((file: Blob | null) => unknown),
 	onImageSelect: noopImageHandler,
 	useAccentBackground: false,
 	useCrop: false,
@@ -66,6 +69,7 @@ class ImageUpload extends Component<
 		this.inputRef = React.createRef();
 		this.onUploadFinish = this.onUploadFinish.bind(this);
 		this.onCropUploaded = this.onCropUploaded.bind(this);
+		this.onCropped = this.onCropped.bind(this);
 		this.setBlob = this.setBlob.bind(this);
 		this.handleImageSelect = this.handleImageSelect.bind(this);
 		this.clearImage = this.clearImage.bind(this);
@@ -88,6 +92,14 @@ class ImageUpload extends Component<
 			uploading: false,
 		});
 		this.props.onNewImage(newImageUrl);
+	}
+
+	onCropped(blob: Blob) {
+		this.setState({
+			imageFile: undefined,
+			imageBlob: URL.createObjectURL(blob),
+		});
+		this.props.onNewFile?.(blob);
 	}
 
 	setBlob(image) {
@@ -114,6 +126,9 @@ class ImageUpload extends Component<
 			const [imageFile] = files;
 			if (useCrop) {
 				this.setState({ imageFile });
+			} else if (this.props.onNewFile) {
+				this.setBlob(imageFile);
+				this.props.onNewFile(imageFile);
 			} else {
 				s3Upload(imageFile, () => {}, this.onUploadFinish, 0);
 				this.setState({ uploading: true });
@@ -138,6 +153,7 @@ class ImageUpload extends Component<
 			uploading: false,
 		});
 		this.props.onNewImage(null);
+		this.props.onNewFile?.(null);
 	}
 
 	renderInput() {
@@ -240,6 +256,7 @@ class ImageUpload extends Component<
 						onCancel={this.cancelImageUpload}
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '(newImageUrl: any, newImageBlob: any) => voi... Remove this comment to see the full error message
 						onUploaded={this.onCropUploaded}
+						onCropped={this.props.onNewFile && this.onCropped}
 					/>
 				</Overlay>
 			</div>

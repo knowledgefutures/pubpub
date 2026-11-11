@@ -48,12 +48,12 @@ import { testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { addWorkerTask } from 'server/utils/workers';
 import {
-	purgeCloudflareUrls as cfPurgeByUrls,
 	purgeFastlyUrl as fastlyPurgeByUrl,
 	getCloudFrontInvalidationStatus,
 	invalidateCloudFrontUrl,
 	isCachePurgeConfigured,
 	isCloudFrontConfigured,
+	purgeCloudflarePrefixes,
 } from 'utils/caching/purge';
 import { aes256Decrypt, aes256Encrypt } from 'utils/crypto';
 import {
@@ -1031,7 +1031,7 @@ router.post('/api/superadmin/scam-files/purge-cloudflare', async (req, res, next
 		}
 		const key = parseAssetKey(req.body.url);
 		const fullUrl = `https://assets.pubpub.org/${key}`;
-		await cfPurgeByUrls([fullUrl]);
+		await purgeCloudflarePrefixes([fullUrl]);
 		return res.json({ key, purged: true });
 	} catch (err) {
 		return handleErrors(req, res, next)(err);

@@ -166,7 +166,7 @@ export const envSchema = z.object({
 	CLOUDFLARE_CACHE_PURGE_API_TOKEN: z
 		.string()
 		.optional()
-		.describe('Cloudflare API token with Zone:Cache Purge:Edit permission'),
+		.describe('Cloudflare API token with Zone > Cache Purge > Purge on the pubpub.org zone'),
 	CLOUDFRONT_ASSETS_DISTRIBUTION_ID: z
 		.string()
 		.optional()

@@ -92,7 +92,8 @@ export function isCachePurgeConfigured() {
 	return Boolean(env.CLOUDFLARE_CACHE_PURGE_API_TOKEN && env.CLOUDFLARE_ZONE_TAG);
 }
 
-export async function purgeCloudflareUrls(urls: string[]) {
+/** Purges every cached variant (any query string) of each URL. */
+export async function purgeCloudflarePrefixes(urls: string[]) {
 	const apiToken = env.CLOUDFLARE_CACHE_PURGE_API_TOKEN;
 	const zoneId = env.CLOUDFLARE_ZONE_TAG;
 	if (!apiToken || !zoneId) {
@@ -107,7 +108,7 @@ export async function purgeCloudflareUrls(urls: string[]) {
 			Authorization: `Bearer ${apiToken}`,
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ files: urls }),
+		body: JSON.stringify({ prefixes: urls.map((url) => url.replace(/^https?:\/\//, '')) }),
 	});
 
 	let json: any = null;
@@ -156,7 +157,7 @@ export async function invalidateCloudFrontUrl(url: string) {
 			DistributionId: getCloudFrontDistributionId(),
 			InvalidationBatch: {
 				CallerReference: `scam-${Date.now()}`,
-				Paths: { Quantity: 1, Items: [pathname] },
+				Paths: { Quantity: 1, Items: [`${pathname}*`] },
 			},
 		}),
 	);

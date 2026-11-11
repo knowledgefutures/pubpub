@@ -13,14 +13,17 @@ import { usePageContext, usePendingChanges } from 'utils/hooks';
 import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import AnalyticsSettings from './AnalyticsSettings';
 import BasicSettings from './BasicSettings';
+import CmsSettings from './CmsSettings';
 import CommunityAdminSettings from './CommunityAdminSettings';
 import CommunityOrCollectionLevelPubSettings from './CommunityOrCollectionLevelPubSettings';
 import FooterSettings from './FooterSettings';
 import HeaderSettings from './HeaderSettings';
 import HomepageBannerSettings from './HomepageBannerSettings';
 import NavSettings from './NavSettings';
+import OrganizationSettings from './OrganizationSettings';
 import PublicNewPubs from './PublicNewPubsSettings';
 import SocialSettings from './SocialSettings';
+import UnderlaySettings from './UnderlaySettings';
 
 const attributesRequiringRefresh = ['subdomain'];
 
@@ -46,6 +49,8 @@ type Props = {
 			output: string | null;
 			error: string | null;
 		}[];
+		/** Whether this community already has a saved Underlay integration (an API key is set). */
+		underlayConfigured?: boolean;
 	};
 };
 
@@ -176,6 +181,45 @@ const CommunitySettings = (props: Props) => {
 						pubPubIcon: 'impact',
 						sections: [
 							<AnalyticsSettings
+								communityData={communityData}
+								updateCommunityData={updateCommunityData}
+							/>,
+						],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.isSuperAdmin ||
+		(pageContext.scopeData.activePermissions.canAdminCommunity &&
+			props.settingsData?.underlayConfigured)
+			? [
+					{
+						id: 'underlay-settings',
+						title: 'Underlay',
+						icon: 'globe-network',
+						sections: [<UnderlaySettings communityData={communityData} />],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+		pageContext.scopeData.activePermissions.isSuperAdmin
+			? [
+					{
+						id: 'organization-settings',
+						title: 'Organization',
+						icon: 'office',
+						sections: [<OrganizationSettings communityData={communityData} />],
+					} as const,
+				]
+			: ([] as Subtab[])),
+		...(pageContext.scopeData.activePermissions.canAdminCommunity ||
+		pageContext.scopeData.activePermissions.isSuperAdmin
+			? [
+					{
+						id: 'cms-settings',
+						title: 'CMS',
+						icon: 'exchange',
+						sections: [
+							<CmsSettings
 								communityData={communityData}
 								updateCommunityData={updateCommunityData}
 							/>,

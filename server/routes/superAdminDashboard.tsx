@@ -20,13 +20,14 @@ import {
 	getEduDomainSummaries,
 } from 'server/community/eduQueries';
 import { getAllTemplates } from 'server/communityTemplate/queries';
+import { getRedepositPlan, RedepositError, type RedepositResult } from 'server/doi/redeposit';
 import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
 import Html from 'server/Html';
-// NOTE: Suggested Hubs SSR returns an empty shell; summaries are fetched client-side on mount.
-import { getAllHubsWithCommunityCounts } from 'server/hub/queries';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
-import { Community, DepositTarget, SpamTag, User } from 'server/models';
+import { Community, DepositTarget, FtpTarget, SpamTag, User, WorkerTask } from 'server/models';
+// NOTE: Suggested Orgs SSR returns an empty shell; summaries are fetched client-side on mount.
+import { getAllOrgsWithCommunityCounts } from 'server/org/queries';
 import { queryCommunitiesForSpamManagement } from 'server/spamTag/communityDashboard';
 import { queryUsersForSpamManagement } from 'server/spamTag/userDashboard';
 import {
@@ -34,10 +35,18 @@ import {
 	isCloudflareConfigured,
 	removeCustomHostname,
 } from 'server/utils/cloudflareCustomHostnames';
-import { BadRequestError, ForbiddenError, handleErrors, NotFoundError } from 'server/utils/errors';
+import {
+	BadRequestError,
+	ForbiddenError,
+	HTTPStatusError,
+	handleErrors,
+	NotFoundError,
+} from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { assetsClient, scamClient } from 'server/utils/s3';
+import { testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { addWorkerTask } from 'server/utils/workers';
 import {
 	purgeCloudflareUrls as cfPurgeByUrls,
 	purgeFastlyUrl as fastlyPurgeByUrl,
@@ -105,16 +114,31 @@ const getTabProps = async (tabKind: SuperAdminTabKind, locationData: types.Locat
 			})),
 		};
 	}
+	if (tabKind === 'ftpTargets') {
+		const targets = await FtpTarget.findAll({
+			include: [
+				{
+					model: Community,
+					as: 'community',
+					attributes: ['id', 'title', 'subdomain'],
+				},
+			],
+			order: [['createdAt', 'DESC']],
+		});
+		return {
+			ftpTargets: targets.map(sanitizeFtpTarget),
+		};
+	}
 	if (tabKind === 'exploreCommunities') {
 		return { communities: await getExploreCommunities() };
 	}
 	if (tabKind === 'landingPageFeatures') {
 		return { landingPageFeatures: await getLandingPageFeatures({ onlyValidItems: false }) };
 	}
-	if (tabKind === 'hubs') {
-		return { hubs: await getAllHubsWithCommunityCounts() };
+	if (tabKind === 'orgs') {
+		return { orgs: await getAllOrgsWithCommunityCounts() };
 	}
-	if (tabKind === 'suggestedHubs') {
+	if (tabKind === 'suggestedOrgs') {
 		// Return empty shell — summaries are fetched client-side for fast SSR
 		return {};
 	}
@@ -297,6 +321,19 @@ const resolveCommunity = async (identifier: string) => {
 	return community;
 };
 
+const sanitizeFtpTarget = (t: FtpTarget) => ({
+	id: t.id,
+	communityId: t.communityId,
+	name: t.name ?? '',
+	ftpType: t.ftpType,
+	port: t.port,
+	host: t.host,
+	filePath: t.filePath,
+	hasCredentials: Boolean(t.username),
+	communityTitle: t.community?.title ?? '(unknown)',
+	communitySubdomain: t.community?.subdomain ?? '(unknown)',
+});
+
 const sanitizeDepositTarget = (t: DepositTarget) => ({
 	id: t.id,
 	communityId: t.communityId,
@@ -322,6 +359,7 @@ router.get('/api/superadmin/communities/search', async (req, res, next) => {
 		}
 
 		const excludeWithDepositTarget = req.query.excludeWithDepositTarget === 'true';
+		const excludeWithFtpTarget = req.query.excludeWithFtpTarget === 'true';
 
 		const communities = await Community.findAll({
 			where: {
@@ -335,17 +373,30 @@ router.get('/api/superadmin/communities/search', async (req, res, next) => {
 			order: [['title', 'ASC']],
 		});
 
-		if (!excludeWithDepositTarget) {
+		if (!excludeWithDepositTarget && !excludeWithFtpTarget) {
 			return res.json(communities);
 		}
 
 		const communityIds = communities.map((c) => c.id);
-		const existingTargets = await DepositTarget.findAll({
-			where: { communityId: communityIds },
-			attributes: ['communityId'],
-		});
-		const idsWithTarget = new Set(existingTargets.map((t) => t.communityId));
-		return res.json(communities.filter((c) => !idsWithTarget.has(c.id)));
+		const excludedIds = new Set<string | null>();
+
+		if (excludeWithDepositTarget) {
+			const existingTargets = await DepositTarget.findAll({
+				where: { communityId: communityIds },
+				attributes: ['communityId'],
+			});
+			existingTargets.forEach((t) => excludedIds.add(t.communityId));
+		}
+
+		if (excludeWithFtpTarget) {
+			const existingFtpTargets = await FtpTarget.findAll({
+				where: { communityId: communityIds },
+				attributes: ['communityId'],
+			});
+			existingFtpTargets.forEach((t) => excludedIds.add(t.communityId));
+		}
+
+		return res.json(communities.filter((c) => !excludedIds.has(c.id)));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}
@@ -545,8 +596,253 @@ router.post('/api/superadmin/deposit-targets/:id/copy', async (req, res, next) =
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs sidebar summaries
-router.get('/api/superadmin/suggested-hubs-summaries', async (req, res, next) => {
+// ── FTP Targets API ────────────────────────────────────────────────────────
+
+router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const { communityId, name, ftpType, port, host, filePath, username, password } = req.body;
+		if (!communityId || !host) {
+			throw new BadRequestError(new Error('communityId and host are required'));
+		}
+		if (!ftpType || !['sftp', 'ftps'].includes(ftpType)) {
+			throw new BadRequestError(new Error('ftpType must be "sftp" or "ftps"'));
+		}
+
+		const community = await resolveCommunity(communityId);
+
+		const createData: Record<string, any> = {
+			communityId: community.id,
+			name: name ? String(name).trim() : '',
+			ftpType,
+			host: String(host).trim(),
+			port: port != null ? Number(port) : null,
+			filePath: filePath ? String(filePath).trim() : null,
+		};
+
+		if (username && password) {
+			await testSftpConnection(
+				{ host: createData.host, port: createData.port, username, password },
+				createData.filePath,
+			).catch((err) => {
+				throw new BadRequestError(new Error(err.message));
+			});
+			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
+			createData.username = username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const target = await FtpTarget.create(createData as any);
+		const reloaded = await FtpTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.status(201).json(sanitizeFtpTarget(reloaded!));
+	} catch (err) {
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
+	}
+});
+
+router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await FtpTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('FTP target not found'));
+		}
+
+		const { name, ftpType, port, host, filePath, username, password } = req.body;
+		const updates: Record<string, any> = {};
+
+		if (name !== undefined) {
+			updates.name = String(name).trim();
+		}
+		if (ftpType !== undefined) {
+			if (!['sftp', 'ftps'].includes(ftpType)) {
+				throw new BadRequestError(new Error('ftpType must be "sftp" or "ftps"'));
+			}
+			updates.ftpType = ftpType;
+		}
+		if (host !== undefined) {
+			updates.host = String(host).trim();
+		}
+		if (port !== undefined) {
+			updates.port = port !== null ? Number(port) : null;
+		}
+		if (filePath !== undefined) {
+			updates.filePath = filePath ? String(filePath).trim() : null;
+		}
+
+		if (username !== undefined) {
+			if (username === '') {
+				updates.username = null;
+				updates.password = null;
+				updates.passwordInitVec = null;
+			} else {
+				// Encrypt any new password first (before the connection test).
+				if (password) {
+					const { encryptedText, initVec } = aes256Encrypt(
+						password,
+						env.AES_ENCRYPTION_KEY!,
+					);
+					updates.password = encryptedText;
+					updates.passwordInitVec = initVec;
+				}
+				if (username !== undefined) {
+					updates.username = username;
+				}
+
+				// Test connection if any connection-relevant field changed and credentials exist.
+				const connectionFieldChanged =
+					host !== undefined ||
+					port !== undefined ||
+					filePath !== undefined ||
+					ftpType !== undefined ||
+					username !== undefined ||
+					password !== undefined;
+
+				const effectiveUsername = username ?? target.username;
+				const hasCredentials =
+					Boolean(effectiveUsername) && Boolean(password ?? target.password);
+
+				if (connectionFieldChanged && hasCredentials) {
+					const effectiveHost = updates.host ?? target.host;
+					const effectivePort = updates.port !== undefined ? updates.port : target.port;
+					const effectivePath =
+						updates.filePath !== undefined ? updates.filePath : target.filePath;
+					const effectivePassword = password
+						? password
+						: aes256Decrypt(
+								target.password!,
+								env.AES_ENCRYPTION_KEY!,
+								target.passwordInitVec!,
+							);
+
+					await testSftpConnection(
+						{
+							host: effectiveHost,
+							port: effectivePort,
+							username: effectiveUsername,
+							password: effectivePassword,
+						},
+						effectivePath,
+					).catch((err) => {
+						throw new BadRequestError(new Error(err.message));
+					});
+				}
+			}
+		}
+
+		await target.update(updates);
+		const reloaded = await FtpTarget.findByPk(target.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeFtpTarget(reloaded!));
+	} catch (err) {
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
+	}
+});
+
+router.delete('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const target = await FtpTarget.findByPk(req.params.id);
+		if (!target) {
+			throw new NotFoundError(new Error('FTP target not found'));
+		}
+
+		await target.destroy();
+		return res.json({ id: req.params.id });
+	} catch (err) {
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
+	}
+});
+
+router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
+	try {
+		const initialData = await getInitialData(req);
+		if (!initialData.loginData.isSuperAdmin) {
+			throw new ForbiddenError();
+		}
+
+		const source = await FtpTarget.findByPk(req.params.id);
+		if (!source) {
+			throw new NotFoundError(new Error('Source FTP target not found'));
+		}
+
+		const { communityId, copyCredentials } = req.body;
+		if (!communityId) {
+			throw new BadRequestError(new Error('communityId is required'));
+		}
+
+		const destCommunity = await resolveCommunity(communityId);
+
+		const createData: Record<string, any> = {
+			communityId: destCommunity.id,
+			name: source.name ?? '',
+			ftpType: source.ftpType,
+			port: source.port,
+			host: source.host,
+			filePath: source.filePath,
+		};
+
+		if (copyCredentials && source.username && source.password && source.passwordInitVec) {
+			const plaintext = aes256Decrypt(
+				source.password,
+				env.AES_ENCRYPTION_KEY!,
+				source.passwordInitVec,
+			);
+			const { encryptedText, initVec } = aes256Encrypt(plaintext, env.AES_ENCRYPTION_KEY!);
+			createData.username = source.username;
+			createData.password = encryptedText;
+			createData.passwordInitVec = initVec;
+		}
+
+		const newTarget = await FtpTarget.create(createData as any);
+		const reloaded = await FtpTarget.findByPk(newTarget.id, {
+			include: [
+				{ model: Community, as: 'community', attributes: ['id', 'title', 'subdomain'] },
+			],
+		});
+
+		return res.json(sanitizeFtpTarget(reloaded!));
+	} catch (err) {
+		if (err instanceof HTTPStatusError) {
+			return res.status(err.status).json({ error: err.message });
+		}
+		return next(err);
+	}
+});
+
+// JSON API for lazy-loading suggested-orgs sidebar summaries
+router.get('/api/superadmin/suggested-orgs-summaries', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -559,8 +855,8 @@ router.get('/api/superadmin/suggested-hubs-summaries', async (req, res, next) =>
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs domain detail
-router.get('/api/superadmin/suggested-hubs/:domain', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs domain detail
+router.get('/api/superadmin/suggested-orgs/:domain', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -575,8 +871,8 @@ router.get('/api/superadmin/suggested-hubs/:domain', async (req, res, next) => {
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs collaborators (fetched on-demand)
-router.get('/api/superadmin/suggested-hubs/:domain/collaborators', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs collaborators (fetched on-demand)
+router.get('/api/superadmin/suggested-orgs/:domain/collaborators', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -590,8 +886,8 @@ router.get('/api/superadmin/suggested-hubs/:domain/collaborators', async (req, r
 	}
 });
 
-// JSON API for lazy-loading suggested-hubs activity feed (fetched on-demand)
-router.get('/api/superadmin/suggested-hubs/:domain/activity', async (req, res, next) => {
+// JSON API for lazy-loading suggested-orgs activity feed (fetched on-demand)
+router.get('/api/superadmin/suggested-orgs/:domain/activity', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -606,7 +902,7 @@ router.get('/api/superadmin/suggested-hubs/:domain/activity', async (req, res, n
 });
 
 // JSON API for known search term content mentions for a domain (cross-reference)
-router.get('/api/superadmin/suggested-hubs/:domain/content-mentions', async (req, res, next) => {
+router.get('/api/superadmin/suggested-orgs/:domain/content-mentions', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		if (!initialData.loginData.isSuperAdmin) {
@@ -892,6 +1188,157 @@ router.get('/api/superadmin/content-search/adhoc/pubs', async (req, res, next) =
 
 		const result = await getContentSearchPubsByPhrase(phrase, { limit, offset });
 		return res.json(result);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+// ── DOI Redeposit API ───────────────────────────────────────────────────────
+
+const assertSuperAdmin = async (req) => {
+	const initialData = await getInitialData(req);
+	if (!initialData.loginData.isSuperAdmin) {
+		throw new ForbiddenError();
+	}
+};
+
+const summarizeRedepositTask = (task: WorkerTask) => {
+	const output = (task.output ?? {}) as any;
+	const { results = [], ...rest } = output as { results?: RedepositResult[] };
+	const counts: Record<string, number> = {};
+	results.forEach((result) => {
+		counts[result.status] = (counts[result.status] ?? 0) + 1;
+	});
+	return {
+		id: task.id,
+		createdAt: task.createdAt,
+		isProcessing: Boolean(task.isProcessing),
+		error: task.error,
+		input: task.input,
+		output: {
+			...rest,
+			counts,
+			// The dashboard lists every item that needs attention, and a sample of the rest.
+			needsAttention: results.filter(
+				(result) => !['succeeded', 'submitted', 'ready'].includes(result.status),
+			),
+			succeeded: results.filter((result) => result.status === 'succeeded').slice(0, 5),
+			changed: results.filter((result) => result.changes?.length).slice(0, 20),
+		},
+	};
+};
+
+const sendRedepositError = (res, err) => {
+	if (err instanceof RedepositError) {
+		res.status(400).json({ message: err.message });
+		return true;
+	}
+	return false;
+};
+
+const getRedepositTasks = (communityId: string) =>
+	WorkerTask.findAll({
+		where: { type: 'redepositDois', input: { communityId } },
+		order: [['createdAt', 'DESC']],
+		limit: 5,
+	});
+
+router.get('/api/superadmin/doi-redeposit', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const communityId = String(req.query.communityId ?? '');
+		if (!communityId) {
+			return res.status(400).json({ message: 'communityId is required' });
+		}
+		const [plan, tasks] = await Promise.all([
+			getRedepositPlan(communityId),
+			getRedepositTasks(communityId),
+		]);
+		const { items, ...rest } = plan;
+		return res.json({
+			...rest,
+			collectionCount: items.filter((item) => item.kind === 'collection').length,
+			pubCount: items.filter((item) => item.kind === 'pub').length,
+			firstPub: items.find((item) => item.kind === 'pub') ?? null,
+			tasks: tasks.map(summarizeRedepositTask),
+		});
+	} catch (err) {
+		if (sendRedepositError(res, err)) return undefined;
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/doi-redeposit', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const { communityId, pubSlug, limit, checkOnly } = req.body;
+		if (!communityId) {
+			return res.status(400).json({ message: 'communityId is required' });
+		}
+		const running = await WorkerTask.findOne({
+			where: { type: 'redepositDois', input: { communityId }, isProcessing: true },
+		});
+		if (running) {
+			return res
+				.status(409)
+				.json({ message: 'A redeposit is already running for this community.' });
+		}
+		// Surface plan-level problems (no such community, a DataCite community) before queueing.
+		const options = {
+			pubSlug: pubSlug ? String(pubSlug) : undefined,
+			limit: limit ? Number(limit) : undefined,
+		};
+		const plan = await getRedepositPlan(communityId, options);
+		if (!plan.items.length) {
+			return res.status(400).json({
+				message: pubSlug
+					? `No pub with slug "${pubSlug}" has a DOI that PubPub deposited.`
+					: 'Nothing to redeposit for this community.',
+			});
+		}
+		const task = await addWorkerTask({
+			type: 'redepositDois',
+			input: {
+				communityId,
+				...(options.pubSlug && { pubSlug: options.pubSlug }),
+				...(options.limit && { limit: options.limit }),
+				...(checkOnly && { checkOnly: true }),
+			},
+		});
+		return res.json(summarizeRedepositTask(task));
+	} catch (err) {
+		if (sendRedepositError(res, err)) return undefined;
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.get('/api/superadmin/doi-redeposit/tasks/:taskId', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const task = await WorkerTask.findOne({
+			where: { id: req.params.taskId, type: 'redepositDois' },
+		});
+		if (!task) {
+			throw new NotFoundError();
+		}
+		return res.json(summarizeRedepositTask(task));
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+router.post('/api/superadmin/doi-redeposit/tasks/:taskId/stop', async (req, res, next) => {
+	try {
+		await assertSuperAdmin(req);
+		const task = await WorkerTask.findOne({
+			where: { id: req.params.taskId, type: 'redepositDois' },
+		});
+		if (!task) {
+			throw new NotFoundError();
+		}
+		// The task checks this between deposits and between rounds of log reads.
+		await task.update({ input: { ...(task.input as object), stopRequested: true } });
+		return res.json(summarizeRedepositTask(task));
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

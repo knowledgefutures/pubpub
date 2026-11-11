@@ -30,6 +30,17 @@ const models = modelize`
 			}
 		}
 	}
+	Community cmsCommunity {
+		cmsMode: true
+		canonicalBaseUrl: "https://cms.example.org"
+		Member {
+			permissions: "admin"
+			User cmsCommunityAdmin {}
+		}
+		Pub cmsPub {
+			Release {}
+		}
+	}
 	User guest {}
 `;
 
@@ -177,6 +188,25 @@ it('lets community admins preview a DOI for collections in their community', asy
 		.expect(200);
 
 	expect(previewDois.collection).toEqual(expectedCollectionDoi);
+});
+
+it('deposits the canonical url for a CMS-mode community', async () => {
+	const { cmsCommunityAdmin, cmsCommunity, cmsPub } = models;
+	const agent = await login(cmsCommunityAdmin);
+	const {
+		body: { depositJson },
+	} = await agent
+		.get('/api/doiPreview')
+		.query({ target: 'pub', pubId: cmsPub.id, communityId: cmsCommunity.id })
+		.expect(200);
+
+	// Assert on the resource URLs specifically: the deposit head legitimately
+	// contains crossref@pubpub.org as the depositor email.
+	const { journal } = depositJson.deposit.doi_batch.body;
+	expect(journal.journal_metadata.doi_data.resource['#text']).toEqual('https://cms.example.org');
+	expect(journal.journal_article.doi_data.resource['#text']).toEqual(
+		`https://cms.example.org/pub/${cmsPub.slug}`,
+	);
 });
 
 teardown(afterAll);

@@ -25,7 +25,7 @@ type TemplateSummary = {
 	description: string | null;
 	avatar: string | null;
 	isActive: boolean;
-	hubCount: number;
+	orgCount: number;
 	communityCount: number;
 	sourceCommunityId: string | null;
 	sourceCommunity?: {
@@ -34,8 +34,8 @@ type TemplateSummary = {
 		title: string;
 		domain: string | null;
 	} | null;
-	hubId: string | null;
-	hub?: { id: string; slug: string; title: string } | null;
+	orgId: string | null;
+	org?: { id: string; slug: string; title: string } | null;
 	createdBy?: { id: string; fullName: string; avatar: string | null } | null;
 };
 
@@ -181,7 +181,7 @@ const CommunityTemplates = (props: Props) => {
 							<th />
 							<th>Title</th>
 							<th>Slug</th>
-							<th>Hub</th>
+							<th>Org</th>
 							<th>Status</th>
 							<th>Communities</th>
 							<th>Source</th>
@@ -206,8 +206,8 @@ const CommunityTemplates = (props: Props) => {
 									<code>{t.slug}</code>
 								</td>
 								<td>
-									{t.hub ? (
-										<Tag minimal>{t.hub.title}</Tag>
+									{t.org ? (
+										<Tag minimal>{t.org.title}</Tag>
 									) : (
 										<Tag minimal intent="none">
 											Global

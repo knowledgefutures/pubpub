@@ -75,3 +75,10 @@ tmp/
 
 planning/
 .claude
+
+infra/sftp/
+!infra/sftp/upload/.gitkeep
+
+# DOI redeposit results (tools/redepositDois.ts)
+redeposit-*.json
+community-issns-*.csv

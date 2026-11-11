@@ -50,7 +50,7 @@ export const getSearchCommunities = async (searchString: string, limit = 8) => {
 		],
 		limit: limit + 5, // fetch extra to account for spam filtering
 	});
-	return results.filter((c: any) => c.spamTag?.status !== 'confirmed').slice(0, limit);
+	return results.filter((c: any) => c.spamTag?.status !== 'confirmed-spam').slice(0, limit);
 };
 
 /**

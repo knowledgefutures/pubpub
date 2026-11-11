@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Tab, Tabs } from '@blueprintjs/core';
+import { Callout, Intent, Tab, Tabs } from '@blueprintjs/core';
 
 import {
 	getDepositBody,
@@ -336,6 +336,7 @@ function AssignDoiPreview(props: Props) {
 		doi,
 		depositJson: {
 			dois: { community: communityDoi, pub: pubDoi },
+			issnNotes = [],
 		},
 		depositXml,
 	} = crossrefDepositRecord;
@@ -357,6 +358,13 @@ function AssignDoiPreview(props: Props) {
 						</>
 					)}
 				</dl>
+				{issnNotes.length > 0 && (
+					<Callout intent={Intent.WARNING} className="issn-notes">
+						{issnNotes.map((note) => (
+							<p key={note}>{note}</p>
+						))}
+					</Callout>
+				)}
 				{isJournalDeposit(crossrefDepositRecord) && renderArticlePreview(body)}
 				{isBookDeposit(crossrefDepositRecord) && renderBookPreview(body)}
 				{isConferenceDeposit(crossrefDepositRecord) && renderConferencePreview(body)}

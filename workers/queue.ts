@@ -7,6 +7,7 @@ import { Worker } from 'worker_threads';
 
 import { env } from 'server/env';
 import { WorkerTask } from 'server/models';
+import { failPushLogForWorkerTask } from 'server/underlayPushLog/queries';
 import { expect } from 'utils/assert';
 import { createCachePurgeDebouncer } from 'utils/caching/createCachePurgeDebouncer';
 import { getAppCommit, isProd } from 'utils/environment';
@@ -20,6 +21,8 @@ let currentWorkerThreads = 0;
 const customTimeouts = {
 	communityExport: 14_400, // 4 hours
 	import: 300, // 5 minutes
+	pushToUnderlay: 14_400, // 4 hours
+	redepositDois: 21_600, // 6 hours: sends, then reads Crossref's logs for up to 2 hours
 } satisfies Partial<Record<TaskType, number>>;
 
 if (env.NODE_ENV === 'production') {
@@ -60,8 +63,20 @@ const processTask = (channel) => async (message) => {
 	const startTime = Date.now();
 	console.log(`Beginning ${taskData.id} (load ${currentWorkerThreads}/${maxWorkerThreads})`);
 
+	// Without an explicit limit a worker thread's heap ceiling is derived from the host's memory, so
+	// the same task OOMs at different points on different machines and the failure is not
+	// reproducible locally. Setting WORKER_MAX_OLD_SPACE_MB pins it. Left unset by default so this
+	// change alters nothing until someone chooses a value.
+	// Must be positive: a zero or negative limit makes the Worker constructor throw, which would
+	// break every task type, not just this one. The schema rejects such values at boot; this guards
+	// the case where the constructor is reached anyway.
+	const configuredHeapMb = Number(env.WORKER_MAX_OLD_SPACE_MB);
+	const maxOldSpaceMb =
+		Number.isFinite(configuredHeapMb) && configuredHeapMb > 0 ? configuredHeapMb : undefined;
+
 	const worker = new Worker(path.join(__dirname, 'initWorker.js'), {
 		workerData: taskData,
+		...(maxOldSpaceMb ? { resourceLimits: { maxOldGenerationSizeMb: maxOldSpaceMb } } : {}),
 	});
 
 	const onWorkerFinished = async (updatedTaskData) => {
@@ -118,10 +133,37 @@ const processTask = (channel) => async (message) => {
 		if (env.NODE_ENV === 'production') {
 			Sentry.captureException(error);
 		}
+		const message = error.message ? error.message : error;
+
+		// A task that throws finalizes its own bookkeeping, but a task whose *process* dies (OOM,
+		// container replacement, the watchdog below terminating the thread) never gets the chance.
+		// pushToUnderlay keeps a user-visible push log that would otherwise show `running` forever,
+		// so close it out here. Best-effort: never let this stop the WorkerTask from being updated
+		// and the message acked, or a failed task would be redelivered indefinitely.
+		if (taskData.type === 'pushToUnderlay') {
+			try {
+				await failPushLogForWorkerTask(taskData.id, String(message));
+			} catch (err) {
+				console.error(`Failed to finalize underlay push log for ${taskData.id}:`, err);
+			}
+		}
+
+		// A redeposit writes its results as it goes. Keep them, so a run that dies still shows what
+		// was sent to Crossref.
+		let output: object | null = null;
+		if (taskData.type === 'redepositDois') {
+			try {
+				const task = await WorkerTask.findByPk(taskData.id, { attributes: ['output'] });
+				output = task?.output ?? null;
+			} catch (err) {
+				console.error(`Failed to read redeposit progress for ${taskData.id}:`, err);
+			}
+		}
+
 		await onWorkerFinished({
 			isProcessing: false,
-			error: error.message ? error.message : error,
-			output: null,
+			error: message,
+			output,
 		});
 	};
 

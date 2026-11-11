@@ -100,7 +100,7 @@ const DetailsTab = (props: Props) => {
 				<DownloadChooser
 					pubData={pub}
 					communityId={pub.communityId}
-					onSetDownloads={onUpdatePub}
+					onSetDownloads={(downloads) => onUpdatePub({ downloads })}
 					text="Upload new file"
 				/>
 			</SpubHeaderField>

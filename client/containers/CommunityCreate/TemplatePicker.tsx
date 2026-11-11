@@ -9,7 +9,7 @@ import './templatePicker.scss';
 
 export const CLONE_MARKER = '__clone__';
 
-type HubCommunityOption = {
+type OrgCommunityOption = {
 	id: string;
 	title: string;
 	subdomain: string;
@@ -20,7 +20,7 @@ type Props = {
 	templates: CommunityTemplate[];
 	selectedTemplateId: string | null;
 	onSelect: (templateId: string | null) => void;
-	hubCommunities: HubCommunityOption[];
+	orgCommunities: OrgCommunityOption[];
 	cloneEnabled: boolean;
 	cloneCommunityId: string | null;
 	onCloneCommunitySelect: (communityId: string | null) => void;
@@ -35,13 +35,13 @@ type TemplateOption = {
 
 const INITIAL_VISIBLE = 6;
 
-const CommunitySelect = Select.ofType<HubCommunityOption>();
+const CommunitySelect = Select.ofType<OrgCommunityOption>();
 
 const TemplatePicker = ({
 	templates,
 	selectedTemplateId,
 	onSelect,
-	hubCommunities,
+	orgCommunities,
 	cloneEnabled,
 	cloneCommunityId,
 	onCloneCommunitySelect,
@@ -66,7 +66,7 @@ const TemplatePicker = ({
 	const visibleOptions = showAll ? options : options.slice(0, INITIAL_VISIBLE);
 	const hasMore = options.length > INITIAL_VISIBLE;
 	const isCloneSelected = selectedTemplateId === CLONE_MARKER;
-	const selectedCommunity = hubCommunities.find((c) => c.id === cloneCommunityId) || null;
+	const selectedCommunity = orgCommunities.find((c) => c.id === cloneCommunityId) || null;
 
 	return (
 		<div className="template-picker-cards">
@@ -107,7 +107,7 @@ const TemplatePicker = ({
 						</button>
 					);
 				})}
-				{cloneEnabled && hubCommunities.length > 0 && (
+				{cloneEnabled && orgCommunities.length > 0 && (
 					<button
 						type="button"
 						className={`template-card${isCloneSelected ? ' selected' : ''}`}
@@ -119,7 +119,7 @@ const TemplatePicker = ({
 						<div className="template-card-body">
 							<div className="template-card-title">Clone from Community</div>
 							<div className="template-card-desc">
-								Copy the layout and branding from an existing community in this hub.
+								Copy the layout and branding from an existing community in this org.
 							</div>
 						</div>
 						<div className="template-card-radio">
@@ -132,7 +132,7 @@ const TemplatePicker = ({
 				<div className="clone-community-select">
 					<div className="clone-select-label">Clone layout from</div>
 					<CommunitySelect
-						items={hubCommunities}
+						items={orgCommunities}
 						itemPredicate={(query, item) =>
 							item.title.toLowerCase().includes(query.toLowerCase()) ||
 							item.subdomain.toLowerCase().includes(query.toLowerCase())
@@ -169,7 +169,7 @@ const TemplatePicker = ({
 							minimal: true,
 							popoverClassName: 'clone-community-popover',
 						}}
-						filterable={hubCommunities.length > 8}
+						filterable={orgCommunities.length > 8}
 						noResults={<MenuItem disabled text="No communities found" />}
 					>
 						<Button

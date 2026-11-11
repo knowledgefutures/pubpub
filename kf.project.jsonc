@@ -1,0 +1,22 @@
+{
+	"$schema": "https://console.knowledgefutures.org/schemas/kf.project.v2.json",
+	"version": 2,
+	"slug": "kf-pubpub",
+	"name": "PubPub",
+	"account": "kf",
+
+	// Deployed by .github/workflows/deploy.yml; secrets come from the console.
+	"environments": {
+		"production": {
+			"ref": "tags/v*",
+			"secrets": ["infra/.env.enc"],
+			"elsewhere": { "workflow": ".github/workflows/deploy.yml" }
+		},
+		// DuqDuq
+		"dev": {
+			"ref": "heads/main",
+			"secrets": ["infra/.env.dev.enc"],
+			"elsewhere": { "workflow": ".github/workflows/deploy.yml" }
+		}
+	}
+}

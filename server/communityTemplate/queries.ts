@@ -26,7 +26,7 @@ import {
 import { sequelize } from 'server/sequelize';
 import { slugifyString } from 'utils/strings';
 
-import { Hub } from '../hub/model';
+import { Org } from '../org/model';
 import { CommunityTemplate } from './model';
 
 // ─── CRUD ────────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ export const createTemplate = async (values: {
 	customCSS?: string | null;
 	sourceCommunityId?: string | null;
 	createdById?: string | null;
-	hubId?: string | null;
+	orgId?: string | null;
 }) => {
 	const slug = slugifyString(values.slug);
 	const existing = await CommunityTemplate.findOne({ where: { slug } });
@@ -83,7 +83,7 @@ export const getTemplateById = async (id: string) => {
 	const template = await CommunityTemplate.findByPk(id, {
 		include: [
 			{ model: User, as: 'createdBy', attributes: ['id', 'fullName', 'avatar'] },
-			{ model: Hub, as: 'hub', attributes: ['id', 'slug', 'title'] },
+			{ model: Org, as: 'org', attributes: ['id', 'slug', 'title'] },
 		],
 	});
 	if (!template) return null;
@@ -103,7 +103,7 @@ export const getAllTemplates = async () => {
 		order: [['title', 'ASC']],
 		include: [
 			{ model: User, as: 'createdBy', attributes: ['id', 'fullName', 'avatar'] },
-			{ model: Hub, as: 'hub', attributes: ['id', 'slug', 'title'] },
+			{ model: Org, as: 'org', attributes: ['id', 'slug', 'title'] },
 		],
 	});
 
@@ -172,12 +172,12 @@ export const destroyTemplate = async (id: string) => {
 	await template.destroy();
 };
 
-// ─── Hub ↔ Template ──────────────────────────────────────────────
+// ─── Org ↔ Template ──────────────────────────────────────────────
 
-/** Get all templates belonging to a hub */
-export const getTemplatesForHub = async (hubId: string) => {
+/** Get all templates belonging to an org */
+export const getTemplatesForOrg = async (orgId: string) => {
 	return CommunityTemplate.findAll({
-		where: { hubId },
+		where: { orgId },
 		order: [['title', 'ASC']],
 		attributes: {
 			include: [
@@ -193,10 +193,10 @@ export const getTemplatesForHub = async (hubId: string) => {
 	});
 };
 
-/** Get active templates for a hub (public-facing, for community creation flow) */
-export const getActiveTemplatesForHub = async (hubId: string) => {
+/** Get active templates for an org (public-facing, for community creation flow) */
+export const getActiveTemplatesForOrg = async (orgId: string) => {
 	const templates = await CommunityTemplate.findAll({
-		where: { hubId, isActive: true },
+		where: { orgId, isActive: true },
 		order: [['title', 'ASC']],
 	});
 	// Only expose public-safe fields (this endpoint is unauthenticated)
@@ -588,13 +588,16 @@ export const fetchPubContent = async (pubUrl: string) => {
 	return { content: release.doc.content, title: pub.title, slug: pub.slug };
 };
 
+/** With orgId, the URL must point into a community that org owns */
+type SourceOptions = { orgId?: string | null };
+
 /**
  * Given a page URL, resolve the community and fetch the page data (title, slug, layout, etc.).
  * Page URLs look like: https://community.pubpub.org/page-slug
  * The slug is the first path segment (pages are top-level routes, not under /page/).
  */
-export const fetchPageByUrl = async (pageUrl: string) => {
-	const { communityId, slug } = await resolveUrlToCommunityAndSlug(pageUrl);
+export const fetchPageByUrl = async (pageUrl: string, options: SourceOptions = {}) => {
+	const { communityId, slug } = await resolveUrlToCommunityAndSlug(pageUrl, options);
 
 	const page = await Page.findOne({
 		where: { communityId, slug },
@@ -618,8 +621,8 @@ export const fetchPageByUrl = async (pageUrl: string) => {
  * Given a collection URL, resolve the community and fetch the collection data.
  * Collection URLs look like: https://community.pubpub.org/collection-slug
  */
-export const fetchCollectionByUrl = async (collectionUrl: string) => {
-	const { communityId, slug } = await resolveUrlToCommunityAndSlug(collectionUrl);
+export const fetchCollectionByUrl = async (collectionUrl: string, options: SourceOptions = {}) => {
+	const { communityId, slug } = await resolveUrlToCommunityAndSlug(collectionUrl, options);
 
 	const collection = await Collection.findOne({
 		where: { communityId, slug },
@@ -655,6 +658,7 @@ export const fetchCollectionByUrl = async (collectionUrl: string) => {
  */
 async function resolveUrlToCommunityAndSlug(
 	input: string,
+	options: SourceOptions = {},
 ): Promise<{ communityId: string; slug: string }> {
 	const trimmed = input.trim();
 	const normalized = trimmed.includes('://') ? trimmed : `https://${trimmed}`;
@@ -674,16 +678,19 @@ async function resolveUrlToCommunityAndSlug(
 	if (pubpubMatch) {
 		community = await Community.findOne({
 			where: { subdomain: pubpubMatch[1] },
-			attributes: ['id'],
+			attributes: ['id', 'orgId'],
 		});
 	} else {
 		community = await Community.findOne({
 			where: { domain: hostname },
-			attributes: ['id'],
+			attributes: ['id', 'orgId'],
 		});
 	}
 	if (!community) {
 		throw new Error(`No community found for "${hostname}"`);
+	}
+	if (options.orgId && community.orgId !== options.orgId) {
+		throw new Error(`"${hostname}" is not a community this org owns`);
 	}
 
 	// Extract slug — first non-empty path segment

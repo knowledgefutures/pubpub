@@ -35,6 +35,7 @@ import { PageContext } from 'utils/hooks';
 
 import BottomMenu from './BottomMenu';
 import Breadcrumbs from './Breadcrumbs';
+import CmsModeBanner from './CmsModeBanner';
 import getPaths from './paths';
 import SideMenu from './SideMenu';
 import SpamBanner from './SpamBanner';
@@ -74,6 +75,19 @@ const App = (props: Props) => {
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, hideHeader, isDashboard } = pathObject;
+
+	// In CMS mode, public visitors get a not-found page; warn the members who
+	// can see the content that it isn't publicly visible. Only shown on public
+	// content views (pages, collections, and pub releases — not drafts).
+	// Keyed on community membership rather than merely being logged in: someone
+	// who got here through a sharing link can see the page without being a
+	// member, and telling them only members can see it is just confusing.
+	const showCmsModeBanner =
+		communityData.cmsMode &&
+		scopeData.activePermissions.canViewCommunity &&
+		(chunkName === 'Page' ||
+			chunkName === 'Collection' ||
+			(chunkName === 'Pub' && !!viewData.pubData?.isRelease));
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {
@@ -150,6 +164,7 @@ const App = (props: Props) => {
 							<LegalBanner />
 							{showHeader && header}
 							{showNav && <NavBar />}
+							{showCmsModeBanner && <CmsModeBanner />}
 							{isDashboard && (
 								<MobileAware
 									mobile={({ className }) => (

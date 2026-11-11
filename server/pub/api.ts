@@ -35,6 +35,22 @@ import { getPubsById, queryPubIds } from './queryMany';
 
 extendZodWithOpenApi(z);
 
+/** The community admin the request is for, provided the pub belongs to that community */
+const ensureUserIsAdminOfPubCommunity = async (
+	req: Parameters<typeof ensureUserIsCommunityAdmin>[0],
+	pubId: string,
+) => {
+	const community = await ensureUserIsCommunityAdmin(req);
+	const pub = await Pub.findOne({
+		where: { id: pubId, communityId: community.id },
+		attributes: ['id'],
+	});
+	if (!pub) {
+		throw new NotFoundError();
+	}
+	return community;
+};
+
 type ManyRequestParams = {
 	query: Omit<types.PubsQuery, 'communityId'>;
 	alreadyFetchedPubIds: string[];
@@ -274,13 +290,15 @@ export const pubServer = s.router(contract.pub, {
 		return { status: 200, body: resource };
 	},
 	text: {
-		get: async ({ params }) => {
+		get: async ({ req, params }) => {
+			await ensureUserIsAdminOfPubCommunity(req, params.pubId);
+
 			const doc = await getPubDraftDoc(params.pubId);
 
 			return { status: 200, body: doc.doc };
 		},
 		update: async ({ req, params, body }) => {
-			await ensureUserIsCommunityAdmin(req);
+			await ensureUserIsAdminOfPubCommunity(req, params.pubId);
 
 			await writeDocumentToPubDraft(params.pubId, body.doc, { method: body.method });
 
@@ -350,7 +368,7 @@ export const pubServer = s.router(contract.pub, {
 				},
 			],
 			handler: async ({ req, body, files, params }) => {
-				await ensureUserIsCommunityAdmin(req);
+				await ensureUserIsAdminOfPubCommunity(req, params.pubId);
 
 				return handleImport({
 					// @ts-expect-error shh

@@ -15,16 +15,35 @@ import CommunityOrCollectionLevelPubSettings from '../CommunitySettings/Communit
 import DashboardSettingsFrame, { type Subtab } from '../DashboardSettingsFrame';
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
+import { ExportCollectionButton } from './ExportCollectionButton';
+
+type PastExport = {
+	id: string;
+	createdAt: string;
+	isProcessing: boolean;
+	output: { downloadUrl: string; ftpUploaded: boolean } | null;
+	error: string | null;
+};
+
+type FtpTargetOption = {
+	id: string;
+	host: string;
+	name: string | null;
+	filePath: string | null;
+	ftpType: string;
+};
 
 type Props = {
 	settingsData: {
 		depositTarget?: DepositTarget | null;
+		collectionExports?: PastExport[] | null;
+		ftpTargets?: FtpTargetOption[] | null;
 	};
 };
 
 const CollectionSettings = (props: Props) => {
 	const {
-		settingsData: { depositTarget },
+		settingsData: { depositTarget, collectionExports, ftpTargets },
 	} = props;
 	const {
 		communityData,
@@ -131,6 +150,31 @@ const CollectionSettings = (props: Props) => {
 					/>,
 				],
 			},
+		{
+			id: 'export',
+			title: 'Export',
+			icon: 'export',
+			hideSaveButton: true,
+			sections: [
+				<SettingsSection title="Export Collection" id="export-collection">
+					<p>
+						Creates a zip export for the collection containing the PDF and JATS files
+						for each Pub in the collection.
+						{ftpTargets && (
+							<span>
+								{` `}If an FTP target is selected, the zip file will be uploaded to
+								that target.
+							</span>
+						)}
+					</p>
+
+					<ExportCollectionButton
+						pastExports={collectionExports ?? []}
+						ftpTargets={ftpTargets ?? []}
+					/>
+				</SettingsSection>,
+			],
+		},
 	]);
 
 	return (

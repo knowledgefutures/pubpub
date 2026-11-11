@@ -16,6 +16,7 @@ import { expect } from 'utils/assert';
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
 import createDeposit, { getDois } from 'utils/crossref/createDeposit';
 
+import { vetDepositIssns } from './issnGate';
 import { submitDoiData } from './submit';
 
 const collectionIncludes = [
@@ -60,7 +61,21 @@ export const findPub = (pubId) =>
 const findCommunity = (communityId) =>
 	Community.findOne({
 		where: { id: communityId },
-		attributes: ['id', 'title', 'issn', 'domain', 'subdomain', 'citeAs', 'publishAs'],
+		attributes: [
+			'id',
+			'title',
+			'electronicIssn',
+			'printIssn',
+			'domain',
+			'subdomain',
+			'citeAs',
+			'publishAs',
+			// cmsMode gates canonicalCommunityUrl, so it must be selected here or
+			// deposits fall back to the pubpub.org URL for CMS-mode communities.
+			'cmsMode',
+			'canonicalBaseUrl',
+			'canonicalPubUrlTemplate',
+		],
 	});
 
 export const persistCrossrefDepositRecord = async (ids, depositJson) => {
@@ -124,24 +139,26 @@ export const getDoiData = (
 		pubId && findPrimaryCollectionPubForPub(pubId),
 		pubId && findPub(pubId),
 		getCommunityDepositTarget(communityId, true),
-	]).then(([community, collection, collectionPub, pub, depositTarget]) => {
-		const resolvedCollection = collectionPub ? collectionPub.collection : collection;
-		return createDeposit(
-			{
-				collectionPub,
-				collection: resolvedCollection?.toJSON(),
-				community: community?.toJSON(),
-				pub: pub?.toJSON(),
-				contentVersion,
-				reviewType,
-				reviewRecommendation,
-			},
-			doiTarget,
-			depositTarget,
-			timestamp,
-			includeRelationships,
-		);
-	});
+	])
+		.then(([community, collection, collectionPub, pub, depositTarget]) => {
+			const resolvedCollection = collectionPub ? collectionPub.collection : collection;
+			return createDeposit(
+				{
+					collectionPub,
+					collection: resolvedCollection?.toJSON(),
+					community: community?.toJSON(),
+					pub: pub?.toJSON(),
+					contentVersion,
+					reviewType,
+					reviewRecommendation,
+				},
+				doiTarget,
+				depositTarget,
+				timestamp,
+				includeRelationships,
+			);
+		})
+		.then(vetDepositIssns);
 
 export const setDoiData = async (
 	{ communityId, collectionId, pubId, contentVersion, reviewType, reviewRecommendation },

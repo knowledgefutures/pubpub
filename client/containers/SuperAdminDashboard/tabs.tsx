@@ -6,12 +6,14 @@ import CommunitySpam from './CommunitySpam';
 import CommunityTemplates from './CommunityTemplates';
 import CustomDomains from './CustomDomains';
 import DepositTargets from './DepositTargets';
+import DoiRedeposit from './DoiRedeposit';
 import ExploreCommunities from './ExploreCommunities';
-import Hubs from './Hubs';
+import FtpTargets from './FtpTargets';
 import LandingPageFeatures from './LandingPageFeatures';
+import Orgs from './Orgs';
 import PlatformAnalytics from './PlatformAnalytics';
 import ScamFiles from './ScamFiles';
-import SuggestedHubs from './SuggestedHubs';
+import SuggestedOrgs from './SuggestedOrgs';
 import UserSpam from './UserSpam';
 
 type SuperAdminTab = {
@@ -32,6 +34,14 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 		title: 'Deposit Targets',
 		component: DepositTargets,
 	},
+	doiRedeposit: {
+		title: 'DOI Redeposit',
+		component: DoiRedeposit,
+	},
+	ftpTargets: {
+		title: 'FTP Targets',
+		component: FtpTargets,
+	},
 	exploreCommunities: {
 		title: 'Explore Page',
 		component: ExploreCommunities,
@@ -40,13 +50,13 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 		title: 'Landing Page features',
 		component: LandingPageFeatures,
 	},
-	hubs: {
-		title: 'Hubs',
-		component: Hubs,
+	orgs: {
+		title: 'Orgs',
+		component: Orgs,
 	},
-	suggestedHubs: {
-		title: 'Suggested Hubs',
-		component: SuggestedHubs,
+	suggestedOrgs: {
+		title: 'Suggested Orgs',
+		component: SuggestedOrgs,
 	},
 	templates: {
 		title: 'Templates',

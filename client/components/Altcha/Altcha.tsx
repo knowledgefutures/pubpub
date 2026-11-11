@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+import { apiFetchRaw } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 export type AltchaRef = {
@@ -40,9 +41,12 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 		if (!loaded) return;
 		const w = widgetRef.current;
 		if (!w) return;
+		// Route the widget's challenge fetch through apiFetchRaw so it carries
+		// credentials (the widget's own plain fetch would not).
+		// needs to be done like this, doesnt work when just passing it to altcha-widget
+		(w as unknown as { customfetch?: typeof apiFetchRaw }).customfetch = apiFetchRaw;
 		const handleStateChange = (ev: Event) => {
 			const e = ev as CustomEvent<{ payload?: string; state: string }>;
-			console.log('state changed', e.detail);
 
 			switch (e.detail.state) {
 				case 'error':
@@ -126,6 +130,7 @@ const Altcha = forwardRef<AltchaRef, AltchaProps>((props, ref) => {
 				delay={500}
 				ref={widgetRef as any}
 				challengeurl={challengeurl}
+				customfetch={apiFetchRaw}
 				{...(auto ? { auto } : {})}
 				floating="auto"
 				{...devAttrs}

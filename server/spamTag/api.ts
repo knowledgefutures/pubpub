@@ -4,6 +4,7 @@ import { Router } from 'express';
 
 import { notifyBannersOfCommunityBanResolution } from 'server/communityBan/queries';
 import { Community, Member, SpamTag, User } from 'server/models';
+import { isInheritedCommunityAdmin } from 'server/orgMember/queries';
 import { isUserSuperAdmin } from 'server/user/queries';
 import { sendEmail } from 'server/utils/email/transport';
 import { ForbiddenError } from 'server/utils/errors';
@@ -51,11 +52,11 @@ router.post(
 			return res.status(400).send({ error: 'communityId required' });
 		}
 
-		// Verify user is an admin of this community
+		// Verify user is an admin of this community, directly or through its org
 		const membership = await Member.findOne({
 			where: { communityId, userId, permissions: 'admin' },
 		});
-		if (!membership) {
+		if (!membership && !(await isInheritedCommunityAdmin(userId, { id: communityId }))) {
 			throw new ForbiddenError();
 		}
 

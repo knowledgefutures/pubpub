@@ -54,7 +54,6 @@ jobs:
                       xsltproc \
                       poppler-utils \
                       imagemagick \
-                      libxml2 \
                       libxml2-utils
 
             - name: Install pandoc

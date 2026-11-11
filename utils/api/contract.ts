@@ -21,6 +21,10 @@ import { type PubRouter, pubRouter } from './contracts/pub';
 import { type PubAttributionRouter, pubAttributionRouter } from './contracts/pubAttribution';
 import { type PubEdgeRouter, pubEdgeRouter } from './contracts/pubEdge';
 import { type ReleaseRouter, releaseRouter } from './contracts/release';
+import {
+	type UnderlayIntegrationRouter,
+	underlayIntegrationRouter,
+} from './contracts/underlayIntegration';
 import { type UploadRouter, uploadRouter } from './contracts/upload';
 import { type WorkerTaskRouter, workerTaskRouter } from './contracts/workerTask';
 
@@ -49,6 +53,8 @@ export const router = {
 	pubAttribution: pubAttributionRouter as PubAttributionRouter,
 	pubEdge: pubEdgeRouter as PubEdgeRouter,
 	release: releaseRouter as ReleaseRouter,
+	/** Methods for configuring and triggering pushes to Underlay */
+	underlayIntegration: underlayIntegrationRouter as UnderlayIntegrationRouter,
 	/** Methods for dealing with worker tasks, i.e. imports and exports */
 	workerTask: workerTaskRouter as WorkerTaskRouter,
 	upload: uploadRouter as UploadRouter,

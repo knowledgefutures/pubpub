@@ -19,17 +19,21 @@ class MediaImage extends Component<Props, State> {
 		this.state = {
 			isUploading: false,
 			progress: 0,
+			uploadError: null,
 		};
 		this.onDrop = this.onDrop.bind(this);
 		this.onUploadFinish = this.onUploadFinish.bind(this);
 		this.onUploadProgress = this.onUploadProgress.bind(this);
+		this.onUploadError = this.onUploadError.bind(this);
 	}
 
 	onDrop(files) {
 		if (files.length) {
-			s3Upload(files[0], this.onUploadProgress, this.onUploadFinish, 0);
+			s3Upload(files[0], this.onUploadProgress, this.onUploadFinish, 0, this.onUploadError);
 			this.setState({
 				isUploading: true,
+				progress: 0,
+				uploadError: null,
 			});
 		}
 	}
@@ -45,6 +49,10 @@ class MediaImage extends Component<Props, State> {
 			url: `https://assets.pubpub.org/${filename}`,
 			align: this.props.isSmall ? 'full' : undefined,
 		});
+	}
+
+	onUploadError(err) {
+		this.setState({ isUploading: false, uploadError: err.message });
 	}
 
 	render() {
@@ -70,6 +78,9 @@ class MediaImage extends Component<Props, State> {
 									<div className="drag-details">
 										.jpeg, .png, .svg, .webp, or .gif
 									</div>
+									{this.state.uploadError && (
+										<div className="drag-error">{this.state.uploadError}</div>
+									)}
 								</div>
 							)}
 							{this.state.isUploading && (

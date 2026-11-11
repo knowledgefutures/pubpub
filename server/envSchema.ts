@@ -187,12 +187,28 @@ export const envSchema = z.object({
 		.optional()
 		.describe('Comma-separated extra keywords to flag uploads as suspicious'),
 
+	// ── Underlay ────────────────────────────────────────────────────────
+	UNDERLAY_API_BASE_URL: z
+		.string()
+		.url()
+		.optional()
+		.describe('Base URL for the Underlay API (defaults to https://underlay.org/api)'),
+
 	// ── Backup / Misc ───────────────────────────────────────────────────
 	BACKUPS_SECRET: z.string().optional().describe('GPG passphrase for encrypting backups'),
 	DEBUG_LOG: z.string().optional().describe('Enable verbose debug logging'),
 
 	// ── Worker ───────────────────────────────────────────────────────────
 	WORKER: booleanish.describe('Set to true when running as a standalone worker process'),
+	WORKER_MAX_OLD_SPACE_MB: z.coerce
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Heap ceiling (MB) for each worker thread. Unset means Node derives it from host memory, ' +
+				'which makes OOM behaviour differ between machines. Set it to make failures reproducible.',
+		),
 	DEFAULT_QUEUE_TASK_PRIORITY: z.coerce
 		.number()
 		.int()
@@ -209,6 +225,19 @@ export const envSchema = z.object({
 		.optional()
 		.describe(
 			'JSON array of search terms for the "By Content" tab. Each element is a string or [name, ...aliases]',
+		),
+
+	// ── Session ─────────────────────────────────────────────────────────
+	SESSION_SECRET: z.string().min(1).describe('Secret for signing session cookies'),
+	SESSION_ENCRYPTION_KEY: z
+		.string()
+		.refine(
+			(v) => v === '' || Buffer.from(v, 'base64').length === 32,
+			'must be 32 bytes, base64-encoded (openssl rand -base64 32)',
+		)
+		.optional()
+		.describe(
+			'AES-256 key for the encrypted OIDC state, session-set and stored refresh tokens. Generate with `openssl rand -base64 32`. Unset falls back to a key derived from OIDC_CLIENT_SECRET',
 		),
 
 	// ── Testing ──────────────────────────────────────────────────────────

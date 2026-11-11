@@ -291,14 +291,14 @@ const TemplateEditorDialog = ({
 					<div className="template-editor-header">
 						<div className="template-editor-title">
 							<h2>{template.title}</h2>
-							{template.hub && (
+							{template.org && (
 								<a
-									href={`/hub/${template.hub.slug}`}
+									href={`/org/${template.org.slug}`}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="template-header-link"
 								>
-									Hub: {template.hub.title}
+									Org: {template.org.title}
 								</a>
 							)}
 							{template.sourceCommunity && (

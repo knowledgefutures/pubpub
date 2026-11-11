@@ -1,0 +1,576 @@
+import { canonicalize, hashBytes, hashRecord } from './hash';
+import {
+	type AssetCacheContext,
+	type AssetWarning,
+	buildManifest,
+	type CollectionInput,
+	type CommunityInput,
+	computeSignatureFromParts,
+	type JsonSchema,
+	MAPPING_VERSION,
+	type ManifestEntry,
+	mapCommunityScopeRecords,
+	type PageInput,
+	type PubInput,
+	type PushOptions,
+	type UnderlayFile,
+	type UnderlayPushPayload,
+	type UnderlayRecord,
+	underlaySchemas,
+} from './mapping';
+
+/**
+ * Incremental push assembly. Builds the full manifest for a community's push while re-mapping (and
+ * re-rendering) only the pubs whose content changed since the last successful push; unchanged pubs
+ * contribute their cached record + file hashes to the manifest without any rendering or asset fetch.
+ *
+ * Correctness guarantee: the client diffs this manifest against the head's, so a cache-hit pub's
+ * record can still turn out to be one the server lacks (a prior push never fully landed) or holds
+ * differently. The returned payload's `resolveRecord` / `resolveFileByHash` lazily re-map that pub on
+ * demand and produce it. So a cache hit never means "we can't upload a record the diff needs".
+ *
+ * See planning/pubpub-underlay-integration.md §3c.
+ */
+
+/** Cached snapshot of one pub's last successful push (persisted as an UnderlayPushEntry row). */
+export type CachedPubEntry = {
+	pubId: string;
+	recordHashes: Record<string, { type: string; hash: string }>;
+	fileHashes: string[];
+	latestReleaseHistoryKey: number | null;
+	pubUpdatedAt: string | Date;
+	optionsSignature: string;
+	/** Hash of the pub's resolved facet cascade at cache time; a facet change flips it. */
+	facetsSignature: string;
+};
+
+/** Maps one pub to its records + the files those records reference. Renders/fetches on demand. */
+export type MapPubFn = (
+	pub: PubInput,
+) => Promise<{ records: UnderlayRecord[]; files: UnderlayFile[] }>;
+
+export type IncrementalPushInput = {
+	community: CommunityInput;
+	collections: CollectionInput[];
+	/** Community pages with their layouts pre-rendered; only public ones are exported. */
+	pages?: PageInput[];
+	/** All pubs, hydrated cheaply (no docs): attributions, collectionPubs, edges, release metadata. */
+	pubs: PubInput[];
+	/** pubId → the pub's `updatedAt` (cheap change signal). */
+	pubUpdatedAt: Record<string, string | Date>;
+	/**
+	 * pubId → hash of that pub's fully-resolved facet cascade. Facet edits at community/collection/pub
+	 * scope change the resolved value (and thus this hash) without bumping `updatedAt` or adding a
+	 * release, so this is the signal that invalidates a pub whose rendered content changed via facets.
+	 * The worker also folds in the pub's collection memberships and the kind derived from them, which
+	 * change the Pub record the same way: through other rows, without touching the pub.
+	 */
+	pubFacetsSignature?: Record<string, string>;
+	options: PushOptions;
+	/** Version metadata (e.g. `{ readme }`) pushed as Underlay version metadata; folded into the
+	 * signature so a metadata-only edit (readme) isn't skipped by the no-op guard. */
+	metadata?: Record<string, unknown> | null;
+	cacheEntries: CachedPubEntry[];
+	mapPub: MapPubFn;
+	/** Fetches asset bytes for community/collection/author-scope images (avatars, logos, hero). */
+	fetchAsset?: (url: string) => Promise<Buffer>;
+	/** Collects non-fatal asset-download failures (community-scope). */
+	onAssetWarning?: (warning: AssetWarning) => void;
+	/**
+	 * Shared immutable-asset cache. When set, scope images resolve from it without downloading; any
+	 * cached file the server later needs is fetched lazily by hash via `resolveFileByHash`.
+	 */
+	assetCache?: AssetCacheContext;
+	/**
+	 * Streaming file upload. When set, each file's bytes are uploaded as soon as the pub that
+	 * produced them is mapped, and then dropped — so peak memory is one pub's files, not the whole
+	 * collection's. Without it, every file (release HTML, PDF/EPUB exports, images) is retained
+	 * until commit, which is what makes a large community's push unbounded in memory.
+	 *
+	 * Safe to do before the version exists: files are content-addressed, the endpoint is idempotent
+	 * by hash, and a push that later fails just leaves unreferenced blobs for GC. The hash is still
+	 * declared in the manifest, and `resolveFileByHash` can always regenerate the bytes if the
+	 * server asks for them anyway.
+	 */
+	uploadFile?: (file: UnderlayFile) => Promise<void>;
+	/**
+	 * Checkpoint callback: persist cache entries for pubs whose records are computed AND whose files
+	 * have landed on the server. Called periodically during mapping, not just at the end.
+	 *
+	 * This is what makes a retry cheap. A push that dies partway (timeout, crash, restart) otherwise
+	 * throws away everything it did, because the cache was only written after a successful commit —
+	 * so the next attempt re-renders and re-uploads content the server already has. With
+	 * checkpointing, those pubs come back as cache hits and are skipped entirely.
+	 */
+	flushCacheEntries?: (entries: CachedPubEntry[]) => Promise<void>;
+};
+
+export type IncrementalPushResult = {
+	payload: UnderlayPushPayload;
+	signature: string;
+	/** Cache rows to write (only the freshly-mapped/changed pubs; cache hits need no write). */
+	cacheUpserts: CachedPubEntry[];
+	/** Every pub id present this push — stale cache rows (pubs not in this set) should be deleted. */
+	presentPubIds: string[];
+	stats: { totalPubs: number; cacheHits: number; cacheMisses: number };
+};
+
+const toIso = (value: string | Date): string =>
+	typeof value === 'string' ? new Date(value).toISOString() : value.toISOString();
+
+const latestHistoryKeyOf = (pub: PubInput): number | null => {
+	const keys = (pub.releases ?? []).map((r) => r.historyKey);
+	return keys.length > 0 ? Math.max(...keys) : null;
+};
+
+/**
+ * Deterministic signature of a pub's fully-resolved facet cascade. The worker passes
+ * `fetchFacetsForScopeIds({ pub })`'s resolved value (the community→collection→pub cascade that feeds
+ * getReleaseHtml), so this is cascade-correct by construction: a facet edit at any scope changes the
+ * resolved value of exactly the pubs it affects, and thus their signatures. Canonicalized, so key
+ * order is irrelevant; value-based, so a facet edit that doesn't change the effective value is a no-op.
+ */
+export const computeFacetsSignature = (resolvedFacets: unknown): string =>
+	hashBytes(Buffer.from(JSON.stringify(canonicalize(resolvedFacets ?? {}))));
+
+/**
+ * Deterministic signature of the push-relevant options AND the mapping shape version. A change to
+ * either invalidates every cache entry — the `MAPPING_VERSION` term is what forces a one-time
+ * re-map of every pub when the emitted record shape changes in code (otherwise cache-hit pubs would
+ * re-emit stale hashes for the OLD shape). `mappingVersion` is injectable only so tests can prove a
+ * bump changes the signature; production always uses the module constant.
+ */
+export const optionsSignature = (
+	options: PushOptions,
+	mappingVersion: string = MAPPING_VERSION,
+): string =>
+	hashBytes(
+		Buffer.from(
+			JSON.stringify({
+				mappingVersion,
+				includeReleaseHtml: options.includeReleaseHtml,
+				includeAssets: options.includeAssets,
+				exportFormats: [...options.exportFormats].sort(),
+			}),
+		),
+	);
+
+/**
+ * A pub is unchanged iff its updatedAt, latest release, the options signature, AND its resolved
+ * facet signature all still match. The facet check catches facet edits (license, citation style,
+ * header theme, …) at any scope in the pub's cascade — these change rendered HTML without touching
+ * `updatedAt` or adding a release, so without it a scheduled push would serve stale content.
+ */
+export const isCacheHit = (
+	pub: PubInput,
+	pubUpdatedAt: string | Date | undefined,
+	entry: CachedPubEntry | undefined,
+	currentOptionsSignature: string,
+	currentFacetsSignature: string | undefined,
+): boolean => {
+	if (!entry || pubUpdatedAt === undefined) {
+		return false;
+	}
+	return (
+		entry.optionsSignature === currentOptionsSignature &&
+		entry.facetsSignature === (currentFacetsSignature ?? '') &&
+		entry.latestReleaseHistoryKey === latestHistoryKeyOf(pub) &&
+		toIso(entry.pubUpdatedAt) === toIso(pubUpdatedAt)
+	);
+};
+
+const recordHashesFrom = (
+	records: UnderlayRecord[],
+): Record<string, { type: string; hash: string }> => {
+	const out: Record<string, { type: string; hash: string }> = {};
+	for (const record of records) {
+		out[record.id] = { type: record.type, hash: hashRecord(record).hash };
+	}
+	return out;
+};
+
+/**
+ * How many file uploads may be in flight at once.
+ *
+ * A push is dominated by upload latency, not bandwidth or CPU: each PUT is a round trip that spends
+ * almost all of its time waiting. Uploading serially made a large community's push take hours (a
+ * measured ~390ms per file × tens of thousands of files), enough to exceed the worker's own task
+ * timeout. Overlapping them removes that wall without raising peak memory much — at most this many
+ * files' bytes are resident at once.
+ */
+const UPLOAD_CONCURRENCY = 12;
+
+/** How many mapped pubs to accumulate before checkpointing their cache entries. */
+const CHECKPOINT_EVERY_PUBS = 200;
+
+/**
+ * Bounded-concurrency uploader. `submit` returns as soon as a slot is free (so the caller keeps
+ * mapping while uploads are in flight) and `drain` waits for everything to land.
+ *
+ * The first failure is latched and re-thrown from the next `submit`/`drain`, so a broken upload
+ * fails the push promptly instead of letting it continue and commit a version whose files never
+ * arrived.
+ */
+const createUploadPool = (
+	upload: (file: UnderlayFile) => Promise<void>,
+	concurrency: number = UPLOAD_CONCURRENCY,
+) => {
+	const inFlight = new Set<Promise<void>>();
+	let failure: unknown = null;
+
+	const start = (file: UnderlayFile) => {
+		const task: Promise<void> = upload(file)
+			.catch((err) => {
+				failure ??= err;
+			})
+			.finally(() => {
+				inFlight.delete(task);
+			});
+		inFlight.add(task);
+	};
+
+	return {
+		submit: async (file: UnderlayFile): Promise<void> => {
+			if (failure) {
+				throw failure;
+			}
+			while (inFlight.size >= concurrency) {
+				// biome-ignore lint/performance/noAwaitInLoops: waiting for a free slot is the point
+				await Promise.race(inFlight);
+				if (failure) {
+					throw failure;
+				}
+			}
+			start(file);
+		},
+		drain: async (): Promise<void> => {
+			while (inFlight.size > 0) {
+				// biome-ignore lint/performance/noAwaitInLoops: draining is inherently sequential
+				await Promise.race(inFlight);
+			}
+			if (failure) {
+				throw failure;
+			}
+		},
+	};
+};
+
+export const buildIncrementalPush = async (
+	input: IncrementalPushInput,
+): Promise<IncrementalPushResult> => {
+	const {
+		community,
+		collections,
+		pages,
+		pubs,
+		pubUpdatedAt,
+		pubFacetsSignature = {},
+		options,
+		metadata,
+		cacheEntries,
+		mapPub,
+		fetchAsset,
+		onAssetWarning,
+		assetCache,
+		uploadFile,
+		flushCacheEntries,
+	} = input;
+
+	const streaming = Boolean(uploadFile);
+	// Hashes already pushed to the server this run, so a file shared across pubs (a reused image, an
+	// identical export) uploads once rather than per referencing pub. Marked on submit, not on
+	// completion, so a duplicate submitted while the first is still in flight is not sent twice.
+	const uploadedHashes = new Set<string>();
+	const pool = uploadFile ? createUploadPool(uploadFile) : null;
+	const streamFile = async (file: UnderlayFile): Promise<void> => {
+		if (!pool || uploadedHashes.has(file.hash)) {
+			return;
+		}
+		uploadedHashes.add(file.hash);
+		await pool.submit(file);
+	};
+
+	const optionsSig = optionsSignature(options);
+	const entryByPubId = new Map(cacheEntries.map((e) => [e.pubId, e]));
+	const pubById = new Map(pubs.map((p) => [p.id, p]));
+
+	// Owner index: every cached record/file hash → the pub that produced it. Drives lazy re-hydration.
+	const pubIdByHash = new Map<string, string>();
+	for (const entry of cacheEntries) {
+		for (const { hash } of Object.values(entry.recordHashes)) {
+			pubIdByHash.set(hash, entry.pubId);
+		}
+		for (const hash of entry.fileHashes) {
+			pubIdByHash.set(hash, entry.pubId);
+		}
+	}
+
+	const manifest: ManifestEntry[] = [];
+	const freshRecords: UnderlayRecord[] = [];
+	const freshFilesByHash = new Map<string, UnderlayFile>();
+	const allFileHashes = new Set<string>();
+	const cacheUpserts: CachedPubEntry[] = [];
+	const pendingCheckpoint: CachedPubEntry[] = [];
+	let cacheHits = 0;
+	let cacheMisses = 0;
+
+	// Community-scope records (Community, Collections, Pages, Users) are always recomputed — cheap, and
+	// their identity depends on cross-pub dedup. Their localized branding/avatar files (if any) are
+	// added to the fresh file set + manifest file hashes; they are always sent in full (never cached
+	// per-pub), so no lazy-rehydration path is needed for them.
+	const addScopeFile = (bytes: Buffer, contentType: string, fileName?: string): string => {
+		const hash = hashBytes(bytes);
+		if (!freshFilesByHash.has(hash)) {
+			freshFilesByHash.set(hash, { hash, contentType, fileName, bytes });
+		}
+		allFileHashes.add(hash);
+		return hash;
+	};
+	// A scope image that resolved from the asset cache has no bytes here; still declare its hash so the
+	// signature (and the version's referenced files) is identical to a freshly-downloaded push. The
+	// bytes are produced on demand by resolveFileByHash below if the server turns out to need them.
+	const registerCachedScopeHash = (hash: string) => {
+		allFileHashes.add(hash);
+	};
+	const scopeRecords = await mapCommunityScopeRecords(
+		community,
+		collections,
+		pubs,
+		{
+			addFile: addScopeFile,
+			fetchAsset,
+			onAssetWarning,
+			options,
+			assetCache,
+			registerCachedHash: registerCachedScopeHash,
+		},
+		pages,
+	);
+	freshRecords.push(...scopeRecords);
+	manifest.push(...buildManifest(scopeRecords));
+
+	// Scope images (community branding, collection + author avatars) are collected synchronously by
+	// `addScopeFile` because the mapper's addFile contract is sync. Upload them now so they aren't
+	// held for the rest of the push.
+	//
+	// Bytes are dropped only when they can be produced again. A scope file has no owning pub for
+	// `hydratePub` to re-map, so its ONLY recovery path is re-fetching the source URL via
+	// `assetCache.byHash` — which the localizer populates for assets.pubpub.org URLs alone. Dropping
+	// an externally-hosted branding image would make a later commit's missing-files refusal for it
+	// unrecoverable, so those stay in memory. That set is small (branding images not on
+	// assets.pubpub.org are the exception), so this costs little and removes the sharp edge.
+	if (streaming) {
+		for (const [hash, file] of [...freshFilesByHash]) {
+			// biome-ignore lint/performance/noAwaitInLoops: sequential to bound memory
+			await streamFile(file);
+			if (assetCache?.byHash.has(hash)) {
+				freshFilesByHash.delete(hash);
+			}
+		}
+	}
+
+	for (const pub of pubs) {
+		const entry = entryByPubId.get(pub.id);
+		if (
+			isCacheHit(pub, pubUpdatedAt[pub.id], entry, optionsSig, pubFacetsSignature[pub.id]) &&
+			entry
+		) {
+			cacheHits += 1;
+			for (const [recordId, { type, hash }] of Object.entries(entry.recordHashes)) {
+				manifest.push({ id: recordId, type, hash });
+			}
+			for (const hash of entry.fileHashes) {
+				allFileHashes.add(hash);
+			}
+			// The row is already current — no write needed; retention keeps it (pubId is present).
+			continue;
+		}
+
+		cacheMisses += 1;
+		// biome-ignore lint/performance/noAwaitInLoops: pubs mapped sequentially to bound memory
+		const { records, files } = await mapPub(pub);
+		freshRecords.push(...records);
+		manifest.push(...buildManifest(records));
+		for (const file of files) {
+			if (streaming) {
+				// Upload now and drop the bytes. `pubIdByHash` still maps the hash back to this pub,
+				// so resolveFileByHash can regenerate it if the server turns out to need it.
+				// biome-ignore lint/performance/noAwaitInLoops: sequential to bound memory
+				await streamFile(file);
+			} else if (!freshFilesByHash.has(file.hash)) {
+				freshFilesByHash.set(file.hash, file);
+			}
+			allFileHashes.add(file.hash);
+			pubIdByHash.set(file.hash, pub.id);
+		}
+		for (const record of records) {
+			pubIdByHash.set(hashRecord(record).hash, pub.id);
+		}
+		const cacheEntry: CachedPubEntry = {
+			pubId: pub.id,
+			recordHashes: recordHashesFrom(records),
+			fileHashes: files.map((f) => f.hash),
+			latestReleaseHistoryKey: latestHistoryKeyOf(pub),
+			pubUpdatedAt: toIso(pubUpdatedAt[pub.id] ?? new Date(0).toISOString()),
+			optionsSignature: optionsSig,
+			facetsSignature: pubFacetsSignature[pub.id] ?? '',
+		};
+		cacheUpserts.push(cacheEntry);
+		pendingCheckpoint.push(cacheEntry);
+
+		// Drain before checkpointing: a pub may only be recorded as cached once its bytes have
+		// actually landed, not merely been queued. Submitting is asynchronous, so without this
+		// barrier a crash could leave a pub marked cached whose files never reached the server.
+		if (flushCacheEntries && pendingCheckpoint.length >= CHECKPOINT_EVERY_PUBS) {
+			await pool?.drain();
+			await flushCacheEntries(pendingCheckpoint.splice(0, pendingCheckpoint.length));
+		}
+	}
+
+	// Everything still queued must land before the push commits: the records reference these files,
+	// and a commit refuses any referenced file the collection doesn't hold yet.
+	await pool?.drain();
+	if (flushCacheEntries && pendingCheckpoint.length > 0) {
+		await flushCacheEntries(pendingCheckpoint.splice(0, pendingCheckpoint.length));
+	}
+
+	// Stable ordering (by type, then id) for a tidy manifest; the signature is order-independent.
+	manifest.sort((a, b) =>
+		a.type === b.type ? a.id.localeCompare(b.id) : a.type.localeCompare(b.type),
+	);
+
+	// Schemas for the types actually present anywhere in the manifest.
+	const presentTypes = new Set(manifest.map((m) => m.type));
+	const schemas: Record<string, JsonSchema> = {};
+	for (const type of Object.keys(underlaySchemas)) {
+		if (presentTypes.has(type)) {
+			schemas[type] = underlaySchemas[type];
+		}
+	}
+
+	// ── Lazy re-hydration: produce a record/file for a cache-hit pub on demand. ─────────────────
+	//
+	// Only RECORDS are memoized. Re-mapping a pub also produces its file bytes, and holding those
+	// would defeat the streaming this module exists to do: a resumed push can legitimately need to
+	// re-produce records for every pub it checkpointed (see below), so a cache that retained bytes
+	// would reaccumulate the entire collection in memory.
+	//
+	// Why a resumed push needs this at all: a checkpointed pub has had its files uploaded, but its
+	// records are only ever sent at the end, in the push session. A push that dies mid-mapping
+	// therefore leaves pubs marked cached whose records the server has never seen, and the next
+	// push's diff lists them all as upserts. Records are metadata-sized (the HTML and exports live in
+	// files), so memoizing them is bounded; bytes are not.
+	type HydratedPub = { byHash: Map<string, UnderlayRecord>; byKey: Map<string, UnderlayRecord> };
+	const recordKey = (type: string, id: string) => `${type}\u0000${id}`;
+	const hydratedByPubId = new Map<string, HydratedPub>();
+	const hydratePub = async (pubId: string): Promise<HydratedPub> => {
+		const cached = hydratedByPubId.get(pubId);
+		if (cached) {
+			return cached;
+		}
+		const hydrated: HydratedPub = { byHash: new Map(), byKey: new Map() };
+		const pub = pubById.get(pubId);
+		if (pub) {
+			const { records, files } = await mapPub(pub);
+			for (const record of records) {
+				hydrated.byHash.set(hashRecord(record).hash, record);
+				hydrated.byKey.set(recordKey(record.type, record.id), record);
+			}
+			// Self-heal a cache entry whose hashes no longer match what the pub maps to (e.g. hashes
+			// stored before the hash function changed). Without this the stale hash would differ from
+			// the head's on every push and the record would be re-sent each time. `cacheUpserts` is
+			// the array returned below, so the correction is persisted with the rest after the push.
+			const entry = entryByPubId.get(pubId);
+			const fresh = recordHashesFrom(records);
+			if (
+				entry &&
+				!cacheUpserts.some((upsert) => upsert.pubId === pubId) &&
+				JSON.stringify(canonicalize(fresh)) !==
+					JSON.stringify(canonicalize(entry.recordHashes))
+			) {
+				cacheUpserts.push({
+					...entry,
+					recordHashes: fresh,
+					fileHashes: files.map((f) => f.hash),
+				});
+			}
+		}
+		hydratedByPubId.set(pubId, hydrated);
+		return hydrated;
+	};
+
+	const resolveRecord = async (entry: ManifestEntry): Promise<UnderlayRecord | null> => {
+		const pubId = pubIdByHash.get(entry.hash);
+		if (!pubId) {
+			return null;
+		}
+		const hydrated = await hydratePub(pubId);
+		return (
+			hydrated.byKey.get(recordKey(entry.type, entry.id)) ??
+			hydrated.byHash.get(entry.hash) ??
+			null
+		);
+	};
+	const resolveRecordByHash = async (hash: string): Promise<UnderlayRecord | null> => {
+		const pubId = pubIdByHash.get(hash);
+		if (!pubId) {
+			return null;
+		}
+		return (await hydratePub(pubId)).byHash.get(hash) ?? null;
+	};
+	const resolveFileByHash = async (hash: string): Promise<UnderlayFile | null> => {
+		// A cache-resolved file (e.g. a scope image) has no bytes in memory — fetch them from the
+		// immutable source URL on demand, and verify the bytes still hash to what we declared (a
+		// mismatch means the URL was not immutable / the cache is poisoned; refuse to upload it wrong).
+		const cached = assetCache?.byHash.get(hash);
+		if (cached && fetchAsset) {
+			const bytes = await fetchAsset(cached.url);
+			const got = hashBytes(bytes);
+			if (got !== hash) {
+				throw new Error(
+					`Underlay asset cache mismatch: ${cached.url} hashed to ${got} but the push declared ${hash}. ` +
+						'The asset URL was expected to be immutable; refusing to upload bytes under the wrong hash.',
+				);
+			}
+			return {
+				hash,
+				bytes,
+				contentType: cached.mimeType ?? 'application/octet-stream',
+				fileName: cached.fileName,
+			};
+		}
+		const pubId = pubIdByHash.get(hash);
+		if (!pubId) {
+			return null;
+		}
+		const pub = pubById.get(pubId);
+		if (!pub) {
+			return null;
+		}
+		// Deliberately NOT memoized: retaining these bytes is precisely what makes a large push run
+		// out of memory. Underlay keeps uploaded blobs even when a push never commits, so this path
+		// is rare — worth re-mapping a pub for, not worth holding every pub's bytes against.
+		const { files } = await mapPub(pub);
+		return files.find((f) => f.hash === hash) ?? null;
+	};
+
+	const payload: UnderlayPushPayload = {
+		records: freshRecords,
+		// Streaming pushes have already uploaded (and dropped) every byte; only the hashes remain.
+		files: [...freshFilesByHash.values()].sort((a, b) => a.hash.localeCompare(b.hash)),
+		fileHashes: [...allFileHashes].sort(),
+		schemas,
+		manifest,
+		resolveRecord,
+		resolveRecordByHash,
+		resolveFileByHash,
+	};
+
+	return {
+		payload,
+		signature: computeSignatureFromParts(manifest, [...allFileHashes], schemas, metadata),
+		cacheUpserts,
+		presentPubIds: pubs.map((p) => p.id),
+		stats: { totalPubs: pubs.length, cacheHits, cacheMisses },
+	};
+};

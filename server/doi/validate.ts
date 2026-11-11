@@ -15,7 +15,8 @@ export type RelationshipIssue = {
 		| 'internal_not_deposited'
 		| 'external_doi_not_in_crossref'
 		| 'external_doi_not_crossref_registrar'
-		| 'external_url_no_doi_found';
+		| 'external_url_no_doi_found'
+		| 'crossref_unreachable';
 	message: string;
 	edgeId: string;
 	targetTitle: string;
@@ -59,28 +60,92 @@ const checkDoiRegistrar = async (doi: string): Promise<'crossref' | 'other' | 'u
 	}
 };
 
-// useTestApi: for internal dois, use the test api in test environment
-const checkDoiExistsInCrossref = async (doi: string): Promise<boolean> => {
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Whether the DOI registry has this DOI registered with Crossref: true, false, or null if the
+ * registry couldn't be asked. A DOI registered with another agency (DataCite) counts as not in
+ * Crossref.
+ */
+const isRegisteredWithCrossref = async (doi: string): Promise<boolean | null> => {
 	try {
-		if (isTestEnvironment()) {
-			const response = await fetch(
-				`https://test.crossref.org/search/doi?usr=dev@pubpub.org&doi=${encodeURIComponent(doi)}`,
-			);
-			if (!response.ok) {
-				return false;
-			}
-			const xml = await response.text();
-			console.log('response for test api', doi, xml);
-
-			return xml.includes('status="resolved"');
-		}
-
-		const response = await fetch(`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`);
-		return response.ok;
+		const response = await fetch(`https://doi.org/ra/${doi}`, {
+			signal: AbortSignal.timeout(8000),
+		});
+		if (!response.ok) return null;
+		const [entry] = (await response.json()) as Array<{ RA?: string; status?: string }>;
+		if (entry?.RA) return entry.RA.toLowerCase() === 'crossref';
+		if (entry?.status?.toLowerCase().includes('does not exist')) return false;
+		return null;
 	} catch {
-		return false;
+		return null;
 	}
 };
+
+type CrossrefPresence = { exists: true } | { exists: false } | { exists: null; reason: string };
+
+// useTestApi: for internal dois, use the test api in test environment
+const checkDoiExistsInCrossref = async (doi: string): Promise<CrossrefPresence> => {
+	if (!isTestEnvironment()) {
+		// Only a 404 means the DOI isn't there. Rate limits and server errors are retried, and
+		// reported as "couldn't check" if they persist, so a busy API never reads as a missing DOI.
+		let reason = '';
+		for (const delay of [0, 1000, 3000]) {
+			if (delay) {
+				// biome-ignore lint/performance/noAwaitInLoops: retry backoff
+				await sleep(delay);
+			}
+			try {
+				const response = await fetch(
+					`https://api.crossref.org/works/${doi}?mailto=dev@pubpub.org`,
+					{ signal: AbortSignal.timeout(8000) },
+				);
+				if (response.ok) return { exists: true };
+				if (response.status === 404) {
+					// Crossref's API can take a while to index a newly registered DOI, so ask the
+					// DOI registry itself before calling it missing.
+					const registered = await isRegisteredWithCrossref(doi);
+					if (registered === null) {
+						return { exists: null, reason: "the DOI registry didn't answer" };
+					}
+					return { exists: registered };
+				}
+				reason = `Crossref returned ${response.status}`;
+			} catch (err: any) {
+				reason = `Crossref didn't respond (${err?.message ?? err})`;
+			}
+		}
+		return { exists: null, reason };
+	}
+	try {
+		const response = await fetch(
+			`https://test.crossref.org/search/doi?usr=dev@pubpub.org&doi=${encodeURIComponent(doi)}`,
+		);
+		if (!response.ok) {
+			return { exists: false };
+		}
+		const xml = await response.text();
+		console.log('response for test api', doi, xml);
+
+		return xml.includes('status="resolved"') ? { exists: true } : { exists: false };
+	} catch {
+		return { exists: false };
+	}
+};
+
+const unreachableIssue = (
+	edge: PubEdgeWithRelations,
+	doi: string,
+	title: string,
+	reason: string,
+): RelationshipIssue => ({
+	type: 'crossref_unreachable',
+	message: `Couldn't check whether DOI ${doi} for "${title}" is in Crossref (${reason}). Try again in a few minutes.`,
+	edgeId: edge.id,
+	targetTitle: title,
+	targetDoi: doi,
+	relationType: edge.relationType,
+});
 
 const createExternalPublicationFromMicrodata = ($: ReturnType<typeof cheerio.load>) => {
 	const script = $('script[type="application/ld+json"]').get(0);
@@ -146,9 +211,12 @@ const checkEdgeForIssues = async (
 			return null;
 		}
 
-		const existsInCrossref = await checkDoiExistsInCrossref(pub.doi);
-		if (existsInCrossref) {
+		const presence = await checkDoiExistsInCrossref(pub.doi);
+		if (presence.exists) {
 			return null;
+		}
+		if (presence.exists === null) {
+			return unreachableIssue(edge, pub.doi, pub.title, presence.reason);
 		}
 
 		return {
@@ -186,8 +254,11 @@ const checkEdgeForIssues = async (
 			};
 		}
 
-		const existsInCrossref = await checkDoiExistsInCrossref(doi);
-		if (!existsInCrossref) {
+		const presence = await checkDoiExistsInCrossref(doi);
+		if (presence.exists === null) {
+			return unreachableIssue(edge, doi, externalPublication.title, presence.reason);
+		}
+		if (!presence.exists) {
 			return {
 				type: 'external_doi_not_in_crossref',
 				message: `DOI ${doi} for "${externalPublication.title}" was not found in Crossref.`,
@@ -217,8 +288,11 @@ const checkEdgeForIssues = async (
 				};
 			}
 
-			const existsInCrossref = await checkDoiExistsInCrossref(foundDoi);
-			if (!existsInCrossref) {
+			const presence = await checkDoiExistsInCrossref(foundDoi);
+			if (presence.exists === null) {
+				return unreachableIssue(edge, foundDoi, externalPublication.title, presence.reason);
+			}
+			if (!presence.exists) {
 				return {
 					type: 'external_doi_not_in_crossref',
 					message: `DOI ${foundDoi} for "${externalPublication.title}" was not found in Crossref.`,

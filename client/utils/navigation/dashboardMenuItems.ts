@@ -63,14 +63,6 @@ const connections: MenuItem = {
 	dashboardMode: 'connections',
 };
 
-const curatedBy: MenuItem = {
-	title: 'Curated By',
-	icon: 'community',
-	dashboardMode: 'curatedBy',
-	requiredPermission: 'manage',
-	shown: (context) => context.scopeData.activeCounts.curatingHubCount > 0,
-};
-
 const impact: MenuItem = {
 	title: 'Impact',
 	icon: 'impact',
@@ -101,7 +93,7 @@ const facets: MenuItem = {
 
 export const menuItemsByScopeType = {
 	hub: [],
-	community: [overview, activity, pages, reviews, impact, members, curatedBy, facets, settings],
+	community: [overview, activity, pages, reviews, impact, members, facets, settings],
 	collection: [
 		overview,
 		activity,
@@ -113,5 +105,5 @@ export const menuItemsByScopeType = {
 		facets,
 		settings,
 	],
-	pub: [overview, activity, reviews, connections, impact, members, curatedBy, facets, settings],
+	pub: [overview, activity, reviews, connections, impact, members, facets, settings],
 } as const;

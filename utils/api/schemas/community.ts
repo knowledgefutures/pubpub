@@ -2,6 +2,8 @@ import type * as types from 'types';
 
 import { z } from 'zod';
 
+import { discussionCreationAccessValues } from 'types/community';
+
 import { baseSchema } from '../utils/baseSchema';
 import { analyticsSettingsSchema } from './analyticsSettings';
 
@@ -89,7 +91,8 @@ export const communitySchema = baseSchema.extend({
 	github: z.string().nullable(),
 	email: z.string().nullable(),
 	socialLinksLocation: z.enum(['header', 'footer']).nullable(),
-	issn: z.string().nullable(),
+	electronicIssn: z.string().nullable(),
+	printIssn: z.string().nullable(),
 	isFeatured: z.boolean().nullable(),
 	viewHash: z.string().nullable(),
 	editHash: z.string().nullable(),
@@ -98,7 +101,21 @@ export const communitySchema = baseSchema.extend({
 	spamTagId: z.string().uuid().nullable(),
 	scopeSummaryId: z.string().uuid().nullable(),
 	templateId: z.string().uuid().nullable(),
-	kfOrgId: z.string().nullable(),
+	orgId: z.string().uuid().nullable(),
+	cmsMode: z.boolean().default(false),
+	canonicalBaseUrl: z.string().url().nullable(),
+	canonicalPubUrlTemplate: z
+		.string()
+		.regex(/\{slug\}/, 'Template must contain {slug}')
+		.refine((template) => {
+			try {
+				const url = new URL(template.replace(/\{slug\}/g, 'test-slug'));
+				return url.protocol === 'http:' || url.protocol === 'https:';
+			} catch {
+				return false;
+			}
+		}, 'Template must be a valid absolute http(s) URL')
+		.nullable(),
 	accentTextColor: z.string(),
 	analyticsSettings: analyticsSettingsSchema,
 }) satisfies z.ZodType<types.Community, any, any>;
@@ -126,7 +143,6 @@ export const communityCreateSchema = communitySchema
 		altcha: z.string().optional(),
 		_honeypot: z.string().optional(),
 		templateId: z.string().uuid().nullish(),
-		kfOrgId: z.string().nullish(),
 	});
 
 export const communityUpdateSchema = communitySchema
@@ -135,8 +151,9 @@ export const communityUpdateSchema = communitySchema
 		id: true,
 		createdAt: true,
 		updatedAt: true,
+		orgId: true,
 	})
 	.extend({
 		communityId: communitySchema.shape.id,
-		discussionCreationAccess: z.enum(['public', 'contributors-members', 'disabled']).optional(),
+		discussionCreationAccess: z.enum(discussionCreationAccessValues).optional(),
 	});

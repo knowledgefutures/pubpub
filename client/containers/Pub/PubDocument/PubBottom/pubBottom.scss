@@ -2,7 +2,8 @@
 
 .pub-bottom-component {
 	background: #f6f4f4;
-	flex-grow: 1;
+	/* Stay at content height — .pub-grid takes the leftover viewport space instead. */
+	flex-grow: 0;
 	overflow: hidden;
 	padding: 2em 0em;
 	margin-top: 2em;

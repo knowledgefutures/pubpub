@@ -42,6 +42,7 @@ class FileUploadButton extends Component<Props, State> {
 		};
 		this.randKey = Math.round(Math.random() * 99999).toString();
 		this.handleUploadFinish = this.handleUploadFinish.bind(this);
+		this.handleUploadError = this.handleUploadError.bind(this);
 		this.handleFileSelect = this.handleFileSelect.bind(this);
 	}
 
@@ -52,9 +53,23 @@ class FileUploadButton extends Component<Props, State> {
 		});
 	}
 
+	handleUploadError(err) {
+		// biome-ignore lint/suspicious/noAlert: simplest feedback in this button component
+		alert(`Upload failed: ${err.message}`);
+		this.setState({
+			isUploading: false,
+		});
+	}
+
 	handleFileSelect(evt) {
 		if (evt.target.files.length) {
-			s3Upload(evt.target.files[0], () => {}, this.handleUploadFinish, 0);
+			s3Upload(
+				evt.target.files[0],
+				() => {},
+				this.handleUploadFinish,
+				0,
+				this.handleUploadError,
+			);
 			this.setState({
 				isUploading: true,
 			});

@@ -26,7 +26,8 @@ type RelationshipIssue = {
 		| 'internal_not_deposited'
 		| 'external_doi_not_in_crossref'
 		| 'external_doi_not_crossref_registrar'
-		| 'external_url_no_doi_found';
+		| 'external_url_no_doi_found'
+		| 'crossref_unreachable';
 	message: string;
 	edgeId: string;
 	targetTitle: string;
@@ -442,6 +443,14 @@ class Doi extends Component<Props, State> {
 									Connections tab
 								</a>
 								.
+							</Callout>
+						);
+					}
+
+					if (issue.type === 'crossref_unreachable') {
+						return (
+							<Callout key={issue.edgeId} intent="warning">
+								{issue.message} Reopen this page to check again.
 							</Callout>
 						);
 					}

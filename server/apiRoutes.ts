@@ -18,12 +18,13 @@ import { router as draftCheckpointRouter } from './draftCheckpoint/api';
 import { router as editorRouter } from './editor/api';
 import { env } from './env';
 import { router as exploreFeaturedRouter } from './exploreFeatured/api';
-import { router as hubRouter } from './hub/api';
 import { router as impact2Router } from './impact2/api';
 import { router as integrationDataOAuth1Router } from './integrationDataOAuth1/api';
 import { router as landingPageFeatureRouter } from './landingPageFeature/api';
 import { router as layoutRouter } from './layout/api';
 import { router as openSearchRouter } from './openSearch/api';
+import { router as orgRouter } from './org/api';
+import { router as orgInviteRouter } from './orgInvite/api';
 import { router as passwordResetRouter } from './passwordReset/api';
 import { router as platformAnalyticsRouter } from './platformAnalytics/api';
 import { router as pubEdgeProposalRouter } from './pubEdgeProposal/api';
@@ -61,7 +62,8 @@ const apiRouter = Router()
 	.use(landingPageFeatureRouter)
 	.use(layoutRouter)
 	.use(openSearchRouter)
-	.use(hubRouter)
+	.use(orgRouter)
+	.use(orgInviteRouter)
 	.use(communityTemplateRouter)
 	.use(passwordResetRouter)
 	.use(pubEdgeProposalRouter)

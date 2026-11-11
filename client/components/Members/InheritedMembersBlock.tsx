@@ -13,11 +13,23 @@ import './inheritedMembersBlock.scss';
 type Props = {
 	members: any[];
 	scope: string;
+	/** For scope "Org": the org that owns the community */
+	org?: { title: string; slug: string } | null;
 };
 
-const renderExplanationForScope = (scope, currentScopeData) => {
+const renderExplanationForScope = (scope, currentScopeData, org?: Props['org']) => {
 	const { elements } = currentScopeData;
 	const currentTarget = elements.activeTargetName;
+	if (scope === 'Org' && org) {
+		return (
+			<>
+				These users have access to this {currentTarget} because they are members of{' '}
+				<a href={`/org/${org.slug}`}>{org.title}</a>, which owns the{' '}
+				{elements.activeCommunity.title} community. Their level comes from the org and is
+				managed there.
+			</>
+		);
+	}
 	const communityTitle = elements.activeCommunity.title;
 	const membersOfWhat =
 		scope === 'Community' ? `the ${communityTitle} community` : 'a collection that contains it';
@@ -39,14 +51,16 @@ const renderExplanationForScope = (scope, currentScopeData) => {
 };
 
 const InheritedBlock = (props: Props) => {
-	const { members, scope } = props;
+	const { members, scope, org } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const { scopeData: currentScopeData } = usePageContext();
 	return (
 		<div className="inherited-members-block-component">
 			<div className="top">
 				<div className="scope">
-					{scope} Members with access: {members.length}
+					{scope === 'Org' && org
+						? `Members via ${org.title}: ${members.length}`
+						: `${scope} Members with access: ${members.length}`}
 				</div>
 				<Button
 					outlined
@@ -74,7 +88,7 @@ const InheritedBlock = (props: Props) => {
 			{isOpen && (
 				<>
 					<div className="explanation-block">
-						{renderExplanationForScope(scope, currentScopeData)}
+						{renderExplanationForScope(scope, currentScopeData, org)}
 					</div>
 					<div className="members-block">
 						{members.map((member) => {

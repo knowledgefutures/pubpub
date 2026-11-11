@@ -22,17 +22,21 @@ class MediaFile extends Component<Props, State> {
 			progress: 0,
 			loadingFileName: '',
 			loadingFileSize: '',
+			uploadError: null,
 		};
 		this.onDrop = this.onDrop.bind(this);
 		this.onUploadFinish = this.onUploadFinish.bind(this);
 		this.onUploadProgress = this.onUploadProgress.bind(this);
+		this.onUploadError = this.onUploadError.bind(this);
 	}
 
 	onDrop(files) {
 		if (files.length) {
-			s3Upload(files[0], this.onUploadProgress, this.onUploadFinish, 0);
+			s3Upload(files[0], this.onUploadProgress, this.onUploadFinish, 0, this.onUploadError);
 			this.setState({
 				isUploading: true,
+				progress: 0,
+				uploadError: null,
 				loadingFileName: files[0].name,
 				loadingFileSize: filesize(files[0].size, { round: 0 }),
 			});
@@ -53,6 +57,10 @@ class MediaFile extends Component<Props, State> {
 		});
 	}
 
+	onUploadError(err) {
+		this.setState({ isUploading: false, uploadError: err.message });
+	}
+
 	render() {
 		return (
 			<Dropzone onDrop={this.onDrop}>
@@ -70,6 +78,9 @@ class MediaFile extends Component<Props, State> {
 									<Icon icon="circle-arrow-up" iconSize={50} />
 									<div className="drag-title">Drag & drop to upload a File</div>
 									<div className="drag-details">Or click to browse files</div>
+									{this.state.uploadError && (
+										<div className="drag-error">{this.state.uploadError}</div>
+									)}
 								</div>
 							)}
 							{this.state.isUploading && (

@@ -15,6 +15,7 @@ import { pubServer } from 'server/pub/api';
 import { pubAttributionServer } from 'server/pubAttribution/api';
 import { pubEdgeServer } from 'server/pubEdge/api';
 import { releaseServer } from 'server/release/api';
+import { underlayIntegrationServer } from 'server/underlayIntegration/api';
 import { uploadRouteImplementation } from 'server/upload/api';
 import { uploadPolicyRouteImplementation } from 'server/uploadPolicy/api';
 import { accountServer } from 'server/user/account';
@@ -47,6 +48,7 @@ export const server = s.router(contractWithScriptsAndCommunity, {
 	pubAttribution: pubAttributionServer,
 	pubEdge: pubEdgeServer,
 	release: releaseServer,
+	underlayIntegration: underlayIntegrationServer,
 	upload: {
 		file: uploadRouteImplementation,
 		policy: uploadPolicyRouteImplementation,

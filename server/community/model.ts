@@ -18,7 +18,6 @@ import {
 	DefaultScope,
 	ForeignKey,
 	HasMany,
-	Index,
 	Is,
 	IsLowercase,
 	Length,
@@ -29,7 +28,17 @@ import {
 } from 'sequelize-typescript';
 
 import { CommunityTemplate } from '../communityTemplate/model';
-import { Collection, DepositTarget, Member, Page, Pub, ScopeSummary, SpamTag } from '../models';
+import {
+	Collection,
+	DepositTarget,
+	FtpTarget,
+	Member,
+	Page,
+	Pub,
+	ScopeSummary,
+	SpamTag,
+} from '../models';
+import { Org } from '../org/model';
 
 @DefaultScope(() => ({ attributes: { exclude: ['searchVector'] } }))
 @Table
@@ -199,8 +208,13 @@ export class Community extends Model<
 	@Column(DataType.ENUM('header', 'footer'))
 	declare socialLinksLocation: 'header' | 'footer' | null;
 
+	// The journal's ISSNs, used in Crossref deposits and citations. An issue's own ISSNs (and
+	// journal title) win, since a community can publish more than one journal.
 	@Column(DataType.TEXT)
-	declare issn: string | null;
+	declare electronicIssn: string | null;
+
+	@Column(DataType.TEXT)
+	declare printIssn: string | null;
 
 	@Column(DataType.BOOLEAN)
 	declare isFeatured: boolean | null;
@@ -242,10 +256,34 @@ export class Community extends Model<
 	@Column(DataType.UUID)
 	declare templateId: string | null;
 
-	/** KF Auth organization that owns this community (for billing/ownership) */
-	@Index
+	/** The org that owns this community, if any. Its index (communities_org_id) is created by
+	 *  the 2026_10_19_renameHubsToOrgs migration: an @Index here would make sync() index the
+	 *  column before that migration adds it. */
+	@AllowNull
+	@ForeignKey(() => Org)
+	@Column(DataType.UUID)
+	declare orgId: string | null;
+
+	/**
+	 * CMS mode: the community is only visible to members;
+	 * public visitors are shown a not-found page with a sign-in prompt.
+	 */
+	@Default(false)
+	@AllowNull(false)
+	@Column(DataType.BOOLEAN)
+	declare cmsMode: CreationOptional<boolean>;
+
+	/** External canonical home for this community's content, e.g. https://journal.example.org */
 	@Column(DataType.TEXT)
-	declare kfOrgId: string | null;
+	declare canonicalBaseUrl: string | null;
+
+	/**
+	 * Template for canonical pub URLs on the external site, with {slug} as the
+	 * pub slug, e.g. https://journal.example.org/articles/{slug}. When unset,
+	 * canonicalBaseUrl + /pub/{slug} is used.
+	 */
+	@Column(DataType.TEXT)
+	declare canonicalPubUrlTemplate: string | null;
 
 	@BelongsTo(() => CommunityTemplate, {
 		as: 'template',
@@ -253,6 +291,9 @@ export class Community extends Model<
 		onDelete: 'SET NULL',
 	})
 	declare template?: CommunityTemplate;
+
+	@BelongsTo(() => Org, { as: 'org', foreignKey: 'orgId', onDelete: 'SET NULL' })
+	declare org?: Org;
 
 	@HasMany(() => Collection, {
 		onDelete: 'CASCADE',
@@ -276,6 +317,13 @@ export class Community extends Model<
 		foreignKey: 'communityId',
 	})
 	declare depositTargets?: DepositTarget[];
+
+	@HasMany(() => FtpTarget, {
+		onDelete: 'CASCADE',
+		as: 'ftpTargets',
+		foreignKey: 'communityId',
+	})
+	declare ftpTargets?: FtpTarget[];
 
 	@BelongsTo(() => ScopeSummary, {
 		as: 'scopeSummary',

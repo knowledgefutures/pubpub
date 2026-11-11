@@ -31,6 +31,8 @@ export const getPermissions = async ({
 		loginId: userId,
 	});
 	const isAuthenticated = scopeData.activePermissions.canManage;
+	const canAdmin =
+		scopeData.activePermissions.canAdmin || scopeData.activePermissions.isSuperAdmin;
 	if (!scopeData.elements.activeCollection) {
 		return { create: isAuthenticated };
 	}
@@ -39,6 +41,7 @@ export const getPermissions = async ({
 		create: isAuthenticated,
 		update: isAuthenticated ? collectionUpdatePremission : (false as const),
 		destroy: isAuthenticated,
+		collectionExport: canAdmin,
 	};
 };
 
@@ -46,4 +49,5 @@ export type Permissions = {
 	create?: boolean;
 	update?: false | typeof collectionUpdatePremission;
 	destroy?: boolean;
+	collectionExport?: boolean;
 };

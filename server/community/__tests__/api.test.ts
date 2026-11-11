@@ -168,6 +168,21 @@ describe('/api/communities', () => {
 		expect(communityNow?.isFeatured).not.toBeTruthy();
 	});
 
+	it("lets community admins set the journal's ISSNs", async () => {
+		const { admin, existingCommunity } = models;
+		const agent = await login(admin);
+		await agent
+			.put('/api/communities')
+			.send({
+				communityId: existingCommunity.id,
+				electronicIssn: '2644-2353',
+				printIssn: '2688-8513',
+			})
+			.expect(200);
+		const communityNow = await Community.findOne({ where: { id: existingCommunity.id } });
+		expect(communityNow).toMatchObject({ electronicIssn: '2644-2353', printIssn: '2688-8513' });
+	});
+
 	it('blocks non-members from accessing an unreviewed community', async () => {
 		const { willNotCreateCommunity } = models;
 		const creator = await login(willNotCreateCommunity);

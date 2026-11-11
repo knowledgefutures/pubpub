@@ -29,14 +29,14 @@ import { FacetBinding as FacetBindingModel } from './facets/models/facetBinding'
 import { FeatureFlag } from './featureFlag/model';
 import { FeatureFlagCommunity } from './featureFlagCommunity/model';
 import { FeatureFlagUser } from './featureFlagUser/model';
-import { Hub } from './hub/model';
-import { HubCommunity } from './hubCommunity/model';
-import { HubManager } from './hubManager/model';
-import { HubOptOut } from './hubOptOut/model';
-import { HubPub } from './hubPub/model';
+import { FtpTarget } from './ftpTarget/model';
 import { IntegrationDataOAuth1 } from './integrationDataOAuth1/model';
 import { LandingPageFeature } from './landingPageFeature/model';
 import { Member } from './member/model';
+import { Org } from './org/model';
+import { OrgFeaturedPub } from './orgFeaturedPub/model';
+import { OrgInvite } from './orgInvite/model';
+import { OrgMember } from './orgMember/model';
 import { Page } from './page/model';
 import { Pub } from './pub/model';
 import { PubAttribution } from './pubAttribution/model';
@@ -55,6 +55,10 @@ import { SubmissionWorkflow } from './submissionWorkflow/model';
 import { Thread } from './thread/model';
 import { ThreadComment } from './threadComment/model';
 import { ThreadEvent } from './threadEvent/model';
+import { UnderlayAssetCache } from './underlayAssetCache/model';
+import { UnderlayIntegration } from './underlayIntegration/model';
+import { UnderlayPushEntry } from './underlayPushEntry/model';
+import { UnderlayPushLog } from './underlayPushLog/model';
 import { User } from './user/model';
 import { UserDismissable } from './userDismissable/model';
 import { UserNotification } from './userNotification/model';
@@ -77,9 +81,9 @@ sequelize.addModels([
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
-	HubOptOut,
 	CustomScript,
 	DepositTarget,
+	FtpTarget,
 	Discussion,
 	DiscussionAnchor,
 	Doc,
@@ -97,10 +101,10 @@ sequelize.addModels([
 	LandingPageFeature,
 	Member,
 	CommunityTemplate,
-	Hub,
-	HubCommunity,
-	HubManager,
-	HubPub,
+	Org,
+	OrgInvite,
+	OrgMember,
+	OrgFeaturedPub,
 	Page,
 	Pub,
 	PubAttribution,
@@ -128,6 +132,10 @@ sequelize.addModels([
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayAssetCache,
+	UnderlayIntegration,
+	UnderlayPushEntry,
+	UnderlayPushLog,
 ]);
 
 export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
@@ -176,9 +184,9 @@ export {
 	Commenter,
 	Community,
 	CrossrefDepositRecord,
-	HubOptOut,
 	CustomScript,
 	DepositTarget,
+	FtpTarget,
 	Discussion,
 	DiscussionAnchor,
 	EmailChangeToken,
@@ -193,10 +201,10 @@ export {
 	IntegrationDataOAuth1,
 	LandingPageFeature,
 	Member,
-	Hub,
-	HubCommunity,
-	HubManager,
-	HubPub,
+	Org,
+	OrgInvite,
+	OrgMember,
+	OrgFeaturedPub,
 	CommunityTemplate,
 	Page,
 	Pub,
@@ -225,6 +233,10 @@ export {
 	Visibility,
 	VisibilityUser,
 	WorkerTask,
+	UnderlayAssetCache,
+	UnderlayIntegration,
+	UnderlayPushEntry,
+	UnderlayPushLog,
 	ZoteroIntegration,
 };
 

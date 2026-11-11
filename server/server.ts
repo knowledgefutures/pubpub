@@ -15,7 +15,7 @@ const app = express();
 
 const appRouter = Router();
 
-import { getAppCommit, isProd, setAppCommit, setEnvironment } from 'utils/environment';
+import { getAppCommit, isDuqDuq, isProd, setAppCommit, setEnvironment } from 'utils/environment';
 
 // ACHTUNG: These calls must appear before we import any more of our own code to ensure that
 // the environment, and in particular the choice of dev vs. prod, is configured correctly!
@@ -33,8 +33,10 @@ if (env.NODE_ENV !== 'test') {
 	require('server/utils/serverModuleOverwrite');
 }
 
+import { RAW_BODY_PATHS } from './kf/consoleToken';
 import { communityBanGuard } from './middleware/communityBanGuard';
 import { deduplicateSlash } from './middleware/deduplicateSlash';
+import { kfSessionCheckMiddleware } from './middleware/kfSessionCheck';
 import { blocklistMiddleware } from './utils/blocklist';
 
 import './hooks';
@@ -70,6 +72,23 @@ import { server } from 'utils/api/server';
 // set BLOCKLIST_IP_ADDRESSES to comma separated list of ips (or partial ips) to block
 appRouter.use(blocklistMiddleware);
 
+// Fastly terminates TLS at the edge and forwards plain HTTP to the origin,
+// marking TLS requests with the `Fastly-SSL` header (see vcl_recv). Both
+// express-session (`proxy: true`) and express-sslify (`trustProtoHeader`)
+// decide "is this secure?" from `X-Forwarded-Proto` only — if that header
+// never reaches us the `Secure` session cookie is silently dropped and the
+// user is trapped in a silent re-auth loop. Normalize the proto signal here,
+// before any of those run. This only touches the header used for the secure
+// decision; req.hostname/req.protocol (and community routing) are untouched.
+if (isProd() || isDuqDuq()) {
+	appRouter.use((req, _res, next) => {
+		if (req.headers['fastly-ssl'] && !req.headers['x-forwarded-proto']) {
+			req.headers['x-forwarded-proto'] = 'https';
+		}
+		next();
+	});
+}
+
 if (env.NODE_ENV === 'production') {
 	Sentry.init({
 		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
@@ -91,7 +110,15 @@ if (env.NODE_ENV === 'production') {
 }
 appRouter.use(deduplicateSlash());
 appRouter.use(noSlash());
-appRouter.use(express.json({ limit: '50mb' }));
+appRouter.use(
+	express.json({
+		limit: '50mb',
+		// The console signs a hash of the raw body; keep it where that is checked.
+		verify: (req: any, _res, buf) => {
+			if (RAW_BODY_PATHS.has(req.originalUrl.split('?')[0])) req.rawBody = buf;
+		},
+	}),
+);
 appRouter.use(express.urlencoded({ limit: '50mb', extended: true }));
 appRouter.use(cookieParser());
 
@@ -117,33 +144,49 @@ appRouter.use('/api/health', (req, res) => {
 
 appRouter.use(
 	session({
-		secret: 'sessionsecret',
+		secret: env.SESSION_SECRET ?? 'sessionsecret',
 		resave: false,
 		saveUninitialized: false,
+		// Reset cookie maxAge on every response so the session expires after
+		// N minutes of *inactivity* rather than N minutes since login. The
+		// store's touch() keeps the DB row in sync without a full resave.
+		rolling: true,
+		// TLS is terminated at the edge (Fastly) and forwarded as plain HTTP,
+		// so without trusting the proxy express-session sees an insecure
+		// connection and silently drops the `secure` cookie. This honors
+		// X-Forwarded-Proto for the secure-cookie decision ONLY — unlike a
+		// global `app.set('trust proxy')`, it leaves req.hostname untouched
+		// so community routing keeps working.
+		proxy: true,
 		store: env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',
-			/* These are necessary for */
-			/* the api cookie to set */
-			/* ------- */
-			httpOnly: false,
-			secure: false,
-			/* ------- */
-			maxAge: 30 * 24 * 60 * 60 * 1000, // = 30 days.
+			httpOnly: true,
+			secure: env.NODE_ENV === 'production',
+			maxAge:
+				env.NODE_ENV === 'production'
+					? 30 * 24 * 60 * 60 * 1000 // 30d prod + duqduq
+					: 24 * 60 * 60 * 1000, // 1d dev
 		},
 	}),
 );
 
 appRouter.use((req, res, next) => {
-	/* If on *.pubpub.org domain, set cookie to be accessible across */
-	/* all subdomains to maintain login. Especially important when */
+	/* If on a pubpub/duqduq domain, set the session cookie to be accessible */
+	/* across all subdomains to maintain login. Especially important when */
 	/* creating communities. */
 	const hostname = req.headers.communityhostname || req.hostname;
-	if (hostname.indexOf('.pubpub.org') > -1) {
-		req.session.cookie.domain = '.pubpub.org';
-	}
-	if (hostname.indexOf('.duqduq.org') > -1) {
-		req.session.cookie.domain = '.duqduq.org';
+	const onPlatformDomain =
+		hostname.indexOf('.pubpub.org') > -1 || hostname.indexOf('.duqduq.org') > -1;
+	if (onPlatformDomain) {
+		/* Fastly maps *.duqduq.org → *.pubpub.org at the edge, so the */
+		/* hostname seen here can read ".pubpub.org" even on the duqduq */
+		/* deployment. Pick the parent domain from the deployment env (the */
+		/* same way the pp-lic cookie does) rather than the rewritten */
+		/* hostname — otherwise the session cookie gets pinned to */
+		/* .pubpub.org and is never sent back to *.duqduq.org, which traps */
+		/* the user in an infinite silent re-auth loop. */
+		req.session.cookie.domain = isDuqDuq() ? '.duqduq.org' : '.pubpub.org';
 	}
 	next();
 });
@@ -153,6 +196,7 @@ appRouter.use((req, res, next) => {
 /* ------------------- */
 appRouter.use(passport.initialize());
 appRouter.use(passport.session());
+
 passport.use(User.createStrategy());
 passport.use('zotero', zoteroAuthStrategy());
 passport.use('bearer', bearerStrategy());
@@ -254,6 +298,7 @@ appRouter.use(authTokenMiddleware);
 appRouter.use(purgeMiddleware(schedulePurge));
 
 appRouter.use(readOnlyMiddleware());
+appRouter.use(kfSessionCheckMiddleware());
 appRouter.use(communityBanGuard());
 
 const { customScript: _, ...contractWithoutCustomScript } = contract;

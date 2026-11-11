@@ -12,6 +12,7 @@ import {
 	PubAttribution,
 	Release,
 } from 'server/models';
+import { getInheritedCommunityMember } from 'server/orgMember/queries';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { expect } from 'utils/assert';
 import { findRank } from 'utils/rank';
@@ -62,8 +63,16 @@ export const getPubsInCollection = async ({
 		offset,
 	});
 	const membersQuery = userId ? Member.findAll({ where: { userId } }) : [];
-	const [collectionPubs, members] = await Promise.all([collectionPubsQuery, membersQuery]);
-	const isCommunityMember = members.some((member) => member.communityId === communityId);
+	const inheritedMemberQuery = userId
+		? getInheritedCommunityMember(userId, { id: communityId })
+		: null;
+	const [collectionPubs, members, inheritedMember] = await Promise.all([
+		collectionPubsQuery,
+		membersQuery,
+		inheritedMemberQuery,
+	]);
+	const isCommunityMember =
+		!!inheritedMember || members.some((member) => member.communityId === communityId);
 	const isCollectionMember = members.some((member) => member.collectionId === collectionId);
 
 	return collectionPubs

@@ -34,6 +34,10 @@ if (process.env.PUBPUB_PRODUCTION === 'true') {
 		timezone: 'UTC',
 	}); // Weekly on Saturday at 5 AM UTC (day before cleanup)
 
+	cron.schedule('0 6 * * *', () => run('Push to Underlay', 'tools-prod pushToUnderlay'), {
+		timezone: 'UTC',
+	}); // Daily at 6 AM UTC — enqueues pushes for integrations whose N-day cadence is due
+
 	cron.schedule(
 		'0 2 * * 0',
 		() => run('Purge Notifications', 'tools-prod purgeNotifications --execute'),

@@ -17,6 +17,7 @@ import {
 	type User,
 	WorkerTask,
 } from 'server/models';
+import { getCommunityIdsFromOrgMemberships } from 'server/orgMember/queries';
 import { sequelize } from 'server/sequelize';
 import { getSpamTagForCommunity } from 'server/spamTag/communityQueries';
 import { defer } from 'server/utils/deferred';
@@ -41,7 +42,9 @@ export const getAdminCommunitiesForUser = async (userId: string) => {
 		attributes: ['communityId'],
 		raw: true,
 	});
-	const communityIds = memberships.map((m) => m.communityId).filter(Boolean) as string[];
+	const directIds = memberships.map((m) => m.communityId).filter(Boolean) as string[];
+	const orgIds = await getCommunityIdsFromOrgMemberships(userId, ['admin']);
+	const communityIds = [...new Set([...directIds, ...orgIds])];
 	if (communityIds.length === 0) {
 		return [];
 	}
@@ -105,7 +108,6 @@ export const createCommunity = async (
 			accentColorDark: inputValues.accentColorDark ?? '#000000',
 			navigation: [{ type: 'page', id: homePageId }],
 			hideCreatePubButton: true,
-			...(inputValues.kfOrgId ? { kfOrgId: inputValues.kfOrgId } : {}),
 		},
 		{ actorId: userData.id },
 	);

@@ -1,6 +1,7 @@
 import stripIndent from 'strip-indent';
 
 import { Member, User } from 'server/models';
+import { getInheritedCommunityAdmins } from 'server/orgMember/queries';
 
 import { sendEmail } from './reset';
 
@@ -13,14 +14,22 @@ type CommunityEmailContext = {
 	communityUrl: string;
 };
 
+/** The community's admins, including the admins of the org that owns it */
 const getAdminEmailsForCommunity = async (communityId: string) => {
-	const members = await Member.findAll({
-		where: { communityId, permissions: 'admin' },
-		include: [{ model: User, as: 'user', attributes: ['email', 'fullName'] }],
-	});
-	return members
-		.filter((m) => m.user?.email)
-		.map((m) => ({ email: m.user!.email, name: m.user!.fullName }));
+	const [members, orgAdmins] = await Promise.all([
+		Member.findAll({
+			where: { communityId, permissions: 'admin' },
+			include: [{ model: User, as: 'user', attributes: ['email', 'fullName'] }],
+		}),
+		getInheritedCommunityAdmins(communityId),
+	]);
+	const admins = new Map<string, { email: string; name: string }>();
+	for (const { user } of [...members, ...orgAdmins]) {
+		if (user?.email && !admins.has(user.email)) {
+			admins.set(user.email, { email: user.email, name: user.fullName });
+		}
+	}
+	return [...admins.values()];
 };
 
 export const sendCommunityAwaitingApprovalEmail = async (ctx: CommunityEmailContext) => {

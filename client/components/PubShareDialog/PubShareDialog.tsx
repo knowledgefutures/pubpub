@@ -103,7 +103,7 @@ const MembersOptions = (props: SharedProps) => {
 	const {
 		pubData: {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'members' does not exist on type '{ membe... Remove this comment to see the full error message
-			membersData: { members },
+			membersData: { members, orgMembers = [], org },
 		},
 	} = props;
 	const { pendingCount } = usePendingChanges();
@@ -153,6 +153,9 @@ const MembersOptions = (props: SharedProps) => {
 			)}
 			{!!membersByType.community.length && activeTargetType !== 'community' && (
 				<InheritedMembersBlock members={membersByType.community} scope="Community" />
+			)}
+			{orgMembers.length > 0 && (
+				<InheritedMembersBlock members={orgMembers} scope="Org" org={org} />
 			)}
 		</React.Fragment>
 	);

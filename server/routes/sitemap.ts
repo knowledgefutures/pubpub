@@ -134,6 +134,9 @@ router.get(
 		}
 
 		const { communityData } = await getInitialData(req, { isDashboard: true });
+		if (communityData.cmsMode) {
+			return res.sendStatus(404);
+		}
 		const sitemapFileStream = await getSitemapIndex(communityData, 'sitemap-index.xml');
 
 		res.header('Content-Encoding', 'gzip');
@@ -158,6 +161,9 @@ router.get(
 		}
 
 		const { communityData } = await getInitialData(req, { isDashboard: true });
+		if (communityData.cmsMode) {
+			return res.sendStatus(404);
+		}
 		const sitemapFileStream = await getSitemapIndex(
 			communityData,
 			sitemapIndexOrSitemapFilename,

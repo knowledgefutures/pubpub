@@ -11,6 +11,7 @@ export const superAdminTabKinds = [
 	'templates',
 	'spam',
 	'spamUsers',
+	'scamFiles',
 ] as const;
 
 export const getSuperAdminTabUrl = (tabKind: SuperAdminTabKind) => {

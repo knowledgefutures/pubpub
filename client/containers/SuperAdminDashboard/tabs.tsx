@@ -12,6 +12,7 @@ import FtpTargets from './FtpTargets';
 import LandingPageFeatures from './LandingPageFeatures';
 import Orgs from './Orgs';
 import PlatformAnalytics from './PlatformAnalytics';
+import ScamFiles from './ScamFiles';
 import SuggestedOrgs from './SuggestedOrgs';
 import UserSpam from './UserSpam';
 
@@ -68,5 +69,9 @@ export const superAdminTabs: Record<SuperAdminTabKind, SuperAdminTab> = {
 	spamUsers: {
 		title: 'Spam Users',
 		component: UserSpam,
+	},
+	scamFiles: {
+		title: 'Scam Files',
+		component: ScamFiles,
 	},
 };

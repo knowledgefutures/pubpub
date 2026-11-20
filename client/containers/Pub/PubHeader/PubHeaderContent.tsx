@@ -62,7 +62,6 @@ const PubHeaderContent = (props: Props) => {
 					</span>
 					{doi && (
 						<span className="metadata-pair doi-pair">
-							<b className="pub-header-themed-secondary">DOI</b>
 							<a className="doi-link" href={`https://doi.org/${doi}`}>
 								https://doi.org/{doi}
 							</a>

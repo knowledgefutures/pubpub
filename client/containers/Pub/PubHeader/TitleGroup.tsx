@@ -17,7 +17,7 @@ type Props = {
 
 const TitleGroup = (props: Props) => {
 	const { pubData, updatePubData } = props;
-	const { title, htmlTitle, description, htmlDescription, isRelease } = pubData;
+	const { title, htmlTitle, description, htmlDescription, isRelease, doi } = pubData;
 	const { communityData, scopeData, featureFlags } = usePageContext();
 	const { submissionState } = usePubContext();
 	const isUnsubmitted = submissionState?.submission.status === 'incomplete';
@@ -123,6 +123,13 @@ const TitleGroup = (props: Props) => {
 				<div className="published-date">
 					<span className="pub-header-themed-secondary">Published on</span>
 					<span>{publishedDateString}</span>
+				</div>
+			)}
+			{doi && (
+				<div className="title-doi">
+					<a className="doi-link" href={`https://doi.org/${doi}`}>
+						https://doi.org/{doi}
+					</a>
 				</div>
 			)}
 		</div>

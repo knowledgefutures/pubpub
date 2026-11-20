@@ -3,7 +3,6 @@ import type { PubPageData } from 'types';
 import React from 'react';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { ClickToCopyButton } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDateString } from 'utils/pub/pubDates';
 
@@ -64,14 +63,9 @@ const PubHeaderContent = (props: Props) => {
 					{doi && (
 						<span className="metadata-pair doi-pair">
 							<b className="pub-header-themed-secondary">DOI</b>
-							<ClickToCopyButton
-								copyString={`https://doi.org/${doi}`}
-								className="click-to-copy"
-								beforeCopyPrompt="Copy doi.org link"
-								icon={null}
-							>
-								{doi}
-							</ClickToCopyButton>
+							<a className="doi-link" href={`https://doi.org/${doi}`}>
+								https://doi.org/{doi}
+							</a>
 						</span>
 					)}
 					<div className="show-details-placeholder" />

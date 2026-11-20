@@ -220,6 +220,20 @@ $mobile-bottom-buttons-spacing: 10px;
 				margin-top: $title-elements-spacing;
 				display: none;
 			}
+			// Shown where the top bar hides its DOI
+			.title-doi {
+				margin-top: $title-elements-spacing;
+				display: none;
+				@media only screen and (max-width: 1000px) {
+					display: block;
+				}
+				.doi-link {
+					color: inherit;
+					text-decoration: underline;
+					text-underline-offset: 2px;
+					overflow-wrap: anywhere;
+				}
+			}
 		}
 
 		.utility-buttons-component {

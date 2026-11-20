@@ -126,8 +126,12 @@ $bp: vendor.$bp-namespace;
 			}
 		}
 
-		.click-to-copy {
-			margin-left: -5px;
+		.doi-link {
+			display: inline-block;
+			margin-bottom: 10px;
+			text-decoration: underline;
+			text-underline-offset: 2px;
+			overflow-wrap: anywhere;
 		}
 
 		.#{$bp}-button,

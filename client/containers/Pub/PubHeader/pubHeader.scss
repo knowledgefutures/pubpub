@@ -193,10 +193,10 @@ $mobile-bottom-buttons-spacing: 10px;
 						display: none;
 					}
 				}
-				.click-to-copy {
-					.#{$bp}-button {
-						color: inherit;
-					}
+				.doi-link {
+					color: inherit;
+					text-decoration: underline;
+					text-underline-offset: 2px;
 				}
 				.details-button {
 					width: 120px;

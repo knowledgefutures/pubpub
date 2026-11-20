@@ -4,7 +4,7 @@ import React from 'react';
 
 import dateFormat from 'dateformat';
 
-import { ClickToCopyButton, ContributorsList } from 'components';
+import { ContributorsList } from 'components';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getAllPubContributors } from 'utils/contributors';
 import { usePageContext } from 'utils/hooks';
@@ -79,13 +79,9 @@ const PubDetails = (props: Props) => {
 					{pubData.doi && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
-							<ClickToCopyButton
-								copyString={`https://doi.org/${pubData.doi}`}
-								className="click-to-copy"
-								beforeCopyPrompt="Copy doi.org link"
-							>
-								{pubData.doi}
-							</ClickToCopyButton>
+							<a className="doi-link" href={`https://doi.org/${pubData.doi}`}>
+								https://doi.org/{pubData.doi}
+							</a>
 						</React.Fragment>
 					)}
 					<CitationsPreview pubData={pubData} />

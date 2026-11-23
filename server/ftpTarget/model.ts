@@ -55,4 +55,11 @@ export class FtpTarget extends Model<
 
 	@Column(DataType.TEXT)
 	declare passwordInitVec: string | null;
+
+	/** An SSH private key, encrypted like the password. A target uses a key or a password. */
+	@Column(DataType.TEXT)
+	declare privateKey: string | null;
+
+	@Column(DataType.TEXT)
+	declare privateKeyInitVec: string | null;
 }

@@ -2,14 +2,13 @@ import { PassThrough } from 'node:stream';
 import archiver from 'archiver';
 import { Op } from 'sequelize';
 
-import { env } from 'server/env';
 import { getOrStartExportTask } from 'server/export/queries';
+import { getFtpTargetSecrets } from 'server/ftpTarget/secrets';
 import { Collection, Community, Export, FtpTarget, Pub, Release, WorkerTask } from 'server/models';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 import { assetsClient, exportsClient } from 'server/utils/s3';
 import { uploadFileViaSftp } from 'server/utils/sftp';
 import { updateWorkerTask } from 'server/workerTask/queries';
-import { aes256Decrypt } from 'utils/crypto';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -189,12 +188,10 @@ export const collectionExportTask = async ({
 		await Promise.all(
 			ftpTargetIds.map(async (targetId) => {
 				const ftpTarget = await FtpTarget.findByPk(targetId);
-				if (
-					!ftpTarget?.host ||
-					!ftpTarget.username ||
-					!ftpTarget.password ||
-					!ftpTarget.passwordInitVec
-				) {
+				const { password, privateKey } = ftpTarget
+					? getFtpTargetSecrets(ftpTarget)
+					: { password: null, privateKey: null };
+				if (!ftpTarget?.host || !ftpTarget.username || !(password || privateKey)) {
 					return {
 						id: targetId,
 						host: ftpTarget?.host ?? 'unknown',
@@ -202,11 +199,6 @@ export const collectionExportTask = async ({
 						error: 'Invalid FTP target configuration',
 					};
 				}
-				const password = aes256Decrypt(
-					ftpTarget.password,
-					env.AES_ENCRYPTION_KEY!,
-					ftpTarget.passwordInitVec,
-				);
 				const baseDir = ftpTarget.filePath?.replace(/\/$/, '') ?? '';
 				const remotePath = baseDir ? `${baseDir}/${zipName}` : zipName;
 				try {
@@ -217,6 +209,7 @@ export const collectionExportTask = async ({
 							port: ftpTarget.port ?? undefined,
 							username: ftpTarget.username,
 							password,
+							privateKey,
 						},
 						remotePath,
 						stream,

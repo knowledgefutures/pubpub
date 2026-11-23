@@ -14,6 +14,7 @@ import {
 	NonIdealState,
 	Position,
 	Tag,
+	TextArea,
 } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 
@@ -30,9 +31,12 @@ type FtpTargetRow = {
 	host: string | null;
 	filePath: string | null;
 	hasCredentials: boolean;
+	authMethod: AuthMethod | null;
 	communityTitle: string;
 	communitySubdomain: string;
 };
+
+type AuthMethod = 'password' | 'key';
 
 type CommunityOption = {
 	id: string;
@@ -45,6 +49,14 @@ type Props = {
 };
 
 const FTP_TYPE_OPTIONS = [{ label: 'SFTP', value: 'sftp' }];
+
+const AUTH_METHOD_OPTIONS = [
+	{ label: 'Password', value: 'password' },
+	{ label: 'SSH key', value: 'key' },
+];
+
+const PRIVATE_KEY_PLACEHOLDER =
+	'-----BEGIN OPENSSH PRIVATE KEY-----\n…\n-----END OPENSSH PRIVATE KEY-----';
 
 const useCommunitySearch = () => {
 	const [query, setQuery] = useState('');
@@ -97,7 +109,9 @@ const FtpTargets = (props: Props) => {
 	const [createHost, setCreateHost] = useState('');
 	const [createFilePath, setCreateFilePath] = useState('');
 	const [createUsername, setCreateUsername] = useState('');
+	const [createAuthMethod, setCreateAuthMethod] = useState<AuthMethod>('password');
 	const [createPassword, setCreatePassword] = useState('');
+	const [createPrivateKey, setCreatePrivateKey] = useState('');
 
 	// Edit dialog — undefined means "untouched", '' means "user cleared the field"
 	const [editTarget, setEditTarget] = useState<FtpTargetRow | null>(null);
@@ -107,7 +121,9 @@ const FtpTargets = (props: Props) => {
 	const [editHost, setEditHost] = useState('');
 	const [editFilePath, setEditFilePath] = useState('');
 	const [editUsername, setEditUsername] = useState<string | undefined>(undefined);
+	const [editAuthMethod, setEditAuthMethod] = useState<AuthMethod>('password');
 	const [editPassword, setEditPassword] = useState<string | undefined>(undefined);
+	const [editPrivateKey, setEditPrivateKey] = useState<string | undefined>(undefined);
 
 	// Copy dialog
 	const [copySource, setCopySource] = useState<FtpTargetRow | null>(null);
@@ -135,8 +151,9 @@ const FtpTargets = (props: Props) => {
 			setError('Community and host are required.');
 			return;
 		}
-		if (!createUsername.trim() || !createPassword) {
-			setError('Username and password are required.');
+		const useKey = createAuthMethod === 'key';
+		if (!createUsername.trim() || !(useKey ? createPrivateKey.trim() : createPassword)) {
+			setError(`Username and ${useKey ? 'SSH key' : 'password'} are required.`);
 			return;
 		}
 		setIsLoading(true);
@@ -151,7 +168,7 @@ const FtpTargets = (props: Props) => {
 				host: createHost.trim(),
 				filePath: createFilePath.trim() || undefined,
 				username: createUsername.trim() || undefined,
-				password: createPassword || undefined,
+				...(useKey ? { privateKey: createPrivateKey } : { password: createPassword }),
 			});
 			setTargets((prev) => [result, ...prev]);
 			createSearch.reset();
@@ -161,7 +178,9 @@ const FtpTargets = (props: Props) => {
 			setCreateHost('');
 			setCreateFilePath('');
 			setCreateUsername('');
+			setCreateAuthMethod('password');
 			setCreatePassword('');
+			setCreatePrivateKey('');
 			setSuccess(
 				`FTP target${result.name ? ` "${result.name}"` : ''} created for "${result.communityTitle}" (${result.host}).`,
 			);
@@ -178,7 +197,9 @@ const FtpTargets = (props: Props) => {
 		createHost,
 		createFilePath,
 		createUsername,
+		createAuthMethod,
 		createPassword,
+		createPrivateKey,
 	]);
 
 	const openEdit = useCallback((target: FtpTargetRow) => {
@@ -189,14 +210,29 @@ const FtpTargets = (props: Props) => {
 		setEditHost(target.host ?? '');
 		setEditFilePath(target.filePath ?? '');
 		setEditUsername(undefined);
+		setEditAuthMethod(target.authMethod ?? 'password');
 		setEditPassword(undefined);
+		setEditPrivateKey(undefined);
 	}, []);
 
 	const handleEdit = useCallback(async () => {
 		if (!editTarget) return;
-		if (!editTarget.hasCredentials && (!editUsername?.trim() || !editPassword)) {
-			setError('Username and password are required.');
-			return;
+		const useKey = editAuthMethod === 'key';
+		const newSecret = useKey ? editPrivateKey?.trim() : editPassword;
+		const clearing = editUsername === '';
+		if (!clearing) {
+			if (!editTarget.hasCredentials && (!editUsername?.trim() || !newSecret)) {
+				setError(`Username and ${useKey ? 'SSH key' : 'password'} are required.`);
+				return;
+			}
+			if (
+				editTarget.hasCredentials &&
+				editTarget.authMethod !== editAuthMethod &&
+				!newSecret
+			) {
+				setError(`Enter the ${useKey ? 'SSH key' : 'password'} to switch to it.`);
+				return;
+			}
 		}
 		setIsLoading(true);
 		setError(null);
@@ -212,8 +248,8 @@ const FtpTargets = (props: Props) => {
 			if (editUsername !== undefined) {
 				body.username = editUsername.trim();
 			}
-			if (editPassword !== undefined) {
-				body.password = editPassword;
+			if (!clearing && newSecret) {
+				body[useKey ? 'privateKey' : 'password'] = newSecret;
 			}
 			const result = await apiFetch.put<FtpTargetRow>(
 				`/api/superadmin/ftp-targets/${editTarget.id}`,
@@ -235,7 +271,9 @@ const FtpTargets = (props: Props) => {
 		editHost,
 		editFilePath,
 		editUsername,
+		editAuthMethod,
 		editPassword,
+		editPrivateKey,
 	]);
 
 	const handleDelete = useCallback(async (target: FtpTargetRow) => {
@@ -374,14 +412,24 @@ const FtpTargets = (props: Props) => {
 						disabled={isLoading}
 					/>
 				</FormGroup>
-				<FormGroup label="Password" style={{ flex: 0.5 }}>
-					<InputGroup
-						type="password"
-						value={createPassword}
-						onChange={(e) => setCreatePassword(e.target.value)}
+				<FormGroup label="Log in with">
+					<HTMLSelect
+						value={createAuthMethod}
+						onChange={(e) => setCreateAuthMethod(e.target.value as AuthMethod)}
+						options={AUTH_METHOD_OPTIONS}
 						disabled={isLoading}
 					/>
 				</FormGroup>
+				{createAuthMethod === 'password' && (
+					<FormGroup label="Password" style={{ flex: 0.5 }}>
+						<InputGroup
+							type="password"
+							value={createPassword}
+							onChange={(e) => setCreatePassword(e.target.value)}
+							disabled={isLoading}
+						/>
+					</FormGroup>
+				)}
 				<FormGroup label="File Path" style={{ flex: 0.7 }}>
 					<InputGroup
 						placeholder="Optional (/uploads)"
@@ -390,6 +438,23 @@ const FtpTargets = (props: Props) => {
 						disabled={isLoading}
 					/>
 				</FormGroup>
+				{createAuthMethod === 'key' && (
+					<FormGroup
+						label="SSH private key"
+						helperText="Paste the whole key file. It is stored encrypted."
+						style={{ flexBasis: '100%' }}
+					>
+						<TextArea
+							className="private-key-input"
+							value={createPrivateKey}
+							onChange={(e) => setCreatePrivateKey(e.target.value)}
+							placeholder={PRIVATE_KEY_PLACEHOLDER}
+							disabled={isLoading}
+							fill
+							rows={6}
+						/>
+					</FormGroup>
+				)}
 				<Button
 					intent={Intent.PRIMARY}
 					text="Create"
@@ -464,7 +529,9 @@ const FtpTargets = (props: Props) => {
 										<span
 											className={`credential-badge ${t.hasCredentials ? 'has-credentials' : 'no-credentials'}`}
 										>
-											{t.hasCredentials ? '🔒 Set' : 'None'}
+											{t.hasCredentials
+												? `🔒 ${t.authMethod === 'key' ? 'SSH key' : 'Password'}`
+												: 'None'}
 										</span>
 									</td>
 									<td>
@@ -555,22 +622,56 @@ const FtpTargets = (props: Props) => {
 							onChange={(e) => setEditUsername(e.target.value)}
 						/>
 					</FormGroup>
-					<FormGroup
-						label="Password"
-						helperText={
-							editTarget?.hasCredentials
-								? 'Leave blank to keep existing password.'
-								: undefined
-						}
-						className="dialog-field"
-					>
-						<InputGroup
-							type="password"
-							placeholder={editTarget?.hasCredentials ? '(unchanged)' : 'Optional'}
-							value={editPassword ?? ''}
-							onChange={(e) => setEditPassword(e.target.value)}
+					<FormGroup label="Log in with" className="dialog-field">
+						<HTMLSelect
+							value={editAuthMethod}
+							onChange={(e) => setEditAuthMethod(e.target.value as AuthMethod)}
+							options={AUTH_METHOD_OPTIONS}
 						/>
 					</FormGroup>
+					{editAuthMethod === 'password' ? (
+						<FormGroup
+							label="Password"
+							helperText={
+								editTarget?.authMethod === 'password'
+									? 'Leave blank to keep existing password.'
+									: undefined
+							}
+							className="dialog-field"
+						>
+							<InputGroup
+								type="password"
+								placeholder={
+									editTarget?.authMethod === 'password' ? '(unchanged)' : ''
+								}
+								value={editPassword ?? ''}
+								onChange={(e) => setEditPassword(e.target.value)}
+							/>
+						</FormGroup>
+					) : (
+						<FormGroup
+							label="SSH private key"
+							helperText={
+								editTarget?.authMethod === 'key'
+									? 'Leave blank to keep the existing key. A new key replaces any password.'
+									: 'Paste the whole key file. It replaces the password and is stored encrypted.'
+							}
+							className="dialog-field"
+						>
+							<TextArea
+								className="private-key-input"
+								value={editPrivateKey ?? ''}
+								onChange={(e) => setEditPrivateKey(e.target.value)}
+								placeholder={
+									editTarget?.authMethod === 'key'
+										? '(unchanged)'
+										: PRIVATE_KEY_PLACEHOLDER
+								}
+								fill
+								rows={6}
+							/>
+						</FormGroup>
+					)}
 					<FormGroup label="File Path" className="dialog-field">
 						<InputGroup
 							placeholder="Optional"
@@ -652,7 +753,7 @@ const FtpTargets = (props: Props) => {
 							onChange={(e) =>
 								setCopyCredentials((e.target as HTMLInputElement).checked)
 							}
-							label="Copy credentials (username & password)"
+							label={`Copy credentials (username & ${copySource.authMethod === 'key' ? 'SSH key' : 'password'})`}
 						/>
 					)}
 				</div>

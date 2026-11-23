@@ -2,11 +2,44 @@ import type { Readable } from 'stream';
 
 import SftpClient from 'ssh2-sftp-client';
 
+/** Log in with a password or an SSH private key; a target stores one or the other. */
 export type SftpConnectionParams = {
 	host: string;
 	port?: number | null;
 	username: string;
-	password: string;
+	password?: string | null;
+	privateKey?: string | null;
+};
+
+export const getSftpConnectOptions = (params: SftpConnectionParams) => {
+	if (!params.password && !params.privateKey) {
+		throw new Error('A password or a private key is required');
+	}
+	return {
+		host: params.host,
+		port: params.port ?? 22,
+		username: params.username,
+		...(params.privateKey
+			? { privateKey: params.privateKey }
+			: { password: params.password ?? undefined }),
+		readyTimeout: 10000,
+	};
+};
+
+/**
+ * Tidy a pasted private key: unify line endings and trim stray whitespace, keeping the trailing
+ * newline some parsers expect. Returns null when the text isn't a PEM or OpenSSH private key.
+ */
+export const normalizePrivateKey = (raw: string) => {
+	const key = raw.replace(/\r\n?/g, '\n').trim();
+	if (
+		!/^-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----\n[\s\S]+\n-----END [A-Z0-9 ]*PRIVATE KEY-----$/.test(
+			key,
+		)
+	) {
+		return null;
+	}
+	return `${key}\n`;
 };
 
 /**
@@ -20,13 +53,7 @@ export const testSftpConnection = async (
 ): Promise<void> => {
 	const client = new SftpClient();
 	try {
-		await client.connect({
-			host: params.host,
-			port: params.port ?? 22,
-			username: params.username,
-			password: params.password,
-			readyTimeout: 10000,
-		});
+		await client.connect(getSftpConnectOptions(params));
 		if (filePath) {
 			const exists = await client.exists(filePath);
 			if (!exists) {
@@ -52,13 +79,7 @@ export const uploadFileViaSftp = async (
 ): Promise<void> => {
 	const client = new SftpClient();
 	try {
-		await client.connect({
-			host: params.host,
-			port: params.port ?? 22,
-			username: params.username,
-			password: params.password,
-			readyTimeout: 10000,
-		});
+		await client.connect(getSftpConnectOptions(params));
 		await client.put(content, remotePath);
 	} finally {
 		await client.end().catch(() => {});

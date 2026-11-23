@@ -23,6 +23,12 @@ import { getAllTemplates } from 'server/communityTemplate/queries';
 import { getRedepositPlan, RedepositError, type RedepositResult } from 'server/doi/redeposit';
 import { env } from 'server/env';
 import { getExploreCommunities } from 'server/exploreFeatured/queries';
+import {
+	clearedFtpTargetCredentials,
+	encryptFtpTargetSecret,
+	getFtpTargetAuthMethod,
+	getFtpTargetSecrets,
+} from 'server/ftpTarget/secrets';
 import Html from 'server/Html';
 import { getLandingPageFeatures } from 'server/landingPageFeature/queries';
 import { Community, DepositTarget, FtpTarget, SpamTag, User, WorkerTask } from 'server/models';
@@ -44,7 +50,7 @@ import {
 } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { assetsClient, scamClient } from 'server/utils/s3';
-import { testSftpConnection } from 'server/utils/sftp';
+import { normalizePrivateKey, testSftpConnection } from 'server/utils/sftp';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { addWorkerTask } from 'server/utils/workers';
 import {
@@ -336,9 +342,22 @@ const sanitizeFtpTarget = (t: FtpTarget) => ({
 	host: t.host,
 	filePath: t.filePath,
 	hasCredentials: Boolean(t.username),
+	authMethod: getFtpTargetAuthMethod(t),
 	communityTitle: t.community?.title ?? '(unknown)',
 	communitySubdomain: t.community?.subdomain ?? '(unknown)',
 });
+
+const parsePrivateKeyOrThrow = (raw: unknown) => {
+	const key = normalizePrivateKey(String(raw));
+	if (!key) {
+		throw new BadRequestError(
+			new Error(
+				'The private key must be a PEM or OpenSSH key ("-----BEGIN ... PRIVATE KEY-----")',
+			),
+		);
+	}
+	return key;
+};
 
 const sanitizeDepositTarget = (t: DepositTarget) => ({
 	id: t.id,
@@ -611,7 +630,8 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 			throw new ForbiddenError();
 		}
 
-		const { communityId, name, ftpType, port, host, filePath, username, password } = req.body;
+		const { communityId, name, ftpType, port, host, filePath, username, password, privateKey } =
+			req.body;
 		if (!communityId || !host) {
 			throw new BadRequestError(new Error('communityId and host are required'));
 		}
@@ -630,17 +650,27 @@ router.post('/api/superadmin/ftp-targets', async (req, res, next) => {
 			filePath: filePath ? String(filePath).trim() : null,
 		};
 
-		if (username && password) {
+		const key = privateKey ? parsePrivateKeyOrThrow(privateKey) : null;
+		if (username && (key || password)) {
 			await testSftpConnection(
-				{ host: createData.host, port: createData.port, username, password },
+				{
+					host: createData.host,
+					port: createData.port,
+					username,
+					password: key ? null : password,
+					privateKey: key,
+				},
 				createData.filePath,
 			).catch((err) => {
 				throw new BadRequestError(new Error(err.message));
 			});
-			const { encryptedText, initVec } = aes256Encrypt(password, env.AES_ENCRYPTION_KEY!);
 			createData.username = username;
-			createData.password = encryptedText;
-			createData.passwordInitVec = initVec;
+			Object.assign(
+				createData,
+				key
+					? encryptFtpTargetSecret('privateKey', key)
+					: encryptFtpTargetSecret('password', password),
+			);
 		}
 
 		const target = await FtpTarget.create(createData as any);
@@ -671,7 +701,7 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 			throw new NotFoundError(new Error('FTP target not found'));
 		}
 
-		const { name, ftpType, port, host, filePath, username, password } = req.body;
+		const { name, ftpType, port, host, filePath, username, password, privateKey } = req.body;
 		const updates: Record<string, any> = {};
 
 		if (name !== undefined) {
@@ -693,63 +723,51 @@ router.put('/api/superadmin/ftp-targets/:id', async (req, res, next) => {
 			updates.filePath = filePath ? String(filePath).trim() : null;
 		}
 
-		if (username !== undefined) {
-			if (username === '') {
-				updates.username = null;
-				updates.password = null;
-				updates.passwordInitVec = null;
+		if (username === '') {
+			Object.assign(updates, clearedFtpTargetCredentials);
+		} else {
+			if (username !== undefined) {
+				updates.username = String(username).trim();
+			}
+			// A new key or password replaces whichever secret the target had.
+			const key = privateKey ? parsePrivateKeyOrThrow(privateKey) : null;
+			let secrets: { password: string | null; privateKey: string | null };
+			if (key) {
+				Object.assign(updates, encryptFtpTargetSecret('privateKey', key));
+				secrets = { password: null, privateKey: key };
+			} else if (password) {
+				Object.assign(updates, encryptFtpTargetSecret('password', password));
+				secrets = { password, privateKey: null };
 			} else {
-				// Encrypt any new password first (before the connection test).
-				if (password) {
-					const { encryptedText, initVec } = aes256Encrypt(
-						password,
-						env.AES_ENCRYPTION_KEY!,
-					);
-					updates.password = encryptedText;
-					updates.passwordInitVec = initVec;
-				}
-				if (username !== undefined) {
-					updates.username = username;
-				}
+				secrets = getFtpTargetSecrets(target);
+			}
 
-				// Test connection if any connection-relevant field changed and credentials exist.
-				const connectionFieldChanged =
-					host !== undefined ||
-					port !== undefined ||
-					filePath !== undefined ||
-					ftpType !== undefined ||
-					username !== undefined ||
-					password !== undefined;
+			const effective = <K extends 'host' | 'port' | 'filePath' | 'ftpType' | 'username'>(
+				field: K,
+			) => (updates[field] !== undefined ? updates[field] : target[field]);
+			const connectionChanged =
+				Boolean(key || password) ||
+				(['host', 'port', 'filePath', 'ftpType', 'username'] as const).some(
+					(field) => effective(field) !== target[field],
+				);
+			const effectiveUsername = effective('username');
 
-				const effectiveUsername = username ?? target.username;
-				const hasCredentials =
-					Boolean(effectiveUsername) && Boolean(password ?? target.password);
-
-				if (connectionFieldChanged && hasCredentials) {
-					const effectiveHost = updates.host ?? target.host;
-					const effectivePort = updates.port !== undefined ? updates.port : target.port;
-					const effectivePath =
-						updates.filePath !== undefined ? updates.filePath : target.filePath;
-					const effectivePassword = password
-						? password
-						: aes256Decrypt(
-								target.password!,
-								env.AES_ENCRYPTION_KEY!,
-								target.passwordInitVec!,
-							);
-
-					await testSftpConnection(
-						{
-							host: effectiveHost,
-							port: effectivePort,
-							username: effectiveUsername,
-							password: effectivePassword,
-						},
-						effectivePath,
-					).catch((err) => {
-						throw new BadRequestError(new Error(err.message));
-					});
-				}
+			if (
+				connectionChanged &&
+				effectiveUsername &&
+				(secrets.password || secrets.privateKey)
+			) {
+				await testSftpConnection(
+					{
+						host: effective('host'),
+						port: effective('port'),
+						username: effectiveUsername,
+						...secrets,
+					},
+					effective('filePath'),
+				).catch((err) => {
+					throw new BadRequestError(new Error(err.message));
+				});
 			}
 		}
 
@@ -819,16 +837,17 @@ router.post('/api/superadmin/ftp-targets/:id/copy', async (req, res, next) => {
 			filePath: source.filePath,
 		};
 
-		if (copyCredentials && source.username && source.password && source.passwordInitVec) {
-			const plaintext = aes256Decrypt(
-				source.password,
-				env.AES_ENCRYPTION_KEY!,
-				source.passwordInitVec,
-			);
-			const { encryptedText, initVec } = aes256Encrypt(plaintext, env.AES_ENCRYPTION_KEY!);
-			createData.username = source.username;
-			createData.password = encryptedText;
-			createData.passwordInitVec = initVec;
+		if (copyCredentials && source.username) {
+			const { password, privateKey } = getFtpTargetSecrets(source);
+			if (privateKey || password) {
+				createData.username = source.username;
+				Object.assign(
+					createData,
+					privateKey
+						? encryptFtpTargetSecret('privateKey', privateKey)
+						: encryptFtpTargetSecret('password', password!),
+				);
+			}
 		}
 
 		const newTarget = await FtpTarget.create(createData as any);

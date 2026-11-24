@@ -262,7 +262,7 @@
 		"xmlbuilder": "^13.0.2",
 		"yaml": "^1.6.0",
 		"yargs": "^13.2.4",
-		"zod": "3.22.4",
+		"zod": "4.6.6",
 		"zod-to-json-schema": "3.17.0",
 		"zod-validation-error": "^2.1.0",
 		"zotero-api-client": "^0.40.0",

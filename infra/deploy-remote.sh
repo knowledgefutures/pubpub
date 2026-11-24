@@ -175,26 +175,61 @@ deploy_stack
 # show progress
 sudo docker stack services "$STACK_NAME"
 
-# Dump everything needed to diagnose a failed rollout. Tasks that exit
-# during an update are short-lived and their containers are gone soon
-# after, so the only reliable moment to read them is right now, in the
-# job that just watched them fail.
+# Where a failed rollout's logs are saved. Never in the job's output: the repo
+# is public, so its Actions logs are too, and the app's logs hold visitors'
+# requests (addresses, user ids, paths).
+DIAG_DIR=/var/log/pubpub-deploy
+
+# `docker service logs` can hang after printing everything; never wait on it.
+service_logs() {
+	sudo timeout -k 5 60 docker service logs "$@" 2>&1 || true
+}
+
+# Error lines with request lines, addresses, user ids, and emails left out.
+redacted_errors() {
+	grep -E 'Error|ERROR|error:|Exception|ENOTFOUND|ECONNREFUSED|FATAL|panic' |
+		grep -v -E '\| (GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) [0-9]{3} ' |
+		sed -E \
+			-e 's/[0-9]{1,3}(\.[0-9]{1,3}){3}/<ip>/g' \
+			-e 's/(ip|user|ua)=[^ |]*/\1=<redacted>/g' \
+			-e 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/<email>/g' |
+		head -40 || true
+}
+
+# Diagnose a failed rollout. Tasks that exit during an update are short-lived
+# and their containers are gone soon after, so the only reliable moment to
+# read them is right now, in the job that just watched them fail. The job
+# shows the update status, the tasks, and the error lines of this image's
+# tasks that failed; the full logs go to a file on this host.
 dump_rollout_failure() {
 	svc="$1"
 	echo "--- $svc update status ---"
 	sudo docker service inspect "$svc" --format '{{json .UpdateStatus}}' 2>/dev/null || true
 	echo "--- $svc tasks ---"
-	sudo docker service ps "$svc" --no-trunc 2>/dev/null || true
-	echo "--- $svc service logs (last 200 lines, all tasks) ---"
-	sudo docker service logs "$svc" --timestamps --tail 200 2>&1 || true
-	echo "--- logs for tasks that are not Running ---"
-	sudo docker service ps "$svc" --no-trunc --format '{{.ID}} {{.CurrentState}}' 2>/dev/null |
-		awk '$2 != "Running" { print $1 }' |
-		head -5 |
-		while read -r task; do
+	sudo docker service ps "$svc" --no-trunc \
+		--format '{{.Name}} {{.Image}} {{.DesiredState}} {{.CurrentState}} {{.Error}}' 2>/dev/null || true
+
+	# This image's tasks that are not running: the ones the update started.
+	failed="$(sudo docker service ps "$svc" --no-trunc --format '{{.ID}} {{.Image}} {{.CurrentState}}' 2>/dev/null |
+		awk -v tag=":${IMAGE_TAG}" 'index($2, tag) && $3 != "Running" { print $1 }' | head -5 || true)"
+
+	file="$DIAG_DIR/$(date -u +%Y%m%dT%H%M%SZ)-$svc-${IMAGE_TAG:0:12}.log"
+	sudo install -d -m 700 "$DIAG_DIR"
+	sudo install -m 600 /dev/null "$file"
+	{
+		echo "--- $svc service logs (last 200 lines, all tasks) ---"
+		service_logs "$svc" --timestamps --tail 200
+		for task in $failed; do
 			echo "--- task $task ---"
-			sudo docker service logs "$task" --timestamps --tail 100 2>&1 || true
+			service_logs "$task" --timestamps --tail 100
 		done
+	} | sudo tee "$file" >/dev/null
+
+	for task in $failed; do
+		echo "--- task $task: errors ---"
+		service_logs "$task" --tail 100 | redacted_errors
+	done
+	echo "Full logs on $(hostname): sudo less $file"
 	echo "--- disk ---"
 	df -h /var/lib/docker 2>/dev/null || df -h /
 }

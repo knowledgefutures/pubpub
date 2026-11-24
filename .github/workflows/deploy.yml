@@ -130,6 +130,8 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
+    # A rollout waits at most 25 minutes (deploy-remote.sh); never sit for hours.
+    timeout-minutes: 45
     environment: ${{ needs.build.outputs.environment }}
     permissions:
       contents: read

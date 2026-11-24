@@ -34,9 +34,9 @@ const DEFAULT_BATCH_LINES = 10_000;
 const DEFAULT_BATCH_BYTES = 16 * 1024 * 1024;
 
 /**
- * Largest file the plain `PUT …/files/:hash` accepts. Larger files go through a presigned upload.
- * Files are streamed during mapping, before any session reports `limits.file_bytes`, so this is
- * fixed here; a 413 from the plain PUT also falls back to the presigned upload.
+ * Largest asset the plain `PUT …/assets/:hash` accepts. Larger ones go through a presigned upload.
+ * Assets are streamed during mapping, before any push session exists, so this is fixed here; a 413
+ * from the plain PUT also falls back to the presigned upload.
  */
 const SMALL_UPLOAD_BYTES = 32 * 1024 * 1024;
 /** A presigned PUT of a large export is one long request; give it far more than the API timeout. */
@@ -275,7 +275,8 @@ export type PushPlan = {
 };
 
 const recordKey = (type: string, id: string) => `${type}\u0000${id}`;
-const bareHash = (hash: string) => hash.replace(/^sha256:/, '');
+/** Bare hex from an Underlay id (`ul:asset:<hex>`, `ul:rec:<hex>`) or bare hex. */
+const bareHash = (hash: string) => hash.replace(/^ul:[a-z]+:/, '');
 
 /**
  * Diff our full record set against the head. A delete is only sent for a type that stays in our
@@ -339,7 +340,8 @@ type CommitErrorBody = {
 	error?: string;
 	statusCode?: number;
 	currentVersion?: string | null;
-	filesNeeded?: string[];
+	/** Assets the commit attaches whose bytes the collection was never sent. */
+	assetsNeeded?: string[];
 	hash?: string;
 };
 
@@ -680,7 +682,7 @@ export class UnderlayClient {
 		}
 		// Send the file's real content type — Underlay reports back whatever it received, so this is
 		// what downstream consumers see. Falls back to octet-stream only when we truly don't know.
-		const response = await this.request(`${this.collectionPath()}/files/${file.hash}`, {
+		const response = await this.request(`${this.collectionPath()}/assets/${file.hash}`, {
 			method: 'PUT',
 			headers: { 'Content-Type': file.contentType || 'application/octet-stream' },
 			rawBody: file.bytes,
@@ -705,14 +707,14 @@ export class UnderlayClient {
 	 * a multipart upload, which no PubPub export comes near, so that is refused clearly.
 	 */
 	private async uploadLargeFile(file: UnderlayFile): Promise<void> {
-		const uploads = `${this.collectionPath()}/files/uploads`;
+		const uploads = `${this.collectionPath()}/assets/uploads`;
 		const start = await this.request(uploads, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				hash: file.hash,
 				size: file.bytes.length,
-				mimeType: file.contentType || 'application/octet-stream',
+				mediaType: file.contentType || 'application/octet-stream',
 			}),
 		});
 		if (!start.ok) {
@@ -986,15 +988,15 @@ export class UnderlayClient {
 	}
 
 	/**
-	 * Upload any files named in a `filesNeeded` rejection. Returns the hashes it could not produce.
+	 * Upload any assets named in an `assetsNeeded` rejection. Returns the hashes it could not produce.
 	 */
 	private async uploadMissingFiles(
-		filesNeeded: string[],
+		assetsNeeded: string[],
 		filesByHash: Map<string, UnderlayFile>,
 		resolveFileByHash?: (hash: string) => Promise<UnderlayFile | null>,
 	): Promise<string[]> {
 		const unresolved: string[] = [];
-		for (const ref of filesNeeded) {
+		for (const ref of assetsNeeded) {
 			const hash = bareHash(ref);
 			let file = filesByHash.get(hash);
 			if (!file && resolveFileByHash) {
@@ -1028,9 +1030,9 @@ export class UnderlayClient {
 		if (detail.error === 'Version conflict') {
 			throw new UnderlayPushError('Version conflict', 409, body, true);
 		}
-		if (detail.filesNeeded && detail.filesNeeded.length > 0) {
+		if (detail.assetsNeeded && detail.assetsNeeded.length > 0) {
 			const unresolved = await this.uploadMissingFiles(
-				detail.filesNeeded,
+				detail.assetsNeeded,
 				filesByHash,
 				resolveFileByHash,
 			);

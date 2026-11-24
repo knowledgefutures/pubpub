@@ -9,8 +9,8 @@ import { canonicalize, hashBytes, hashRecord, hashSchema } from './hash';
  * - Records are flat `{ id, type, data }`. `id` is a stable PubPub primary key.
  * - `data` contains NO volatile fields (no export-time timestamps) so that unchanged content
  *   produces an unchanged hash — this is what makes re-pushes a no-op.
- * - Heavy/nested content (rendered release HTML, binary assets) becomes a file reference
- *   `{"$file":"sha256:<hex>"}`; the bytes are uploaded separately and deduplicated by hash.
+ * - Heavy/nested content (rendered release HTML, binary assets) becomes an asset reference
+ *   `{"$asset":"ul:asset:<hex>"}`; the bytes are uploaded separately and deduplicated by hash.
  * - Emitted `data` keys must exactly match the declared schema properties (Underlay rejects
  *   fields not present in the schema).
  *
@@ -53,7 +53,7 @@ export type AssetWarning = {
  * invalidates exactly once and unchanged pubs are re-mapped with the new shape instead of silently
  * re-emitting stale hashes. Bump on any change to a type's emitted fields.
  */
-export const MAPPING_VERSION = '11';
+export const MAPPING_VERSION = '12';
 
 export type ManifestEntry = { id: string; type: string; hash: string; private?: boolean };
 
@@ -68,7 +68,7 @@ export type UnderlayPushPayload = {
 	/**
 	 * Every file hash this version references, whether or not its bytes are still in `files`. The
 	 * streaming path uploads bytes during mapping and keeps only hashes. Feeds the no-op signature;
-	 * Underlay itself learns referenced files from the records' `$file` references.
+	 * Underlay itself learns referenced files from the records' `$asset` references.
 	 */
 	fileHashes?: string[];
 	/**
@@ -122,7 +122,7 @@ export type CommunityInput = {
 	issn?: string | null;
 	publishAs?: string | null;
 	citeAs?: string | null;
-	// Canonical identity + branding. Image fields are localized to `$file` references (see item 6 of
+	// Canonical identity + branding. Image fields are localized to `$asset` references (see item 6 of
 	// the durability handoff); scalars are stored as-is. Pure layout/visibility toggles are NOT pushed.
 	avatar?: string | null;
 	favicon?: string | null;
@@ -274,19 +274,20 @@ export type PubDownloadInput = {
 	createdAt?: string | Date | null;
 };
 
-const FILE_PREFIX = 'sha256:';
+/** How an Underlay id names an asset: `ul:asset:<hex>`, the hash of its bytes. */
+const ASSET_PREFIX = 'ul:asset:';
 /**
- * A record's reference to a content-addressed file. Underlay stores files by hash only (no
- * filename/type), so we carry the original `fileName` + `mimeType` on the reference itself, letting
- * consumers reconstruct the extension and content type.
+ * A record's reference to an asset (Underlay protocol §5.3). `mediaType` and `fileName` are the
+ * protocol's own members: Underlay stores the asset's media type from the reference, and a reader
+ * saves the bytes under `fileName`. `originalUrl` is ours: where the bytes came from.
  */
 const fileRef = (
 	hash: string,
 	fileName?: string,
-	mimeType?: string,
+	mediaType?: string,
 	originalUrl?: string,
 ): Record<string, Json> =>
-	compact({ $file: `${FILE_PREFIX}${hash}`, fileName, mimeType, originalUrl });
+	compact({ $asset: `${ASSET_PREFIX}${hash}`, fileName, mediaType, originalUrl });
 
 /** Best-effort original filename (with extension) from an asset URL, for the file reference. */
 const assetFileName = (url: string): string => {
@@ -405,13 +406,13 @@ export const layoutAssetUrls = (blocks: LayoutBlockInput[] | null | undefined): 
 const fileRefSchema = {
 	type: 'object',
 	properties: {
-		$file: { type: 'string' },
+		$asset: { type: 'string', pattern: '^ul:asset:[0-9a-f]{64}$' },
 		fileName: { type: 'string' },
-		mimeType: { type: 'string' },
+		mediaType: { type: 'string' },
 		/** Provenance: the source URL this file was localized from (kept out of the HTML itself). */
 		originalUrl: { type: 'string' },
 	},
-	required: ['$file'],
+	required: ['$asset'],
 };
 
 /**
@@ -423,12 +424,12 @@ const downloadRefSchema = {
 	properties: {
 		type: { type: 'string' },
 		createdAt: { type: 'string', format: 'date-time' },
-		$file: { type: 'string' },
+		$asset: { type: 'string', pattern: '^ul:asset:[0-9a-f]{64}$' },
 		fileName: { type: 'string' },
-		mimeType: { type: 'string' },
+		mediaType: { type: 'string' },
 		originalUrl: { type: 'string' },
 	},
-	required: ['type', '$file'],
+	required: ['type', '$asset'],
 };
 
 /** One layout block of a Page or Collection, in layout order. `html` only on text/html blocks. */
@@ -448,11 +449,11 @@ const exportRefSchema = {
 	type: 'object',
 	properties: {
 		format: { type: 'string' },
-		$file: { type: 'string' },
+		$asset: { type: 'string', pattern: '^ul:asset:[0-9a-f]{64}$' },
 		fileName: { type: 'string' },
-		mimeType: { type: 'string' },
+		mediaType: { type: 'string' },
 	},
-	required: ['format', '$file'],
+	required: ['format', '$asset'],
 };
 
 export const underlaySchemas: Record<string, JsonSchema> = {
@@ -509,7 +510,7 @@ export const underlaySchemas: Record<string, JsonSchema> = {
 			// (CollectionPub.rank), as PubPub shows it on the collection page.
 			pubIds: { type: 'array', items: { type: 'string', 'x-ref-type': 'Pub' } },
 			// The text/html blocks of the collection's layout (often an issue's intro), rendered and
-			// joined, as Page.html. Images point at `sha256:<hex>`, resolved through `layoutAssets`.
+			// joined, as Page.html. Images point at `ul:asset:<hex>`, resolved through `layoutAssets`.
 			layoutHtml: { type: 'string' },
 			layoutAssets: { type: 'array', items: fileRefSchema },
 			// Every block of the collection's layout in order, as Page.blocks: text/html blocks carry
@@ -748,7 +749,7 @@ type LocalizeToRef = ReturnType<typeof createAssetLocalizer>['localizeToRef'];
 type Localize = ReturnType<typeof createAssetLocalizer>['localize'];
 
 /**
- * Rewrite every assets.pubpub.org URL in rendered HTML to a content-addressed `sha256:<hex>` ref and
+ * Rewrite every assets.pubpub.org URL in rendered HTML to its asset id, `ul:asset:<hex>`, and
  * list the files it now points to (sorted by hash). Shared by release, page and collection HTML so
  * all three resolve images the same way. An asset that fails to localize keeps its original URL.
  */
@@ -794,15 +795,15 @@ const localizeHtmlAssets = async (
 	out = out
 		.replace(HTML_QUOTED_ASSET_URL, (match, quote, url) => {
 			const hash = tokenToHash.get(url);
-			return hash ? `${quote}${FILE_PREFIX}${hash}${quote}` : match;
+			return hash ? `${quote}${ASSET_PREFIX}${hash}${quote}` : match;
 		})
 		.replace(HTML_CSS_URL_ASSET, (match, url) => {
 			const hash = tokenToHash.get(url);
-			return hash ? `url(${FILE_PREFIX}${hash})` : match;
+			return hash ? `url(${ASSET_PREFIX}${hash})` : match;
 		});
 	return {
 		html: out,
-		assets: assets.sort((a, b) => String(a.$file).localeCompare(String(b.$file))),
+		assets: assets.sort((a, b) => String(a.$asset).localeCompare(String(b.$asset))),
 	};
 };
 
@@ -826,7 +827,7 @@ const mapLayoutBlocks = async (
 			const localized = await localizeHtmlAssets(html, localize);
 			html = localized.html;
 			for (const asset of localized.assets) {
-				assets.set(String(asset.$file), asset);
+				assets.set(String(asset.$asset), asset);
 			}
 		}
 		if (html) {
@@ -839,7 +840,9 @@ const mapLayoutBlocks = async (
 	return {
 		blocks: out,
 		html: parts.length > 0 ? parts.join('\n') : undefined,
-		assets: [...assets.values()].sort((a, b) => String(a.$file).localeCompare(String(b.$file))),
+		assets: [...assets.values()].sort((a, b) =>
+			String(a.$asset).localeCompare(String(b.$asset)),
+		),
 	};
 };
 

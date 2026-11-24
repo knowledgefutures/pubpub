@@ -17,9 +17,9 @@ import {
  * Global, immutable url → content-hash cache for pushed assets.
  *
  * `assets.pubpub.org` URLs are content-addressed by PubPub, so a URL permanently determines its
- * bytes and therefore its SHA-256 hash. Caching that mapping lets a push produce a file reference
+ * bytes and therefore its SHA-256 hash. Caching that mapping lets a push produce an asset reference
  * without re-downloading the asset — the bytes are only fetched if the Underlay server actually
- * asks for them (via the negotiate `needed_files` / 422 `filesNeeded` path). This mainly saves the
+ * asks for them (a commit refused with 422 `assetsNeeded`). This mainly saves the
  * community/collection/author branding images, which are recomputed on every push.
  *
  * Not scoped to an integration: the mapping is immutable, so it is safe to share across every

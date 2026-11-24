@@ -173,17 +173,17 @@ const fakeUnderlay = (opts: {
 				if (method === 'DELETE') return json({ ok: true });
 				if (method === 'GET') return json(states.shift() ?? { status: 'committing' });
 			}
-			if (method === 'POST' && path === `${COLLECTION}/files/uploads`) {
+			if (method === 'POST' && path === `${COLLECTION}/assets/uploads`) {
 				return json({ id: 'u1', url: 'https://storage.test/put/u1', expiresIn: 3600 }, 201);
 			}
 			if (url === 'https://storage.test/put/u1') return new Response(null, { status: 200 });
-			if (method === 'POST' && path === `${COLLECTION}/files/uploads/u1/complete`) {
+			if (method === 'POST' && path === `${COLLECTION}/assets/uploads/u1/complete`) {
 				return json({ id: 'u1', status: 'verifying' }, 202);
 			}
-			if (method === 'GET' && path === `${COLLECTION}/files/uploads/u1`) {
+			if (method === 'GET' && path === `${COLLECTION}/assets/uploads/u1`) {
 				return json({ id: 'u1', status: uploadStatuses.shift() ?? 'verified' });
 			}
-			if (method === 'PUT' && path.startsWith(`${COLLECTION}/files/`)) {
+			if (method === 'PUT' && path.startsWith(`${COLLECTION}/assets/`)) {
 				opts.onPut?.(url);
 				return json({ status: 'stored' }, 201);
 			}
@@ -523,7 +523,7 @@ describe('underlay/client — async commit', () => {
 			sessionStates: [
 				{
 					status: 'failed',
-					error: { statusCode: 422, error: 'Missing files', filesNeeded: ['f1'] },
+					error: { statusCode: 422, error: 'Missing files', assetsNeeded: ['f1'] },
 				},
 				{
 					status: 'committed',
@@ -542,7 +542,7 @@ describe('underlay/client — async commit', () => {
 		);
 
 		expect(result.status).toBe('committed');
-		expect(uploaded.some((u) => u.endsWith('/files/f1'))).toBe(true);
+		expect(uploaded.some((u) => u.endsWith('/assets/f1'))).toBe(true);
 		// The failed session can't be committed again, so recovery is a second session.
 		expect(fake.opens).toHaveLength(2);
 		expect(commits).toBe(2);
@@ -551,7 +551,7 @@ describe('underlay/client — async commit', () => {
 	it('does not retry when a missing file cannot be produced', async () => {
 		const fake = fakeUnderlay({
 			head: null,
-			commit: () => json({ error: 'Missing files', filesNeeded: ['missing'] }, 422),
+			commit: () => json({ error: 'Missing files', assetsNeeded: ['missing'] }, 422),
 		});
 		await expect(makeClient().push(payloadOf([rec('a', '1')]), 'msg')).rejects.toThrow(
 			/can no longer produce/,
@@ -596,11 +596,11 @@ describe('underlay/client — files', () => {
 		await makeClient().putFile({ hash: 'big', contentType: 'application/pdf', bytes });
 
 		expect(fake.calls).toEqual([
-			`POST ${COLLECTION}/files/uploads`,
+			`POST ${COLLECTION}/assets/uploads`,
 			'PUT https://storage.test/put/u1',
-			`POST ${COLLECTION}/files/uploads/u1/complete`,
-			`GET ${COLLECTION}/files/uploads/u1`,
-			`GET ${COLLECTION}/files/uploads/u1`,
+			`POST ${COLLECTION}/assets/uploads/u1/complete`,
+			`GET ${COLLECTION}/assets/uploads/u1`,
+			`GET ${COLLECTION}/assets/uploads/u1`,
 		]);
 		expect(fake.headers.find((h) => h.url.startsWith('https://storage.test'))?.auth).toBe(
 			false,
@@ -625,7 +625,7 @@ describe('underlay/client — files', () => {
 			contentType: 'text/html',
 			bytes: Buffer.from('x'),
 		});
-		expect(fake.calls).toEqual([`PUT ${COLLECTION}/files/small`]);
+		expect(fake.calls).toEqual([`PUT ${COLLECTION}/assets/small`]);
 	});
 });
 

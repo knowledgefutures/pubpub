@@ -157,10 +157,10 @@ describe('underlay/mapping — file content-type + filename', () => {
 		const release = payload.records.find((r) => r.type === 'Release')!;
 		expect(release.data.contentFile).toMatchObject({
 			fileName: 'p1-v1.html',
-			mimeType: 'text/html',
+			mediaType: 'text/html',
 		});
 		expect(release.data.assets).toEqual([
-			expect.objectContaining({ fileName: 'photo.png', mimeType: 'image/png' }),
+			expect.objectContaining({ fileName: 'photo.png', mediaType: 'image/png' }),
 		]);
 		// No hardcoded octet-stream for a known type.
 		expect(png?.contentType).not.toBe('application/octet-stream');
@@ -254,7 +254,7 @@ describe('underlay/mapping — canonical pub metadata', () => {
 		});
 	});
 
-	it('emits avatar as $file, htmlDescription, metadata as-is, and labels (id+title only)', async () => {
+	it('emits avatar as $asset, htmlDescription, metadata as-is, and labels (id+title only)', async () => {
 		const pub: PubInput = {
 			id: 'p1',
 			slug: 'p1',
@@ -286,7 +286,9 @@ describe('underlay/mapping — canonical pub metadata', () => {
 		});
 		const record = payload.records.find((r) => r.type === 'Pub')!;
 		expect(record.data.htmlDescription).toBe('<em>Styled</em> summary');
-		expect(String((record.data.avatar as Record<string, unknown>).$file)).toMatch(/^sha256:/);
+		expect(String((record.data.avatar as Record<string, unknown>).$asset)).toMatch(
+			/^ul:asset:/,
+		);
 		expect(record.data.metadata).toEqual({
 			bibcode: '2020ApJ...123..45X',
 			mtg_id: 'agu-2020',
@@ -393,16 +395,16 @@ describe('underlay/mapping — self-contained HTML', () => {
 		const htmlFile = payload.files.find((f) => f.contentType.startsWith('text/html'))!;
 		const content = htmlFile.bytes.toString('utf8');
 		expect(content).not.toContain('assets.pubpub.org');
-		expect(content).toContain('sha256:');
+		expect(content).toContain('ul:asset:');
 
 		const release = payload.records.find((r) => r.type === 'Release')!;
 		const asset = (release.data.assets as Record<string, unknown>[])[0];
-		expect(String(asset.$file)).toMatch(/^sha256:/);
+		expect(String(asset.$asset)).toMatch(/^ul:asset:/);
 		// Provenance lives on the structured reference, not in the HTML.
 		expect(asset.originalUrl).toBe('https://assets.pubpub.org/abc/photo.png');
-		// The rewritten sha256 ref in the HTML resolves to a file in the push.
-		const referencedHash = String(asset.$file).replace('sha256:', '');
-		expect(content).toContain(`sha256:${referencedHash}`);
+		// The rewritten asset id in the HTML resolves to a file in the push.
+		const referencedHash = String(asset.$asset).replace('ul:asset:', '');
+		expect(content).toContain(`ul:asset:${referencedHash}`);
 		expect(payload.files.some((f) => f.hash === referencedHash)).toBe(true);
 	});
 });
@@ -432,13 +434,13 @@ describe('underlay/mapping — responsive srcSet rewrite', () => {
 		const html = contentOf(await runPush());
 		// Zero external URLs anywhere — src, former srcset candidates, and data-url.
 		expect(html).not.toContain('assets.pubpub.org');
-		// No glued remnants like `sha256:<hash>&dpr=2` / `&amp;dpr=2`.
-		expect(html).not.toMatch(/sha256:[a-f0-9]+(?:&amp;|&)?(?:dpr|width)=/);
+		// No glued remnants like `ul:asset:<hash>&dpr=2` / `&amp;dpr=2`.
+		expect(html).not.toMatch(/ul:asset:[a-f0-9]+(?:&amp;|&)?(?:dpr|width)=/);
 		// CDN responsive variants stripped from the canonical HTML.
 		expect(html).not.toMatch(/srcset=/i);
 		expect(html).not.toMatch(/\bsizes=/i);
 		// The single content-addressed src remains.
-		expect(html).toMatch(/src="sha256:[a-f0-9]+"/);
+		expect(html).toMatch(/src="ul:asset:[a-f0-9]+"/);
 	});
 
 	it('is deterministic across runs (identical contentFile ref)', async () => {
@@ -476,14 +478,14 @@ describe('underlay/mapping — asset URLs with spaces/parens in the filename', (
 			.bytes.toString('utf8');
 		// The whole quoted value (spaces + parens) was captured and rewritten — nothing external left.
 		expect(html).not.toContain('assets.pubpub.org');
-		expect(html.match(/src="sha256:[a-f0-9]+"/g) ?? []).toHaveLength(2);
+		expect(html.match(/src="ul:asset:[a-f0-9]+"/g) ?? []).toHaveLength(2);
 
 		const release = payload.records.find((r) => r.type === 'Release')!;
 		const assets = release.data.assets as Record<string, unknown>[];
 		// Both distinct images localized; each resolves to a file in the push.
 		expect(assets).toHaveLength(2);
 		for (const a of assets) {
-			const hash = String(a.$file).replace('sha256:', '');
+			const hash = String(a.$asset).replace('ul:asset:', '');
 			expect(payload.files.some((f) => f.hash === hash)).toBe(true);
 		}
 	});
@@ -522,7 +524,7 @@ describe('underlay/mapping — branding/avatar images become files', () => {
 		outboundEdges: [],
 	};
 
-	it('localizes Community/Collection/User images to $file refs and keeps scalar branding', async () => {
+	it('localizes Community/Collection/User images to $asset refs and keeps scalar branding', async () => {
 		const payload = await buildUnderlayPush({
 			community: brandedCommunity,
 			collections: [brandedCollection],
@@ -535,15 +537,15 @@ describe('underlay/mapping — branding/avatar images become files', () => {
 		expect(comm.data.avatar).toMatchObject({
 			originalUrl: 'https://assets.pubpub.org/logo.png',
 		});
-		expect(String((comm.data.avatar as Record<string, unknown>).$file)).toMatch(/^sha256:/);
+		expect(String((comm.data.avatar as Record<string, unknown>).$asset)).toMatch(/^ul:asset:/);
 		expect(comm.data.accentColorLight).toBe('#ffffff');
 		expect(comm.data.twitter).toBe('https://twitter.com/kf');
 
 		const coll = payload.records.find((r) => r.type === 'Collection')!;
-		expect(String((coll.data.avatar as Record<string, unknown>).$file)).toMatch(/^sha256:/);
+		expect(String((coll.data.avatar as Record<string, unknown>).$asset)).toMatch(/^ul:asset:/);
 
 		const user = payload.records.find((r) => r.type === 'User')!;
-		expect(String((user.data.avatar as Record<string, unknown>).$file)).toMatch(/^sha256:/);
+		expect(String((user.data.avatar as Record<string, unknown>).$asset)).toMatch(/^ul:asset:/);
 	});
 
 	it('omits the image field and warns when a branding image fails to localize', async () => {
@@ -606,9 +608,9 @@ describe('underlay/mapping — immutable asset url→hash cache', () => {
 		expect(fetchCalls).toBe(0);
 		const comm = records.find((r) => r.type === 'Community')!;
 		expect(comm.data.avatar).toMatchObject({
-			$file: 'sha256:cachedhash123',
+			$asset: 'ul:asset:cachedhash123',
 			fileName: 'logo.png',
-			mimeType: 'image/png',
+			mediaType: 'image/png',
 			originalUrl: url,
 		});
 		expect(cachedHashes).toContain('cachedhash123');
@@ -628,7 +630,9 @@ describe('underlay/mapping — immutable asset url→hash cache', () => {
 			},
 		});
 		const comm = records.find((r) => r.type === 'Community')!;
-		expect(String((comm.data.avatar as Record<string, unknown>).$file)).toBe('sha256:hash-10');
+		expect(String((comm.data.avatar as Record<string, unknown>).$asset)).toBe(
+			'ul:asset:hash-10',
+		);
 		expect(assetCache.learned.get(url)).toMatchObject({ hash: 'hash-10' });
 		expect(assetCache.byHash.get('hash-10')).toMatchObject({ url });
 	});
@@ -804,15 +808,15 @@ describe('underlay/mapping — downloadable exports (Release.exports)', () => {
 		const release = records.find((r) => r.type === 'Release' && r.id === 'pe-r1')!;
 		const exports = release.data.exports as {
 			format: string;
-			$file: string;
-			mimeType: string;
+			$asset: string;
+			mediaType: string;
 		}[];
 		expect(exports.map((e) => e.format)).toEqual(['epub', 'pdf']); // sorted, docx excluded
 		const pdf = exports.find((e) => e.format === 'pdf')!;
-		expect(pdf.mimeType).toBe('application/pdf');
-		expect(pdf.$file).toMatch(/^sha256:/);
+		expect(pdf.mediaType).toBe('application/pdf');
+		expect(pdf.$asset).toMatch(/^ul:asset:/);
 		const epub = exports.find((e) => e.format === 'epub')!;
-		expect(epub.mimeType).toBe('application/epub+zip');
+		expect(epub.mediaType).toBe('application/epub+zip');
 	});
 
 	it('omits exports when no formats are selected', async () => {
@@ -879,17 +883,17 @@ describe('underlay/mapping — formatted downloads (Pub.downloads)', () => {
 			{
 				type: 'formatted',
 				createdAt: '2025-12-01T10:00:00.000Z',
-				$file: 'sha256:hash-of-https://assets.pubpub.org/44k2vnvm/older.pdf',
+				$asset: 'ul:asset:hash-of-https://assets.pubpub.org/44k2vnvm/older.pdf',
 				fileName: 'ragworms-commentary.pdf',
-				mimeType: 'application/pdf',
+				mediaType: 'application/pdf',
 				originalUrl: 'https://assets.pubpub.org/44k2vnvm/older.pdf',
 			},
 			{
 				type: 'formatted',
 				createdAt: '2026-02-01T10:00:00.000Z',
-				$file: `sha256:hash-of-${formattedUrl}`,
+				$asset: `ul:asset:hash-of-${formattedUrl}`,
 				fileName: 'ragworms-commentary.pdf',
-				mimeType: 'application/pdf',
+				mediaType: 'application/pdf',
 				originalUrl: formattedUrl,
 			},
 		]);
@@ -1174,13 +1178,13 @@ describe('underlay/mapping — Pages and collection layout text', () => {
 				communityId: 'c1',
 				createdAt: '2020-01-01T00:00:00.000Z',
 				updatedAt: '2024-05-01T00:00:00.000Z',
-				html: '<h2>About</h2><img src="sha256:h-team.png"/>\n<p>Contact us</p>',
+				html: '<h2>About</h2><img src="ul:asset:h-team.png"/>\n<p>Contact us</p>',
 				blocks: [
 					{ id: 'b0', type: 'banner' },
 					{
 						id: 'b1',
 						type: 'text',
-						html: '<h2>About</h2><img src="sha256:h-team.png"/>',
+						html: '<h2>About</h2><img src="ul:asset:h-team.png"/>',
 					},
 					{ id: 'b2', type: 'pubs', title: 'Latest' },
 					{ id: 'b3', type: 'html', html: '<p>Contact us</p>' },
@@ -1188,9 +1192,9 @@ describe('underlay/mapping — Pages and collection layout text', () => {
 				],
 				assets: [
 					{
-						$file: 'sha256:h-team.png',
+						$asset: 'ul:asset:h-team.png',
 						fileName: 'team.png',
-						mimeType: 'image/png',
+						mediaType: 'image/png',
 						originalUrl: 'https://assets.pubpub.org/a/team.png',
 					},
 				],

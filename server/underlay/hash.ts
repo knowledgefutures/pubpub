@@ -92,6 +92,6 @@ export const hashRecord = (record: {
 export const hashSchema = (schemaBody: unknown): string => sha256Hex(jcs(schemaBody));
 
 /**
- * Hash an arbitrary buffer of bytes (used for file references `{"$file":"sha256:<hex>"}`).
+ * Hash an arbitrary buffer of bytes (an asset id is `ul:asset:` plus this hash).
  */
 export const hashBytes = (bytes: Buffer | Uint8Array): string => sha256Hex(bytes);

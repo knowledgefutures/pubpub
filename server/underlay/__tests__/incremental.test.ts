@@ -55,7 +55,11 @@ const makeMapPub =
 			{
 				id: release.id,
 				type: 'Release',
-				data: { pubId: pub.id, historyKey, contentFile: { $file: `sha256:${fileHash}` } },
+				data: {
+					pubId: pub.id,
+					historyKey,
+					contentFile: { $asset: `ul:asset:${fileHash}` },
+				},
 			},
 		];
 		return {

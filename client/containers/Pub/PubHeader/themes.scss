@@ -130,6 +130,7 @@ $off-black: #333;
 	.text-wrapper,
 	.#{vendor.$bp-namespace}-editable-text-content,
 	.title-group-component .published-date,
+	.title-group-component .title-doi .doi-link,
 	.title-group-component .title-editor-component {
 		/* Ways of accomplishing this effect: */
 		/* https://css-tricks.com/multi-line-padded-text/ */
